@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
@@ -80,7 +80,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
   private static final URI modelTypeURI;
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE+"MemoryModel");
+      modelTypeURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
       assert modelTypeURI != null;
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded memory model URI", e);

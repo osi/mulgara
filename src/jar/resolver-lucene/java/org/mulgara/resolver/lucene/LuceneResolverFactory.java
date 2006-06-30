@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
@@ -89,7 +89,7 @@ public class LuceneResolverFactory implements ResolverFactory {
     }
 
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE + "LuceneModel");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "LuceneModel");
       assert modelTypeURI != null;
 
       // Initialize fields

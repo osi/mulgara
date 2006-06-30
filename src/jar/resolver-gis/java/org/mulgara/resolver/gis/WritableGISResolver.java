@@ -556,7 +556,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
         log.debug("Creating temp Model: " + model + " with ID: " + tempModel);
       }
       super.resolver.createModel(tempModel,
-          new URI(Tucana.NAMESPACE + "Model"));
+          new URI(Mulgara.NAMESPACE + "Model"));
       return tempModel;
     }
     catch (Exception exception) {

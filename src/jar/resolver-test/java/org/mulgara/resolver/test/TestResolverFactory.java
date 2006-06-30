@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.server.Session;
@@ -67,7 +67,7 @@ public class TestResolverFactory implements ResolverFactory {
 
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE + "TestModel");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "TestModel");
       assert modelTypeURI != null;
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded Test model URI", e);

@@ -48,7 +48,7 @@ import org.kowari.server.SessionFactory;
 import org.kowari.server.driver.SessionFactoryFinder;
 
 /**
- * Test case for {@link GraphKowari}.
+ * Test case for {@link GraphMulgara}.
  *
  * @created 2003-02-09
  *
@@ -93,7 +93,7 @@ public class QueryEngineUnitTest extends TestCase {
   /**
    * The graph Kowari maker.
    */
-  protected GraphKowariMaker graphMaker;
+  protected GraphMulgaraMaker graphMaker;
 
   /**
    * Default constructor for unit test.
@@ -145,9 +145,9 @@ public class QueryEngineUnitTest extends TestCase {
       LocalJenaSession session = (LocalJenaSession) sessionFactory.
           newJenaSession();
 
-      graphMaker = new GraphKowariMaker((LocalJenaSession)
+      graphMaker = new GraphMulgaraMaker((LocalJenaSession)
           session, serverURI, ReificationStyle.Minimal);
-      ModelKowariMaker modelMaker = new ModelKowariMaker(graphMaker);
+      ModelMulgaraMaker modelMaker = new ModelMulgaraMaker(graphMaker);
 
       model = modelMaker.createModel("test");
 
@@ -178,7 +178,7 @@ public class QueryEngineUnitTest extends TestCase {
 
       RdqlQuery q = new RdqlQuery("select ?x ?y ?z WHERE (?x ?y ?z)");
       q.setSource(model);
-      QueryExecution qe = new KowariQueryEngine(q);
+      QueryExecution qe = new MulgaraQueryEngine(q);
       QueryResults results = qe.exec();
       assertTrue(results.hasNext());
 

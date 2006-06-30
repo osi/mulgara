@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.*;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
@@ -70,8 +70,8 @@ public class PrefixResolverFactory implements ResolverFactory
 
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE + "PrefixModel");
-      kowariPrefixURI = new URI(Tucana.NAMESPACE + "prefix");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "PrefixModel");
+      kowariPrefixURI = new URI(Mulgara.NAMESPACE + "prefix");
       assert modelTypeURI != null;
       assert kowariPrefixURI != null;
     } catch (URISyntaxException e) {

@@ -386,13 +386,13 @@ public class LocalJenaDatabaseSession extends LocalJRDFDatabaseSession
       URI modelURI, Node_Variable column) throws QueryException {
 
     Variable realColumn = null;
-    if (GraphKowari.VARIABLES[0].equals(column)) {
+    if (GraphMulgara.VARIABLES[0].equals(column)) {
       realColumn = StatementStore.VARIABLES[0];
     }
-    else if (GraphKowari.VARIABLES[1].equals(column)) {
+    else if (GraphMulgara.VARIABLES[1].equals(column)) {
       realColumn = StatementStore.VARIABLES[1];
     }
-    else if (GraphKowari.VARIABLES[2].equals(column)) {
+    else if (GraphMulgara.VARIABLES[2].equals(column)) {
       realColumn = StatementStore.VARIABLES[2];
     }
 

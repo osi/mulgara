@@ -35,7 +35,7 @@ import java.net.*;
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 

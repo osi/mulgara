@@ -10,5 +10,5 @@ package org.mulgara.connection;
  * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface ItqlConnection extends KowariConnection {
+public interface ItqlConnection extends MulgaraConnection {
 }

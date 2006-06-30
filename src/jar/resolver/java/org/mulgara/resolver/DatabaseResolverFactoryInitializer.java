@@ -42,7 +42,7 @@ import org.jrdf.vocabulary.RDF;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.util.NVPair;

@@ -59,7 +59,7 @@ import org.apache.log4j.Category;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class TestResultSet extends AbstractKowariResultSet
+public class TestResultSet extends AbstractMulgaraResultSet
   implements Serializable {
 
  /**

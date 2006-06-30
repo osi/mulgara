@@ -41,7 +41,7 @@ import org.jrdf.graph.URIReference;
 
 // Locally written packages
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 
 /**
@@ -68,7 +68,7 @@ public interface FileSystemModel extends Model {
 
   /** Predicate used to identify a File extension */
   public final static URIReference FILE_EXT = new URIReferenceImpl(URI.create(
-      Tucana.NAMESPACE + "extension"));
+      Mulgara.NAMESPACE + "extension"));
 
   /** Namespace used in TKS filesystem domain */
   public final static String TKS_FS = "http://tucana.org/tucana/filesystem#";

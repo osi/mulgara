@@ -9,7 +9,7 @@ import net.java.dev.sofa.*;
 import net.java.dev.sofa.impl.*;
 import net.java.dev.sofa.model.*;
 import org.jrdf.graph.*;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.SessionFactoryFactory;
@@ -267,7 +267,7 @@ public class CameraPhoneOntologyApp {
     if (session.modelExists(graph)) {
       session.removeModel(graph);
     }
-    session.createModel(graph, new URI(Tucana.NAMESPACE + "Model"));
+    session.createModel(graph, new URI(Mulgara.NAMESPACE + "Model"));
     return JRDFGraphFactory.newClientGraph(getServerURI(), graph);
   }
 

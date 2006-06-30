@@ -39,7 +39,7 @@ import java.util.*;
 import org.apache.log4j.Category;
 
 // Locally written packages
-import org.mulgara.util.KowariResultSet;
+import org.mulgara.util.MulgaraResultSet;
 import org.mulgara.util.ResultSetRow;
 import org.mulgara.util.TestResultSet;
 

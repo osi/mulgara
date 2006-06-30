@@ -49,7 +49,7 @@ import org.kowari.server.driver.SessionFactoryFinder;
 import org.kowari.server.SessionFactory;
 
 /**
- * Test case for {@link GraphKowariMaker}.
+ * Test case for {@link GraphMulgaraMaker}.
  *
  * @created 2003-02-27
  *
@@ -88,7 +88,7 @@ public class OntologySupportExample {
   /**
    * The graphMaker used in the tests.
    */
-  private GraphKowariMaker graphMaker;
+  private GraphMulgaraMaker graphMaker;
 
   /**
    * The database session being used for the tests.
@@ -148,7 +148,7 @@ public class OntologySupportExample {
       // Get all of the data from the camera.
       String hostname = InetAddress.getLocalHost().getCanonicalHostName();
       URI cameraURI = new URI("rmi", hostname, "/" + SERVER_NAME, "camera");
-      GraphKowari graph = new GraphKowari(session, cameraURI);
+      GraphMulgara graph = new GraphMulgara(session, cameraURI);
 
       // Get number of triples
       System.err.println("Total number of triples: " + graph.size());
@@ -199,9 +199,9 @@ public class OntologySupportExample {
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, false);
       this.session = (LocalJenaSession) sessionFactory.newJenaSession();
 
-      graphMaker = new GraphKowariMaker((LocalJenaSession)
+      graphMaker = new GraphMulgaraMaker((LocalJenaSession)
           session, serverURI, ReificationStyle.Minimal);
-      ModelMaker modelMaker = new ModelKowariMaker(graphMaker);
+      ModelMaker modelMaker = new ModelMulgaraMaker(graphMaker);
 
       exceptionOccurred = false;
 

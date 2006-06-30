@@ -88,7 +88,7 @@ public class ReadOnlyGISResolver implements Resolver {
   protected ContentHandlerManager contentManager;
 
   /** Model type supported by this resolver */
-  public static final URI MODEL_TYPE = URI.create(Tucana.NAMESPACE + "GISModel");
+  public static final URI MODEL_TYPE = URI.create(Mulgara.NAMESPACE + "GISModel");
 
   /** Node ID for rdf:type */
   protected long RDF_TYPE = -1;

@@ -28,57 +28,61 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
+import gnu.trove.TIntHashSet;
+import gnu.trove.TIntIterator;
+
 import java.beans.Beans;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.util.*;
-import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-// Java 2 enterprise packages
+import javax.naming.NamingException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
-// Third party packages
-import org.apache.log4j.Logger;  // Apache Log4J
-import org.jrdf.graph.*;         // JRDF
+import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
-import gnu.trove.TIntHashSet;
-import gnu.trove.TIntIterator;
-
-// Local packages
 import org.mulgara.content.Content;
 import org.mulgara.content.ContentHandler;
-import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.query.LocalNode;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Tucana;
-import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.spi.*;
+import org.mulgara.query.rdf.Mulgara;
+import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.FactoryInitializer;
+import org.mulgara.resolver.spi.InitializerException;
+import org.mulgara.resolver.spi.LocalizeException;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.ResolverFactory;
+import org.mulgara.resolver.spi.ResolverFactoryException;
+import org.mulgara.resolver.spi.SecurityAdapter;
+import org.mulgara.resolver.spi.SecurityAdapterFactory;
+import org.mulgara.resolver.spi.SecurityAdapterFactoryException;
+import org.mulgara.resolver.spi.SymbolicTransformation;
+import org.mulgara.resolver.spi.SystemResolverFactory;
 import org.mulgara.rules.RuleLoader;
-import org.mulgara.rules.RuleLoaderFactory;
-import org.mulgara.rules.Rules;
-import org.mulgara.rules.RulesException;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.nodepool.NodePoolFactory;
-import org.mulgara.store.statement.StatementStoreException;
 import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.stringpool.StringPoolFactory;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;
-import org.mulgara.store.xa.SimpleXAResource;
 import org.mulgara.store.xa.SimpleXAResourceException;
-import org.mulgara.store.xa.XANodePool;
-import org.mulgara.store.xa.XAResolverSession;
-import org.mulgara.store.xa.XAResolverSessionFactory;
-import org.mulgara.store.xa.XAStringPool;
 import org.mulgara.transaction.TransactionManagerFactory;
 
 /**
@@ -307,7 +311,7 @@ public class Database implements SessionFactory
    */
   public Database(URI                            uri,
                   File                           directory,
-                  org.kowari.config.TucanaConfig config)
+                  org.mulgara.config.MulgaraConfig config)
       throws ConfigurationException, InitializerException, LocalizeException,
              NamingException, NodePoolException, QueryException,
              ResolverException, ResolverFactoryException,
@@ -648,7 +652,7 @@ public class Database implements SessionFactory
                                                    .iterator()
                                                    .next()).getKey();
     */
-    temporaryModelTypeURI = new URI(Tucana.NAMESPACE + "MemoryModel");
+    temporaryModelTypeURI = new URI(Mulgara.NAMESPACE + "MemoryModel");
     assert temporaryModelTypeURI != null;
 
     /*

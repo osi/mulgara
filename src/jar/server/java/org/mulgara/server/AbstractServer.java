@@ -40,7 +40,7 @@ import javax.jmdns.*;       // ZeroConf (multicast DNS)
 import org.apache.log4j.*;  // Apache Log4J
 
 // Locally written packages
-import org.kowari.config.TucanaConfig;
+import org.mulgara.config.MulgaraConfig;
 import org.mulgara.query.*;
 import org.mulgara.server.SessionFactory;
 
@@ -122,7 +122,7 @@ public abstract class AbstractServer implements ServerMBean {
   private SessionFactory sessionFactory;
 
   /** The session factory config object */
-  private TucanaConfig sessionConfig;
+  private MulgaraConfig sessionConfig;
 
   /**
    * ZeroConf server.
@@ -355,7 +355,7 @@ public abstract class AbstractServer implements ServerMBean {
       sessionFactory =
           (SessionFactory) Class.forName(providerClassName)
           .getConstructor(new Class[] {
-                          URI.class, File.class, TucanaConfig.class})
+                          URI.class, File.class, MulgaraConfig.class})
           .newInstance(new Object[] {
                        getURI(), dir, sessionConfig});
     }
@@ -510,7 +510,7 @@ public abstract class AbstractServer implements ServerMBean {
  *
  * @return The configuration used when initialising a session factory
  */
-public TucanaConfig getConfig() {
+public MulgaraConfig getConfig() {
 
   return sessionConfig;
 }
@@ -521,7 +521,7 @@ public TucanaConfig getConfig() {
  * @param config The configuration to be used when bringing up a session
  *               factory
  */
-public void setConfig(TucanaConfig config) {
+public void setConfig(MulgaraConfig config) {
 
   // Store the new configuration item
   sessionConfig = config;

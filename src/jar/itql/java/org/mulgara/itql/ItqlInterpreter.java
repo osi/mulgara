@@ -67,7 +67,7 @@ import java.util.zip.ZipInputStream;
  * Responsible for the following :
  * - maintains connectivty between client and server;
  * - parsing and converting TQL requests to query objects for execution;
- * - Abstract layer for the {@link ItqlInterpreterBean} and {@link org.mulgara.connection.KowariConnection}s.
+ * - Abstract layer for the {@link ItqlInterpreterBean} and {@link org.mulgara.connection.MulgaraConnection}s.
  * </p>
  *
  * @created 2001-08-21
@@ -622,7 +622,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
      try {
 
        // create dummy URI to force the server to assume RDF/XML inputStream
-       dummySourceURI = new URI(Tucana.NAMESPACE+"locally-sourced-inputStream.rdf");
+       dummySourceURI = new URI(Mulgara.NAMESPACE+"locally-sourced-inputStream.rdf");
 
       } catch ( URISyntaxException ex ) {};
 
@@ -836,7 +836,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
     try {
 
       // create dummy URI for server identification messages
-      dummySourceURI = new URI(Tucana.NAMESPACE+"locally-sourced-inputStream.gz");
+      dummySourceURI = new URI(Mulgara.NAMESPACE+"locally-sourced-inputStream.gz");
 
      } catch ( URISyntaxException ex ) {};
 

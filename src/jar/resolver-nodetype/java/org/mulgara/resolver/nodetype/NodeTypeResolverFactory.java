@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.*;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
@@ -81,8 +81,8 @@ public class NodeTypeResolverFactory implements ResolverFactory
 
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE + "TypeModel");
-      kowariUriReferenceURI = new URI(Tucana.NAMESPACE + "uriReference");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "TypeModel");
+      kowariUriReferenceURI = new URI(Mulgara.NAMESPACE + "uriReference");
       assert modelTypeURI != null;
       assert kowariUriReferenceURI != null;
     } catch (URISyntaxException e) {

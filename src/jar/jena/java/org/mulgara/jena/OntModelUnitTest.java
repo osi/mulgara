@@ -98,7 +98,7 @@ public class OntModelUnitTest extends TestOntModel {
   /**
    * Creates new graph.
    */
-  protected GraphKowariMaker graphMaker = null;
+  protected GraphMulgaraMaker graphMaker = null;
 
   /**
    * Creates new models.
@@ -329,9 +329,9 @@ public class OntModelUnitTest extends TestOntModel {
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, false);
       this.session = (LocalJenaSession) sessionFactory.newJenaSession();
 
-      graphMaker = new GraphKowariMaker((LocalJenaSession)
+      graphMaker = new GraphMulgaraMaker((LocalJenaSession)
           session, serverURI, ReificationStyle.Minimal);
-      modelMaker = new ModelKowariMaker(graphMaker);
+      modelMaker = new ModelMulgaraMaker(graphMaker);
 
       spec = new OntModelSpec(OntModelSpec.OWL_MEM);
       spec.setModelMaker(modelMaker);

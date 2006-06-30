@@ -57,7 +57,7 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.Database;
 import org.mulgara.server.Session;
 import org.mulgara.transaction.TransactionManagerFactory;
@@ -98,7 +98,7 @@ public class TestResolverUnitTest extends TestCase {
     try {
       databaseURI  = new URI("local:database");
       systemModelURI     = new URI("local:database#");
-      modelTypeURI = new URI(Tucana.NAMESPACE + "TestModel");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "TestModel");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }

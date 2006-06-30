@@ -119,7 +119,7 @@ public class KGraph
   private static final String EOL = System.getProperty("line.separator");
 
   /** special <tks:is> predicate */
-  private static final String TKS_IS = "<" + Tucana.NAMESPACE + "is> " ;
+  private static final String TKS_IS = "<" + Mulgara.NAMESPACE + "is> " ;
 
   /**
    * Construct a KGraph against the given Kowari model.

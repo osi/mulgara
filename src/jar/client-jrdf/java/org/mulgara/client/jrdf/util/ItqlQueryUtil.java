@@ -102,7 +102,7 @@ import org.mulgara.server.Session;
 public abstract class ItqlQueryUtil {
 
   /** Special <tks:is> predicate */
-  private static final String TKS_IS = "<" + Tucana.NAMESPACE + "is> ";
+  private static final String TKS_IS = "<" + Mulgara.NAMESPACE + "is> ";
 
   /**
    * Returns an Answer for the executed query.

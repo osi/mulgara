@@ -36,7 +36,7 @@ import org.jrdf.graph.URIReference;
 import org.jrdf.vocabulary.Vocabulary;
 
 // local packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 
 /**
  * Provides a central point for defining all magic predicates used by Kowari.
@@ -60,19 +60,19 @@ import org.mulgara.query.rdf.Tucana;
 public class SpecialPredicates extends Vocabulary {
 
   /** The string for the equality predicate */
-  public static final String IS = Tucana.NAMESPACE + "is";
+  public static final String IS = Mulgara.NAMESPACE + "is";
 
   /** The string for the cardinality equality predicate */
-  public static final String OCCURS = Tucana.NAMESPACE + "occurs";
+  public static final String OCCURS = Mulgara.NAMESPACE + "occurs";
 
   /** The string for the cardinality equality predicate */
-  public static final String NOT_OCCURS = Tucana.NAMESPACE + "notOccurs";
+  public static final String NOT_OCCURS = Mulgara.NAMESPACE + "notOccurs";
 
   /** The string for the cardinality less than predicate */
-  public static final String OCCURS_LESS_THAN = Tucana.NAMESPACE + "occursLessThan";
+  public static final String OCCURS_LESS_THAN = Mulgara.NAMESPACE + "occursLessThan";
 
   /** The string for the cardinality greater than predicate */
-  public static final String OCCURS_MORE_THAN = Tucana.NAMESPACE + "occursMoreThan";
+  public static final String OCCURS_MORE_THAN = Mulgara.NAMESPACE + "occursMoreThan";
 
   /** The URI for the equality predicate */
   public static final URI KOWARI_IS;

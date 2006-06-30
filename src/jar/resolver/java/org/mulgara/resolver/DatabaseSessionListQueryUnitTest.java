@@ -45,7 +45,7 @@ import org.jrdf.vocabulary.RDFS; // JRDF
 import org.jrdf.graph.URIReference;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.TripleImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactoryFactory;
@@ -95,7 +95,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     try {
       databaseURI = new URI("local:database");
       systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Tucana.NAMESPACE + "MemoryModel");
+      memoryModelURI = new URI(Mulgara.NAMESPACE + "MemoryModel");
 
       //generate a number of models to be 'batch' queried
       modelURIs = new ArrayList();
@@ -348,7 +348,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     URIReference object = new URIReferenceImpl(new URI(RDFS.baseURI + "Class"));
     for (int i = 0; i < NUM_STATEMENTS; i++) {
 
-      subject = new URIReferenceImpl(new URI(Tucana.NAMESPACE + "subject" + i));
+      subject = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "subject" + i));
       statements.add(new TripleImpl(subject, predicate, object));
     }
 

@@ -37,7 +37,7 @@ import javax.naming.*;
 import org.apache.log4j.Logger; // Apache Log4J
 
 // Locally written packages
-import org.kowari.config.TucanaConfig;
+import org.mulgara.config.MulgaraConfig;
 import org.mulgara.server.SessionFactory;
 
 import java.lang.reflect.Constructor;
@@ -83,7 +83,7 @@ public class SessionFactoryFactory {
   private static final String CONFIG_PATH = "conf/tucana-config.xml";
 
   /** Config to use when creating new sessions */
-  private TucanaConfig tucanaConfig;
+  private MulgaraConfig mulgaraConfig;
 
   /**
    * Default Constructor.
@@ -384,7 +384,7 @@ public class SessionFactoryFactory {
 
       //create a configuration object from the stream
       InputStreamReader reader = new InputStreamReader(inStream);
-      tucanaConfig = TucanaConfig.unmarshal(reader);
+      tucanaConfig = MulgaraConfig.unmarshal(reader);
       tucanaConfig.validate();
 
       //set configuration properties

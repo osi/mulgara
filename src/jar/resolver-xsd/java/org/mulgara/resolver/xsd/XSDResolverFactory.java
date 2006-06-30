@@ -45,7 +45,7 @@ import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
 import org.mulgara.query.LocalNode;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
@@ -78,7 +78,7 @@ public class XSDResolverFactory implements ResolverFactory {
   private static final URI modelTypeURI;
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE + "XMLSchemaModel");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "XMLSchemaModel");
       assert modelTypeURI != null;
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded XSD model URI", e);
@@ -131,19 +131,19 @@ public class XSDResolverFactory implements ResolverFactory {
 
       // Create the after node ID
       XSDResolver.KOWARI_AFTER = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Tucana.NAMESPACE + "after")));
+          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "after")));
 
       // Create the before node ID
       XSDResolver.KOWARI_BEFORE = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Tucana.NAMESPACE + "before")));
+          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "before")));
 
       // Create the less than node ID
       XSDResolver.KOWARI_LT = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Tucana.NAMESPACE + "lt")));
+          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")));
 
       // Create the greater than node ID
       XSDResolver.KOWARI_GT = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Tucana.NAMESPACE + "gt")));
+          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt")));
     } catch (URISyntaxException e) {
 
       throw new ResolverException("Generated bad XML schema URI", e);
@@ -167,8 +167,8 @@ public class XSDResolverFactory implements ResolverFactory {
     try {
       resolverFactoryInitializer.addSymbolicTransformation(
         new IntervalTransformation(
-          new URIReferenceImpl(new URI(Tucana.NAMESPACE + "lt")),
-          new URIReferenceImpl(new URI(Tucana.NAMESPACE + "gt"))
+          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")),
+          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt"))
         )
       );
     }

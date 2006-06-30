@@ -94,12 +94,12 @@ public class SimpleListStatementsUnitTest extends ModelTestBase {
   /**
    * Creates new graph.
    */
-  protected static GraphKowariMaker graphMaker = null;
+  protected static GraphMulgaraMaker graphMaker = null;
 
   /**
    * Creates new models.
    */
-  protected static ModelKowariMaker modelMaker = null;
+  protected static ModelMulgaraMaker modelMaker = null;
 
   /**
    * The server URI.
@@ -177,9 +177,9 @@ public class SimpleListStatementsUnitTest extends ModelTestBase {
           newJenaSession();
 
       // Create model
-      graphMaker = new GraphKowariMaker((LocalJenaSession) session, serverURI,
+      graphMaker = new GraphMulgaraMaker((LocalJenaSession) session, serverURI,
           ReificationStyle.Minimal);
-      modelMaker = new ModelKowariMaker((GraphKowariMaker) graphMaker);
+      modelMaker = new ModelMulgaraMaker((GraphMulgaraMaker) graphMaker);
       model = modelMaker.createModel();
 
       // Add default statements to model
@@ -310,7 +310,7 @@ public class SimpleListStatementsUnitTest extends ModelTestBase {
   }
 
   public static Model modelWithStatements(ReificationStyle style, String facts) {
-    Model m = new ModelKowari((GraphKowari) graphMaker.createGraph());
+    Model m = new ModelMulgara((GraphMulgara) graphMaker.createGraph());
     modelAdd(m, facts);
     return m;
   }

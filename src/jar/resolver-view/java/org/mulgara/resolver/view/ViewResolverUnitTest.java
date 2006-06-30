@@ -45,7 +45,7 @@ import org.jrdf.vocabulary.RDF;  // JRDF
 // Locally written packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.Database;
 import org.mulgara.resolver.TestDef;
@@ -85,7 +85,7 @@ public class ViewResolverUnitTest extends TestCase {
     try {
       databaseURI    = new URI("local:database");
       systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Tucana.NAMESPACE+"MemoryModel");
+      memoryModelURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }
@@ -605,7 +605,7 @@ public class ViewResolverUnitTest extends TestCase {
     database.addResolverFactory("org.kowari.resolver.url.URLResolverFactory", null);
 
     try {
-      URI modelTypeURI = new URI(Tucana.NAMESPACE+"Model");
+      URI modelTypeURI = new URI(Mulgara.NAMESPACE+"Model");
       Session session = database.newSession();
       for (int i = 1; i < modelURIs.length; i++) {
         session.createModel(modelURIs[i], modelTypeURI);

@@ -96,12 +96,12 @@ public class NamespaceUnitTest extends ModelTestBase {
   /**
    * Creates new graph.
    */
-  protected static GraphKowariMaker graphMaker = null;
+  protected static GraphMulgaraMaker graphMaker = null;
 
   /**
    * Creates new models.
    */
-  protected static ModelKowariMaker modelMaker = null;
+  protected static ModelMulgaraMaker modelMaker = null;
 
   /**
    * The server URI.
@@ -166,9 +166,9 @@ public class NamespaceUnitTest extends ModelTestBase {
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, false);
       this.session = (LocalJenaSession) sessionFactory.newJenaSession();
 
-      graphMaker = new GraphKowariMaker((LocalJenaSession)
+      graphMaker = new GraphMulgaraMaker((LocalJenaSession)
           session, serverURI, ReificationStyle.Minimal);
-      modelMaker = new ModelKowariMaker(graphMaker);
+      modelMaker = new ModelMulgaraMaker(graphMaker);
       model = modelMaker.createModel();
 
       super.setUp();

@@ -31,7 +31,7 @@ package org.mulgara.server;
 import java.io.File;
 import java.net.URI;
 
-import org.kowari.config.TucanaConfig;
+import org.mulgara.config.MulgaraConfig;
 
 /**
  * Management interface for a {@link org.mulgara.server.SessionFactory}.
@@ -215,7 +215,7 @@ public interface ServerMBean {
     *
     * @return The configuration used when initialising a session factory
     */
-   public TucanaConfig getConfig();
+   public MulgaraConfig getConfig();
 
    /**
     * Sets the configuration to be used when bringing up a session factory.
@@ -223,5 +223,5 @@ public interface ServerMBean {
     * @param config The configuration to be used when bringing up a session
     *               factory
     */
-   public void setConfig(TucanaConfig config);
+   public void setConfig(MulgaraConfig config);
 }

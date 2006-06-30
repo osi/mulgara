@@ -38,7 +38,7 @@ import org.jrdf.util.ClosableIterator;
 import org.mulgara.demo.mp3.Mp3Context;
 import org.mulgara.demo.mp3.Mp3File;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 
 
@@ -74,7 +74,7 @@ public interface Id3Tag {
   public final static String ID3_URI = " <" + Id3Tag.NAMESPACE + "uri>";
 
   /** Used in queries */
-  public final static String TKS_IS = " <" + Tucana.NAMESPACE + "is>";
+  public final static String TKS_IS = " <" + Mulgara.NAMESPACE + "is>";
 
   /** Version URI for a version 1 ID3 tag */
   public static final URIReference ID3V1 = Mp3File.TKS_MP3_DOMAIN;

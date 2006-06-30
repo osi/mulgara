@@ -37,7 +37,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.mulgara.server.SessionFactory;
 
 /**
- * Holds details on the currently running server.  All data set by {@link EmbeddedKowariServer}.
+ * Holds details on the currently running server.  All data set by {@link EmbeddedMulgaraServer}.
  * This class allows access to data which would normally be stored in EmbeddedKowariServer without
  * incurring the overhead of the entire classpath needed by that class.
  *

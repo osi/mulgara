@@ -48,7 +48,7 @@ import org.mulgara.demo.mp3.swing.ExceptionHandler;
 import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.Answer;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 
 import java.net.URLEncoder;
@@ -82,7 +82,7 @@ public abstract class AbstractModel implements Model {
       getName());
 
   /** Used in queries */
-  protected final static String TKS_IS = " <" + Tucana.NAMESPACE + "is>";
+  protected final static String TKS_IS = " <" + Mulgara.NAMESPACE + "is>";
 
   /** Newline character ('\n' on Unix) */
   protected final static String NEWLINE = System.getProperty("line.separator");
@@ -187,7 +187,7 @@ public abstract class AbstractModel implements Model {
   public void create() throws QueryException {
     checkInitialized();
     try {
-      String typeURI = (type == null) ? Tucana.NAMESPACE + "Model" :
+      String typeURI = (type == null) ? Mulgara.NAMESPACE + "Model" :
           type.getURI().toString();
       getBean().executeUpdate("create <" + getResource().getURI() + "> " +
           "<" + typeURI + "> ;");

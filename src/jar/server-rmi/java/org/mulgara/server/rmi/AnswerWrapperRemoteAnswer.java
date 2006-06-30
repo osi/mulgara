@@ -38,7 +38,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.ArrayAnswer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.util.KowariResultSet;
+import org.mulgara.util.MulgaraResultSet;
 
 /**
  * Remote ITQL answer. An answer is a set of solutions, where a solution is a

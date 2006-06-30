@@ -42,7 +42,7 @@ import org.jrdf.vocabulary.RDF;  // JRDF
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.tuples.*;
 
@@ -94,7 +94,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
     try {
       databaseURI    = new URI("local:database");
       systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Tucana.NAMESPACE+"MemoryModel");
+      memoryModelURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }

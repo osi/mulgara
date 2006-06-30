@@ -58,7 +58,7 @@ import org.mulgara.server.Session;
  * This class provides a simple interface for the execution of iTQL queries.
  * </p>
  * <p>
- * Note. This class will be deprecated and is going away in favour of {@link org.mulgara.connection.KowariConnection}
+ * Note. This class will be deprecated and is going away in favour of {@link org.mulgara.connection.MulgaraConnection}
  * based interfaces.
  * </p>
  *

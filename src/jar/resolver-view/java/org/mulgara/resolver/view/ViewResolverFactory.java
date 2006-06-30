@@ -39,7 +39,7 @@ import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.statement.StatementStore;
@@ -92,7 +92,7 @@ public class ViewResolverFactory implements ResolverFactory
   private static final URI modelTypeURI;
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE+"ViewModel");
+      modelTypeURI = new URI(Mulgara.NAMESPACE+"ViewModel");
       assert modelTypeURI != null;
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded view model URI", e);

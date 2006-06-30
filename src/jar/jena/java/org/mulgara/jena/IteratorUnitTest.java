@@ -87,7 +87,7 @@ public class IteratorUnitTest extends TestCase {
   /**
    * Creates new graphs.
    */
-  protected GraphKowariMaker graphMaker;
+  protected GraphMulgaraMaker graphMaker;
 
   /**
    * Creates new models.
@@ -168,9 +168,9 @@ public class IteratorUnitTest extends TestCase {
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, false);
       this.session = (LocalJenaSession) sessionFactory.newJenaSession();
 
-      graphMaker = new GraphKowariMaker((LocalJenaSession)
+      graphMaker = new GraphMulgaraMaker((LocalJenaSession)
           session, serverURI, ReificationStyle.Minimal);
-      modelMaker = new ModelKowariMaker(graphMaker);
+      modelMaker = new ModelMulgaraMaker(graphMaker);
       model = modelMaker.createModel();
 
       exceptionOccurred = false;

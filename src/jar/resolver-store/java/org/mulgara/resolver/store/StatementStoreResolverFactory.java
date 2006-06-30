@@ -37,7 +37,7 @@ import java.net.URISyntaxException;
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.statement.StatementStoreException;
 import org.mulgara.store.statement.xa.XAStatementStoreImpl;
@@ -68,7 +68,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
   private static final URI modelTypeURI;
   static {
     try {
-      modelTypeURI = new URI(Tucana.NAMESPACE + "Model");
+      modelTypeURI = new URI(Mulgara.NAMESPACE + "Model");
       assert modelTypeURI != null;
     }
     catch (URISyntaxException e) {

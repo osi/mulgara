@@ -71,7 +71,7 @@ public class ReificationSupportExample {
     LocalJenaSession session = (LocalJenaSession) sessionFactory.
           newJenaSession();
 
-      ModelMaker modelMaker = new ModelKowariMaker(new GraphKowariMaker(
+      ModelMaker modelMaker = new ModelMulgaraMaker(new GraphMulgaraMaker(
         session, serverURI, ReificationStyle.Convenient));
     String modelName = "testbot";
     if (modelMaker.hasModel(modelName)) {

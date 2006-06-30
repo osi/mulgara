@@ -55,7 +55,7 @@ import org.jibble.simplewebserver.*;
 import org.mulgara.content.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.GlobalizeException;

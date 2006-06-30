@@ -52,7 +52,7 @@ import org.apache.log4j.xml.*; // Log4J
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.GlobalizeException;

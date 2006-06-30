@@ -39,7 +39,7 @@ import org.apache.log4j.*;
 // Debugging writer
 import org.apache.axis.utils.DOM2Writer;
 
-import org.mulgara.server.EmbeddedKowariServer;
+import org.mulgara.server.EmbeddedMulgaraServer;
 
 // DOM
 import org.w3c.dom.*;

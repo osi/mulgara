@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;  // Apache Log4J
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 
 /**
@@ -112,8 +112,8 @@ public class IntervalTransformationUnitTest extends TestCase
    */
   public void setUp() throws Exception
   {
-    greaterThan     = new URIReferenceImpl(new URI(Tucana.NAMESPACE + "lt"));
-    lessThan        = new URIReferenceImpl(new URI(Tucana.NAMESPACE + "gt"));
+    greaterThan     = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt"));
+    lessThan        = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt"));
     intervalTransformation = new IntervalTransformation(lessThan, greaterThan);
   }
 

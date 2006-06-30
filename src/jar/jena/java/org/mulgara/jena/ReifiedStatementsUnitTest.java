@@ -48,7 +48,7 @@ import org.kowari.server.driver.SessionFactoryFinder;
 
 
 /**
- * Test case for {@link ModelKowari} testing reification.
+ * Test case for {@link ModelMulgara} testing reification.
  *
  * @created 2004-17-09
  *
@@ -98,18 +98,18 @@ public class ReifiedStatementsUnitTest extends TestReifiedStatements {
   /**
    * The Kowari model that we're adding statements to.
    */
-  protected ModelKowari model;
+  protected ModelMulgara model;
 
   /**
    * Creates new graph.
    */
-  protected static GraphKowariMaker graphMakerMinimal, graphMakerStandard,
+  protected static GraphMulgaraMaker graphMakerMinimal, graphMakerStandard,
       graphMakerConvenient = null;
 
   /**
    * Creates new models.
    */
-  protected static ModelKowariMaker modelMakerMinimal, modelMakerStandard,
+  protected static ModelMulgaraMaker modelMakerMinimal, modelMakerStandard,
       modelMakerConvenient = null;
 
 
@@ -278,16 +278,16 @@ public class ReifiedStatementsUnitTest extends TestReifiedStatements {
       LocalJenaSession session = (LocalJenaSession) sessionFactory.
           newJenaSession();
 
-      graphMakerMinimal = new GraphKowariMaker(session, serverURI,
+      graphMakerMinimal = new GraphMulgaraMaker(session, serverURI,
           ReificationStyle.Minimal);
-      graphMakerStandard = new GraphKowariMaker(session, serverURI,
+      graphMakerStandard = new GraphMulgaraMaker(session, serverURI,
           ReificationStyle.Standard);
-      graphMakerConvenient = new GraphKowariMaker(session, serverURI,
+      graphMakerConvenient = new GraphMulgaraMaker(session, serverURI,
           ReificationStyle.Convenient);
 
-      modelMakerMinimal = new ModelKowariMaker(graphMakerMinimal);
-      modelMakerStandard = new ModelKowariMaker(graphMakerStandard);
-      modelMakerConvenient = new ModelKowariMaker(graphMakerConvenient);
+      modelMakerMinimal = new ModelMulgaraMaker(graphMakerMinimal);
+      modelMakerStandard = new ModelMulgaraMaker(graphMakerStandard);
+      modelMakerConvenient = new ModelMulgaraMaker(graphMakerConvenient);
 
       exceptionOccurred = false;
     } catch ( Exception ex ) {

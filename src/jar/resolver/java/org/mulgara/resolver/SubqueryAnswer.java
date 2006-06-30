@@ -88,7 +88,7 @@ public class SubqueryAnswer extends GlobalizedAnswer {
   // Initialize global constants
   static {
     try {
-      KOWARI_IS = new URIReferenceImpl(new URI(Tucana.NAMESPACE+"is"));
+      KOWARI_IS = new URIReferenceImpl(new URI(Mulgara.NAMESPACE+"is"));
     }
     catch (URISyntaxException e) {
       throw new ExceptionInInitializerError(e);

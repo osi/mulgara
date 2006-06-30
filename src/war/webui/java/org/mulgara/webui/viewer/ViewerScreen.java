@@ -66,7 +66,7 @@ import org.mulgara.itql.*;
 // For answers
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
-import org.mulgara.server.EmbeddedKowariServer;
+import org.mulgara.server.EmbeddedMulgaraServer;
 
 // For displaying exceptions
 import org.mulgara.webui.viewer.events.*;
@@ -195,7 +195,7 @@ public class ViewerScreen
     catch (URISyntaxException use) {
 
       // If this fails get the current host name and assume 1099.
-      hostName = EmbeddedKowariServer.getResolvedLocalHost();
+      hostName = EmbeddedMulgaraServer.getResolvedLocalHost();
     }
 
     // Default to localhost

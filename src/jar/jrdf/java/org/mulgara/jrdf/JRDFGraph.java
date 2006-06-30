@@ -125,7 +125,7 @@ public class JRDFGraph implements Graph {
 
       // Create model if it doesn't exist.
       if (!session.modelExists(graphURI)) {
-        session.createModel(graphURI, new URI(Tucana.NAMESPACE + "Model"));
+        session.createModel(graphURI, new URI(Mulgara.NAMESPACE + "Model"));
       }
     }
     catch (URISyntaxException uriException) {

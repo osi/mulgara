@@ -63,11 +63,11 @@ import org.mulgara.query.rdf.*;
 public interface Mp3File extends Comparable {
 
   /** Used in queries to represent an Mp3 */
-  public final static String TKS_MP3 = " <" + Tucana.NAMESPACE + "mp3>";
+  public final static String TKS_MP3 = " <" + Mulgara.NAMESPACE + "mp3>";
 
   /** Used to represent the Mp3 file domain */
   public final static URIReference TKS_MP3_DOMAIN = new URIReferenceImpl(URI.
-      create(Tucana.NAMESPACE + "MP3"));
+      create(Mulgara.NAMESPACE + "MP3"));
 
   /**
    * Initializes the Mp3File.

@@ -38,7 +38,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.rules.InitializerException;
 import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
@@ -310,7 +310,7 @@ public interface Session {
 
     static URI getKowariModelURI() {
       try {
-        return new URI(Tucana.NAMESPACE + "Model");
+        return new URI(Mulgara.NAMESPACE + "Model");
       }
        catch (URISyntaxException e) {
         throw new Error("Bad hardcoded URI");

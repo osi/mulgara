@@ -33,7 +33,7 @@ import java.net.URISyntaxException;
 import java.util.Set;
 
 // Local packages
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.spi.DatabaseMetadata;
 
 /**
@@ -57,9 +57,9 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   private static final URI PREALLOCATED_MODEL_URI;
   static {
     try {
-     PREALLOCATED_SUBJECT_URI = new URI(Tucana.NAMESPACE + "preallocatedNodes");
-     PREALLOCATED_PREDICATE_URI = new URI(Tucana.NAMESPACE + "preallocatedNode");
-     PREALLOCATED_MODEL_URI = new URI(Tucana.NAMESPACE + "preallocatedNodeModel");
+     PREALLOCATED_SUBJECT_URI = new URI(Mulgara.NAMESPACE + "preallocatedNodes");
+     PREALLOCATED_PREDICATE_URI = new URI(Mulgara.NAMESPACE + "preallocatedNode");
+     PREALLOCATED_MODEL_URI = new URI(Mulgara.NAMESPACE + "preallocatedNodeModel");
     } catch (URISyntaxException eu) {
       throw new Error("Invalid URI Syntax", eu);
     }

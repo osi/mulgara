@@ -40,9 +40,9 @@ public class DefaultItqlConnection implements ItqlConnection {
    *
    * @param command The command to execute.
    * @throws InvalidQuerySyntaxException If the syntax of the query is incorrect.
-   * @throws KowariConnectionException If an error occurs while executing the command.
+   * @throws MulgaraConnectionException If an error occurs while executing the command.
    */
-  public void executeUpdate(String command) throws InvalidQuerySyntaxException, KowariConnectionException {
+  public void executeUpdate(String command) throws InvalidQuerySyntaxException, MulgaraConnectionException {
     checkStringParam("command", command);
     throw new UnsupportedOperationException("Implement me...");
   }
@@ -53,9 +53,9 @@ public class DefaultItqlConnection implements ItqlConnection {
    * @param query The query to execute.
    * @return The answer to the query, will never be <code>null</code>.
    * @throws InvalidQuerySyntaxException If the syntax of the query is incorrect.
-   * @throws KowariConnectionException If an error occurs while executing the query.
+   * @throws MulgaraConnectionException If an error occurs while executing the query.
    */
-  public Answer executeQuery(String query) throws InvalidQuerySyntaxException, KowariConnectionException {
+  public Answer executeQuery(String query) throws InvalidQuerySyntaxException, MulgaraConnectionException {
     checkStringParam("query", query);
     throw new UnsupportedOperationException("Implement me...");
   }
@@ -66,13 +66,13 @@ public class DefaultItqlConnection implements ItqlConnection {
    * Calling this method will close the underlying {@link Session}, making it unusable for future use.
    * </p>
    *
-   * @throws KowariConnectionException If an error occurs while closing the connection.
+   * @throws MulgaraConnectionException If an error occurs while closing the connection.
    */
-  public void close() throws KowariConnectionException {
+  public void close() throws MulgaraConnectionException {
     try {
       session.close();
     } catch (QueryException e) {
-      throw new KowariConnectionException("Unable to close underlying session", e);
+      throw new MulgaraConnectionException("Unable to close underlying session", e);
     }
   }
 

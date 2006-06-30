@@ -21,7 +21,7 @@ import org.mulgara.connection.param.ParameterTestUtil;
 public class DefaultItqlConnectionUnitTest extends TestCase {
 
   private static final MockBadSession BAD_SESSION = new MockBadSession();
-  private static final URI NULL_SECURITY_DOMAIN = KowariConnectionFactory.NULL_SECURITY_DOMAIN;
+  private static final URI NULL_SECURITY_DOMAIN = MulgaraConnectionFactory.NULL_SECURITY_DOMAIN;
   private static final String EXECUTE_UPDATE_METHOD = "executeUpdate";
   private static final String EXECUTE_QUERY_METHOD = "executeQuery";
   private static final String NULL = ParameterTestUtil.NULL;
@@ -32,7 +32,7 @@ public class DefaultItqlConnectionUnitTest extends TestCase {
     try {
       new DefaultItqlConnection(BAD_SESSION, NULL_SECURITY_DOMAIN).close();
       fail("Bad connection should throw KowariConnectionException");
-    } catch (KowariConnectionException expected) { }
+    } catch (MulgaraConnectionException expected) { }
   }
 
   public void testExecuteSimpleBadQuery() throws Exception {
