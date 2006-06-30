@@ -9,7 +9,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  *
- * The Original Code is the Kowari Metadata Store.
+ * The Original Code is the Mulgara Metadata Store.
  *
  * The Initial Developer of the Original Code is Plugged In Software Pty
  * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
@@ -25,7 +25,7 @@
  *
  */
 
-package org.kowari.barracuda.exception;
+package org.mulgara.barracuda.exception;
 
 import org.enhydra.barracuda.core.event.HttpResponseEvent;
 import org.enhydra.barracuda.core.event.InterruptDispatchException;
@@ -36,8 +36,8 @@ import org.enhydra.barracuda.core.event.InterruptDispatchException;
  * It will be caught by the <code>ExceptionHandlerServlet</code>, reported to
  * the user and logged. For methods that do not usually generate events (e.g.
  * constructors) use the
- * {@link org.kowari.barracuda.gateway.ExceptionHandlerGateway} and register
- * the exception with it using the method {@link org.kowari.barracuda.gateway.ExceptionHandlerGateway#registerException(Exception, String)}.
+ * {@link org.mulgara.barracuda.gateway.ExceptionHandlerGateway} and register
+ * the exception with it using the method {@link org.mulgara.barracuda.gateway.ExceptionHandlerGateway#registerException(Exception, String)}.
  * <p/>
  * <p>
  * Usage Example:

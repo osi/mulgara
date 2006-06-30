@@ -70,55 +70,55 @@
       <src path="${src.dir}/jar/server-rmi/java"/>
     </javac>
 
-    <rmic classname="org.kowari.server.rmi.RemoteSessionFactoryImpl"
+    <rmic classname="org.mulgara.server.rmi.RemoteSessionFactoryImpl"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
 
-    <rmic classname="org.kowari.server.rmi.SessionWrapperRemoteSession"
+    <rmic classname="org.mulgara.server.rmi.SessionWrapperRemoteSession"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
 
-    <rmic classname="org.kowari.server.rmi.JRDFSessionWrapperRemoteJRDFSession"
+    <rmic classname="org.mulgara.server.rmi.JRDFSessionWrapperRemoteJRDFSession"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
-    <rmic classname="org.kowari.server.rmi.JenaSessionWrapperRemoteJenaSession"
-      base="${obj.dir}/jar/server-rmi/classes">
-
-      <classpath refid="server-rmi-classpath"/>
-      <classpath path="${obj.dir}/jar/server-rmi/classes"/>
-    </rmic>
-
-    <rmic classname="org.kowari.server.rmi.RemoteSessionImpl"
+    <rmic classname="org.mulgara.server.rmi.JenaSessionWrapperRemoteJenaSession"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
 
-    <rmic classname="org.kowari.server.rmi.RemoteJRDFSessionImpl"
+    <rmic classname="org.mulgara.server.rmi.RemoteSessionImpl"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
 
-    <rmic classname="org.kowari.server.rmi.RemoteJenaSessionImpl"
+    <rmic classname="org.mulgara.server.rmi.RemoteJRDFSessionImpl"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
 
-    <rmic classname="org.kowari.server.rmi.AnswerWrapperRemoteAnswer"
+    <rmic classname="org.mulgara.server.rmi.RemoteJenaSessionImpl"
+      base="${obj.dir}/jar/server-rmi/classes">
+
+      <classpath refid="server-rmi-classpath"/>
+      <classpath path="${obj.dir}/jar/server-rmi/classes"/>
+    </rmic>
+
+    <rmic classname="org.mulgara.server.rmi.AnswerWrapperRemoteAnswer"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>
@@ -183,7 +183,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.server.rmi.*"/>
+      <param name="javadoc.package" value="org.mulgara.server.rmi.*"/>
       <param name="javadoc.classpath" value="server-rmi-classpath"/>
       <param name="javadoc.sourcepath" value="${server-rmi.src.dir}/java"/>
     </antcall>

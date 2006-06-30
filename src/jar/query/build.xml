@@ -64,7 +64,7 @@
 
   <target name="-unjar-config-uptodate">
 
-    <available file="${query.obj.dir}/classes/org/kowari/config/TucanaConfig.class"
+    <available file="${query.obj.dir}/classes/org/mulgara/config/TucanaConfig.class"
                property="unjar.config.uptodate"/>
   </target>
 
@@ -135,8 +135,8 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.query.*,
-                                           org.kowari.server.*"/>
+      <param name="javadoc.package" value="org.mulgara.query.*,
+                                           org.mulgara.server.*"/>
       <param name="javadoc.classpath" value="query-classpath"/>
       <param name="javadoc.sourcepath" value="${query.src.dir}/java"/>
     </antcall>

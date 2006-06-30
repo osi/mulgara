@@ -7,18 +7,18 @@
 <project name="config" default="config-jar" basedir="../../..">
 
   <!-- =================================================================== -->
-  <!-- Builds the base Kowari configuration JAR                            -->
+  <!-- Builds the base Mulgara configuration JAR                            -->
   <!-- =================================================================== -->
   <target name="config-generate-uptodate">
 
     <uptodate property="config-generate-uptodate"
        targetfile="${config.dist.dir}/${config.jar}">
-      <srcfiles dir="${conf.dir}" includes="kowari-embedded.xsd"/>
+      <srcfiles dir="${conf.dir}" includes="mulgara-embedded.xsd"/>
     </uptodate>
   </target>
 
   <target name="config-generate" depends="config-generate-uptodate"
-     description="Generates the Kowari config code" unless="config-generate-uptodate">
+     description="Generates the Mulgara config code" unless="config-generate-uptodate">
 
     <delete dir="${obj.dir}/jar/config/java"/>
 
@@ -31,9 +31,9 @@
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
 
       <arg value="-i"/>
-      <arg value="${conf.dir}/kowari-embedded.xsd"/>
+      <arg value="${conf.dir}/mulgara-embedded.xsd"/>
       <arg value="-package"/>
-      <arg value="org.kowari.config"/>
+      <arg value="org.mulgara.config"/>
       <arg value="-dest"/>
       <arg value="${obj.dir}/jar/config/java"/>
 
@@ -44,7 +44,7 @@
   </target>
 
   <target name="config-compile" depends="config-generate"
-      description="Compiles the Kowari config code">
+      description="Compiles the Mulgara config code">
 
     <mkdir dir="${obj.dir}/jar/config/classes"/>
 
@@ -58,7 +58,7 @@
   </target>
 
   <target name="config-jar" depends="config-jar-uptodate, config-compile"
-      description="Builds the base Kowari configuration JAR"
+      description="Builds the base Mulgara configuration JAR"
       unless="config.jar-uptodate">
 
     <mkdir dir="${config.dist.dir}"/>

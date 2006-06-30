@@ -140,7 +140,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.content.mbox.*"/>
+      <param name="javadoc.package" value="org.mulgara.content.mbox.*"/>
       <param name="javadoc.classpath" value="content-mbox-classpath"/>
       <param name="javadoc.sourcepath" value="${content-mbox.src.dir}/java"/>
     </antcall>

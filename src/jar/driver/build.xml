@@ -137,7 +137,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.server.driver.*"/>
+      <param name="javadoc.package" value="org.mulgara.server.driver.*"/>
       <param name="javadoc.classpath" value="driver-classpath"/>
       <param name="javadoc.sourcepath" value="${driver.src.dir}/java"/>
     </antcall>

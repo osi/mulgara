@@ -64,18 +64,18 @@
           unless="rdql.configuration.uptodate">
 
     <!-- Substitute the build label into the source code -->
-    <copy toDir="${rdql.obj.dir}/java/org/kowari/rdql">
-      <fileset dir="${rdql.src.dir}/java/org/kowari/rdql" includes="*.java"/>
+    <copy toDir="${rdql.obj.dir}/java/org/mulgara/rdql">
+      <fileset dir="${rdql.src.dir}/java/org/mulgara/rdql" includes="*.java"/>
     </copy>
 
-    <replace file="${rdql.obj.dir}/java/org/kowari/rdql/RdqlSession.java"
+    <replace file="${rdql.obj.dir}/java/org/mulgara/rdql/RdqlSession.java"
       token="@@build.label@@" value="${build.label}"/>
   </target>
 
   <target name="-rdql-configuration-uptodate">
 
     <uptodate property="rdql.configuration.uptodate"
-              targetfile="${rdql.obj.dir}/java/org/kowari/rdql/RdqlSession.java">
+              targetfile="${rdql.obj.dir}/java/org/mulgara/rdql/RdqlSession.java">
       <srcfiles dir="${rdql.src.dir}" includes="**/RdqlSession.java"/>
     </uptodate>
   </target>
@@ -84,7 +84,7 @@
       depends="-rdql-prepare, rdql-parser-uptodate, sablecc"
       unless="rdql-parser-uptodate">
 
-    <delete dir="${rdql.obj.dir}/java/org/kowari/rdql"/>
+    <delete dir="${rdql.obj.dir}/java/org/mulgara/rdql"/>
 
     <sablecc src="${rdql.src.dir}/sablecc"
              outputdirectory="${rdql.obj.dir}/java">
@@ -95,7 +95,7 @@
   <target name="rdql-parser-uptodate" depends="-prepare-build">
 
     <uptodate property="rdql-parser-uptodate"
-              targetfile="${rdql.obj.dir}/java/org/kowari/rdql/analysis/DepthFirstAdapter.java">
+              targetfile="${rdql.obj.dir}/java/org/mulgara/rdql/analysis/DepthFirstAdapter.java">
       <srcfiles dir="${rdql.src.dir}/sablecc" includes="rdql.grammar"/>
     </uptodate>
   </target>
@@ -145,7 +145,7 @@
     <mkdir dir="${obj.dir}/META-INF"/>
 
     <manifest file="${obj.dir}/META-INF/rdql-MANIFEST.MF">
-      <attribute name="Main-Class" value="org.kowari.rdql.RdqlSession"/>
+      <attribute name="Main-Class" value="org.mulgara.rdql.RdqlSession"/>
     </manifest>
 
     <jar jarfile="${dist.dir}/${rdql.jar}"
@@ -190,7 +190,7 @@
 
   <target name="rdql-server-test"
           depends="rdql-jar, test-data"
-          description="Carries out unit testing for this rdql using a kowari
+          description="Carries out unit testing for this rdql using a mulgara
                        server">
 
     <antcall target="start"/>
@@ -211,7 +211,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.rdql.*"/>
+      <param name="javadoc.package" value="org.mulgara.rdql.*"/>
       <param name="javadoc.classpath" value="rdql-classpath"/>
       <param name="javadoc.sourcepath" value="${rdql.src.dir}/java"/>
     </antcall>

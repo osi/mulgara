@@ -74,7 +74,7 @@
            deprecation="on" source="1.4">
       <classpath refid="sofa-classpath"/>
       <src path="${sofa.src.dir}/java"/>
-      <exclude name="org/kowari/sofa/example/**"/>
+      <exclude name="org/mulgara/sofa/example/**"/>
     </javac>
   </target>
 
@@ -129,7 +129,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.sofa.*"/>
+      <param name="javadoc.package" value="org.mulgara.sofa.*"/>
       <param name="javadoc.classpath" value="sofa-classpath"/>
       <param name="javadoc.sourcepath" value="${sofa.src.dir}/java"/>
     </antcall>

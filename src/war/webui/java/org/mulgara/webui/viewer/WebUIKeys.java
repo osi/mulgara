@@ -25,7 +25,7 @@
  *
  */
 
-package org.kowari.webui.viewer;
+package org.mulgara.webui.viewer;
 
 /**
  * Stores keys for accessing page, session and request data.

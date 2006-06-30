@@ -3,7 +3,7 @@
   <xs:element name="ExternalConfigPaths">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="TucanaLogging"/>
+        <xs:element ref="MulgaraLogging"/>
         <xs:element ref="WebDefault"/>
       </xs:sequence>
     </xs:complexType>
@@ -108,11 +108,11 @@
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="TucanaConfig">
+  <xs:element name="MulgaraConfig">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="ExternalConfigPaths" minOccurs="0"/>
-        <xs:element ref="TucanaHost" minOccurs="0"/>
+        <xs:element ref="MulgaraHost" minOccurs="0"/>
         <xs:element ref="Jetty" minOccurs="0"/>
         <xs:element ref="ServerName"/>
         <xs:element ref="RMIPort" minOccurs="0"/>
@@ -136,8 +136,8 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="TucanaHost" type="xs:string"/>
-  <xs:element name="TucanaLogging" type="xs:string"/>
+  <xs:element name="MulgaraHost" type="xs:string"/>
+  <xs:element name="MulgaraLogging" type="xs:string"/>
   <xs:element name="TripleStoreImplementation" type="xs:string"/>
   <xs:element name="WebDefault" type="xs:string"/>
 </xs:schema>

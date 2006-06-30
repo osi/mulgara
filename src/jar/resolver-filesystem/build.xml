@@ -138,7 +138,7 @@
     <touch file="${tmp.dir}/filesystem/dc.rdfs"/>
     <copy file="${data.dir}/ical.rdf" tofile="${tmp.dir}/filesystem/ical.rdf"/>
     <touch file="${tmp.dir}/filesystem/kamera.owl"/>
-    <touch file="${tmp.dir}/filesystem/kowari.rdfs"/>
+    <touch file="${tmp.dir}/filesystem/mulgara.rdfs"/>
     <touch file="${tmp.dir}/filesystem/numbers.rdf.gz"/>
     <touch file="${tmp.dir}/filesystem/rdfs.rdfs"/>
     <touch file="${tmp.dir}/filesystem/RDF-Test-Cases-2001-09-12.zip"/>
@@ -378,7 +378,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.resolver.filesystem.*"/>
+      <param name="javadoc.package" value="org.mulgara.resolver.filesystem.*"/>
       <param name="javadoc.classpath" value="resolver-filesystem-classpath"/>
       <param name="javadoc.sourcepath" value="${resolver-filesystem.src.dir}/java"/>
     </antcall>

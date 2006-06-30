@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Mulgara Metadata Store configuration file.
+-->
+
+<MulgaraConfig>
+
+  <!-- Paths to external component configuration, relative to JAR file -->
+  <ExternalConfigPaths>
+    <MulgaraLogging>conf/log4j-mulgara.xml</MulgaraLogging>
+    <WebDefault>conf/webdefault.xml</WebDefault>
+  </ExternalConfigPaths>
+
+  <!--
+    The hostname to bind Mulgara to
+
+    Note. Not setting will cause Mulgara to bind to the canonical local machine name
+  -->
+  <!--<MulgaraHost>localhost</MulgaraHost>-->
+
+  <!--
+    Configuration for the Jetty servlet container
+
+    Note. Not setting the "Host" parameter will cause Jetty to listen on
+          all interfaces
+  -->
+  <Jetty>
+    <Listener>
+      <!--<Host>localhost</Host>-->
+      <Port>8080</Port>
+      <MinThreads>5</MinThreads>
+      <MaxThreads>255</MaxThreads>
+      <MaxIdleTimeMs>60000</MaxIdleTimeMs>
+      <MaxReadTimeMs>60000</MaxReadTimeMs>
+      <LowResourcePersistTimeMs>5000</LowResourcePersistTimeMs>
+    </Listener>
+  </Jetty>
+
+  <!-- The name of the server, used for RMI binding -->
+  <ServerName>server1</ServerName>
+
+  <!-- RMI registry port -->
+  <RMIPort>1099</RMIPort>
+
+  <!--
+    The path to persist data to, one of:
+
+    + . - current directory (directory from which the Mulgara JAR was run)
+    + temp - default system temporary directory
+    + <path> - user defined (OS dependant) path
+  -->
+  <PersistencePath>.</PersistencePath>
+
+  <!-- Maximum duration in seconds for transactions, a positive integer -->
+  <TransactionTimeout>604800</TransactionTimeout> <!-- one week -->
+
+  <!--
+    Database implementation to use, one of:
+
+    org.mulgara.resolver.Database
+    org.mulgara.store.xa.XADatabaseImpl
+      (Metaphasic transactional triple store)
+  <TripleStoreImplementation>org.mulgara.store.xa.XADatabaseImpl</TripleStoreImplementation>
+  -->
+  <TripleStoreImplementation>@database-class@</TripleStoreImplementation>
+
+  <!--
+    The Related Query Handler is the implementation of
+    org.mulgara.resolver.RelatedHandler.
+  -->
+  <RelatedQueryHandler
+    class="org.mulgara.resolver.RelatedQueryHandlerImpl"/>
+
+  <!--
+    Security adapter implementation.  If this element is omitted, the only
+    forbidden operations will be the modification or deletion of the system
+    model.
+  -->
+  <!--
+    <SecurityAdapterClass>com.tucana.store.security.model.ModelSecurityAdapterFactory</SecurityAdapterClass>
+  -->
+
+  <!--
+    Implementations of the persistent and temporary node pools, string pools,
+    and resolvers.  The persistent resolver is used to manipulate the system
+    model.
+  -->
+  <PersistentNodePoolFactory class="org.mulgara.store.nodepool.xa.XANodePoolFactory" dir="xaNodePool"/>
+  <TemporaryNodePoolFactory  class="org.mulgara.store.nodepool.memory.MemoryNodePoolFactory"/>
+  <PersistentStringPoolFactory class="org.mulgara.store.stringpool.xa.XAStringPoolFactory" dir="xaStringPool"/>
+  <TemporaryStringPoolFactory class="org.mulgara.store.stringpool.memory.MemoryStringPoolFactory"/>
+  <PersistentResolverFactory class="org.mulgara.resolver.store.StatementStoreResolverFactory" dir="xaStatementStore"/>
+  <TemporaryResolverFactory class="org.mulgara.resolver.memory.MemoryResolverFactory" dir="tempStatementStore"/>
+
+  <!--
+    Implementations of a rule engine.
+  -->
+  <RuleLoader class="org.mulgara.krule.KruleLoader"/>
+
+  <!--
+    Implementations of the ContentHandler interface to use for resolving MIME
+    types.
+  -->
+  <DefaultContentHandler class="org.mulgara.content.rdfxml.RDFXMLContentHandler"/>
+  <!--
+  <DefaultContentHandler class="org.mulgara.content.rio.RDFXMLContentHandler"/>
+  -->
+  <ContentHandler class="org.mulgara.content.mp3.MP3ContentHandler"/>
+  <ContentHandler class="org.mulgara.content.mbox.MBoxContentHandler"/>
+  <ContentHandler class="org.mulgara.content.n3.N3ContentHandler"/>
+
+  <!--
+    Additional resolvers
+  -->
+  <ResolverFactory class="org.mulgara.resolver.file.FileResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.lucene.LuceneResolverFactory" dir="lucene"/>
+  <ResolverFactory class="org.mulgara.resolver.xsd.XSDResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.http.HttpResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.nodetype.NodeTypeResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.jar.JarResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.view.ViewResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.filesystem.FileSystemResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.prefix.PrefixResolverFactory"/>
+
+  <!-- iTQL script to run on startup -->
+  <StartupScript>foo.itql</StartupScript>
+
+  <!-- smtp server for email notifications
+    mail.xyz.com
+  -->
+  <Smtp></Smtp>
+
+</MulgaraConfig>

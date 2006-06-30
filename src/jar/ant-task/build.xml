@@ -119,8 +119,8 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.ant.task.itql.*,
-                                           org.kowari.ant.task.rdf.*"/>
+      <param name="javadoc.package" value="org.mulgara.ant.task.itql.*,
+                                           org.mulgara.ant.task.rdf.*"/>
       <param name="javadoc.classpath" value="ant-task-test-classpath"/>
       <param name="javadoc.sourcepath" value="${ant-task.src.dir}/java"/>
     </antcall>

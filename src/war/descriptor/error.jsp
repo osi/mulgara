@@ -3,7 +3,7 @@
 
 <html>
 <head>
-  <title>Kowari Descriptor Error</title>
+  <title>Mulgara Descriptor Error</title>
 <link media="all" href="/all.css" type="text/css" title="Default" rel="stylesheet">
 <link media="screen" href="/default.css" type="text/css" title="Default" rel="stylesheet">
 <link media="print" href="/print.css" type="text/css" rel="stylesheet">
@@ -17,7 +17,7 @@
 
   <!-- Banner -->
   <div id="banner">
-    <h1>kowari.sourceforge.net</h1>
+    <h1>mulgara.sourceforge.net</h1>
   </div>
 
   <div id="content">
@@ -27,7 +27,7 @@
         <li>descriptor error</li>
       </ul>  ]
     </div>  
-    <h1>Kowari Descriptor Error</h1>
+    <h1>Mulgara Descriptor Error</h1>
   </div>
 </div>
 </body>

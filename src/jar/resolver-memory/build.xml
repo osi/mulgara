@@ -112,7 +112,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.resolver.memory.*"/>
+      <param name="javadoc.package" value="org.mulgara.resolver.memory.*"/>
       <param name="javadoc.classpath" value="resolver-memory-classpath"/>
       <param name="javadoc.sourcepath" value="${resolver-memory.src.dir}/java"/>
     </antcall>

@@ -123,7 +123,7 @@
           description="Creates the javadoc for this jena">
 
     <antcall target="javadoc">
-      <param name="javadoc.package" value="org.kowari.jena.*"/>
+      <param name="javadoc.package" value="org.mulgara.jena.*"/>
       <param name="javadoc.classpath" value="jena-classpath"/>
       <param name="javadoc.sourcepath" value="${jena.src.dir}/java"/>
     </antcall>

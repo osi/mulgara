@@ -83,8 +83,8 @@
           unless="client-drools.jar.uptodate"
           description="Creates the client-drools's jar/s">
 
-    <copy file="${client-drools.src.dir}/java/org/kowari/client/drools/rdfs.drl"
-        tofile="${client-drools.obj.dir}/classes/org/kowari/client/drools/rdfs.drl"/>
+    <copy file="${client-drools.src.dir}/java/org/mulgara/client/drools/rdfs.drl"
+        tofile="${client-drools.obj.dir}/classes/org/mulgara/client/drools/rdfs.drl"/>
 
     <jar jarfile="${client-drools.dist.dir}/${client-drools.jar}">
       <fileset dir="${client-drools.obj.dir}/classes"/>
@@ -132,7 +132,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.client.drools.*"/>
+      <param name="javadoc.package" value="org.mulgara.client.drools.*"/>
       <param name="javadoc.classpath" value="client-drools-classpath"/>
       <param name="javadoc.sourcepath" value="${client-drools.src.dir}/java"/>
     </antcall>

@@ -1,4 +1,4 @@
-// Kowari security policy
+// Mulgara security policy
 
 grant
 {
@@ -20,12 +20,12 @@ grant
   permission java.net.SocketPermission "*:80", "connect,resolve";
   permission java.net.SocketPermission "224.0.0.251", "connect,accept,resolve";
   permission java.security.SecurityPermission "getPolicy";
-  permission java.util.PropertyPermission "org.kowari.xml.ResourceDocumentBuilderFactory", "write";
+  permission java.util.PropertyPermission "org.mulgara.xml.ResourceDocumentBuilderFactory", "write";
   permission java.util.PropertyPermission "java.naming.factory.initial", "write";
   permission java.util.PropertyPermission "java.naming.provider.url", "write";
   permission java.util.PropertyPermission "java.rmi.server.codebase", "write";
   permission java.util.PropertyPermission "sun.arch.data.model", "read";
-  permission javax.security.auth.AuthPermission "createLoginContext.kowari";
+  permission javax.security.auth.AuthPermission "createLoginContext.mulgara";
   permission javax.security.auth.AuthPermission "doAsPrivileged";
 
   permission java.util.PropertyPermission "*", "read, write";

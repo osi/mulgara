@@ -25,7 +25,7 @@
  *
  */
 
-package org.kowari.webui.viewer;
+package org.mulgara.webui.viewer;
 
 import java.io.*;
 import java.net.*;
@@ -57,19 +57,19 @@ import org.w3c.dom.*;
 import org.w3c.dom.html.*;
 
 // Other locally required classes
-import org.kowari.barracuda.dom.util.HtmlTableBuilder;
-import org.kowari.barracuda.gateway.ExceptionHandlerGateway;
+import org.mulgara.barracuda.dom.util.HtmlTableBuilder;
+import org.mulgara.barracuda.gateway.ExceptionHandlerGateway;
 
 // For queries
-import org.kowari.itql.*;
+import org.mulgara.itql.*;
 
 // For answers
-import org.kowari.query.*;
-import org.kowari.query.rdf.*;
-import org.kowari.server.EmbeddedKowariServer;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.*;
+import org.mulgara.server.EmbeddedKowariServer;
 
 // For displaying exceptions
-import org.kowari.webui.viewer.events.*;
+import org.mulgara.webui.viewer.events.*;
 import javax.servlet.ServletException;
 import org.enhydra.barracuda.core.event.EventException;
 import java.util.List;
@@ -125,7 +125,7 @@ public class ViewerScreen
   private static List exampleQueryDisplay;
 
   /**
-   * The path to the kowari jar file
+   * The path to the mulgara jar file
    */
   private static String jarPath = null;
 
@@ -166,7 +166,7 @@ public class ViewerScreen
    */
   public ViewerScreen() {
 
-    // Get the path to the kowari jar
+    // Get the path to the mulgara jar
     if (jarPath == null) {
 
       jarPath = System.getProperty("tucana.jar.path");

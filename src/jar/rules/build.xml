@@ -61,7 +61,7 @@
 
   <target name="-unjar-config-uptodate">
 
-    <available file="${rules.obj.dir}/classes/org/kowari/config/TucanaConfig.class"
+    <available file="${rules.obj.dir}/classes/org/mulgara/config/TucanaConfig.class"
                property="unjar.config.uptodate"/>
   </target>
 
@@ -79,7 +79,7 @@
       <src path="${rules.src.dir}/java"/>
     </javac>
 
-    <rmic classname="org.kowari.rules.RulesRefImpl"
+    <rmic classname="org.mulgara.rules.RulesRefImpl"
               base="${obj.dir}/jar/rules/classes">
                   
       <classpath refid="rules-classpath"/>
@@ -136,8 +136,8 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.rules.*,
-                                           org.kowari.server.*"/>
+      <param name="javadoc.package" value="org.mulgara.rules.*,
+                                           org.mulgara.server.*"/>
       <param name="javadoc.classpath" value="rules-classpath"/>
       <param name="javadoc.sourcepath" value="${rules.src.dir}/java"/>
     </antcall>

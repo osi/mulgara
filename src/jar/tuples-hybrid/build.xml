@@ -115,7 +115,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.store.xa.*"/>
+      <param name="javadoc.package" value="org.mulgara.store.xa.*"/>
       <param name="javadoc.classpath" value="tuples-hybrid-classpath"/>
       <param name="javadoc.sourcepath" value="${tuples-hybrid.src.dir}/java"/>
     </antcall>

@@ -8,10 +8,10 @@
   <!-- ==================================================================== -->
   <!-- Project display                                                      -->
   <!-- ==================================================================== -->
-  <display-name>KowariV</display-name>
+  <display-name>MulgaraV</display-name>
   <description>
-    The Kowari Metadata Store Viewer (KowariV) is a web-based application that
-    allows you to view and traverse the data contained on a Kowari server.
+    The Mulgara Metadata Store Viewer (MulgaraV) is a web-based application that
+    allows you to view and traverse the data contained on a Mulgara server.
   </description>
 
 
@@ -21,7 +21,7 @@
   <!-- ==================================================================== -->
   <servlet>
     <servlet-name>ApplicationGateway</servlet-name>
-    <servlet-class>org.kowari.webui.ApplicationGateway</servlet-class>
+    <servlet-class>org.mulgara.webui.ApplicationGateway</servlet-class>
       <init-param>
         <!-- Disable the client side script detection code -->
         <param-name>

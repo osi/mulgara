@@ -125,7 +125,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.server.local.*"/>
+      <param name="javadoc.package" value="org.mulgara.server.local.*"/>
       <param name="javadoc.classpath" value="server-local-classpath"/>
       <param name="javadoc.sourcepath" value="${server-local.src.dir}/java"/>
     </antcall>

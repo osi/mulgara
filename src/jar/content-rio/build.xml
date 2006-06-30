@@ -129,7 +129,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.content.rio.*"/>
+      <param name="javadoc.package" value="org.mulgara.content.rio.*"/>
       <param name="javadoc.classpath" value="content-rio-classpath"/>
       <param name="javadoc.sourcepath" value="${content-rio.src.dir}/java"/>
     </antcall>

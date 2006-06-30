@@ -125,7 +125,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.content.n3.*"/>
+      <param name="javadoc.package" value="org.mulgara.content.n3.*"/>
       <param name="javadoc.classpath" value="content-n3-classpath"/>
       <param name="javadoc.sourcepath" value="${content-n3.src.dir}/java"/>
     </antcall>

@@ -124,7 +124,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.client.jrdf.*"/>
+      <param name="javadoc.package" value="org.mulgara.client.jrdf.*"/>
       <param name="javadoc.classpath" value="client-jrdf-classpath"/>
       <param name="javadoc.sourcepath" value="${client-jrdf.src.dir}/java"/>
     </antcall>

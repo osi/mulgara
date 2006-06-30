@@ -86,7 +86,7 @@
           unless="server.token.build.label.uptodate">
 
     <!-- Insert the normal build label -->
-    <replace file="${server.obj.dir}/java/org/kowari/server/EmbeddedKowariServer.java"
+    <replace file="${server.obj.dir}/java/org/mulgara/server/EmbeddedKowariServer.java"
              token="@@build.label@@" value="${build.label}"/>
 
   </target>
@@ -94,7 +94,7 @@
   <target name="-server-token-build-label-uptodate">
 
     <uptodate property="server.token.build.label.uptodate"
-              targetfile="${server.obj.dir}/classes/org/kowari/server/EmbeddedKowariServer.java">
+              targetfile="${server.obj.dir}/classes/org/mulgara/server/EmbeddedKowariServer.java">
       <srcfiles dir="${server.src.dir}" includes="**/EmbeddedKowariServer.java"/>
     </uptodate>
   </target>
@@ -125,7 +125,7 @@
       <fileset dir="${server.obj.dir}/classes" excludes="**/*.java"/>
     </jar>
 
-    <replace file="${server.src.dir}/java/org/kowari/server/EmbeddedKowariServer.java"
+    <replace file="${server.src.dir}/java/org/mulgara/server/EmbeddedKowariServer.java"
              token="${build.label}" value="@@build.label@@"/>
   </target>
 
@@ -163,7 +163,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.server.*"/>
+      <param name="javadoc.package" value="org.mulgara.server.*"/>
       <param name="javadoc.classpath" value="server-classpath"/>
       <param name="javadoc.sourcepath" value="${server.src.dir}/java"/>
     </antcall>

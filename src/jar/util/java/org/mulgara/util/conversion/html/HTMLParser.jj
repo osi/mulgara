@@ -63,7 +63,7 @@ options {
 
 PARSER_BEGIN(HTMLParser)
 
-package org.kowari.util.conversion.html;
+package org.mulgara.util.conversion.html;
 
 import java.io.*;
 import java.util.*;

@@ -124,7 +124,7 @@
       <src path="${descriptor.src.dir}/src/java"/>
 
       <!-- must exclude this cos the support files have not been generated yet -->
-      <exclude name="org/kowari/descriptor/test/DescriptorUtilServiceTest.java"/>
+      <exclude name="org/mulgara/descriptor/test/DescriptorUtilServiceTest.java"/>
     </javac>
   </target>
 
@@ -229,7 +229,7 @@
       <include name="**/*.java"/>
 
       <src path="${client.obj.dir}/"/>
-      <src path="${descriptor.src.dir}/src/java/org/kowari/descriptor/test/"/>
+      <src path="${descriptor.src.dir}/src/java/org/mulgara/descriptor/test/"/>
     </javac>
 
     <jar jarfile="${bin.dir}/descriptor-client.jar">
@@ -353,7 +353,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.descriptor.*"/>
+      <param name="javadoc.package" value="org.mulgara.descriptor.*"/>
       <param name="javadoc.classpath" value="descriptor-classpath"/>
       <param name="javadoc.sourcepath" value="${descriptor.src.dir}/src/java"/>
     </antcall>

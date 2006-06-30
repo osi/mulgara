@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Embedded Kowari Metadata Store configuration file.
+Embedded Mulgara Metadata Store configuration file.
 -->
 
-<TucanaConfig>
+<MulgaraConfig>
 
   <!-- Paths to external component configuration, relative to JAR file -->
   <ExternalConfigPaths>
-    <TucanaLogging>conf/log4j-kowari.xml</TucanaLogging>
+    <MulgaraLogging>conf/log4j-mulgara.xml</MulgaraLogging>
     <WebDefault>conf/webdefault.xml</WebDefault>
   </ExternalConfigPaths>
 
   <!--
-    The hostname to bind Kowari to
+    The hostname to bind Mulgara to
 
-    Note. Not setting will cause Kowari to bind to the canonical local machine name
+    Note. Not setting will cause Mulgara to bind to the canonical local machine name
   -->
-  <!--<TucanaHost>localhost</TucanaHost>-->
+  <!--<MulgaraHost>localhost</MulgaraHost>-->
 
   <!--
     Configuration for the Jetty servlet container
@@ -46,7 +46,7 @@ Embedded Kowari Metadata Store configuration file.
   <!--
     The path to persist data to, one of:
 
-    + . - current directory (directory from which the Kowari JAR was run)
+    + . - current directory (directory from which the Mulgara JAR was run)
     + temp - default system temporary directory
     + <path> - user defined (OS dependant) path
   -->
@@ -55,12 +55,12 @@ Embedded Kowari Metadata Store configuration file.
   <!--
     Database implementation to use, one of:
 
-    org.kowari.store.xa.XADatabaseImpl
+    org.mulgara.store.xa.XADatabaseImpl
       (Metaphasic transactional triple store)
   -->
-  <TripleStoreImplementation>org.kowari.store.xa.XADatabaseImpl</TripleStoreImplementation>
+  <TripleStoreImplementation>org.mulgara.store.xa.XADatabaseImpl</TripleStoreImplementation>
 
   <!-- iTQL script to run on startup -->
   <StartupScript>foo.itql</StartupScript>
 
-</TucanaConfig>
+</MulgaraConfig>

@@ -119,7 +119,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.store.nodepool.xa.*"/>
+      <param name="javadoc.package" value="org.mulgara.store.nodepool.xa.*"/>
       <param name="javadoc.classpath" value="store-nodepool-xa-classpath"/>
       <param name="javadoc.sourcepath" value="${store-nodepool-xa.src.dir}/java"/>
     </antcall>

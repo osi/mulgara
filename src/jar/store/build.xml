@@ -100,7 +100,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.store.*"/>
+      <param name="javadoc.package" value="org.mulgara.store.*"/>
       <param name="javadoc.classpath" value="store-classpath"/>
       <param name="javadoc.sourcepath" value="${store.src.dir}/java"/>
     </antcall>

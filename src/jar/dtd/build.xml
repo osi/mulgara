@@ -114,7 +114,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.xml.*"/>
+      <param name="javadoc.package" value="org.mulgara.xml.*"/>
       <param name="javadoc.classpath" value="dtd-classpath"/>
       <param name="javadoc.sourcepath" value="${dtd.src.dir}/java"/>
     </antcall>

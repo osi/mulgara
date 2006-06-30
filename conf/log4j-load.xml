@@ -2,7 +2,7 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!--
-Log4J configuration for the Kowari Metadata Store project (distributable
+Log4J configuration for the Mulgara Metadata Store project (distributable
 version).
 
 Typically, you'll want to add <category/> elements to display the debug
@@ -49,7 +49,7 @@ DTD.  An example <category/> element is as follows:
   <!-- Turn on info level logging for "important" classes  -->
 
   <!-- (Insert category elements here) -->
-  <category name="org.kowari.server.EmbeddedKowariServer">
+  <category name="org.kowari.server.EmbeddedMulgaraServer">
     <priority value="INFO"/>
   </category>
 

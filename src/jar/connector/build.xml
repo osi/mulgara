@@ -116,7 +116,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.connector.*"/>
+      <param name="javadoc.package" value="org.mulgara.connector.*"/>
       <param name="javadoc.classpath" value="connector-classpath"/>
       <param name="javadoc.sourcepath" value="${connector.src.dir}/java"/>
     </antcall>

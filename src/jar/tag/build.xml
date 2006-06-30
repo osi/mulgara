@@ -72,7 +72,7 @@
           unless="tag.jar.uptodate"
           description="Creates the tag's jar/s">
 
-    <copy file="${tag.src.dir}/tld/kowari.tld" tofile="${bin.dir}/taglib.tld"
+    <copy file="${tag.src.dir}/tld/mulgara.tld" tofile="${bin.dir}/taglib.tld"
           overwrite="yes"/>
 
     <delete file="${tag.dist.dir}/${tag.jar}"/>
@@ -95,7 +95,7 @@
     <uptodate property="tag.jar.uptodate"
               targetfile="${tag.dist.dir}/${tag.jar}">
 
-      <srcfiles dir="${tag.src.dir}" includes="tld/kowari.tld"/>
+      <srcfiles dir="${tag.src.dir}" includes="tld/mulgara.tld"/>
       <srcfiles dir="${tag.obj.dir}/classes" excludes="**/extractor/**"/>
     </uptodate>
   </target>
@@ -128,9 +128,9 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.extractor.*,
-                                           org.kowari.tag.*,
-                                           org.kowari.util.*"/>
+      <param name="javadoc.package" value="org.mulgara.extractor.*,
+                                           org.mulgara.tag.*,
+                                           org.mulgara.util.*"/>
       <param name="javadoc.classpath" value="tag-classpath"/>
       <param name="javadoc.sourcepath" value="${tag.src.dir}/java"/>
     </antcall>

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o../xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-  <title>Kowari Descriptor Tutorials</title>
+  <title>Mulgara Descriptor Tutorials</title>
 <link media="all" href="/all.css" type="text/css" title="Default" rel="stylesheet">
 <link media="screen" href="/default.css" type="text/css" title="Default" rel="stylesheet">
 <link media="print" href="/print.css" type="text/css" rel="stylesheet">
@@ -15,7 +15,7 @@
 
   <!-- Banner -->
   <div id="banner">
-    <h1>kowari.sourceforge.net</h1>
+    <h1>mulgara.sourceforge.net</h1>
   </div>
 
   <div id="content">
@@ -28,7 +28,7 @@
           </ul>
       </ul>  ]
   </div>  
-<h1>Kowari Descriptors</h1>
+<h1>Mulgara Descriptors</h1>
    
 <ul>
     <li>Introduction<br>
@@ -51,7 +51,7 @@
    <li>Extensions to XSL&nbsp;</li>
    
   <ul>
-     <li>query tag enables Kowari iTQL queries to be performed in XSL stylesheets</li>
+     <li>query tag enables Mulgara iTQL queries to be performed in XSL stylesheets</li>
      <li>descriptor tag enables one descriptor to call another</li>
    
   </ul>
@@ -65,9 +65,9 @@ SOAP service.</li>
 defined task. &nbsp;Useful tasks include<br>
  
 <ul>
-   <li>Hide complex Kowari queries behind a simple interface</li>
+   <li>Hide complex Mulgara queries behind a simple interface</li>
    <li>Complex data can be aggregated by descriptors calling other descriptors</li>
-   <li>HTML front ends to Kowari queries can be rapidy developed</li>
+   <li>HTML front ends to Mulgara queries can be rapidy developed</li>
    <li>Descriptors are fast, not much slower than working with the API directly.<br>
    </li>
  
@@ -77,7 +77,7 @@ defined task. &nbsp;Useful tasks include<br>
 <ul>
    <li>Defining an interface for client while allowing the implementation 
 to evolve, even at runtime (live development)</li>
-   <li>Descriptors are referenced as URLs, so Kowari servers may use descriptors 
+   <li>Descriptors are referenced as URLs, so Mulgara servers may use descriptors 
 from remote machines.</li>
    <li>Descriptor interfaces are well defined in RDF so humans or applications 
 can discover descriptors that meet their needs.</li>
@@ -115,20 +115,20 @@ of descriptors.<br>
  </h2>
  <b>NOTE</b> all tags must be in a certain namespace in order to be recognized 
 as XSL extensions, when using descriptors created by the descriptor Wizard 
-a prefix of kowariDescriptor such be used e.g.<br>
+a prefix of mulgaraDescriptor such be used e.g.<br>
  <br>
- &lt;kowariDescriptor:query&gt;<br>
- &nbsp;&nbsp;&nbsp; perform Kowari Query<br>
- &lt;/kowariDescriptor:query&gt;<br>
+ &lt;mulgaraDescriptor:query&gt;<br>
+ &nbsp;&nbsp;&nbsp; perform Mulgara Query<br>
+ &lt;/mulgaraDescriptor:query&gt;<br>
  <br>
  <br>
- &lt;kowariDescriptor:descriptor<br>
- &nbsp;&nbsp;&nbsp; call Kowari Descriptor<br>
+ &lt;mulgaraDescriptor:descriptor<br>
+ &nbsp;&nbsp;&nbsp; call Mulgara Descriptor<br>
  /&gt;<br>
  <br>
  The documentation below leaves out these name spaces for clarity. 
 <h2>XSL query Tag</h2>
- The query tag is an extension to XSL that enables Kowari queries to be made
+ The query tag is an extension to XSL that enables Mulgara queries to be made
 from an XSL stylesheet. &nbsp;<br>
   <br>
  &lt;query&gt;<br>
@@ -171,7 +171,7 @@ this is best explained by an example:<br>
   &lt;/query&gt;<br>
  <br>
  When the descriptor is executing this element it substitutes rmi://host/server1# 
-for @@model@@ before passing the query to Kowari. &nbsp;By specifing the parameter 
+for @@model@@ before passing the query to Mulgara. &nbsp;By specifing the parameter 
 as an Descriptor parameter the value can be passed in by the client e.g.<br>
  <br>
  &lt;query model="{$model}"&gt;<br>
@@ -322,20 +322,20 @@ here.
  There are 2 ways to execute an iTQL query:<br>
  <br>
  1) use the iTQL command line client<br>
- 2) use the built in GUI <a href="../webui/" target="webui">Kowari viewer</a> 
+ 2) use the built in GUI <a href="../webui/" target="webui">Mulgara viewer</a> 
 <h3>How do I deploy the built in Descriptors ?<br>
  </h3>
  Use one of the Deploy built in descriptors tasks from the <a
- href="file:///mnt/home/keith/work/kowari/src/war/descriptor/"
+ href="file:///mnt/home/keith/work/mulgara/src/war/descriptor/"
  target="descriptor">Descriptor Management</a> page. &nbsp;There are 2 tasks 
 available e to deploy the built in descriptors. &nbsp;One task completely 
 removes all descriptors before redeploying the built in ones, while the other 
 deploys the built in descriptors while preserving the exisiting descriptors 
 - such as the ones you may have developed. 
 <h3>How do I deploy my descriptor ?</h3>
-    To use a descriptor it must be deployed in a Kowari database. &nbsp;Deployment
+    To use a descriptor it must be deployed in a Mulgara database. &nbsp;Deployment
   is simple, all that is required is that the RDF embedded in the descriptor
-  XSL file is loaded into a model in a Kowari database.<br>
+  XSL file is loaded into a model in a Mulgara database.<br>
     <br>
     Start an iTQL client TODO link.<br>
     <br>
@@ -345,7 +345,7 @@ deploys the built in descriptors while preserving the exisiting descriptors
     <br>
     iTQL&gt; load &lt;file:/home/joe/work/helloworld.xsl&gt; into &lt;rmi://localhost/server1#descriptors&gt;;<br>
     <br>
- <b>   NOTE</b> the location of the descriptor MUST be readable to the Kowari 
+ <b>   NOTE</b> the location of the descriptor MUST be readable to the Mulgara 
 server.<br>
     <br>
     If the there were no errors in the XSL then the Descriptor is now deployed
@@ -368,13 +368,13 @@ like this:<br>
 with HTTP access, including anywhere on the internet if accessable through 
 a firewall. 
 <h3><b>I can't invoke my descriptor.</b></h3>
- First see if the descriptor model exists on the Kowari server TODO link. &nbsp;If 
+ First see if the descriptor model exists on the Mulgara server TODO link. &nbsp;If 
 it does then check if your descriptor is deployed TODO link. &nbsp;If you 
 have changed any of the parameters required, their types or anything else 
 from you entered from the Descriptor Wizard then you will have to redeploy, 
 the easiest way to do this is to redeploy the built in descriptors and redeploy 
 your descriptor. 
-<h3><b>How do I check if the descriptor model exists on a Kowari server ?</b></h3>
+<h3><b>How do I check if the descriptor model exists on a Mulgara server ?</b></h3>
  There are 2 ways to check if the descriptor model exists<br>
  <br>
  1) Use the lists descriptor task from the <a href="../">Descriptor Management 
@@ -387,14 +387,14 @@ should be deployed TODO link<br>
   select $model from &lt;rmi://HOSTNAME/server1#&gt; where $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;
  &lt;http://tucana.org/tucana#Model&gt;;<br>
   <br>
-  <b>NOTE</b> replace HOSTNAME with the fully qualified hostname of the Kowari 
+  <b>NOTE</b> replace HOSTNAME with the fully qualified hostname of the Mulgara 
 server e.g. foo.bar.com and not just foo.<br>
   <br>
   This query will return all models on the server, if there is no #descriptor 
 model then you should deploy the built in descriptors and any descriptors 
 you have developed. &nbsp; 
 <h3><b>How do I check if my descriptor is deployed ?</b></h3>
- Descriptors must be deployed before use. &nbsp;The Kowari code that invokes 
+ Descriptors must be deployed before use. &nbsp;The Mulgara code that invokes 
 descriptors looks up the parameters a descriptor uses as well as other information 
 before it invokes a descriptor, if the descriptor has not been deployed then 
 the code &nbsp;does not know how to invoke it and will have errors. <br>
@@ -413,7 +413,7 @@ and an instance is already in the busy pool and new instance is created and
 made available, both descriptors will eventually return to the free pool.
 &nbsp;Descriptors are NOT currently garbage collected, the pool grows to
 the size needed and stays that size, it is not expected that these pools
-will get very large - especially in comparison to resources in a Kowari server.
+will get very large - especially in comparison to resources in a Mulgara server.
 &nbsp;This may change in future. &nbsp;There is a facility to purge all the
 cached descriptors - see here TODO 
 <h3>How do I empty the Descriptor Cache ?</h3>
@@ -425,7 +425,7 @@ my changes, whats wrong ?</h3>
 and reused. &nbsp;If you have changed the logic in a descriptor but NOT the 
 parameters, mime type etc. (i.e. everything specified in the Descriptor Wizard) 
 then you need to clear the Descriptor cache. This task is available from the
-<a href="file:///mnt/home/keith/work/kowari/src/war/descriptor/">Descriptor Management</a>
+<a href="file:///mnt/home/keith/work/mulgara/src/war/descriptor/">Descriptor Management</a>
 page. &nbsp;If you have added or removed a parameter, mime type etc then
 you will need to re deploy your descriptor TODO link.<br>
  <br>
@@ -433,7 +433,7 @@ you will need to re deploy your descriptor TODO link.<br>
  
 <h3>My Descriptor doesn't work, are errors logged anywhere ?<br>
  </h3>
- A file called descriptor-errors.log is created where Kowari was started from, 
+ A file called descriptor-errors.log is created where Mulgara was started from, 
 it will contain the reasons for Descriptors failing, it may also write out 
 a stack trace for more detailed error explanations for example when the XML 
 or XSL parser fails. &nbsp; 
@@ -490,7 +490,7 @@ previously mentioned put a tag around where the 2 descriptors are called.<br>
  Yes, since all descriptors have to be downloaded to be invoked they can
 be downloaded with a web browser or other mechanism. &nbsp;The Descriptor
 List tasks available from the <a
- href="file:///mnt/home/keith/work/kowari/src/war/descriptor/">Descriptor Management</a> 
+ href="file:///mnt/home/keith/work/mulgara/src/war/descriptor/">Descriptor Management</a> 
 page allow you to list descriptors available on your host OR other hosts. 
 &nbsp;The page while lists the descriptors includes a link to download the 
 descriptor. &nbsp;<br>
@@ -503,11 +503,11 @@ web pages accessing local files, you should retrieve the file using a local
 file mananger such as Windows Explorer (and not Internet Explorer).<br>
  <br>
  
-<h3>How do I store the result of a Kowari query in a variable ?</h3>
+<h3>How do I store the result of a Mulgara query in a variable ?</h3>
  &lt;<span class="start-tag">xsl:variable</span><span
  class="attribute-name"> name</span>=<span class="attribute-value">"answer"</span>&gt;<br>
  
-<blockquote>          &lt;<span class="start-tag">kowariDescriptor:query</span><span
+<blockquote>          &lt;<span class="start-tag">mulgaraDescriptor:query</span><span
  class="attribute-name"> model</span>=<span class="attribute-value">"{$model}" 
   </span><span class="attribute-name">node</span>=<span
  class="attribute-value">"{$node}"</span>&gt;<br>
@@ -515,7 +515,7 @@ file mananger such as Windows Explorer (and not Internet Explorer).<br>
    <span class="cdata">            select $predicate from &lt;@@model@@&gt; 
 where &lt;@@node@@&gt; $predicate $object;</span><br>
    <span class="cdata">            ]]&gt;</span><br>
- &lt;/<span class="end-tag">kowariDescriptor:query</span>&gt;<br>
+ &lt;/<span class="end-tag">mulgaraDescriptor:query</span>&gt;<br>
  </blockquote>
              &lt;/<span class="end-tag">xsl:variable</span>&gt;<br>
  <br>
@@ -525,7 +525,7 @@ descriptor ?</h3>
  &lt;<span class="start-tag">xsl:variable</span><span
  class="attribute-name"> name</span>=<span class="attribute-value">"answer"</span>&gt;<br>
  
-<blockquote>          &lt;<span class="start-tag">kowariDescriptor:query</span><span
+<blockquote>          &lt;<span class="start-tag">mulgaraDescriptor:query</span><span
  class="attribute-name"> model</span>=<span class="attribute-value">"{$model}" 
   </span><span class="attribute-name">node</span>=<span
  class="attribute-value">"{$node}"</span>&gt;<br>
@@ -534,7 +534,7 @@ descriptor ?</h3>
 where &lt;@@node@@&gt; $predicate $object;</span><br>
    <span class="cdata">            ]]&gt;</span><br>
    <br>
-           &lt;/<span class="end-tag">kowariDescriptor:query</span>&gt;<br>
+           &lt;/<span class="end-tag">mulgaraDescriptor:query</span>&gt;<br>
  </blockquote>
              &lt;/<span class="end-tag">xsl:variable</span>&gt;<br>
  
@@ -551,7 +551,7 @@ apply XML to the the style sheet use something like the following.<br>
            <span class="comment"></span>&lt;<span class="start-tag">xsl:variable</span><span
  class="attribute-name"> name</span>=<span class="attribute-value">"answer"</span>&gt;<br>
  
-<blockquote>          &lt;<span class="start-tag">kowariDescriptor:query</span><span
+<blockquote>          &lt;<span class="start-tag">mulgaraDescriptor:query</span><span
  class="attribute-name"> model</span>=<span class="attribute-value">"{$model}" 
   </span><span class="attribute-name">node</span>=<span
  class="attribute-value">"{$node}"</span>&gt;<br>
@@ -559,7 +559,7 @@ apply XML to the the style sheet use something like the following.<br>
    <span class="cdata">            select $predicate from &lt;@@model@@&gt; 
 where &lt;@@node@@&gt; $predicate $object;</span><br>
    <span class="cdata">            ]]&gt;</span><br>
- &lt;/<span class="end-tag">kowariDescriptor:query</span>&gt;<br>
+ &lt;/<span class="end-tag">mulgaraDescriptor:query</span>&gt;<br>
  </blockquote>
                        &lt;/<span class="end-tag">xsl:variable</span>&gt;<br>
  <br>
@@ -570,13 +570,13 @@ apply the templates to the answer --&gt;</span><br>
  class="attribute-name">/</span>&gt;<br>
  <br>
  
-<h3>How can I see the raw XML response from a Kowari query ?</h3>
+<h3>How can I see the raw XML response from a Mulgara query ?</h3>
  Simply copy the result to the output stream like this:<br>
  <br>
  &lt;<span class="start-tag">xsl:variable</span><span
  class="attribute-name"> name</span>=<span class="attribute-value">"answer"</span>&gt;<br>
    
-<blockquote>          &lt;<span class="start-tag">kowariDescriptor:query</span><span
+<blockquote>          &lt;<span class="start-tag">mulgaraDescriptor:query</span><span
  class="attribute-name"> model</span>=<span class="attribute-value">"{$model}" 
   </span><span class="attribute-name">node</span>=<span
  class="attribute-value">"{$node}"</span>&gt;<br>
@@ -584,7 +584,7 @@ apply the templates to the answer --&gt;</span><br>
     <span class="cdata">            select $predicate from &lt;@@model@@&gt; 
 where &lt;@@node@@&gt; $predicate $object;</span><br>
     <span class="cdata">            ]]&gt;</span><br>
-  &lt;/<span class="end-tag">kowariDescriptor:query</span>&gt;<br>
+  &lt;/<span class="end-tag">mulgaraDescriptor:query</span>&gt;<br>
   </blockquote>
                         &lt;/<span class="end-tag">xsl:variable</span>&gt;<br>
   <br>

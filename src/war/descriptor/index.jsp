@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@ page import="java.net.*, org.kowari.server.EmbeddedKowariServer" %>
+<%@ page import="java.net.*, org.mulgara.server.EmbeddedMulgaraServer" %>
 <%
 
 String hostname = null;
@@ -8,7 +8,7 @@ String currentHostUrl = null;
 try {
 
   if (hostname == null) {
-    hostname = (String)getServletContext().getAttribute(EmbeddedKowariServer.BOUND_HOST_NAME_KEY);
+    hostname = (String)getServletContext().getAttribute(EmbeddedMulgaraServer.BOUND_HOST_NAME_KEY);
     
     // determine the requesting URL
     currentHostUrl = HttpUtils.getRequestURL(request).toString();
@@ -28,13 +28,13 @@ try {
 }
 
 String URL2Here = currentHostUrl.substring(0, currentHostUrl.length() - "index.jsp".length());
-String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowariServer.SERVER_MODEL_URI_KEY) + "#descriptors";
+String descriptorModel = (String)getServletContext().getAttribute(EmbeddedMulgaraServer.SERVER_MODEL_URI_KEY) + "#descriptors";
   
 %>
 
 <html>
 <head>
-  <title>Kowari Descriptor</title>
+  <title>Mulgara Descriptor</title>
 <link media="all" href="/all.css" type="text/css" title="Default" rel="stylesheet">
 <link media="screen" href="/default.css" type="text/css" title="Default" rel="stylesheet">
 <link media="print" href="/print.css" type="text/css" rel="stylesheet">
@@ -48,7 +48,7 @@ String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowari
 
   <!-- Banner -->
   <div id="banner">
-    <h1>kowari.sourceforge.net</h1>
+    <h1>mulgara.sourceforge.net</h1>
   </div>
 
   <div id="content">
@@ -58,7 +58,7 @@ String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowari
         <li>descriptors</li>
       </ul>  ]
   </div>  
-  <h1>Kowari Descriptors</h1>
+  <h1>Mulgara Descriptors</h1>
   <ul>
     <li><a href="#overview">Overview</a>
     <li><a href="#tasks">Tasks</a>
@@ -73,10 +73,10 @@ String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowari
   Descriptors:
   <ul>
     <li>Allow complex or frequently used queries to be named and invoked by a client. 
-    <li>Can perform an iTQL command, including inserting data into Kowari.
+    <li>Can perform an iTQL command, including inserting data into Mulgara.
     <li>May return XML, HTML, text or anything XSL is capable of producing.
     <li>Output can be deserialized into java objects.
-    <li>Expose their interfaces using RDF stored on a Kowari server.  
+    <li>Expose their interfaces using RDF stored on a Mulgara server.  
     <li>Are accessible as SOAP services for 3rd party integration.
     <li>May be changed on the fly even if interfaces change.
     <li>Are stored somewhere accessible as a URL such as on a webserver.  
@@ -108,7 +108,7 @@ String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowari
 <p>
 <form action="deploy">
   <input type="submit" value="ReDeploy"/>
-  Redeploy bundled Descriptors - drops existing Descriptors from Kowari, reloads built-in descriptors, clears descriptors from cache&nbsp;&nbsp; 
+  Redeploy bundled Descriptors - drops existing Descriptors from Mulgara, reloads built-in descriptors, clears descriptors from cache&nbsp;&nbsp; 
   <input type="hidden" name="deployLocalDescriptors" value="true"/>
   <input type="hidden" name="clearLocalDescriptors" value="true"/>
 </form>
@@ -119,7 +119,7 @@ String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowari
 <p>
 <form action="deploy">
   <input type="submit" value="Deploy"/>
-  Deploy bundled Descriptors - preserves any existing Descriptors in Kowari, reloads built-in descriptors, clears descriptors from cache&nbsp;&nbsp; 
+  Deploy bundled Descriptors - preserves any existing Descriptors in Mulgara, reloads built-in descriptors, clears descriptors from cache&nbsp;&nbsp; 
   <input type="hidden" name="deployLocalDescriptors" value="true"/>
 </form>
 </p>
@@ -144,7 +144,7 @@ String descriptorModel = (String)getServletContext().getAttribute(EmbeddedKowari
 <p>
 <form action="execute">
   <input type="submit" value="Invoke"/>
-  See list of Descriptors available from Kowari model&nbsp;&nbsp;
+  See list of Descriptors available from Mulgara model&nbsp;&nbsp;
   <input type="hidden" name="_self" value="<%= URL2Here %>descriptors/default/descriptorListHTML.xsl"/>
   <input type="hidden" name="descriptorBase" value="<%= URL2Here %>descriptors/"/>
   <input type="text" name="model" size="40"/>
@@ -173,7 +173,7 @@ Purge all cached Descriptors available on this host, list of descriptors availab
 <p>
 <form action="execute">
   <input type="submit" value="Invoke"/>
-Purge Descriptors from this Kowari model, list of descriptors available will be shown.&nbsp;&nbsp;
+Purge Descriptors from this Mulgara model, list of descriptors available will be shown.&nbsp;&nbsp;
   <input type="hidden" name="_self" value="<%= URL2Here %>descriptors/default/descriptorListHTML.xsl"/>
   <input type="hidden" name="descriptorBase" value="<%= URL2Here %>descriptors/"/>
   <input type="hidden" name="_clearCache" value="true"/>

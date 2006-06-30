@@ -121,7 +121,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.server.beep.*"/>
+      <param name="javadoc.package" value="org.mulgara.server.beep.*"/>
       <param name="javadoc.classpath" value="server-beep-classpath"/>
       <param name="javadoc.sourcepath" value="${server-beep.src.dir}/java"/>
     </antcall>

@@ -104,7 +104,7 @@
   </target>
 
   <target name="demo-mp3-deploy" depends="demo-mp3-dist">
-	<java fork="true" jvm="${java.home}/bin/java" classname="org.kowari.demo.mp3.swing.Mp3Application" failonerror="yes">
+	<java fork="true" jvm="${java.home}/bin/java" classname="org.mulgara.demo.mp3.swing.Mp3Application" failonerror="yes">
 	  <classpath refid="demo-mp3-test-classpath">
   	  </classpath>
 	</java>
@@ -114,7 +114,7 @@
           depends="demo-mp3-jar"
           description="Creates the javadoc for this demo-mp3">
     <antcall target="javadoc">
-      <param name="javadoc.package" value="org.kowari.demo.mp3.*"/>
+      <param name="javadoc.package" value="org.mulgara.demo.mp3.*"/>
       <param name="javadoc.classpath" value="demo-mp3-classpath"/>
       <param name="javadoc.sourcepath" value="${demo-mp3.src.dir}/java"/>
     </antcall>
@@ -149,7 +149,7 @@
       <arg value="-i"/>
       <arg value="${demo-mp3.conf.dir}/mp3-config.xsd"/>
       <arg value="-package"/>
-      <arg value="org.kowari.demo.mp3.config"/>
+      <arg value="org.mulgara.demo.mp3.config"/>
       <arg value="-dest"/>
       <arg value="${demo-mp3.obj.src.dir}/java"/>
       <classpath>

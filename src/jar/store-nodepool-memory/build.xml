@@ -119,7 +119,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.store.nodepool.memory.*"/>
+      <param name="javadoc.package" value="org.mulgara.store.nodepool.memory.*"/>
       <param name="javadoc.classpath" value="store-nodepool-memory-classpath"/>
       <param name="javadoc.sourcepath" value="${store-nodepool-memory.src.dir}/java"/>
     </antcall>

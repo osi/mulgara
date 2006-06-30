@@ -120,7 +120,7 @@
           description="Creates the javadoc for this jrdf">
 
     <antcall target="javadoc">
-      <param name="javadoc.package" value="org.kowari.jrdf.*"/>
+      <param name="javadoc.package" value="org.mulgara.jrdf.*"/>
       <param name="javadoc.classpath" value="jrdf-classpath"/>
       <param name="javadoc.sourcepath" value="${jrdf.src.dir}/java"/>
     </antcall>

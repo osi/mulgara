@@ -9,7 +9,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  *
- * The Original Code is the Kowari Metadata Store.
+ * The Original Code is the Mulgara Metadata Store.
  *
  * The Initial Developer of the Original Code is Plugged In Software Pty
  * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
@@ -25,7 +25,7 @@
  *
  */
 
-package org.kowari.barracuda.dom.util;
+package org.mulgara.barracuda.dom.util;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.html.*;

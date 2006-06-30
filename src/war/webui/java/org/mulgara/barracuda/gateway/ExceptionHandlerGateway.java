@@ -9,7 +9,7 @@
  * the License for the specific language governing rights and limitations
  * under the License.
  *
- * The Original Code is the Kowari Metadata Store.
+ * The Original Code is the Mulgara Metadata Store.
  *
  * The Initial Developer of the Original Code is Plugged In Software Pty
  * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
@@ -25,7 +25,7 @@
  *
  */
 
-package org.kowari.barracuda.gateway;
+package org.mulgara.barracuda.gateway;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,8 +34,8 @@ import org.apache.log4j.*;
 
 import org.enhydra.barracuda.core.event.*;
 import org.enhydra.barracuda.core.helper.servlet.ScriptDetector;
-import org.kowari.barracuda.exception.ApplicationExceptionEvent;
-import org.kowari.barracuda.exception.ApplicationExceptionHandler;
+import org.mulgara.barracuda.exception.ApplicationExceptionEvent;
+import org.mulgara.barracuda.exception.ApplicationExceptionHandler;
 
 /**
  * This gateway allows you to register an exception which will be desplayed to

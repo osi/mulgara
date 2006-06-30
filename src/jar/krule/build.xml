@@ -118,7 +118,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.krule.*"/>
+      <param name="javadoc.package" value="org.mulgara.krule.*"/>
       <param name="javadoc.classpath" value="krule-classpath"/>
       <param name="javadoc.sourcepath" value="${krule.src.dir}/java"/>
     </antcall>

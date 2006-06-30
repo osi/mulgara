@@ -1,11 +1,11 @@
-<!ELEMENT KowariConfig (ExternalConfigPaths?, KowariHost?, Jetty?, ServerName, RMIPort?, PersistencePath, TransactionTimeout? TripleStoreImplementation, StartupScript?)>
+<!ELEMENT MulgaraConfig (ExternalConfigPaths?, MulgaraHost?, Jetty?, ServerName, RMIPort?, PersistencePath, TransactionTimeout? TripleStoreImplementation, StartupScript?)>
 
-  <!ELEMENT ExternalConfigPaths (KowariLogging, WebDefault)>
+  <!ELEMENT ExternalConfigPaths (MulgaraLogging, WebDefault)>
 
-    <!ELEMENT KowariLogging (#PCDATA)>
+    <!ELEMENT MulgaraLogging (#PCDATA)>
     <!ELEMENT WebDefault (#PCDATA)>
 
-  <!ELEMENT KowariHost (#PCDATA)>
+  <!ELEMENT MulgaraHost (#PCDATA)>
 
   <!ELEMENT Jetty (Listener)>
 

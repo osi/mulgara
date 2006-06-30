@@ -56,16 +56,16 @@
   </target>
   <target name="itql-parser-uptodate" depends="-prepare-build">
     <uptodate property="itql-parser-uptodate"
-        targetfile="${obj.dir}/jar/itql/java/org/kowari/itql/analysis/DepthFirstAdapter.java">
+        targetfile="${obj.dir}/jar/itql/java/org/mulgara/itql/analysis/DepthFirstAdapter.java">
       <srcfiles dir="${itql.src.dir}/sablecc" includes="itql.grammar"/>
     </uptodate>
   </target>
 
   <target name="-itql-token-build-label" depends="-itql-token-build-label-uptodate" unless="itql.token.build.label.uptodate">
-    <replace file="${itql.obj.dir}/java/org/kowari/itql/ItqlSession.java" token="@@build.label@@" value="${build.label}"/>
+    <replace file="${itql.obj.dir}/java/org/mulgara/itql/ItqlSession.java" token="@@build.label@@" value="${build.label}"/>
   </target>
   <target name="-itql-token-build-label-uptodate">
-    <uptodate property="itql.token.build.label.uptodate" targetfile="${itql.obj.dir}/java/org/kowari/itql/ItqlSession.java">
+    <uptodate property="itql.token.build.label.uptodate" targetfile="${itql.obj.dir}/java/org/mulgara/itql/ItqlSession.java">
       <srcfiles dir="${itql.src.dir}" includes="**/ItqlSession.java"/>
     </uptodate>
   </target>
@@ -83,12 +83,12 @@
   <target name="-itql-create-manifest">
     <mkdir dir="${obj.dir}/META-INF"/>
     <manifest file="${obj.dir}/META-INF/MANIFEST_ITQL_BASE.MF">
-      <attribute name="Main-Class" value="org.kowari.itql.ItqlSession"/>
+      <attribute name="Main-Class" value="org.mulgara.itql.ItqlSession"/>
     </manifest>
     <manifest file="${obj.dir}/META-INF/MANIFEST_ITQL_BOOTSTRAP.MF">
-      <attribute name="Main-Class" value="org.kowari.util.Bootstrap"/>
+      <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="${query.jar}, ${driver.jar}, ${itql.jar},${util.jar}, ${server-beep.jar}, ${server-rmi.jar}, apache-soap-2.2.jar, log4j-1.2.8.jar,jargs-0.2.jar, ${jrdf.jar}, ${saaj.jar}, ${emory-util.jar}"/>
-      <attribute name="Embedded-Main-Class" value="org.kowari.itql.ItqlSession"/>
+      <attribute name="Embedded-Main-Class" value="org.mulgara.itql.ItqlSession"/>
     </manifest>
   </target>
 
@@ -115,7 +115,7 @@
     <mkdir dir="${obj.dir}/META-INF"/>
 
     <manifest file="${obj.dir}/META-INF/itql-MANIFEST.MF">
-      <attribute name="Main-Class" value="org.kowari.itql.ItqlSession"/>
+      <attribute name="Main-Class" value="org.mulgara.itql.ItqlSession"/>
     </manifest>
 
     <jar jarfile="${dist.dir}/${itql.jar}"
@@ -184,8 +184,8 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.itql.*,
-                                           org.kowari.store.*"/>
+      <param name="javadoc.package" value="org.mulgara.itql.*,
+                                           org.mulgara.store.*"/>
       <param name="javadoc.classpath" value="itql-classpath"/>
       <param name="javadoc.sourcepath" value="${itql.src.dir}/java"/>
     </antcall>

@@ -104,7 +104,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.store-stringpool.*"/>
+      <param name="javadoc.package" value="org.mulgara.store-stringpool.*"/>
       <param name="javadoc.classpath" value="store-stringpool-classpath"/>
       <param name="javadoc.sourcepath" value="${store-stringpool.src.dir}/java"/>
     </antcall>

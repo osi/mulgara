@@ -26,7 +26,7 @@
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
-    <!-- Need to seperate UnitTests into their own hierachy so we don't polute the classpath -->
+    <!-- Need to separate UnitTests into their own hierarchy so we don't pollute the classpath -->
     <fileset file="${resolver.dist.dir}/${resolver.jar}"/>
     <fileset file="${store-nodepool-memory.dist.dir}/${store-nodepool-memory.jar}"/>
     <fileset file="${resolver-memory.dist.dir}/${resolver-memory.jar}"/>
@@ -133,7 +133,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.resolver.test.*"/>
+      <param name="javadoc.package" value="org.mulgara.resolver.test.*"/>
       <param name="javadoc.classpath" value="resolver-test-pkg-classpath"/>
       <param name="javadoc.sourcepath" value="${resolver-test.src.dir}/java"/>
     </antcall>

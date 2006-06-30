@@ -131,7 +131,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.client.jena.*"/>
+      <param name="javadoc.package" value="org.mulgara.client.jena.*"/>
       <param name="javadoc.classpath" value="client-jena-classpath"/>
       <param name="javadoc.sourcepath" value="${client-jena.src.dir}/java"/>
     </antcall>

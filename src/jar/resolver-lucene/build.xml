@@ -117,7 +117,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.resolver.lucene.*"/>
+      <param name="javadoc.package" value="org.mulgara.resolver.lucene.*"/>
       <param name="javadoc.classpath" value="resolver-lucene-classpath"/>
       <param name="javadoc.sourcepath" value="${resolver-lucene.src.dir}/java"/>
     </antcall>

@@ -2,7 +2,7 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!--
-Log4J configuration for the Kowari Metadata Store project (distributable
+Log4J configuration for the Mulgara Metadata Store project (distributable
 version).
 
 Typically, you'll want to add <category/> elements to display the debug
@@ -10,7 +10,7 @@ messages of a class you're working on.  Any <category/> elements must appear
 after the <appender/> elements and before the <root/> element to satisfy the
 DTD.  An example <category/> element is as follows:
 
-  <category name="org.kowari.store.AbstractDatabaseSession">
+  <category name="org.mulgara.store.AbstractDatabaseSession">
     <priority value="debug"/>
   </category>
 
@@ -33,7 +33,7 @@ DTD.  An example <category/> element is as follows:
 
   <!-- Log to a file -->
   <appender name="LOGFILE" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="./kowari-@server.instance@.log"/>
+    <param name="File" value="./mulgara-@server.instance@.log"/>
     <param name="MaxFileSize" value="5MB"/>
     <param name="MaxBackupIndex" value="3"/>
     <layout class="org.apache.log4j.PatternLayout">
@@ -49,7 +49,7 @@ DTD.  An example <category/> element is as follows:
   <!-- Turn on info level logging for "important" classes  -->
 
   <!-- (Insert category elements here) -->
-  <category name="org.kowari.server.EmbeddedKowariServer">
+  <category name="org.mulgara.server.EmbeddedMulgaraServer">
     <priority value="INFO"/>
   </category>
 

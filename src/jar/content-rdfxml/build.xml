@@ -129,7 +129,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.content.rdfxml.*"/>
+      <param name="javadoc.package" value="org.mulgara.content.rdfxml.*"/>
       <param name="javadoc.classpath" value="content-rdfxml-classpath"/>
       <param name="javadoc.sourcepath" value="${content-rdfxml.src.dir}/java"/>
     </antcall>

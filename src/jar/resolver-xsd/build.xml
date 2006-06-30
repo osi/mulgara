@@ -118,7 +118,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.resolver.xsd.*"/>
+      <param name="javadoc.package" value="org.mulgara.resolver.xsd.*"/>
       <param name="javadoc.classpath" value="resolver-xsd-classpath"/>
       <param name="javadoc.sourcepath" value="${resolver-xsd.src.dir}/java"/>
     </antcall>

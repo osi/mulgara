@@ -113,7 +113,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.resolver.url.*"/>
+      <param name="javadoc.package" value="org.mulgara.resolver.url.*"/>
       <param name="javadoc.classpath" value="resolver-url-classpath"/>
       <param name="javadoc.sourcepath" value="${resolver-url.src.dir}/java"/>
     </antcall>

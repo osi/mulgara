@@ -56,12 +56,12 @@
                        source code"
           unless="util.classes.uptodate">
 
-    <mkdir dir="${util.obj.dir}/java/org/kowari/util/conversion/html"/>
+    <mkdir dir="${util.obj.dir}/java/org/mulgara/util/conversion/html"/>
 
     <javacc
-      target="${util.src.dir}/java/org/kowari/util/conversion/html/HTMLParser.jj"
+      target="${util.src.dir}/java/org/mulgara/util/conversion/html/HTMLParser.jj"
       javacchome="${lib.dir}"
-      outputdirectory="${util.obj.dir}/java/org/kowari/util/conversion/html"/>
+      outputdirectory="${util.obj.dir}/java/org/mulgara/util/conversion/html"/>
 
     <javac destdir="${obj.dir}/jar/util/classes" debug="on"
            deprecation="on" source="1.4">
@@ -120,7 +120,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.util.*"/>
+      <param name="javadoc.package" value="org.mulgara.util.*"/>
       <param name="javadoc.classpath" value="util-classpath"/>
       <param name="javadoc.sourcepath" value="${util.src.dir}/java"/>
     </antcall>

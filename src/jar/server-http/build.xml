@@ -143,15 +143,15 @@
 
     <!-- generate the core manifest -->
     <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_HTTP_BASE.MF">
-      <attribute name="Main-Class" value="org.kowari.store.Main"/>
+      <attribute name="Main-Class" value="org.mulgara.store.Main"/>
     </manifest>
 
     <!-- generate the bootstrap manifest -->
     <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_HTTP_BOOTSTRAP.MF">
 
-      <attribute name="Main-Class" value="org.kowari.util.Bootstrap"/>
+      <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="lib/${driver.jar}, lib/${query.jar},lib/${itql.jar}, lib/${rules.jar}, lib/${server.jar}, lib/${util.jar}, lib/${config.jar}, lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar,lib/antlr.jar, lib/${commons-logging.jar}, lib/log4j-1.2.8.jar, lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,lib/castor-0.9.3.9-xml.jar, lib/xercesImpl.jar, lib/xmlParserAPIs.jar, lib/${jrdf.jar},lib/jakarta-oro-2.0.5.jar, lib/${emory-util.jar}"/>
-      <attribute name="Embedded-Main-Class" value="org.kowari.server.EmbeddedKowariHttpServer"/>
+      <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedKowariHttpServer"/>
     </manifest>
 
     <!-- HACK!!!!! -->
@@ -165,12 +165,12 @@
     <!-- build the executable jar file -->
     <mkdir dir="${dist.dir}"/>
 
-    <jar jarfile="${dist.dir}/${kowari-http.jar}"
+    <jar jarfile="${dist.dir}/${mulgara-http.jar}"
         manifest="${obj.dir}/META-INF/MANIFEST_Kowari_HTTP_BOOTSTRAP.MF">
 
       <zipfileset dir="${conf.dir}" prefix="conf"
-                  includes="log4j-kowari.xml, webdefault.xml, kowari-rmi.policy,
-                    kowari.policy"/>
+                  includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy,
+                    mulgara.policy"/>
       <zipfileset dir="${lib.dir}" prefix="lib"
         includes="log4j*.jar, icu4j.jar, jena-*.jar, antlr*.jar, ${commons-logging.jar},
           activation*.jar, jargs*.jar,
@@ -203,7 +203,7 @@
   <target name="server-http-uptodate">
 
     <uptodate property="server-http.uptodate"
-              targetfile="${dist.dir}/${kowari-http.jar}">
+              targetfile="${dist.dir}/${mulgara-http.jar}">
 
       <srcfiles dir="${server-http.dist.dir}" includes="${server-http.jar}"/>
       <srcfiles dir="${bin.dir}" includes="${server-http.jar}"/>
@@ -234,7 +234,7 @@
 
     <antcall target="javadoc">
 
-      <param name="javadoc.package" value="org.kowari.server.http.*"/>
+      <param name="javadoc.package" value="org.mulgara.server.http.*"/>
       <param name="javadoc.classpath" value="server-http-classpath"/>
       <param name="javadoc.sourcepath" value="${server-http.src.dir}/java"/>
     </antcall>

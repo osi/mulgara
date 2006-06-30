@@ -6,20 +6,20 @@
 <taglib>
   <tlibversion>0.1</tlibversion>
   <jspversion>1.1</jspversion>
-  <shortname>kowari</shortname>
-  <uri>http://www.kowari.org/kowari/taglibs/kowari</uri>
+  <shortname>mulgara</shortname>
+  <uri>http://www.mulgara.org/mulgara/taglibs/mulgara</uri>
 
   <info>
-    Tags for communicating with Kowari Metadata Stores.
+    Tags for communicating with Mulgara Metadata Stores.
   </info>
 
   <tag>
     <name>init</name>
-    <tagclass>org.kowari.tag.InitTag</tagclass>
-    <teiclass>org.kowari.tag.InitTEI</teiclass>
+    <tagclass>org.mulgara.tag.InitTag</tagclass>
+    <teiclass>org.mulgara.tag.InitTEI</teiclass>
     <bodycontent>empty</bodycontent>
     <info>
-      Initialises the Kowari JSP environment.
+      Initialises the Mulgara JSP environment.
     </info>
     <attribute>
       <name>server</name>
@@ -35,10 +35,10 @@
 
   <tag>
     <name>render</name>
-    <tagclass>org.kowari.tag.RenderTag</tagclass>
+    <tagclass>org.mulgara.tag.RenderTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <info>
-      Renders an XML document using a suppied stylesheet.
+      Renders an XML document using a supplied stylesheet.
     </info>
     <attribute>
       <name>stylesheet</name>
@@ -49,11 +49,11 @@
 
   <tag>
     <name>statement</name>
-    <tagclass>org.kowari.tag.StatementTag</tagclass>
-    <teiclass>org.kowari.tag.StatementTEI</teiclass>
+    <tagclass>org.mulgara.tag.StatementTag</tagclass>
+    <teiclass>org.mulgara.tag.StatementTEI</teiclass>
     <bodycontent>JSP</bodycontent>
     <info>
-      Sends queries to a Kowari server.
+      Sends queries to a Mulgara server.
     </info>
     <attribute>
       <name>id</name>
@@ -69,7 +69,7 @@
 
   <tag>
     <name>query</name>
-    <tagclass>org.kowari.tag.QueryTag</tagclass>
+    <tagclass>org.mulgara.tag.QueryTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <info>
       Adds an iTQL query to a statement.
@@ -83,7 +83,7 @@
 
   <tag>
     <name>execute</name>
-    <tagclass>org.kowari.tag.ExecuteTag</tagclass>
+    <tagclass>org.mulgara.tag.ExecuteTag</tagclass>
     <bodycontent>empty</bodycontent>
     <info>
       Executes a statement.
@@ -97,8 +97,8 @@
 
   <tag>
     <name>answer</name>
-    <tagclass>org.kowari.tag.AnswerTag</tagclass>
-    <teiclass>org.kowari.tag.AnswerTEI</teiclass>
+    <tagclass>org.mulgara.tag.AnswerTag</tagclass>
+    <teiclass>org.mulgara.tag.AnswerTEI</teiclass>
     <bodycontent>JSP</bodycontent>
     <info>
       Retrieves query answers from a statement.
