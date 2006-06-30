@@ -1,0 +1,6 @@
+ItqlInterpreter error - org.kowari.query.QueryException: Error getting information for answer
+Caused by: (QueryException) Error getting information for answer
+Caused by: (QueryException) org.kowari.query.TuplesException: Couldn't evaluate aggregate
+Caused by: (QueryException) Failed to resolve subquery
+Caused by: (QueryException) Failure ending previous query
+Caused by: (QueryException) The subject: $head and the object: $n are invalid, one must be a variable and the other a fixed value around a predicate.

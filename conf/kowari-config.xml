@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Kowari Metadata Store configuration file.
+-->
+
+<TucanaConfig>
+
+  <!-- Paths to external component configuration, relative to JAR file -->
+  <ExternalConfigPaths>
+    <TucanaLogging>conf/log4j-kowari.xml</TucanaLogging>
+    <WebDefault>conf/webdefault.xml</WebDefault>
+  </ExternalConfigPaths>
+
+  <!--
+    The hostname to bind Kowari to
+
+    Note. Not setting will cause Kowari to bind to the canonical local machine name
+  -->
+  <!--<TucanaHost>localhost</TucanaHost>-->
+
+  <!--
+    Configuration for the Jetty servlet container
+
+    Note. Not setting the "Host" parameter will cause Jetty to listen on
+          all interfaces
+  -->
+  <Jetty>
+    <Listener>
+      <!--<Host>localhost</Host>-->
+      <Port>8080</Port>
+      <MinThreads>5</MinThreads>
+      <MaxThreads>255</MaxThreads>
+      <MaxIdleTimeMs>60000</MaxIdleTimeMs>
+      <MaxReadTimeMs>60000</MaxReadTimeMs>
+      <LowResourcePersistTimeMs>5000</LowResourcePersistTimeMs>
+    </Listener>
+  </Jetty>
+
+  <!-- The name of the server, used for RMI binding -->
+  <ServerName>server1</ServerName>
+
+  <!-- RMI registry port -->
+  <RMIPort>1099</RMIPort>
+
+  <!--
+    The path to persist data to, one of:
+
+    + . - current directory (directory from which the Kowari JAR was run)
+    + temp - default system temporary directory
+    + <path> - user defined (OS dependant) path
+  -->
+  <PersistencePath>.</PersistencePath>
+
+  <!-- Maximum duration in seconds for transactions, a positive integer -->
+  <TransactionTimeout>604800</TransactionTimeout> <!-- one week -->
+
+  <!--
+    Database implementation to use, one of:
+
+    org.kowari.resolver.Database
+    org.kowari.store.xa.XADatabaseImpl
+      (Metaphasic transactional triple store)
+  <TripleStoreImplementation>org.kowari.store.xa.XADatabaseImpl</TripleStoreImplementation>
+  -->
+  <TripleStoreImplementation>@database-class@</TripleStoreImplementation>
+
+  <!--
+    The Related Query Handler is the implementation of
+    org.kowari.resolver.RelatedHandler.
+  -->
+  <RelatedQueryHandler
+    class="org.kowari.resolver.RelatedQueryHandlerImpl"/>
+
+  <!--
+    Security adapter implementation.  If this element is omitted, the only
+    forbidden operations will be the modification or deletion of the system
+    model.
+  -->
+  <!--
+    <SecurityAdapterClass>com.tucana.store.security.model.ModelSecurityAdapterFactory</SecurityAdapterClass>
+  -->
+
+  <!--
+    Implementations of the persistent and temporary node pools, string pools,
+    and resolvers.  The persistent resolver is used to manipulate the system
+    model.
+  -->
+  <PersistentNodePoolFactory class="org.kowari.store.nodepool.xa.XANodePoolFactory" dir="xaNodePool"/>
+  <TemporaryNodePoolFactory  class="org.kowari.store.nodepool.memory.MemoryNodePoolFactory"/>
+  <PersistentStringPoolFactory class="org.kowari.store.stringpool.xa.XAStringPoolFactory" dir="xaStringPool"/>
+  <TemporaryStringPoolFactory class="org.kowari.store.stringpool.memory.MemoryStringPoolFactory"/>
+  <PersistentResolverFactory class="org.kowari.resolver.store.StatementStoreResolverFactory" dir="xaStatementStore"/>
+  <TemporaryResolverFactory class="org.kowari.resolver.memory.MemoryResolverFactory" dir="tempStatementStore"/>
+
+  <!--
+    Implementations of a rule engine.
+  -->
+  <RuleLoader class="org.kowari.krule.KruleLoader"/>
+
+  <!--
+    Implementations of the ContentHandler interface to use for resolving MIME
+    types.
+  -->
+  <DefaultContentHandler class="org.kowari.content.rdfxml.RDFXMLContentHandler"/>
+  <!--
+  <DefaultContentHandler class="org.kowari.content.rio.RDFXMLContentHandler"/>
+  -->
+  <ContentHandler class="org.kowari.content.mp3.MP3ContentHandler"/>
+  <ContentHandler class="org.kowari.content.mbox.MBoxContentHandler"/>
+  <ContentHandler class="org.kowari.content.n3.N3ContentHandler"/>
+
+  <!--
+    Additional resolvers
+  -->
+  <ResolverFactory class="org.kowari.resolver.file.FileResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.lucene.LuceneResolverFactory" dir="lucene"/>
+  <ResolverFactory class="org.kowari.resolver.xsd.XSDResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.http.HttpResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.nodetype.NodeTypeResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.jar.JarResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.view.ViewResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.filesystem.FileSystemResolverFactory"/>
+  <ResolverFactory class="org.kowari.resolver.prefix.PrefixResolverFactory"/>
+
+  <!-- iTQL script to run on startup -->
+  <StartupScript>foo.itql</StartupScript>
+
+  <!-- smtp server for email notifications
+    mail.xyz.com
+  -->
+  <Smtp></Smtp>
+
+</TucanaConfig>

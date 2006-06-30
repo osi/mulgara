@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<answer xmlns="http://tucana.org/tql#"><query><message>Successfully dropped model @server@#fsmodel</message><message>Successfully created model @server@#fsmodel</message><variables><object/></variables></query></answer>

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<answer xmlns="http://tucana.org/tql#"><query><variables><label/></variables><solution><label>March 2004</label></solution></query></answer>

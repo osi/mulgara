@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Resolver SPI</title>
+</head>
+<body>
+<abstract>
+Resolver SPI.
+</abstract>
+<p>
+This package is a service provider interface for plugin libraries that manage
+a particular type of statement store.
+A {@link org.kowari.resolver.spi.ResolverFactory} is provided with resources
+via the {@link org.kowari.resolver.spi.ResolverFactoryInitializer} interface
+when it is installed.  Thereafter, the factory produces
+{@link org.kowari.resolver.spi.Resolver}s which may create, modify and delete
+models, and which produce {@link org.kowari.resolver.spi.Resolution}s to
+{@link org.kowari.query.Constraint}s.
+</p>
+</body>
+</html>

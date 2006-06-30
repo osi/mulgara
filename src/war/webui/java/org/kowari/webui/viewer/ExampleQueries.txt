@@ -1,0 +1,22 @@
+#--------------------------------------
+# This file defines the example queries
+# in the select box. It maps the visible
+# option to the actual query text.
+#--------------------------------------
+
+# Model URI (leave out the <> brackets)
+ModelURI = @@model-uri@@
+
+# Put queries here. The text -model- will be replaced by the model URI above and 
+# is the model the user can edit in the text box on the UI. The text 'host.name'
+# will be rplaced by the machine host name and the text 'tucana.jar.path' will be 
+# replaced by the path to the user's Kowari jar file. 
+Step 1. Create a model = create <-model->;
+Step 2. Load RSS data into the model = load <@@data-dir@@/w3c-news.rss> into <-model->;
+Step 3. List everything in the model = select $subject $predicate $object from <-model-> where $subject $predicate $object;
+Step 4. List the news articles = select $title $link $description from <-model-> where $article <http://purl.org/rss/1.0/title> $title and $article <http://purl.org/rss/1.0/link> $link and $article <http://purl.org/rss/1.0/description> $description;
+Step 5. Create a standalone RDF schema model = create <rmi://host.name/server1#rdfs>;
+Step 6. Load in the referenced schemas = load <@@data-dir@@/rss-1.0.rdfs> into <rmi://host.name/server1#rdfs>; load <@@data-dir@@/dc.rdfs> into <rmi://host.name/server1#rdfs>; load <@@data-dir@@/rdfs.rdfs> into <rmi://host.name/server1#rdfs>;
+Step 7. List the RSS properties using both models = select $rdfSubject $rdfProperty $value from <-model-> or <rmi://host.name/server1#rdfs> where $rdfSubject $rdfProperty $value and $rdfProperty <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> and $rdfProperty <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://purl.org/rss/1.0/>;
+Step 8. Drop the models = drop <-model->; drop <rmi://host.name/server1#rdfs>;
+

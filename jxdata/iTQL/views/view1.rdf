@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rdf:RDF [
+ <!ENTITY rdf    'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+ <!ENTITY rdfs   'http://www.w3.org/2000/01/rdf-schema#'>
+ <!ENTITY kowariv   'http://tucana.org/tucana/view#'>
+ <!ENTITY server '@server@'>
+]>
+
+<rdf:RDF xml:lang="en"
+  xmlns:rdf="&rdf;"
+  xmlns:rdfs="&rdfs;"
+  xmlns:kowariv="&kowariv;">
+
+<kowariv:Union rdf:about="http://tucana.org/tucana/view" kowariv:enabled="true">
+  <kowariv:model rdfs:label="Sub Model 1"
+      rdf:resource="&server;#sub-model1"/>
+  <kowariv:model rdfs:label="Sub Model 2"
+      rdf:resource="&server;#sub-model2"/>
+</kowariv:Union>
+
+</rdf:RDF>

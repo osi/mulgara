@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="jena" default="jena-jar" basedir="${project.dir}">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="jena-classpath">
+
+    <path refid="common-classpath"/>
+
+    <fileset file="${jrdf.dist.dir}/${jrdf.base.jar}"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+    <fileset file="${driver.dist.dir}/${driver.jar}"/>
+    <fileset file="${server-local.dist.dir}/${server-local.jar}"/>
+    <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
+  </path>
+
+  <path id="jena-test-classpath">
+
+    <path refid="jena-classpath"/>
+
+    <fileset dir="${lib.dir}" includes="**/*.jar" />
+    <fileset dir="${bin.dir}" includes="**/*.jar" />
+    <fileset file="${jena.dist.dir}/${jena.jar}"/>
+  </path>
+
+  <target name="jena-clean"
+          description="Removes all compile generated files for the jrdf">
+
+    <tstamp/>
+
+    <delete dir="${jena.obj.dir}"/>
+    <delete dir="${jena.test.dir}"/>
+    <delete dir="${jena.dist.dir}"/>
+  </target>
+
+  <target name="-jena-prepare"
+          description="Creates all directories associated with the jena's
+                       compilation"
+          depends="-prepare-build">
+
+    <mkdir dir="${jena.obj.dir}"/>
+    <mkdir dir="${jena.test.dir}"/>
+    <mkdir dir="${jena.dist.dir}"/>
+    <mkdir dir="${jena.obj.dir}/classes"/>
+  </target>
+
+  <!-- Removed dependency on server-local-jar -->
+  <target name="jena-compile"
+          depends="-jena-prepare, driver-jar, server-local-jar, jrdf-jar"
+          description="Compiles all jrdf related files included generated source
+                       code">
+
+    <javac destdir="${jena.obj.dir}/classes"
+           debug="on"
+           deprecation="on"
+           source="1.4">
+
+      <classpath refid="jena-classpath"/>
+      <src path="${jena.src.dir}/java"/>
+
+    </javac>
+
+  </target>
+
+  <target name="jena-jar"
+          depends="-jena-jar-uptodate, jena-compile"
+          description="Creates the jena's jar/s"
+          unless="jena.jar.uptodate">
+
+    <jar jarfile="${jena.dist.dir}/${jena.base.jar}">
+      <fileset dir="${jena.obj.dir}/classes"/>
+    </jar>
+  </target>
+
+  <target name="-jena-jar-uptodate">
+
+    <uptodate property="jena.jar.uptodate"
+              targetfile="${jena.dist.dir}/${jena.base.jar}">
+
+      <srcfiles dir="${jena.src.dir}" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="jena-dist"
+          depends="jena-jar"
+          description="Performs all tasks related to finalising this jena
+                       and readying it for distribution">
+
+    <!-- All that's involved in the final version of the jrdf library
+         is the jar so we don't need to do anything because the dependencies
+         take care of the work. -->
+  </target>
+
+  <target name="jena-test"
+          depends="jena-jar, dist"
+          description="Carries out unit testing for jena">
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="jena-test-classpath"/>
+      <param name="dir" value="${jena.src.dir}"/>
+      <param name="jar" value="${jena.base.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="jena-javadoc"
+          depends="jena-jar"
+          description="Creates the javadoc for this jena">
+
+    <antcall target="javadoc">
+      <param name="javadoc.package" value="org.kowari.jena.*"/>
+      <param name="javadoc.classpath" value="jena-classpath"/>
+      <param name="javadoc.sourcepath" value="${jena.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="jena-help"
+          description="Displays the help information for this jena">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this jena -->
+
+    <echo message="Welcome to the build script for ${jena.name}."/>
+    <echo message="(Component jar for Kowari's Jena support)"/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${jena.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

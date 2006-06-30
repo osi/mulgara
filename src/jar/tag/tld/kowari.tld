@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+  <tlibversion>0.1</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>kowari</shortname>
+  <uri>http://www.kowari.org/kowari/taglibs/kowari</uri>
+
+  <info>
+    Tags for communicating with Kowari Metadata Stores.
+  </info>
+
+  <tag>
+    <name>init</name>
+    <tagclass>org.kowari.tag.InitTag</tagclass>
+    <teiclass>org.kowari.tag.InitTEI</teiclass>
+    <bodycontent>empty</bodycontent>
+    <info>
+      Initialises the Kowari JSP environment.
+    </info>
+    <attribute>
+      <name>server</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>render</name>
+    <tagclass>org.kowari.tag.RenderTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+      Renders an XML document using a suppied stylesheet.
+    </info>
+    <attribute>
+      <name>stylesheet</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>statement</name>
+    <tagclass>org.kowari.tag.StatementTag</tagclass>
+    <teiclass>org.kowari.tag.StatementTEI</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+      Sends queries to a Kowari server.
+    </info>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>server</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>query</name>
+    <tagclass>org.kowari.tag.QueryTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+      Adds an iTQL query to a statement.
+    </info>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>execute</name>
+    <tagclass>org.kowari.tag.ExecuteTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <info>
+      Executes a statement.
+    </info>
+    <attribute>
+      <name>query</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>answer</name>
+    <tagclass>org.kowari.tag.AnswerTag</tagclass>
+    <teiclass>org.kowari.tag.AnswerTEI</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+      Retrieves query answers from a statement.
+    </info>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>statement</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>query</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+</taglib>

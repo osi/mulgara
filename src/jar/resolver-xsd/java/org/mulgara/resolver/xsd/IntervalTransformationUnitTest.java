@@ -1,0 +1,225 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is the Kowari Metadata Store.
+ *
+ * The Initial Developer of the Original Code is Plugged In Software Pty
+ * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
+ * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
+ * Plugged In Software Pty Ltd. All Rights Reserved.
+ *
+ * Contributor(s):
+ * The copyright to this file is held by:
+ *   The Australian Commonwealth Government
+ *   Department of Defense
+ * Developed by Netymon Pty Ltd
+ * under contract 4500430665
+ * contributed to the Kowari Project under the
+ *   Mozilla Public License version 1.1
+ * per clause 4.1.3 of the above contract.
+ *
+ * [NOTE: The text of this Exhibit A may differ slightly from the text
+ * of the notices in the Source Code files of the Original Code. You
+ * should use the text of this Exhibit A rather than the text found in the
+ * Original Code Source Code for Your Modifications.]
+ *
+ */
+
+package org.mulgara.resolver.xsd;
+
+// Java 2 standard packages
+import java.net.URI;
+
+// Third party packages
+import junit.framework.*;        // JUnit
+import org.apache.log4j.Logger;  // Apache Log4J
+
+// Local packages
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.URIReferenceImpl;
+
+/**
+ * Unit testing suite for {@link IntervalTransformation}.
+ *
+ * @created 2005-05-25
+ *
+ * @author <a href="mailto:raboczi@itee.uq.edu.au">Simon Raboczi</a>
+ *
+ * @version $Revision: 1.2 $
+ *
+ * @modified $Date: 2005/06/09 09:26:20 $ @maintenanceAuthor $Author: raboczi $
+ *
+ * @copyright &copy;2005 <a href="http://www.defence.gov.au/">
+ *      Australian Commonwealth Government, Department of Defence</a>
+ *
+ * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ */
+public class IntervalTransformationUnitTest extends TestCase
+{
+  /** Logger */
+  private static Logger logger =
+    Logger.getLogger(IntervalTransformationUnitTest.class.getName());
+
+  private URIReferenceImpl greaterThan;
+
+  private URIReferenceImpl lessThan;
+
+  /**
+   * Test instance.
+   */
+  private IntervalTransformation intervalTransformation;
+
+  /**
+   * Constructs a new test with the given name.
+   *
+   * @param name the name of the test
+   */
+  public IntervalTransformationUnitTest(String name)
+  {
+    super(name);
+  }
+
+  /**
+   * Hook for test runner to obtain a test suite from.
+   *
+   * @return the test suite
+   */
+  public static Test suite()
+  {
+    TestSuite suite = new TestSuite();
+
+    suite.addTest(new IntervalTransformationUnitTest("test1Transform"));
+    suite.addTest(new IntervalTransformationUnitTest("test2Transform"));
+    suite.addTest(new IntervalTransformationUnitTest("test3Transform"));
+    suite.addTest(new IntervalTransformationUnitTest("test4Transform"));
+    suite.addTest(new IntervalTransformationUnitTest("test5Transform"));
+
+    return suite;
+  }
+
+  /**
+   * Create test instance.
+   */
+  public void setUp() throws Exception
+  {
+    greaterThan     = new URIReferenceImpl(new URI(Tucana.NAMESPACE + "lt"));
+    lessThan        = new URIReferenceImpl(new URI(Tucana.NAMESPACE + "gt"));
+    intervalTransformation = new IntervalTransformation(lessThan, greaterThan);
+  }
+
+  /**
+   * Default test runner.
+   *
+   * @param args the command line arguments
+   */
+  public static void main(String[] args)
+  {
+    junit.textui.TestRunner.run(suite());
+  }
+
+  //
+  // Test cases
+  //
+
+  /**
+   * Test #1 for the {@link IntervalTransformation#transform} method.
+   */
+  public void test1Transform() throws Exception
+  {
+    try {
+      intervalTransformation.transform((ConstraintExpression) null);
+      fail("Expected an IllegalArgumentException");
+    }
+    catch (IllegalArgumentException e) {
+      // expected
+    }
+  }
+
+  /**
+   * Test #2 for the {@link IntervalTransformation#transform} method.
+   */
+  public void test2Transform() throws Exception
+  {
+    assertNull(intervalTransformation.transform(ConstraintTrue.INSTANCE));
+  }
+
+  /**
+   * Test #3 for the {@link IntervalTransformation#transform} method.
+   *
+   * This transforms a single {@link ConstraintImpl}.
+   */
+  public void test3Transform() throws Exception
+  {
+    Variable x = new Variable("x");
+
+    assertEquals(
+      new IntervalConstraint(
+        x,
+        null,
+        new Bound(3, false)
+      ),
+      intervalTransformation.transform(
+        (ConstraintExpression) new ConstraintImpl(x, lessThan, new LiteralImpl(3))
+      )
+    );
+  }
+
+  /**
+   * Test #4 for the {@link IntervalTransformation#transform} method.
+   *
+   * This transforms a single {@link ConstraintConjunction}.
+   */
+  public void test4Transform() throws Exception
+  {
+    Variable x = new Variable("x");
+
+    assertEquals(
+      new IntervalConstraint(
+        x,
+        new Bound(2, false),
+        new Bound(3, false)
+      ),
+      intervalTransformation.transform(
+        (ConstraintExpression) new ConstraintConjunction(
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(2)),
+          new ConstraintImpl(x, lessThan, new LiteralImpl(3))
+        )
+      )
+    );
+  }
+
+  /**
+   * Test #5 for the {@link IntervalTransformation#transform} method.
+   *
+   * This transforms a {@link ConstraintConjunction} containing
+   * {@link IntervalConstraint}s over different variables.
+   */
+  public void test5Transform() throws Exception
+  {
+    Variable x = new Variable("x");
+    Variable y = new Variable("y");
+
+    assertEquals(
+      new ConstraintConjunction(
+        new IntervalConstraint(y, null, new Bound(3, false)),
+        new IntervalConstraint(x, new Bound(2, false), null)
+      ),
+      intervalTransformation.transform(
+        (ConstraintExpression) new ConstraintConjunction(
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(2)),
+          new ConstraintImpl(y, lessThan, new LiteralImpl(3))
+        )
+      )
+    );
+  }
+}

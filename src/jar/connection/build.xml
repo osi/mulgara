@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="connection" default="connection-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="connection-classpath">
+    <path refid="common-classpath"/>
+    <!-- FIXME: Remove iTQL JAR once the iTQL classes are moved into the iTQL package. -->
+    <fileset file="${itql.dist.dir}/${itql.jar}"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+    <fileset file="${rules.dist.dir}/${rules.jar}"/>
+  </path>
+  <path id="connection-test-classpath">
+    <path refid="connection-classpath"/>
+    <fileset dir="${lib.dir}" includes="**/*.jar" />
+    <fileset dir="${bin.dir}" includes="**/*.jar" />
+    <fileset file="${connection.dist.dir}/${connection.base.jar}"/>
+  </path>
+
+  <target name="connection-clean" description="Removes all compile generated files for the connection">
+    <tstamp/>
+    <delete dir="${connection.obj.dir}"/>
+    <delete dir="${connection.test.dir}"/>
+    <delete dir="${connection.dist.dir}"/>
+  </target>
+
+  <target name="connection-compile" depends="-prepare-build, server-jar" description="Compiles connection classes">
+    <mkdir dir="${connection.obj.dir}"/>
+    <mkdir dir="${connection.test.dir}"/>
+    <mkdir dir="${connection.dist.dir}"/>
+    <mkdir dir="${connection.obj.dir}/classes"/>
+    <javac destdir="${obj.dir}/jar/connection/classes" debug="on" deprecation="on" source="1.4">
+      <classpath refid="connection-classpath"/>
+      <src path="${connection.src.dir}/java"/>
+    </javac>
+  </target>
+
+  <target name="connection-jar" depends="-connection-jar-uptodate, connection-compile" unless="connection.jar.uptodate"
+          description="Creates the connection.jar">
+    <jar jarfile="${connection.dist.dir}/${connection.base.jar}">
+      <fileset dir="${connection.obj.dir}/classes"/>
+    </jar>
+  </target>
+  <target name="-connection-jar-uptodate">
+    <uptodate property="connection.jar.uptodate" targetfile="${connection.dist.dir}/${connection.base.jar}">
+      <srcfiles dir="${connection.obj.dir}/classes" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="connection-dist" depends="connection-jar" description="Prepares distribution files"/>
+
+  <target name="connection-test" depends="connection-jar, dist" description="Carries out testing for this connection">
+    <antcall target="start"/>
+    <antcall target="component-test">
+      <param name="classpath.id" value="connection-test-classpath"/>
+      <param name="dir" value="${connection.src.dir}"/>
+      <param name="jar" value="${connection.base.jar}"/>
+    </antcall>
+    <antcall target="stop"/>
+  </target>
+
+  <target name="connection-javadoc" depends="connection-jar" description="Creates the javadoc for this connection">
+    <antcall target="javadoc">
+      <param name="javadoc.package" value="org.kowari.connection.*"/>
+      <param name="javadoc.classpath" value="connection-classpath"/>
+      <param name="javadoc.sourcepath" value="${connection.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="connection-help"
+          description="Displays the help information for this connection">
+    <echo message="Welcome to the build script for ${connection.name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+    <java fork="false" classname="org.apache.tools.ant.Main" newenvironment="false">
+      <jvmarg value="${arch.bits}"/>
+      <arg line="-buildfile ${connection.src.dir}/build.xml -projecthelp"/>
+    </java>
+  </target>
+
+</project>

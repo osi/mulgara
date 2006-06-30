@@ -1,0 +1,34 @@
+<!ELEMENT KowariConfig (ExternalConfigPaths?, KowariHost?, Jetty?, ServerName, RMIPort?, PersistencePath, TransactionTimeout? TripleStoreImplementation, StartupScript?)>
+
+  <!ELEMENT ExternalConfigPaths (KowariLogging, WebDefault)>
+
+    <!ELEMENT KowariLogging (#PCDATA)>
+    <!ELEMENT WebDefault (#PCDATA)>
+
+  <!ELEMENT KowariHost (#PCDATA)>
+
+  <!ELEMENT Jetty (Listener)>
+
+    <!ELEMENT Listener (Host?, Port, MinThreads, MaxThreads, MaxIdleTimeMs, MaxReadTimeMs, LowResourcePersistTimeMs)>
+
+      <!ELEMENT Host (#PCDATA)>
+      <!ELEMENT Port (#PCDATA)>
+      <!ELEMENT MinThreads (#PCDATA)>
+      <!ELEMENT MaxThreads (#PCDATA)>
+      <!ELEMENT MaxIdleTimeMs (#PCDATA)>
+      <!ELEMENT MaxReadTimeMs (#PCDATA)>
+      <!ELEMENT LowResourcePersistTimeMs (#PCDATA)>
+
+  <!ELEMENT ServerName (#PCDATA)>
+
+  <!ELEMENT RMIPort (#PCDATA)>
+
+  <!ELEMENT PersistencePath (#PCDATA)>
+
+  <!ELEMENT TransactionTimeout (#PCDATA)>
+
+  <!ELEMENT TripleStoreImplementation (#PCDATA)>
+
+  <!ELEMENT StartupScript (#PCDATA)>
+
+  <!ELEMENT Smtp (#PCDATA)>

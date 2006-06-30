@@ -1,0 +1,2 @@
+ItqlInterpreter error - java.lang.IllegalArgumentException: Failed to constrain all variables: $pmid2 not constrained in WHERE or GIVEN clauses
+Caused by: (IllegalArgumentException) Failed to constrain all variables: $pmid2 not constrained in WHERE or GIVEN clauses

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<answer xmlns="http://tucana.org/tql#"><query><variables><s2/><p2/><v/><k0/></variables><solution><s2 resource="urn:test:8"/><p2 resource="urn:test:bar"/><v>2.0</v><k0>1.0</k0></solution></query></answer>

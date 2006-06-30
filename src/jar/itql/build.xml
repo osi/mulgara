@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="itql" default="itql-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="itql-classpath">
+    <path refid="common-classpath"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+    <fileset file="${driver.dist.dir}/${driver.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
+    <fileset file="${rules.dist.dir}/${rules.jar}"/>
+  </path>
+  <path id="itql-test-classpath">
+    <path refid="itql-classpath"/>
+    <path refid="driver-classpath"/>
+    <fileset file="${lib.dir}/commons-discovery-1.2.jar"/>
+    <fileset file="${bin.dir}/${rmi.jar}"/>
+    <fileset file="${itql.dist.dir}/${itql.jar}"/>
+    <fileset file="${rules.dist.dir}/${rules.jar}"/>
+  </path>
+
+  <target name="itql-clean" description="Removes all compile generated files for the itql">
+    <tstamp/>
+    <delete dir="${itql.obj.dir}"/>
+    <delete dir="${itql.test.dir}"/>
+    <delete dir="${itql.dist.dir}"/>
+  </target>
+
+  <target name="-itql-prepare" description="Creates all directories associated with the itql's compilation"
+      depends="-prepare-build">
+    <mkdir dir="${itql.obj.dir}"/>
+    <mkdir dir="${itql.test.dir}"/>
+    <mkdir dir="${itql.dist.dir}"/>
+    <mkdir dir="${itql.obj.dir}/classes"/>
+    <mkdir dir="${itql.obj.dir}/java"/>
+  </target>
+
+  <target name="gen-itql-parser" depends="-prepare-build, itql-parser-uptodate, sablecc" unless="itql-parser-uptodate">
+    <sablecc src="${itql.src.dir}/sablecc" outputdirectory="${itql.obj.dir}/java">
+      <include name="itql.grammar"/>
+    </sablecc>
+  </target>
+  <target name="itql-parser-uptodate" depends="-prepare-build">
+    <uptodate property="itql-parser-uptodate"
+        targetfile="${obj.dir}/jar/itql/java/org/kowari/itql/analysis/DepthFirstAdapter.java">
+      <srcfiles dir="${itql.src.dir}/sablecc" includes="itql.grammar"/>
+    </uptodate>
+  </target>
+
+  <target name="-itql-token-build-label" depends="-itql-token-build-label-uptodate" unless="itql.token.build.label.uptodate">
+    <replace file="${itql.obj.dir}/java/org/kowari/itql/ItqlSession.java" token="@@build.label@@" value="${build.label}"/>
+  </target>
+  <target name="-itql-token-build-label-uptodate">
+    <uptodate property="itql.token.build.label.uptodate" targetfile="${itql.obj.dir}/java/org/kowari/itql/ItqlSession.java">
+      <srcfiles dir="${itql.src.dir}" includes="**/ItqlSession.java"/>
+    </uptodate>
+  </target>
+
+  <target name="itql-compile" depends="-itql-prepare, gen-itql-parser, driver-jar" description="Compiles all itql related files included generated source code">
+    <copy todir="${itql.obj.dir}/java/" preservelastmodified="yes">
+      <fileset dir="${itql.src.dir}/java/" includes="**/*.java"/>
+    </copy>
+    <antcall target="-itql-token-build-label"/>
+    <javac destdir="${itql.obj.dir}/classes" debug="on" deprecation="on" source="1.4" classpathref="itql-classpath">
+      <src path="${itql.obj.dir}/java"/>
+    </javac>
+  </target>
+
+  <target name="-itql-create-manifest">
+    <mkdir dir="${obj.dir}/META-INF"/>
+    <manifest file="${obj.dir}/META-INF/MANIFEST_ITQL_BASE.MF">
+      <attribute name="Main-Class" value="org.kowari.itql.ItqlSession"/>
+    </manifest>
+    <manifest file="${obj.dir}/META-INF/MANIFEST_ITQL_BOOTSTRAP.MF">
+      <attribute name="Main-Class" value="org.kowari.util.Bootstrap"/>
+      <attribute name="Embedded-Jar" value="${query.jar}, ${driver.jar}, ${itql.jar},${util.jar}, ${server-beep.jar}, ${server-rmi.jar}, apache-soap-2.2.jar, log4j-1.2.8.jar,jargs-0.2.jar, ${jrdf.jar}, ${saaj.jar}, ${emory-util.jar}"/>
+      <attribute name="Embedded-Main-Class" value="org.kowari.itql.ItqlSession"/>
+    </manifest>
+  </target>
+
+  <target name="itql-jar" depends="itql-compile, -itql-jar-uptodate, -itql-create-manifest" unless="itql.jar.uptodate" description="Creates the itql's jar/s">
+    <jar jarfile="${itql.dist.dir}/${itql.jar}"
+         manifest="${obj.dir}/META-INF/MANIFEST_ITQL_BASE.MF">
+      <fileset dir="${itql.obj.dir}/classes" excludes="**/*.java"/>
+      <fileset dir="${itql.obj.dir}/java" includes="**/*.dat"/>
+    </jar>
+  </target>
+
+  <target name="-itql-jar-uptodate">
+    <uptodate property="itql.jar.uptodate" targetfile="${itql.dist.dir}/${itql.jar}">
+      <srcfiles dir="${itql.obj.dir}/classes" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="itql-dist"
+          depends="itql-uptodate, itql-jar, server-beep-jar, server-rmi-jar"
+          unless="itql.uptodate"
+          description="Performs all tasks related to finalising this itql
+                       and readying it for distribution">
+
+    <mkdir dir="${obj.dir}/META-INF"/>
+
+    <manifest file="${obj.dir}/META-INF/itql-MANIFEST.MF">
+      <attribute name="Main-Class" value="org.kowari.itql.ItqlSession"/>
+    </manifest>
+
+    <jar jarfile="${dist.dir}/${itql.jar}"
+         manifest="${obj.dir}/META-INF/itql-MANIFEST.MF">
+
+      <fileset dir="${conf.dir}" includes="log4j-itql.xml"/>
+      <fileset dir="${itql.src.dir}/itql"
+               includes="default-pre.itql, default-post.itql"/>
+
+      <zipfileset src="${driver.dist.dir}/${driver.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${itql.dist.dir}/${itql.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${query.dist.dir}/${query.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${server-beep.dist.dir}/${server-beep.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${util.dist.dir}/${util.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/beepcore-0.9.08.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/concurrent-1.3.4.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/jargs-0.2.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/jsr173_07_api.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/jsr173_07_ri.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/log4j-1.2.8.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
+    </jar>
+  </target>
+
+  <target name="itql-uptodate">
+
+    <uptodate property="itql.uptodate"
+              targetfile="${dist.dir}/${itql.jar}">
+
+      <srcfiles dir="${itql.dist.dir}" includes="${itql.jar}"/>
+      <srcfiles dir="${driver.dist.dir}" includes="${driver.jar}"/>
+      <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
+      <srcfiles dir="${server-beep.dist.dir}" includes="${server-beep.jar}"/>
+      <srcfiles dir="${server-rmi.dist.dir}" includes="${server-rmi.jar}"/>
+      <srcfiles dir="${util.dist.dir}" includes="${util.jar}"/>
+    </uptodate>
+  </target>
+
+  <target name="itql-test"
+          depends="itql-jar, test-data"
+          description="Carries out unit testing for this itql">
+
+    <!-- start the Kowari server -->
+    <antcall target="start"/>
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="itql-test-classpath"/>
+      <param name="dir" value="${itql.src.dir}"/>
+      <param name="jar" value="${itql.jar}"/>
+    </antcall>
+
+    <!-- stop the Kowari server -->
+    <antcall target="stop"/>
+  </target>
+
+  <target name="itql-javadoc"
+          depends="itql-jar"
+          description="Creates the javadoc for this itql">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.kowari.itql.*,
+                                           org.kowari.store.*"/>
+      <param name="javadoc.classpath" value="itql-classpath"/>
+      <param name="javadoc.sourcepath" value="${itql.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="itql-help"
+          description="Displays the help information for this itql">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this itql -->
+
+    <echo message="Welcome to the build script for ${itql.name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${itql.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

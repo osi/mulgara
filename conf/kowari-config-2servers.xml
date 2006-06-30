@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Embedded Kowari Metadata Store configuration file.
+-->
+
+<TucanaConfig>
+
+  <!-- Paths to external component configuration, relative to JAR file -->
+  <ExternalConfigPaths>
+    <TucanaLogging>conf/log4j-kowari.xml</TucanaLogging>
+    <WebDefault>conf/webdefault.xml</WebDefault>
+  </ExternalConfigPaths>
+
+  <!--
+    The hostname to bind Kowari to
+
+    Note. Not setting will cause Kowari to bind to the canonical local machine name
+  -->
+  <!--<TucanaHost>localhost</TucanaHost>-->
+
+  <!--
+    Configuration for the Jetty servlet container
+
+    Note. Not setting the "Host" parameter will cause Jetty to listen on
+          all interfaces
+  -->
+  <Jetty>
+    <Listener>
+      <!--<Host>localhost</Host>-->
+      <Port>8090</Port>
+      <MinThreads>5</MinThreads>
+      <MaxThreads>255</MaxThreads>
+      <MaxIdleTimeMs>60000</MaxIdleTimeMs>
+      <MaxReadTimeMs>60000</MaxReadTimeMs>
+      <LowResourcePersistTimeMs>5000</LowResourcePersistTimeMs>
+    </Listener>
+  </Jetty>
+
+  <!-- The name of the server, used for RMI binding -->
+  <ServerName>server2</ServerName>
+
+  <!-- RMI registry port -->
+  <RMIPort>1000</RMIPort>
+
+  <!--
+    The path to persist data to, one of:
+
+    + . - current directory (directory from which the Kowari JAR was run)
+    + temp - default system temporary directory
+    + <path> - user defined (OS dependant) path
+  -->
+  <PersistencePath>.</PersistencePath>
+
+  <!--
+    Database implementation to use, one of:
+
+    org.kowari.store.xa.XADatabaseImpl
+      (Metaphasic transactional triple store)
+  -->
+  <TripleStoreImplementation>org.kowari.store.xa.XADatabaseImpl</TripleStoreImplementation>
+
+  <!-- iTQL script to run on startup -->
+  <StartupScript>foo.itql</StartupScript>
+
+</TucanaConfig>

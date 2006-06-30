@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="client-drools" default="client-drools-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="client-drools-classpath">
+
+    <path refid="common-classpath"/>
+
+    <pathelement path="${itql.dist.dir}/${itql.jar}"/>
+    <pathelement path="${rules.dist.dir}/${rules.jar}"/>
+    <pathelement path="${driver.dist.dir}/${driver.jar}"/>
+    <pathelement path="${query.dist.dir}/${query.jar}"/>
+    <pathelement path="${server-rmi.dist.dir}/${server-rmi.jar}"/>
+    <pathelement path="${server-beep.dist.dir}/${server-beep.jar}"/>
+    <pathelement path="${util.dist.dir}/${util.jar}"/>
+
+    <fileset dir="${lib.dir}" includes="drools-base-2.0-beta-15.jar,
+                                        drools-core-2.0-beta-15.jar,
+                                        drools-io-2.0-beta-15.jar,
+                                        drools-java-2.0-beta-15.jar,
+                                        drools-smf-2.0-beta-15.jar"/>
+  </path>
+
+  <path id="client-drools-test-classpath">
+
+    <path refid="client-drools-classpath"/>
+
+    <fileset file="${client-drools.dist.dir}/${client-drools.jar}"/>
+  </path>
+
+  <target name="client-drools-clean"
+          description="Removes all compile generated files for the client-drools">
+
+    <tstamp/>
+
+    <delete dir="${client-drools.obj.dir}"/>
+    <delete dir="${client-drools.test.dir}"/>
+    <delete dir="${client-drools.dist.dir}"/>
+  </target>
+
+  <target name="-client-drools-prepare"
+          description="Creates all directories associated with the client-drools's
+                       compilation"
+          depends="-prepare-build">
+
+    <mkdir dir="${client-drools.obj.dir}"/>
+    <mkdir dir="${client-drools.test.dir}"/>
+    <mkdir dir="${client-drools.dist.dir}"/>
+    <mkdir dir="${client-drools.obj.dir}/classes"/>
+  </target>
+
+  <target name="client-drools-compile"
+          depends="-client-drools-prepare, itql-jar"
+          description="Compiles all client-drools related files included generated
+                       source code">
+
+    <javac destdir="${obj.dir}/jar/client-drools/classes" debug="on"
+           deprecation="on" source="1.4">
+
+      <classpath refid="client-drools-classpath"/>
+
+      <src path="${client-drools.src.dir}/java"/>
+    </javac>
+  </target>
+
+  <target name="client-drools-jar"
+          depends="-client-drools-jar-uptodate, client-drools-compile"
+          unless="client-drools.jar.uptodate"
+          description="Creates the client-drools's jar/s">
+
+    <copy file="${client-drools.src.dir}/java/org/kowari/client/drools/rdfs.drl"
+        tofile="${client-drools.obj.dir}/classes/org/kowari/client/drools/rdfs.drl"/>
+
+    <jar jarfile="${client-drools.dist.dir}/${client-drools.jar}">
+      <fileset dir="${client-drools.obj.dir}/classes"/>
+    </jar>
+  </target>
+
+  <target name="-client-drools-jar-uptodate">
+
+    <uptodate property="client-drools.jar.uptodate"
+              targetfile="${client-drools.dist.dir}/${client-drools.jar}">
+      <srcfiles dir="${client-drools.obj.dir}/classes" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="client-drools-dist"
+          depends="client-drools-jar"
+          unless="client-drools.uptodate"
+          description="Performs all tasks related to finalising this client-drools
+                       and readying it for distribution">
+
+    <!-- All that's involved in the final version of the client-drools library
+         is the jar so we don't need to do anything because the dependencies
+         take care of the work. -->
+  </target>
+
+  <target name="client-drools-test"
+          depends="client-drools-jar"
+          description="Carries out unit testing for this client-drools">
+
+    <antcall target="start"/>
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="client-drools-test-classpath"/>
+      <param name="dir" value="${client-drools.src.dir}"/>
+      <param name="jar" value="${client-drools.jar}"/>
+    </antcall>
+
+    <antcall target="stop"/>
+  </target>
+
+  <target name="client-drools-javadoc"
+          depends="client-drools-jar"
+          description="Creates the javadoc for this client-drools">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.kowari.client.drools.*"/>
+      <param name="javadoc.classpath" value="client-drools-classpath"/>
+      <param name="javadoc.sourcepath" value="${client-drools.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="client-drools-help"
+          description="Displays the help information for this client-drools">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this client-drools -->
+
+    <echo message="Welcome to the build script for ${client-drools.name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${client-drools.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

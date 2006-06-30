@@ -1,0 +1,571 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is the Kowari Metadata Store.
+ *
+ * The Initial Developer of the Original Code is Plugged In Software Pty
+ * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
+ * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
+ * Plugged In Software Pty Ltd. All Rights Reserved.
+ *
+ * Contributor(s): N/A.
+ *
+ * [NOTE: The text of this Exhibit A may differ slightly from the text
+ * of the notices in the Source Code files of the Original Code. You
+ * should use the text of this Exhibit A rather than the text found in the
+ * Original Code Source Code for Your Modifications.]
+ *
+ */
+
+package org.mulgara.resolver.store;
+
+// Third party packages
+import org.apache.log4j.Category;
+
+// Standard Java packages
+import java.util.*;
+
+// Locally written packages
+import org.mulgara.query.*;
+import org.mulgara.resolver.spi.Resolution;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.statement.StatementStore;
+import org.mulgara.store.statement.StatementStoreException;
+import org.mulgara.store.tuples.AbstractTuples;
+import org.mulgara.store.tuples.StoreTuples;
+import org.mulgara.store.tuples.Tuples;
+import org.mulgara.store.tuples.TuplesOperations;
+
+/**
+ * Tuples backed by the graph, corresponding to a particular constraint.
+ *
+ * It differs from {@link StatementStoreResolution} in that it handles
+ * constraints with duplicate variable bindings.  That is,
+ * <code>$x $x $x</code> which will return all the statements that have the
+ * same value in all three places.  The class retains the original constraint
+ * so that the graph index it's resolved against can be resolved anew as its
+ * variables are bound.
+ *
+ * TO DO: Support <code>$p $x $x</code> - i.e. where we have two variables and
+ * another variable not a constant.  Also, support <code>tucana:is</code>
+ * re-binding.
+ *
+ * @created 2004-08-26
+ *
+ * @author Andrew Newman
+ *
+ * @version $Revision: 1.10 $
+ *
+ * @modified $Date: 2005/05/02 20:07:58 $ by $Author: raboczi $
+ *
+ * @maintenanceAuthor $Author: raboczi $
+ *
+ * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
+ *
+ * @copyright &copy; 2003 <A href="http://www.PIsoftware.com/">Plugged In
+ *      Software Pty Ltd</A>
+ *
+ * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ */
+class StatementStoreDuplicateResolution extends AbstractTuples implements Resolution {
+
+  protected static Category logger =
+      Category.getInstance(StatementStoreDuplicateResolution.class.getName());
+
+  /**
+   * The constraint these tuples were generated to satisfy.
+   */
+  protected Constraint constraint;
+
+  /**
+   * The graph from which these tuples were generated.
+   */
+  protected StatementStore store;
+
+  /**
+   * The tuples.
+   */
+  private Tuples baseTuples, uniqueTuples;
+
+  /**
+   * Which columns s, p, o are the same.
+   */
+  private boolean[] sameColumns;
+
+  /**
+   * Whether we've calculated the rows.
+   */
+  private boolean calculatedRowCount;
+
+  /**
+   * An array that contains the position in the tuples.  Elements 0, 1, 2, 3
+   * map to subject, predicate, object and meta and the value in the array is
+   * the column position.
+   */
+  private int[] columnOrder;
+
+  private boolean hasNext = false;
+
+  private List variableList;
+
+  private TuplesEvaluator tuplesEvaluator;
+
+  /**
+   * Construct a tuples with node numbers and local tuples objects.
+   *
+   * @param newTuples a local tuples representing a graph.
+   */
+  StatementStoreDuplicateResolution(boolean[] newSameColumns, Tuples newTuples,
+      int[] newColumnOrder) {
+
+    baseTuples = newTuples;
+    sameColumns = newSameColumns;
+    columnOrder = newColumnOrder;
+
+    // Get variable list.
+    variableList = new LinkedList();
+    for (int index = 0; index < sameColumns.length; index++) {
+      if (sameColumns[index]) {
+        variableList.add(baseTuples.getVariables()[index]);
+      }
+    }
+
+    // Project for unique variables.
+    try {
+      uniqueTuples = TuplesOperations.project(baseTuples, variableList);
+    }
+    catch (TuplesException te) {
+      logger.error("Failed to get unique tuples", te);
+    }
+
+    columnOrder = newColumnOrder;
+    setVariables(newTuples.getVariables());
+    setTuplesEvaluator();
+  }
+
+  /**
+   * Find a graph index that satisfies a constraint.
+   *
+   * @param newConstraint the constraint to satisfy
+   * @param newStore the store to resolve against
+   * @throws IllegalArgumentException if <var>constraint</var> or <var>graph
+   *      </var> is <code>null</code>
+   * @throws TuplesException EXCEPTION TO DO
+   */
+  StatementStoreDuplicateResolution(Constraint newConstraint, StatementStore newStore)
+      throws TuplesException {
+
+    try {
+      constraint = newConstraint;
+      store = newStore;
+
+      // Setup which columns are duplicates.
+      boolean equalSubject = constraint.getElement(0).equals(constraint.getElement(1)) ||
+          constraint.getElement(0).equals(constraint.getElement(2));
+      boolean equalPredicate = constraint.getElement(1).equals(constraint.getElement(0)) ||
+          constraint.getElement(1).equals(constraint.getElement(2));
+      boolean equalObject = constraint.getElement(2).equals(constraint.getElement(0)) ||
+          constraint.getElement(2).equals(constraint.getElement(1));
+      sameColumns = new boolean[] { equalSubject, equalPredicate,
+          equalObject };
+
+      // Setup which are the constants and which are the variables.
+      long subject = toGraphTuplesIndex(constraint.getElement(0));
+      long predicate = toGraphTuplesIndex(constraint.getElement(1));
+      long object = toGraphTuplesIndex(constraint.getElement(2));
+      long meta = toGraphTuplesIndex(constraint.getElement(3));
+
+      // Return the tuples using the s, p, o hints.
+      baseTuples = store.findTuples(subject, predicate, object, meta);
+
+      // Get the unique values for the multiply constrained column.
+      variableList = new LinkedList();
+      for (int index = 0; index < sameColumns.length; index++) {
+        if (sameColumns[index]) {
+          variableList.add(StatementStore.VARIABLES[index]);
+        }
+      }
+      uniqueTuples = TuplesOperations.project(baseTuples, variableList);
+
+      // Set the variables.
+      Set uniqueVariables = new HashSet();
+      for (int index = 0; index < baseTuples.getVariables().length; index++) {
+        Object obj = constraint.getElement(index);
+        if (obj instanceof Variable) {
+          if (!((Variable) obj).equals(Variable.FROM)) {
+            uniqueVariables.add(obj);
+          }
+        }
+      }
+      setVariables((Variable[]) uniqueVariables.toArray(new Variable[] {}));
+
+      // Create column map.
+      int[] inverseColumnOrder = ((StoreTuples) baseTuples).getColumnOrder();
+      columnOrder = new int[4];
+      for (int index = 0; index < inverseColumnOrder.length; index++) {
+        columnOrder[inverseColumnOrder[index]] = index;
+      }
+
+      // Set up the tuples evaluator.
+      setTuplesEvaluator();
+    }
+    catch (StatementStoreException se) {
+      throw new TuplesException("Failed to set-up tuples", se);
+    }
+  }
+
+  /**
+   * Create a new tuples evaluator depending on how many columns to bind.
+   */
+  public void setTuplesEvaluator() {
+    if (variableList.size() == 2) {
+      tuplesEvaluator = new TwoConstrainedTuplesEvaluator();
+    }
+    else {
+      tuplesEvaluator = new ThreeConstrainedTuplesEvaluator();
+    }
+  }
+
+  public long getRowCount() throws TuplesException {
+    return tuplesEvaluator.getRowCount();
+  }
+
+  public boolean hasNoDuplicates() throws TuplesException {
+    return baseTuples.hasNoDuplicates();
+  }
+
+  public List getOperands() {
+    return new ArrayList();
+  }
+
+  public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
+    if (prefix.length > 4) {
+      throw new TuplesException("Prefix too long");
+    }
+    tuplesEvaluator.beforeFirst(prefix, suffixTruncation);
+  }
+
+  public void close() throws TuplesException {
+    try {
+      if (baseTuples != null) {
+        baseTuples.close();
+      }
+    }
+    finally {
+      if (uniqueTuples != null) {
+        uniqueTuples.close();
+      }
+    }
+  }
+
+  /**
+   * METHOD TO DO
+   *
+   * @return RETURNED VALUE TO DO
+   */
+  public Object clone() {
+    StatementStoreDuplicateResolution cloned = (StatementStoreDuplicateResolution) super.clone();
+    cloned.baseTuples = (Tuples) baseTuples.clone();
+    cloned.uniqueTuples = (Tuples) uniqueTuples.clone();
+    cloned.setVariables(getVariables());
+    cloned.setTuplesEvaluator();
+//    cloned.constraint = constraint;
+    return cloned;
+  }
+
+
+  public long getRowUpperBound() throws TuplesException {
+    return getRowCount();
+  }
+
+  public int getRowCardinality() throws TuplesException {
+    long count = getRowCount();
+    if (count > 1) {
+      return Cursor.MANY;
+    }
+    switch ((int) count) {
+      case 0:
+        return Cursor.ZERO;
+      case 1:
+        return Cursor.ONE;
+      default:
+        throw new TuplesException("Illegal row count: " + count);
+    }
+  }
+
+  public Constraint getConstraint() {
+    return constraint;
+  }
+
+  public long getColumnValue(int column) throws TuplesException {
+    return baseTuples.getColumnValue(column);
+  }
+
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
+    return baseTuples.isColumnEverUnbound(column);
+  }
+
+  public boolean isUnconstrained() throws TuplesException {
+    return baseTuples.isUnconstrained();
+  }
+
+  public boolean isMaterialized() {
+    return baseTuples.isMaterialized();
+  }
+
+  public boolean next() throws TuplesException {
+    return tuplesEvaluator.next();
+  }
+
+  public boolean isComplete() {
+    return true;
+  }
+
+
+  /**
+   * A decorator around the getRowCount(), next() and beforeFirst() methods on
+   * a tuples correctly sets the searching tuples and performs the correct next
+   * operation.
+   */
+  private interface TuplesEvaluator {
+
+    /**
+     * Returns the row count.
+     *
+     * @return the row count.
+     * @throws TuplesException if there was an error accessing the tuples.
+     */
+    public long getRowCount() throws TuplesException;
+
+    /**
+     * Calls before first using a given prefix.
+     *
+     * @param prefix long[] the prefix to jump to.
+     * @param suffixTruncation the suffixes to truncate.
+     * @throws TuplesException if there was a problem accessing the tuples.
+     */
+    public void beforeFirst(long[] prefix, int suffixTruncation)
+        throws TuplesException;
+
+    /**
+     * Returns true if there is another tuples.
+     *
+     * @throws TuplesException if there was a problem accessing the tuples.
+     * @return true if there is another tuples.
+     */
+    public boolean next() throws TuplesException;
+  }
+
+  /**
+   * Operates on a tuples where two of the constraints are equal.
+   */
+  private class TwoConstrainedTuplesEvaluator implements TuplesEvaluator {
+
+    public long getRowCount() throws TuplesException {
+
+      // Only calculate rows once.
+      if (!calculatedRowCount) {
+
+        // Start with total number of tuples.
+        Tuples tmpUniqueTuples = (Tuples) uniqueTuples.clone();
+        Tuples tmpTuples = (Tuples) baseTuples.clone();
+        tmpUniqueTuples.beforeFirst();
+        tmpTuples.beforeFirst();
+
+        rowCount = 0;
+
+        while (tmpUniqueTuples.next()) {
+          if (tmpUniqueTuples.getColumnValue(0) == tmpUniqueTuples.getColumnValue(1)) {
+            tmpTuples.beforeFirst(new long[] {
+                tmpUniqueTuples.getColumnValue(0),
+                tmpUniqueTuples.getColumnValue(1) }, 0);
+            while (tmpTuples.next()) {
+              rowCount++;
+            }
+          }
+        }
+
+        // Ensure we don't calculate the rows again.
+        calculatedRowCount = true;
+      }
+      return rowCount;
+    }
+
+    public void beforeFirst(long[] prefix, int suffixTruncation)
+        throws TuplesException {
+
+      // Get the subject/predicate before first.
+     uniqueTuples.beforeFirst(prefix, suffixTruncation);
+     baseTuples.beforeFirst(prefix, suffixTruncation);
+
+     hasNext = uniqueTuples.next();
+     while (hasNext && (uniqueTuples.getColumnValue(0) !=
+         uniqueTuples.getColumnValue(1))) {
+       hasNext = uniqueTuples.next();
+     }
+
+     // Go to the first tuples.
+     if (hasNext) {
+       baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0),
+           uniqueTuples.getColumnValue(1) }, 0);
+     }
+   }
+
+    public boolean next() throws TuplesException {
+
+      // Check that there are more tuples - assume tuples are in order.
+      if (hasNext) {
+
+        boolean hasNextBase = baseTuples.next();
+
+        // Check if we still have a match, if not get the next match.
+        if (!hasNextBase ||
+            !((uniqueTuples.getColumnValue(0) == baseTuples.getColumnValue(0)) &&
+            (uniqueTuples.getColumnValue(1) == baseTuples.getColumnValue(1)))) {
+
+          // Get the next item to search.
+          while (uniqueTuples.next()) {
+
+            // Check to see that there is a next value.  There will be at least
+            // one value as the items to search are based on the original tuples.
+            if (uniqueTuples.getColumnValue(0) == uniqueTuples.getColumnValue(1)) {
+              baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0),
+                  uniqueTuples.getColumnValue(1) }, 0);
+              hasNextBase = baseTuples.next();
+              if (hasNextBase) {
+                break;
+              }
+            }
+          }
+        }
+        hasNext = hasNextBase;
+      }
+      return hasNext;
+    }
+  }
+
+  /**
+   * Operates on a tuples where all three of the constraints are equal.
+   */
+  private class ThreeConstrainedTuplesEvaluator implements TuplesEvaluator {
+
+    public long getRowCount() throws TuplesException {
+
+      // Only calculate rows once.
+      if (!calculatedRowCount) {
+
+        // Start with total number of tuples.
+        Tuples tmpSubjPredTuples = (Tuples) uniqueTuples.clone();
+        Tuples tmpTuples = (Tuples) baseTuples.clone();
+        tmpSubjPredTuples.beforeFirst();
+        tmpTuples.beforeFirst();
+
+        rowCount = 0;
+
+        while (tmpSubjPredTuples.next()) {
+          if ((tmpSubjPredTuples.getColumnValue(0) == tmpSubjPredTuples.getColumnValue(1)) &&
+             (tmpSubjPredTuples.getColumnValue(1) == tmpSubjPredTuples.getColumnValue(2))) {
+            tmpTuples.beforeFirst(new long[] {
+                tmpSubjPredTuples.getColumnValue(0),
+                tmpSubjPredTuples.getColumnValue(1),
+                tmpSubjPredTuples.getColumnValue(2) }, 0);
+            while (tmpTuples.next()) {
+              rowCount++;
+            }
+          }
+        }
+
+        // Ensure we don't calculate the rows again.
+        calculatedRowCount = true;
+      }
+      return rowCount;
+    }
+
+    public void beforeFirst(long[] prefix, int suffixTruncation)
+        throws TuplesException {
+
+      // Get the subject/predicate before first.
+     uniqueTuples.beforeFirst(prefix, suffixTruncation);
+     baseTuples.beforeFirst(prefix, suffixTruncation);
+     hasNext = uniqueTuples.next();
+
+     while (hasNext &&
+         ((uniqueTuples.getColumnValue(0) != uniqueTuples.getColumnValue(1)) ||
+          (uniqueTuples.getColumnValue(1) != uniqueTuples.getColumnValue(2)))) {
+       hasNext = uniqueTuples.next();
+     }
+
+     // Go to the first tuples.
+     if (hasNext) {
+       baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0),
+           uniqueTuples.getColumnValue(1), uniqueTuples.getColumnValue(2) },
+           0);
+     }
+   }
+
+    public boolean next() throws TuplesException {
+
+      // Check that there are more tuples - assume tuples are in order.
+      if (hasNext) {
+
+        boolean hasNextBase = baseTuples.next();
+
+        // Check if we still have a match, if not get the next match.
+        if (!hasNextBase ||
+            !((uniqueTuples.getColumnValue(0) == baseTuples.getColumnValue(0)) &&
+            (uniqueTuples.getColumnValue(1) == baseTuples.getColumnValue(1)) &&
+            (uniqueTuples.getColumnValue(2) == baseTuples.getColumnValue(2)))) {
+
+          // Get the next item to search.
+          while (uniqueTuples.next()) {
+
+            // Check to see that there is a next value.  There will be at least
+            // one value as the items to search are based on the original tuples.
+            if ((uniqueTuples.getColumnValue(0) == uniqueTuples.getColumnValue(1)) &&
+                (uniqueTuples.getColumnValue(1) == uniqueTuples.getColumnValue(2))) {
+              baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0),
+                  uniqueTuples.getColumnValue(1),
+                  uniqueTuples.getColumnValue(2) }, 0);
+              hasNextBase = baseTuples.next();
+              if (hasNextBase) {
+                break;
+              }
+            }
+          }
+        }
+        hasNext = hasNextBase;
+      }
+      return hasNext;
+    }
+  }
+
+  /**
+   * Returns the long representation of the constraint element or
+   * NodePool.NONE if a variable.
+   *
+   * @param constraintElement the constraint element to resolve.
+   * @throws TuplesException if the constraint element is not supported.
+   * @return long the long representation of the constraint element.
+   */
+  protected static long toGraphTuplesIndex(ConstraintElement constraintElement)
+      throws TuplesException {
+    if (constraintElement instanceof Variable) {
+      return NodePool.NONE;
+    }
+    if (constraintElement instanceof LocalNode) {
+      return ((LocalNode) constraintElement).getValue();
+    }
+
+    throw new TuplesException("Unsupported constraint element: " +
+        constraintElement + " (" + constraintElement.getClass() + ")");
+  }
+}

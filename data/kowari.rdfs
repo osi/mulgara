@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rdf:RDF [
+ <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+ <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+ <!ENTITY kowari 'http://tucana.org/tucana#'>
+]>
+
+<rdf:RDF xml:base="http://tucana.org/tucana" xml:lang="en"
+  xmlns:rdf="&rdf;"
+  xmlns:rdfs="&rdfs;"
+  xmlns:kowari="&kowari;" >
+
+<rdfs:Class rdf:ID="Model"
+  rdfs:label="Model"
+  rdfs:comment="A set of rdf:Statements">
+</rdfs:Class>
+
+<!-- A reified RDF Statement is a Kowari Model with a single statement -->
+<rdfs:Class rdf:about="&rdf;Statement">
+  <rdfs:subClassOf rdf:resource="&kowari;Model"/>
+</rdfs:Class>
+
+<rdfs:Class rdf:ID="LuceneModel"
+  rdfs:label="Lucene model"
+  rdfs:comment="A model backed by a Lucene full text index">
+  <rdfs:subclassOf rdf:resource="#Model"/>
+</rdfs:Class>
+
+
+<!--========== LDAP Authentication / Kowari Authorization ============-->
+<!-- 
+Use Principals to define Permissions when using LDAP for authentication. 
+
+Principals are assigned URLs. The scheme part is "java:" and the path 
+part is the classname of an implementation of java.security.Principal, 
+followed by a "/" and trailing data which is parsed into arguments for the 
+class constructor.
+
+Example: java:com.sun.security.auth.UnixPrincipal/jsmith
+
+An example config is in data/security-unix.rdf. If using Kowari for 
+authentication see the section below.
+-->
+
+<rdfs:Class rdf:ID="Principal"
+  rdfs:label="Principal"
+  rdfs:comment="A credential such as a unique name or group membership">
+</rdfs:Class>
+
+
+
+<!--===========  Kowari Authentication/ Kowari Authorization  ===========-->
+
+<!--
+Use 'Group' and 'User' definitions to specify Permissions when using Kowari for 
+authentication and authorization.
+
+Groups and Users are assigned URLs. The scheme part is "kowari:" and the path 
+part is ether 'group' or 'user', followed by a "/" and then the name of the 
+group or the username of the user.
+
+Example: kowari:group/dev or kowari:user/fred
+
+An example config file is in data/security-kowari.rdf. If using LDAP for 
+authentication see the section above.
+-->
+
+<!-- User Group - subclass of Principal -->
+
+<rdfs:Class rdf:ID="Group"
+  rdfs:label="Group"
+  rdfs:comment="A user group for providing a common set of permissions to a group of users">
+  <rdfs:subclassOf rdf:resource="#Principal"/>
+</rdfs:Class>
+
+<rdf:Property rdf:ID="groupname"
+  rdfs:label="Name"
+  rdfs:comment="The group's name">
+  <rdfs:domain rdf:resource="#Group"/>
+  <rdfs:range rdf:resource="&rdfs;Literal"/>
+</rdf:Property>
+
+
+<!-- User - subclass of Principal -->
+
+<rdfs:Class rdf:ID="User"
+  rdfs:label="User"
+  rdfs:comment="A Kowari user">
+  <rdfs:subclassOf rdf:resource="#Principal"/>
+</rdfs:Class>
+
+<rdf:Property rdf:ID="username"
+  rdfs:label="Username"
+  rdfs:comment="A user's username">
+  <rdfs:domain rdf:resource="#User"/>
+  <rdfs:range rdf:resource="&rdfs;Literal"/>
+</rdf:Property>
+
+<rdf:Property rdf:ID="password" 
+  rdfs:label="Password"
+  rdfs:comment="A user's password">
+  <rdfs:domain rdf:resource="#User"/>
+  <rdfs:range rdf:resource="&rdfs;Literal"/>
+</rdf:Property>
+
+<rdf:Property rdf:ID="group" 
+  rdfs:label="User Group"
+  rdfs:comment="A user group that the user belongs to">
+  <rdfs:domain rdf:resource="#User"/>
+  <rdfs:range rdf:resource="#Group"/>
+</rdf:Property>
+
+
+
+<!--======================  Permissions  ======================-->
+
+<!-- All instances of kowari:Permission should have a domain of kowari:Principal and
+     a range of kowari:Model. -->
+<rdfs:Class rdf:ID="Permission" 
+  rdfs:label="Permission"
+  rdfs:comment="The four RDF properties kowari:canRead, kowari:canWrite, kowari:canCreate and kowari:canDelete">
+  <rdfs:subclassOf rdf:resource="&rdf;Property"/>
+</rdfs:Class>
+
+<kowari:Permission rdf:ID="canCreate"
+  rdfs:label="can create"
+  rdfs:comment="Permission for a kowari:Principal (the subject) to create a kowari:Model from a specified rdf:Resource (the object)">
+  <rdfs:domain rdf:resource="&kowari;Principal"/>
+  <rdfs:range rdf:resource="&kowari;Model"/>
+</kowari:Permission>
+
+<kowari:Permission rdf:ID="canDelete"
+  rdfs:label="can delete"
+  rdfs:comment="Permission for a kowari:Principal (the subject) to remove a kowari:Model (the object)">
+  <rdfs:domain rdf:resource="&kowari;Principal"/>
+  <rdfs:range rdf:resource="&kowari;Model"/>
+</kowari:Permission>
+
+<kowari:Permission rdf:ID="canRead"
+  rdfs:label="can read"
+  rdfs:comment="Permission for a kowari:Principal (the subject) to know if a statement occurs within a kowari:Model (the object)">
+  <rdfs:domain rdf:resource="&kowari;Principal"/>
+  <rdfs:range rdf:resource="&kowari;Model"/>
+</kowari:Permission>
+
+<kowari:Permission rdf:ID="canWrite"
+  rdfs:label="can write"
+  rdfs:comment="Permission for a kowari:Principal (the subject) to modify the occurence of statements within a kowari:Model (the object)">
+  <rdfs:domain rdf:resource="&kowari;Principal"/>
+  <rdfs:range rdf:resource="&kowari;Model"/>
+</kowari:Permission>
+
+</rdf:RDF>
+

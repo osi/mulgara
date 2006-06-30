@@ -1,0 +1,294 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is the Kowari Metadata Store.
+ *
+ * The Initial Developer of the Original Code is Plugged In Software Pty
+ * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
+ * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
+ * Plugged In Software Pty Ltd. All Rights Reserved.
+ *
+ * Contributor(s): N/A.
+ *
+ * [NOTE: The text of this Exhibit A may differ slightly from the text
+ * of the notices in the Source Code files of the Original Code. You
+ * should use the text of this Exhibit A rather than the text found in the
+ * Original Code Source Code for Your Modifications.]
+ *
+ */
+
+package org.mulgara.resolver;
+
+// Java 2 standard packages
+import java.util.*;
+
+// Third party packages
+import org.apache.log4j.Logger;
+import org.jrdf.graph.Node;
+import org.jrdf.graph.URIReference;
+
+// Local packages
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.BlankNodeImpl;
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.resolver.spi.ConstraintBindingHandler;
+import org.mulgara.resolver.spi.ConstraintModelRewrite;
+import org.mulgara.resolver.spi.ConstraintResolutionHandler;
+import org.mulgara.resolver.spi.ModelResolutionHandler;
+import org.mulgara.resolver.spi.QueryEvaluationContext;
+import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.store.tuples.Tuples;
+import org.mulgara.util.NVPair;
+
+/**
+ * Localized version of a global {@link Query}.
+ *
+ * As well as providing coordinate transformation from global to local
+ * coordinates, this adds methods to partially resolve the query.
+ *
+ * @created 2004-05-06
+ * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
+ * @version $Revision: 1.13 $
+ * @modified $Date: 2005/05/15 04:12:15 $
+ * @maintenanceAuthor $Author: pgearon $
+ * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
+ *   Technology, Inc</a>
+ * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ */
+class ConstraintOperations
+{
+  /** Logger.  */
+  private static final Logger logger = Logger.getLogger(ConstraintOperations.class.getName());
+
+  static Map modelResolutionHandlers = new HashMap();
+  static Map constraintResolutionHandlers = new HashMap();
+  static Map constraintBindingHandlers = new HashMap();
+  static Map constraintLocalizations = new HashMap();
+  static Map constraintModelRewrites = new HashMap();
+
+  static void addConstraintResolutionHandlers(NVPair[] resolutionHandlers) throws RuntimeException {
+    addToMap(resolutionHandlers, constraintResolutionHandlers,
+             ConstraintExpression.class, ConstraintResolutionHandler.class);
+  }
+
+
+  static void addConstraintBindingHandlers(NVPair[] bindingHandlers) throws RuntimeException {
+    addToMap(bindingHandlers, constraintBindingHandlers,
+             ConstraintExpression.class, ConstraintBindingHandler.class);
+  }
+
+
+  static void addModelResolutionHandlers(NVPair[] resolutionHandlers) throws RuntimeException {
+    addToMap(resolutionHandlers, modelResolutionHandlers,
+             ModelExpression.class, ModelResolutionHandler.class);
+  }
+
+  static void addConstraintModelRewrites(NVPair[] resolutionHandlers) throws RuntimeException {
+    addToMap(resolutionHandlers, constraintModelRewrites,
+             ConstraintExpression.class, ConstraintModelRewrite.class);
+  }
+
+/*
+  static void addConstraintLocalizations(NVPair[] resolutionHandlers) throws Exception {
+    addToMap(resolutionHandlers, modelResolutionHandlers,
+             ConstraintExpression.class, ConstraintLocalization.class);
+  }
+*/
+
+  static boolean constraintRegistered(Class constraintClass) {
+  return modelResolutionHandlers.containsKey(constraintClass) ||
+         constraintResolutionHandlers.containsKey(constraintClass) ||
+         constraintLocalizations.containsKey(constraintClass) ||
+         constraintModelRewrites.containsKey(constraintClass);
+  }
+
+  static void addToMap(NVPair[] pairs, Map dest, Class keyClass, Class valueClass) throws ClassCastException {
+    // Type check array.
+    for (int i = 0; i < pairs.length; i++) {
+      Class key = (Class)pairs[i].getName();
+      Object value = pairs[i].getValue();
+      if (!keyClass.isAssignableFrom(key)) {
+        throw new ClassCastException(key + " is not assignable to " + keyClass);
+      }
+      if (!valueClass.isAssignableFrom(value.getClass())) {
+        throw new ClassCastException(value.getClass() + " is not assignable to " + valueClass);
+      }
+    }
+    // Insert array into map.
+    for (int i = 0; i < pairs.length; i++) {
+      dest.put(pairs[i].getName(), pairs[i].getValue());
+    }
+  }
+
+
+  static Tuples resolveModelExpression(QueryEvaluationContext context, ModelExpression modelExpr,
+                                      Constraint constraint) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resolving " + constraint + " against ModelExpression[" + modelExpr.getClass() + "]");
+      }
+
+      ModelResolutionHandler op = (ModelResolutionHandler)modelResolutionHandlers.get(modelExpr.getClass());
+      if (op == null) {
+        throw new QueryException("Unknown ModelExpression type: " + modelExpr.getClass() + " known types: " + modelResolutionHandlers.keySet());
+      }
+        Tuples result = op.resolve(context, modelExpr, constraint);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resolved " + constraint + " against ModelExpression[" + modelExpr.getClass() + "] to: " + result);
+      }
+
+      return result;
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Resolving model expression failed", e);
+    }
+  }
+
+
+  static Tuples resolveConstraintExpression(QueryEvaluationContext context, ModelExpression modelExpr,
+                                           ConstraintExpression constraintExpr) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resolving ConstraintExpression[" + constraintExpr.getClass() + "]");
+      }
+
+      ConstraintResolutionHandler op = (ConstraintResolutionHandler)constraintResolutionHandlers.get(constraintExpr.getClass());
+      if (op == null) {
+        throw new QueryException("Unknown ConstraintExpression type: " + constraintExpr.getClass() + " known types: " + constraintResolutionHandlers.keySet());
+      }
+
+      Tuples result = op.resolve(context, modelExpr, constraintExpr);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resolved ConstraintExpression[" + constraintExpr.getClass() + "] to: " + result);
+      }
+
+      return result;
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Failed to resolve constraintExpression", e);
+    }
+  }
+
+
+  public static ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Binding Variables in ConstraintExpression[" + constraintExpr.getClass() + "]");
+      }
+
+      logger.debug("binding variables for: " + constraintExpr + " with " + bindings);
+      ConstraintBindingHandler op = (ConstraintBindingHandler)constraintBindingHandlers.get(constraintExpr.getClass());
+      if (op == null) {
+        throw new QueryException("Unknown ConstraintExpression type: " + constraintExpr.getClass() + " known types: " + constraintBindingHandlers.keySet());
+      }
+
+      ConstraintExpression result = op.bindVariables(bindings, constraintExpr);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Bound variables in ConstraintExpression[" + constraintExpr.getClass() + "] to: " + result);
+      }
+
+      return result;
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Failed to bind variables in constraintExpression", e);
+    }
+  }
+
+
+/*
+  public static ConstraintElement localize(QueryEvaluationContext context,
+                                           ConstraintExpression constraintExpr) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Localizing ConstraintExpression[" + constraintExpr.getClass() + "]");
+      }
+
+      ConstraintLocalization op = (ConstraintLocalization)constraintLocalizations.get(constraintExpr.getClass());
+      if (op == null) {
+        throw new QueryException("Unknown ConstraintExpression type: " + constraintExpr.getClass() + " known types: " + constraintLocalizations.keySet());
+      }
+
+      ConstraintElement result = op.localize(context, constraintExpr);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Localized ConstraintExpression[" + constraintExpr.getClass() + "] to: " + result);
+      }
+
+      return result;
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Failed to localize constraintExpression", e);
+    }
+  }
+*/
+
+
+  static Constraint rewriteConstraintModel(ConstraintElement newModel,
+                                           Constraint constraint) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Rewriting Model" + newModel + " in " + constraint);
+      }
+
+      ConstraintModelRewrite op = (ConstraintModelRewrite)constraintModelRewrites.get(constraint.getClass());
+      if (op == null) {
+        throw new QueryException("Unknown Constraint type: " + constraint.getClass() + " known types: " + constraintModelRewrites.keySet());
+      }
+      Constraint result = op.rewrite(newModel, constraint);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Rewrote Model" + newModel + " in " + constraint + " to " + result);
+      }
+
+      return result;
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Rewriting constraint failed", e);
+    }
+  }
+
+
+  public static Constraint replace(Map bindings, Constraint constraint) throws QueryException {
+    return ConstraintFactory.newConstraint(replace(bindings, constraint.getElement(0)),
+                                           replace(bindings, constraint.getElement(1)),
+                                           replace(bindings, constraint.getElement(2)),
+                                           replace(bindings, constraint.getElement(3)));
+  }
+
+
+  public static ConstraintElement replace(Map bindings, ConstraintElement element) {
+    if (element instanceof Variable && bindings.containsKey(element)) {
+      return (ConstraintElement)bindings.get(element);
+    } else {
+      return element;
+    }
+  }
+
+  public static List replaceOperationArgs(Map bindings, ConstraintOperation constraint) throws QueryException {
+    List newArgs = new ArrayList();
+    Iterator i = constraint.getElements().iterator();
+    while (i.hasNext()) {
+      newArgs.add(bindVariables(bindings, (ConstraintExpression)i.next()));
+    }
+
+    return newArgs;
+  }
+}

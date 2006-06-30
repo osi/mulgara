@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tql SYSTEM "tql.dtd" [
+  <!ENTITY dc   "http://purl.org/dc/elements/1.1/">
+  <!ENTITY rdf  "http://www.w3.org/1999/rdf-syntax#">
+  <!ENTITY tql  "http://pisoftware.com/tql#">
+  <!ENTITY x500 "http://osi.org/x500#">
+]>
+<tql>
+  <!-- First, ask which DBMSes know about documents and people. -->
+  <select>
+    <where from="beep://rns.site1.net:7000/models"><![CDATA[
+      <RDF xmlns="&rdf;"
+           xmlns:rdf="&rdf;"
+           xmlns:tql="&tql;">
+        <tql:Model rdf:about="node:$model">
+          <tql:contains>
+            <Statement>
+              <predicate resource="node:starts-with(?,'&dc;'|'&x500;')"/>
+            </Statement>
+          </tql:contains>
+        </tql:Model>
+      </RDF>]]>
+    </where>
+  </select>
+
+  <!-- Next, ask those DBMSes to find the works of Shakespeare. -->
+  <select>
+    <variable name="uri"/>
+    <where from="$model"><![CDATA[
+      <RDF xmlns="&rdf;"
+           xmlns:dc="&dc;">
+           xmlns:rdf="&rdf;">
+           xmlns:x500="&x500;">
+        <Description about="node:$uri">
+          <dc:creator>
+            <Alt>
+              <li>
+                <Description>
+                  <x500:cn>William Shakespeare</x500:cn>
+                </Description>
+              </li>
+              <li>
+                <Description>
+                  <x500:givenname rdf:resource="node:'Bill'|'William'|'W.'"/>
+                  <x500:sn>Shakespeare</x500:sn>
+                </Description>
+              </li>
+              <li>
+                <x500:email resource="mailto:billys@isp.co.uk"/>
+              </li>
+            </Alt>
+        </Description>
+      </RDF>]]>
+    </where>
+  </select>
+
+  <!-- Try to find titles for those works. -->
+  <select>
+    <variable name="title"/>
+    <where from="$model"><![CDATA[
+      <RDF xmlns="&rdf;"
+           xmlns:dc="&dc;">
+        <Description about="node:$uri">
+          <dc:title resource="node:$title"/>
+        </Description>
+      </RDF>]]>
+    </where>
+  </select>
+</tql>

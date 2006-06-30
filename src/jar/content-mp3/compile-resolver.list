@@ -1,0 +1,3 @@
+org/kowari/resolver/http/HttpResolver.java
+org/kowari/resolver/http/HttpResolverFactory.java
+org/kowari/resolver/http/HttpContent.java

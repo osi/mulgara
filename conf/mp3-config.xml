@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Kowari Mp3 Application configuration
+-->
+
+<Mp3ConfigXML applicationName="MusiK">
+
+  <FileSystemModel resource="rmi://localhost/server1#fsModel"
+    type ="http://tucana.org/tucana#FileSystemModel"/>
+
+  <SchemaModel resource="rmi://localhost/server1#schemaModel"
+    type ="http://tucana.org/tucana#Model">
+    <SchemaFile resource="/mp3.rdfs"/>
+  </SchemaModel>
+
+  <Mp3Model resource="rmi://localhost/server1#mp3Model"
+    type ="http://tucana.org/tucana#Model"/>
+
+</Mp3ConfigXML>

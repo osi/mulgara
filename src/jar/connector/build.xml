@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="connector" default="connector-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="connector-classpath">
+
+    <path refid="common-classpath"/>
+
+    <fileset dir="${lib.dir}" includes="jboss-j2ee.jar"/>
+    <fileset file="${driver.dist.dir}/${driver.jar}"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+  </path>
+
+  <path id="connector-test-classpath">
+
+    <path refid="connector-classpath"/>
+
+    <fileset file="${connector.dist.dir}/${connector.jar}"/>
+  </path>
+
+  <target name="connector-clean"
+          description="Removes all compile generated files for the connector">
+
+    <tstamp/>
+
+    <delete dir="${connector.obj.dir}"/>
+    <delete dir="${connector.test.dir}"/>
+    <delete dir="${connector.dist.dir}"/>
+  </target>
+
+  <target name="-connector-prepare"
+          description="Creates all directories associated with the connector's
+                       compilation"
+          depends="-prepare-build">
+
+    <mkdir dir="${connector.obj.dir}"/>
+    <mkdir dir="${connector.test.dir}"/>
+    <mkdir dir="${connector.dist.dir}"/>
+    <mkdir dir="${connector.obj.dir}/classes"/>
+  </target>
+
+  <target name="connector-compile"
+          depends="-connector-prepare, driver-jar"
+          description="Compiles all connector related files included generated
+                       source code"
+          unless="connector.classes.uptodate">
+
+    <javac destdir="${obj.dir}/jar/connector/classes" debug="on"
+           deprecation="on" source="1.4">
+
+      <classpath refid="connector-classpath"/>
+
+      <src path="${connector.src.dir}/java"/>
+    </javac>
+  </target>
+
+  <target name="connector-jar"
+          depends="-connector-jar-uptodate, connector-compile"
+          unless="connector.jar.uptodate"
+          description="Creates the connector's jar/s">
+
+    <jar jarfile="${connector.dist.dir}/${connector.jar}">
+      <fileset dir="${connector.obj.dir}/classes"/>
+    </jar>
+  </target>
+
+  <target name="-connector-jar-uptodate">
+
+    <uptodate property="connector.jar.uptodate"
+              targetfile="${connector.dist.dir}/${connector.jar}">
+      <srcfiles dir="${connector.obj.dir}/classes" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="connector-dist"
+          depends="connector-jar"
+          unless="connector.uptodate"
+          description="Performs all tasks related to finalising this connector
+                       and readying it for distribution">
+
+    <!-- All that's involved in the final version of the connector library
+         is the jar so we don't need to do anything because the dependencies
+         take care of the work. -->
+  </target>
+
+  <target name="connector-test"
+          depends="connector-jar"
+          description="Carries out unit testing for this connector">
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="connector-test-classpath"/>
+      <param name="dir" value="${connector.src.dir}"/>
+      <param name="jar" value="${connector.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="connector-javadoc"
+          depends="connector-jar"
+          description="Creates the javadoc for this connector">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.kowari.connector.*"/>
+      <param name="javadoc.classpath" value="connector-classpath"/>
+      <param name="javadoc.sourcepath" value="${connector.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="connector-help"
+          description="Displays the help information for this connector">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this connector -->
+
+    <echo message="Welcome to the build script for ${connector.name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${connector.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

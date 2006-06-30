@@ -1,0 +1,68 @@
+<html id="ExceptionHandler">
+<head>
+  <title>Application Exception</title>
+  <style type="text/css">
+    <!--
+    SPAN.highlight {color: red}
+    -->
+  </style>
+</head>
+<body>
+  <table summary="">
+    <tr>
+      <td>
+        <table summary="Exception Listing" width="100%" cellspacing="5">
+          <tr>
+            <td>
+              <h1>An Exception Occurred</h1>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <h2>Message: <span class="highlight" id="Message">"Could not open file"</span></h2>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <h2>Exception type: <span class="highlight" id="ExceptionType">java.io.FileNotFoundException</span></h2>
+            </td>
+          </tr>
+          <tr id="StackTraceHeader">
+            <td>
+              <h3>Stack Trace:</h3>
+            </td>
+          </tr>
+          <tr id="StackTraceBody">
+            <td>
+<pre>
+  <span id="StackTrace">java.io.FileNotFoundException: /usr/share/tomcat/conf/ajp12.id (Permission denied)
+        at java.io.FileOutputStream.open(Native Method)
+        at java.io.FileOutputStream.&lt;init&gt;(FileOutputStream.java:179)
+        at java.io.FileOutputStream.&lt;init&gt;(FileOutputStream.java:134)
+        at java.io.FileWriter.&lt;init&gt;(FileWriter.java:73)
+        at org.apache.tomcat.modules.server.Ajp12Interceptor.engineState(Unknown Source)
+        at org.apache.tomcat.core.ContextManager.setState(Unknown Source)
+        at org.apache.tomcat.core.ContextManager.start(Unknown Source)
+        at org.apache.tomcat.startup.EmbededTomcat.start(Unknown Source)
+        at org.apache.tomcat.startup.EmbededTomcat.execute1(Unknown Source)
+        at org.apache.tomcat.startup.EmbededTomcat$1.run(Unknown Source)
+        at org.apache.tomcat.util.compat.Jdk12Support$PrivilegedProxy.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at org.apache.tomcat.util.compat.Jdk12Support.doPrivileged(Unknown Source)
+        at org.apache.tomcat.startup.EmbededTomcat.execute(Unknown Source)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:42)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:28)
+        at java.lang.reflect.Method.invoke(Method.java:327)
+        at org.apache.tomcat.util.IntrospectionUtils.execute(Unknown Source)
+        at org.apache.tomcat.startup.Main.execute(Unknown Source)
+        at org.apache.tomcat.startup.Main.main(Unknown Source)</span>
+</pre>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

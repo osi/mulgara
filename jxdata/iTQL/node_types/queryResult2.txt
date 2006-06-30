@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<answer xmlns="http://tucana.org/tql#"><query><variables><o/></variables><solution><o>0.0</o></solution><solution><o>
+        Camera OWL Ontology                           
+                                                                  
+      Author: Roger L. Costello                                   
+      Acknowlegements: Many thanks to the following people for    
+                       their invaluable input:                    
+                          Richard McCullough, Yuzhong Qu,         
+                          Leo Sauermann, Brian McBride and        
+                          Jim Farrugia.                           
+        </o></solution></query></answer>

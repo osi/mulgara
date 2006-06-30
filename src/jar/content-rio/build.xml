@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="content-rio" default="content-rio-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="content-rio-classpath">
+
+    <path refid="common-classpath"/>
+
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+    <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
+    <fileset file="${resolver-file.dist.dir}/${resolver-file.jar}"/>
+    <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
+    <fileset file="${tuples-hybrid.dist.dir}/${tuples-hybrid.jar}"/>
+
+  </path>
+
+  <path id="content-rio-test-classpath">
+
+    <path refid="content-rio-classpath"/>
+
+    <fileset file="${resolver-file.dist.dir}/${resolver-file.jar}"/>
+    <fileset file="${store-stringpool-memory.dist.dir}/${store-stringpool-memory.jar}"/>
+    <fileset file="${store-stringpool-xa.dist.dir}/${store-stringpool-xa.jar}"/>
+
+    <fileset file="${lib.dir}/icu4j.jar"/>
+
+    <fileset file="${content-rio.dist.dir}/${content-rio.jar}"/>
+
+    <fileset file="${tuples-hybrid.dist.dir}/${tuples-hybrid.jar}"/>
+    <fileset file="${util.dist.dir}/${util.base.jar}"/>
+  </path>
+
+  <target name="content-rio-clean"
+          description="Removes all compile generated files for the content-rio">
+
+    <tstamp/>
+
+    <delete dir="${content-rio.obj.dir}"/>
+    <delete dir="${content-rio.test.dir}"/>
+    <delete dir="${content-rio.dist.dir}"/>
+  </target>
+
+  <target name="-content-rio-prepare"
+          description="Creates all directories associated with the content-rio's
+                       compilation"
+          depends="-prepare-build">
+
+    <mkdir dir="${content-rio.obj.dir}"/>
+    <mkdir dir="${content-rio.test.dir}"/>
+    <mkdir dir="${content-rio.dist.dir}"/>
+    <mkdir dir="${content-rio.obj.dir}/classes"/>
+  </target>
+
+  <target name="content-rio-compile"
+          depends="-content-rio-prepare, resolver-spi-jar, resolver-file-jar,
+          tuples-hybrid-jar, util-jar"
+          description="Compiles all content-rio related files included generated
+                       source code">
+
+    <javac destdir="${content-rio.obj.dir}/classes" debug="on"
+           deprecation="on" source="1.4">
+
+      <classpath refid="content-rio-classpath"/>
+
+      <src path="${content-rio.src.dir}/java"/>
+    </javac>
+  </target>
+
+  <target name="content-rio-jar"
+    depends="-content-rio-jar-uptodate, content-rio-compile"
+    unless="content-rio.jar.uptodate"
+    description="Builds the RDF/XML content handler JAR">
+
+    <jar jarfile="${content-rio.dist.dir}/${content-rio.jar}">
+      <fileset dir="${content-rio.obj.dir}/classes"/>
+    </jar>
+  </target>
+
+  <target name="-content-rio-jar-uptodate">
+
+    <uptodate property="content-rio.jar.uptodate"
+              targetfile="${content-rio.dist.dir}/${content-rio.jar}">
+      <srcfiles dir="${content-rio.obj.dir}/classes" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="content-rio-dist"
+          depends="content-rio-jar"
+          unless="content-rio.uptodate"
+          description="Performs all tasks related to finalising this content-rio
+                       and readying it for distribution">
+
+    <!-- All that's involved in the final version of the content-rio library
+         is the jar so we don't need to do anything because the dependencies
+         take care of the work. -->
+  </target>
+
+  <target name="content-rio-test"
+    depends="content-rio-jar, resolver-file-jar, store-stringpool-memory-jar,
+             store-stringpool-xa-jar">
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="content-rio-test-classpath"/>
+      <param name="dir" value="${content-rio.src.dir}"/>
+      <param name="jar" value="${content-rio.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="content-rio-javadoc"
+          depends="content-rio-jar"
+          description="Creates the javadoc for this content-rio">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.kowari.content.rio.*"/>
+      <param name="javadoc.classpath" value="content-rio-classpath"/>
+      <param name="javadoc.sourcepath" value="${content-rio.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="content-rio-help"
+          description="Displays the help information for this content-rio">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this content-rio -->
+
+    <echo message="Welcome to the build script for ${content-rio.name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${content-rio.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

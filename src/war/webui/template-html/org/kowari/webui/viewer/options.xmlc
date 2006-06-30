@@ -1,0 +1,35 @@
+###################################
+##       XMLC options file       ##
+###################################
+
+# For a list of options go here:
+#   http://xmlc.enhydra.org/software/documentation/doc/xmlc/user-manual/xmlc-command.html
+
+-verbose
+-dom xerces
+-urlregexpmapping images xlib/images
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><title>Version 1.0.5 (Build 1.0.831)</title>
+
+<link rel="icon" type="text/png" href="./media/images/icons/siteicon.png">
+<link rel="shortcut icon" type="text/png" href="siteicon.png">
+
+<meta name="author" content="Tom Adams">
+<meta name="copyright" content="Copyright &copy; 2003, Kowari Project">
+<meta name="robots" content="all">
+<meta name="description" content="Kowari Project Home">
+<meta name="keywords" content="Version 1.0.5 (Build 1.0.831)kowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage">
+<meta name="location" content="Global">
+<meta name="document-distribution" content="Global">
+
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="dialect" content="AU">
+<meta http-equiv="language" content="English">
+<meta http-equiv="window-target" content="_top">
+
+<meta name="DC.Title" content="kowari : metastore">
+<meta name="DC.Creator" content="Tom Adams">
+<meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php"><!--<meta name="DC.Contributor" content="Andrew Newman" />-->
+
+<meta name="DC.Subject" content="Kowari Project Home">
+<meta name="DC.Description" content="Kowari Project Home">
+<meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22">
+<meta name="DC.Modified" scheme="iso8601" content="2003-09-22">
+<meta name="DC.Language" scheme="rfc1766" content="en">
+<meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright">
+<meta name="DC.Type" content="Text.Homepage.Personal">
+<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php">
+
+<meta name="Generator" content="AITPublish">
+
+<link rel="stylesheet" href="kowari_stylesheet.css"><!-- <link rel="stylesheet" href="44.css"> -->
+
+<base target="BODY"></head>
+
+<body>
+<table border="0" width="100%">
+  <tbody><tr valign="top">
+	  <td width="80%"> 
+      <table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="top">
+<td width="18">
+<p class="prevnextbutton"><a href="3194.htm" target="_self"><img src="previous.gif" alt="Previous Topic" align="bottom" border="0" height="25" hspace="2" vspace="2" width="23"></a></p></td>
+<td width="18">
+<p class="prevnextbutton"><a href="1676.htm" target="_self"><img src="next.gif" alt="Next Topic" align="bottom" border="0" height="25" hspace="2" vspace="2" width="23"></a></p></td>
+</tr>
+</tbody></table>
+<h2 class="heading2">Version 1.0.5 (Build 1.0.831)</h2>
+<p class="bodytext">This release includes new iTQL operations and the <code class="monospace">having</code>
+clause, improved Jena support, a new OWL API called SOFA, improved RMI
+handling, many enhancements to the client/server functionality, support
+for N3, as well as upgrades to JRDF and Jena.</p>
+<p class="bodytext">For more information on changes between releases, consult the <a id="h1486" class="documentlinktemplate" title="Revision History" href="1217.htm" target="_self">revision history</a>.</p>
+<p class="bodytext">The downloads available include:</p>
+<ul class="listbullet"><li class="listbullet"><a class="internetlinktemplate" title="" href="http://prdownloads.sourceforge.net/kowari/kowari-1.0.5.zip?download" target="_blank">Complete Source</a></li><li class="listbullet"><a class="internetlinktemplate" title="" href="http://prdownloads.sourceforge.net/kowari/kowari-lite-1.0.5.zip?download" target="_blank">Kowari Lite Binaries</a></li></ul><p class="bodytext">Notes:</p>
+<ul class="listbullet"><li class="listbullet">Cardinality support. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1004563&amp;group_id=89874&amp;atid=591707" target="_blank">1004563</a>.</li><li class="listbullet">Jena Fastpath Support. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=944964&amp;group_id=89874&amp;atid=591707" target="_blank">944964</a>.</li><li class="listbullet"><code class="monospace">exclude</code> iTQL command. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1004232&amp;group_id=89874&amp;atid=591707" target="_blank">1004232</a>.</li><li class="listbullet">A refactoring of the string pool. Increases load speed by up to 50%, among other changes. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1041080&amp;group_id=89874&amp;atid=591707" target="_blank">1041080</a>.</li><li class="listbullet">Speed improvement to sub-queries. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=994937&amp;group_id=89874&amp;atid=591707" target="_blank">994937</a>.</li><li class="listbullet">Client/Server JRDF and Jena Support. SF features <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1004369&amp;group_id=89874&amp;atid=591707" target="_blank">1004369</a> and <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1004371&amp;group_id=89874&amp;atid=591707" target="_blank">1004371</a>.</li><li class="listbullet">Remote loading (client to server) and backup (server to client). SF features <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1005704&amp;group_id=89874&amp;atid=591707" target="_blank">1005704</a> and <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1011195&amp;group_id=89874&amp;atid=591707" target="_blank">1011195</a>.</li><li class="listbullet">N3 Parsing and Output. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=975020&amp;group_id=89874&amp;atid=591707" target="_blank">975020</a>.</li><li class="listbullet">SOFA OWL API support. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1028149&amp;group_id=89874&amp;atid=591707" target="_blank">1028149</a>.</li><li class="listbullet">Pre-fetching of paged Answers. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=994209&amp;group_id=89874&amp;atid=591707" target="_blank">994209</a>.</li><li class="listbullet">Upgrade of JRDF and patching of Jena. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1028226&amp;group_id=89874&amp;atid=591707" target="_blank">1028226</a> and <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1028228&amp;group_id=89874&amp;atid=591707" target="_blank">1028228</a>.</li><li class="listbullet">Caching of globalized nodes for speed improvement. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=995008&amp;group_id=89874&amp;atid=591707" target="_blank">995008</a>.</li><li class="listbullet">2 times speed improvement on read calls on ModelKowari. SF feature <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1028450&amp;group_id=89874&amp;atid=591707" target="_blank">1028450</a>.</li></ul><p class="bodytext">A list of bugs fixed in this release is available <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?atid=591704&amp;group_id=89874&amp;_group=413549&amp;set=custom&amp;_status=100&amp;_assigned_to=0" target="_blank">here</a>.</p>
+<p class="bodytext">The outstanding bugs in this release are as follows:</p>
+<ul class="listbullet"><li class="listbullet">The Kowari Viewer<sup class="superscript">TM</sup>, the web based iTQL<sup class="superscript">TM</sup> user interface, does not support unicode querying. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=970139&amp;group_id=89874&amp;atid=591704" target="_blank">970139</a>. The Swing UI, scripting and SOAP API do.</li><li class="listbullet">Counts are incorrect when using variables in the IN clause. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1023470&amp;group_id=89874&amp;atid=591704" target="_blank">1023470</a>.</li><li class="listbullet">An error in loading data when autocommit is set off causes rollback instead of setting autocommit to on. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1021572&amp;group_id=89874&amp;atid=591704" target="_blank">1021572</a>.</li><li class="listbullet">Client side JRDF does not support blank nodes. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1032218&amp;group_id=89874&amp;atid=591704" target="_blank">1032218</a>.</li><li class="listbullet">All cloning of remote answers should be removed. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1032337&amp;group_id=89874&amp;atid=591704" target="_blank">1032337</a>.</li><li class="listbullet">Does not compile under Java 1.5. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1038219&amp;group_id=89874&amp;atid=591704" target="_blank">1038219</a>.</li><li class="listbullet">Result of a <code class="monospace">count</code> should be xsd:nonNegativeInteger. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1032343&amp;group_id=89874&amp;atid=591704" target="_blank">1032343</a>.</li><li class="listbullet">Missing unit test for queries only involving Lucene models. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=999183&amp;group_id=89874&amp;atid=591704" target="_blank">999183</a>.</li><li class="listbullet">Backup
+and restore does not handle full text models. On restore the system
+thinks that the full text models exist when they may not. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=978696&amp;group_id=89874&amp;atid=591704" target="_blank">978696</a>. The backup/restore system only handles the single statement store not external model implementations such as Lucene.</li><li class="listbullet">The query layer has no object representing unbound results. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=947517&amp;group_id=89874&amp;atid=591704" target="_blank">947517</a>.</li><li class="listbullet">Loading RDF data can cause the system to corrupt. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=978672&amp;group_id=89874&amp;atid=591704" target="_blank">978672</a>.
+This is restricted to RDF/XML containing certain predicates that are
+used by the system model and would not normally occur in normal usage.</li><li class="listbullet">When columns are unbound they create duplicates. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=949673&amp;group_id=89874&amp;atid=591704" target="_blank">949673</a>.</li><li class="listbullet"><code class="monospace">having</code> fails if <code class="monospace">count</code> returns empty. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1037386&amp;group_id=89874&amp;atid=591704" target="_blank">1037386</a>.</li><li class="listbullet">Jena literals lose language and datatype. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1015539&amp;group_id=89874&amp;atid=591704" target="_blank">1015539</a>.</li><li class="listbullet">Cannot insert into Lucene models statements with blank nodes as subjects. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=989790&amp;group_id=89874&amp;atid=591704" target="_blank">989790</a>.</li><li class="listbullet">UnconstrainedResolution returns Long.MAX_VALUE. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=979536&amp;group_id=89874&amp;atid=591704" target="_blank">979536</a>.</li><li class="listbullet">Abstract tuples should not implement getRowComparator. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=962034&amp;group_id=89874&amp;atid=591704" target="_blank">962034</a>.</li><li class="listbullet">Byte order mis-match causes the machine to hang. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=978687&amp;group_id=89874&amp;atid=591704" target="_blank">978687</a>. Doing a backup/restore instead of moving directories will prevent this from occurring.</li><li class="listbullet">WebUI does not honor RMI server name. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=994160&amp;group_id=89874&amp;atid=591704" target="_blank">994160</a>.</li><li class="listbullet">Answer does not implement getObject(String). SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=968648&amp;group_id=89874&amp;atid=591704" target="_blank">968648</a>.</li><li class="listbullet">WebUI does not handle unbound values (returns true from a query). SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1020093&amp;group_id=89874&amp;atid=591704" target="_blank">1020093</a>.</li><li class="listbullet">HybridTuples getRowCount sometimes throws NPE. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1020135&amp;group_id=89874&amp;atid=591704" target="_blank">1020135</a>.</li><li class="listbullet">UnorderedProjection is occurring on a ordered projection. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=985669&amp;group_id=89874&amp;atid=591704" target="_blank">985669</a>.</li><li class="listbullet">Unification in append and join operations need to co-operate. At the moment they don't. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=960504&amp;group_id=89874&amp;atid=591704" target="_blank">960504</a>.</li><li class="listbullet">HybridTuples do not cap their total memory usage. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=958334&amp;group_id=89874&amp;atid=591704" target="_blank">958334</a>.</li><li class="listbullet">Can't compile using JRockit JDK. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=947534&amp;group_id=89874&amp;atid=591707" target="_blank">947534</a>. Use the Sun or other SDK to compile. Seems to be a SableCC issue. Runs under JRockit.</li><li class="listbullet">jxUnitTests don't exercise FileTuples.beforeFirst(prefix). SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=919218&amp;group_id=89874&amp;atid=591704" target="_blank">919218</a>.</li><li class="listbullet">Original file that's zipped is limited to 2GB in size. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=936092&amp;group_id=89874&amp;atid=591704" target="_blank">936092</a>. This is a problem with Java's implementation of ZIP.</li><li class="listbullet">Under Mac OS<sup class="superscript">&reg;</sup>
+X you should kill the Kowari process rather than hitting Control-C as
+it seems cause the operating system to become unstable. This may be
+related to mapped I/O problems. Again, this does not lead to corruption
+of the database. SF bug <a class="internetlinktemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=898486&amp;group_id=89874&amp;atid=591704" target="_blank">898486</a>.</li><li class="listbullet">Change TuplesException to CursorException. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=960577&amp;group_id=89874&amp;atid=591704" target="_blank">960577</a>.</li><li class="listbullet">OrderByRowComparator fails without projection. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=962055&amp;group_id=89874&amp;atid=591704" target="_blank">962055</a>.</li><li class="listbullet">Make HybridTuples use memory adaptively. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=958336&amp;group_id=89874&amp;atid=591704" target="_blank">958336</a>.</li><li class="listbullet">TuplesOperation should consume input parameter. SF bug <a class="internetlinktemplate" title="" href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=960518&amp;group_id=89874&amp;atid=591704" target="_blank">960518</a>.</li></ul><table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="top">
+<td width="226">
+<p class="relatedheading">See Also</p><p class="relateditem"><a href="1163.htm" target="_self">Kowari Downloads</a></p><p class="relateditem"><a href="3194.htm" target="_self">Version 1.1.0 Pre-release 1 (Build 1.1.0.192)</a></p><p class="relateditem"><a href="1676.htm" target="_self">Version 1.0.4.1 (Build 1.0.509)</a></p><p class="relateditem"><a href="1567.htm" target="_self">Version 1.0.4 (Build 1.0.508)</a></p><p class="relateditem"><a href="1474.htm" target="_self">Version 1.0.3 (Build 1.0.294)</a></p><p class="relateditem"><a href="1172.htm" target="_self">Version 1.0.2 (Build 1.0.222)</a></p><p class="relateditem"><a href="1198.htm" target="_self">Version 1.0.1 (Build 1.0.52)</a></p><p class="relateditem"><a href="1207.htm" target="_self">Version 1.0 (Build 1.0.4)</a></p><p class="relateditem"><a href="1218.htm" target="_self">Source Access</a></p><p class="relateditem"><a href="1217.htm" target="_self">Revision History</a></p></td>
+</tr>
+</tbody></table>
+
+
+			
+    </td>
+		<td width="20">
+		<br>
+</td>
+		<td align="left">
+		  <h3 class="heading3">Latest News</h3>
+			
+      <p class="bodytext"><a href="1452.htm#o3199">Kowari 1.1.0 Pre-release 2 Released</a></p>
+<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
+			<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
+			<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
+      <p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
+      <p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
+      <p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
+      <p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
+      <!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
+      <p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
+			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
+      <br>
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border: 0pt none ; width: 110px;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo"></a>
+      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border: 0pt none ; height: 72px;" src="tucana%20logo.gif" alt="Tucana Technologies Logo"></a>
+      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border: 0pt none ; height: 37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo"></a>
+		</td>
+	</tr>
+  <tr valign="bottom">
+	  <td>
+		<br>
+    <p class="toc">&copy; 2001-2004 Tucana Technologies, Inc. Some rights reserved.</p>
+    </td>
+	</tr>
+</tbody></table>
+</body></html>

@@ -1,0 +1,4 @@
+ItqlInterpreter error - org.kowari.query.QueryException: Could not commit insert
+Caused by: (QueryException) Could not commit insert
+Caused by: (QueryException) javax.transaction.RollbackException: null
+Caused by: (QueryException) rmi://localhost/server1#nomodelexistswiththisname is not a Model

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="rules" default="rules-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="rules-classpath">
+
+    <path refid="common-classpath"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
+  </path>
+
+  <path id="rules-test-classpath">
+
+    <path refid="rules-classpath"/>
+
+    <fileset file="${rules.dist.dir}/${rules.jar}"/>
+  </path>
+
+  <target name="rules-clean"
+          description="Removes all compile generated files for the rules">
+
+    <tstamp/>
+
+    <delete dir="${rules.obj.dir}"/>
+    <delete dir="${rules.test.dir}"/>
+    <delete dir="${rules.dist.dir}"/>
+  </target>
+
+  <target name="-rules-prepare"
+          description="Creates all directories associated with the rules's compilation"
+          depends="-prepare-build">
+
+    <mkdir dir="${rules.obj.dir}"/>
+    <mkdir dir="${rules.test.dir}"/>
+    <mkdir dir="${rules.dist.dir}"/>
+    <mkdir dir="${rules.obj.dir}/classes"/>
+    <mkdir dir="${rules.obj.dir}/classes/conf"/>
+    <mkdir dir="${rules.obj.dir}/java"/>
+  </target>
+
+  <target name="-unjar-config"
+          depends="-unjar-config-uptodate"
+          unless="unjar.config.uptodate">
+
+    <unjar src="${bin.dir}/${config.jar}" dest="${rules.obj.dir}/classes"/>
+  </target>
+
+  <target name="-unjar-config-uptodate">
+
+    <available file="${rules.obj.dir}/classes/org/kowari/config/TucanaConfig.class"
+               property="unjar.config.uptodate"/>
+  </target>
+
+  <target name="rules-compile"
+          depends="-rules-prepare, util-jar, config-jar, -unjar-config"
+          description="Compiles all rules related files included generated
+                       source code"
+          unless="rules.classes.uptodate">
+
+    <javac destdir="${rules.obj.dir}/classes" debug="on"
+           deprecation="on" source="1.4">
+
+      <classpath refid="rules-classpath"/>
+
+      <src path="${rules.src.dir}/java"/>
+    </javac>
+
+    <rmic classname="org.kowari.rules.RulesRefImpl"
+              base="${obj.dir}/jar/rules/classes">
+                  
+      <classpath refid="rules-classpath"/>
+    </rmic>
+
+  </target>
+
+  <target name="rules-jar"
+          depends="-rules-jar-uptodate, rules-compile, config-database"
+          unless="rules.jar.uptodate"
+          description="Creates the rules's jar/s">
+
+    <jar jarfile="${rules.dist.dir}/${rules.jar}">
+
+      <fileset dir="${rules.obj.dir}/classes"/>
+      <fileset dir="${rules.obj.dir}/java" includes="**/*.dat"/>
+    </jar>
+  </target>
+
+  <target name="-rules-jar-uptodate">
+
+    <uptodate property="rules.jar.uptodate"
+              targetfile="${rules.dist.dir}/${rules.jar}">
+      <srcfiles dir="${rules.obj.dir}" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="rules-dist"
+          depends="rules-jar"
+          unless="rules.uptodate"
+          description="Performs all tasks related to finalising this rules
+                       and readying it for distribution">
+
+    <!-- All that's involved in the final version of the rules library
+         is the jar so we don't need to do anything because the dependencies
+         take care of the work. -->
+  </target>
+
+  <target name="rules-test"
+          depends="rules-jar"
+          description="Carries out unit testing for this rules">
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="rules-test-classpath"/>
+      <param name="dir" value="${rules.src.dir}"/>
+      <param name="jar" value="${rules.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="rules-javadoc"
+          depends="rules-jar"
+          description="Creates the javadoc for this rules">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.kowari.rules.*,
+                                           org.kowari.server.*"/>
+      <param name="javadoc.classpath" value="rules-classpath"/>
+      <param name="javadoc.sourcepath" value="${rules.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="rules-help"
+          description="Displays the help information for this rules">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this rules -->
+
+    <echo message="Welcome to the build script for ${name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${rules.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

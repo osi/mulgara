@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title> System Architecture </title>
+<link rel="icon" type="text/png"
+href="./media/images/icons/siteicon.png" />
+<link rel="shortcut icon" type="text/png" href="siteicon.png" />
+
+<meta name="author" content="Tom Adams" />
+<meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
+<meta name="robots" content="all" />
+<meta name="description" content="Kowari Project Home" />
+<meta name="keywords" content="System Architecturekowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="location" content="Global" />
+<meta name="document-distribution" content="Global" />
+
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="dialect" content="AU" />
+<meta http-equiv="language" content="English" />
+<meta http-equiv="window-target" content="_top" />
+
+<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Creator" content="Tom Adams" />
+<meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
+<!--<meta name="DC.Contributor" content="Andrew Newman" />-->
+<meta name="DC.Subject" content="Kowari Project Home" />
+<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
+<meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
+<meta name="DC.Language" scheme="rfc1766" content="en" />
+<meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
+<meta name="DC.Type" content="Text.Homepage.Personal" />
+<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+
+<meta name="Generator" content="AITPublish" />
+
+<link rel="stylesheet" href="kowari_stylesheet.css">
+<!-- <link rel="stylesheet" href="44.css"> -->
+<base target="BODY">
+</head>
+<body>
+<table border="0" width="100%">
+  <tr valign="top">
+	  <td width="80%"> 
+      <table cellpadding="0" cellspacing="0" border="0">
+<tr valign="top">
+<td width= "18">
+<p class="prevnextbutton"><a href="2553.htm" target="_self"><img src="previous.gif" alt="Previous Topic" height="25px" width="23px" vspace="2" hspace="2" align="bottom" border="0" /></a></p></td>
+<td width= "18">
+<p class="prevnextbutton"><a href="485.htm" target="_self"><img src="next.gif" alt="Next Topic" height="25px" width="23px" vspace="2" hspace="2" align="bottom" border="0" /></a></p></td>
+</tr>
+</table>
+<h1 class="heading1">System Architecture</h1>
+<p class="bodytext">Much like a relational database, Kowari may be used as a data repository for software applications. Kowari has an open API that supports many industry-standard programming languages and protocols.</p>
+<p class="bodytext">Different types of users interact with Kowari in different ways depending on their needs:</p>
+<ul class="listbullet"><li class="listbullet">End users interact with Kowari indirectly via applications that use Kowari as the underlying data repository.</li><li class="listbullet">System administrators use iTQL to load metadata into Kowari, check its status, back up information held, or otherwise administer Kowari databases.</li><li class="listbullet">Programmers perform the integration between their own applications and Kowari. Queries to Kowari databases can be issued via any of the following industry-standard mechanisms:<ul class="listbullet2"><li class="listbullet2"><a id="h551" class="documentlinktemplate" title="iTQL Shell" href="526.htm" target="_self">iTQL shell</a></li><li class="listbullet2"><a id="h552" class="documentlinktemplate" title="Simple Object Access Protocol (SOAP)" href="527.htm" target="_self">Simple Object Access Protocol (SOAP)</a></li><li class="listbullet2"><a id="h954" class="documentlinktemplate" title="iTQL Bean" href="528.htm" target="_self">iTQL JavaBean</a></li><li class="listbullet2"><a id="h660" class="documentlinktemplate" title="Kowari Driver" href="530.htm" target="_self">Kowari Driver</a><p class="listcontinue">Each of the above mechanisms connect to a Kowari driver, which in turn connects to a Kowari server over a separate communication channel. The communication channel is configurable and determines how a server exposes itself to the world, generally via RMI or SOAP.</p>
+</li></ul></li></ul><p class="bodytext">Using SOAP allows Kowari to run on a different server from an organizations' web application server, and still maintain accessibility through the regular corporate firewall. If this is not required (for example, the Java RMI port is opened on the firewall, or the Kowari server and the web application server are running on the same machine) the JSP tag libraries can communicate with the driver directly using the iTQL bean, effectively removing a level of indirection. The JSP tag libraries and COM object provide convenient methods by which iTQL commands can be sent and answers parsed into suitable formats.</p>
+<p class="bodytext">iTQL commands received by the SOAP endpoint are sent to the iTQL interpreter. The interpreter uses a driver to issue commands to Kowari servers containing the models specified by the command. The driver is responsible for coordinating the distribution of commands to the appropriate servers, and collating the results into a single answer to be returned to the interpreter. The remote server receives method calls from the driver via RMI, and makes the appropriate method calls to the underlying Kowari database.</p>
+<p class="bodytext">Pluggable resolvers, provided with Kowari or written by third parties, allow Kowari to query just about any type of data source, including:</p>
+<ul class="listbullet"><li class="listbullet">The Kowari native XA datastore (both local and distributed)</li><li class="listbullet">Lucene models</li><li class="listbullet">XSD datatype models</li><li class="listbullet">Views</li><li class="listbullet">External data sources such as relational databases or Mbox files</li></ul><p class="bodytext">See the <a id="h3078" class="documentlinktemplate" title="Resolvers" href="2552.htm" target="_self">Resolvers section</a> for more information, including a tutorial on how to write your own resolvers.</p>
+<p class="bodytext">Deciding on the appropriate integration method depends on your choice of development tools, platform, operating system and network environment. You should choose:</p>
+<ul class="listbullet"><li class="listbullet">JavaServer Pages (JSP) tag libraries when:<ul class="listbullet2"><li class="listbullet2">Your application presents a web interface or requires HTML, XHTML or XML publishing</li><li class="listbullet2">You are a web developer familiar with JSP technology and don't require the sophistication of servlets</li></ul></li><li class="listbullet"><a id="h551_2" class="documentlinktemplate" title="iTQL Shell" href="526.htm" target="_self">iTQL shell</a> when you require:<ul class="listbullet2"><li class="listbullet2">A text-based interactive interface with Kowari</li><li class="listbullet2">Shell-based scripting for scheduled tasks, for example cron jobs or Windows Services</li></ul></li><li class="listbullet"><a id="h552_2" class="documentlinktemplate" title="Simple Object Access Protocol (SOAP)" href="527.htm" target="_self">Simple Object Access Protocol (SOAP)</a> when you:<ul class="listbullet2"><li class="listbullet2">Are developing a non-Java application, for example Perl, PHP or using other socket-based communication</li><li class="listbullet2">Have firewall restrictions between Kowari and your application</li><li class="listbullet2">Require SSL or TLS to secure the connection between Kowari and your application</li></ul></li><li class="listbullet"><a id="h553" class="documentlinktemplate" title="iTQL Bean" href="528.htm" target="_self">iTQL Bean</a> when you:<ul class="listbullet2"><li class="listbullet2">Require fine-grain access to a Kowari server</li><li class="listbullet2">Are building third party connectivity libraries</li><li class="listbullet2">Are a developer who uses visual JavaBeans development tools, for example IBM VisualAge for Java</li><li class="listbullet2">Are a web developer developing sophisticated data-centric web-based applications</li></ul></li><li class="listbullet"><a id="h2880" class="documentlinktemplate" title="Java RDF (JRDF)" href="2466.htm" target="_self">Java RDF (JRDF)</a> when you:<ul class="listbullet2"><li class="listbullet2">Require a highly modular and type safe interface allowing users to create, store and query RDF statements</li></ul></li></ul><p class="bodytext">The following sections explore the application integration methods available in more detail and where applicable, provides links to tutorials. The assumption is that you are familiar with the <a class="internetlinktemplate" title="" href="http://java.sun.com" target="_blank">Java<sup class="superscript">TM</sup></a> language for software development.</p>
+<table cellpadding="0" cellspacing="0" border="0">
+<tr valign="top">
+<td width= "226.8">
+<p class="relatedheading">In This Section</p><p class="relateditem"><a href="485.htm" target="_self">JavaServer Pages Tag Library</a></p><p class="relateditem"><a href="526.htm" target="_self">iTQL Shell</a></p><p class="relateditem"><a href="527.htm" target="_self">Simple Object Access Protocol (SOAP)</a></p><p class="relateditem"><a href="528.htm" target="_self">iTQL Bean</a></p><p class="relateditem"><a href="530.htm" target="_self">Kowari Driver</a></p><p class="relateditem"><a href="2466.htm" target="_self">Java RDF (JRDF)</a></p></td>
+</tr>
+</table>
+
+
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <h3 class="heading3">Latest News</h3>
+			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
+			<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
+			<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
+			<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
+      <p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
+      <p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
+      <p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
+      <p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
+      <!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
+      <p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
+			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
+      <br>
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
+      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+		</td>
+	</tr>
+  <tr valign="bottom">
+	  <td>
+		<br>
+    <p class="toc">&copy; 2001-2004 Tucana Technologies, Inc. Some rights reserved.</p>
+    </td>
+	</tr>
+</table>
+</body>
+</html>
+
+
