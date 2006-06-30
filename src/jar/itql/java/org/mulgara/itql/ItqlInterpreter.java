@@ -3706,7 +3706,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
   //
 
   /**
-   * Builds a {@link org.mulgara.query.ConstraintExpression} object from a
+   * Builds a {@link org.mulgara.rdql.query.ConstraintExpression} object from a
    * {@link org.kowari.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
    * to resolve aliases.
    *
@@ -3752,7 +3752,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
   }
 
   /**
-   * Builds a HAVING compliant {@link org.mulgara.query.ConstraintExpression} object from a
+   * Builds a HAVING compliant {@link org.mulgara.rdql.query.ConstraintExpression} object from a
    * {@link org.kowari.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
    * to resolve aliases.  To comply with a HAVING clause the predicate must be one of:
    * tks:occurs tks:occursLessThan tks:occursMoreThan.

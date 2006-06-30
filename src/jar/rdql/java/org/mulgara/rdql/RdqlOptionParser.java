@@ -25,7 +25,7 @@
  *
  */
 
-package org.mulgara;
+package org.mulgara.rdql;
 
 // third party packages
 import jargs.gnu.CmdLineParser;

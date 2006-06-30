@@ -25,7 +25,7 @@
  *
  */
 
-package org.mulgara;
+package org.mulgara.rdql;
 
 // Java 2 standard packages
 import java.io.*;

@@ -90,7 +90,7 @@ public class ModelExpressionBuilder {
   //
 
   /**
-   * Builds a {@link org.mulgara.query.ModelExpression} object from a {@link
+   * Builds a {@link org.mulgara.rdql.query.ModelExpression} object from a {@link
    * org.kowari.itql.node.PModelExpression}, using an <code>aliasMap</code>
    * to resolve aliases.
    *
@@ -143,12 +143,12 @@ public class ModelExpressionBuilder {
   //
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
    * {@link org.kowari.itql.node.PModelExpression}.
    *
    * @param rawModelExpression a raw model expression from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
-   *      creating a {@link org.mulgara.query.Query}
+   * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
+   *      creating a {@link org.mulgara.rdql.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
    * @throws URISyntaxException if the <code>rawModelExpression</code> contains
@@ -251,12 +251,12 @@ public class ModelExpressionBuilder {
   // buildModelExpression()
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
    * {@link org.kowari.itql.node.PModelTerm}.
    *
    * @param rawModelTerm a raw model term from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
-   *      creating a {@link org.mulgara.query.Query}
+   * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
+   *      creating a {@link org.mulgara.rdql.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
    * @throws URISyntaxException if the <code>rawModelExpression</code> contains
@@ -355,12 +355,12 @@ public class ModelExpressionBuilder {
   // buildModelExpression()
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
    * {@link org.kowari.itql.node.PModelPart}.
    *
    * @param rawModelPart a raw model part from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
-   *      creating a {@link org.mulgara.query.Query}
+   * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
+   *      creating a {@link org.mulgara.rdql.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
    * @throws URISyntaxException if the <code>rawModelExpression</code> contains
@@ -460,12 +460,12 @@ public class ModelExpressionBuilder {
   // buildModelExpression()
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
    * {@link org.kowari.itql.node.PModelFactor}.
    *
    * @param rawModelFactor a raw model factor from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
-   *      creating a {@link org.mulgara.query.Query}
+   * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
+   *      creating a {@link org.mulgara.rdql.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
    * @throws URISyntaxException if the <code>rawModelExpression</code> contains

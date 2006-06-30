@@ -24,7 +24,7 @@
  * Original Code Source Code for Your Modifications.]
  */
 
-package org.mulgara;
+package org.mulgara.rdql;
 
 /**
  * Swing based RDQL session command line shell.

@@ -39,12 +39,12 @@ import org.apache.log4j.Logger;
 import org.jrdf.graph.URIReference;
 
 // Local packages
-import org.mulgara.demo.mp3.config.FileSystemModel;
-import org.mulgara.demo.mp3.config.Mp3ConfigXML;
-import org.mulgara.demo.mp3.config.Mp3Model;
-import org.mulgara.demo.mp3.config.SchemaFile;
-import org.mulgara.demo.mp3.config.SchemaModel;
 import org.mulgara.query.rdf.*;
+import org.mulgara.rdql.demo.mp3.config.FileSystemModel;
+import org.mulgara.rdql.demo.mp3.config.Mp3ConfigXML;
+import org.mulgara.rdql.demo.mp3.config.Mp3Model;
+import org.mulgara.rdql.demo.mp3.config.SchemaFile;
+import org.mulgara.rdql.demo.mp3.config.SchemaModel;
 
 /**
  * Mp3Config implementation that can be loaded and persisted as an XML File.
