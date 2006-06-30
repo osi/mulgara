@@ -41,7 +41,7 @@ import org.jrdf.graph.*;
 import com.hp.hpl.jena.graph.impl.*;
 
 // Local packages
-import org.kowari.jena.*;
+import org.mulgara.jena.*;
 import org.mulgara.jrdf.*;
 import org.mulgara.server.*;
 

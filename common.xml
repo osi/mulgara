@@ -179,11 +179,11 @@
         var version = bufferedReader.readLine();
         bufferedReader.close();
 
-        // update the Kowari build labels with the current build number
+        // update the Mulgara build labels with the current build number
         java.lang.System.out.println("Obtained build tag : "+version);
 
-        Kowari.setProperty("default.build.label",
-          Kowari.getProperty("default.build.label").replaceAll("@@build@@",version));
+        Mulgara.setProperty("default.build.label",
+          Mulgara.getProperty("default.build.label").replaceAll("@@build@@",version));
 
       } catch (ex) {
         java.lang.System.out.println("Unable to read version file for build label "+ ex);
@@ -200,14 +200,14 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Changes Kowari Config files Database Class depending on Resolvers   -->
+  <!-- Changes Mulgara Config files Database Class depending on Resolvers   -->
   <!-- =================================================================== -->
   <target name="config-database">
 
-    <filter token="database-class" value="org.kowari.resolver.Database"/>
+    <filter token="database-class" value="org.mulgara.resolver.Database"/>
 
     <copy tofile="${obj.dir}/tucana-config.xml" filtering="yes">
-      <fileset file="${conf.dir}/kowari-config.xml"/>
+      <fileset file="${conf.dir}/mulgara-config.xml"/>
     </copy>
 
   </target>
@@ -237,7 +237,7 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="admin" value=""/>
       <sysproperty key="itql.command.log" value="${tmp.dir}/itql.log"/>
-      <sysproperty key="org.kowari.xml.ResourceDocumentBuilderFactory"
+      <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
                    value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial"
                    value="com.sun.jndi.rmi.registry.RegistryContextFactory"/>
@@ -246,15 +246,15 @@
                    value="${bin.uri}/${rmi.base.jar}"/>
       <sysproperty key="java.security.manager" value=""/>
       <sysproperty key="java.security.policy"
-                   value="${basedir}/conf/kowari-test.policy"/>
+                   value="${basedir}/conf/mulgara-test.policy"/>
       <sysproperty key="host.name" value="${host.name}"/>
 
       <!-- The cvs.root property allows tests to find CVS'ed test data -->
       <sysproperty key="cvs.root" value="${basedir}"/>
-      <sysproperty key="kowari.jar" value="${kowari.jar}"/>
+      <sysproperty key="mulgara.jar" value="${mulgara.jar}"/>
       <sysproperty key="log4j.configuration" value="${baseuri}/log4j-conf.xml"/>
       <sysproperty key="basedir" value="${basedir}"/>
-      <sysproperty key="org.kowari.test" value="${org.kowari.test}"/>
+      <sysproperty key="org.mulgara.test" value="${org.mulgara.test}"/>
 
       <classpath>
         <path refid="${classpath.id}"/>
@@ -315,13 +315,13 @@
           depends="itql-jar, uri"
           description="run stress tests the ItqlInterpreterBean">
 
-    <java classname="org.kowari.itql.ItqlInterpreterStressTest" fork="yes" failonerror="no"
+    <java classname="org.mulgara.itql.ItqlInterpreterStressTest" fork="yes" failonerror="no"
       jvm="${java.home}/bin/java" dir="${basedir}">
 
       <jvmarg value="${arch.bits}"/>
 
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
-      <sysproperty key="org.kowari.xml.ResourceDocumentBuilderFactory"
+      <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
         value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial"
         value="com.sun.jndi.rmi.registry.RegistryContextFactory"/>
@@ -381,7 +381,7 @@
       <jvmarg value="-ea"/>
       <jvmarg value="${jvm.args}"/>
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
-      <sysproperty key="org.kowari.xml.ResourceDocumentBuilderFactory"
+      <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
                    value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial"
                    value="com.sun.jndi.rmi.registry.RegistryContextFactory"/>
@@ -392,7 +392,7 @@
       <sysproperty key="cvs.root" value="${basedir}"/>
       <sysproperty key="log4j.configuration" value="${baseuri}/log4j-conf.xml"/>
       <sysproperty key="itql.command.log" value="${tmp.dir}/itql.log"/>
-      <sysproperty key="org.kowari.test" value="${org.kowari.test}"/>
+      <sysproperty key="org.mulgara.test" value="${org.mulgara.test}"/>
 
       <classpath>
 
@@ -434,7 +434,7 @@
     <filter token="server" value="rmi://${host.name}/server1"/>
     <filter token="server2" value="rmi://${host.name}/server2"/>
     <filter token="point-version" value="${point-version}"/>
-    <filter token="kowari.jar" value="${kowari.jar}"/>
+    <filter token="mulgara.jar" value="${mulgara.jar}"/>
 
     <copy todir="${jxtest.dir}" filtering="yes">
       <fileset dir="jxdata" excludes="**/*.gz"/>
@@ -480,34 +480,34 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Starts an embedded Kowari server                                    -->
+  <!-- Starts an embedded Mulgara server                                    -->
   <!-- =================================================================== -->
   <target name="start"
-          description="Starts an embedded Kowari server">
+          description="Starts an embedded Mulgara server">
 
     <antcall target="start-cp">
-      <param name="jvm-classpath" value="${dist.dir}/${kowari.jar}" />
-      <param name="jvm-classpath-win" value="${dist.dir}/${kowari.jar}" />
+      <param name="jvm-classpath" value="${dist.dir}/${mulgara.jar}" />
+      <param name="jvm-classpath-win" value="${dist.dir}/${mulgara.jar}" />
     </antcall>
   </target>
 
 
   <!-- =================================================================== -->
-  <!-- Starts an embedded Kowari server - using a supplied classpath       -->
+  <!-- Starts an embedded Mulgara server - using a supplied classpath       -->
   <!-- jvm-classpath:   regular classpath (paths seperated by ':')         -->
-  <!--            (eg ${dist.dir}/${kowari.jar}:${jar1}:${dir}/${jar2})    -->
+  <!--            (eg ${dist.dir}/${mulgara.jar}:${jar1}:${dir}/${jar2})    -->
   <!-- jvm-classpath-win: windows classpath                                -->
-  <!--            (eg ${dist.dir}\${kowari.jar}:${jar1}:${dir}\${jar2})    -->
+  <!--            (eg ${dist.dir}\${mulgara.jar}:${jar1}:${dir}\${jar2})    -->
   <!-- =================================================================== -->
   <target name="start-cp"
-          description="Starts an embedded Kowari server with a supplied classpath">
+          description="Starts an embedded Mulgara server with a supplied classpath">
 
     <ant antfile="build.xml" target="dist"/>
     <ant antfile="build.xml" target="lite-dist"/>
 
     <echo>
-      Starting embedded Kowari server on ${os.name} with output to
-      ${dist.dir}/kowari-output
+      Starting embedded Mulgara server on ${os.name} with output to
+      ${dist.dir}/mulgara-output
     </echo>
     <echo message="jvm-classpath: ${jvm-classpath}" />
     <echo message="jvm-classpath-win: ${jvm-classpath-win}" />
@@ -515,16 +515,16 @@
     <exec os="Linux" executable="${scripts.dir}/bg.linux" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output"/>
+      <arg value="${dist.dir}/mulgara-output"/>
       <arg value="${java.home}/bin/java"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
-      <arg line="-Dorg.kowari.test=&quot;${org.kowari.test}&quot;"/>
+      <arg line="-Dorg.mulgara.test=&quot;${org.mulgara.test}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath}"/>
-      <arg line="org.kowari.util.Bootstrap"/>
+      <arg line="org.mulgara.util.Bootstrap"/>
 <!--      <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.jar}"/> -->
+      <arg value="${dist.dir}/${mulgara.jar}"/> -->
 
       <arg value="-a"/>
       <arg value="${test.dir}"/>
@@ -533,16 +533,16 @@
     <exec os="SunOS" executable="${scripts.dir}/bg.sh" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output"/>
+      <arg value="${dist.dir}/mulgara-output"/>
       <arg value="${java.home}/bin/java"/>
       <arg value="${arch.bits}"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath}"/>
-      <arg line="org.kowari.util.Bootstrap"/>
+      <arg line="org.mulgara.util.Bootstrap"/>
 <!--      <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.jar}"/> -->
+      <arg value="${dist.dir}/${mulgara.jar}"/> -->
       <arg value="-a"/>
       <arg value="${test.dir}"/>
     </exec>
@@ -550,15 +550,15 @@
     <exec os="Mac OS X" executable="${scripts.dir}/bg.sh" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output"/>
+      <arg value="${dist.dir}/mulgara-output"/>
       <arg value="${java.home}/bin/java"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath}"/>
-      <arg line="org.kowari.util.Bootstrap"/>
+      <arg line="org.mulgara.util.Bootstrap"/>
 <!--      <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.jar}"/> -->
+      <arg value="${dist.dir}/${mulgara.jar}"/> -->
       <arg value="-a"/>
       <arg value="${test.dir}"/>
     </exec>
@@ -567,15 +567,15 @@
           executable="${scripts.dir}\bg.exe" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}\kowari-output"/>
+      <arg value="${dist.dir}\mulgara-output"/>
       <arg value="${java.home}\bin\javaw"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath-win}"/>
-      <arg line="org.kowari.util.Bootstrap"/>
+      <arg line="org.mulgara.util.Bootstrap"/>
 <!--      <arg value="-jar"/>
-      <arg value="${dist.dir}\${kowari.jar}"/> -->
+      <arg value="${dist.dir}\${mulgara.jar}"/> -->
       <arg value="-a"/>
       <arg value="${test.dir}"/>
     </exec>
@@ -587,14 +587,14 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Stops an embedded Kowari server                                     -->
+  <!-- Stops an embedded Mulgara server                                     -->
   <!-- =================================================================== -->
   <target name="stop"
-          description="Stops an embedded Kowari server">
+          description="Stops an embedded Mulgara server">
 
-    <echo message="Stopping embedded Kowari server"/>
+    <echo message="Stopping embedded Mulgara server"/>
 
-    <java jar="${dist.dir}/${kowari.jar}" fork="true"
+    <java jar="${dist.dir}/${mulgara.jar}" fork="true"
       failonerror="true">
 
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
@@ -606,9 +606,9 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Check if Kowari is running                                          -->
+  <!-- Check if Mulgara is running                                          -->
   <!-- =================================================================== -->
-  <target name="await" description="Wait for Kowari to start">
+  <target name="await" description="Wait for Mulgara to start">
 
     <echo>Waiting for server to start on shutdown hook
           ${shutdownhook.port}</echo>
@@ -632,11 +632,11 @@
         }
       }
       if (socket) {
-        java.lang.System.out.println("Kowari started");
+        java.lang.System.out.println("Mulgara started");
         java.lang.Thread.sleep(5000);
       }
       else {
-        java.lang.System.out.println("Kowari not started");
+        java.lang.System.out.println("Mulgara not started");
       }
 
       ]]>
@@ -707,7 +707,7 @@
       // Got it - now set it.
       if (hostname) {
 
-        Kowari.setProperty("host.name", hostname);
+        Mulgara.setProperty("host.name", hostname);
       }
       ]]>
     </script>
@@ -727,15 +727,15 @@
         packagenames="${javadoc.package}"
         private="true"
         overview="${obj.dir}/docs/overview.html"
-        windowtitle="${description} ${kowari-version} API"
-        doctitle="${description} ${kowari-version} API"
+        windowtitle="${description} ${mulgara-version} API"
+        doctitle="${description} ${mulgara-version} API"
         version="true"
         use="true"
         bottom="Copyright &amp;copy; ${year} Tucana Technologies, Inc. (http://www.tucanatech.com/)."
         author="true"
         additionalParam="-breakiterator -source 1.4">
 
-      <doclet name="org.kowari.doclet.KowariDoclet"
+      <doclet name="org.mulgara.doclet.MulgaraDoclet"
               path="${bin.dir}/doclet.jar">
 
         <param name="-author"/>

@@ -4,7 +4,7 @@
   <!-- =================================================================== -->
   <!--                       Project definition                            -->
   <!-- =================================================================== -->
-  <project name="Kowari" default="help" basedir=".">
+  <project name="Mulgara" default="help" basedir=".">
 
   <!-- =================================================================== -->
   <!--                      Property Definitions                           -->
@@ -74,9 +74,9 @@
   <property file="${jar.src.dir}/util/util-build.properties"/>
 
   <property name="webui.viewer.src.dir"
-      value="${webui.src.dir}/java/org/kowari/webui/viewer"/>
+      value="${webui.src.dir}/java/org/mulgara/webui/viewer"/>
   <property name="webui.viewer.obj.dir.classes"
-      value="${obj.dir}/war/webui/classes/org/kowari/webui/viewer"/>
+      value="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer"/>
 
   <!-- =================================================================== -->
   <!--                              Imports                                -->
@@ -169,7 +169,7 @@
   <target name="define.rdfload" unless="define.rdfload" depends="ant-task-jar"
    description="Defines the rdfload taskdef">
 
-    <taskdef name="rdfload" classname="org.kowari.ant.task.rdf.RDFLoad">
+    <taskdef name="rdfload" classname="org.mulgara.ant.task.rdf.RDFLoad">
 
      <classpath>
 
@@ -187,7 +187,7 @@
   <target name="define.itqlcommand" unless="define.itqlcommand" depends="ant-task-jar"
    description="Defines the itqlcommand taskdef">
 
-    <taskdef name="itqlcommand" classname="org.kowari.ant.task.itql.ITQLCommand">
+    <taskdef name="itqlcommand" classname="org.mulgara.ant.task.itql.ITQLCommand">
 
      <classpath>
 
@@ -337,11 +337,11 @@
   <!-- =================================================================== -->
   <!-- Removed server-local, jrdf -->
   <target name="dist"
-          depends="itql-dist, driver-dist, descriptor-dist, kowari-war,
+          depends="itql-dist, driver-dist, descriptor-dist, mulgara-war,
                    embedded-dist, lite-dist"
           description="Creates the distribution files">
 
-    <copy file="${bin.dir}/${kowari.war}" tofile="${dist.dir}/${kowari.war}"/>
+    <copy file="${bin.dir}/${mulgara.war}" tofile="${dist.dir}/${mulgara.war}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -367,10 +367,10 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates and copies the core Kowari files to a single directory      -->
+  <!-- Creates and copies the core Mulgara files to a single directory      -->
   <!-- =================================================================== -->
   <target name="core" depends="dist"
-    description="Creates and then copies the core Kowari files to a single directory.">
+    description="Creates and then copies the core Mulgara files to a single directory.">
 
     <!-- webservices.war -->
     <copy file="${obj.dir}/war/webservices.war" todir="${core.dir}"/>
@@ -456,20 +456,20 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Generates a manifest file for the Kowari executable project JAR        -->
+  <!-- Generates a manifest file for the Mulgara executable project JAR        -->
   <!-- =================================================================== -->
   <target name="lite-create-manifest" depends="-prepare-build">
     <mkdir dir="${obj.dir}/META-INF"/>
 
     <!-- generate the core manifest -->
-    <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_BASE.MF">
-      <attribute name="Main-Class" value="org.kowari.triplestore.Main"/>
+    <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_BASE.MF">
+      <attribute name="Main-Class" value="org.mulgara.triplestore.Main"/>
     </manifest>
 
     <!-- generate the bootstrap manifest -->
-    <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_Lite_BOOTSTRAP.MF">
+    <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_Lite_BOOTSTRAP.MF">
 
-      <attribute name="Main-Class" value="org.kowari.util.Bootstrap"/>
+      <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="
           lib/${query.jar}, lib/${driver.jar}, lib/${itql.jar}, lib/${rmi.jar},
           lib/${server.jar}, lib/${server-beep.jar}, lib/${server-rmi.jar},
@@ -494,12 +494,12 @@
           lib/castor-0.9.3.9-xml.jar, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.carol.jar}, lib/${jotm.iiop.jar},
           lib/connector-1_5.jar, lib/${httpclient.jar}"/>
-      <attribute name="Embedded-Main-Class" value="org.kowari.server.EmbeddedKowariServer"/>
+      <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the lite distribution file for the Embedded Kowari server   -->
+  <!-- Creates the lite distribution file for the Embedded Mulgara server   -->
   <!-- =================================================================== -->
   <target name="lite-dist"
           depends="driver-jar, itql-jar, query-jar, rmi-jar,
@@ -521,7 +521,7 @@
                    lite-create-manifest, javadoc-dist,
                    lite-dist-uptodate"
           unless="dist.lite.uptodate"
-          description="Creates the executable JAR for the Embedded Kowari Lite
+          description="Creates the executable JAR for the Embedded Mulgara Lite
                        server">
 
     <!-- HACK!!!!! -->
@@ -535,12 +535,12 @@
     <!-- HACK!!!!! -->
 
     <!-- build the executable jar file -->
-    <jar jarfile="${dist.dir}/${kowari-lite.jar}"
-        manifest="${obj.dir}/META-INF/MANIFEST_Kowari_Lite_BOOTSTRAP.MF">
+    <jar jarfile="${dist.dir}/${mulgara-lite.jar}"
+        manifest="${obj.dir}/META-INF/MANIFEST_Mulgara_Lite_BOOTSTRAP.MF">
 
       <zipfileset dir="${conf.dir}" prefix="conf"
-          includes="log4j-kowari.xml, webdefault.xml, kowari-rmi.policy,
-                    kowari.policy"/>
+          includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy,
+                    mulgara.policy"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="
         ${log4j.jar}, ${icu4j.jar}, ${activation.jar}, ${beep.jar},
         ${jargs.jar}, ${jrdf.jar}, ${jetty.jar}, ${jetty.plus.jar},
@@ -574,7 +574,7 @@
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data"
-          includes="kowari.rdfs"/>
+          includes="mulgara.rdfs"/>
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
           includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
@@ -594,12 +594,12 @@
 
   </target>
 
-  <!-- do a check for any changes made to the kowari build -->
+  <!-- do a check for any changes made to the mulgara build -->
   <!-- potentially not the most efficient checking performed -->
   <target name="lite-dist-uptodate">
 
     <uptodate property="dist.lite.uptodate"
-       targetfile="${dist.dir}/${kowari-lite.jar}">
+       targetfile="${dist.dir}/${mulgara-lite.jar}">
 
      <srcfiles dir="${bin.dir}" includes="**/*"/>
      <srcfiles dir="${conf.dir}" includes="**/*"/>
@@ -611,7 +611,7 @@
 
 
   <!-- =================================================================== -->
-  <!-- Generate the doclet to support custom @-tags in Kowari javadoc      -->
+  <!-- Generate the doclet to support custom @-tags in Mulgara javadoc      -->
   <!-- =================================================================== -->
   <target name="doclet.jar"
           depends="javadoc-version, doclet-compile, doclet141-compile">
@@ -693,7 +693,7 @@
         valid Java source files as input!
       -->
     <jalopy fileformat="unix"
-            convention="${src.dir}/kowari.xml"
+            convention="${src.dir}/mulgara.xml"
             history="file"
             historymethod="adler32"
             loglevel="info"
@@ -747,55 +747,55 @@
     <delete dir="${javadoc.dir}"/>
     <mkdir dir="${javadoc.dir}"/>
     <javadoc destdir="${javadoc.dir}"
-        packagenames="org.kowari.ant.*,
-                      org.kowari.barracuda.*,
-                      org.kowari.beep.*,
-                      org.kowari.client.*,
-                      org.kowari.config,
-                      org.kowari.content.*,
-                      org.kowari.connection.*,
-                      org.kowari.driver.*,
-                      org.kowari.extractor.tag,
-                      org.kowari.itql,
-                      org.kowari.jena,
-                      org.kowari.jrdf,
-                      org.kowari.local.*,
-                      org.kowari.query.*,
-                      org.kowari.rdf,
-                      org.kowari.resolver.*,
-                      org.kowari.rmi.*,
-                      org.kowari.server.*,
-                      org.kowari.sofa.*,
-                      org.kowari.krule.*,
-                      org.kowari.rules.*,
-                      org.kowari.sparql.*,
-                      org.kowari.store.*,
-                      org.kowari.store.graph.*,
-                      org.kowari.store.graph.xa.*,
-                      org.kowari.store.jena.*,
-                      org.kowari.store.jxunit.*,
-                      org.kowari.store.loader.*,
-                      org.kowari.store.nodepool.*,
-                      org.kowari.store.nodepool.memory.*,
-                      org.kowari.store.nodepool.xa.*,
-                      org.kowari.store.stringpool.*,
-                      org.kowari.store.stringpool.memory.*,
-                      org.kowari.store.stringpool.xa.*,
-                      org.kowari.store.tuples.*,
-                      org.kowari.store.xa.*,
-                      org.kowari.webui.*,
-                      org.kowari.util,
-                      org.kowari.xml.*"
+        packagenames="org.mulgara.ant.*,
+                      org.mulgara.barracuda.*,
+                      org.mulgara.beep.*,
+                      org.mulgara.client.*,
+                      org.mulgara.config,
+                      org.mulgara.content.*,
+                      org.mulgara.connection.*,
+                      org.mulgara.driver.*,
+                      org.mulgara.extractor.tag,
+                      org.mulgara.itql,
+                      org.mulgara.jena,
+                      org.mulgara.jrdf,
+                      org.mulgara.local.*,
+                      org.mulgara.query.*,
+                      org.mulgara.rdf,
+                      org.mulgara.resolver.*,
+                      org.mulgara.rmi.*,
+                      org.mulgara.server.*,
+                      org.mulgara.sofa.*,
+                      org.mulgara.krule.*,
+                      org.mulgara.rules.*,
+                      org.mulgara.sparql.*,
+                      org.mulgara.store.*,
+                      org.mulgara.store.graph.*,
+                      org.mulgara.store.graph.xa.*,
+                      org.mulgara.store.jena.*,
+                      org.mulgara.store.jxunit.*,
+                      org.mulgara.store.loader.*,
+                      org.mulgara.store.nodepool.*,
+                      org.mulgara.store.nodepool.memory.*,
+                      org.mulgara.store.nodepool.xa.*,
+                      org.mulgara.store.stringpool.*,
+                      org.mulgara.store.stringpool.memory.*,
+                      org.mulgara.store.stringpool.xa.*,
+                      org.mulgara.store.tuples.*,
+                      org.mulgara.store.xa.*,
+                      org.mulgara.webui.*,
+                      org.mulgara.util,
+                      org.mulgara.xml.*"
         private="true"
         overview="${obj.dir}/docs/overview.html"
-        windowtitle="${description} ${kowari-version} API"
-        doctitle="${description} ${kowari-version} API"
+        windowtitle="${description} ${mulgara-version} API"
+        doctitle="${description} ${mulgara-version} API"
         version="true"
         use="true"
         bottom="Copyright &amp;copy; ${year} Tucana Technologies, Inc. (http://www.tucanatech.com/)."
         author="true"
         additionalParam="-breakiterator -source 1.4">
-      <doclet name="org.kowari.doclet.KowariDoclet"
+      <doclet name="org.mulgara.doclet.MulgaraDoclet"
         path="${bin.dir}/doclet.jar">
         <param name="-author"/>
         <param name="-version"/>
@@ -993,7 +993,7 @@
   <!-- =================================================================== -->
   <target name="run-itql" depends="itql-dist, uri">
 
-    <java classname="org.kowari.itql.ItqlSession"
+    <java classname="org.mulgara.itql.ItqlSession"
           failonerror="yes">
 
       <jvmarg value="${arch.bits}"/>
@@ -1027,14 +1027,14 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Starts multiple embedded Kowari servers                             -->
+  <!-- Starts multiple embedded Mulgara servers                             -->
   <!-- =================================================================== -->
   <target name="start-instance"
-     description="Starts an embedded Kowari server">
+     description="Starts an embedded Mulgara server">
 
     <echo>
-      Starting embedded Kowari ${server.instance} server on ${os.name} with
-      output to ${dist.dir}/kowari-output-${server.instance}
+      Starting embedded Mulgara ${server.instance} server on ${os.name} with
+      output to ${dist.dir}/mulgara-output-${server.instance}
     </echo>
 
     <!-- create a temporary directory for this server instance -->
@@ -1050,12 +1050,12 @@
     <exec os="Linux" executable="${scripts.dir}/bg.linux" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output-${server.instance}"/>
+      <arg value="${dist.dir}/mulgara-output-${server.instance}"/>
       <arg value="${java.home}/bin/java"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}/${server.instance}&quot;"/>
       <arg line="-Dshutdownhook.port=689${server.instance}"/>
       <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.version.to.run}"/>
+      <arg value="${dist.dir}/${mulgara.version.to.run}"/>
       <arg value="-a"/>
       <arg value="${test.dir}"/>
       <arg value="-s"/>
@@ -1069,13 +1069,13 @@
     <exec os="SunOS" executable="${scripts.dir}/bg.sh" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output-${server.instance}"/>
+      <arg value="${dist.dir}/mulgara-output-${server.instance}"/>
       <arg value="${java.home}/bin/java"/>
       <arg value="${arch.bits}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}/${server.instance}&quot;"/>
       <arg line="-Dshutdownhook.port=689${server.instance}"/>
       <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.version.to.run}"/>
+      <arg value="${dist.dir}/${mulgara.version.to.run}"/>
       <arg value="-a"/>
       <arg value="${test.dir}"/>
       <arg value="-s"/>
@@ -1089,12 +1089,12 @@
     <exec os="Mac OS X" executable="${scripts.dir}/bg.sh" failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output-${server.instance}"/>
+      <arg value="${dist.dir}/mulgara-output-${server.instance}"/>
       <arg value="${java.home}/bin/java"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}/${server.instance}&quot;"/>
       <arg line="-Dshutdownhook.port=689${server.instance}"/>
       <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.version.to.run}"/>
+      <arg value="${dist.dir}/${mulgara.version.to.run}"/>
       <arg value="-a"/>
       <arg value="${test.dir}"/>
       <arg value="-s"/>
@@ -1109,12 +1109,12 @@
         failonerror="yes">
 
       <arg value="-o"/>
-      <arg value="${dist.dir}/kowari-output-${server.instance}"/>
+      <arg value="${dist.dir}/mulgara-output-${server.instance}"/>
       <arg value="${java.home}/bin/java"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}/${server.instance}&quot;"/>
       <arg line="-Dshutdownhook.port=689${server.instance}"/>
       <arg value="-jar"/>
-      <arg value="${dist.dir}/${kowari.version.to.run}"/>
+      <arg value="${dist.dir}/${mulgara.version.to.run}"/>
       <arg value="-a"/>
       <arg value="${test.dir}"/>
       <arg value="-s"/>
@@ -1132,27 +1132,27 @@
   </target>
 
 
-  <!-- Run full dist of Kowari by default unless other (lite) is set -->
-  <target name="set-version-to-run" unless="kowari.version.to.run.jar">
+  <!-- Run full dist of Mulgara by default unless other (lite) is set -->
+  <target name="set-version-to-run" unless="mulgara.version.to.run.jar">
 
-    <property name="kowari.version.to.run" value="${kowari.jar}"/>
+    <property name="mulgara.version.to.run" value="${mulgara.jar}"/>
   </target>
 
 
   <!-- =================================================================== -->
-  <!-- Starts an embedded Kowari server with profiling (from OptimizeIt)      -->
+  <!-- Starts an embedded Mulgara server with profiling (from OptimizeIt)      -->
   <!-- =================================================================== -->
   <target name="start-profiled" depends="dist"
-      description="Starts an embedded Kowari server with profiling (from OptimizeIt)">
+      description="Starts an embedded Mulgara server with profiling (from OptimizeIt)">
 
     <echo>
-      Starting embedded Kowari server with profiling (from OptimizeIt) with output to
-      ${dist.dir}/kowari-output
+      Starting embedded Mulgara server with profiling (from OptimizeIt) with output to
+      ${dist.dir}/mulgara-output
     </echo>
 
-    <exec executable="${kowari-profiled}" failonerror="yes">
+    <exec executable="${mulgara-profiled}" failonerror="yes">
 
-      <env key="Kowari_DIR" path="${dist.dir}"/>
+      <env key="Mulgara_DIR" path="${dist.dir}"/>
 
       <arg value="start"/>
     </exec>
@@ -1160,15 +1160,15 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Starts two embedded Kowari servers                                     -->
+  <!-- Starts two embedded Mulgara servers                                     -->
   <!-- =================================================================== -->
   <target name="start-twoservers"
       depends="dist, lite-dist, set-version-to-run"
-      description="Starts two embedded Kowari servers">
+      description="Starts two embedded Mulgara servers">
 
     <echo>
-      Starting two embedded Kowari servers with output to
-      ${dist.dir}/kowari-output
+      Starting two embedded Mulgara servers with output to
+      ${dist.dir}/mulgara-output
     </echo>
 
     <antcall target="start-instance">
@@ -1244,13 +1244,13 @@
    </target>
 
   <!-- =================================================================== -->
-  <!-- Stops an embedded Kowari instance                                   -->
+  <!-- Stops an embedded Mulgara instance                                   -->
   <!-- =================================================================== -->
-  <target name="stop-instance" depends="set-version-to-run" description="Stops an embedded Kowari server">
+  <target name="stop-instance" depends="set-version-to-run" description="Stops an embedded Mulgara server">
 
-    <echo message="Stopping embedded Kowari server instance ${server.instance}"/>
+    <echo message="Stopping embedded Mulgara server instance ${server.instance}"/>
 
-    <java jar="${dist.dir}/${kowari.version.to.run}" fork="true" failonerror="true">
+    <java jar="${dist.dir}/${mulgara.version.to.run}" fork="true" failonerror="true">
 
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
       <sysproperty key="shutdownhook.port" value="689${server.instance}"/>
@@ -1263,12 +1263,12 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Stops two embedded Kowari servers                                      -->
+  <!-- Stops two embedded Mulgara servers                                      -->
   <!-- =================================================================== -->
-  <target name="stop-twoservers" description="Stops the two embedded Kowari servers">
+  <target name="stop-twoservers" description="Stops the two embedded Mulgara servers">
 
     <!-- shutdown servers in reverse order. First has the RMI registry -->
-    <echo message="Stopping Kowari instance servers"/>
+    <echo message="Stopping Mulgara instance servers"/>
 
     <antcall target="stop-instance">
       <param name="server.instance" value="2"/>
@@ -1308,13 +1308,13 @@
           depends="itql-jar, uri"
           description="run stress tests the ItqlInterpreterBean">
 
-    <java classname="org.kowari.itql.ItqlInterpreterStressTest" fork="yes" failonerror="no"
+    <java classname="org.mulgara.itql.ItqlInterpreterStressTest" fork="yes" failonerror="no"
       jvm="${java.home}/bin/java" dir="${basedir}">
 
       <jvmarg value="${arch.bits}"/>
 
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
-      <sysproperty key="org.kowari.xml.ResourceDocumentBuilderFactory"
+      <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
         value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial"
         value="com.sun.jndi.rmi.registry.RegistryContextFactory"/>
@@ -1341,20 +1341,20 @@
    </target>
 
   <!-- =================================================================== -->
-  <!-- Runs regression tests on a Kowari server                               -->
+  <!-- Runs regression tests on a Mulgara server                               -->
   <!-- =================================================================== -->
   <!--target name="regression-test"
     depends="-prepare-build, log4j-conf.xml, dist"
-    description="Runs regression tests on a Kowari server">
+    description="Runs regression tests on a Mulgara server">
 
-    <echo message="kowari-test has not been implemented, run itql-test or dbms-test instead."/-->
+    <echo message="mulgara-test has not been implemented, run itql-test or dbms-test instead."/-->
 
     <!-- Set timestamp for CruiseControl's benefit -->
     <!--tstamp/>
 
-    <delete dir="${kowari.results.tmpdir}"/>
-    <mkdir dir="${kowari.results.tmpdir}"/>
-    <delete file="${kowari.results}"/-->
+    <delete dir="${mulgara.results.tmpdir}"/>
+    <mkdir dir="${mulgara.results.tmpdir}"/>
+    <delete file="${mulgara.results}"/-->
 
     <!-- start a server -->
     <!--ant target="start"/-->
@@ -1368,31 +1368,31 @@
 
 
   <!-- =================================================================== -->
-  <!-- Builds Kowari Metadata Store (Kowari) WAR                           -->
+  <!-- Builds Mulgara Metadata Store (Mulgara) WAR                           -->
   <!-- =================================================================== -->
-  <target name="kowari-war"
-      description="Builds the Kowari Metadata Store (Kowari) WAR"
+  <target name="mulgara-war"
+      description="Builds the Mulgara Metadata Store (Mulgara) WAR"
       depends="driver-jar, itql-jar, query-jar, rmi-jar, server-jar,
       server-beep-jar, server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
-      set.host.name, kowari.war-uptodate"
-      unless="kowari.war-uptodate">
+      set.host.name, mulgara.war-uptodate"
+      unless="mulgara.war-uptodate">
 
-    <copy file="${kowari.war.src.dir}/WEB-INF/web.xml"
-      tofile="${obj.dir}/war/kowari/WEB-INF/web.xml"/>
+    <copy file="${mulgara.war.src.dir}/WEB-INF/web.xml"
+      tofile="${obj.dir}/war/mulgara/WEB-INF/web.xml"/>
 
-    <replace file="${obj.dir}/war/kowari/WEB-INF/web.xml"
+    <replace file="${obj.dir}/war/mulgara/WEB-INF/web.xml"
        token="@@hostname@@" value="${host.name}"/>
 
-    <delete file="${bin.dir}/${kowari.war}"/>
+    <delete file="${bin.dir}/${mulgara.war}"/>
 
-    <war warfile="${bin.dir}/${kowari.war}"
-        webxml="${obj.dir}/war/kowari/WEB-INF/web.xml">
+    <war warfile="${bin.dir}/${mulgara.war}"
+        webxml="${obj.dir}/war/mulgara/WEB-INF/web.xml">
 
       <zipfileset dir="${conf.dir}" prefix="WEB-INF/conf"
-          includes="kowari-config-war.xml, kowari-rmi.policy, kowari.policy,
-          log4j-kowari-war.properties, expires.txt"/>
+          includes="mulgara-config-war.xml, mulgara-rmi.policy, mulgara.policy,
+          log4j-mulgara-war.properties, expires.txt"/>
 
-      <fileset dir="${src.dir}/war/kowari"
+      <fileset dir="${src.dir}/war/mulgara"
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
@@ -1405,10 +1405,10 @@
     </war>
   </target>
 
-  <target name="kowari.war-uptodate">
+  <target name="mulgara.war-uptodate">
 
-    <uptodate property="kowari.war-uptodate"
-       targetfile="${bin.dir}/${kowari.war}">
+    <uptodate property="mulgara.war-uptodate"
+       targetfile="${bin.dir}/${mulgara.war}">
 
       <srcfiles dir="${bin.dir}" includes="${query.jar},
           ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
@@ -1416,17 +1416,17 @@
           ${util.jar}, ${config.jar}, ${descriptor.jar}"/>
       <srcfiles dir="${dist.dir}" includes="expires.txt"/>
       <srcfiles dir="${conf.dir}" includes="**/*"/>
-      <srcfiles dir="${src.dir}/war/kowari" includes="WEB-INF/**"
+      <srcfiles dir="${src.dir}/war/mulgara" includes="WEB-INF/**"
                                          excludes="WEB-INF/web.xml"/>
-      <srcfiles dir="${kowari.war.src.dir}/WEB-INF" includes="web.xml"/>
+      <srcfiles dir="${mulgara.war.src.dir}/WEB-INF" includes="web.xml"/>
     </uptodate>
   </target>
 
   <!-- =================================================================== -->
-  <!-- Compiles the Kowari webui interface pages with XMLC                    -->
+  <!-- Compiles the Mulgara webui interface pages with XMLC                    -->
   <!-- =================================================================== -->
   <target name="webui-xmlc" depends="xmlc"
-      description="Compiles the Kowari webui interface pages with XMLC">
+      description="Compiles the Mulgara webui interface pages with XMLC">
 
     <!-- Build the webui interface classes -->
     <mkdir dir="${obj.dir}/war/webui/java"/>
@@ -1442,10 +1442,10 @@
 
 
   <!-- =================================================================== -->
-  <!-- Compiles the Kowari webui interface classes                            -->
+  <!-- Compiles the Mulgara webui interface classes                            -->
   <!-- =================================================================== -->
   <target name="webui-build" depends="webui-xmlc, eventbuilder, driver-dist"
-      description="Compiles the Kowari webui interface classes">
+      description="Compiles the Mulgara webui interface classes">
 
     <!-- Build the webui interface classes -->
     <mkdir dir="${obj.dir}/war/webui/classes"/>
@@ -1481,7 +1481,7 @@
     <!-- images -->
     <copy todir="${obj.dir}/war/webui/xlib" >
 
-      <fileset dir="${webui.src.dir}/template-html/org/kowari/webui/viewer" >
+      <fileset dir="${webui.src.dir}/template-html/org/mulgara/webui/viewer" >
 
         <exclude name="**/*.html"/>
         <exclude name="**/*.xmlc"/>
@@ -1490,25 +1490,25 @@
 
     <!-- Replace tokens in example queries - leave out the <> brackets-->
     <!-- The name of the model to work on -->
-    <replace file="${obj.dir}/war/webui/classes/org/kowari/webui/viewer/ExampleQueries.txt"
+    <replace file="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer/ExampleQueries.txt"
        token="@@model-uri@@" value="rmi://host.name/server1#sampledata"/>
-    <replace file="${obj.dir}/war/webui/classes/org/kowari/webui/viewer/ExampleQueries.txt"
+    <replace file="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer/ExampleQueries.txt"
        token="@@data-dir@@" value="jar:file:tucana.jar.path!/data"/>
 
   </target>
 
 
   <!-- =================================================================== -->
-  <!-- Builds the Kowari webui interface WAR                                  -->
+  <!-- Builds the Mulgara webui interface WAR                                  -->
   <!-- =================================================================== -->
   <target name="webui-war" depends="webui-build, -webui-war-uptodate"
-      description="Builds the Kowari webui interface WAR" unless="webui.war-uptodate">
+      description="Builds the Mulgara webui interface WAR" unless="webui.war-uptodate">
 
     <mkdir dir="${obj.dir}/war/webui/jars"/>
 
     <!-- Actual page classes -->
     <jar jarfile="${obj.dir}/war/webui/jars/${webui-screens.jar}">
-      <fileset dir="${obj.dir}/war/webui/classes" includes="org/kowari/webui/**/*HTML.class"/>
+      <fileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/webui/**/*HTML.class"/>
     </jar>
 
     <!-- Images and stylesheet - swap this jar to change badging -->
@@ -1518,12 +1518,12 @@
     <!-- Barracuda related classes -->
     <jar jarfile="${obj.dir}/war/webui/jars/${webui-barracuda.jar}"
       basedir="${obj.dir}/war/webui/classes"
-      includes="org/kowari/barracuda/**"/>
+      includes="org/mulgara/barracuda/**"/>
 
     <!-- Logic -->
     <jar jarfile="${obj.dir}/war/webui/jars/${webui-logic.jar}"
       basedir="${obj.dir}/war/webui/classes"
-      includes="org/kowari/webui/**"
+      includes="org/mulgara/webui/**"
       excludes="**/*HTML.class"/>
 
     <war warfile="${bin.dir}/${webui.war}"
@@ -1551,12 +1551,12 @@
   <!-- =================================================================== -->
   <!-- J2EE resource adapter                                               -->
   <!-- =================================================================== -->
-  <target name="kowari-rar" depends="connector-jar, driver-jar, query-jar">
+  <target name="mulgara-rar" depends="connector-jar, driver-jar, query-jar">
 
-    <jar jarfile="${bin.dir}/kowari.rar">
+    <jar jarfile="${bin.dir}/mulgara.rar">
 
-      <fileset dir="${src.dir}/rar/kowari" includes="META-INF/ra.xml"/>
-      <fileset dir="${src.dir}/rar/kowari/content"/>
+      <fileset dir="${src.dir}/rar/mulgara" includes="META-INF/ra.xml"/>
+      <fileset dir="${src.dir}/rar/mulgara/content"/>
       <fileset dir="${bin.dir}" includes="${connector.jar},
         ${driver.jar}, ${query.jar}"/>
       <fileset dir="${lib.dir}" includes="beepcore-*.jar"/>
@@ -1595,7 +1595,7 @@
       </rdfpath>
     </rdfload>
 
-   <!-- shutdown the Kowari server -->
+   <!-- shutdown the Mulgara server -->
    <antcall target="stop"/>
 
   </target>
@@ -1619,7 +1619,7 @@
        <itqlquery query="set autocommit on;"/>
     </itqlcommand>
 
-   <!-- shutdown the Kowari server -->
+   <!-- shutdown the Mulgara server -->
    <antcall target="stop"/>
 
   </target>
@@ -1701,7 +1701,7 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the distribution file for the Embedded Kowari server        -->
+  <!-- Creates the distribution file for the Embedded Mulgara server        -->
   <!-- =================================================================== -->
   <target name="embedded-dist"
           depends="client-jrdf-jar, client-jena-jar, config-jar,
@@ -1721,7 +1721,7 @@
              store-stringpool-xa-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar, jena-jar,
              webservices-war, webui-war, -embedded-dist-uptodate"
-          description="Creates the executable JAR for the Embedded Kowari server"
+          description="Creates the executable JAR for the Embedded Mulgara server"
                 unless="embedded.dist.uptodate">
 
     <!-- HACK!!!!! -->
@@ -1736,12 +1736,12 @@
     <unjar src="${lib.dir}/jsr173_07_ri.jar" dest="${obj.dir}/xerces"/>
 
     <!-- build the executable jar file -->
-    <jar jarfile="${dist.dir}/${kowari.jar}"
-        manifest="${obj.dir}/META-INF/MANIFEST_Kowari_BOOTSTRAP.MF">
+    <jar jarfile="${dist.dir}/${mulgara.jar}"
+        manifest="${obj.dir}/META-INF/MANIFEST_Mulgara_BOOTSTRAP.MF">
 
       <zipfileset dir="${conf.dir}" prefix="conf"
-          includes="log4j-kowari.xml, webdefault.xml, kowari-rmi.policy,
-                    kowari.policy"/>
+          includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy,
+                    mulgara.policy"/>
 
       <!-- third party libraries -->
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
@@ -1884,12 +1884,12 @@
     </jar>
   </target>
 
-  <!-- do a check for any changes made to the kowari build -->
+  <!-- do a check for any changes made to the mulgara build -->
   <!-- potentially not the most efficient checking performed -->
   <target name="-embedded-dist-uptodate">
 
     <uptodate property="embedded.dist.uptodate"
-       targetfile="${dist.dir}/${kowari.jar}">
+       targetfile="${dist.dir}/${mulgara.jar}">
 
       <srcfiles dir="${bin.dir}" includes="**/*"/>
       <srcfiles dir="${conf.dir}" includes="**/*"/>
@@ -1905,14 +1905,14 @@
     <mkdir dir="${obj.dir}/META-INF"/>
 
     <!-- generate the core manifest -->
-    <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_BASE.MF">
-      <attribute name="Main-Class" value="org.kowari.triplestore.Main"/>
+    <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_BASE.MF">
+      <attribute name="Main-Class" value="org.mulgara.triplestore.Main"/>
     </manifest>
 
     <!-- generate the bootstrap manifest -->
-    <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_BOOTSTRAP.MF">
+    <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_BOOTSTRAP.MF">
 
-      <attribute name="Main-Class" value="org.kowari.util.Bootstrap"/>
+      <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
 <!--
 <attribute name="Embedded-Jar" value="lib/${client-jrdf.jar}, lib/${client-jena.jar}, lib/${config.jar},
 lib/${content-n3.jar}, lib/${content-rdfxml.jar}, lib/${content-rio.jar}, lib/${descriptor.jar},lib/${driver.jar},
@@ -1933,7 +1933,7 @@ lib/${servlet.jar},lib/jargs-0.2.jar, lib/castor-0.9.3.9-xml.jar, lib/xercesImpl
 lib/trove-1.0.2.jar,lib/${jrdf.jar}, lib/${sofa.jar}, lib/${rules.jar}, lib/${krule.jar}, lib/${saaj.jar}, lib/${axis.jar}, lib/${commons-discovery.jar},
 lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar}"/>
 -->
-      <attribute name="Embedded-Main-Class" value="org.kowari.server.EmbeddedKowariServer"/>
+      <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
 
@@ -1996,12 +1996,12 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
 <target name="ideSupport" depends="dist">
 
      <jar jarfile="${dist.dir}/ideSupport.jar">
-      <zipfileset dir="${obj.dir}/jar/itql/classes" includes="org/kowari/itql/**"/>
-      <zipfileset dir="${obj.dir}/jar/itql/java" includes="org/kowari/itql/lexer/lexer.dat"/>
-      <zipfileset dir="${obj.dir}/jar/itql/java" includes="org/kowari/itql/parser/parser.dat"/>
-      <zipfileset dir="${obj.dir}/jar/config/classes" includes="org/kowari/config/**"/>
-      <zipfileset dir="${obj.dir}/jar/util/classes" includes="org/kowari/util/conversion/**"/>
-      <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="org/kowari/server/rmi/**"/>
+      <zipfileset dir="${obj.dir}/jar/itql/classes" includes="org/mulgara/itql/**"/>
+      <zipfileset dir="${obj.dir}/jar/itql/java" includes="org/mulgara/itql/lexer/lexer.dat"/>
+      <zipfileset dir="${obj.dir}/jar/itql/java" includes="org/mulgara/itql/parser/parser.dat"/>
+      <zipfileset dir="${obj.dir}/jar/config/classes" includes="org/mulgara/config/**"/>
+      <zipfileset dir="${obj.dir}/jar/util/classes" includes="org/mulgara/util/conversion/**"/>
+      <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="org/mulgara/server/rmi/**"/>
       <zipfileset dir="${basedir}" includes="conf/**"/>
       <!-- include pre-bundled webapps -->
       <zipfileset dir="${bin.dir}" prefix="webapps" includes="${webui.war}"/>

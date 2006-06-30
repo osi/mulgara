@@ -1,4 +1,4 @@
-Kowari Metadata Store Legal Statements
+Mulgara Metadata Store Legal Statements
 
 This project includes source code and/or binary distributions from other
 projects and companies. It is our intent to list each of them here. If
@@ -246,9 +246,9 @@ I.  Open Source Components
 
 II.  Sun Microsystems Components
 
-     The Kowari Metadata Store is written entirely in the Java(TM)
+     The Mulgara Metadata Store is written entirely in the Java(TM)
      programming language and depends on several optional Java packages.
-     The Kowari Metadata Store Open Source project DOES NOT DISTRIBUTE
+     The Mulgara Metadata Store Open Source project DOES NOT DISTRIBUTE
      these packages due to licensing constraints, but they are freely
      available for download under their own licensing terms.  They are:
 
@@ -279,7 +279,7 @@ II.  Sun Microsystems Components
 
 III. Supporting Optional Packages
 
-    Those wishing to build the Kowari Metadata Store from source will
+    Those wishing to build the Mulgara Metadata Store from source will
     require Ant.  Those wishing to run the unit tests included in the
     distribution will require the other packages listed here:
 

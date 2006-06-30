@@ -1,4 +1,4 @@
-Kowari Metadata Store (Kowari) Installation Guide
+Mulgara Metadata Store (Mulgara) Installation Guide
 -------------------------------------------------
 
 Table of Contents
@@ -7,16 +7,16 @@ I. Introduction
     i. Directory Layout
     ii. Release Notes
 II. Installing Java
-III. Building Kowari
-IV. Running a Kowari Server
-V. Kowari Server Options
+III. Building Mulgara
+IV. Running a Mulgara Server
+V. Mulgara Server Options
 VI. License
 
 
 I. Introduction
 ===============
 
-Kowari Metadata Store is a directed graph daatabase designed to store metadata in
+Mulgara Metadata Store is a directed graph daatabase designed to store metadata in
 a highly scalable, transaction safe environment.
 
 i. Directory Layout
@@ -38,7 +38,7 @@ ii. Release Notes
 
 New Features:
 * Create best practises example. Demonstrates an RDF based music player using
-Kowari. SF feature 1088763.
+Mulgara. SF feature 1088763.
 * XML Literal support. SF feature 1077157.
 * Improved subquery speed.  SF feature 1081837.
 * Increased small query speed. SF feature 1081838.
@@ -112,16 +112,16 @@ If your shell reports that it cannot find the command, add <JAVA_HOME>/bin
 (where JAVA_HOME is the location where you installed J2SE to) to your path
 in the appropriate way for your shell.
 
-Note. You must use J2SE 1.4.2 or above for compiling and running Kowari.
+Note. You must use J2SE 1.4.2 or above for compiling and running Mulgara.
 
 
-III. Building Kowari
+III. Building Mulgara
 ====================
 
-If you have downloaded the binary distribution of Kowari please skip this
-section and go on to "Running a Kowari Server".
+If you have downloaded the binary distribution of Mulgara please skip this
+section and go on to "Running a Mulgara Server".
 
-To build Kowari, you must either use build.sh (for Unix opeating systems) or
+To build Mulgara, you must either use build.sh (for Unix opeating systems) or
 build.bat (for Windows).  You must have you JAVA_HOME enviroment variable
 set in order for the script to work or modify the script to point to your
 current installation of Java.
@@ -130,39 +130,39 @@ To build the distribution in Unix:
 $ ./build.sh dist
 
 To build the distribution in Windows:
-C:\Kowari\> build dist
+C:\Mulgara\> build dist
 
 
-IV. Running a Kowari Server
+IV. Running a Mulgara Server
 ============================
 
-The Kowari server is currently run from a shell script under Linux or a batch
+The Mulgara server is currently run from a shell script under Linux or a batch
 file under Windows. To start the server using this script, you'll need to do
 the following:
 
 Note. This assumes PATH has been set to the
 C:\Program Files\Java\j2re1.4.2\bin directory.
 
-1. Change to the Kowari directory:
-$ cd <kowarihome>
+1. Change to the Mulgara directory:
+$ cd <mulgarahome>
 
-Note. If the directory does not exist create one and copy the kowari-1.1.0.jar
+Note. If the directory does not exist create one and copy the mulgara-1.1.0.jar
 and itql-1.1.0.jar into it.
 
 2. Start the executable JAR :
 
-$ cd <kowarihome>
-$ java -jar kowari-1.1.0.jar
+$ cd <mulgarahome>
+$ java -jar mulgara-1.1.0.jar
 
 Once you see the following line appear in the console the server is ready to be used.
 
 11:01:47.763 EVENT Started SocketListener on 0.0.0.0:8080
 
 However, if the following message appears then the HTTP port is already occupied by
-another process. Please refer to Kowari Server options to change this
+another process. Please refer to Mulgara Server options to change this
 configuration.
 
-2004-04-23 11:20:23,823 ERROR EmbeddedKowariServer - java.net.BindException: Address already in use
+2004-04-23 11:20:23,823 ERROR EmbeddedMulgaraServer - java.net.BindException: Address already in use
 
 To verify your installation is working correctly open your browser and enter the following URL
 
@@ -170,16 +170,16 @@ http://localhost:8080
 
 Your HTTP port may be different if you have supplied a -p option.
 
-Follow the links to the user documentation to learn more about using Kowari.
+Follow the links to the user documentation to learn more about using Mulgara.
 
 
-V. Kowari Server Options
+V. Mulgara Server Options
 =========================
 
-You can change the basic Kowari server options by suppling them as arguments
+You can change the basic Mulgara server options by suppling them as arguments
 to the startup command. To view the basic options supply the --help option.
 
-$ java -jar kowari-1.1.0.jar --help
+$ java -jar mulgara-1.1.0.jar --help
 
 This will return the following options :
 
@@ -198,30 +198,30 @@ This will return the following options :
                     or the system temporary directory respectively
 -m, --smtp          the SMTP server for email notifications
 
-Since Kowari has an embedded HTTP server you may have a conflict with an
+Since Mulgara has an embedded HTTP server you may have a conflict with an
 existing HTTP running on port 8080. For example, to change the HTTP port of
-the Kowari server to 8081
+the Mulgara server to 8081
 
-$java -jar kowari-1.1.0.jar -p 8081
+$java -jar mulgara-1.1.0.jar -p 8081
 
 By default the database files are stored in the current directory under a
 server1 directory. To change the location of the database files supply the
 -a followed by a path. For example :
 
-$java -jar kowari-1.1.0.jar -a file:///usr/local/kowari
+$java -jar mulgara-1.1.0.jar -a file:///usr/local/mulgara
 Under Windows :
 
-$java -jar kowari-1.1.0.jar -a c:\kowari-data
+$java -jar mulgara-1.1.0.jar -a c:\mulgara-data
 
 VI. License
 ==========
 
-The Kowari Metadata Store is licensed under the Mozilla Public License
+The Mulgara Metadata Store is licensed under the Mozilla Public License
 version 1.1 which is included with the distribution in a file called
 LICENSE.txt.
 
 Copyright (c) 2001-2004 Tucana Technologies, Inc. All rights reserved.
-Copyright (c) 2005 Kowari Project. All rights reserved.
+Copyright (c) 2005 Mulgara Project. All rights reserved.
 
 Last updated on 1 April 2005
 

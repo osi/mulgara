@@ -46,8 +46,8 @@ import org.jrdf.graph.*;
 import com.hp.hpl.jena.graph.Node_Variable;
 
 // Local packages
-import org.kowari.jena.*;
 import org.mulgara.content.ContentHandlerManager;
+import org.mulgara.jena.*;
 import org.mulgara.jrdf.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
@@ -194,8 +194,8 @@ public class LocalJenaDatabaseSession extends LocalJRDFDatabaseSession
       com.hp.hpl.jena.graph.Triple triple =
           new com.hp.hpl.jena.graph.Triple(subject, predicate, object);
 
-      org.kowari.jena.AnswerClosableIteratorImpl iter =
-          new org.kowari.jena.AnswerClosableIteratorImpl(answer, triple,
+      org.mulgara.jena.AnswerClosableIteratorImpl iter =
+          new org.mulgara.jena.AnswerClosableIteratorImpl(answer, triple,
           modelURI, jenaFactory, iteratorHandler);
        return iter;
     }

@@ -5,7 +5,7 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!--
-Log4J configuration template for the Kowari Query Engine project.
+Log4J configuration template for the Mulgara Query Engine project.
 
 Ant will copy this file from the templates directory to the CVS root.
 Developers are expected to edit the copied version so that they can see debug
@@ -15,7 +15,7 @@ on.  Any <category/> elements must appear after the <appender/> elements and
 before the <root/> element to satisfy the DTD.  An example <category/> element
 is as follows:
 
-  <category name="org.kowari.grammar.rdfdb.QueryCompiler">
+  <category name="org.mulgara.grammar.rdfdb.QueryCompiler">
     <priority value="debug"/>
   </category>
 

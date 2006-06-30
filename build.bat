@@ -1,7 +1,7 @@
 @echo off
 
 REM -----------------------------------------------------------------------------
-REM Build script for Kowari
+REM Build script for Mulgara
 REM
 REM $Id: build.bat,v 1.5 2004/12/22 05:00:31 newmana Exp $
 REM -----------------------------------------------------------------------------
