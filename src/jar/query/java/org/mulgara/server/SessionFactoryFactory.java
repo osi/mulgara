@@ -223,12 +223,12 @@ public class SessionFactoryFactory {
     Class [] argTypes = new Class [] {
       serverURI.getClass(),
       directory.getClass(),
-      tucanaConfig.getClass()
+      mulgaraConfig.getClass()
     };
     Object [] args = new Object [] {
       serverURI,
       directory,
-      tucanaConfig
+      mulgaraConfig
     };
 
     return getTripleStoreImplementation(this.className, argTypes, args);
@@ -384,13 +384,13 @@ public class SessionFactoryFactory {
 
       //create a configuration object from the stream
       InputStreamReader reader = new InputStreamReader(inStream);
-      tucanaConfig = MulgaraConfig.unmarshal(reader);
-      tucanaConfig.validate();
+      mulgaraConfig = MulgaraConfig.unmarshal(reader);
+      mulgaraConfig.validate();
 
       //set configuration properties
 
       //className
-      String storeImpl = tucanaConfig.getTripleStoreImplementation();
+      String storeImpl = mulgaraConfig.getTripleStoreImplementation();
       if ((storeImpl != null)
           && (!"".equals(storeImpl))) {
 
@@ -398,7 +398,7 @@ public class SessionFactoryFactory {
       }
 
       //server name (sets server URI)
-      String serverName = tucanaConfig.getServerName();
+      String serverName = mulgaraConfig.getServerName();
       if ((serverName != null)
           && (!"".equals(serverName))) {
 
@@ -407,7 +407,7 @@ public class SessionFactoryFactory {
       }
 
       //serverURI (overrides URI set for serverName)
-      String host = tucanaConfig.getTucanaHost();
+      String host = mulgaraConfig.getTucanaHost();
       if ((host != null)
           && (!"".equals(host))) {
 
@@ -415,7 +415,7 @@ public class SessionFactoryFactory {
       }
 
       //directory
-      String persistencePath = tucanaConfig.getPersistencePath();
+      String persistencePath = mulgaraConfig.getPersistencePath();
       if ((persistencePath != null)
           && (!"".equals(persistencePath))) {
 
