@@ -85,19 +85,19 @@ public class XSDResolver implements Resolver {
   private static final boolean PERMISSIVE_PARAMETER_KLUDGE = true;
 
   /** Description of the Field */
-  static long mULGARA_AFTER;
+  static long MULGARA_AFTER;
 
   /** Description of the Field */
-  static long mULGARA_BEFORE;
+  static long MULGARA_BEFORE;
 
   /** Description of the Field */
-  static long mULGARA_LT;
+  static long MULGARA_LT;
 
   /** Description of the Field */
-  static long mULGARA_GT;
+  static long MULGARA_GT;
 
   /** Description of equals field */
-  static long mULGARA_IS;
+  static long MULGARA_IS;
 
   /** Description of the Field */
   static final Map oppositePropertyMap = new HashMap();
@@ -229,7 +229,7 @@ public class XSDResolver implements Resolver {
 
       if ((constraint.getElement(0) instanceof Variable) &&
           !(constraint.getElement(2) instanceof Variable)) {
-        if (property == mULGARA_LT) {
+        if (property == MULGARA_LT) {
 
           if (logger.isDebugEnabled()) {
             logger.debug("Evaluating " + constraint.getElement(0) +
@@ -244,7 +244,7 @@ public class XSDResolver implements Resolver {
               getBoundDouble(constraint.getElement(2)), // high value
               false // exclude high value
               );
-        } else if (property == mULGARA_GT) {
+        } else if (property == MULGARA_GT) {
 
           if (logger.isDebugEnabled()) {
             logger.debug("Evaluating " + constraint.getElement(0) + "(" + constraint.getElement(0).getClass() + ") " +
@@ -258,7 +258,7 @@ public class XSDResolver implements Resolver {
               null, // high value
               true // include high value
               );
-        } else if (property == mULGARA_BEFORE) {
+        } else if (property == MULGARA_BEFORE) {
 
           if (logger.isDebugEnabled()) {
             logger.debug("Evaluating " + constraint.getElement(0) +
@@ -274,7 +274,7 @@ public class XSDResolver implements Resolver {
               getBoundDate(constraint.getElement(2)), // high value
               false // exclude high value
               );
-        } else if (property == mULGARA_AFTER) {
+        } else if (property == MULGARA_AFTER) {
 
           // Evaluate "less than" for xsd:double
           if (logger.isDebugEnabled()) {
@@ -322,19 +322,19 @@ public class XSDResolver implements Resolver {
         // Evaluate the cases where neither subject nor object are variables
         boolean condition;
 
-        if (property == mULGARA_LT) {
+        if (property == MULGARA_LT) {
           SPObject lhs = getBoundDouble(constraint.getElement(0));
           SPObject rhs = getBoundDouble(constraint.getElement(2));
           condition = lhs.compareTo(rhs) < 0;
-        } else if (property == mULGARA_GT) {
+        } else if (property == MULGARA_GT) {
           SPObject lhs = getBoundDouble(constraint.getElement(0));
           SPObject rhs = getBoundDouble(constraint.getElement(2));
           condition = lhs.compareTo(rhs) > 0;
-        } else if (property == mULGARA_AFTER) {
+        } else if (property == MULGARA_AFTER) {
           SPObject lhs = getBoundDate(constraint.getElement(0));
           SPObject rhs = getBoundDate(constraint.getElement(2));
           condition = lhs.compareTo(rhs) > 0;
-        } else if (property == mULGARA_BEFORE) {
+        } else if (property == MULGARA_BEFORE) {
           SPObject lhs = getBoundDate(constraint.getElement(0));
           SPObject rhs = getBoundDate(constraint.getElement(2));
           condition = lhs.compareTo(rhs) < 0;

@@ -68,8 +68,8 @@ public class ConstraintOccursMoreThan extends ConstraintHaving {
   /**
    * Create the predicate to be used to indicate equality.
    */
-  public static final URIReferenceImpl mULGARA_OCCURS_MORE_THAN =
-      new URIReferenceImpl(SpecialPredicates.mULGARA_OCCURS_MORE_THAN);
+  public static final URIReferenceImpl MULGARA_OCCURS_MORE_THAN =
+      new URIReferenceImpl(SpecialPredicates.MULGARA_OCCURS_MORE_THAN);
 
   /**
    * Constructor.
@@ -80,7 +80,7 @@ public class ConstraintOccursMoreThan extends ConstraintHaving {
    */
   public ConstraintOccursMoreThan(ConstraintElement e0, ConstraintElement e2,
       ConstraintElement e3) {
-    super(e0, mULGARA_OCCURS_MORE_THAN, e2, e3);
+    super(e0, MULGARA_OCCURS_MORE_THAN, e2, e3);
   }
 
 
@@ -100,7 +100,7 @@ public class ConstraintOccursMoreThan extends ConstraintHaving {
    * Localized factory.  Only for use when the predicate is a localized node.
    *
    * @param e0 The first statement constraint.
-   * @param e1 The constraint predicate.  This must be a localized node for mULGARA_IS.
+   * @param e1 The constraint predicate.  This must be a localized node for MULGARA_IS.
    * @param e2 The third statement constraint.
    * @param e3 The fourth (meta) statement constraint.
    * @return A new ConstraintOccurs with a localized predicate.

@@ -116,7 +116,7 @@ public class MetadataTag extends TagSupport {
   /**
    * the system property that overrides the the query file location
    */
-  private final static String mULGARAV_QUERY = "mULGARAVQUERY";
+  private final static String MULGARAV_QUERY = "MULGARAVQUERY";
 
   //
   // Document properties
@@ -642,7 +642,7 @@ public class MetadataTag extends TagSupport {
       // get the location of the queries file
       String virtualLocation =
         this.pageContext.getServletContext().getInitParameter(DOCUMENT_QUERIES_FILE);
-      virtualLocation = System.getProperty(mULGARAV_QUERY, virtualLocation);
+      virtualLocation = System.getProperty(MULGARAV_QUERY, virtualLocation);
 
       if (virtualLocation == null) {
 

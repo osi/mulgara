@@ -75,34 +75,34 @@ public class SpecialPredicates extends Vocabulary {
   public static final String OCCURS_MORE_THAN = Mulgara.NAMESPACE + "occursMoreThan";
 
   /** The URI for the equality predicate */
-  public static final URI mULGARA_IS;
+  public static final URI MULGARA_IS;
 
   /** The URI for the cardinality equality predicate */
-  public static final URI mULGARA_OCCURS;
+  public static final URI MULGARA_OCCURS;
 
   /** The URI for the cardinality equality predicate */
-  public static final URI mULGARA_NOT_OCCURS;
+  public static final URI MULGARA_NOT_OCCURS;
 
   /** The URI for the cardinality less than predicate */
-  public static final URI mULGARA_OCCURS_LESS_THAN;
+  public static final URI MULGARA_OCCURS_LESS_THAN;
 
   /** The URI for the cardinality greater than predicate */
-  public static final URI mULGARA_OCCURS_MORE_THAN;
+  public static final URI MULGARA_OCCURS_MORE_THAN;
 
   // intialize all predicate URIs
   static {
     try {
-      mULGARA_IS = new URI(IS);
-      mULGARA_OCCURS = new URI(OCCURS);
-      mULGARA_NOT_OCCURS = new URI(NOT_OCCURS);
-      mULGARA_OCCURS_LESS_THAN = new URI(OCCURS_LESS_THAN);
-      mULGARA_OCCURS_MORE_THAN = new URI(OCCURS_MORE_THAN);
+      MULGARA_IS = new URI(IS);
+      MULGARA_OCCURS = new URI(OCCURS);
+      MULGARA_NOT_OCCURS = new URI(NOT_OCCURS);
+      MULGARA_OCCURS_LESS_THAN = new URI(OCCURS_LESS_THAN);
+      MULGARA_OCCURS_MORE_THAN = new URI(OCCURS_MORE_THAN);
 
-      resources.add(mULGARA_IS);
-      resources.add(mULGARA_OCCURS);
-      resources.add(mULGARA_NOT_OCCURS);
-      resources.add(mULGARA_OCCURS_LESS_THAN);
-      resources.add(mULGARA_OCCURS_MORE_THAN);
+      resources.add(MULGARA_IS);
+      resources.add(MULGARA_OCCURS);
+      resources.add(MULGARA_NOT_OCCURS);
+      resources.add(MULGARA_OCCURS_LESS_THAN);
+      resources.add(MULGARA_OCCURS_MORE_THAN);
     } catch (URISyntaxException e) {
       // Houston, we have a problem.  Not much we can do with it, so rethrow as an error.
       throw new ExceptionInInitializerError(e);
@@ -117,9 +117,9 @@ public class SpecialPredicates extends Vocabulary {
    * @return <code>true</code> if the predicate is magic.
    */
   public static final boolean isSpecialPredicate(URI uri) {
-    return uri.equals(mULGARA_IS) || uri.equals(mULGARA_OCCURS) ||
-        uri.equals(mULGARA_NOT_OCCURS) || uri.equals(mULGARA_OCCURS_LESS_THAN) ||
-        uri.equals(mULGARA_OCCURS_MORE_THAN);
+    return uri.equals(MULGARA_IS) || uri.equals(MULGARA_OCCURS) ||
+        uri.equals(MULGARA_NOT_OCCURS) || uri.equals(MULGARA_OCCURS_LESS_THAN) ||
+        uri.equals(MULGARA_OCCURS_MORE_THAN);
   }
 
 

@@ -143,14 +143,14 @@ public class EmbeddedMulgaraServer extends Thread {
   private final static String DATA_PATH = "data";
 
   /**
-   * the mULGARAV web application file
+   * the MULGARAV web application file
    */
-  private static final String mULGARAV_WEBAPP = "mulgarav.war";
+  private static final String MULGARAV_WEBAPP = "mulgarav.war";
 
   /**
-   * the mULGARAV path
+   * the MULGARAV path
    */
-  private static final String mULGARAV_PATH = "mulgarav";
+  private static final String MULGARAV_PATH = "mulgarav";
 
   /**
    * the documentation file path

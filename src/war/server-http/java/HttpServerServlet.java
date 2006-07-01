@@ -118,12 +118,12 @@ public class HttpServerServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
 
-    final String mULGARA_SESSION_PROPERTY = "mulgaraSession";
+    final String MULGARA_SESSION_PROPERTY = "mulgaraSession";
 
     // Obtain the Mulgara session
     HttpSession httpSession = request.getSession();
     Session mulgaraSession =
-      (Session) httpSession.getAttribute(mULGARA_SESSION_PROPERTY);
+      (Session) httpSession.getAttribute(MULGARA_SESSION_PROPERTY);
 
     if (mulgaraSession == null) {
 
@@ -141,7 +141,7 @@ public class HttpServerServlet extends HttpServlet {
         throw new ServletException("Couldn't generate session", e);
       }
 
-      httpSession.setAttribute(mULGARA_SESSION_PROPERTY, mulgaraSession);
+      httpSession.setAttribute(MULGARA_SESSION_PROPERTY, mulgaraSession);
     }
 
     //assert mulgaraSession != null;

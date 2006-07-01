@@ -105,22 +105,22 @@ public class ServletMulgaraServer extends HttpServlet implements
   /**
    * the key to retreive the Mulgara server name
    */
-  private final static String mULGARA_CONFIG_SERVERNAME = "mulgara.config.servername";
+  private final static String MULGARA_CONFIG_SERVERNAME = "mulgara.config.servername";
 
   /**
    * the key to retrieve the database persistence path
    */
-  private final static String mULGARA_CONFIG_PERSISTENCE_PATH = "mulgara.config.persistencepath";
+  private final static String MULGARA_CONFIG_PERSISTENCE_PATH = "mulgara.config.persistencepath";
 
   /**
    * the key to retreive the Mulgara security policy file
    */
-  private final static String mULGARA_SECURITY_POLICY_PATH = "mulgara.security.policy";
+  private final static String MULGARA_SECURITY_POLICY_PATH = "mulgara.security.policy";
 
   /**
    * the key to retreive the Mulgara host name
    */
-  private final static String mULGARA_HOSTNAME = "mulgara.hostname";
+  private final static String MULGARA_HOSTNAME = "mulgara.hostname";
 
   /**
    * the key to retreive the Mulgara LDAP security file
@@ -130,7 +130,7 @@ public class ServletMulgaraServer extends HttpServlet implements
   /**
    * the key to retreive the Mulgara LDAP security file
    */
-  private final static String mULGARA_LOG4J_CONFIG = "mulgara.log4j.config";
+  private final static String MULGARA_LOG4J_CONFIG = "mulgara.log4j.config";
 
   /**
    * the key to retreive the lucene index directory
@@ -189,9 +189,9 @@ public class ServletMulgaraServer extends HttpServlet implements
 
       // get the loction of the logging configuration file
       String log4jConfigPath = this
-          .getRealPath(ServletMulgaraServer.mULGARA_LOG4J_CONFIG);
+          .getRealPath(ServletMulgaraServer.MULGARA_LOG4J_CONFIG);
 
-      //this.getResourceURL(ServletMulgaraServer.mULGARA_LOG4J_CONFIG);
+      //this.getResourceURL(ServletMulgaraServer.MULGARA_LOG4J_CONFIG);
       if (log4jConfigPath == null) {
 
         throw new IOException("Unable to retrieve log4j configuration file");
@@ -284,7 +284,7 @@ public class ServletMulgaraServer extends HttpServlet implements
   private URI getServerURI(String serverName) throws URISyntaxException {
 
     String hostname = this.getServletContext()
-        .getInitParameter(mULGARA_HOSTNAME);
+        .getInitParameter(MULGARA_HOSTNAME);
 
     // attempt to determine the hostname if not supplied by servlet
     if (hostname == null || hostname.trim().length() == 0) {
@@ -396,9 +396,9 @@ public class ServletMulgaraServer extends HttpServlet implements
 
       // get params we'll need to create the server
       String persistencePath = this.getPersistencePath(this.getServletContext()
-          .getInitParameter(mULGARA_CONFIG_PERSISTENCE_PATH));
+          .getInitParameter(MULGARA_CONFIG_PERSISTENCE_PATH));
       String serverName = this.getServletContext().getInitParameter(
-          mULGARA_CONFIG_SERVERNAME);
+          MULGARA_CONFIG_SERVERNAME);
 
       // throw an error if anything is null
       if (serverName == null) {

@@ -89,31 +89,31 @@ public class AlldocsTag extends TagSupport {
   /**
    * the Mulgara document property
    */
-  protected final static String mULGARA_DOCUMENT_PROPERTY =
+  protected final static String MULGARA_DOCUMENT_PROPERTY =
     "http://tucana.org/tucana/Document#Document";
 
   /**
    * the TMex HTML title property
    */
-  protected final static String mULGARA_HTMLTITLE_PROPERTY =
+  protected final static String MULGARA_HTMLTITLE_PROPERTY =
     "http://tucana.org/tucana/tool/HtmlExtractor#title";
 
   /**
    * the TMex HTML property
    */
-  protected final static String mULGARA_TITLE_PROPERTY =
+  protected final static String MULGARA_TITLE_PROPERTY =
     "http://tucana.org/tucana/Document#title";
 
   /**
    * the TMex has HTML property
    */
-  protected final static String mULGARA_HASHHTML_PROPERTY =
+  protected final static String MULGARA_HASHHTML_PROPERTY =
     "http://tucana.org/tucana/Document#hasHtml";
 
   /**
    * the TMex processed property
    */
-  protected final static String mULGARA_PROCESSED_PROPERTY =
+  protected final static String MULGARA_PROCESSED_PROPERTY =
     "http://tucana.org/tucana/Document#processed";
 
   /**
@@ -484,8 +484,8 @@ public class AlldocsTag extends TagSupport {
     // construct the query
     String allDocsQuery =
       "select $url $title from <" + model.toString() + ">" + " where ($url <" +
-      RDF_TYPE_PROPERTY + "> <" + mULGARA_DOCUMENT_PROPERTY + "> )" +
-      " and ( $url <" + mULGARA_TITLE_PROPERTY + "> $title );";
+      RDF_TYPE_PROPERTY + "> <" + MULGARA_DOCUMENT_PROPERTY + "> )" +
+      " and ( $url <" + MULGARA_TITLE_PROPERTY + "> $title );";
 
     // log the query we're sending
     log.debug("Sending all documents query to " + soapEndpoint + ":\n" +

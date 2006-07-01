@@ -130,19 +130,19 @@ public class XSDResolverFactory implements ResolverFactory {
     try {
 
       // Create the after node ID
-      XSDResolver.mULGARA_AFTER = resolverFactoryInitializer.preallocate(
+      XSDResolver.MULGARA_AFTER = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "after")));
 
       // Create the before node ID
-      XSDResolver.mULGARA_BEFORE = resolverFactoryInitializer.preallocate(
+      XSDResolver.MULGARA_BEFORE = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "before")));
 
       // Create the less than node ID
-      XSDResolver.mULGARA_LT = resolverFactoryInitializer.preallocate(
+      XSDResolver.MULGARA_LT = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")));
 
       // Create the greater than node ID
-      XSDResolver.mULGARA_GT = resolverFactoryInitializer.preallocate(
+      XSDResolver.MULGARA_GT = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt")));
     } catch (URISyntaxException e) {
 
@@ -182,20 +182,20 @@ public class XSDResolverFactory implements ResolverFactory {
     }
 
     // Store the after opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_AFTER),
-                                        new LocalNode(XSDResolver.mULGARA_BEFORE));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.MULGARA_AFTER),
+                                        new LocalNode(XSDResolver.MULGARA_BEFORE));
 
     // Store the before opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_BEFORE),
-                                        new LocalNode(XSDResolver.mULGARA_AFTER));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.MULGARA_BEFORE),
+                                        new LocalNode(XSDResolver.MULGARA_AFTER));
 
     // Store the greater than opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_GT),
-                                        new LocalNode(XSDResolver.mULGARA_LT));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.MULGARA_GT),
+                                        new LocalNode(XSDResolver.MULGARA_LT));
 
     // Store the less than opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_LT),
-                                        new LocalNode(XSDResolver.mULGARA_GT));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.MULGARA_LT),
+                                        new LocalNode(XSDResolver.MULGARA_GT));
   }
 
   /**

@@ -220,7 +220,7 @@ public class JRDFLocalGraphUnitTest extends AbstractGraphUnitTest {
    */
   private void createModel(URI modelURI) throws Exception {
 
-    this.session.createModel(modelURI, Session.mULGARA_MODEL_URI);
+    this.session.createModel(modelURI, Session.MULGARA_MODEL_URI);
   }
 
   /**

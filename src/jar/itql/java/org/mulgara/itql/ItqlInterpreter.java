@@ -1661,7 +1661,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
     // get the type of model to create; default to tucana:Model is unspecified
     URI modelTypeURI = (node.getModelType() == null)
-        ? Session.mULGARA_MODEL_URI
+        ? Session.MULGARA_MODEL_URI
         : toURI(node.getModelType());
 
     try {

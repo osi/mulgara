@@ -199,17 +199,17 @@ class LocalQuery implements Cloneable
   }
 
 
-  // FIXME: This method should be using a LiteralTuples.  Also I believe mULGARA_IS is now preallocated.
+  // FIXME: This method should be using a LiteralTuples.  Also I believe MULGARA_IS is now preallocated.
   // Someone needs to try making the change and testing.
   private ConstraintExpression constrainBindings(Map bindings) throws LocalizeException {
     List args = new ArrayList();
     Iterator i = bindings.entrySet().iterator();
-    logger.info("FIXME:localize should be lookup, need to preallocate mULGARA_IS");
+    logger.info("FIXME:localize should be lookup, need to preallocate MULGARA_IS");
     while (i.hasNext()) {
       Map.Entry entry = (Map.Entry)i.next();
       args.add(ConstraintIs.newLocalConstraintIs(
                   (Variable)entry.getKey(),
-                  new LocalNode(resolverSession.localize(ConstraintIs.mULGARA_IS)),
+                  new LocalNode(resolverSession.localize(ConstraintIs.MULGARA_IS)),
                   (Value)entry.getValue(),
                   null));
     }

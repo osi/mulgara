@@ -83,12 +83,12 @@ public class SubqueryAnswer extends GlobalizedAnswer {
    *
    * This ought to be replaced by owl:sameIndividualAs.
    */
-  static final URIReferenceImpl mULGARA_IS;
+  static final URIReferenceImpl MULGARA_IS;
 
   // Initialize global constants
   static {
     try {
-      mULGARA_IS = new URIReferenceImpl(new URI(Mulgara.NAMESPACE+"is"));
+      MULGARA_IS = new URIReferenceImpl(new URI(Mulgara.NAMESPACE+"is"));
     }
     catch (URISyntaxException e) {
       throw new ExceptionInInitializerError(e);

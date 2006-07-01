@@ -68,8 +68,8 @@ public class ConstraintOccurs extends ConstraintHaving {
   /**
    * Create the predicate to be used to indicate equality.
    */
-  public static final URIReferenceImpl mULGARA_OCCURS =
-      new URIReferenceImpl(SpecialPredicates.mULGARA_OCCURS);
+  public static final URIReferenceImpl MULGARA_OCCURS =
+      new URIReferenceImpl(SpecialPredicates.MULGARA_OCCURS);
 
   /**
    * Constructor.
@@ -79,7 +79,7 @@ public class ConstraintOccurs extends ConstraintHaving {
    * @param e3 The fourth (meta) statement constraint.
    */
   public ConstraintOccurs(ConstraintElement e0, ConstraintElement e2, ConstraintElement e3) {
-    super(e0, mULGARA_OCCURS, e2, e3);
+    super(e0, MULGARA_OCCURS, e2, e3);
   }
 
 
@@ -99,7 +99,7 @@ public class ConstraintOccurs extends ConstraintHaving {
    * Localized factory.  Only for use when the predicate is a localized node.
    *
    * @param e0 The first statement constraint.
-   * @param e1 The constraint predicate.  This must be a localized node for mULGARA_IS.
+   * @param e1 The constraint predicate.  This must be a localized node for MULGARA_IS.
    * @param e2 The third statement constraint.
    * @param e3 The fourth (meta) statement constraint.
    * @return A new ConstraintOccurs with a localized predicate.

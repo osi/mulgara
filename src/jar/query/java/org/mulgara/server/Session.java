@@ -68,7 +68,7 @@ public interface Session {
    * This constant can be passed to {@link #createModel} to indicate that a
    * normal model backed by a triple store is required.
    */
-  public final URI mULGARA_MODEL_URI = ConstantFactory.getMulgaraModelURI();
+  public final URI MULGARA_MODEL_URI = ConstantFactory.getMulgaraModelURI();
 
   /**
    * Insert statements into a model.
@@ -176,7 +176,7 @@ public interface Session {
 
   /**
    * Creates a new model of a given type.  The standard model type is
-   * {@link #mULGARA_MODEL_URI}.
+   * {@link #MULGARA_MODEL_URI}.
    *
    * @param modelURI the {@link URI} of the new model
    * @param modelTypeURI the {@link URI} identifying the type of model to use
