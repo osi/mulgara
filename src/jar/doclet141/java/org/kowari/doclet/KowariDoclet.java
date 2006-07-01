@@ -1,4 +1,4 @@
-package org.kowari.doclet;
+package org.mulgara.doclet;
 
 // Java 2 standard packages
 import java.io.IOException;
@@ -12,11 +12,11 @@ import com.sun.tools.doclets.DocletAbortException;
 import com.sun.tools.doclets.standard.Standard;     // Sun standard doclet
 
 /**
-* Custom doclet for Kowari project.
+* Custom doclet for Mulgara project.
 *
 * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
 */
-public class KowariDoclet extends Standard
+public class MulgaraDoclet extends Standard
 {
   /**
   * Doclet entry point.
@@ -24,7 +24,7 @@ public class KowariDoclet extends Standard
   public static boolean start(RootDoc root) throws IOException
   {
     try {
-      KowariDoclet doclet = new KowariDoclet();
+      MulgaraDoclet doclet = new MulgaraDoclet();
       doclet.configuration();
       doclet.startGeneration(root);
       return true;

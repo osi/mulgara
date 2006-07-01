@@ -71,7 +71,7 @@ public class RestoreDataJX implements JXTestStep {
   public final static String TIME = "time";
 
   /**
-   * Supplied a valid server name and a file this method will restore a Kowari
+   * Supplied a valid server name and a file this method will restore a Mulgara
    * database.
    *
    * @param testCase PARAMETER TO DO
@@ -93,7 +93,7 @@ public class RestoreDataJX implements JXTestStep {
 
     ItqlInterpreterBean iTQL = new ItqlInterpreterBean();
 
-    System.out.println("Restoring Kowari database from " + file +
+    System.out.println("Restoring Mulgara database from " + file +
       " please wait...");
 
     long start = System.currentTimeMillis();

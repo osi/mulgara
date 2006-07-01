@@ -1323,7 +1323,7 @@ public class Database implements SessionFactory
    */
   private void setHostnameAliases(Set names) {
     try {
-      Class si = Class.forName("org.kowari.server.ServerInfo");
+      Class si = Class.forName("org.mulgara.server.ServerInfo");
       java.lang.reflect.Method setter = si.getMethod("setHostnameAliases", new Class[] { Set.class });
       setter.invoke(null, new Object[] { names });
     } catch (Exception e) {

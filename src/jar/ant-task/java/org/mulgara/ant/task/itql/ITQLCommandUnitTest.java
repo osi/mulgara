@@ -52,7 +52,7 @@ import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.Answer;
 
 /**
- * An Ant Task to load RDF into a Kowari database.
+ * An Ant Task to load RDF into a Mulgara database.
  *
  * @created 2002-11-07
  *

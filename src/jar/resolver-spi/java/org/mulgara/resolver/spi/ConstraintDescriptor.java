@@ -22,7 +22,7 @@
  *   Department of Defense
  * Developed by Netymon Pty Ltd
  * under contract 4500430665
- * contributed to the Kowari Project under the
+ * contributed to the Mulgara Project under the
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
  *
@@ -46,7 +46,7 @@ import org.mulgara.store.tuples.Tuples;
  * Describes a Constraint object.
  *
  * This interface is used by ResolverFactory's to introduce custom private
- * constraint types to Kowari.  One alternative design would be to have
+ * constraint types to Mulgara.  One alternative design would be to have
  * methods return the various Handlers required (initially two).  For the
  * moment we will provide an AbstractConstraintDescriptor that can provide
  * that functionality.

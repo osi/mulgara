@@ -34,13 +34,13 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 // Locally written classes
-import org.kowari.query.*;
+import org.mulgara.query.*;
 
 // Jena
 import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.graph.query.*;
 import com.hp.hpl.jena.util.iterator.*;
-import org.kowari.server.*;
+import org.mulgara.server.*;
 
 /**
  * Takes an Answer and creates {@link Domain}s.  This is returned by

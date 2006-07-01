@@ -251,7 +251,7 @@ public class RmiSessionFactory implements SessionFactory {
    */
   private URI getLocalURI() {
     try {
-      Class rsf = Class.forName("org.kowari.server.ServerInfo");
+      Class rsf = Class.forName("org.mulgara.server.ServerInfo");
       java.lang.reflect.Method getServerURI = rsf.getMethod("getServerURI", null);
       Object uri = getServerURI.invoke(null, null);
       return (URI)uri;

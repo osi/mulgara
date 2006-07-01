@@ -48,7 +48,7 @@ import org.mulgara.server.driver.*;
 
 
 /**
- * Unit test for client-side JRDF Graph representing a kowari model (modelURI)
+ * Unit test for client-side JRDF Graph representing a mulgara model (modelURI)
  * and uses an ItqlInterpreterBeean and a Session.
  *
  * @created 2004-08-24
@@ -76,7 +76,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
   /** name of the model */
   private static String MODEL_NAME = "remoteAnswerCloneModel";
 
-  /** URI for the kowari server */
+  /** URI for the mulgara server */
   private static URI serverURI = null;
 
   /** URI for the test model */

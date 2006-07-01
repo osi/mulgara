@@ -39,7 +39,7 @@ import org.apache.log4j.*;
 // jrdf
 import org.jrdf.vocabulary.RDF;
 
-//kowari packages
+//mulgara packages
 import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;
 import org.mulgara.store.stringpool.SPTypedLiteral;

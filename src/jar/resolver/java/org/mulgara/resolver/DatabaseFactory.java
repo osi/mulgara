@@ -43,7 +43,7 @@ import javax.transaction.SystemException;
 import org.apache.log4j.Logger;  // Apache Log4J
 
 // Local packages
-import org.kowari.config.TucanaConfig;
+import org.mulgara.config.TucanaConfig;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.*;
@@ -195,8 +195,8 @@ public abstract class DatabaseFactory
     while (contentHandlers.hasMoreElements()) {
 
       // Retrieve the next content handler class name
-      org.kowari.config.ContentHandler contentHandler =
-        (org.kowari.config.ContentHandler) contentHandlers.nextElement();
+      org.mulgara.config.ContentHandler contentHandler =
+        (org.mulgara.config.ContentHandler) contentHandlers.nextElement();
 
       if (logger.isInfoEnabled()) {
 
@@ -215,8 +215,8 @@ public abstract class DatabaseFactory
     while (resolverFactories.hasMoreElements()) {
 
       // Retrieve the next resolver factory class name
-      org.kowari.config.ResolverFactory resolverFactory =
-        (org.kowari.config.ResolverFactory) resolverFactories.nextElement();
+      org.mulgara.config.ResolverFactory resolverFactory =
+        (org.mulgara.config.ResolverFactory) resolverFactories.nextElement();
 
       if (logger.isInfoEnabled()) {
 
@@ -242,8 +242,8 @@ public abstract class DatabaseFactory
 
     while (securityAdapterFactories.hasMoreElements()) {
 
-      org.kowari.config.SecurityAdapterFactory configSecurityAdapterFactory =
-        (org.kowari.config.SecurityAdapterFactory) securityAdapterFactories.nextElement();
+      org.mulgara.config.SecurityAdapterFactory configSecurityAdapterFactory =
+        (org.mulgara.config.SecurityAdapterFactory) securityAdapterFactories.nextElement();
 
       // Instantiate the factory bean
       SecurityAdapterFactory securityAdapterFactory;

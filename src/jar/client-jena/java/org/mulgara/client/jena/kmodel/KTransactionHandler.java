@@ -32,13 +32,13 @@ import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.graph.impl.*;
 import com.hp.hpl.jena.shared.*;
 
-//Kowari packages
-import org.kowari.query.*;
-import org.kowari.server.*;
+//Mulgara packages
+import org.mulgara.query.*;
+import org.mulgara.server.*;
 
 
 /**
- * A Jena TransactionHandler for a Kowari Session.
+ * A Jena TransactionHandler for a Mulgara Session.
  *
  * <p>An instance of this class is usually obtained via a KGraph.</p>
  *

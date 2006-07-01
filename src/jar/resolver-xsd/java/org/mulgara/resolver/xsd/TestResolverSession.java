@@ -22,7 +22,7 @@
  *   Department of Defense
  * Developed by Netymon Pty Ltd
  * under contract 4500430665
- * contributed to the Kowari Project under the
+ * contributed to the Mulgara Project under the
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
  *

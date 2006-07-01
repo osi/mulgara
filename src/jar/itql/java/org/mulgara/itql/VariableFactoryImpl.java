@@ -39,10 +39,10 @@ import org.jrdf.graph.*;         // JRDF
 // Locally written packages
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.analysis.*;
-import org.kowari.itql.lexer.*;
-import org.kowari.itql.node.*;
-import org.kowari.itql.parser.*;
+import org.mulgara.itql.analysis.*;
+import org.mulgara.itql.lexer.*;
+import org.mulgara.itql.node.*;
+import org.mulgara.itql.parser.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.server.Session;

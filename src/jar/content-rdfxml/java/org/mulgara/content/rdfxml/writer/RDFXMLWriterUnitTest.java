@@ -44,7 +44,7 @@ import org.mulgara.util.TempDir;
 
 
 /**
- * Unit test for client-side JRDF Graph representing a kowari model (modelURI)
+ * Unit test for client-side JRDF Graph representing a mulgara model (modelURI)
  * and uses an ItqlInterpreterBeean and a Session.
  *
  * @created 2004-08-24
@@ -73,7 +73,7 @@ public class RDFXMLWriterUnitTest extends TestCase {
   private static final String RDF_FILE = System.getProperty("cvs.root") +
       System.getProperty("file.separator") + "data" +
       System.getProperty("file.separator") + "ical.rdf";
-//  private static final String RDF_FILE = "/spare/test/kowari/jxdata/iTQL/data.rdf";
+//  private static final String RDF_FILE = "/spare/test/mulgara/jxdata/iTQL/data.rdf";
 
 
   /**

@@ -200,7 +200,7 @@ public class Collaborator {
   private final static String KEY_PREFIX = NS + "key";
 
   /**
-   * Check Kowari for the collaborator model
+   * Check Mulgara for the collaborator model
    */
   private final static String CHECK_MODEL =
       "select $model from <" + SERVER + "> " +
@@ -457,7 +457,7 @@ public class Collaborator {
   /**
    * Perform a registation of a new user. A successful registration will result
    * in an email been sent containing an access key to initiate the plug-in for
-   * a set period. ?All details are recorded in the Kowari database.
+   * a set period. ?All details are recorded in the Mulgara database.
    *
    * @param emailAddress ?email address to send the access key to
    * @param nickName ? the user name to be registered
@@ -510,7 +510,7 @@ public class Collaborator {
 
         this.sendEmail("foo@localhost", emailAddress,
                        "Collaborator Registration",
-                       "Welcome to Kowari Collaborator. Your access key is " +
+                       "Welcome to Mulgara Collaborator. Your access key is " +
                        key);
       }
     }
@@ -1594,12 +1594,12 @@ Variable("model")))).getURI().toString();
     }
     catch (QueryException ex) {
 
-      log.error("Unable to obtain a transaction for the Kowari Collaborator <" +
+      log.error("Unable to obtain a transaction for the Mulgara Collaborator <" +
                 name + ">", ex);
 
       SOAPException se =
           new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Unable to obtain a transaction for the Kowari Collaborator <" +
+          "Unable to obtain a transaction for the Mulgara Collaborator <" +
           name + ">");
       throw se;
     }
@@ -1624,12 +1624,12 @@ Variable("model")))).getURI().toString();
     }
     catch (QueryException ex) {
 
-      log.error("Unable to obtain a transaction for the Kowari Collaborator <" +
+      log.error("Unable to obtain a transaction for the Mulgara Collaborator <" +
                 name + ">", ex);
 
       SOAPException se =
           new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Unable to commit changes for the Kowari Collaborator <" + name +
+          "Unable to commit changes for the Mulgara Collaborator <" + name +
           ">");
 
       throw se;
@@ -1656,13 +1656,13 @@ Variable("model")))).getURI().toString();
     catch (QueryException ex) {
 
       log.error(
-          "Unable to rollback a transaction for the Kowari Collaborator <" +
+          "Unable to rollback a transaction for the Mulgara Collaborator <" +
           name + ">",
           ex);
 
       SOAPException se =
           new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Unable to rollback a transaction for the Kowari Collaborator <" +
+          "Unable to rollback a transaction for the Mulgara Collaborator <" +
           name + ">");
       throw se;
     }

@@ -27,7 +27,7 @@
 
 package org.mulgara.tag;
 
-//Kowari utilities
+//Mulgara utilities
 
 // Java 2 enterprise packages
 import java.io.*;
@@ -54,7 +54,7 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 /**
- * Sends queries to a Kowari server.
+ * Sends queries to a Mulgara server.
  *
  * @created 2001-11-07
  *
@@ -88,7 +88,7 @@ public class StatementTag extends BodyTagSupport {
    * the prefix of the key to retrieve the map of query answers from
    */
   protected final static String KEY_STATEMENT_PREFIX =
-      "kowari.tag.statement.answers";
+      "mulgara.tag.statement.answers";
 
   //
   // Constants
@@ -106,18 +106,18 @@ public class StatementTag extends BodyTagSupport {
   //
 
   /**
-   * the Kowari server containing metadata we're interested in, overrides the value
+   * the Mulgara server containing metadata we're interested in, overrides the value
    * set using the {@link InitTag} tag
    */
   private URL server = null;
 
   /**
-   * the (ordered) map of queries to send to a Kowari server
+   * the (ordered) map of queries to send to a Mulgara server
    */
   private LinkedHashMap queries = null;
 
   /**
-   * the URL of the SOAP endpoint of the Kowari server
+   * the URL of the SOAP endpoint of the Mulgara server
    */
   private URL soapEndpoint = null;
 
@@ -170,14 +170,14 @@ public class StatementTag extends BodyTagSupport {
   // execute()
 
   /**
-   * Sets the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Sets the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * Note. This method will be called if this tag is invoked with the <code>server</code>
    * attribute set, overriding the server name set using the <code>init</code>
    * tag. </p>
    *
-   * @param server the URL of the SOAP endpoint of the Kowari server containing
+   * @param server the URL of the SOAP endpoint of the Mulgara server containing
    *      metadata we're interested in
    * @throws JspTagException if <code>server</code> specified is not a valid URL
    */
@@ -203,15 +203,15 @@ public class StatementTag extends BodyTagSupport {
   // setServer()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Returns the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * Note. This method may return null if this tag has not been invoked with the
    * <code>server</code> attribute set. If this is the case, the server URL may
    * be obtained by retrieving the value of the attribute
-   * &quot;kowari.server.soapendpoint&quot;. </p>
+   * &quot;mulgara.server.soapendpoint&quot;. </p>
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or <code>null</code> if the server hasn't been
    *      set
    */
@@ -266,7 +266,7 @@ public class StatementTag extends BodyTagSupport {
 
       // end if
       // log that we've found the SOAP endpoint
-      log.debug("Found Kowari server SOAP enpoint - " + soapEndpoint);
+      log.debug("Found Mulgara server SOAP enpoint - " + soapEndpoint);
 
       // set the SOAP endpoint
       this.setSoapEndpoint(soapEndpoint);
@@ -592,9 +592,9 @@ public class StatementTag extends BodyTagSupport {
   // formatSoapResponse()
 
   /**
-   * Sets the (ordered) map of queries to send to a Kowari server.
+   * Sets the (ordered) map of queries to send to a Mulgara server.
    *
-   * @param queries the (ordered) map of queries to send to a Kowari server
+   * @param queries the (ordered) map of queries to send to a Mulgara server
    */
   private void setQueries(LinkedHashMap queries) {
 
@@ -604,9 +604,9 @@ public class StatementTag extends BodyTagSupport {
   // getQueries()
 
   /**
-   * Sets the URL of the SOAP endpoint of the Kowari server.
+   * Sets the URL of the SOAP endpoint of the Mulgara server.
    *
-   * @param soapEndpoint the URL of the SOAP endpoint of the Kowari server
+   * @param soapEndpoint the URL of the SOAP endpoint of the Mulgara server
    */
   private void setSoapEndpoint(URL soapEndpoint) {
 
@@ -640,9 +640,9 @@ public class StatementTag extends BodyTagSupport {
   // setQueries()
 
   /**
-   * Returns the (ordered) map of queries to send to a Kowari server.
+   * Returns the (ordered) map of queries to send to a Mulgara server.
    *
-   * @return the (ordered) map of queries to send to a Kowari server
+   * @return the (ordered) map of queries to send to a Mulgara server
    */
   private LinkedHashMap getQueries() {
 
@@ -652,9 +652,9 @@ public class StatementTag extends BodyTagSupport {
   // setSoapEndpoint()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server.
+   * Returns the URL of the SOAP endpoint of the Mulgara server.
    *
-   * @return the URL of the SOAP endpoint of the Kowari server
+   * @return the URL of the SOAP endpoint of the Mulgara server
    */
   private URL getSoapEndpoint() {
 
@@ -691,7 +691,7 @@ public class StatementTag extends BodyTagSupport {
   //
 
   /**
-   * Sends a query to a Kowari server.
+   * Sends a query to a Mulgara server.
    *
    * @param query the query to send
    * @return the answer to the query
@@ -726,14 +726,14 @@ public class StatementTag extends BodyTagSupport {
   // sendQuery()
 
   /**
-   * Finds the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Finds the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * This tag looks first for an attribute defined on this tag, and then in the
    * <code>pageContext</code> for an attribute set using the <code>init</code>
    * tag. </p>
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or null if the model URI has not been defined as
    *      an attribute to this tag or using the <code>init</code> tag
    * @throws MalformedURLException if the SOAP endpoint is not a valid URL

@@ -214,7 +214,7 @@ XML response something like this:<br>
  <br>
  
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;answer
-xmlns="http://tucana.org/tql#"&gt;<br>&lt;query&gt;<br>&lt;variables&gt;<br>&lt;model/&gt;<br>&lt;/variables&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.kowari.org/server1#"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.kowari.org/server1#_"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.kowari.org/server1#descriptors"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.kowari.org/server1#customer"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.kowari.org/server1#sun"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.kowari.org/server1#nytimes"/&gt;&lt;/solution&gt;<br>&lt;/query&gt;<br>&lt;/answer&gt;<br></pre>
+xmlns="http://tucana.org/tql#"&gt;<br>&lt;query&gt;<br>&lt;variables&gt;<br>&lt;model/&gt;<br>&lt;/variables&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.mulgara.org/server1#"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.mulgara.org/server1#_"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.mulgara.org/server1#descriptors"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.mulgara.org/server1#customer"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.mulgara.org/server1#sun"/&gt;&lt;/solution&gt;<br>&lt;solution&gt;&lt;model resource="rmi://user.mulgara.org/server1#nytimes"/&gt;&lt;/solution&gt;<br>&lt;/query&gt;<br>&lt;/answer&gt;<br></pre>
  If you do this and make further changes to your descriptor (as you now will) 
 you <b>MUST</b> clear the descriptor cache - this is one of the tasks available 
 from the <a href="../../">Descriptor Management Page</a>.<br>
@@ -341,7 +341,7 @@ be used to get a list of models on <i>any </i>Kowari server (if allowed). &nbsp;
 if this descriptor was put on a web server it could be deployed onto a remote 
 Kowari server like this:<br>
    <br>
-   iTQL&gt; load &lt;http://kowari.org/descriptors/utils/modellist.xsl&gt; 
+   iTQL&gt; load &lt;http://mulgara.org/descriptors/utils/modellist.xsl&gt; 
 into &lt;rmi://interal.acme.com/server1#descriptors&gt;;<br>
  <br>
  It is envisioned that lots of descriptors will be developed to perform many 

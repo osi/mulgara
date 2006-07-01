@@ -43,7 +43,7 @@ import org.mulgara.resolver.spi.*;
 import org.mulgara.server.*;
 
 /**
- * Creates Kowari implemented JRDF Graph Nodes and Triples.
+ * Creates Mulgara implemented JRDF Graph Nodes and Triples.
  *
  * @created 2004-10-12
  *

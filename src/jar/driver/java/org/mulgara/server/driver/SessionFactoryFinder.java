@@ -89,9 +89,9 @@ public abstract class SessionFactoryFinder {
   private static final Map schemeMap = new HashMap();
 
   static {
-    schemeMap.put("beep", "org.kowari.server.beep.BEEPSessionFactory");
-    schemeMap.put("rmi", "org.kowari.server.rmi.RmiSessionFactory");
-    schemeMap.put("local", "org.kowari.server.local.LocalSessionFactory");
+    schemeMap.put("beep", "org.mulgara.server.beep.BEEPSessionFactory");
+    schemeMap.put("rmi", "org.mulgara.server.rmi.RmiSessionFactory");
+    schemeMap.put("local", "org.mulgara.server.local.LocalSessionFactory");
 
     /*
          try {
@@ -254,7 +254,7 @@ public abstract class SessionFactoryFinder {
   private static SessionFactory getLocalSessionFactory() throws SessionFactoryFinderException {
     Object factory = null;
     try {
-      Class rsf = Class.forName("org.kowari.server.ServerInfo");
+      Class rsf = Class.forName("org.mulgara.server.ServerInfo");
       java.lang.reflect.Method getLocalSessionFactory = rsf.getMethod("getLocalSessionFactory", null);
       factory = getLocalSessionFactory.invoke(null, null);
     } catch (Exception e) {

@@ -42,7 +42,7 @@ import org.apache.log4j.*;
 
 // Debugging writer
 import org.apache.soap.util.xml.DOM2Writer;
-import org.kowari.server.EmbeddedKowariServer;
+import org.mulgara.server.EmbeddedMulgaraServer;
 
 // DOM
 import org.w3c.dom.*;
@@ -71,12 +71,12 @@ import org.w3c.dom.*;
 public class DescriptorServlet extends HttpServlet {
 
   /**
-   * descriptor username for Kowari access
+   * descriptor username for Mulgara access
    */
   final static String DESCRIPTOR_USERNAME = "descriptor";
 
   /**
-   * descriptor password for Kowari access
+   * descriptor password for Mulgara access
    */
   final static String DESCRIPTOR_PASSWORD = "ZZpj4i6p7r";
 

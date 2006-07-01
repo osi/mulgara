@@ -37,9 +37,9 @@ import org.apache.log4j.Logger;
 import com.hp.hpl.jena.rdf.model.*;
 
 //Local packages
-import org.kowari.server.*;
-import org.kowari.server.driver.*;
-import org.kowari.query.QueryException;
+import org.mulgara.server.*;
+import org.mulgara.server.driver.*;
+import org.mulgara.query.QueryException;
 import org.mulgara.client.jena.exception.*;
 import org.mulgara.client.jena.kmodel.*;
 import org.mulgara.client.jena.model.*;

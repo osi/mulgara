@@ -67,9 +67,9 @@ public class ContentFactory
   private static Map contentConstructors = new HashMap();
 
   static {
-    contentClasses.put("file", "org.kowari.resolver.file.FileContent");
-    contentClasses.put("http", "org.kowari.resolver.http.HttpContent");
-    contentClasses.put("jar", "org.kowari.resolver.jar.JarContent");
+    contentClasses.put("file", "org.mulgara.resolver.file.FileContent");
+    contentClasses.put("http", "org.mulgara.resolver.http.HttpContent");
+    contentClasses.put("jar", "org.mulgara.resolver.jar.JarContent");
   }
 
   /**

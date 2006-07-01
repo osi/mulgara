@@ -27,7 +27,7 @@
 
 package org.mulgara.extractor.tag;
 
-//Kowari utilities
+//Mulgara utilities
 
 // Java 2 enterprise packages
 import java.io.*;
@@ -101,7 +101,7 @@ public class MetadataTag extends TagSupport {
   /**
    * the key to retrieve the document queries file
    */
-  private final static String DOCUMENT_QUERIES_FILE = "kowari.document.queries";
+  private final static String DOCUMENT_QUERIES_FILE = "mulgara.document.queries";
 
   /**
    * the marker of a model URI for replacement
@@ -116,7 +116,7 @@ public class MetadataTag extends TagSupport {
   /**
    * the system property that overrides the the query file location
    */
-  private final static String KOWARIV_QUERY = "KOWARIVQUERY";
+  private final static String mULGARAV_QUERY = "mULGARAVQUERY";
 
   //
   // Document properties
@@ -220,7 +220,7 @@ public class MetadataTag extends TagSupport {
   private URI model = null;
 
   /**
-   * the Kowari server containing metadata we're interested in, overrides the value
+   * the Mulgara server containing metadata we're interested in, overrides the value
    * set using the {@link InitTag} tag
    */
   private URL server = null;
@@ -268,14 +268,14 @@ public class MetadataTag extends TagSupport {
   // getModel()
 
   /**
-   * Sets the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Sets the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * Note. This method will be called if this tag is invoked with the <code>server</code>
    * attribute set, overriding the server name set using the <code>init</code>
    * tag. </p>
    *
-   * @param server the URL of the SOAP endpoint of the Kowari server containing
+   * @param server the URL of the SOAP endpoint of the Mulgara server containing
    *      metadata we're interested in
    * @throws JspTagException if <code>server</code> specified is not a valid URL
    */
@@ -356,7 +356,7 @@ public class MetadataTag extends TagSupport {
   // setServer()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Returns the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * Note. This method may return null if this tag has not been invoked with the
@@ -364,7 +364,7 @@ public class MetadataTag extends TagSupport {
    * be obtained by retrieving the value of the attribute
    * &quot;tmex.server.soapendpoint&quot;. </p>
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or <code>null</code> if the server hasn't been
    *      set
    */
@@ -430,7 +430,7 @@ public class MetadataTag extends TagSupport {
 
       // end if
       // log that we've found the SOAP endpoint
-      log.debug("Found Kowari server SOAP enpoint - " + soapEndpoint);
+      log.debug("Found Mulgara server SOAP enpoint - " + soapEndpoint);
 
       // retrieve the model we'll be looking for documents in
       URI tmexModel = this.getTmexModel();
@@ -457,7 +457,7 @@ public class MetadataTag extends TagSupport {
       // log what document we're retrieving metadata for
       log.debug("Retrieving metadata for " + document);
 
-      // ask the Kowari server for the metadata of the document
+      // ask the Mulgara server for the metadata of the document
       Response metadataResponse =
         this.retrieveDocumentMetadata(soapEndpoint, tmexModel,
           new URL(documentURL));
@@ -534,14 +534,14 @@ public class MetadataTag extends TagSupport {
   // retrieveDocumentMetadata()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Returns the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * This tag looks first for an attribute defined on this tag, and then in the
    * <code>pageContext</code> for an attribute set using the <code>init</code>
    * tag. </p>
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or null if the model URI has not been defined as
    *      an attribute to this tag or using the <code>init</code> tag
    * @throws MalformedURLException if the SOAP endpoint is not a valid URL
@@ -609,7 +609,7 @@ public class MetadataTag extends TagSupport {
    * Returns a new-line terminated query to retreive the value of the HTML title
    * property.
    *
-   * @param model the Kowari model
+   * @param model the Mulgara model
    * @param document the URL of the document to find the title of
    * @return a query to retrieve the
    */
@@ -628,7 +628,7 @@ public class MetadataTag extends TagSupport {
   /**
    * Retrieves the document properties queries from the query file.
    *
-   * @param model the Kowari model
+   * @param model the Mulgara model
    * @param document the URL of the document to find the title of
    * @return the queries to retrieve document properties
    */
@@ -642,7 +642,7 @@ public class MetadataTag extends TagSupport {
       // get the location of the queries file
       String virtualLocation =
         this.pageContext.getServletContext().getInitParameter(DOCUMENT_QUERIES_FILE);
-      virtualLocation = System.getProperty(KOWARIV_QUERY, virtualLocation);
+      virtualLocation = System.getProperty(mULGARAV_QUERY, virtualLocation);
 
       if (virtualLocation == null) {
 
@@ -732,10 +732,10 @@ public class MetadataTag extends TagSupport {
   //
 
   /**
-   * Issues a query to a Kowari server asking for metadata on a given document.
+   * Issues a query to a Mulgara server asking for metadata on a given document.
    *
    * @param soapEndpoint the SOAP endpoint
-   * @param model the Kowari model
+   * @param model the Mulgara model
    * @param document the URL of the model to find metadata for
    * @return RETURNED VALUE TO DO
    * @throws SOAPException if an error occurs while sending information to, or

@@ -37,7 +37,7 @@ public class CameraPhoneOntologyApp {
       ontology = OntoConnector.getInstance().createOntology(ontologyURI);
 
       //    uncomment this to..
-      // Create Ontology on the client (communicates with TKS/Kowari server)
+      // Create Ontology on the client (communicates with TKS/Mulgara server)
       //ontology = OntoConnector.getInstance().createOntology(
       //    app.createClientOntologyModel(), ontologyURI);
 
@@ -213,7 +213,7 @@ public class CameraPhoneOntologyApp {
   }
 
   /**
-   * Creates a SOFA Ontology Model backed by a kowari model (in same JVM as
+   * Creates a SOFA Ontology Model backed by a mulgara model (in same JVM as
    * Server)
    *
    * @return @throws Exception
@@ -221,12 +221,12 @@ public class CameraPhoneOntologyApp {
    */
   OntologyModel createServerOntologyModel() throws Exception {
 
-    return new OntologyJRDFModel(createServerGraph(createKowariDatabase(),
+    return new OntologyJRDFModel(createServerGraph(createMulgaraDatabase(),
         getGraphURI()));
   }
 
   /**
-   * Creates a SOFA Ontology Model backed by a kowari model, the kowari model is
+   * Creates a SOFA Ontology Model backed by a mulgara model, the mulgara model is
    * running in a different JVM and accessed via RMI.
    *
    * @return @throws Exception
@@ -272,12 +272,12 @@ public class CameraPhoneOntologyApp {
   }
 
   /**
-   * Creates a Kowari database.
+   * Creates a Mulgara database.
    *
    * @return @throws Exception
    * @throws Exception
    */
-  SessionFactory createKowariDatabase() throws Exception {
+  SessionFactory createMulgaraDatabase() throws Exception {
 
     boolean exceptionOccurred = true;
 
@@ -285,7 +285,7 @@ public class CameraPhoneOntologyApp {
 
     try {
 
-      database = new SessionFactoryFactory("org.kowari.resolver.Database").newSessionFactory(getServerURI(),
+      database = new SessionFactoryFactory("org.mulgara.resolver.Database").newSessionFactory(getServerURI(),
           getServerDir());
       exceptionOccurred = false;
     } finally {
@@ -303,12 +303,12 @@ public class CameraPhoneOntologyApp {
   }
 
 //  /**
-//   * Creates a Kowari database.
+//   * Creates a Mulgara database.
 //   *
 //   * @return @throws
 //   *         Exception
 //   */
-//  XADatabaseImpl createKowariDatabase() throws Exception {
+//  XADatabaseImpl createMulgaraDatabase() throws Exception {
 //
 //    boolean exceptionOccurred = true;
 //

@@ -34,7 +34,7 @@ import org.jrdf.graph.GraphException;
 import org.jrdf.graph.Graph;
 
 /**
- * A Writer used to write a serialization for a Kowari model.
+ * A Writer used to write a serialization for a Mulgara model.
  *
  * @created 2004-02-23
  *

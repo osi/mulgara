@@ -59,7 +59,7 @@ public class DocumentBuilderFactoryWrapper extends DocumentBuilderFactory {
    * class.
    */
   public final String DOCUMENT_BUILDER_FACTORY_PROPERTY =
-      "org.kowari.xml.ResourceDocumentBuilderFactory";
+      "org.mulgara.xml.ResourceDocumentBuilderFactory";
 
   /**
    * The class name of the default {@link DocumentBuilderFactory} used if the

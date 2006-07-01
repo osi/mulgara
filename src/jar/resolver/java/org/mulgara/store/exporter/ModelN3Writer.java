@@ -44,7 +44,7 @@ import org.jrdf.graph.*;
 import org.mulgara.store.*;
 
 /**
- * A Writer used to write N3 for a Kowari model.
+ * A Writer used to write N3 for a Mulgara model.
  *
  * @created 2004-07-26
  *
@@ -132,7 +132,7 @@ public class ModelN3Writer implements ModelWriter {
 
     //validate
     if (out != null) {
-      out.println("# Kowari graph in N3");
+      out.println("# Mulgara graph in N3");
     } else {
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }

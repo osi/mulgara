@@ -48,10 +48,10 @@ import com.hp.hpl.jena.shared.*;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 // Locally written classes
-import org.kowari.query.*;
-import org.kowari.query.rdf.*;
-import org.kowari.jrdf.*;
-import org.kowari.server.*;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.*;
+import org.mulgara.jrdf.*;
+import org.mulgara.server.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.query.TreeQueryPlan}.
@@ -145,7 +145,7 @@ public class MulgaraTreeQueryPlan implements TreeQueryPlan {
     }
 
     // Construct a new query object representing the TreeQuery.
-    org.kowari.query.Query query = new org.kowari.query.Query(
+    org.mulgara.query.Query query = new org.mulgara.query.Query(
       toList(),                                               // SELECT
       toModelExpression(),                                    // FROM
       toConstraintExpression(),                               // WHERE

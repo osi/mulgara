@@ -33,8 +33,8 @@ import java.util.*;
 //Hewlwtt-Packard packages
 import com.hp.hpl.jena.graph.*;
 
-//Kowari packages
-import org.kowari.query.*;
+//Mulgara packages
+import org.mulgara.query.*;
 
 
 /**

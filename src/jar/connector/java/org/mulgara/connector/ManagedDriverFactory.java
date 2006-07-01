@@ -37,8 +37,8 @@ import javax.resource.*;
 import javax.resource.spi.*;
 import javax.security.auth.Subject;
 
-import org.kowari.server.SessionFactory;
-//import org.kowari.server.driver.SessionFactoryImpl;
+import org.mulgara.server.SessionFactory;
+//import org.mulgara.server.driver.SessionFactoryImpl;
 
 /**
  *

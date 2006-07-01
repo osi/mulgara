@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 // JRDF
 import org.jrdf.graph.*;
 
-//Kowari
+//Mulgara
 import org.mulgara.client.jrdf.answer.*;
 import org.mulgara.client.jrdf.itql.*;
 import org.mulgara.query.*;

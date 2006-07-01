@@ -121,7 +121,7 @@ public class MulgaraQueryHandler implements QueryHandler {
   public BindingQueryPlan prepareBindings(Query q, Node[] variables)
       throws IllegalArgumentException {
     if (!(q instanceof MulgaraQuery)) {
-      throw new IllegalArgumentException("Can only use KowariQuery objects");
+      throw new IllegalArgumentException("Can only use MulgaraQuery objects");
     }
 
     return new MulgaraQueryPlan((GraphMulgara) graph, (MulgaraQuery) q, variables, session,

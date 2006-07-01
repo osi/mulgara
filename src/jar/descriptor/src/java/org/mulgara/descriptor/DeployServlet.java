@@ -46,9 +46,9 @@ import org.apache.log4j.*;
 
 // Debugging writer
 import org.apache.soap.util.xml.DOM2Writer;
-import org.kowari.itql.ItqlInterpreterBean;
-import org.kowari.query.QueryException;
-import org.kowari.server.ServerInfo;
+import org.mulgara.itql.ItqlInterpreterBean;
+import org.mulgara.query.QueryException;
+import org.mulgara.server.ServerInfo;
 
 // DOM
 import org.w3c.dom.*;
@@ -265,7 +265,7 @@ public class DeployServlet extends HttpServlet {
 
     // get the hostname from the descriptor Servlet
     if (hostname == null) {
-      hostname = org.kowari.server.ServerInfo.getBoundHostname();
+      hostname = org.mulgara.server.ServerInfo.getBoundHostname();
 
       if (log.isDebugEnabled()) {
         log.debug("Hostname is set from ServerInfo to " + hostname);
@@ -323,8 +323,8 @@ public class DeployServlet extends HttpServlet {
 
     // Figure out our URL
     String URL2Here = Descriptor.DEFAULT_DESCRIPTOR_PROTOCOL +
-        org.kowari.server.ServerInfo.getBoundHostname() + 
-        ":" + org.kowari.server.ServerInfo.getHttpPort() + "/webservices/";
+        org.mulgara.server.ServerInfo.getBoundHostname() + 
+        ":" + org.mulgara.server.ServerInfo.getHttpPort() + "/webservices/";
 
     for (Iterator it = resources.iterator(); it.hasNext(); ) {
 
@@ -481,7 +481,7 @@ public class DeployServlet extends HttpServlet {
     // send to response
     result.append(eol + query + eol);
 
-    result.append("\n Sending Statements to Kowari Database..." + eol);
+    result.append("\n Sending Statements to Mulgara Database..." + eol);
     */
 
     return query;

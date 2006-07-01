@@ -22,7 +22,7 @@
  *     Department of Defense
  *   Developed by Netymon Pty Ltd
  *   under contract 4500430665
- *   contributed to the Kowari Project under the
+ *   contributed to the Mulgara Project under the
  *     Mozilla Public License version 1.1
  *   per clause 4.1.3 of the above contract.
  *
@@ -389,27 +389,27 @@ public class TestResolverUnitTest extends TestCase {
 
 			// Define the the node pool factory
 			String nodePoolFactoryClassName =
-				"org.kowari.store.nodepool.xa.XANodePoolFactory";
+				"org.mulgara.store.nodepool.xa.XANodePoolFactory";
 
 			// Define the string pool factory
 			String stringPoolFactoryClassName =
-				"org.kowari.store.stringpool.xa.XAStringPoolFactory";
+				"org.mulgara.store.stringpool.xa.XAStringPoolFactory";
 
 			String tempNodePoolFactoryClassName =
-				"org.kowari.store.nodepool.memory.MemoryNodePoolFactory";
+				"org.mulgara.store.nodepool.memory.MemoryNodePoolFactory";
 
 			// Define the string pool factory
 			String tempStringPoolFactoryClassName =
-				"org.kowari.store.stringpool.memory.MemoryStringPoolFactory";
+				"org.mulgara.store.stringpool.memory.MemoryStringPoolFactory";
 
 			// Define the resolver factory used to manage system models
 			String systemResolverFactoryClassName =
-				"org.kowari.resolver.store.StatementStoreResolverFactory";
+				"org.mulgara.resolver.store.StatementStoreResolverFactory";
 
-			String tmfClassName = "org.kowari.resolver.JotmTransactionManagerFactory";
+			String tmfClassName = "org.mulgara.resolver.JotmTransactionManagerFactory";
 
 			String relatedQueryHandlerClassName =
-				"org.kowari.resolver.RelatedQueryHandlerImpl";
+				"org.mulgara.resolver.RelatedQueryHandlerImpl";
 
 			TransactionManagerFactory transactionManagerFactory =
 				(TransactionManagerFactory) Beans.instantiate(null, tmfClassName);
@@ -437,7 +437,7 @@ public class TestResolverUnitTest extends TestCase {
 					relatedQueryHandlerClassName,
 					null);                            // no default content handler
 
-			database.addResolverFactory("org.kowari.resolver.test.TestResolverFactory", null);
+			database.addResolverFactory("org.mulgara.resolver.test.TestResolverFactory", null);
 		}
   }
 

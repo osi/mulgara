@@ -22,7 +22,7 @@
  *   Department of Defense
  * Developed by Netymon Pty Ltd
  * under contract 4500430665
- * contributed to the Kowari Project under the
+ * contributed to the Mulgara Project under the
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
  *
@@ -50,7 +50,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
 /**
- * Resolves XML Schema constraints from the Kowari string pool.
+ * Resolves XML Schema constraints from the Mulgara string pool.
  *
  * @created 2004-10-28
  *
@@ -130,19 +130,19 @@ public class XSDResolverFactory implements ResolverFactory {
     try {
 
       // Create the after node ID
-      XSDResolver.KOWARI_AFTER = resolverFactoryInitializer.preallocate(
+      XSDResolver.mULGARA_AFTER = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "after")));
 
       // Create the before node ID
-      XSDResolver.KOWARI_BEFORE = resolverFactoryInitializer.preallocate(
+      XSDResolver.mULGARA_BEFORE = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "before")));
 
       // Create the less than node ID
-      XSDResolver.KOWARI_LT = resolverFactoryInitializer.preallocate(
+      XSDResolver.mULGARA_LT = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")));
 
       // Create the greater than node ID
-      XSDResolver.KOWARI_GT = resolverFactoryInitializer.preallocate(
+      XSDResolver.mULGARA_GT = resolverFactoryInitializer.preallocate(
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt")));
     } catch (URISyntaxException e) {
 
@@ -182,20 +182,20 @@ public class XSDResolverFactory implements ResolverFactory {
     }
 
     // Store the after opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.KOWARI_AFTER),
-                                        new LocalNode(XSDResolver.KOWARI_BEFORE));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_AFTER),
+                                        new LocalNode(XSDResolver.mULGARA_BEFORE));
 
     // Store the before opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.KOWARI_BEFORE),
-                                        new LocalNode(XSDResolver.KOWARI_AFTER));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_BEFORE),
+                                        new LocalNode(XSDResolver.mULGARA_AFTER));
 
     // Store the greater than opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.KOWARI_GT),
-                                        new LocalNode(XSDResolver.KOWARI_LT));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_GT),
+                                        new LocalNode(XSDResolver.mULGARA_LT));
 
     // Store the less than opposite
-    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.KOWARI_LT),
-                                        new LocalNode(XSDResolver.KOWARI_GT));
+    XSDResolver.oppositePropertyMap.put(new LocalNode(XSDResolver.mULGARA_LT),
+                                        new LocalNode(XSDResolver.mULGARA_GT));
   }
 
   /**

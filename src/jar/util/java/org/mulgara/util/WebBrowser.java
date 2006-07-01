@@ -30,7 +30,7 @@ package org.mulgara.util;
 /**
  * Class used to launch a WebBrowser. <p>
  *
- * Extracted from method: EmbeddedKowariServer.LaunchBrowser()</p>
+ * Extracted from method: EmbeddedMulgaraServer.LaunchBrowser()</p>
  *
  * @created 2004-07-23
  *

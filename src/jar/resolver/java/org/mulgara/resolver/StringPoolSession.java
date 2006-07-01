@@ -426,7 +426,7 @@ public class StringPoolSession implements XAResolverSession
       throws LocalizeException {
     try {
 
-      // Check to see that it's a blank node impl (a Kowari blank node)
+      // Check to see that it's a blank node impl (a Mulgara blank node)
       if (node instanceof BlankNodeImpl) {
         BlankNodeImpl bi = (BlankNodeImpl) node;
 

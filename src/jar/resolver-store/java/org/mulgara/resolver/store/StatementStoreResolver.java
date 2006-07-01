@@ -60,7 +60,7 @@ import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAStatementStore;
 
 /**
- * Resolves constraints from the Kowari {@link StatementStore}.
+ * Resolves constraints from the Mulgara {@link StatementStore}.
  *
  * @created 2003-12-01
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>

@@ -41,7 +41,7 @@ import org.mulgara.query.rdf.*;
 
 /**
  * An instance of this GraphElementFactoryImpl is passed to
- * org.jrdf.parser.rdfxml.RdfXmlParser for it to allocate the Kowari variations
+ * org.jrdf.parser.rdfxml.RdfXmlParser for it to allocate the Mulgara variations
  * of Node objects.
  *
  * @created 2004-12-23

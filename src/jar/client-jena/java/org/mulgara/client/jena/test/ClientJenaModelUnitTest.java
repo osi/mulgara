@@ -36,13 +36,13 @@ import org.jrdf.vocabulary.*;
 import junit.framework.*;
 import java.net.*;
 import java.util.*;
-import org.kowari.server.*;
-import org.kowari.server.driver.*;
-import org.kowari.query.*;
+import org.mulgara.server.*;
+import org.mulgara.server.driver.*;
+import org.mulgara.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
-import org.kowari.query.ModelResource;
+import org.mulgara.query.ModelResource;
 import org.mulgara.client.jena.AbstractJenaFactory;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -50,7 +50,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 
 /**
- * Unit test for client-side Jena Model representing a kowari model (modelURI)
+ * Unit test for client-side Jena Model representing a mulgara model (modelURI)
  * and uses an ItqlInterpreterBeean and a Session.
  *
  * @created 2004-08-24
@@ -82,7 +82,7 @@ public class ClientJenaModelUnitTest extends TestCase {
   private static final String TEST_RDF_FILE = System.getProperty("cvs.root") +
       "/data/camera.owl";
 
-  /** URI for the kowari server */
+  /** URI for the mulgara server */
   private static URI serverURI = null;
 
   /** URI for the test model */

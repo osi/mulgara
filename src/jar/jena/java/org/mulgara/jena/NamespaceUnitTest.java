@@ -44,11 +44,11 @@ import java.util.*;
 
 import org.apache.log4j.*;
 
-import org.kowari.server.Session;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.SessionFactory;
-import org.kowari.query.QueryException;
-import org.kowari.util.TempDir;
+import org.mulgara.server.Session;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
+import org.mulgara.query.QueryException;
+import org.mulgara.util.TempDir;
 
 /**
  * Test case for {@link TestNamespace}.
@@ -122,7 +122,7 @@ public class NamespaceUnitTest extends ModelTestBase {
   public NamespaceUnitTest(String name) throws Exception {
 
     super(name);
-    System.setProperty("org.kowari.xml.ResourceDocumentBuilderFactory",
+    System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
         "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
     String hostname = InetAddress.getLocalHost().getCanonicalHostName();

@@ -42,19 +42,19 @@ import com.hp.hpl.jena.graph.impl.*;
 import com.hp.hpl.jena.shared.*;
 import com.hp.hpl.jena.util.iterator.*;
 
-//Kowari packages
-import org.kowari.itql.*;
-import org.kowari.itql.lexer.*;
-import org.kowari.itql.parser.*;
-import org.kowari.query.*;
-import org.kowari.query.rdf.Tucana;
-import org.kowari.server.*;
+//Mulgara packages
+import org.mulgara.itql.*;
+import org.mulgara.itql.lexer.*;
+import org.mulgara.itql.parser.*;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.Tucana;
+import org.mulgara.server.*;
 
 //JRDF packages
 
 
 /**
- * A Jena Graph backed by a Kowari triplestore.
+ * A Jena Graph backed by a Mulgara triplestore.
  *
  * <p>An instance of this class can only be obtained via a KModel.</p>
  *
@@ -122,7 +122,7 @@ public class KGraph
   private static final String TKS_IS = "<" + Mulgara.NAMESPACE + "is> " ;
 
   /**
-   * Construct a KGraph against the given Kowari model.
+   * Construct a KGraph against the given Mulgara model.
    *
    * <p>If <code>textModelURI</code> and <code>textModelSession</code> are
    * non-null, the KGraph will keep that model's literals up-to-date with the

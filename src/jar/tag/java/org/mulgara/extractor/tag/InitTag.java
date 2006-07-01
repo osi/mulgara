@@ -95,14 +95,14 @@ public class InitTag extends TagSupport {
   protected final static String ATTR_SCOPE = "scope";
 
   /**
-   * the key to retrieve the URL of the Kowari server's SOAP endpoint
+   * the key to retrieve the URL of the Mulgara server's SOAP endpoint
    */
-  protected final static String KEY_SERVER = "kowari.server.soapendpoint";
+  protected final static String KEY_SERVER = "mulgara.server.soapendpoint";
 
   /**
-   * the key to retrieve the URI of the Kowari model
+   * the key to retrieve the URI of the Mulgara model
    */
-  protected final static String KEY_MODEL = "kowari.server.model";
+  protected final static String KEY_MODEL = "mulgara.server.model";
 
   //
   // Constants
@@ -119,7 +119,7 @@ public class InitTag extends TagSupport {
   //
 
   /**
-       * the URL of the SOAP endpoint of the Kowari server containing metadata we're
+       * the URL of the SOAP endpoint of the Mulgara server containing metadata we're
    * interested in
    */
   private URL server = null;
@@ -140,10 +140,10 @@ public class InitTag extends TagSupport {
   //
 
   /**
-   * Sets the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Sets the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in.
    *
-   * @param server the URL of the SOAP endpoint of the Kowari server containing
+   * @param server the URL of the SOAP endpoint of the Mulgara server containing
    *      metadata we're interested in
    * @throws JspTagException if <code>server</code> specified is not a valid URL
    */
@@ -209,10 +209,10 @@ public class InitTag extends TagSupport {
   // setServer()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Returns the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in.
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or <code>null</code> if no server was specified
    */
   public String getServer() {
@@ -268,7 +268,7 @@ public class InitTag extends TagSupport {
   //
 
   /**
-   * Sets the URL of the Kowari server's SOAP endpoint in the page context.
+   * Sets the URL of the Mulgara server's SOAP endpoint in the page context.
    *
    * @return a response code informing the servlet container how to proceed with
    *      JSP tag execution
@@ -304,7 +304,7 @@ public class InitTag extends TagSupport {
       this.pageContext.setAttribute(InitTag.KEY_MODEL, new URI(model), scope);
 
       // log that we've just set the SOAP endpoint
-      log.debug("Kowari server SOAP enpoint set to " + this.getServer());
+      log.debug("Mulgara server SOAP enpoint set to " + this.getServer());
     }
     catch (MalformedURLException mue) {
 

@@ -47,7 +47,7 @@ import org.mulgara.resolver.spi.*;
  * @author <a href="mailto:gearon@users.sourceforge.net">Paul Gearon</a>
  * @version $Revision: 1.1 $
  * @modified $Date: 2005/05/15 00:58:05 $ @maintenanceAuthor $Author: pgearon $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class PrefixResolverFactory implements ResolverFactory
@@ -63,17 +63,17 @@ public class PrefixResolverFactory implements ResolverFactory
   private static final URI modelTypeURI;
 
   /** The URI for prefixes. */
-  private static final URI kowariPrefixURI;
+  private static final URI mulgaraPrefixURI;
 
   /** The preallocated local node representing the prefix predicate. */
-  private long kowariPrefix;
+  private long mulgaraPrefix;
 
   static {
     try {
       modelTypeURI = new URI(Mulgara.NAMESPACE + "PrefixModel");
-      kowariPrefixURI = new URI(Mulgara.NAMESPACE + "prefix");
+      mulgaraPrefixURI = new URI(Mulgara.NAMESPACE + "prefix");
       assert modelTypeURI != null;
-      assert kowariPrefixURI != null;
+      assert mulgaraPrefixURI != null;
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded internal URIs for Node Types", e);
     }
@@ -96,7 +96,7 @@ public class PrefixResolverFactory implements ResolverFactory
     }
 
     // intialize the fields
-    kowariPrefix = initializer.preallocate(new URIReferenceImpl(kowariPrefixURI));
+    mulgaraPrefix = initializer.preallocate(new URIReferenceImpl(mulgaraPrefixURI));
 
     // Claim the type supported by the resolver
     initializer.addModelType(modelTypeURI, this);
@@ -150,7 +150,7 @@ public class PrefixResolverFactory implements ResolverFactory
   ) throws ResolverFactoryException {
 
     return new PrefixResolver(
-        resolverSession, systemResolver, kowariPrefix, modelTypeURI
+        resolverSession, systemResolver, mulgaraPrefix, modelTypeURI
     );
   }
 }

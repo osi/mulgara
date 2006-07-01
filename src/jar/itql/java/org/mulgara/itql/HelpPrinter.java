@@ -31,8 +31,8 @@ package org.mulgara.itql;
 import org.apache.log4j.Category;
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.analysis.DepthFirstAdapter;
-import org.kowari.itql.node.*;
+import org.mulgara.itql.analysis.DepthFirstAdapter;
+import org.mulgara.itql.node.*;
 
 /**
  * Prints help for ITQL commands.
@@ -400,7 +400,7 @@ public class HelpPrinter {
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  iTQL> execute " +
-        "<file:/usr/local/kowari/sample/itql/loaddc.itql> ;" + eol);
+        "<file:/usr/local/mulgara/sample/itql/loaddc.itql> ;" + eol);
 
     // return the help mesage
     return helpMsg;

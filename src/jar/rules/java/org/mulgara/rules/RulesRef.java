@@ -41,7 +41,7 @@ import java.rmi.RemoteException;
  * @version $Revision: 1.1 $
  * @modified $Date: 2005/06/26 12:42:43 $
  * @maintenanceAuthor $Author: pgearon $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public interface RulesRef extends Remote {

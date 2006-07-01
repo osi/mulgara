@@ -7,7 +7,7 @@
 
 package org.mulgara.descriptor.test;
 
-//import  org.kowari.descriptor.*;
+//import  org.mulgara.descriptor.*;
 // only used for constants
 import org.mulgara.descriptor.Descriptor;
 

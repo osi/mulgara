@@ -286,8 +286,8 @@ public class AnswerUnitTest extends TestCase {
     row.setObject("y", "Y1");
     expected.addRow(row);
 
-    KowariResultSet result =
-      AnswerImpl.toKowariResultSet(answer.getResultSet());
+    MulgaraResultSet result =
+      AnswerImpl.toMulgaraResultSet(answer.getResultSet());
 
     assertEqualsIgnoreOrder(expected, result);
   }
@@ -334,8 +334,8 @@ public class AnswerUnitTest extends TestCase {
    * @throws Exception EXCEPTION TO DO
    */
   /*
-  private void assertEqualsIgnoreOrder(KowariResultSet expected,
-    KowariResultSet result) throws Exception {
+  private void assertEqualsIgnoreOrder(MulgaraResultSet expected,
+    MulgaraResultSet result) throws Exception {
 
     try {
 

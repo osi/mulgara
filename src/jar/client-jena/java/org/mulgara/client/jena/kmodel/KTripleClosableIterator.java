@@ -45,12 +45,12 @@ import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.ObjectNode;
 
-//Kowari packages
-import org.kowari.query.*;
+//Mulgara packages
+import org.mulgara.query.*;
 import org.jrdf.graph.GraphException;
 
 /**
- * A ClosableIterator wrapper around a Kowari Answer object.
+ * A ClosableIterator wrapper around a Mulgara Answer object.
  *
  * <p>This class is used internally to support the ExtendedIterator returned
  * by KGraph.find(...)</p>

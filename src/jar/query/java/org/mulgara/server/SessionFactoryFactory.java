@@ -74,7 +74,7 @@ public class SessionFactoryFactory {
       Logger.getLogger(SessionFactoryFactory.class.getName());
 
   /** SessionFactory implementation  */
-  private String className = "org.kowari.store.xa.XADatabaseImpl";
+  private String className = "org.mulgara.store.xa.XADatabaseImpl";
 
   /** Server name used if one is not configured */
   private final static String DEFAULT_SERVER_NAME = "server1";

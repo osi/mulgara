@@ -55,21 +55,21 @@ import org.mulgara.server.SessionFactoryException;
 import org.mulgara.server.SessionFactoryFactory;
 
 /**
- * Servlet startup wrapper for a Kowari server. <p>
+ * Servlet startup wrapper for a Mulgara server. <p>
  *
  * You can get a handle on the database created by this servlet by calling: </p>
  * <pre>
- * Database database = ServletKowariServer.getDatabase();
+ * Database database = ServletMulgaraServer.getDatabase();
  * </pre>
  * <p>
  *
  * Note that this servlet cannot furnish requests. Any (HTTP) requests will
  * result in an exception being thrown indicating as much. It is only intended
- * to start a Kowari instance that can be retrieved locally if needed (ie. not
+ * to start a Mulgara instance that can be retrieved locally if needed (ie. not
  * over RMI) for speed.
  * </p>
  * <p>
- * Note. This servlet should eventually start a "normal" Kowari server that will
+ * Note. This servlet should eventually start a "normal" Mulgara server that will
  * accept requests as per normal. At the moment, queries can only be sent via
  * direct method calls.
  * </p>
@@ -103,34 +103,34 @@ public class ServletMulgaraServer extends HttpServlet implements
       .getName());
 
   /**
-   * the key to retreive the Kowari server name
+   * the key to retreive the Mulgara server name
    */
-  private final static String KOWARI_CONFIG_SERVERNAME = "kowari.config.servername";
+  private final static String mULGARA_CONFIG_SERVERNAME = "mulgara.config.servername";
 
   /**
    * the key to retrieve the database persistence path
    */
-  private final static String KOWARI_CONFIG_PERSISTENCE_PATH = "kowari.config.persistencepath";
+  private final static String mULGARA_CONFIG_PERSISTENCE_PATH = "mulgara.config.persistencepath";
 
   /**
-   * the key to retreive the Kowari security policy file
+   * the key to retreive the Mulgara security policy file
    */
-  private final static String KOWARI_SECURITY_POLICY_PATH = "kowari.security.policy";
+  private final static String mULGARA_SECURITY_POLICY_PATH = "mulgara.security.policy";
 
   /**
-   * the key to retreive the Kowari host name
+   * the key to retreive the Mulgara host name
    */
-  private final static String KOWARI_HOSTNAME = "kowari.hostname";
+  private final static String mULGARA_HOSTNAME = "mulgara.hostname";
 
   /**
-   * the key to retreive the Kowari LDAP security file
+   * the key to retreive the Mulgara LDAP security file
    */
-  private final static String LDAP_SECURITY_PATH = "kowari.security.ldap";
+  private final static String LDAP_SECURITY_PATH = "mulgara.security.ldap";
 
   /**
-   * the key to retreive the Kowari LDAP security file
+   * the key to retreive the Mulgara LDAP security file
    */
-  private final static String KOWARI_LOG4J_CONFIG = "kowari.log4j.config";
+  private final static String mULGARA_LOG4J_CONFIG = "mulgara.log4j.config";
 
   /**
    * the key to retreive the lucene index directory
@@ -176,9 +176,9 @@ public class ServletMulgaraServer extends HttpServlet implements
   //
 
   /**
-   * Creates a new Kowari database, and stores it in the servlet context.
+   * Creates a new Mulgara database, and stores it in the servlet context.
    *
-   * @throws ServletException if the Kowari database cannot be created for some
+   * @throws ServletException if the Mulgara database cannot be created for some
    *      reason
    */
   public void init() throws ServletException {
@@ -189,9 +189,9 @@ public class ServletMulgaraServer extends HttpServlet implements
 
       // get the loction of the logging configuration file
       String log4jConfigPath = this
-          .getRealPath(ServletMulgaraServer.KOWARI_LOG4J_CONFIG);
+          .getRealPath(ServletMulgaraServer.mULGARA_LOG4J_CONFIG);
 
-      //this.getResourceURL(ServletKowariServer.KOWARI_LOG4J_CONFIG);
+      //this.getResourceURL(ServletMulgaraServer.mULGARA_LOG4J_CONFIG);
       if (log4jConfigPath == null) {
 
         throw new IOException("Unable to retrieve log4j configuration file");
@@ -212,13 +212,13 @@ public class ServletMulgaraServer extends HttpServlet implements
     // log what we're doing
     if (log.isInfoEnabled()) {
 
-      log.info("Initialising Kowari server servlet");
+      log.info("Initialising Mulgara server servlet");
     }
 
     // log that we've created a new server
     if (log.isDebugEnabled()) {
 
-      log.debug("Created servlet-wrapped Kowari server");
+      log.debug("Created servlet-wrapped Mulgara server");
     }
 
     // if it we don't have one already, create a new database
@@ -240,7 +240,7 @@ public class ServletMulgaraServer extends HttpServlet implements
       // log that we're stopping the database
       if (log.isInfoEnabled()) {
 
-        log.info("Stopping Kowari server");
+        log.info("Stopping Mulgara server");
       }
 
       ServletMulgaraServer.getDatabase().close();
@@ -271,7 +271,7 @@ public class ServletMulgaraServer extends HttpServlet implements
   protected void service(HttpServletRequest req, HttpServletResponse res)
       throws ServletException {
 
-    throw new ServletException("Kowari server servlet does not handle requests");
+    throw new ServletException("Mulgara server servlet does not handle requests");
   }
 
   /**
@@ -284,7 +284,7 @@ public class ServletMulgaraServer extends HttpServlet implements
   private URI getServerURI(String serverName) throws URISyntaxException {
 
     String hostname = this.getServletContext()
-        .getInitParameter(KOWARI_HOSTNAME);
+        .getInitParameter(mULGARA_HOSTNAME);
 
     // attempt to determine the hostname if not supplied by servlet
     if (hostname == null || hostname.trim().length() == 0) {
@@ -396,9 +396,9 @@ public class ServletMulgaraServer extends HttpServlet implements
 
       // get params we'll need to create the server
       String persistencePath = this.getPersistencePath(this.getServletContext()
-          .getInitParameter(KOWARI_CONFIG_PERSISTENCE_PATH));
+          .getInitParameter(mULGARA_CONFIG_PERSISTENCE_PATH));
       String serverName = this.getServletContext().getInitParameter(
-          KOWARI_CONFIG_SERVERNAME);
+          mULGARA_CONFIG_SERVERNAME);
 
       // throw an error if anything is null
       if (serverName == null) {
@@ -418,10 +418,10 @@ public class ServletMulgaraServer extends HttpServlet implements
       }
 
       // end if
-      // log that we're creating a Kowari server
+      // log that we're creating a Mulgara server
       if (log.isInfoEnabled()) {
 
-        log.info("Starting Kowari server at " + serverURI + " in directory "
+        log.info("Starting Mulgara server at " + serverURI + " in directory "
             + statePath);
       }
 
@@ -476,7 +476,7 @@ public class ServletMulgaraServer extends HttpServlet implements
   private void configureSystemProperties() throws IOException {
 
     // set the system properties needed
-    System.setProperty("org.kowari.xml.ResourceDocumentBuilderFactory",
+    System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
         "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
     // set the lucene index

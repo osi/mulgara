@@ -44,14 +44,14 @@ import com.hp.hpl.jena.shared.*;
 import com.hp.hpl.jena.util.iterator.*;
 
 // Locally written classes
-import org.kowari.query.*;
-import org.kowari.query.rdf.Tucana;
-import org.kowari.server.*;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.Tucana;
+import org.mulgara.server.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.Graph} that extends
  * {@link com.hp.hpl.jena.graph.impl.GraphBase} as a wrapper
- * around an {@link org.kowari.resolver.Database}.
+ * around an {@link org.mulgara.resolver.Database}.
  *
  * @created 2004-02-20
  *

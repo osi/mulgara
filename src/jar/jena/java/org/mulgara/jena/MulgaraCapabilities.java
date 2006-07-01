@@ -35,7 +35,7 @@ import org.apache.log4j.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.Capabilities} that
- * describes Kowari graphs.
+ * describes Mulgara graphs.
  *
  * @created 2003-02-12
  *

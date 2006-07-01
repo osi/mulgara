@@ -28,7 +28,7 @@
 package org.mulgara.jena;
 
 // Locally written classes
-import org.kowari.query.*;
+import org.mulgara.query.*;
 
 /**
  * An implementation of variable factory.

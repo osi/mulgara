@@ -43,9 +43,9 @@ import com.hp.hpl.jena.rdql.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.shared.*;
 
-// Internal Kowari APIs
-import org.kowari.server.SessionFactory;
-import org.kowari.server.driver.SessionFactoryFinder;
+// Internal Mulgara APIs
+import org.mulgara.server.SessionFactory;
+import org.mulgara.server.driver.SessionFactoryFinder;
 
 /**
  * Test case for {@link GraphMulgara}.
@@ -91,7 +91,7 @@ public class QueryEngineUnitTest extends TestCase {
   protected Model model;
 
   /**
-   * The graph Kowari maker.
+   * The graph Mulgara maker.
    */
   protected GraphMulgaraMaker graphMaker;
 

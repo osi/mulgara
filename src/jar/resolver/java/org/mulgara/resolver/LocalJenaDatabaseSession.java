@@ -154,7 +154,7 @@ public class LocalJenaDatabaseSession extends LocalJRDFDatabaseSession
   }
 
   /**
-   * @throws IllegalArgumentException if the graph given is not a Kowari graph.
+   * @throws IllegalArgumentException if the graph given is not a Mulgara graph.
    */
   public com.hp.hpl.jena.util.iterator.ClosableIterator find(URI modelURI,
       com.hp.hpl.jena.graph.Node subject, com.hp.hpl.jena.graph.Node predicate,
@@ -380,7 +380,7 @@ public class LocalJenaDatabaseSession extends LocalJRDFDatabaseSession
   }
 
   /**
-   * @throws IllegalArgumentException if the graph given is not a Kowari graph.
+   * @throws IllegalArgumentException if the graph given is not a Mulgara graph.
    */
   public com.hp.hpl.jena.util.iterator.ClosableIterator findUniqueValues(
       URI modelURI, Node_Variable column) throws QueryException {

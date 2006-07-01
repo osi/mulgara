@@ -40,12 +40,12 @@ import org.apache.log4j.Category;
 import org.apache.log4j.xml.DOMConfigurator;
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.analysis.DepthFirstAdapter;
-import org.kowari.itql.lexer.Lexer;
-import org.kowari.itql.lexer.LexerException;
-import org.kowari.itql.node.*;
-import org.kowari.itql.parser.Parser;
-import org.kowari.itql.parser.ParserException;
+import org.mulgara.itql.analysis.DepthFirstAdapter;
+import org.mulgara.itql.lexer.Lexer;
+import org.mulgara.itql.lexer.LexerException;
+import org.mulgara.itql.node.*;
+import org.mulgara.itql.parser.Parser;
+import org.mulgara.itql.parser.ParserException;
 import org.mulgara.query.Answer;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;

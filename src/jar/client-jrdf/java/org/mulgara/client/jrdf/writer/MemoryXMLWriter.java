@@ -42,7 +42,7 @@ import org.jrdf.vocabulary.*;
 import org.jrdf.graph.GraphException;
 import org.jrdf.util.ClosableIterator;
 import org.jrdf.graph.*;
-//import org.kowari.store.exporter.ModelXMLWriter;
+//import org.mulgara.store.exporter.ModelXMLWriter;
 import org.mulgara.client.jrdf.util.*;
 import org.mulgara.util.StringUtil;
 

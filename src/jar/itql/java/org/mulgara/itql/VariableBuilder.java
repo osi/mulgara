@@ -36,8 +36,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.analysis.AnalysisAdapter;
-import org.kowari.itql.node.*;
+import org.mulgara.itql.analysis.AnalysisAdapter;
+import org.mulgara.itql.node.*;
 
 // Locally written packages
 import org.mulgara.query.*;

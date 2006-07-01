@@ -43,8 +43,8 @@ import com.hp.hpl.jena.rdf.model.test.TestReifiedStatements;
 import com.hp.hpl.jena.shared.ReificationStyle;
 
 // local packages
-import org.kowari.server.SessionFactory;
-import org.kowari.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
+import org.mulgara.server.driver.SessionFactoryFinder;
 
 
 /**
@@ -96,7 +96,7 @@ public class ReifiedStatementsUnitTest extends TestReifiedStatements {
   protected static LocalJenaSession session = null;
 
   /**
-   * The Kowari model that we're adding statements to.
+   * The Mulgara model that we're adding statements to.
    */
   protected ModelMulgara model;
 

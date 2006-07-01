@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;  // Apache Log4J
  * @version $Revision: 1.1 $
  * @modified $Date: 2005/06/26 12:42:43 $
  * @maintenanceAuthor $Author: pgearon $
- * @copyright &copy;2004 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy;2004 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public abstract class RuleLoaderFactory {

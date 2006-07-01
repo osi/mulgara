@@ -126,7 +126,7 @@ public class MBoxContentHandler implements ContentHandler {
    */
   public boolean canParse(Content content) throws NotModifiedException {
 
-    if (content.getClass().getName().equals("org.kowari.resolver.StreamContent")) {
+    if (content.getClass().getName().equals("org.mulgara.resolver.StreamContent")) {
 
       log.info("Unable to parse streaming content in mbox content handler.");
 

@@ -36,7 +36,7 @@ import javax.xml.soap.SOAPException;
 import java.net.URL;
 
 /**
- * This class queries the "#" model in a Kowari server for permissions.
+ * This class queries the "#" model in a Mulgara server for permissions.
  *
  * @created 2002-01-14
  *

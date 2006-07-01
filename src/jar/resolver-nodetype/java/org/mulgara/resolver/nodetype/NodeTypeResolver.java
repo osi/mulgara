@@ -85,7 +85,7 @@ public class NodeTypeResolver implements Resolver
   private long rdfsLiteral;
 
   /** The local node represening the URI Reference type. */
-  private long kowariUriReference;
+  private long mulgaraUriReference;
 
 
   //
@@ -106,7 +106,7 @@ public class NodeTypeResolver implements Resolver
       long rdfType,
       long systemModel,
       long rdfsLiteral,
-      long kowariUriReference,
+      long mulgaraUriReference,
       long  modelType,
       URI modelTypeURI
   ) throws ResolverFactoryException {
@@ -126,7 +126,7 @@ public class NodeTypeResolver implements Resolver
     this.modelType = modelType;
     this.rdfType = rdfType;
     this.rdfsLiteral = rdfsLiteral;
-    this.kowariUriReference = kowariUriReference;
+    this.mulgaraUriReference = mulgaraUriReference;
     sessions = new Hashtable();
   }
 
@@ -298,7 +298,7 @@ public class NodeTypeResolver implements Resolver
               logger.debug("Error getting the length of the tuples object");
             }
           }
-        } else if (type == kowariUriReference) {
+        } else if (type == mulgaraUriReference) {
           // just need the URI type from the string pool
           tuples = resolverSession.findStringPoolType(SPObject.TypeCategory.URI, null);
           assert tuples != null;
@@ -336,7 +336,7 @@ public class NodeTypeResolver implements Resolver
               tuples = TuplesOperations.empty();
             }
 
-          } else if (type == kowariUriReference) {
+          } else if (type == mulgaraUriReference) {
 
             if (spo.getTypeCategory() == SPObject.TypeCategory.URI) {
               tuples = TuplesOperations.unconstrained();

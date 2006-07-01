@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 
 // JRDF
 import org.jrdf.graph.*;
-import org.kowari.query.rdf.*;
+import org.mulgara.query.rdf.*;
 
 /**
  * A JRDF GraphElementFactory implementation for creating server nodes.

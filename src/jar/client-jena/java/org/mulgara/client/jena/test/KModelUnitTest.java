@@ -40,8 +40,8 @@ import javax.xml.parsers.*;
 import org.apache.log4j.Category;
 
 // local classes
-import org.kowari.itql.ItqlInterpreterBean;
-import org.kowari.query.Answer;
+import org.mulgara.itql.ItqlInterpreterBean;
+import org.mulgara.query.Answer;
 import org.mulgara.client.jena.*;
 import org.mulgara.client.jena.kmodel.*;
 

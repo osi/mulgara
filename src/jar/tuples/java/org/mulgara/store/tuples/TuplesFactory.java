@@ -76,10 +76,10 @@ public abstract class TuplesFactory {
 
         String tuplesFactoryClass = System.getProperty(FACTORY_CLASS);
         if ((tuplesFactoryClass == null) || (tuplesFactoryClass.length() <= 0)) {
-          tuplesFactoryClass = "org.kowari.store.xa.HybridTuplesFactory";
+          tuplesFactoryClass = "org.mulgara.store.xa.HybridTuplesFactory";
         }
 
-        //"org.kowari.store.tuples.TestTuplesFactory";
+        //"org.mulgara.store.tuples.TestTuplesFactory";
         tuplesFactory =
           (TuplesFactory) Class.forName(tuplesFactoryClass).newInstance();
       }

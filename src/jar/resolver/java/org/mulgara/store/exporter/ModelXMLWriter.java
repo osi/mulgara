@@ -42,8 +42,8 @@ import org.jrdf.vocabulary.*;
 
 // Local packages
 /*
-import org.kowari.resolver.jrdf.ClosableIteratorImpl;
-import org.kowari.resolver.jrdf.JRDFGraph;
+import org.mulgara.resolver.jrdf.ClosableIteratorImpl;
+import org.mulgara.resolver.jrdf.JRDFGraph;
 */
 import org.jrdf.graph.*;
 import org.mulgara.query.Order;
@@ -54,7 +54,7 @@ import org.mulgara.store.tuples.RowComparator;
 import org.mulgara.util.*;
 
 /**
- * A Writer used to write RDF/XML for a Kowari model.
+ * A Writer used to write RDF/XML for a Mulgara model.
  *
  * @created 2004-02-20
  *

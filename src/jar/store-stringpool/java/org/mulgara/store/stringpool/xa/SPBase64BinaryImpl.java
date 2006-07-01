@@ -34,7 +34,7 @@ import java.net.URI;
 //apache packages
 import org.apache.log4j.*;
 
-//kowari packages
+//mulgara packages
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;

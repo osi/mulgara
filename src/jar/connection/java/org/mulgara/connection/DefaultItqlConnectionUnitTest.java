@@ -15,7 +15,7 @@ import org.mulgara.connection.param.ParameterTestUtil;
  * @version $Revision: 1.4 $
  * @created Apr 1, 2005
  * @modified $Date: 2005/04/04 11:30:10 $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="http://www.mulgara.org/">Mulgara Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class DefaultItqlConnectionUnitTest extends TestCase {
@@ -31,7 +31,7 @@ public class DefaultItqlConnectionUnitTest extends TestCase {
   public void testClose() {
     try {
       new DefaultItqlConnection(BAD_SESSION, NULL_SECURITY_DOMAIN).close();
-      fail("Bad connection should throw KowariConnectionException");
+      fail("Bad connection should throw MulgaraConnectionException");
     } catch (MulgaraConnectionException expected) { }
   }
 

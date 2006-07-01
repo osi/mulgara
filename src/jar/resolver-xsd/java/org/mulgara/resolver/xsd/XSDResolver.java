@@ -49,7 +49,7 @@ import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 
 /**
- * Resolves XML Schema datatyping constraints from the Kowari string pool.
+ * Resolves XML Schema datatyping constraints from the Mulgara string pool.
  *
  * @created 2004-10-28
  *
@@ -85,19 +85,19 @@ public class XSDResolver implements Resolver {
   private static final boolean PERMISSIVE_PARAMETER_KLUDGE = true;
 
   /** Description of the Field */
-  static long KOWARI_AFTER;
+  static long mULGARA_AFTER;
 
   /** Description of the Field */
-  static long KOWARI_BEFORE;
+  static long mULGARA_BEFORE;
 
   /** Description of the Field */
-  static long KOWARI_LT;
+  static long mULGARA_LT;
 
   /** Description of the Field */
-  static long KOWARI_GT;
+  static long mULGARA_GT;
 
   /** Description of equals field */
-  static long KOWARI_IS;
+  static long mULGARA_IS;
 
   /** Description of the Field */
   static final Map oppositePropertyMap = new HashMap();
@@ -229,7 +229,7 @@ public class XSDResolver implements Resolver {
 
       if ((constraint.getElement(0) instanceof Variable) &&
           !(constraint.getElement(2) instanceof Variable)) {
-        if (property == KOWARI_LT) {
+        if (property == mULGARA_LT) {
 
           if (logger.isDebugEnabled()) {
             logger.debug("Evaluating " + constraint.getElement(0) +
@@ -244,7 +244,7 @@ public class XSDResolver implements Resolver {
               getBoundDouble(constraint.getElement(2)), // high value
               false // exclude high value
               );
-        } else if (property == KOWARI_GT) {
+        } else if (property == mULGARA_GT) {
 
           if (logger.isDebugEnabled()) {
             logger.debug("Evaluating " + constraint.getElement(0) + "(" + constraint.getElement(0).getClass() + ") " +
@@ -258,7 +258,7 @@ public class XSDResolver implements Resolver {
               null, // high value
               true // include high value
               );
-        } else if (property == KOWARI_BEFORE) {
+        } else if (property == mULGARA_BEFORE) {
 
           if (logger.isDebugEnabled()) {
             logger.debug("Evaluating " + constraint.getElement(0) +
@@ -274,7 +274,7 @@ public class XSDResolver implements Resolver {
               getBoundDate(constraint.getElement(2)), // high value
               false // exclude high value
               );
-        } else if (property == KOWARI_AFTER) {
+        } else if (property == mULGARA_AFTER) {
 
           // Evaluate "less than" for xsd:double
           if (logger.isDebugEnabled()) {
@@ -322,19 +322,19 @@ public class XSDResolver implements Resolver {
         // Evaluate the cases where neither subject nor object are variables
         boolean condition;
 
-        if (property == KOWARI_LT) {
+        if (property == mULGARA_LT) {
           SPObject lhs = getBoundDouble(constraint.getElement(0));
           SPObject rhs = getBoundDouble(constraint.getElement(2));
           condition = lhs.compareTo(rhs) < 0;
-        } else if (property == KOWARI_GT) {
+        } else if (property == mULGARA_GT) {
           SPObject lhs = getBoundDouble(constraint.getElement(0));
           SPObject rhs = getBoundDouble(constraint.getElement(2));
           condition = lhs.compareTo(rhs) > 0;
-        } else if (property == KOWARI_AFTER) {
+        } else if (property == mULGARA_AFTER) {
           SPObject lhs = getBoundDate(constraint.getElement(0));
           SPObject rhs = getBoundDate(constraint.getElement(2));
           condition = lhs.compareTo(rhs) > 0;
-        } else if (property == KOWARI_BEFORE) {
+        } else if (property == mULGARA_BEFORE) {
           SPObject lhs = getBoundDate(constraint.getElement(0));
           SPObject rhs = getBoundDate(constraint.getElement(2));
           condition = lhs.compareTo(rhs) < 0;

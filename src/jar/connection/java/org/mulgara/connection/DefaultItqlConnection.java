@@ -8,13 +8,13 @@ import org.mulgara.query.QueryException;
 import org.mulgara.server.Session;
 
 /**
- * Default implementation of an iTQL connection to a Kowari store.
+ * Default implementation of an iTQL connection to a Mulgara store.
  *
  * @author Tom Adams
  * @version $Revision: 1.4 $
  * @created 2005-04-01
  * @modified $Date: 2005/04/04 11:30:10 $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="http://www.mulgara.org/">Mulgara Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class DefaultItqlConnection implements ItqlConnection {
@@ -25,10 +25,10 @@ public class DefaultItqlConnection implements ItqlConnection {
   private URI securityDomain;
 
   /**
-   * Creates a new iTQL connection to a Kowari server.
+   * Creates a new iTQL connection to a Mulgara server.
    *
-   * @param session The session to use to communicate to the Kowari server.
-   * @param securityDomain The security domain of the Kowari server.
+   * @param session The session to use to communicate to the Mulgara server.
+   * @param securityDomain The security domain of the Mulgara server.
    */
   public DefaultItqlConnection(Session session, URI securityDomain) {
     this.session = session;
@@ -61,7 +61,7 @@ public class DefaultItqlConnection implements ItqlConnection {
   }
 
   /**
-   * Closes the connection to the Kowari store.
+   * Closes the connection to the Mulgara store.
    * <p>
    * Calling this method will close the underlying {@link Session}, making it unusable for future use.
    * </p>

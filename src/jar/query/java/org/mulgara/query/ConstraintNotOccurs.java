@@ -68,8 +68,8 @@ public class ConstraintNotOccurs extends ConstraintHaving {
   /**
    * Create the predicate to be used to indicate equality.
    */
-  public static final URIReferenceImpl KOWARI_NOT_OCCURS =
-      new URIReferenceImpl(SpecialPredicates.KOWARI_NOT_OCCURS);
+  public static final URIReferenceImpl mULGARA_NOT_OCCURS =
+      new URIReferenceImpl(SpecialPredicates.mULGARA_NOT_OCCURS);
 
   /**
    * Constructor.
@@ -79,7 +79,7 @@ public class ConstraintNotOccurs extends ConstraintHaving {
    * @param e3 The fourth (meta) statement constraint.
    */
   public ConstraintNotOccurs(ConstraintElement e0, ConstraintElement e2, ConstraintElement e3) {
-    super(e0, KOWARI_NOT_OCCURS, e2, e3);
+    super(e0, mULGARA_NOT_OCCURS, e2, e3);
   }
 
 
@@ -99,7 +99,7 @@ public class ConstraintNotOccurs extends ConstraintHaving {
    * Localized factory.  Only for use when the predicate is a localized node.
    *
    * @param e0 The first statement constraint.
-   * @param e1 The constraint predicate.  This must be a localized node for KOWARI_IS.
+   * @param e1 The constraint predicate.  This must be a localized node for mULGARA_IS.
    * @param e2 The third statement constraint.
    * @param e3 The fourth (meta) statement constraint.
    * @return A new ConstraintOccurs with a localized predicate.

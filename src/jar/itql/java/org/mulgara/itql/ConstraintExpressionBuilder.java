@@ -36,8 +36,8 @@ import org.apache.log4j.Logger; // Apache Log4J
 // Locally written packages
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.analysis.*;
-import org.kowari.itql.node.*;
+import org.mulgara.itql.analysis.*;
+import org.mulgara.itql.node.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 
@@ -690,16 +690,16 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
   /**
    * Constructs a {@link org.mulgara.rdql.query.ConstraintElement} from a
-   * {@link org.kowari.itql.node.PElement}.
+   * {@link org.mulgara.itql.node.PElement}.
    *
    * @param element an element of a constraint (variable, resource or literal)
    * @return a constraint element for the given <code>element</code>
    * @throws QueryException if <code>element</code> is a
-   *      {@link org.kowari.itql.node.AResourceElement} whose text contains a
+   *      {@link org.mulgara.itql.node.AResourceElement} whose text contains a
    *      <a href="http://www.w3.org/TR/REC-xml-names/#ns-qualnames">qualified name</a>
    *      with a prefix not defined in the <code>aliasMap</code>
    * @throws URISyntaxException if <code>element</code> is a
-   *      {@link org.kowari.itql.node.AResourceElement} whose text doesn't
+   *      {@link org.mulgara.itql.node.AResourceElement} whose text doesn't
    *      conform to
    *      <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC 2396</a>
    */

@@ -46,11 +46,11 @@ import junit.framework.*;
 
 import org.apache.log4j.*;
 
-import org.kowari.server.Session;
-import org.kowari.query.QueryException;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.SessionFactory;
-import org.kowari.server.*;
+import org.mulgara.server.Session;
+import org.mulgara.query.QueryException;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
+import org.mulgara.server.*;
 
 /**
  * Test case for {@link TestOntModel}.
@@ -124,7 +124,7 @@ public class OntModelUnitTest extends TestOntModel {
   public OntModelUnitTest(String name) throws Exception {
 
     super(name);
-    System.setProperty("org.kowari.xml.ResourceDocumentBuilderFactory",
+    System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
         "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
     String hostname = InetAddress.getLocalHost().getCanonicalHostName();

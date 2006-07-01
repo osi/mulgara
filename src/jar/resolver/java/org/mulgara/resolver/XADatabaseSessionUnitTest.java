@@ -180,168 +180,168 @@ public class XADatabaseSessionUnitTest extends TestCase {
 
   protected static final TestDef[] tests = {
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "M4",
                  "(result p04 p05 p06 p08)",
                  "testModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V1 V2))",
                  "M4",
                  "(result s01 s02)",
                  "testSubjectModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V4 V2))",
                  "M10",
                  "(result s01 s02)",
                  "testSubjectVarObjModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V4 V7))",
                  "M10",
                  "(result s01)",
                  "testSubjectLitObjModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V4 V2))",
                  "M11",
                  "(result _node84 _node85)",
                  "testSubjectVarObjModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V4 V7))",
                  "M11",
                  "(result _node84)",
                  "testSubjectLitObjModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (| V3 V5 V2)))",
                  "M6",
                  "(result o04 o05)",
                  "testConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (| V3 V5 V2)))",
                  "M6",
                  "(result o01 o02 o04 o05 o06 o07)",
                  "testDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(union M4 M5)",
                  "(result p04 p05 p06 p07 p08 p09)",
                  "testUnion"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(intersect M4 M5)",
                  "(result p04 p05)",
                  "testIntersect"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (| V3 V5 V2))",
                  "(union M7 M8)",
                  "(result o02 o05 o08)",
                  "testUnionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (| V3 V5 V2)))",
                  "(intersect M7 M8)",
                  "(result o05)",
                  "testIntersectConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (| V3 V5 V2)))",
                  "(union M7 M8)",
                  "(result o01 o02 o03 o04 o05 o06 o07 o08 o09)",
                  "testUnionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (| V3 V5 V2)))",
                  "(intersect M7 M8)",
                  "(result o04 o05 o06)",
                  "testIntersectDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(union M4 (union M5 M9))",
                  "(result p04 p05 p06 p07 p08 p09 p10)",
                  "testModelUnionUnion"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(union M4 (intersect M5 M9))",
                  "(result p04 p05 p06 p07 p08)",
                  "testModelUnionIntersect"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(intersect M4 (union M5 M9))",
                  "(result p04 p05 p06)",
                  "testModelIntersectUnion"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(intersect M4 (intersect M5 M9))",
                  "(result p04)",
                  "testModelIntersectIntersect"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o04)",
                  "testConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o04 o05 o06)",
                  "testConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o01 o04 o05 o06 o07)",
                  "testDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o01 o02 o03 o04 o05 o06 o07)",
                  "testDisjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o43 o44 o45 o46 o47 o48 o49)",
                  "testUnionUnionConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o22 o23 o24 o25 o26 o27 o28 " +
@@ -350,7 +350,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testUnionUnionConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o01 o02 o03 o04 o05 o06 o07 " +
@@ -361,7 +361,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testUnionUnionDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o01 o02 o03 o04 o05 o06 o07 " +
@@ -374,14 +374,14 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testUnionUnionDisjunctionDisjunction"),
 /*
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o43 o46 o47 o48 o49)",
                  "testUnionIntersectConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o22 o25 o26 o27 o28 " +
@@ -390,7 +390,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testUnionIntersectConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o01 o04 o05 o06 o07 " +
@@ -401,7 +401,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testUnionIntersectDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o01 o04 o05 o06 o07 " +
@@ -414,14 +414,14 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testUnionIntersectDisjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o46 o47 o49)",
                  "testIntersectUnionConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o25 o26 o28 " +
@@ -430,7 +430,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testIntersectUnionConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o04 o05 o07 " +
@@ -441,7 +441,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testIntersectUnionDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o04 o05 o07 " +
@@ -454,14 +454,14 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testIntersectUnionDisjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o49)",
                  "testIntersectIntersectConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o28 " +
@@ -470,7 +470,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testIntersectIntersectConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o07 " +
@@ -481,7 +481,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  "testIntersectIntersectDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.kowari.resolver.store.StatementStoreResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o07 " +
@@ -542,32 +542,32 @@ public class XADatabaseSessionUnitTest extends TestCase {
 
     // Define the the node pool factory
     String nodePoolFactoryClassName =
-      "org.kowari.store.nodepool.xa.XANodePoolFactory";
+      "org.mulgara.store.nodepool.xa.XANodePoolFactory";
 
     // Define the string pool factory
     String stringPoolFactoryClassName =
-      "org.kowari.store.stringpool.xa.XAStringPoolFactory";
+      "org.mulgara.store.stringpool.xa.XAStringPoolFactory";
 
     String tempNodePoolFactoryClassName =
-      "org.kowari.store.nodepool.memory.MemoryNodePoolFactory";
+      "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory";
 
     // Define the string pool factory
     String tempStringPoolFactoryClassName =
-      "org.kowari.store.stringpool.memory.MemoryStringPoolFactory";
+      "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory";
 
     // Define the resolver factory used to manage system models
     String systemResolverFactoryClassName =
-      "org.kowari.resolver.store.StatementStoreResolverFactory";
+      "org.mulgara.resolver.store.StatementStoreResolverFactory";
 
     // Define the resolver factory used to manage system models
     String tempResolverFactoryClassName =
-      "org.kowari.resolver.memory.MemoryResolverFactory";
+      "org.mulgara.resolver.memory.MemoryResolverFactory";
 
     String relatedQueryHandlerClassName =
-      "org.kowari.resolver.RelatedQueryHandlerImpl";
+      "org.mulgara.resolver.RelatedQueryHandlerImpl";
 
     String ruleLoaderFactoryClassName =
-      "org.kowari.rules.RuleLoaderFactory";
+      "org.mulgara.rules.RuleLoaderFactory";
 
     // Create a database which keeps its system models on the Java heap
     database = new Database(
@@ -590,9 +590,9 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  null,                            // no dir for temp models
                  "",                              // no rule loader
                  relatedQueryHandlerClassName,
-                 "org.kowari.content.rdfxml.RDFXMLContentHandler");
+                 "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
-    database.addResolverFactory("org.kowari.resolver.url.URLResolverFactory", null);
+    database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
 
     try {
       URI modelTypeURI = new URI(Mulgara.NAMESPACE+"Model");

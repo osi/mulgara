@@ -55,8 +55,8 @@ import javax.swing.text.*;
 
 import org.apache.log4j.*;
 
-import org.kowari.query.Answer;
-import org.kowari.query.TuplesException;
+import org.mulgara.query.Answer;
+import org.mulgara.query.TuplesException;
 
 public class RdqlSessionUI extends JScrollPane implements Runnable, KeyListener,
     ActionListener, PropertyChangeListener {

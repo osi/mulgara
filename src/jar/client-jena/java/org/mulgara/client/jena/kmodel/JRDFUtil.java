@@ -38,7 +38,7 @@ import com.hp.hpl.jena.shared.JenaException;
 //JRDF packages
 import org.jrdf.graph.*;
 
-//Kowari packages
+//Mulgara packages
 
 /**
  * Utilities for instantiating JRDF objects.

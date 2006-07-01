@@ -40,18 +40,18 @@ import org.apache.log4j.Category;
 import org.apache.log4j.xml.DOMConfigurator;
 
 // Automatically generated packages (SableCC)
-import org.kowari.rdql.analysis.DepthFirstAdapter;
-import org.kowari.rdql.lexer.Lexer;
-import org.kowari.rdql.lexer.LexerException;
-import org.kowari.rdql.node.*;
-import org.kowari.rdql.parser.Parser;
-import org.kowari.rdql.parser.ParserException;
-import org.kowari.query.Answer;
-import org.kowari.query.QueryException;
-import org.kowari.query.TuplesException;
-import org.kowari.server.Session;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.driver.SessionFactoryFinderException;
+import org.mulgara.rdql.analysis.DepthFirstAdapter;
+import org.mulgara.rdql.lexer.Lexer;
+import org.mulgara.rdql.lexer.LexerException;
+import org.mulgara.rdql.node.*;
+import org.mulgara.rdql.parser.Parser;
+import org.mulgara.rdql.parser.ParserException;
+import org.mulgara.query.Answer;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
+import org.mulgara.server.Session;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.driver.SessionFactoryFinderException;
 
 import javax.swing.*;
 

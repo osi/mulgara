@@ -1,4 +1,4 @@
-package org.kowari.doclet;
+package org.mulgara.doclet;
 
 // Java 2 standard packages
 import java.io.IOException;

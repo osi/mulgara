@@ -30,7 +30,7 @@ package org.mulgara.server.rmi;
 // Java 2 standard packages
 import java.io.Serializable;
 
-// Kowari
+// Mulgara
 import org.mulgara.query.TuplesException;
 
 /**

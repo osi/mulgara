@@ -34,7 +34,7 @@ import com.hp.hpl.jena.util.iterator.Filter;
 /**
  * An implementation {@link com.hp.hpl.jena.util.iterator.Filter} that doesn't
  * actually provide any filtering of statements.  This is used in the
- * GraphKowari implementation because the results do not need to be filtered.
+ * GraphMulgara implementation because the results do not need to be filtered.
  * Hotspot optimizer should hopefully optimize this out.
  *
  * @created 2004-07-07

@@ -32,11 +32,11 @@ import com.hp.hpl.jena.graph.impl.TransactionHandlerBase;
 import com.hp.hpl.jena.shared.*;
 
 // Local packages
-import org.kowari.server.Session;
+import org.mulgara.server.Session;
 
 // Log4j
 import org.apache.log4j.*;
-import org.kowari.query.*;
+import org.mulgara.query.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.TransactionHandler} as a

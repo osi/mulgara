@@ -39,16 +39,16 @@ import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 // Internal packages
-import org.kowari.query.Answer;
-import org.kowari.query.Cursor;
-import org.kowari.query.TuplesException;
-import org.kowari.query.Value;
-import org.kowari.store.statement.StatementStore;
-import org.kowari.server.*;
+import org.mulgara.query.Answer;
+import org.mulgara.query.Cursor;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.Value;
+import org.mulgara.store.statement.StatementStore;
+import org.mulgara.server.*;
 
 /**
  * An implementation {@link com.hp.hpl.jena.util.iterator.ClosableIterator}
- * that wraps {@link org.kowari.query.Answer} and produces Jena triples.
+ * that wraps {@link org.mulgara.query.Answer} and produces Jena triples.
  *
  * @created 2003-02-12
  *
@@ -84,7 +84,7 @@ public class AnswerClosableIteratorImpl implements ClosableIterator {
    * The Jena graph that created the iterator.  Used to tell it that it was
    * closed correctly.
    */
-  //private GraphKowari graph;
+  //private GraphMulgara graph;
 
   /**
    * The triple representing the search term requested.  Nulls represent

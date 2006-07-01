@@ -12,7 +12,7 @@ import com.sun.tools.doclets.DocletAbortException;
 import com.sun.tools.doclets.standard.Standard;     // Sun standard doclet
 
 /**
-* Custom doclet for Kowari project.
+* Custom doclet for Mulgara project.
 *
 * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
 */

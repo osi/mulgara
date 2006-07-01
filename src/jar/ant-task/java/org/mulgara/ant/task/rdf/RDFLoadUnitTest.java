@@ -53,7 +53,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.util.TempDir;
 
 /**
- * An Ant Task to load RDF into a Kowari database.
+ * An Ant Task to load RDF into a Mulgara database.
  *
  * @created 2002-11-07
  *
@@ -501,7 +501,7 @@ public class RDFLoadUnitTest extends TestCase {
         fail("The data did not load");
       }
 
-      // Kowari - should be 5 loaded
+      // Mulgara - should be 5 loaded
       assertEquals("Wrong number of documents loaded!", 5,
                    answer.getRowCount());
       answer.close();
@@ -543,7 +543,7 @@ public class RDFLoadUnitTest extends TestCase {
       fail("The data did not load");
     }
 
-    // Kowari - should be 1 loaded
+    // Mulgara - should be 1 loaded
     assertEquals("Wrong number of documents loaded!", 1,
                  answer.getRowCount());
     answer.close();
@@ -583,7 +583,7 @@ public class RDFLoadUnitTest extends TestCase {
         fail("The data did not load");
       }
 
-      // Kowari - should be 1 loaded
+      // Mulgara - should be 1 loaded
       assertEquals("Wrong number of documents loaded!", 1,
                    answer.getRowCount());
       answer.close();
@@ -630,7 +630,7 @@ public class RDFLoadUnitTest extends TestCase {
       fail("The data did not load");
     }
 
-    // Kowari - should be 1 loaded
+    // Mulgara - should be 1 loaded
     assertEquals("Wrong number of documents loaded!", 1,
                  answer.getRowCount());
     answer.close();
@@ -671,7 +671,7 @@ public class RDFLoadUnitTest extends TestCase {
         fail("The data did not load");
       }
 
-      // Kowari - should be 1 loaded
+      // Mulgara - should be 1 loaded
       assertEquals("Wrong number of documents loaded!", 1,
                    answer.getRowCount());
       answer.close();
@@ -726,7 +726,7 @@ public class RDFLoadUnitTest extends TestCase {
         fail("The data did not load");
       }
 
-      // Kowari - should be 1 loaded as tear down would have dropped the model...
+      // Mulgara - should be 1 loaded as tear down would have dropped the model...
       assertEquals("Wrong number of documents loaded!", 1,
                    answer.getRowCount());
       answer.close();
@@ -864,11 +864,11 @@ public class RDFLoadUnitTest extends TestCase {
    *
    * create <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit off;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/2.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/2.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit off;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/3.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/3.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit on;
    * select $s from <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> where $s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:medline:Journal>;
    *
@@ -929,17 +929,17 @@ public class RDFLoadUnitTest extends TestCase {
    *
    * create <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit off;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/2.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/2.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit off;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/3.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/3.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit off;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/4.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/4.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * set autocommit off;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
-   * load <file:/spare/test/kowari/jxdata/ant-tasks/rdf-bad/5.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/1.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
+   * load <file:/spare/test/mulgara/jxdata/ant-tasks/rdf-bad/5.rdf> into <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> ;
    * commit;
    * set autocommit on;
    * select $s from <rmi://kildall.bne.pisoftware.com/server1#rdfload-test-model> where $s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:medline:Journal>;

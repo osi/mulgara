@@ -113,7 +113,7 @@ public class ExecuteTag extends TagSupport {
   //
 
   /**
-   * Sets the URL of the Kowari server's SOAP endpoint in the page context.
+   * Sets the URL of the Mulgara server's SOAP endpoint in the page context.
    *
    * @return a response code informing the servlet container how to proceed with
    *      JSP tag execution

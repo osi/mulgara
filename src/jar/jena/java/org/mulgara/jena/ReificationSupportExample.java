@@ -31,17 +31,17 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.URI;
 
-import org.kowari.server.Session;
+import org.mulgara.server.Session;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.SessionFactory;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
 
 /**
- * A sample application showing how to use Kowari and Jena's reifier together.
+ * A sample application showing how to use Mulgara and Jena's reifier together.
  *
  * @created 2004-09-27
  *
@@ -62,7 +62,7 @@ import org.kowari.server.SessionFactory;
  */
 public class ReificationSupportExample {
 
-  static Model getKowariModel() throws Exception {
+  static Model getMulgaraModel() throws Exception {
     String hostname = InetAddress.getLocalHost().getCanonicalHostName();
     URI serverURI = new URI("rmi", hostname, "/server1", null);
 
@@ -99,7 +99,7 @@ public class ReificationSupportExample {
   }
 
   public static void main(String[] args) throws Exception {
-    Model model = getKowariModel();
+    Model model = getMulgaraModel();
 
     System.out.println("initial size " + model.size());
     model.write(System.out);

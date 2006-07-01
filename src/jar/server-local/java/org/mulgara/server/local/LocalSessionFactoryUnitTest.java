@@ -45,7 +45,7 @@ import org.jrdf.graph.GraphException;
 import com.hp.hpl.jena.graph.test.*;
 import com.hp.hpl.jena.shared.*;
 
-// Internal Kowari APIs
+// Internal Mulgara APIs
 import org.mulgara.itql.*;
 import org.mulgara.query.*;
 import org.mulgara.server.Session;
@@ -121,10 +121,10 @@ public class LocalSessionFactoryUnitTest extends MetaTestGraph {
       session = (Session) factory.newSession();
 
 /*      //add
-      GraphKowariMaker graphMaker = new GraphKowariMaker(session,
+      GraphMulgaraMaker graphMaker = new GraphMulgaraMaker(session,
           serverURI,
           ReificationStyle.Minimal);
-      ModelKowariMaker modelMaker = new ModelKowariMaker(graphMaker);
+      ModelMulgaraMaker modelMaker = new ModelMulgaraMaker(graphMaker);
       com.hp.hpl.jena.rdf.model.Model model = modelMaker.createModel("testModel");
       model.add(model.createResource("info:foo"),
           model.createProperty("info:bar#", "baz"),

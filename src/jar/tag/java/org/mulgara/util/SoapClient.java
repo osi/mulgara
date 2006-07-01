@@ -39,7 +39,7 @@ import org.apache.soap.rpc.Response;
 import org.mulgara.util.SoapClient;
 
 /**
- * This class queries the "#" model in a Kowari server for permissions.
+ * This class queries the "#" model in a Mulgara server for permissions.
  *
  * @created 2002-01-14
  *

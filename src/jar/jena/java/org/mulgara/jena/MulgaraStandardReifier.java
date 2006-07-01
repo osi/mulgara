@@ -35,7 +35,7 @@ import com.hp.hpl.jena.graph.impl.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.Reifier} that uses a
- * KowariGraph for storage.  This current stores a duplicate of all tuples
+ * MulgaraGraph for storage.  This current stores a duplicate of all tuples
  * in order to return the reification tuples as a graph.
  *
  * In the future this should probably not create a duplicate graph but create

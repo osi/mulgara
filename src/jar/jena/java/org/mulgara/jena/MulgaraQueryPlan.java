@@ -35,9 +35,9 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 // Locally written classes
-import org.kowari.query.*;
-import org.kowari.query.rdf.*;
-import org.kowari.store.*;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.*;
+import org.mulgara.store.*;
 
 // Jena
 import com.hp.hpl.jena.graph.*;
@@ -86,7 +86,7 @@ public class MulgaraQueryPlan implements BindingQueryPlan {
   /**
    * The object representing a set of constraints and variables to bind.
    */
-  private MulgaraQuery kowariQuery;
+  private MulgaraQuery mulgaraQuery;
 
   /**
    * The graph to query.
@@ -99,7 +99,7 @@ public class MulgaraQueryPlan implements BindingQueryPlan {
   private Node[] variables;
 
   /**
-   * The map of Jena nodes to Kowari variables.
+   * The map of Jena nodes to Mulgara variables.
    */
   private HashMap nodesToVariables = new HashMap();
 
@@ -133,12 +133,12 @@ public class MulgaraQueryPlan implements BindingQueryPlan {
   public MulgaraQueryPlan(GraphMulgara newGraph, MulgaraQuery newQuery,
       Node[] newVariables, LocalJenaSession newSession, URI newModelURI) {
     graph = newGraph;
-    kowariQuery = newQuery;
+    mulgaraQuery = newQuery;
     variables = newVariables;
     session = newSession;
     modelURI = newModelURI;
 
-    // Create a hashmap of nodes to Kowari variables.
+    // Create a hashmap of nodes to Mulgara variables.
     for (int index = 0; index < newVariables.length; index++) {
       Node var = newVariables[index];
       if (var.isVariable()) {
@@ -159,14 +159,14 @@ public class MulgaraQueryPlan implements BindingQueryPlan {
     // If the graph is empty, the variables are empty and there are no matches
     // in the query object return an empty domain iterator.
     if ((graph.isEmpty()) && (variables.length == 0) &&
-        (kowariQuery.getHashMapTriples().values().size() == 0)) {
+        (mulgaraQuery.getHashMapTriples().values().size() == 0)) {
       return new EmptyDomainIterator();
     }
 
     ExtendedIterator iter = null;
-    org.kowari.query.Query query = null;
+    org.mulgara.query.Query query = null;
     try {
-       query = new org.kowari.query.Query(
+       query = new org.mulgara.query.Query(
         toList(),                                               // SELECT
         toModelExpression(),                                    // FROM
         toConstraintExpression(),                               // WHERE
@@ -189,11 +189,11 @@ public class MulgaraQueryPlan implements BindingQueryPlan {
 
    // If there are no constraints then we are trying to get everything from the
    // graph.
-   if (kowariQuery.getHashMapTriples().values().size() == 0) {
+   if (mulgaraQuery.getHashMapTriples().values().size() == 0) {
      triple = new Triple(Node.ANY, Node.ANY, Node.ANY);
    }
    else {
-     Iterator varIter = kowariQuery.getHashMapTriples().values().iterator();
+     Iterator varIter = mulgaraQuery.getHashMapTriples().values().iterator();
      triple = ((MulgaraQuery.Cons) varIter.next()).getTriple();
    }
 
@@ -242,11 +242,11 @@ public class MulgaraQueryPlan implements BindingQueryPlan {
   private ConstraintExpression toConstraintExpression() {
 
     // Iterate through all the matches
-    Iterator iter = kowariQuery.getHashMapTriples().values().iterator();
+    Iterator iter = mulgaraQuery.getHashMapTriples().values().iterator();
     ConstraintExpression constraintExpression = null;
 
     // If there are no matches we don't constrain anything.
-    if (kowariQuery.getHashMapTriples().size() == 0) {
+    if (mulgaraQuery.getHashMapTriples().size() == 0) {
       constraintExpression = toConstraint(new Triple(Node.ANY, Node.ANY,
           Node.ANY));
     }

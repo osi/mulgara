@@ -35,7 +35,7 @@ import javax.transaction.xa.XAResource;
 
 /**
  * The interface required by any persistent resource that wishes to participate
- * in the Kowari Database phase recovery protocol.
+ * in the Mulgara Database phase recovery protocol.
  *
  * Note: This interface is likely to be migrated to JTA/XAResource/XID in the near
  *       future.

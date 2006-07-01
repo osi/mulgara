@@ -152,7 +152,7 @@ public class FullTextStringIndex {
 
   /**
    * Constructor for the FullTextStringIndex object.  Uses the system
-   * property "kowari.textindex.reverse.enabled" to set the desired value or
+   * property "mulgara.textindex.reverse.enabled" to set the desired value or
    * will default to "false" if not set.
    *
    * @param directory the directory to put the index files.
@@ -163,7 +163,7 @@ public class FullTextStringIndex {
 
     name = newName;
     enableReverseTextIndex = System.getProperty(
-        "kowari.textindex.reverse.enabled", "false").equalsIgnoreCase("true");
+        "mulgara.textindex.reverse.enabled", "false").equalsIgnoreCase("true");
     init(directory);
   }
 

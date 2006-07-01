@@ -37,12 +37,12 @@ import org.apache.log4j.*;
 // JRDF
 import org.jrdf.graph.*;
 
-// Kowari
+// Mulgara
 import org.mulgara.server.*;
 import org.mulgara.server.driver.*;
 
 /**
- * Unit test for server-side JRDF Graph representing a kowari model.
+ * Unit test for server-side JRDF Graph representing a mulgara model.
  *
  * @created 2004-10-13
  *
@@ -75,7 +75,7 @@ public class JRDFLocalGraphUnitTest extends AbstractGraphUnitTest {
   /** name of the model */
   private static String MODEL_NAME = "itqlGraphModel";
 
-  /** URI for the kowari server */
+  /** URI for the mulgara server */
   private static URI serverURI = null;
 
   /** URI for the test model */
@@ -220,7 +220,7 @@ public class JRDFLocalGraphUnitTest extends AbstractGraphUnitTest {
    */
   private void createModel(URI modelURI) throws Exception {
 
-    this.session.createModel(modelURI, Session.KOWARI_MODEL_URI);
+    this.session.createModel(modelURI, Session.mULGARA_MODEL_URI);
   }
 
   /**

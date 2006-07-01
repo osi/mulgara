@@ -57,7 +57,7 @@ import com.hp.hpl.jena.util.iterator.WrappedIterator;
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.Graph} that extends
  * {@link com.hp.hpl.jena.graph.impl.GraphBase} as a wrapper
- * around an {@link org.kowari.resolver.DatabaseSession}.
+ * around an {@link org.mulgara.resolver.DatabaseSession}.
  *
  * @created 2004-02-20
  *
@@ -85,15 +85,15 @@ public class GraphMulgaraMaker extends BaseGraphMaker {
       Logger.getLogger(GraphMulgaraMaker.class.getName());
 
   /**
-   * The URI node of all Kowari models.
+   * The URI node of all Mulgara models.
    */
-  private static Node kowariModel =
+  private static Node mulgaraModel =
       Node.createURI(Mulgara.NAMESPACE + "Model");
 
   /**
    * Map object used to convert the URIs to model names expected by Jena.
    */
-  private final Map1 graphKowariMakerMap = new GraphKowariMakerMap();
+  private final Map1 graphMulgaraMakerMap = new GraphMulgaraMakerMap();
 
   /**
    * The URI of the system model.
@@ -143,7 +143,7 @@ public class GraphMulgaraMaker extends BaseGraphMaker {
   private URI databaseURI;
 
   /**
-   * Construct a new GraphKowariMake with a given database and reification
+   * Construct a new GraphMulgaraMake with a given database and reification
    * style.
    *
    * @param newSession the database session that is use to create, list, etc.
@@ -384,7 +384,7 @@ public class GraphMulgaraMaker extends BaseGraphMaker {
       // Get all models from the graph.
       ExtendedIterator iterator = graph.find(null,
           Node.createURI(com.hp.hpl.jena.vocabulary.RDF.type.getURI()),
-          kowariModel);
+          mulgaraModel);
 
       // Filter out system model and security models.
       iterator = iterator.filterDrop(systemModelFilter);
@@ -404,7 +404,7 @@ public class GraphMulgaraMaker extends BaseGraphMaker {
 
       // Transform the subject from a URI to a String.
       iterator = WrappedIterator.create(graphList.iterator());
-      iterator = iterator.mapWith(graphKowariMakerMap);
+      iterator = iterator.mapWith(graphMulgaraMakerMap);
 
       return iterator;
     }
@@ -420,7 +420,7 @@ public class GraphMulgaraMaker extends BaseGraphMaker {
    * the URI part is removed which is then converted to a string.  This is for
    * Jena compatability with the unit tests.
    */
-  private class GraphKowariMakerMap implements Map1 {
+  private class GraphMulgaraMakerMap implements Map1 {
 
     public Object map1(Object o) {
 

@@ -78,7 +78,7 @@ public class MulgaraQueryEngine extends com.hp.hpl.jena.rdql.QueryEngine {
   private RdqlQuery query;
 
   /**
-   * Create a new Kowari Query Engine.
+   * Create a new Mulgara Query Engine.
    *
    * @param q object representing the Jena RDQL Query object.
    */

@@ -145,18 +145,18 @@ public class BasicDatabaseSessionUnitTest extends TestCase
 
     // Define the the node pool factory
     String nodePoolFactoryClassName =
-      "org.kowari.store.nodepool.memory.MemoryNodePoolFactory";
+      "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory";
 
     // Define the string pool factory
     String stringPoolFactoryClassName =
-      "org.kowari.store.stringpool.memory.MemoryStringPoolFactory";
+      "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory";
 
     // Define the resolver factory used to manage system models
     String systemResolverFactoryClassName =
-      "org.kowari.resolver.memory.MemoryResolverFactory";
+      "org.mulgara.resolver.memory.MemoryResolverFactory";
 
     String relatedQueryHandlerClassName =
-      "org.kowari.resolver.RelatedQueryHandlerImpl";
+      "org.mulgara.resolver.RelatedQueryHandlerImpl";
 
     // Create a database which keeps its system models on the Java heap
     database = new Database(
@@ -179,7 +179,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
         null,
         "",                               // no rules engine
         relatedQueryHandlerClassName,
-        "org.kowari.content.rdfxml.RDFXMLContentHandler");
+        "org.mulgara.content.rdfxml.RDFXMLContentHandler");
   }
 
   /**
@@ -260,7 +260,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
 
     try {
       // Register the URL resolver so we can load test data
-      database.addResolverFactory("org.kowari.resolver.url.URLResolverFactory", null);
+      database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
 
       // Load some test data
       Session session = database.newSession();
@@ -288,7 +288,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
 
     try {
       // Register the URL resolver so we can query the test data
-      database.addResolverFactory("org.kowari.resolver.url.URLResolverFactory", null);
+      database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
 
       // Load some test data
       Session session = database.newSession();

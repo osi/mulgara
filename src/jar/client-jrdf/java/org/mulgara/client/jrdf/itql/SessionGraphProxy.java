@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 import org.jrdf.graph.*;
 import org.jrdf.util.ClosableIterator;
 
-//Kowari
+//Mulgara
 import org.mulgara.client.jrdf.*;
 import org.mulgara.client.jrdf.answer.*;
 import org.mulgara.client.jrdf.exception.*;

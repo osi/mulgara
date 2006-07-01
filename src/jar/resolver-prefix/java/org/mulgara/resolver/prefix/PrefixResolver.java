@@ -59,7 +59,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  * @author <a href="mailto:gearon@users.sourceforge.net">Paul Gearon</a>
  * @version $Revision: 1.1 $
  * @modified $Date: 2005/05/15 00:58:05 $ @maintenanceAuthor $Author: pgearon $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class PrefixResolver implements Resolver
@@ -76,8 +76,8 @@ public class PrefixResolver implements Resolver
   /** The URI of the type describing node type models.  */
   private URI modelTypeURI;
 
-  /** The preallocated local node representing the kowari:prefix property. */
-  private long kowariPrefix;
+  /** The preallocated local node representing the mulgara:prefix property. */
+  private long mulgaraPrefix;
 
   //
   // Constructors
@@ -94,7 +94,7 @@ public class PrefixResolver implements Resolver
   PrefixResolver(
       ResolverSession resolverSession,
       Resolver systemResolver,
-      long kowariPrefix,
+      long mulgaraPrefix,
       URI modelTypeURI
   ) throws ResolverFactoryException {
 
@@ -110,7 +110,7 @@ public class PrefixResolver implements Resolver
     // Initialize fields
     this.resolverSession = resolverSession;
     this.modelTypeURI = modelTypeURI;
-    this.kowariPrefix = kowariPrefix;
+    this.mulgaraPrefix = mulgaraPrefix;
     sessions = new Hashtable();
   }
 
@@ -222,8 +222,8 @@ public class PrefixResolver implements Resolver
       Node prefixNode = resolverSession.globalize(object.getValue());
 
       // check the constraint for consistency
-      if (property != kowariPrefix || !(prefixNode instanceof Literal || prefixNode instanceof URIReference)) {
-        logger.error("property = " + property +", kowariPrefix = " + kowariPrefix);
+      if (property != mulgaraPrefix || !(prefixNode instanceof Literal || prefixNode instanceof URIReference)) {
+        logger.error("property = " + property +", mulgaraPrefix = " + mulgaraPrefix);
         logger.error("element(2): " + prefixNode + " [" + prefixNode.getClass().getName() + "]");
         throw new QueryException("Prefix resolver can only be used for prefix constraints: " + constraint);
       }

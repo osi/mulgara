@@ -34,7 +34,7 @@ import jargs.gnu.CmdLineParser;
 import org.apache.log4j.Category;
 
 /**
- * Command line option parser for the Kowari server.
+ * Command line option parser for the Mulgara server.
  *
  * @created 2001-12-21
  *
@@ -134,7 +134,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   //
 
   /**
-   * the command line arguments passed to the Kowari server
+   * the command line arguments passed to the Mulgara server
    */
   protected String[] args = null;
 
@@ -148,7 +148,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   //
 
   /**
-   * Creates a new Kowari server command line option parser to parse the command
+   * Creates a new Mulgara server command line option parser to parse the command
    * line <code>args</code> given.
    *
    * @param args the command line arguments
@@ -166,7 +166,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
 
     // end if
     // log that we've created a parser
-    //log.debug("Created option parser for Kowari server");
+    //log.debug("Created option parser for Mulgara server");
     // set the member
     this.setArgs(args);
 
@@ -183,7 +183,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
     this.addOption(SMTP_SERVER);
     this.addOption(SERVER_CONFIG);
 
-  } // EmbeddedKowariOptionParser()
+  } // EmbeddedMulgaraOptionParser()
 
   //
   // Public API
@@ -201,7 +201,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
       IllegalOptionValueException {
 
     // log that
-    //log.debug("Parsing Kowari server arguments");
+    //log.debug("Parsing Mulgara server arguments");
     // parse the arguments if we haven't done so already
     if (!this.optionsParsed) {
 

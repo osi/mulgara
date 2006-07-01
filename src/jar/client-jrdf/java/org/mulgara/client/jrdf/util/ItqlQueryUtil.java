@@ -1,5 +1,5 @@
 /*
- * $Header: /home/pgearon/cvs/kowari/kowari-1.1/src/jar/client-jrdf/java/org/kowari/client/jrdf/util/ItqlQueryUtil.java,v 1.8 2005/01/05 04:57:37 newmana Exp $
+ * $Header: /home/pgearon/cvs/mulgara/mulgara-1.1/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/ItqlQueryUtil.java,v 1.8 2005/01/05 04:57:37 newmana Exp $
  * $Revision: 1.8 $
  * $Date: 2005/01/05 04:57:37 $
  *
@@ -67,9 +67,9 @@ import java.util.Iterator;
 import org.jrdf.graph.*;
 import org.jrdf.util.ClosableIterator;
 
-//Kowari packages
-import org.kowari.itql.lexer.*;
-import org.kowari.itql.parser.*;
+//Mulgara packages
+import org.mulgara.itql.lexer.*;
+import org.mulgara.itql.parser.*;
 import org.mulgara.client.jrdf.*;
 import org.mulgara.itql.*;
 import org.mulgara.query.*;

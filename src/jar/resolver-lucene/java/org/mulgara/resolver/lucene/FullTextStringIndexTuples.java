@@ -198,7 +198,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
       }
       catch (ClassCastException e) {
         throw new QueryException(
-            "The object of any rdf:object statement in a kowari:LuceneModel " +
+            "The object of any rdf:object statement in a mulgara:LuceneModel " +
             "must be a literal.", e);
       }
 

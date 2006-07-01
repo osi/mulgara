@@ -80,27 +80,27 @@ public class ConstraintFactory {
       if (SpecialPredicates.isSpecialPredicate(predicate.getURI())) {
 
         // check for the equality predicate
-        if (predicate.getURI().equals(SpecialPredicates.KOWARI_IS)) {
+        if (predicate.getURI().equals(SpecialPredicates.mULGARA_IS)) {
           return new ConstraintIs(e0, e2, e3);
         }
 
         // check for the cardinality equality predicate
-        if (predicate.getURI().equals(SpecialPredicates.KOWARI_OCCURS)) {
+        if (predicate.getURI().equals(SpecialPredicates.mULGARA_OCCURS)) {
           return new ConstraintOccurs(e0, e2, e3);
         }
 
         // check for the cardinality equality predicate
-        if (predicate.getURI().equals(SpecialPredicates.KOWARI_NOT_OCCURS)) {
+        if (predicate.getURI().equals(SpecialPredicates.mULGARA_NOT_OCCURS)) {
           return new ConstraintNotOccurs(e0, e2, e3);
         }
 
         // check for the cardinality less than predicate
-        if (predicate.getURI().equals(SpecialPredicates.KOWARI_OCCURS_LESS_THAN)) {
+        if (predicate.getURI().equals(SpecialPredicates.mULGARA_OCCURS_LESS_THAN)) {
           return new ConstraintOccursLessThan(e0, e2, e3);
         }
 
         // check for the cardinality greater than predicate
-        if (predicate.getURI().equals(SpecialPredicates.KOWARI_OCCURS_MORE_THAN)) {
+        if (predicate.getURI().equals(SpecialPredicates.mULGARA_OCCURS_MORE_THAN)) {
           return new ConstraintOccursMoreThan(e0, e2, e3);
         }
 

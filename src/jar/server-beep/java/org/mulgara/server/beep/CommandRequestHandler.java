@@ -25,7 +25,7 @@ public class CommandRequestHandler implements RequestHandler
   private final Category logger = Category.getInstance(getClass().getName());
 
   /**
-  * The Kowari session wrapped by this BEEP session.
+  * The Mulgara session wrapped by this BEEP session.
   */
   private final org.mulgara.server.Session session;
 
@@ -34,9 +34,9 @@ public class CommandRequestHandler implements RequestHandler
   //
 
   /**
-  * Construct a BEEP ITQL session that wraps a Kowari session.
+  * Construct a BEEP ITQL session that wraps a Mulgara session.
   *
-  * @param session  the Kowari session to wrap
+  * @param session  the Mulgara session to wrap
   * @throws IllegalArgumentException if <var>session</var> is <code>null</code>
   */
   CommandRequestHandler(org.mulgara.server.Session session)
@@ -127,9 +127,9 @@ public class CommandRequestHandler implements RequestHandler
   //
 
   /**
-  * Accessor for the wrapped Kowari session.
+  * Accessor for the wrapped Mulgara session.
   *
-  * @return the wrapped Kowari session, never <code>null</code>
+  * @return the wrapped Mulgara session, never <code>null</code>
   */
   public org.mulgara.server.Session getSession()
   {

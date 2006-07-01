@@ -558,7 +558,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
    * @throws SQLException if the join fails
    */
   /*
-  public KowariResultSet join(KowariResultSet resultSet) throws SQLException {
+  public MulgaraResultSet join(MulgaraResultSet resultSet) throws SQLException {
 
     // Determine the join variables
     List columnNamesList = new ArrayList(Arrays.asList(columnNames));
@@ -597,7 +597,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
    * @throws SQLException if the join fails
    */
   /*
-  public KowariResultSet join(KowariResultSet resultSet, String[] columnNames,
+  public MulgaraResultSet join(MulgaraResultSet resultSet, String[] columnNames,
       String[] resultSetColumnNames) throws SQLException {
 
     // Validate parameters
@@ -607,7 +607,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
           "columnNames different length than resultSetColumnNames");
     }
 
-    KowariResultSet testResultSet = new TestResultSet(resultSet);
+    MulgaraResultSet testResultSet = new TestResultSet(resultSet);
 
     // Calculate unjoined columns of this and resultSet
     List unjoinedColumnNamesList =
@@ -783,7 +783,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
    * @throws SQLException if the projection fails
    */
   /*
-  public KowariResultSet project2(String[] columnNames) throws SQLException {
+  public MulgaraResultSet project2(String[] columnNames) throws SQLException {
 
     // Intersect the projection variables
     List columnNamesList = new ArrayList(Arrays.asList(columnNames));
@@ -831,7 +831,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
    * @throws SQLException if the projection fails
    */
   /*
-  public KowariResultSet project(String[] columnNames) throws SQLException {
+  public MulgaraResultSet project(String[] columnNames) throws SQLException {
 
     TestResultSet result = new TestResultSet(columnNames);
 
@@ -1126,7 +1126,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
 
   /**
    * Comparator class used by the
-   * {@link #join(KowariResultSet, String[], String[])} method.
+   * {@link #join(MulgaraResultSet, String[], String[])} method.
    */
   //class ColumnComparator implements Comparator {
 

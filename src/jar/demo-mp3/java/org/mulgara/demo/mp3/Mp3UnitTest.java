@@ -41,7 +41,7 @@ import java.util.*;
 
 // JRDF
 
-// Kowari
+// Mulgara
 
 
 /**

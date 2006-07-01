@@ -92,7 +92,7 @@ public class OntologyJRDFMulgaraImplUnitTest extends OntologyMemoryImplUnitTest 
   protected SessionFactory database = null;
 
   /**
-   * Session used to construct a kowari Graph.
+   * Session used to construct a mulgara Graph.
    *
    */
   protected Session session = null;
@@ -111,7 +111,7 @@ public class OntologyJRDFMulgaraImplUnitTest extends OntologyMemoryImplUnitTest 
    * @see TestCase#setUp()
    */
   protected void setUp() throws Exception {
-    initRDFKowariImpl();
+    initRDFMulgaraImpl();
     OntologyModel ontoModel = new OntologyJRDFModel(graph);
     onto = OntoConnector.getInstance().createOntology(ontoModel, ONTO_NAMESPACE);
     initOntology();
@@ -159,13 +159,13 @@ public class OntologyJRDFMulgaraImplUnitTest extends OntologyMemoryImplUnitTest 
   /**
    * @throws Exception
    */
-  protected void initRDFKowariImpl() throws Exception {
+  protected void initRDFMulgaraImpl() throws Exception {
     boolean exceptionOccurred = true;
     try {
 
       hostname = InetAddress.getLocalHost().getCanonicalHostName();
       serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
-      graphURI = new URI("rmi", hostname, "/" + SERVER_NAME, "testKowari");
+      graphURI = new URI("rmi", hostname, "/" + SERVER_NAME, "testMulgara");
 
       File dir =
           new File(System.getProperty("java.io.tmpdir"),

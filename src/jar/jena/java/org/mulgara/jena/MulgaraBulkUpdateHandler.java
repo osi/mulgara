@@ -33,8 +33,8 @@ import java.util.*;
 import org.apache.log4j.*;
 
 // Locally written classes
-import org.kowari.server.Session;
-import org.kowari.query.*;
+import org.mulgara.server.Session;
+import org.mulgara.query.*;
 
 // Jena classes
 import com.hp.hpl.jena.graph.*;
@@ -72,7 +72,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
   /**
    * The graph.
    */
-  private GraphMulgara graphKowari;
+  private GraphMulgara graphMulgara;
 
   /**
    * The graph event manager.
@@ -82,17 +82,17 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
   /**
    * Create a new bulk update handler.
    *
-   * @param newGraphKowari the graph.
+   * @param newGraphMulgara the graph.
    */
-  public MulgaraBulkUpdateHandler(GraphMulgara newGraphKowari) {
+  public MulgaraBulkUpdateHandler(GraphMulgara newGraphMulgara) {
 
-    graphKowari = newGraphKowari;
-    manager = graphKowari.getEventManager();
+    graphMulgara = newGraphMulgara;
+    manager = graphMulgara.getEventManager();
   }
 
   public void add(Triple[] triples) {
 
-    graphKowari.performAdd(new ArrayList(Arrays.asList(triples)));
+    graphMulgara.performAdd(new ArrayList(Arrays.asList(triples)));
     manager.notifyAddArray(triples);
   }
 
@@ -103,7 +103,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
 
   protected void add(List triples, boolean notify) {
 
-    graphKowari.performAdd(triples);
+    graphMulgara.performAdd(triples);
     if (notify) {
 
       manager.notifyAddList(triples);
@@ -136,7 +136,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
     addIterator(GraphUtil.findAll(g), false);
     if (withReifications) {
 
-      addReifications(graphKowari, g);
+      addReifications(graphMulgara, g);
     }
     manager.notifyAddGraph(g);
   }
@@ -165,7 +165,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
 
   public void delete(Triple[] triples) {
 
-    graphKowari.performDelete(new ArrayList(Arrays.asList(triples)));
+    graphMulgara.performDelete(new ArrayList(Arrays.asList(triples)));
     manager.notifyDeleteArray(triples);
   }
 
@@ -176,7 +176,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
 
   protected void delete(List triples, boolean notify) {
 
-   graphKowari.performDelete(triples);
+   graphMulgara.performDelete(triples);
 
     if (notify) {
 
@@ -217,7 +217,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
 
   public void delete(Graph g, boolean withReifications) {
 
-    if (g.dependsOn(graphKowari)) {
+    if (g.dependsOn(graphMulgara)) {
 
       delete(triplesOf(g));
     }
@@ -227,7 +227,7 @@ public class MulgaraBulkUpdateHandler implements BulkUpdateHandler {
     }
     if (withReifications) {
 
-      deleteReifications(graphKowari, g);
+      deleteReifications(graphMulgara, g);
     }
     manager.notifyDeleteGraph(g);
   }

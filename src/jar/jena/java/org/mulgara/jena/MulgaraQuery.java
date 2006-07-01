@@ -42,8 +42,8 @@ import com.hp.hpl.jena.util.iterator.*;
 import com.hp.hpl.jena.graph.impl.*;
 
 // Internal classes
-import org.kowari.query.*;
-import org.kowari.query.rdf.*;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.*;
 
 /**
  * A re-implementation of the concrete {@link com.hp.hpl.jena.graph.query.Query}.
@@ -79,7 +79,7 @@ public class MulgaraQuery extends com.hp.hpl.jena.graph.query.Query {
   private TripleHashMap triples = new TripleHashMap();
 
   /**
-   * The map of Jena nodes to Kowari variables.
+   * The map of Jena nodes to Mulgara variables.
    */
   private HashMap nodesToVariables = new HashMap();
 
@@ -174,10 +174,10 @@ public class MulgaraQuery extends com.hp.hpl.jena.graph.query.Query {
   }
 
   /**
-   * Not supported by KowariQuery.
+   * Not supported by MulgaraQuery.
    *
    * @param e expression to add.
-   * @throws UnsupportedOperationException not supported by KowariQuery.
+   * @throws UnsupportedOperationException not supported by MulgaraQuery.
    * @return Query a new query object with an expression applied.
    */
   public com.hp.hpl.jena.graph.query.Query addConstraint(Expression e) {
@@ -222,9 +222,9 @@ public class MulgaraQuery extends com.hp.hpl.jena.graph.query.Query {
     Set uniqueGraphs = getUniqueGraphs(args, getHashMapTriples());
 
     ExtendedIterator iter = null;
-    org.kowari.query.Query query = null;
+    org.mulgara.query.Query query = null;
     try {
-      query = new org.kowari.query.Query(
+      query = new org.mulgara.query.Query(
         toList(nodes),
         toModelExpression(uniqueGraphs),
         toConstraintExpression(args, getHashMapTriples(), uniqueGraphs),

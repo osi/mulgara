@@ -26,10 +26,6 @@
  * Original Code Source Code for Your Modifications.]
  *
  */
-/*
-  [See end of file]
-  $Id: KowariPatternStage.java,v 1.8 2005/01/05 04:58:17 newmana Exp $
-*/
 
 package org.mulgara.jena;
 

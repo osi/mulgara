@@ -35,8 +35,8 @@ import java.io.Serializable;
 import javax.resource.ResourceException;
 import javax.resource.spi.*;
 
-import org.kowari.query.QueryException;
-import org.kowari.server.SessionFactory;
+import org.mulgara.query.QueryException;
+import org.mulgara.server.SessionFactory;
 
 /**
  * CLASS TO DO

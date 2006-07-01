@@ -43,7 +43,7 @@ import org.apache.log4j.Category;
 import org.apache.log4j.xml.DOMConfigurator;
 
 // automagically generated classes
-import org.kowari.itql.parser.ParserException;
+import org.mulgara.itql.parser.ParserException;
 import org.mulgara.query.Answer;
 import org.mulgara.query.AnswerImpl;
 import org.mulgara.query.Constraint;
@@ -568,7 +568,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-   * select $x from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; where $x
+   * select $x from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; where $x
    * &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Title' ; </pre> Expects
    * results: <pre>
    *   x=http://purl.org/dc/elements/1.1/title
@@ -622,7 +622,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-   * select $x from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; where ($x
+   * select $x from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; where ($x
    * &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Title') ; </pre>
    * Expects results: <pre>
    *   x=http://purl.org/dc/elements/1.1/title
@@ -674,7 +674,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-   * select $x $y from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; where ($x
+   * select $x $y from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; where ($x
    * $y 'Subject'); </pre> Expects results: <pre>
    *   x=http://purl.org/dc/elements/1.1/subject
    *   y=http://www.w3.org/2000/01/rdf-schema#label
@@ -729,7 +729,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-       * select $x $y from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; where (($x
+       * select $x $y from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; where (($x
    * $y 'Subject') and ($x &lt;http://www.w3.org/2000/01/rdf-schema#label&gt;
    * 'Subject')) ; </pre> Expects results: <pre>
    *   x=http://purl.org/dc/elements/1.1/subject
@@ -785,7 +785,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-   * select $x $y from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; where (($x
+   * select $x $y from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; where (($x
    * $y 'Subject') or ($x &lt;http://www.w3.org/2000/01/rdf-schema#label&gt;
    * 'Subject')) ; </pre> Expects results: <pre>
    *   x=http://purl.org/dc/elements/1.1/subject
@@ -846,7 +846,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-   * select $x $y from <file:<it>kowarihome</it> /data/dc.rdfs&gt; where (($x $y
+   * select $x $y from <file:<it>mulgarahome</it> /data/dc.rdfs&gt; where (($x $y
    * 'Subject') and ($x &lt;http://www.w3.org/2000/01/rdf-schema#label&gt;
    * 'Subject')) and &lt;http://purl.org/dc/elements/1.1/subject&gt; $y
    * 'Subject' ; </pre> Expects results: <pre>
@@ -906,7 +906,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a select statement. Executes the following
    * query: <pre>
-   * select $x $y from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; where (($x
+   * select $x $y from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; where (($x
    * $y 'Subject') and ($x &lt;http://www.w3.org/2000/01/rdf-schema#label&gt;
    * 'Subject')) or &lt;http://purl.org/dc/elements/1.1/subject&gt; $y 'Subject'
    * ; </pre> Expects results: <pre>
@@ -990,9 +990,9 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Executes the following query: <pre>
    * select count (
    *   select $x $y
-   *   from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt;
+   *   from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt;
    *   where (($x $y 'Subject') and ($x &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Subject'))
-   * from &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt;
+   * from &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt;
    * where (($x $y 'Subject') and ($x &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Subject')) ;
    * </pre> Expects results: <pre>
    *   k0=http://purl.org/dc/elements/1.1/subject
@@ -1398,7 +1398,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
-   *   load &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; into
+   *   load &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
    * &lt;tucana://localhost/database&gt; ; </pre> Expects results:
    * ParserException
    *
@@ -1434,7 +1434,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
-   *   load &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; into
+   *   load &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
    * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
@@ -1505,7 +1505,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
-   *   load as rdf &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; into
+   *   load as rdf &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
    * &lt;tucana://localhost/database&gt; ; </pre> Expects results:
    * ParserException
    *
@@ -1541,7 +1541,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
-   *   load as rdf &lt;file:<it>kowarihome</it> /data/dc.rdfs&gt; into
+   *   load as rdf &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
    * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
@@ -1614,7 +1614,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
-   *   load as serial &lt;file:<it>kowarihome</it> /data/<it>database</it> &gt;
+   *   load as serial &lt;file:<it>mulgarahome</it> /data/<it>database</it> &gt;
    * into &lt;tucana://localhost/database&gt; ; </pre> Expects results:
    * ParserException
    *
@@ -1650,7 +1650,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
-   *   load as serial &lt;file:<it>kowarihome</it> /<it>database</it> &gt; into
+   *   load as serial &lt;file:<it>mulgarahome</it> /<it>database</it> &gt; into
    * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
@@ -1862,7 +1862,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   // testRestore1()
 
   /**
-   * Tests the backup and restore functionality of Kowari by running a query,
+   * Tests the backup and restore functionality of Mulgara by running a query,
    * backing up the DB, deleting the server.
    *
    * @throws Exception if the test fails
@@ -1893,7 +1893,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   // testBackupRestore1()
 
   /**
-   * Tests the backup and restore functionality of Kowari by running a query,
+   * Tests the backup and restore functionality of Mulgara by running a query,
    * backing up the DB, deleting the server.
    *
    * @throws Exception if the test fails
@@ -1922,7 +1922,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   }
 
   /**
-   * Tests the backup and restore functionality of Kowari by running a query,
+   * Tests the backup and restore functionality of Mulgara by running a query,
    * backing up the DB, deleting the server.
    *
    * @throws Exception if the test fails

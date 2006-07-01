@@ -15,7 +15,7 @@ import com.hp.hpl.jena.rdf.model.impl.*;
  * OWLReader.java
  * <br>
  * This is a version of the OWLReader supplied with SOFA which is compatible with
- * Jena 2.1 as used in kowari/tks.
+ * Jena 2.1 as used in mulgara/tks.
  * <pre>
  * Modified by       Keith Ahern
  *                   [keith@tucanatech.com]

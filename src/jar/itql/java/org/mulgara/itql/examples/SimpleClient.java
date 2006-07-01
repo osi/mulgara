@@ -35,7 +35,7 @@ import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.Answer;
 
 /**
- * A simple Kowari client to demonstrate the Kowari java API. The client will print
+ * A simple Mulgara client to demonstrate the Mulgara java API. The client will print
  * out the contents of the model specified on the command line.
  *
  * @created 2002-11-02
@@ -63,7 +63,7 @@ public class SimpleClient {
   private static final String eol = System.getProperty("line.separator");
 
   /**
-   * iTQL Bean used to query Kowari
+   * iTQL Bean used to query Mulgara
    */
   private ItqlInterpreterBean interpreter;
 

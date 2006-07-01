@@ -42,9 +42,9 @@ import org.apache.axis.utils.DOM2Writer;
 import org.jrdf.graph.URIReference;     // JRDF
 import org.jrdf.graph.BlankNode;
 
-// Kowari packages
-import org.kowari.itql.lexer.LexerException;
-import org.kowari.itql.parser.ParserException;
+// Mulgara packages
+import org.mulgara.itql.lexer.LexerException;
+import org.mulgara.itql.parser.ParserException;
 import org.mulgara.query.Answer;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -68,7 +68,8 @@ import org.mulgara.server.Session;
  * @author Tom Adams
  * @version $Revision: 1.11 $
  * @modified $Date: 2005/04/04 11:30:11 $ by $Author: tomadams $
- * @copyright &copy;2001-2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy;2001-2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
+ * @copyright &copy;2005 <a href="mailto:tomjadams@gmail.com">Tom Adams</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class ItqlInterpreterBean {
@@ -115,7 +116,7 @@ public class ItqlInterpreterBean {
   /**
    * Create the ITQL interpreter using the given <code>session</code>.
    *
-   * @param session the session to use to communicate with the Kowari server
+   * @param session the session to use to communicate with the Mulgara server
    */
   public ItqlInterpreterBean(Session session, URI securityDomain) {
 
@@ -243,9 +244,9 @@ public class ItqlInterpreterBean {
   }
 
   /**
-   * Returns the session to use to communicate with the Kowari server.
+   * Returns the session to use to communicate with the Mulgara server.
    *
-   * @return the session to use to communicate with the Kowari server
+   * @return the session to use to communicate with the Mulgara server
    */
   public Session getSession() {
 
@@ -258,10 +259,10 @@ public class ItqlInterpreterBean {
   }
 
   /**
-   * Returns the session to use to communicate with the specified Kowari server.
+   * Returns the session to use to communicate with the specified Mulgara server.
    *
    * @param serverURI URI Server to get a Session for.
-   * @return the session to use to communicate with the specified Kowari server
+   * @return the session to use to communicate with the specified Mulgara server
    */
   public Session getSession(URI serverURI) {
 

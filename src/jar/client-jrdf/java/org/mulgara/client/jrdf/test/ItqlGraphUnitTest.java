@@ -46,7 +46,7 @@ import org.mulgara.server.*;
 import org.mulgara.server.driver.*;
 
 /**
- * Unit test for client-side JRDF Graph representing a kowari model (modelURI)
+ * Unit test for client-side JRDF Graph representing a mulgara model (modelURI)
  * and uses an ItqlInterpreterBean and a Session.
  *
  * @created 2004-08-24
@@ -74,7 +74,7 @@ public class ItqlGraphUnitTest extends AbstractGraphUnitTest {
   /** name of the model */
   private static String MODEL_NAME = "itqlGraphModel";
 
-  /** URI for the kowari server */
+  /** URI for the mulgara server */
   private static URI serverURI = null;
 
   /** URI for the test model */

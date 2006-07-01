@@ -37,24 +37,24 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.rdf.model.impl.*;
 import com.hp.hpl.jena.util.iterator.*;
 
-//Kowari packages
-import org.kowari.itql.*;
-import org.kowari.itql.lexer.*;
-import org.kowari.itql.parser.*;
-import org.kowari.query.Answer;
-import org.kowari.query.Query;
-import org.kowari.query.QueryException;
-import org.kowari.query.rdf.*;
-import org.kowari.server.*;
-import org.kowari.server.driver.*;
+//Mulgara packages
+import org.mulgara.itql.*;
+import org.mulgara.itql.lexer.*;
+import org.mulgara.itql.parser.*;
+import org.mulgara.query.Answer;
+import org.mulgara.query.Query;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.rdf.*;
+import org.mulgara.server.*;
+import org.mulgara.server.driver.*;
 
 
 /**
- * A Jena Model backed by a Kowari triplestore.
+ * A Jena Model backed by a Mulgara triplestore.
  *
- * <p>This class uses a Kowari Session and ItqlInterpreter to emulate a Jena Model,
+ * <p>This class uses a Mulgara Session and ItqlInterpreter to emulate a Jena Model,
  * ultimately using RMI to communicate with the server.  It represents a single
- * thread's connection to a Kowari model.</p>
+ * thread's connection to a Mulgara model.</p>
  *
  * @created 2001-08-16
  *
@@ -95,7 +95,7 @@ public class KModel extends ModelCom implements Model {
   }
 
   /**
-   * Get a Jena Model instance given a Kowari model's URI.
+   * Get a Jena Model instance given a Mulgara model's URI.
    *
    * <p>The model must already exist.</p>
    * <pre>
@@ -115,7 +115,7 @@ public class KModel extends ModelCom implements Model {
   }
 
   /**
-   * Get a Jena Model instance given Kowari model and fulltext model URIs.
+   * Get a Jena Model instance given Mulgara model and fulltext model URIs.
    *
    * <p>All literals added or deleted in the model will correspondingly be
    * added or deleted in the text model.</p>
@@ -175,7 +175,7 @@ public class KModel extends ModelCom implements Model {
   }
 
   /**
-   * Close underlying Kowari session(s) and any unclosed iterators.
+   * Close underlying Mulgara session(s) and any unclosed iterators.
    */
   public void close() {
 

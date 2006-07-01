@@ -95,7 +95,7 @@ public interface MulgaraResultSet extends ResultSet {
    * @return the result of the join operation
    * @throws SQLException if the join fails
    */
-  //public KowariResultSet join(KowariResultSet resultSet) throws SQLException;
+  //public MulgaraResultSet join(MulgaraResultSet resultSet) throws SQLException;
 
   /**
    * Perform a natural join between this result set and another, specifying the
@@ -115,7 +115,7 @@ public interface MulgaraResultSet extends ResultSet {
    *      the arguments are <code>null</code>
    * @throws SQLException if the join fails
    */
-  //public KowariResultSet join(KowariResultSet resultSet, String[] columnNames,
+  //public MulgaraResultSet join(MulgaraResultSet resultSet, String[] columnNames,
   //    String[] resultSetColumnNames) throws SQLException;
 
   /**
@@ -142,7 +142,7 @@ public interface MulgaraResultSet extends ResultSet {
    * @return a result set containing only columns named in <code>columnNames</code>
    * @throws SQLException if the projection fails
    */
-  //public KowariResultSet project(String[] columnNames) throws SQLException;
+  //public MulgaraResultSet project(String[] columnNames) throws SQLException;
 
   /**
    * Perform a relational algebra <dfn>project</dfn> operation. This operation
@@ -154,7 +154,7 @@ public interface MulgaraResultSet extends ResultSet {
    * @return a result set containing only columns named in <code>columnNames</code>
    * @throws SQLException if the projection fails
    */
-  //public KowariResultSet project2(String[] columnNames) throws SQLException;
+  //public MulgaraResultSet project2(String[] columnNames) throws SQLException;
 
   /**
    * Perform a relational algebra <dfn>self join</dfn> operation. This operation
@@ -190,7 +190,7 @@ public interface MulgaraResultSet extends ResultSet {
   public String[] getColumnNames() throws SQLException;
 
   /**
-   * Gets the CurrentRow attribute of the KowariResultSet object
+   * Gets the CurrentRow attribute of the MulgaraResultSet object
    *
    * @return The CurrentRow value
    */

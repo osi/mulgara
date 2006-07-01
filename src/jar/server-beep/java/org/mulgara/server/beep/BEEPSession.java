@@ -55,7 +55,7 @@ import org.mulgara.server.Session;
 import org.mulgara.sparql.protocol.StreamFormatException;
 
 /**
- * Network transport of a Kowari {@link Session} via a BEEP-based application
+ * Network transport of a Mulgara {@link Session} via a BEEP-based application
  * protocol.
  *
  * In addition to BEEP's own reserved session management channel (Channel 0),
@@ -111,7 +111,7 @@ class BEEPSession implements Session {
   //
 
   /**
-   * Create a Kowari session by wrapping a BEEP session.
+   * Create a Mulgara session by wrapping a BEEP session.
    *
    * @param beepSession  the BEEP session to wrap
    * @throws BEEPException if the initial command channel can't be opened to the
@@ -366,8 +366,8 @@ class BEEPSession implements Session {
   *
   * @param modelURI the {@link URI} of the new model
   * @param modelTypeURI the {@link URI} identifying whether the new model is
-  *   backed by a triple store (<code>kowari:Model</code>) or by a Lucene full
-  *   text index (<code>kowari:LuceneModel</code>)
+  *   backed by a triple store (<code>mulgara:Model</code>) or by a Lucene full
+  *   text index (<code>mulgara:LuceneModel</code>)
   * @throws QueryException if the model can't be created
   */
  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {

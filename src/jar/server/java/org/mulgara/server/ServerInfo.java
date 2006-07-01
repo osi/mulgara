@@ -38,7 +38,7 @@ import org.mulgara.server.SessionFactory;
 
 /**
  * Holds details on the currently running server.  All data set by {@link EmbeddedMulgaraServer}.
- * This class allows access to data which would normally be stored in EmbeddedKowariServer without
+ * This class allows access to data which would normally be stored in EmbeddedMulgaraServer without
  * incurring the overhead of the entire classpath needed by that class.
  *
  * @created 2004-12-01
@@ -85,14 +85,14 @@ public class ServerInfo {
    * underlying database without going across the network. For example:
    * </p>
    * <pre>
-   * Session session = EmbeddedKowariServer.getLocalSessionFactory().newSession();
+   * Session session = EmbeddedMulgaraServer.getLocalSessionFactory().newSession();
    * ItqlInterpreterBean interpreter = new ItqlInterpreterBean(session);
    * String answer = interpreter.executeQueryToString(
    *     "select $s $p $o from <rmi://localhost/server1#model> where $s $p $o;");
    * </pre>
    *
    * @return the local {@link org.mulgara.server.SessionFactory} of this
-   *      Kowari database instance, or <code>null</code> if no local session
+   *      Mulgara database instance, or <code>null</code> if no local session
    *      factory has been set
    */
   public static SessionFactory getLocalSessionFactory() {
@@ -113,13 +113,13 @@ public class ServerInfo {
 
 
   /**
-   * Returns a static reference to the hostname this Kowari server is bound to.
+   * Returns a static reference to the hostname this Mulgara server is bound to.
    * <p>
    *
    * Local clients (in the same JVM) should use this method to determine the
-   * hostname Kowari is bound to, rather than assuming the local hostname. </p>
+   * hostname Mulgara is bound to, rather than assuming the local hostname. </p>
    *
-   * @return the hostname this Kowari server is bound to
+   * @return the hostname this Mulgara server is bound to
    */
   public static String getBoundHostname() {
     return boundHostname;

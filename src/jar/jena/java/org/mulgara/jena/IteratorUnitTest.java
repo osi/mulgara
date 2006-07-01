@@ -38,8 +38,8 @@ import java.net.URI;
 
 import org.apache.log4j.*;
 
-import org.kowari.server.*;
-import org.kowari.server.driver.*;
+import org.mulgara.server.*;
+import org.mulgara.server.driver.*;
 
 /**
  * Test case for {@link StmtIterator}s.
@@ -113,7 +113,7 @@ public class IteratorUnitTest extends TestCase {
   public IteratorUnitTest(String name) throws Exception {
 
     super(name);
-    System.setProperty("org.kowari.xml.ResourceDocumentBuilderFactory",
+    System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
         "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
     String hostname = InetAddress.getLocalHost().getCanonicalHostName();

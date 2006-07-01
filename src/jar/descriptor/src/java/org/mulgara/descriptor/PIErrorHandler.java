@@ -409,7 +409,7 @@ public class PIErrorHandler implements ErrorHandler, ErrorListener {
     // write pointer to stack output
     m_pw.println(eol + "Full Stack Trace in file " +
                  Descriptor.DESCRIPTOR_STACKTRACE_OUTPUT +
-                 " in directory where Kowari was started from");
+                 " in directory where Mulgara was started from");
   }
 
   /**

@@ -33,12 +33,12 @@ import java.net.*;
 import org.apache.log4j.Category;
 
 // Locally written packages
-import org.kowari.query.*;
-import org.kowari.server.*;
+import org.mulgara.query.*;
+import org.mulgara.server.*;
 
 /**
  * Java HTTP server. This class would more properly be called a <q>system
- * property server</q> . It exports the Kowari {@link SessionFactory} object as
+ * property server</q> . It exports the Mulgara {@link SessionFactory} object as
  * a system property, where a web application running in the same VM can access
  * it to provide HTTP network export.
  *

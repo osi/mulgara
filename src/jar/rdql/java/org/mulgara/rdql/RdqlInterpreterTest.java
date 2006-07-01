@@ -40,8 +40,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 // automagically generated classes
-import org.kowari.rdql.lexer.LexerException;
-import org.kowari.rdql.parser.ParserException;
+import org.mulgara.rdql.lexer.LexerException;
+import org.mulgara.rdql.parser.ParserException;
 
 /**
 * Unit test for {@link RdqlInterpreter}.

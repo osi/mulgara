@@ -137,7 +137,7 @@ public class BEEPSessionFactory implements SessionFactory {
         port = 10288;
       }
 
-      // Create a Kowari session by wrapping a BEEP session
+      // Create a Mulgara session by wrapping a BEEP session
       return new BEEPSession(
         TCPSessionCreator.initiate(serverURI.getHost(), port)  // BEEP session
       );

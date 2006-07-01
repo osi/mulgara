@@ -74,7 +74,7 @@ public class UIDGeneratorUnitTest extends TestCase {
   private static final String CLASS_NAME = "UIDGenerator";
 
   /** Fully qualified name of the UIDGenerator class */
-  private static final String FULL_CLASS_NAME = "org.kowari.util." + CLASS_NAME;
+  private static final String FULL_CLASS_NAME = "org.mulgara.util." + CLASS_NAME;
 
   /**
    * Constructs a new test with the given name.

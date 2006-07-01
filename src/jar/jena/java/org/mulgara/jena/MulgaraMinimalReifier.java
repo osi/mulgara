@@ -35,7 +35,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.graph.Reifier} that uses a
- * KowariGraph for storage.
+ * MulgaraGraph for storage.
  *
  * @created 2004-09-24
  *

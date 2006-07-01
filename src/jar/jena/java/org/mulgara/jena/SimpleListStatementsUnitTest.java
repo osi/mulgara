@@ -43,10 +43,10 @@ import java.util.*;
 
 import org.apache.log4j.*;
 
-import org.kowari.query.QueryException;
-import org.kowari.server.Session;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.SessionFactory;
+import org.mulgara.query.QueryException;
+import org.mulgara.server.Session;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
 
 /**
  * Test case for {@link TestList}.
@@ -131,7 +131,7 @@ public class SimpleListStatementsUnitTest extends ModelTestBase {
 
 //    Logger.getRootLogger().setLevel(Level.ERROR);
 
-    System.setProperty("org.kowari.xml.ResourceDocumentBuilderFactory",
+    System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
         "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
     try {

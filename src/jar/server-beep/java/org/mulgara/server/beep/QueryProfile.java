@@ -25,7 +25,7 @@ public class QueryProfile implements Profile, StartChannelListener
   /**
   * The URI identifier for this profile.
   */
-  public static final String URI = "http://kowari.org/profiles/ITQL/QUERY";
+  public static final String URI = "http://mulgara.org/profiles/ITQL/QUERY";
 
   /**
   * Logger.
@@ -33,7 +33,7 @@ public class QueryProfile implements Profile, StartChannelListener
   private final Category logger = Category.getInstance(getClass().getName());
 
   /**
-  * The Kowari session wrapped by this BEEP session.
+  * The Mulgara session wrapped by this BEEP session.
   */
   private final SessionFactory sessionFactory;
 
@@ -44,7 +44,7 @@ public class QueryProfile implements Profile, StartChannelListener
   /**
   * Construct an ITQL profile.
   *
-  * @param sessionFactory  the source of Kowari sessions for clients connecting
+  * @param sessionFactory  the source of Mulgara sessions for clients connecting
   *   with BEEP sessions using this profile
   * @throws IllegalArgumentException if <var>sessionFactorr</var> is
   *   <code>null</code>
@@ -75,8 +75,8 @@ public class QueryProfile implements Profile, StartChannelListener
   //
 
   /**
-  * @throws StartChannelException if the Kowari {@link #sessionFactory} fails
-  *   to generate a new Kowari session
+  * @throws StartChannelException if the Mulgara {@link #sessionFactory} fails
+  *   to generate a new Mulgara session
   */
   public void startChannel(Channel channel, String encoding, String data)
     throws StartChannelException
@@ -102,7 +102,7 @@ public class QueryProfile implements Profile, StartChannelListener
 
   /**
   * @param channel {@inheritDoc}
-  * @throws CloseChannelException  if the underlying Kowari session can't be
+  * @throws CloseChannelException  if the underlying Mulgara session can't be
   *   closed
   */
   public void closeChannel(Channel channel) throws CloseChannelException

@@ -43,7 +43,7 @@ import java.util.jar.*;
  *
  * To use this class, add the following to the attributes to the manifest of
  * your enclosing JAR: <PRE>
- * Main-Class: org.kowari.Bootstrap
+ * Main-Class: org.mulgara.Bootstrap
  * Embedded-Jar: jar1filename.jar, jar2filename.jar,jar3filename.jar
  * Embedded-Main-Class: com.foo.Bar
  * </PRE> The <CODE>Main-Class</CODE> attribute tells the JVM which class to
@@ -193,7 +193,7 @@ public class Bootstrap extends URLClassLoader {
       // Set the path of the jar as a System property - tucana.jar.path
       URL bootURL =
           Bootstrap.class.getClassLoader().getSystemResource(
-          "org/kowari/util/Bootstrap.class");
+          "org/mulgara/util/Bootstrap.class");
 
       String bootURLString = bootURL.toString();
       String preString = "jar:file:";
@@ -206,10 +206,10 @@ public class Bootstrap extends URLClassLoader {
       // HACK: This is a hack to get the ARP parser working inside the bootstrapper.
       //       It should be removed once we work out a real solution to the
       //       dodgy error message problem.
-      // set the xerces system property if we're executing the Kowari server
-      if (embeddedMainClass.equals("org.kowari.server.EmbeddedKowariServer")) {
+      // set the xerces system property if we're executing the Mulgara server
+      if (embeddedMainClass.equals("org.mulgara.server.EmbeddedMulgaraServer")) {
 
-        System.setProperty("org.kowari.xml.ResourceDocumentBuilderFactory",
+        System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
             "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
       }
 
@@ -436,7 +436,7 @@ public class Bootstrap extends URLClassLoader {
       // end if
       // create a temporary file to write the jar to (we may need to keep the
       // class on disk for windows weenies...)
-      File tmpJarFile = File.createTempFile("kowari", ".jar");
+      File tmpJarFile = File.createTempFile("mulgara", ".jar");
       tmpJarFile.deleteOnExit();
 
       // get a stream so we can write to it

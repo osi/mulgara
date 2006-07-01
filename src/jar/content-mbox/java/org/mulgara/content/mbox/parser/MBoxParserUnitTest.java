@@ -2129,15 +2129,15 @@ public class MBoxParserUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.file.FileContent");
+      contentClass = Class.forName("org.mulgara.resolver.file.FileContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.file.FileContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      fail("Unable to find class [org.mulgara.resolver.file.FileContent] " +
            "for instantiation.");
     }
 

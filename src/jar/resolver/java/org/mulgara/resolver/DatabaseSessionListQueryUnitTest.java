@@ -161,18 +161,18 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
 
     // Define the the node pool factory
     String nodePoolFactoryClassName =
-        "org.kowari.store.nodepool.memory.MemoryNodePoolFactory";
+        "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory";
 
     // Define the string pool factory
     String stringPoolFactoryClassName =
-        "org.kowari.store.stringpool.memory.MemoryStringPoolFactory";
+        "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory";
 
     // Define the resolver factory used to manage system models
     String systemResolverFactoryClassName =
-        "org.kowari.resolver.memory.MemoryResolverFactory";
+        "org.mulgara.resolver.memory.MemoryResolverFactory";
 
     String relatedQueryHandlerClassName =
-        "org.kowari.resolver.RelatedQueryHandlerImpl";
+        "org.mulgara.resolver.RelatedQueryHandlerImpl";
 
     // Create a database which keeps its system models on the Java heap
     database = new Database(

@@ -60,19 +60,19 @@ import org.mulgara.server.*;
 public abstract class JRDFGraphFactory {
 
   /** Server-side Graph class */
-  private static final String SERVER_GRAPH_CLASS = "org.kowari.jrdf.JRDFGraph";
+  private static final String SERVER_GRAPH_CLASS = "org.mulgara.jrdf.JRDFGraph";
 
   /** Client-side Graph proxy (used to create the Graph) */
   private static final String CLIENT_PROXY_CLASS =
-      "org.kowari.client.jrdf.itql.ItqlGraphProxy";
+      "org.mulgara.client.jrdf.itql.ItqlGraphProxy";
 
   /** Client-side Graph class  */
   private static final String CLIENT_GRAPH_CLASS =
-      "org.kowari.client.jrdf.ClientGraph";
+      "org.mulgara.client.jrdf.ClientGraph";
 
   /** Argument types for the Client-side Graph  */
   private static final String [] CLIENT_GRAPH_ARG_TYPES = new String [] {
-      "org.kowari.client.jrdf.RemoteGraphProxy"
+      "org.mulgara.client.jrdf.RemoteGraphProxy"
   };
 
   /**

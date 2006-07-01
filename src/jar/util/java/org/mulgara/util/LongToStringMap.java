@@ -72,7 +72,7 @@ public final class LongToStringMap {
 
 
   /**
-   * Default Constructor. Creates the map File(s) in the kowari temp directory.
+   * Default Constructor. Creates the map File(s) in the mulgara temp directory.
    *
    * @throws IOException
    */

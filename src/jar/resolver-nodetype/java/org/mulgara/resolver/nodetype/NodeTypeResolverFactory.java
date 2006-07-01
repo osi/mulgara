@@ -70,21 +70,21 @@ public class NodeTypeResolverFactory implements ResolverFactory
   private long rdfsLiteral;
   
   /** The preallocated local node representing the URI reference type.  */
-  private long kowariUriReference;
+  private long mulgaraUriReference;
 
 
   /** The URI for the modelType.  */
   private static final URI modelTypeURI;
 
   /** The URI for the internal URI reference type. */
-  private static final URI kowariUriReferenceURI;
+  private static final URI mulgaraUriReferenceURI;
 
   static {
     try {
       modelTypeURI = new URI(Mulgara.NAMESPACE + "TypeModel");
-      kowariUriReferenceURI = new URI(Mulgara.NAMESPACE + "uriReference");
+      mulgaraUriReferenceURI = new URI(Mulgara.NAMESPACE + "uriReference");
       assert modelTypeURI != null;
-      assert kowariUriReferenceURI != null;
+      assert mulgaraUriReferenceURI != null;
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded internal URIs for Node Types", e);
     }
@@ -122,7 +122,7 @@ public class NodeTypeResolverFactory implements ResolverFactory
 
     rdfsLiteral = initializer.preallocate(new URIReferenceImpl(RDFS.LITERAL));
 
-    kowariUriReference = initializer.preallocate(new URIReferenceImpl(kowariUriReferenceURI));
+    mulgaraUriReference = initializer.preallocate(new URIReferenceImpl(mulgaraUriReferenceURI));
 
     systemModel = initializer.getSystemModel();
 
@@ -179,7 +179,7 @@ public class NodeTypeResolverFactory implements ResolverFactory
 
     return new NodeTypeResolver(
         resolverSession, systemResolver, rdfType, systemModel,
-        rdfsLiteral, kowariUriReference, modelType, modelTypeURI
+        rdfsLiteral, mulgaraUriReference, modelType, modelTypeURI
     );
   }
 }

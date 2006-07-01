@@ -54,12 +54,12 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 // Local packages
-import org.kowari.query.ModelResource;
-import org.kowari.query.QueryException;
-import org.kowari.query.Value;
-import org.kowari.query.rdf.*;
-import org.kowari.util.TempDir;
-import org.kowari.server.*;
+import org.mulgara.query.ModelResource;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.Value;
+import org.mulgara.query.rdf.*;
+import org.mulgara.util.TempDir;
+import org.mulgara.server.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.rdf.model.Model}.
@@ -90,25 +90,25 @@ public class ModelMulgara extends ModelCom implements Model {
       Category.getInstance(ModelMulgara.class.getName());
 
   /**
-   * Local graph - Kowari.
+   * Local graph - Mulgara.
    */
-  private GraphMulgara graphKowari;
+  private GraphMulgara graphMulgara;
 
   /**
-   * Create a new Kowari Model based on the given Kowari Graph.
+   * Create a new Mulgara Model based on the given Mulgara Graph.
    *
    * @param graph the graph to be used by the model.
    */
   public ModelMulgara(GraphMulgara graph) {
 
     super(graph, BuiltinPersonalities.model);
-    graphKowari = graph;
+    graphMulgara = graph;
   }
 
   public NsIterator listNameSpaces()  {
-    ExtendedIterator predIter = graphKowari.findUniquePredicates();
-    ExtendedIterator typeIter = graphKowari.find(Node.ANY,
-        graphKowari.getJenaFactory().convertValueToNode((Value)
+    ExtendedIterator predIter = graphMulgara.findUniquePredicates();
+    ExtendedIterator typeIter = graphMulgara.find(Node.ANY,
+        graphMulgara.getJenaFactory().convertValueToNode((Value)
         new URIReferenceImpl(RDF.TYPE)), Node.ANY);
     predIter.andThen(typeIter);
 
@@ -159,8 +159,8 @@ public class ModelMulgara extends ModelCom implements Model {
       }
 
       // Load the data.
-      graphKowari.getSession().setModel(new FileInputStream(tmpFile),
-          graphKowari.graphURI, new ModelResource(baseURI));
+      graphMulgara.getSession().setModel(new FileInputStream(tmpFile),
+          graphMulgara.graphURI, new ModelResource(baseURI));
     }
     catch (QueryException ge) {
       logger.error("Failed to add statements", ge);
@@ -212,7 +212,7 @@ public class ModelMulgara extends ModelCom implements Model {
       }
 
       // Load the data.
-      graphKowari.getSession().setModel(graphKowari.graphURI,
+      graphMulgara.getSession().setModel(graphMulgara.graphURI,
           new ModelResource(new URI(url)));
     }
     catch (QueryException ge) {
@@ -263,8 +263,8 @@ public class ModelMulgara extends ModelCom implements Model {
       }
 
       // Load the data.
-      graphKowari.getSession().setModel(new FileInputStream(tmpFile),
-          graphKowari.graphURI, new ModelResource(baseURI));
+      graphMulgara.getSession().setModel(new FileInputStream(tmpFile),
+          graphMulgara.graphURI, new ModelResource(baseURI));
     }
     catch (QueryException ge) {
       logger.error("Failed to add statements", ge);
@@ -308,7 +308,7 @@ public class ModelMulgara extends ModelCom implements Model {
   }
 
   public String toString() {
-    return "<ModelKowari  " + getGraph() + " | " + reifiedToString() + ">";
+    return "<ModelMulgara  " + getGraph() + " | " + reifiedToString() + ">";
   }
 
   /**

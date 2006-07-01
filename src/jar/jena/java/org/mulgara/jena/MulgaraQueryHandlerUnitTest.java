@@ -67,8 +67,8 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 // local packages
-import org.kowari.server.SessionFactory;
-import org.kowari.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
+import org.mulgara.server.driver.SessionFactoryFinder;
 
 
 /**
@@ -130,7 +130,7 @@ public class MulgaraQueryHandlerUnitTest extends AbstractTestQuery {
   }
 
   public static TestSuite suite() {
-//    return new TestSuite(KowariQueryHandlerUnitTest.class);
+//    return new TestSuite(MulgaraQueryHandlerUnitTest.class);
     TestSuite result = new TestSuite();
     result.addTest(new MulgaraQueryHandlerUnitTest("testAtomicTreeQuery"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testBinding1"));
@@ -142,9 +142,9 @@ public class MulgaraQueryHandlerUnitTest extends AbstractTestQuery {
     result.addTest(new MulgaraQueryHandlerUnitTest("testChainedTreeQuery"));
 
     // Does not handle constraints.
-////    result.addTest(new KowariQueryHandlerUnitTest("testConstraint"));
-////    result.addTest(new KowariQueryHandlerUnitTest("testConstraintFour"));
-////    result.addTest(new KowariQueryHandlerUnitTest("testConstraintThree"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testConstraint"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testConstraintFour"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testConstraintThree"));
 
     result.addTest(new MulgaraQueryHandlerUnitTest("testDisconnected"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testEmpty"));
@@ -152,15 +152,15 @@ public class MulgaraQueryHandlerUnitTest extends AbstractTestQuery {
     result.addTest(new MulgaraQueryHandlerUnitTest("testFor"));
 
     // Does not handle constraints.
-////    result.addTest(new KowariQueryHandlerUnitTest("testExtractConstraints"));
-////    result.addTest(new KowariQueryHandlerUnitTest("testGraphConstraints"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testExtractConstraints"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testGraphConstraints"));
 
     result.addTest(new MulgaraQueryHandlerUnitTest("testGraphQuery"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testManyThings"));
 
     // Does not handle constraints.
-////    result.addTest(new KowariQueryHandlerUnitTest("testMatchConstraints"));
-////    result.addTest(new KowariQueryHandlerUnitTest("testExtractConstraint"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testMatchConstraints"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testExtractConstraint"));
 
     result.addTest(new MulgaraQueryHandlerUnitTest("testMissingVariable"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testMultiplePatterns"));
@@ -169,20 +169,20 @@ public class MulgaraQueryHandlerUnitTest extends AbstractTestQuery {
     result.addTest(new MulgaraQueryHandlerUnitTest("testOneMatch"));
 
     // Does not handle constraints.
-////    result.addTest(new KowariQueryHandlerUnitTest("testQueryConstraintUnbound"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testQueryConstraintUnbound"));
 
     result.addTest(new MulgaraQueryHandlerUnitTest("testQueryOptimisation"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testQueryTripleOrder"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testStringResults"));
 
     // Does not handle constraints.
-////    result.addTest(new KowariQueryHandlerUnitTest("testTripleSorting"));
+////    result.addTest(new MulgaraQueryHandlerUnitTest("testTripleSorting"));
 
     result.addTest(new MulgaraQueryHandlerUnitTest("testTwoGraphs"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testTwoPatterns"));
 
     // These should work.
-//    result.addTest(new KowariQueryHandlerUnitTest("testVariableCount"));
+//    result.addTest(new MulgaraQueryHandlerUnitTest("testVariableCount"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testXXXMatch1"));
     result.addTest(new MulgaraQueryHandlerUnitTest("testXXXMatch3"));
 

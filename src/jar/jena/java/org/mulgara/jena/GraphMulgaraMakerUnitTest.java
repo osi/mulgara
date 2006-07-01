@@ -42,10 +42,10 @@ import com.hp.hpl.jena.shared.*;
 import junit.framework.*;
 import org.apache.log4j.*;
 
-// Internal Kowari APIs
-import org.kowari.server.*;
-import org.kowari.query.*;
-import org.kowari.server.driver.*;
+// Internal Mulgara APIs
+import org.mulgara.server.*;
+import org.mulgara.query.*;
+import org.mulgara.server.driver.*;
 
 /**
  * Test case for {@link GraphMulgaraMaker}.
@@ -104,7 +104,7 @@ public class GraphMulgaraMakerUnitTest extends AbstractTestGraphMaker {
 
     return new TestSuite(GraphMulgaraMakerUnitTest.class);
 //    TestSuite result = new TestSuite();
-//    result.addTest(new GraphKowariMakerUnitTest("testListAfterDelete"));
+//    result.addTest(new GraphmulgaraMakerUnitTest("testListAfterDelete"));
 //    return result;
   }
 

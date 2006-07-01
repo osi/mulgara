@@ -31,7 +31,7 @@ package org.mulgara.jena;
 import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.rdf.model.impl.*;
 import com.hp.hpl.jena.rdf.model.*;
-import org.kowari.server.*;
+import org.mulgara.server.*;
 
 /**
  * An implementation of {@link com.hp.hpl.jena.rdf.model.ModelMaker} that
@@ -57,15 +57,15 @@ import org.kowari.server.*;
 public class ModelMulgaraMaker extends ModelMakerImpl implements ModelMaker {
 
   /**
-   * A constructor to create model on top of the Kowari store.
+   * A constructor to create model on top of the Mulgara store.
    *
-   * @param gkm GraphKowariMaker the graph Kowari maker to use.
+   * @param gkm GraphMulgaraMaker the graph Mulgara maker to use.
    */
   public ModelMulgaraMaker(GraphMulgaraMaker gkm) {
     super(gkm);
   }
 
-  public Model makeModel(Graph graphKowari) {
-    return new ModelMulgara((GraphMulgara) graphKowari);
+  public Model makeModel(Graph graphMulgara) {
+    return new ModelMulgara((GraphMulgara) graphMulgara);
   }
 }

@@ -34,8 +34,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 // Locally written packages
-import org.kowari.query.*;
-import org.kowari.server.*;
+import org.mulgara.query.*;
+import org.mulgara.server.*;
 
 /**
  * Receive HTTP requests, pass them to a {@link Session}, and return any
@@ -118,14 +118,14 @@ public class HttpServerServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
 
-    final String KOWARI_SESSION_PROPERTY = "kowariSession";
+    final String mULGARA_SESSION_PROPERTY = "mulgaraSession";
 
-    // Obtain the Kowari session
+    // Obtain the Mulgara session
     HttpSession httpSession = request.getSession();
-    Session kowariSession =
-      (Session) httpSession.getAttribute(KOWARI_SESSION_PROPERTY);
+    Session mulgaraSession =
+      (Session) httpSession.getAttribute(mULGARA_SESSION_PROPERTY);
 
-    if (kowariSession == null) {
+    if (mulgaraSession == null) {
 
       try {
 
@@ -133,7 +133,7 @@ public class HttpServerServlet extends HttpServlet {
 
         synchronized (sessionFactory) {
 
-          kowariSession = sessionFactory.newSession();
+          mulgaraSession = sessionFactory.newSession();
         }
       }
        catch (QueryException e) {
@@ -141,10 +141,10 @@ public class HttpServerServlet extends HttpServlet {
         throw new ServletException("Couldn't generate session", e);
       }
 
-      httpSession.setAttribute(KOWARI_SESSION_PROPERTY, kowariSession);
+      httpSession.setAttribute(mULGARA_SESSION_PROPERTY, mulgaraSession);
     }
 
-    //assert kowariSession != null;
+    //assert mulgaraSession != null;
     // Extract the Kowai query from the HTTP request
     ObjectInputStream in = new ObjectInputStream(request.getInputStream());
     Object result;
@@ -171,12 +171,12 @@ public class HttpServerServlet extends HttpServlet {
         argClasses = null;
       }
 
-      method = kowariSession.getClass().getMethod(methodName, argClasses);
-      result = method.invoke(kowariSession, args);
+      method = mulgaraSession.getClass().getMethod(methodName, argClasses);
+      result = method.invoke(mulgaraSession, args);
     }
      catch (InvocationTargetException e) {
 
-      // Return the Kowari answer in the HTTP response
+      // Return the Mulgara answer in the HTTP response
       ObjectOutputStream out =
         new ObjectOutputStream(response.getOutputStream());
       out.writeBoolean(true);
@@ -203,7 +203,7 @@ public class HttpServerServlet extends HttpServlet {
       throw new ServletException("Reflection failure", e);
     }
 
-    // Return the Kowari answer in the HTTP response
+    // Return the Mulgara answer in the HTTP response
     ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
     out.writeBoolean(false);
 

@@ -165,15 +165,15 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.file.FileContent");
+      contentClass = Class.forName("org.mulgara.resolver.file.FileContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.file.FileContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      fail("Unable to find class [org.mulgara.resolver.file.FileContent] " +
            "for instantiation.");
     }
 
@@ -278,15 +278,15 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.file.FileContent");
+      contentClass = Class.forName("org.mulgara.resolver.file.FileContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.file.FileContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      fail("Unable to find class [org.mulgara.resolver.file.FileContent] " +
            "for instantiation.");
     }
 
@@ -418,15 +418,15 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.file.FileContent");
+      contentClass = Class.forName("org.mulgara.resolver.file.FileContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.file.FileContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      fail("Unable to find class [org.mulgara.resolver.file.FileContent] " +
            "for instantiation.");
     }
 
@@ -544,15 +544,15 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.file.FileContent");
+      contentClass = Class.forName("org.mulgara.resolver.file.FileContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.file.FileContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      fail("Unable to find class [org.mulgara.resolver.file.FileContent] " +
            "for instantiation.");
     }
 
@@ -834,15 +834,15 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.file.FileContent");
+      contentClass = Class.forName("org.mulgara.resolver.file.FileContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.file.FileContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.file.FileContent] " +
+      fail("Unable to find class [org.mulgara.resolver.file.FileContent] " +
            "for instantiation.");
     }
 
@@ -972,15 +972,15 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the class for the FileContent object
-      contentClass = Class.forName("org.kowari.resolver.http.HttpContent");
+      contentClass = Class.forName("org.mulgara.resolver.http.HttpContent");
     } catch (ClassNotFoundException classNotFoundException) {
 
       // Log the exception
-      log.error("Unable to find class [org.kowari.resolver.http.HttpContent] " +
+      log.error("Unable to find class [org.mulgara.resolver.http.HttpContent] " +
                 "for instantiation.", classNotFoundException);
 
       // Fail the test
-      fail("Unable to find class [org.kowari.resolver.http.HttpContent] " +
+      fail("Unable to find class [org.mulgara.resolver.http.HttpContent] " +
            "for instantiation.");
     }
 

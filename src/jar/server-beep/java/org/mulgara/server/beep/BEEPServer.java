@@ -44,7 +44,7 @@ import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
 
 /**
-* Kowari server using a BEEP-based ITQL application protocol.
+* Mulgara server using a BEEP-based ITQL application protocol.
 *
 * @created 2004-03-21
 * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>

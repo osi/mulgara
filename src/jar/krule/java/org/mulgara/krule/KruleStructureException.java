@@ -35,7 +35,7 @@ package org.mulgara.krule;
  * @version $Revision: 1.1 $
  * @modified $Date: 2005/06/26 12:41:14 $
  * @maintenanceAuthor $Author: pgearon $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="mailto:pgearon@users.sorceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class KruleStructureException extends Exception {

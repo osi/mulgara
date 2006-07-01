@@ -168,7 +168,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   private String ruleLoaderClassName;
 
   /** A fallback rule loader */
-  private static final String DUMMY_RULE_LOADER = "org.kowari.rules.DummyRuleLoader";
+  private static final String DUMMY_RULE_LOADER = "org.mulgara.rules.DummyRuleLoader";
 
   private int opState;
   private static final int UNINIT = 0;

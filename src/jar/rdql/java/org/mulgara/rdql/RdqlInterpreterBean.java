@@ -44,17 +44,17 @@ import org.apache.soap.rpc.*;
 import org.apache.soap.util.xml.*;
 import org.jrdf.graph.URIReference;
 
-// Kowari packages
-import org.kowari.rdql.lexer.LexerException;
-import org.kowari.rdql.parser.ParserException;
-import org.kowari.query.Answer;
-import org.kowari.query.Query;
-import org.kowari.query.QueryException;
-import org.kowari.query.TuplesException;
-import org.kowari.query.rdf.LiteralImpl;
-import org.kowari.server.Session;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.driver.SessionFactoryFinderException;
+// Mulgara packages
+import org.mulgara.rdql.lexer.LexerException;
+import org.mulgara.rdql.parser.ParserException;
+import org.mulgara.query.Answer;
+import org.mulgara.query.Query;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.server.Session;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.driver.SessionFactoryFinderException;
 
 // Required xml packages
 import org.w3c.dom.*;
@@ -140,7 +140,7 @@ public class RdqlInterpreterBean {
   /**
    * Create the RDQL interpreter using the given <code>session</code>.
    *
-   * @param session the session to use to communicate with the Kowari server
+   * @param session the session to use to communicate with the Mulgara server
    */
   public RdqlInterpreterBean(Session session) {
 
@@ -268,9 +268,9 @@ public class RdqlInterpreterBean {
   }
 
   /**
-   * Returns the session to use to communicate with the Kowari server.
+   * Returns the session to use to communicate with the Mulgara server.
    *
-   * @return the session to use to communicate with the Kowari server
+   * @return the session to use to communicate with the Mulgara server
    */
   public Session getSession() {
 
@@ -465,13 +465,13 @@ public class RdqlInterpreterBean {
    * queries in the input string. </p> <p>
    *
    * Note. Two different return types will be contained in the returned list. An
-   * {@link org.kowari.query.Answer} or a {@link java.lang.String} (error)
+   * {@link org.mulgara.query.Answer} or a {@link java.lang.String} (error)
    * message. </p>
    *
    * @param queryString semi-colon delimited string containing the queries to be
    *      executed
    * @return a list of answers, messages and errors, answers are of type {@link
-   *      org.kowari.query.Answer}, the messages are {@link
+   *      org.mulgara.query.Answer}, the messages are {@link
    *      java.lang.String}s
    */
   public List executeQueryToList(String queryString) {
@@ -494,14 +494,14 @@ public class RdqlInterpreterBean {
    * queries in the input string. </p> <p>
    *
    * Note. Two different return types will be contained in the returned list. An
-   * {@link org.kowari.query.Answer} or a {@link java.lang.String} (error)
+   * {@link org.mulgara.query.Answer} or a {@link java.lang.String} (error)
    * message. </p>
    *
    * @param queryString semi-colon delimited string containing the queries to be
    *      executed
    * @param keepExceptions return exceptions, don't convert them to a string.
    * @return a list of answers, messages and errors, answers are of type {@link
-   *      org.kowari.query.Answer}, the messages are {@link
+   *      org.mulgara.query.Answer}, the messages are {@link
    *      java.lang.String}s
    */
   public List executeQueryToList(String queryString, boolean keepExceptions) {
@@ -569,7 +569,7 @@ public class RdqlInterpreterBean {
    * Answer dateAnswer = answers.get(date);
    * </pre> <p>
    *
-   * Note. Each answer will be either a {@link org.kowari.query.Answer} or a
+   * Note. Each answer will be either a {@link org.mulgara.query.Answer} or a
    * {@link java.lang.String} (error) message. </p>
    *
    * @param queries a map of keys to queries to be executed
@@ -606,10 +606,10 @@ public class RdqlInterpreterBean {
   // getSession()
 
   /**
-   * Builds a {@link org.kowari.query.Query} from the given <var>query</var>.
+   * Builds a {@link org.mulgara.query.Query} from the given <var>query</var>.
    *
    * @param query PARAMETER TO DO
-   * @return a {@link org.kowari.query.Query} constructed from the given
+   * @return a {@link org.mulgara.query.Query} constructed from the given
    *      <var>query</var>
    * @throws IOException if the <var>query</var> can't be buffered
    * @throws LexerException if <var>query</var> can't be tokenized
@@ -678,7 +678,7 @@ public class RdqlInterpreterBean {
 
   /**
    * Returns the results of the last command execution. Methods overriding
-   * {@link org.kowari.rdql.analysis.DepthFirstAdapter} are expected to set
+   * {@link org.mulgara.rdql.analysis.DepthFirstAdapter} are expected to set
    * a results message, even if that message is null.
    *
    * @return the results of the last command execution, null if the command did
@@ -805,7 +805,7 @@ public class RdqlInterpreterBean {
    * Executes the <var>query</var> , returning a &quot;nice&quot; result. <p>
    *
    * The result is either a {@link java.lang.String} or a {@link
-   * org.kowari.query.Answer}. Any exceptions are logged, gobbled and return
+   * org.mulgara.query.Answer}. Any exceptions are logged, gobbled and return
    * as a {@link java.lang.String}. </p>
    *
    * @param query the query to execute

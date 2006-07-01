@@ -39,15 +39,15 @@ import org.apache.log4j.*;
 import org.jrdf.graph.*;
 
 // Local packages
-import org.kowari.query.*;
-import org.kowari.query.rdf.*;
-import org.kowari.server.Session;
+import org.mulgara.query.*;
+import org.mulgara.query.rdf.*;
+import org.mulgara.server.Session;
 
 // Automatically generated packages (SableCC)
-import org.kowari.rdql.analysis.*;
-import org.kowari.rdql.lexer.*;
-import org.kowari.rdql.node.*;
-import org.kowari.rdql.parser.*;
+import org.mulgara.rdql.analysis.*;
+import org.mulgara.rdql.lexer.*;
+import org.mulgara.rdql.node.*;
+import org.mulgara.rdql.parser.*;
 
 /**
  * RDF Data Query Language (RDQL) command interpreter.

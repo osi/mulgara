@@ -42,10 +42,10 @@ import org.jrdf.graph.*; // JRDF
 // Locally written packages
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.analysis.*;
-import org.kowari.itql.lexer.*;
-import org.kowari.itql.node.*;
-import org.kowari.itql.parser.*;
+import org.mulgara.itql.analysis.*;
+import org.mulgara.itql.lexer.*;
+import org.mulgara.itql.node.*;
+import org.mulgara.itql.parser.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.rules.*;
@@ -79,7 +79,7 @@ import java.util.zip.ZipInputStream;
  * @maintenanceAuthor $Author: pgearon $
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  * @copyright &copy;2001-2004 <a href="http://www.tucanatech.com/">Tucana Technologies, Inc.</a>
- * @copyright &copy;2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy;2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class ItqlInterpreter extends DepthFirstAdapter {
@@ -274,7 +274,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
   }
 
   /**
-   * Constructor internal to Kowari that accepts a provided session.
+   * Constructor internal to Mulgara that accepts a provided session.
    *
    * @param providedSession The session to use.
    * @param aliasMap the map from targets to aliases, never <code>null</code>
@@ -392,7 +392,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Returns the error of the last query. Methods overriding {@link
-   * org.kowari.itql.analysis.DepthFirstAdapter} are expected to set a
+   * org.mulgara.itql.analysis.DepthFirstAdapter} are expected to set a
    * results message, even if that message is null.  The is for APIs, logging
    * and programmers not for users.
    *
@@ -407,7 +407,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Returns the results of the last query. Methods overriding {@link
-   * org.kowari.itql.analysis.DepthFirstAdapter} are expected to set a
+   * org.mulgara.itql.analysis.DepthFirstAdapter} are expected to set a
    * results message, even if that message is null.
    *
    * @return the results of the last query, <code>null</code> if the query
@@ -420,7 +420,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Returns the results of the last command execution. Methods overriding
-   * {@link org.kowari.itql.analysis.DepthFirstAdapter} are expected to set
+   * {@link org.mulgara.itql.analysis.DepthFirstAdapter} are expected to set
    * a results message, even if that message is null.  This is the user
    * understandable message.
    *
@@ -1421,7 +1421,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
                    databaseURI);
     }
 
-    // connect to local server via EmbeddedKowariServer Database which is an instance of SessionFactory
+    // connect to local server via EmbeddedMulgaraServer Database which is an instance of SessionFactory
     // - get a session factory from that singleton database
     // Switch the underlying session to point at the required server
     if (databaseURI == null) {
@@ -1473,10 +1473,10 @@ public class ItqlInterpreter extends DepthFirstAdapter {
   }
 
   /**
-   * Returns the session to use to communicate with the specified Kowari server.
+   * Returns the session to use to communicate with the specified Mulgara server.
    *
    * @param serverURI URI Server to get a Session for.
-   * @return the session to use to communicate with the specified Kowari server
+   * @return the session to use to communicate with the specified Mulgara server
    */
   public Session getSession(URI serverURI) throws QueryException {
 
@@ -1661,7 +1661,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
     // get the type of model to create; default to tucana:Model is unspecified
     URI modelTypeURI = (node.getModelType() == null)
-        ? Session.KOWARI_MODEL_URI
+        ? Session.mULGARA_MODEL_URI
         : toURI(node.getModelType());
 
     try {
@@ -3037,15 +3037,15 @@ public class ItqlInterpreter extends DepthFirstAdapter {
    * Executes a query and returns its results.
    *
    * @param rawQuery a select query, represented as either a {@link
-   *      org.kowari.itql.node.ASelectCommand} or a {@link
-   *      org.kowari.itql.node.ASelectSetOfTriples}
+   *      org.mulgara.itql.node.ASelectCommand} or a {@link
+   *      org.mulgara.itql.node.ASelectSetOfTriples}
    * @return the answer to the query
    * @throws QueryException if the query cannot be executed
    * @throws URISyntaxException if the <code>query</code> contains a resource
    *      whose text violates <a href="http://www.isi.edu/in-notes/rfc2396.txt">
    *      RFC\uFFFD2396</a>
    */
-  public Query buildQuery(org.kowari.itql.node.Node rawQuery) throws
+  public Query buildQuery(org.mulgara.itql.node.Node rawQuery) throws
       QueryException, URISyntaxException {
 
     // validate query parameter
@@ -3226,12 +3226,12 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Builds a list of {@link org.mulgara.query.Variable}s from a list of
-   * {@link org.kowari.itql.node.PVariable}s. Note. Variables in both the
+   * {@link org.mulgara.itql.node.PVariable}s. Note. Variables in both the
    * <code>rawVariableList</code> and the returned list will <strong>not
    * </strong> contain the variable prefix <code>$</code> in their name.
    *
    * @param rawVariableList a list of {@link
-   *      org.kowari.itql.node.PVariable}s from the parser
+   *      org.mulgara.itql.node.PVariable}s from the parser
    * @return a list of {@link org.mulgara.query.Variable}s, suitable for use
    *      in creating a {@link org.mulgara.query.Query}
    * @throws QueryException if the <code>rawVariableList</code> cannot be parsed
@@ -3285,7 +3285,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Builds a list of {@link org.mulgara.query.Variable}s from a list of
-   * {@link org.kowari.itql.node.POrderElement}s. Note. Variables in both
+   * {@link org.mulgara.itql.node.POrderElement}s. Note. Variables in both
    * the <code>rawVariableList</code> and the returned list will <strong>not
    * </strong> contain the variable prefix <code>$</code> in their name.
    *
@@ -3394,18 +3394,18 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Constructs a {@link org.jrdf.graph.Node} from a {@link
-   * org.kowari.itql.node.PTripleElement}.
+   * org.mulgara.itql.node.PTripleElement}.
    *
    * @param element dd
    * @param variableMap a {@link Map} of variable names (as string) to
    *   {@link VariableNodeImpl} that are used to contain all variables.
    * @return dd
    * @throws QueryException if <code>element</code> is a {@link
-   *   org.kowari.itql.node.AResourceTripleElement} whose text contains a
+   *   org.mulgara.itql.node.AResourceTripleElement} whose text contains a
    *   <a href="http://www.w3.org/TR/REC-xml-names/#ns-qualnames">qualified
    *   name</a> with a prefix not defined in the <code>aliasMap</code>
    * @throws URISyntaxException if <code>element</code> is a {@link
-   *   org.kowari.itql.node.AResourceTripleElement} whose text doesn't
+   *   org.mulgara.itql.node.AResourceTripleElement} whose text doesn't
    *   conform to <a href="http://www.isi.edu/in-notes/rfc2396.txt">
    *   RFC\uFFFD2396</a>
    */
@@ -3707,7 +3707,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Builds a {@link org.mulgara.rdql.query.ConstraintExpression} object from a
-   * {@link org.kowari.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
+   * {@link org.mulgara.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
    * to resolve aliases.
    *
    * @param expression a constraint expression from the parser
@@ -3753,7 +3753,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
   /**
    * Builds a HAVING compliant {@link org.mulgara.rdql.query.ConstraintExpression} object from a
-   * {@link org.kowari.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
+   * {@link org.mulgara.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
    * to resolve aliases.  To comply with a HAVING clause the predicate must be one of:
    * tks:occurs tks:occursLessThan tks:occursMoreThan.
    *
@@ -3949,7 +3949,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
   private static Object getServerInfoProperty(String property) {
     Object o = null;
     try {
-      Class rsf = Class.forName("org.kowari.server.ServerInfo");
+      Class rsf = Class.forName("org.mulgara.server.ServerInfo");
       java.lang.reflect.Method getter = rsf.getMethod("get" + property, null);
       o = getter.invoke(null, null);
     } catch (Exception e) { /* no op */ }

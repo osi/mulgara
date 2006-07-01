@@ -68,21 +68,21 @@ public class PersistentResolverSession implements ResolverSession
     this.resolverSession = resolverSession;
   }
   /*
-   * @see org.kowari.resolver.spi.ResolverSession#globalize(long)
+   * @see org.mulgara.resolver.spi.ResolverSession#globalize(long)
    */
   public Node globalize(long node) throws GlobalizeException {
     return resolverSession.globalize(node);
   }
 
   /*
-   * @see org.kowari.resolver.spi.ResolverSession#lookup(org.jrdf.graph.Node)
+   * @see org.mulgara.resolver.spi.ResolverSession#lookup(org.jrdf.graph.Node)
    */
   public long lookup(Node node) throws LocalizeException {
     return resolverSession.lookupPersistent(node);
   }
 
   /*
-   * @see org.kowari.resolver.spi.ResolverSession#lookupPersistent(org.jrdf.graph.Node)
+   * @see org.mulgara.resolver.spi.ResolverSession#lookupPersistent(org.jrdf.graph.Node)
    */
   public long lookupPersistent(Node node) throws LocalizeException {
     return resolverSession.lookupPersistent(node);
@@ -90,14 +90,14 @@ public class PersistentResolverSession implements ResolverSession
 
   /* Perform the re-direction of localize to localizePersistent
    *
-   * @see org.kowari.resolver.spi.ResolverSession#localize(org.jrdf.graph.Node)
+   * @see org.mulgara.resolver.spi.ResolverSession#localize(org.jrdf.graph.Node)
    */
   public long localize(Node node) throws LocalizeException {
     return resolverSession.localizePersistent(node);
   }
 
   /*
-   * @see org.kowari.resolver.spi.ResolverSession#localizePersistent(org.jrdf.graph.Node)
+   * @see org.mulgara.resolver.spi.ResolverSession#localizePersistent(org.jrdf.graph.Node)
    */
   public long localizePersistent(Node node) throws LocalizeException {
     return resolverSession.localizePersistent(node);

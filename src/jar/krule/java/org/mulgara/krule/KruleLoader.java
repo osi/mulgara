@@ -54,7 +54,7 @@ import org.mulgara.server.*;
  * @version $Revision: 1.3 $
  * @modified $Date: 2005/07/03 12:57:44 $
  * @maintenanceAuthor $Author: pgearon $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class KruleLoader implements RuleLoader {
@@ -102,7 +102,7 @@ public class KruleLoader implements RuleLoader {
   private Map constraintMap;
 
   /** URI for the Krule namespace. */
-  private static final String KRULE = "http://kowari.org/owl/krule/#";
+  private static final String KRULE = "http://mulgara.org/owl/krule/#";
 
   /** URI for a constraint subject. */
   private static final String HAS_SUBJECT_STR = KRULE + "hasSubject";
@@ -565,7 +565,7 @@ public class KruleLoader implements RuleLoader {
       aliases.put("rdfs", new URI("http://www.w3.org/2000/01/rdf-schema#"));
       aliases.put("owl", new URI("http://www.w3.org/2002/07/owl#"));
       aliases.put("tucana", new URI("http://tucana.org/tucana#"));
-      aliases.put("krule", new URI("http://kowari.org/owl/krule/#"));
+      aliases.put("krule", new URI("http://mulgara.org/owl/krule/#"));
     } catch (URISyntaxException e) {
       /* get those aliases which we could */
       logger.error("Error defining internal aliases: ", e);

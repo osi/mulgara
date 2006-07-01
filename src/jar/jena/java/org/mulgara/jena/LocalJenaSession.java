@@ -28,8 +28,8 @@
 package org.mulgara.jena;
 
 // Local packages
-import org.kowari.resolver.spi.*;
-import org.kowari.server.*;
+import org.mulgara.resolver.spi.*;
+import org.mulgara.server.*;
 
 /**
  * A local Jena session.

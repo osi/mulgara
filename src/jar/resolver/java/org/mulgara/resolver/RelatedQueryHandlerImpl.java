@@ -68,7 +68,7 @@ public class RelatedQueryHandlerImpl extends RelatedQueryHandler {
    */
   public synchronized Answer related(Node baseNode, Query[] queries,
       int maxRelated, double minScore) throws QueryException {
-    throw new QueryException("Related queries are not supported in Kowari");
+    throw new QueryException("Related queries are not supported in Mulgara");
   }
 
   /**
@@ -89,6 +89,6 @@ public class RelatedQueryHandlerImpl extends RelatedQueryHandler {
    */
   public synchronized Answer howRelated(Node baseNode, Node relatedNode,
       Query[] queries, int nrPColumns) throws QueryException {
-    throw new QueryException("Related queries are not supported in Kowari");
+    throw new QueryException("Related queries are not supported in Mulgara");
   }
 }

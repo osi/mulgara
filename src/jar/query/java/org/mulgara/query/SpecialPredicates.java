@@ -39,7 +39,7 @@ import org.jrdf.vocabulary.Vocabulary;
 import org.mulgara.query.rdf.Mulgara;
 
 /**
- * Provides a central point for defining all magic predicates used by Kowari.
+ * Provides a central point for defining all magic predicates used by Mulgara.
  * Each predicate is stored as string and URI.
  *
  * @created 2004-08-10
@@ -75,34 +75,34 @@ public class SpecialPredicates extends Vocabulary {
   public static final String OCCURS_MORE_THAN = Mulgara.NAMESPACE + "occursMoreThan";
 
   /** The URI for the equality predicate */
-  public static final URI KOWARI_IS;
+  public static final URI mULGARA_IS;
 
   /** The URI for the cardinality equality predicate */
-  public static final URI KOWARI_OCCURS;
+  public static final URI mULGARA_OCCURS;
 
   /** The URI for the cardinality equality predicate */
-  public static final URI KOWARI_NOT_OCCURS;
+  public static final URI mULGARA_NOT_OCCURS;
 
   /** The URI for the cardinality less than predicate */
-  public static final URI KOWARI_OCCURS_LESS_THAN;
+  public static final URI mULGARA_OCCURS_LESS_THAN;
 
   /** The URI for the cardinality greater than predicate */
-  public static final URI KOWARI_OCCURS_MORE_THAN;
+  public static final URI mULGARA_OCCURS_MORE_THAN;
 
   // intialize all predicate URIs
   static {
     try {
-      KOWARI_IS = new URI(IS);
-      KOWARI_OCCURS = new URI(OCCURS);
-      KOWARI_NOT_OCCURS = new URI(NOT_OCCURS);
-      KOWARI_OCCURS_LESS_THAN = new URI(OCCURS_LESS_THAN);
-      KOWARI_OCCURS_MORE_THAN = new URI(OCCURS_MORE_THAN);
+      mULGARA_IS = new URI(IS);
+      mULGARA_OCCURS = new URI(OCCURS);
+      mULGARA_NOT_OCCURS = new URI(NOT_OCCURS);
+      mULGARA_OCCURS_LESS_THAN = new URI(OCCURS_LESS_THAN);
+      mULGARA_OCCURS_MORE_THAN = new URI(OCCURS_MORE_THAN);
 
-      resources.add(KOWARI_IS);
-      resources.add(KOWARI_OCCURS);
-      resources.add(KOWARI_NOT_OCCURS);
-      resources.add(KOWARI_OCCURS_LESS_THAN);
-      resources.add(KOWARI_OCCURS_MORE_THAN);
+      resources.add(mULGARA_IS);
+      resources.add(mULGARA_OCCURS);
+      resources.add(mULGARA_NOT_OCCURS);
+      resources.add(mULGARA_OCCURS_LESS_THAN);
+      resources.add(mULGARA_OCCURS_MORE_THAN);
     } catch (URISyntaxException e) {
       // Houston, we have a problem.  Not much we can do with it, so rethrow as an error.
       throw new ExceptionInInitializerError(e);
@@ -117,9 +117,9 @@ public class SpecialPredicates extends Vocabulary {
    * @return <code>true</code> if the predicate is magic.
    */
   public static final boolean isSpecialPredicate(URI uri) {
-    return uri.equals(KOWARI_IS) || uri.equals(KOWARI_OCCURS) ||
-        uri.equals(KOWARI_NOT_OCCURS) || uri.equals(KOWARI_OCCURS_LESS_THAN) ||
-        uri.equals(KOWARI_OCCURS_MORE_THAN);
+    return uri.equals(mULGARA_IS) || uri.equals(mULGARA_OCCURS) ||
+        uri.equals(mULGARA_NOT_OCCURS) || uri.equals(mULGARA_OCCURS_LESS_THAN) ||
+        uri.equals(mULGARA_OCCURS_MORE_THAN);
   }
 
 

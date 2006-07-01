@@ -44,7 +44,7 @@ import org.jrdf.graph.*;             // JRDF
 
 // Locally written packages
 /*
-import org.kowari.store.nodepool.NodePoolException;
+import org.mulgara.store.nodepool.NodePoolException;
 */
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;

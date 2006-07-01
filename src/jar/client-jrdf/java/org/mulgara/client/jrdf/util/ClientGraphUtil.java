@@ -1,5 +1,5 @@
 /*
- * $Header: /home/pgearon/cvs/kowari/kowari-1.1/src/jar/client-jrdf/java/org/kowari/client/jrdf/util/ClientGraphUtil.java,v 1.8 2005/01/05 04:57:37 newmana Exp $
+ * $Header: /home/pgearon/cvs/mulgara/mulgara-1.1/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/ClientGraphUtil.java,v 1.8 2005/01/05 04:57:37 newmana Exp $
  * $Revision: 1.8 $
  * $Date: 2005/01/05 04:57:37 $
  *

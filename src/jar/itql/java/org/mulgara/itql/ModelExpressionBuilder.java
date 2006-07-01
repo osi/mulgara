@@ -35,18 +35,18 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 // Automatically generated packages (SableCC)
-import org.kowari.itql.node.AAndModelTerm;
-import org.kowari.itql.node.AExpressionModelFactor;
-import org.kowari.itql.node.AFactorModelPart;
-import org.kowari.itql.node.AOrModelExpression;
-import org.kowari.itql.node.APartModelTerm;
-import org.kowari.itql.node.AResourceModelFactor;
-import org.kowari.itql.node.ATermModelExpression;
-import org.kowari.itql.node.AXorModelPart;
-import org.kowari.itql.node.PModelExpression;
-import org.kowari.itql.node.PModelFactor;
-import org.kowari.itql.node.PModelPart;
-import org.kowari.itql.node.PModelTerm;
+import org.mulgara.itql.node.AAndModelTerm;
+import org.mulgara.itql.node.AExpressionModelFactor;
+import org.mulgara.itql.node.AFactorModelPart;
+import org.mulgara.itql.node.AOrModelExpression;
+import org.mulgara.itql.node.APartModelTerm;
+import org.mulgara.itql.node.AResourceModelFactor;
+import org.mulgara.itql.node.ATermModelExpression;
+import org.mulgara.itql.node.AXorModelPart;
+import org.mulgara.itql.node.PModelExpression;
+import org.mulgara.itql.node.PModelFactor;
+import org.mulgara.itql.node.PModelPart;
+import org.mulgara.itql.node.PModelTerm;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.ModelIntersection;
 import org.mulgara.query.ModelPartition;
@@ -91,7 +91,7 @@ public class ModelExpressionBuilder {
 
   /**
    * Builds a {@link org.mulgara.rdql.query.ModelExpression} object from a {@link
-   * org.kowari.itql.node.PModelExpression}, using an <code>aliasMap</code>
+   * org.mulgara.itql.node.PModelExpression}, using an <code>aliasMap</code>
    * to resolve aliases.
    *
    * @param aliasMap the map from targets to aliases
@@ -144,7 +144,7 @@ public class ModelExpressionBuilder {
 
   /**
    * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
-   * {@link org.kowari.itql.node.PModelExpression}.
+   * {@link org.mulgara.itql.node.PModelExpression}.
    *
    * @param rawModelExpression a raw model expression from the parser
    * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
@@ -252,7 +252,7 @@ public class ModelExpressionBuilder {
 
   /**
    * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
-   * {@link org.kowari.itql.node.PModelTerm}.
+   * {@link org.mulgara.itql.node.PModelTerm}.
    *
    * @param rawModelTerm a raw model term from the parser
    * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
@@ -356,7 +356,7 @@ public class ModelExpressionBuilder {
 
   /**
    * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
-   * {@link org.kowari.itql.node.PModelPart}.
+   * {@link org.mulgara.itql.node.PModelPart}.
    *
    * @param rawModelPart a raw model part from the parser
    * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in
@@ -461,7 +461,7 @@ public class ModelExpressionBuilder {
 
   /**
    * Recursively builds a {@link org.mulgara.rdql.query.ModelExpression} from a
-   * {@link org.kowari.itql.node.PModelFactor}.
+   * {@link org.mulgara.itql.node.PModelFactor}.
    *
    * @param rawModelFactor a raw model factor from the parser
    * @return a {@link org.mulgara.rdql.query.ModelExpression} suitable for use in

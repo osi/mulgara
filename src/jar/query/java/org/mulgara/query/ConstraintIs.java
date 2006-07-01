@@ -66,7 +66,7 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
       Category.getInstance(ConstraintIs.class.getName());
 
   /** Create the predicate to be used to indicate equality. */
-  public static final URIReferenceImpl KOWARI_IS = new URIReferenceImpl(SpecialPredicates.KOWARI_IS);
+  public static final URIReferenceImpl mULGARA_IS = new URIReferenceImpl(SpecialPredicates.mULGARA_IS);
 
   /**
     * The 4-tuple of elements (either nodes or variables)
@@ -103,7 +103,7 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
     }
 
     // Initialize fields
-    element = new ConstraintElement[] {e0, KOWARI_IS, e2, e3};
+    element = new ConstraintElement[] {e0, mULGARA_IS, e2, e3};
   }
 
 
@@ -123,7 +123,7 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
    * Localized factory.  Only for use when the predicate is a localized node.
    *
    * @param e0 The first statement constraint.
-   * @param e1 The constraint predicate.  This must be a localized node for KOWARI_IS.
+   * @param e1 The constraint predicate.  This must be a localized node for mULGARA_IS.
    * @param e2 The third statement constraint.
    * @param e3 The fourth (meta) statement constraint.
    * @return A new ConstraintIs with a localized predicate.

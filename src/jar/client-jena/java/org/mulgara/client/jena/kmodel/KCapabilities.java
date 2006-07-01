@@ -32,7 +32,7 @@ import com.hp.hpl.jena.graph.*; // Capabilities
 
 
 /**
- * A Jena Capabilities object representing a Kowari session.
+ * A Jena Capabilities object representing a Mulgara session.
  *
  * @created 2001-08-16
  *

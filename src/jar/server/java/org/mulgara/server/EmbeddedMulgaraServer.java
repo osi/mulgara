@@ -73,10 +73,10 @@ import org.mulgara.util.TempDir;
 import org.xml.sax.SAXException;
 
 /**
- * Canonical embedded production Kowari server. <p>
+ * Canonical embedded production Mulgara server. <p>
  *
- * Creates a Kowari server instance, and a SOAP server instance to handle <a
- * href="http://www.w3.org/TR/SOAP">SOAP</a> requests for the Kowari server.
+ * Creates a Mulgara server instance, and a SOAP server instance to handle <a
+ * href="http://www.w3.org/TR/SOAP">SOAP</a> requests for the Mulgara server.
  * </p>
  *
  * @created 2001-10-04
@@ -113,9 +113,9 @@ public class EmbeddedMulgaraServer extends Thread {
   public final static int SHUTDOWN_PORT = 6789;
 
   /**
-   * the request required to shutdown kowari
+   * the request required to shutdown mulgara
    */
-  public final static String SHUTDOWN_MSG = "shutdownkowari";
+  public final static String SHUTDOWN_MSG = "shutdownmulgara";
 
   /**
    * the key to the bound host name in the attribute map of the servlet context
@@ -143,14 +143,14 @@ public class EmbeddedMulgaraServer extends Thread {
   private final static String DATA_PATH = "data";
 
   /**
-   * the KOWARIV web application file
+   * the mULGARAV web application file
    */
-  private static final String KOWARIV_WEBAPP = "kowariv.war";
+  private static final String mULGARAV_WEBAPP = "mulgarav.war";
 
   /**
-   * the KOWARIV path
+   * the mULGARAV path
    */
-  private static final String KOWARIV_PATH = "kowariv";
+  private static final String mULGARAV_PATH = "mulgarav";
 
   /**
    * the documentation file path
@@ -202,7 +202,7 @@ public class EmbeddedMulgaraServer extends Thread {
   private static SessionFactory localSessionFactory = null;
 
   /**
-   * static reference to the hostname this Kowari server is bound to
+   * static reference to the hostname this Mulgara server is bound to
    */
   private static String boundHostname = null;
 
@@ -222,7 +222,7 @@ public class EmbeddedMulgaraServer extends Thread {
   private static URI serverURI = null;
 
   /**
-   * the Kowari server instance
+   * the Mulgara server instance
    */
   private ServerMBean server = null;
 
@@ -232,7 +232,7 @@ public class EmbeddedMulgaraServer extends Thread {
   private Server httpServer = null;
 
   /**
-   * the embedded Kowari server configuration
+   * the embedded Mulgara server configuration
    */
   private MulgaraConfig config = null;
 
@@ -270,7 +270,7 @@ public class EmbeddedMulgaraServer extends Thread {
   static {
 
     CONFIG_PATH = "conf/tucana-config.xml";
-    RMI_SECURITY_POLICY_PATH = "conf/kowari-rmi.policy";
+    RMI_SECURITY_POLICY_PATH = "conf/mulgara-rmi.policy";
 
     // Configure the logger for this class
     log = Logger.getLogger(EmbeddedMulgaraServer.class.getName());
@@ -282,7 +282,7 @@ public class EmbeddedMulgaraServer extends Thread {
   //
 
   /**
-   * Creates a new embedded Kowari server. <p>
+   * Creates a new embedded Mulgara server. <p>
    *
    * Users of this constructor should call {@link #setServer(ServerMBean)}
    * and {@link #setHttpServer(Server)}. </p>
@@ -292,10 +292,10 @@ public class EmbeddedMulgaraServer extends Thread {
     // nothing
   }
 
-  // EmbeddedKowariServer()
+  // EmbeddedMulgaraServer()
 
   /**
-   * Creates a new embedded Kowari server.
+   * Creates a new embedded Mulgara server.
    *
    * @param server PARAMETER TO DO
    * @param httpServer the SOAP server
@@ -307,15 +307,15 @@ public class EmbeddedMulgaraServer extends Thread {
     this.setHttpServer(httpServer);
 
     // log that we've created a new server
-    //log.info("Created embedded Kowari server");
+    //log.info("Created embedded Mulgara server");
   }
 
   // setLocalSessionFactory()
 
   /**
-   * Sets a static reference to the hostname this Kowari server is bound to.
+   * Sets a static reference to the hostname this Mulgara server is bound to.
    *
-   * @param boundHostname to the hostname this Kowari server is bound to
+   * @param boundHostname to the hostname this Mulgara server is bound to
    */
   public static void setBoundHostname(String boundHostname) {
     EmbeddedMulgaraServer.boundHostname = boundHostname;
@@ -326,7 +326,7 @@ public class EmbeddedMulgaraServer extends Thread {
    * Attempts to obtain the localhost name or defaults to the
    * IP address of the localhost
    *
-   * @return the hostname this Kowari server is bound to
+   * @return the hostname this Mulgara server is bound to
    */
   public static String getResolvedLocalHost() {
 
@@ -367,14 +367,14 @@ public class EmbeddedMulgaraServer extends Thread {
    * underlying database without going across the network. For example:
    * </p>
    * <pre>
-   * Session session = EmbeddedKowariServer.getLocalSessionFactory().newSession();
+   * Session session = EmbeddedMulgaraServer.getLocalSessionFactory().newSession();
    * ItqlInterpreterBean interpreter = new ItqlInterpreterBean(session);
    * String answer = interpreter.executeQueryToString(
    *     "select $s $p $o from <rmi://localhost/server1#model> where $s $p $o;");
    * </pre>
    *
    * @return the local {@link org.mulgara.server.SessionFactory} of this
-   *      Kowari database instance, or <code>null</code> if no local session
+   *      Mulgara database instance, or <code>null</code> if no local session
    *      factory has been set
    */
   public static SessionFactory getLocalSessionFactory() {
@@ -397,13 +397,13 @@ public class EmbeddedMulgaraServer extends Thread {
   }
 
   /**
-   * Returns a static reference to the hostname this Kowari server is bound to.
+   * Returns a static reference to the hostname this Mulgara server is bound to.
    * <p>
    *
    * Local clients (in the same JVM) should use this method to determine the
-   * hostname Kowari is bound to, rather than assuming the local hostname. </p>
+   * hostname Mulgara is bound to, rather than assuming the local hostname. </p>
    *
-   * @return to the hostname this Kowari server is bound to
+   * @return to the hostname this Mulgara server is bound to
    */
   public static String getBoundHostname() {
     return EmbeddedMulgaraServer.boundHostname;
@@ -426,10 +426,10 @@ public class EmbeddedMulgaraServer extends Thread {
   //
 
   /**
-   * Starts a Kowari server and a WebServices (SOAP) server to handle SOAP queries to the
-   * Kowari server. <p>
+   * Starts a Mulgara server and a WebServices (SOAP) server to handle SOAP queries to the
+   * Mulgara server. <p>
    *
-   * Database files for the Kowari server are written to the directory from
+   * Database files for the Mulgara server are written to the directory from
    * where this class was run. </p>
    *
    * @param args command line arguments
@@ -460,7 +460,7 @@ public class EmbeddedMulgaraServer extends Thread {
       // start the server if we're allowed to
       if (startServer) {
 
-        // create the params need for a new Kowari instance
+        // create the params need for a new Mulgara instance
         File statePath =
             new File(new File(server.getPersistencePath()),
             server.getServerName());
@@ -470,14 +470,14 @@ public class EmbeddedMulgaraServer extends Thread {
         //set the tripleStoreImplemention property
         System.setProperty("triple.store.implementation", tripleStore);
 
-        // create a Kowari server instance
+        // create a Mulgara server instance
         ServerMBean newServer = server.createServer(
           server.getServerName(), statePath,
           hostname,
           getRMIPort(),
           tripleStore,
-          //"org.kowari.server.beep.BEEPServer"
-          "org.kowari.server.rmi.RmiServer"
+          //"org.mulgara.server.beep.BEEPServer"
+          "org.mulgara.server.rmi.RmiServer"
         );
         server.setServer(newServer);
 
@@ -494,7 +494,7 @@ public class EmbeddedMulgaraServer extends Thread {
         // tell the RMI server who we are
         // setRmiLocalURI(server.getServerURI());
 
-        // start the kowari server
+        // start the mulgara server
         server.startServer();
 
         // create a HTTP server instance
@@ -507,10 +507,10 @@ public class EmbeddedMulgaraServer extends Thread {
         server.startShutdownHookServer();
 
 
-        // log that we've start a Kowari server
+        // log that we've start a Mulgara server
         if (log.isInfoEnabled()) {
 
-          log.info("Successfully started Kowari server at " +
+          log.info("Successfully started Mulgara server at " +
               EmbeddedMulgaraServer.getServerURI().toString() +
               " in directory " +
               ( (AbstractServer) server.getServer()).getDir());
@@ -543,7 +543,7 @@ public class EmbeddedMulgaraServer extends Thread {
       // end for
       System.exit(2);
     }
-    catch (EmbeddedKowariOptionParser.UnknownOptionException uoe) {
+    catch (EmbeddedMulgaraOptionParser.UnknownOptionException uoe) {
 
       // let the user know
       System.err.println("ERROR: Unknown option(s): " + uoe.getOptionName());
@@ -551,7 +551,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
       System.exit(3);
     }
-    catch (EmbeddedKowariOptionParser.IllegalOptionValueException iove) {
+    catch (EmbeddedMulgaraOptionParser.IllegalOptionValueException iove) {
 
       // let the user know
       System.err.println("ERROR: Illegal value '" + iove.getValue() +
@@ -574,7 +574,7 @@ public class EmbeddedMulgaraServer extends Thread {
   }
 
   /**
-   * Shutdown the Kowari server
+   * Shutdown the Mulgara server
    *
    * @param args command line arguments
    */
@@ -775,16 +775,16 @@ public class EmbeddedMulgaraServer extends Thread {
         }
         // end if
 
-        URL kowariSecurityPolicyURL =
+        URL mulgaraSecurityPolicyURL =
             ClassLoader.getSystemResource(RMI_SECURITY_POLICY_PATH);
         System.setProperty("java.security.policy",
-            kowariSecurityPolicyURL.toString());
+            mulgaraSecurityPolicyURL.toString());
 
         // log the policy we've just set
         if (log.isInfoEnabled()) {
 
           log.info("java.security.policy set to " +
-              kowariSecurityPolicyURL.toString());
+              mulgaraSecurityPolicyURL.toString());
         } // end if
       } // end if
 
@@ -923,7 +923,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // end if
     // create a temporary file to write the file to
-    File tmpFile = TempDir.createTempFile("kowari", ".war");
+    File tmpFile = TempDir.createTempFile("mulgara", ".war");
     tmpFile.deleteOnExit();
 
     // log the filename we're copying to
@@ -986,7 +986,7 @@ public class EmbeddedMulgaraServer extends Thread {
   /**
    * Shutdown handler. <p>
    *
-   * Stops and cleanly destroys the Kowari and SOAP servers. </p>
+   * Stops and cleanly destroys the Mulgara and SOAP servers. </p>
    *
    */
   public void run() {
@@ -1074,7 +1074,7 @@ public class EmbeddedMulgaraServer extends Thread {
   public void setServer(ServerMBean server) {
 
     this.server = server;
-  } // setKowariServer()
+  } // setMulgaraServer()
 
   /**
    * Sets the SOAP server instance.
@@ -1087,9 +1087,9 @@ public class EmbeddedMulgaraServer extends Thread {
   } // setHttpServer()
 
   /**
-   * Sets the embedded Kowari server configuration.
+   * Sets the embedded Mulgara server configuration.
    *
-   * @param config the embedded Kowari server configuration
+   * @param config the embedded Mulgara server configuration
    */
   public void setConfig(MulgaraConfig config) {
 
@@ -1117,7 +1117,7 @@ public class EmbeddedMulgaraServer extends Thread {
   } // setPersistencePath()
 
   /**
-   * Sets the hostname to bind the Kowari server to.
+   * Sets the hostname to bind the Mulgara server to.
    *
    * @param host the hostname to bind the server to
    */
@@ -1158,14 +1158,14 @@ public class EmbeddedMulgaraServer extends Thread {
   } // setSMTP()
 
   /**
-   * Returns the Kowari server instance.
+   * Returns the Mulgara server instance.
    *
-   * @return the Kowari server instance
+   * @return the Mulgara server instance
    */
   public ServerMBean getServer() {
 
     return this.server;
-  } // getKowariServer()
+  } // getMulgaraServer()
 
   /**
    * Returns the SOAP server instance.
@@ -1178,9 +1178,9 @@ public class EmbeddedMulgaraServer extends Thread {
   } // getHttpServer()
 
   /**
-   * Returns the embedded Kowari server configuration.
+   * Returns the embedded Mulgara server configuration.
    *
-   * @return the embedded Kowari server configuration
+   * @return the embedded Mulgara server configuration
    */
   public MulgaraConfig getConfig() {
 
@@ -1208,9 +1208,9 @@ public class EmbeddedMulgaraServer extends Thread {
   } // getPersistencePath()
 
   /**
-   * Returns the hostname to bind the Kowari server to.
+   * Returns the hostname to bind the Mulgara server to.
    *
-   * @return the hostname to bind the Kowari server to
+   * @return the hostname to bind the Mulgara server to
    */
   public String getHost() {
 
@@ -1252,7 +1252,7 @@ public class EmbeddedMulgaraServer extends Thread {
   //
 
   /**
-   * Configures an embedded Kowari server.
+   * Configures an embedded Mulgara server.
    *
    * @param parser the options parser containing the command line arguments to
    *      the server
@@ -1276,7 +1276,7 @@ public class EmbeddedMulgaraServer extends Thread {
       }
       else {
 
-        // load the Kowari configuration file
+        // load the Mulgara configuration file
         Object configURL =
             parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_CONFIG);
 
@@ -1322,7 +1322,7 @@ public class EmbeddedMulgaraServer extends Thread {
           System.setProperty("no_rmi", "no_rmi");
         }
 
-        // set the hostname to bind Kowari to
+        // set the hostname to bind Mulgara to
         Object host =
             parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_HOST);
 
@@ -1534,7 +1534,7 @@ public class EmbeddedMulgaraServer extends Thread {
     catch (Exception e) {
 
       // log the error
-      log.warn("Could not start embedded Kowari server", e );
+      log.warn("Could not start embedded Mulgara server", e );
 
       // let the user know
       //System.err.println("Error - " + e.getMessage());
@@ -1548,16 +1548,16 @@ public class EmbeddedMulgaraServer extends Thread {
   } // configure()
 
   /**
-   * Starts the Kowari server.
+   * Starts the Mulgara server.
    *
    * @throws IllegalStateException if this method is called before the servers
    *      have been created
-   * @throws IOException if the Kowari server cannot access its state keeping
+   * @throws IOException if the Mulgara server cannot access its state keeping
    *      files
-   * @throws NamingException if the Kowari server cannot communicate with the
+   * @throws NamingException if the Mulgara server cannot communicate with the
    *      RMI registry
    * @throws TripleStoreException if an error ocurrs while initialising the
-   *      Kowari server node pool
+   *      Mulgara server node pool
    * @throws MultiException if an error ocurrs while starting up the SOAP server
    * @throws SimpleXAResourceException EXCEPTION TO DO
    * @throws Exception EXCEPTION TO DO
@@ -1572,13 +1572,13 @@ public class EmbeddedMulgaraServer extends Thread {
           "can be started");
     } // end if
 
-    // log that we're starting a Kowari server
+    // log that we're starting a Mulgara server
     if (log.isDebugEnabled()) {
 
       log.debug("Starting server");
     }
 
-    // start the Kowari server
+    // start the Mulgara server
     this.getServer().init();
     this.getServer().start();
     EmbeddedMulgaraServer.setLocalSessionFactory(this.getSessionFactory());
@@ -1609,11 +1609,11 @@ public class EmbeddedMulgaraServer extends Thread {
    *
    * @throws IllegalStateException if this method is called before the servers
    *      have been created
-   * @throws IOException if the Kowari server cannot access its state keeping
+   * @throws IOException if the Mulgara server cannot access its state keeping
    *      files
-   * @throws NamingException if the Kowari server cannot communicate with the
+   * @throws NamingException if the Mulgara server cannot communicate with the
    *      RMI registry
-   *      Kowari server node pool
+   *      Mulgara server node pool
    * @throws MultiException if an error ocurrs while starting up the SOAP server
    * @throws Exception EXCEPTION TO DO
    */
@@ -1643,16 +1643,16 @@ public class EmbeddedMulgaraServer extends Thread {
   } // startHttpServer()
 
   /**
-   * Creates a Kowari server.
+   * Creates a Mulgara server.
    *
    * @param serverName the RMI binding name of the server
    * @param statePath the path to the directory containing server state
-   * @param hostname the hostname to bind the Kowari server to
+   * @param hostname the hostname to bind the Mulgara server to
    * @param providerClassName  class name of a
    *                           {@link org.mulgara.server.Session} implementation
    * @param serverClassName    class name of a
    *                           {@link org.mulgara.server.ServerMBean}
-   * @return a Kowari server
+   * @return a Mulgara server
    * @throws ClassNotFoundException if <var>serverClassName</var> isn't in the
    *      classpath
    * @throws IOException if the <var>statePath</var> is invalid
@@ -1661,7 +1661,7 @@ public class EmbeddedMulgaraServer extends Thread {
       File statePath, String hostname, int portNumber, String providerClassName,
       String serverClassName) throws ClassNotFoundException, IOException {
 
-    // log that we're createing a Kowari server
+    // log that we're createing a Mulgara server
     if (log.isDebugEnabled()) {
 
       log.debug("Creating server instance at rmi://" + hostname + "/" +
@@ -1698,7 +1698,7 @@ public class EmbeddedMulgaraServer extends Thread {
     // Check to see if the port number is not 1099 and we're using the RMI
     // server.
     if ((portNumber != 1099) &&
-        (serverClassName.equals("org.kowari.server.rmi.RmiServer"))) {
+        (serverClassName.equals("org.mulgara.server.rmi.RmiServer"))) {
       server.setPortNumber(portNumber);
     }
     server.setHostname(hostname);
@@ -1810,7 +1810,7 @@ public class EmbeddedMulgaraServer extends Thread {
    *
    * @param httpServer the server to add the listener to
    * @throws UnknownHostException if an invalid hostname was specified in the
-   *      Kowari server configuration
+   *      Mulgara server configuration
    */
   private void addListener(Server httpServer) throws UnknownHostException {
 
@@ -1937,7 +1937,7 @@ public class EmbeddedMulgaraServer extends Thread {
   // addDataContext()
 
   /**
-   * Creates the Kowari Descriptor UI
+   * Creates the Mulgara Descriptor UI
    *
    * @throws IOException if the driver WAR file could not be found
    */
@@ -1980,7 +1980,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
 
   /**
-   * Creates the Kowari Metadata Store Query Tool (webui).
+   * Creates the Mulgara Metadata Store Query Tool (webui).
    *
    * @throws IOException if the driver WAR file could not be found
    */
@@ -2090,7 +2090,7 @@ public class EmbeddedMulgaraServer extends Thread {
    * Launch a browser if specified by a 'browser.url/exe' system property.
    *
    * If 'auto' is supplied then the system will automaticallly open to the
-   * default Kowari home page based on the Kowari configuration settings.
+   * default Mulgara home page based on the Mulgara configuration settings.
    */
   public void launchBrowser() {
 
@@ -2103,7 +2103,7 @@ public class EmbeddedMulgaraServer extends Thread {
       return;
     }
 
-    // Automatically configure url for the Kowari home page.
+    // Automatically configure url for the Mulgara home page.
     if (url.equalsIgnoreCase("auto")) {
 
       url = "http://" + this.getHttpHost() + ":" + this.getHttpPort() + "/";
@@ -2285,15 +2285,15 @@ public class EmbeddedMulgaraServer extends Thread {
   }
 
   /**
-   * Filter class for detecting temporary files created by Kowari
+   * Filter class for detecting temporary files created by Mulgara
    */
   private class TemporaryFileNameFilter implements java.io.FilenameFilter {
 
     public boolean accept(File dir, String name) {
 
       // check for files and directories with
-      // kowari*.jar , Jetty-*.war and JettyContext*.tmp
-      return ( ( (name.indexOf("kowari") == 0) && (name.indexOf(".jar") > 0)) ||
+      // mulgara*.jar , Jetty-*.war and JettyContext*.tmp
+      return ( ( (name.indexOf("mulgara") == 0) && (name.indexOf(".jar") > 0)) ||
           ( (name.indexOf("Jetty-") == 0) && (name.indexOf(".war") > 0)) ||
           ( (name.indexOf("JettyContext") == 0) &&
           (name.indexOf(".tmp") > 0)));
@@ -2354,7 +2354,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
             if (message != null) {
 
-              log.error("Incorrect request to shutdown kowari");
+              log.error("Incorrect request to shutdown mulgara");
             }
           }
         } // while

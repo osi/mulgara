@@ -118,7 +118,7 @@ public class N3StatementsUnitTest extends TestCase
 
     // Obtain a content handler for the test file
     Content content = (Content)
-      Class.forName("org.kowari.resolver.file.FileContent")
+      Class.forName("org.mulgara.resolver.file.FileContent")
            .getConstructor(new Class[] { File.class })
            .newInstance(new Object[] { file });
     assert content != null;
@@ -181,7 +181,7 @@ public class N3StatementsUnitTest extends TestCase
 
     // Obtain a content handler for the test file
     Content content = (Content)
-      Class.forName("org.kowari.resolver.file.FileContent")
+      Class.forName("org.mulgara.resolver.file.FileContent")
            .getConstructor(new Class[] { File.class })
            .newInstance(new Object[] { file });
     assert content != null;

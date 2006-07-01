@@ -47,7 +47,7 @@ import org.mulgara.server.Session;
  * @version $Revision: 1.2 $
  * @modified $Date: 2005/06/30 01:12:28 $
  * @maintenanceAuthor $Author: pgearon $
- * @copyright &copy; 2005 <a href="http://www.kowari.org/">Kowari Project</a>
+ * @copyright &copy; 2005 <a href="mailto:pgearon@users.sorceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class Rule implements Serializable {

@@ -716,7 +716,7 @@ public class Descriptor {
   }
 
   /**
-   * Gets the settings such as parameters from a Kowari server
+   * Gets the settings such as parameters from a Mulgara server
    *
    * @throws DescriptorException EXCEPTION TO DO
    */
@@ -909,19 +909,19 @@ public class Descriptor {
       catch (ClassCastException ce) {
 
         ce.printStackTrace();
-        throw new DescriptorException("Kowari Query error: " + obj,
+        throw new DescriptorException("Mulgara Query error: " + obj,
             (obj instanceof Exception) ?
             (Exception) obj : ce);
       }
       catch (TuplesException qe) {
 
-        throw new DescriptorException("Kowari Query error", qe);
+        throw new DescriptorException("Mulgara Query error", qe);
       }
     }
   }
 
   /**
-   * Get our setting from the Kowari store
+   * Get our setting from the Mulgara store
    *
    * @throws DescriptorException EXCEPTION TO DO
    */

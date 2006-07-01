@@ -29,7 +29,7 @@ package org.mulgara.resolver;
 
 /**
  * Exception thrown if the {@link DatabaseFactory} finds fault with the
- * {@link org.kowari.config.TucanaConfig} passed to it.
+ * {@link org.mulgara.config.TucanaConfig} passed to it.
  *
  * @created 2004-11-23
  *

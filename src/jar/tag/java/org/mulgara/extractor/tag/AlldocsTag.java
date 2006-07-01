@@ -27,7 +27,7 @@
 
 package org.mulgara.extractor.tag;
 
-//Kowari utilities
+//Mulgara utilities
 
 // Java 2 enterprise packages
 import java.io.*;
@@ -87,37 +87,37 @@ public class AlldocsTag extends TagSupport {
   protected final static String ATTR_MODEL = "model";
 
   /**
-   * the Kowari document property
+   * the Mulgara document property
    */
-  protected final static String KOWARI_DOCUMENT_PROPERTY =
+  protected final static String mULGARA_DOCUMENT_PROPERTY =
     "http://tucana.org/tucana/Document#Document";
 
   /**
    * the TMex HTML title property
    */
-  protected final static String KOWARI_HTMLTITLE_PROPERTY =
+  protected final static String mULGARA_HTMLTITLE_PROPERTY =
     "http://tucana.org/tucana/tool/HtmlExtractor#title";
 
   /**
    * the TMex HTML property
    */
-  protected final static String KOWARI_TITLE_PROPERTY =
+  protected final static String mULGARA_TITLE_PROPERTY =
     "http://tucana.org/tucana/Document#title";
 
   /**
    * the TMex has HTML property
    */
-  protected final static String KOWARI_HASHHTML_PROPERTY =
+  protected final static String mULGARA_HASHHTML_PROPERTY =
     "http://tucana.org/tucana/Document#hasHtml";
 
   /**
    * the TMex processed property
    */
-  protected final static String KOWARI_PROCESSED_PROPERTY =
+  protected final static String mULGARA_PROCESSED_PROPERTY =
     "http://tucana.org/tucana/Document#processed";
 
   /**
-   * the Kowari generic String property
+   * the Mulgara generic String property
    */
   protected final static String TUCANA_STRING_PROPERTY =
     "http://tucana.org/tucana/generic#string";
@@ -143,7 +143,7 @@ public class AlldocsTag extends TagSupport {
   //
 
   /**
-   * the Kowari server containing metadata we're interested in, overrides the value
+   * the Mulgara server containing metadata we're interested in, overrides the value
    * set using the {@link InitTag} tag
    */
   private URL server = null;
@@ -192,14 +192,14 @@ public class AlldocsTag extends TagSupport {
   // getModel()
 
   /**
-   * Sets the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Sets the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * Note. This method will be called if this tag is invoked with the <code>server</code>
    * attribute set, overriding the server name set using the <code>init</code>
    * tag. </p>
    *
-   * @param server the URL of the SOAP endpoint of the Kowari server containing
+   * @param server the URL of the SOAP endpoint of the Mulgara server containing
    *      metadata we're interested in
    * @throws JspTagException if <code>server</code> specified is not a valid URL
    */
@@ -252,7 +252,7 @@ public class AlldocsTag extends TagSupport {
   // setServer()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Returns the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * Note. This method may return null if this tag has not been invoked with the
@@ -260,7 +260,7 @@ public class AlldocsTag extends TagSupport {
    * be obtained by retrieving the value of the attribute
    * &quot;tmex.server.soapendpoint&quot;. </p>
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or <code>null</code> if the server hasn't been
    *      set
    */
@@ -283,7 +283,7 @@ public class AlldocsTag extends TagSupport {
   //
 
   /**
-   * Retrieves summary information on all the documents on a Kowari server
+   * Retrieves summary information on all the documents on a Mulgara server
    * processed by the TMex framework.
    *
    * @return a response code informing the servlet container how to proceed with
@@ -306,7 +306,7 @@ public class AlldocsTag extends TagSupport {
 
       // end if
       // log that we've found the SOAP endpoint
-      log.debug("Found Kowari server SOAP enpoint - " + soapEndpoint);
+      log.debug("Found Mulgara server SOAP enpoint - " + soapEndpoint);
 
       // retrieve the model we'll be looking for documents in
       URI tmexModel = this.getTmexModel();
@@ -321,7 +321,7 @@ public class AlldocsTag extends TagSupport {
       // log what model we're looking for documents in
       log.debug("Retrieving all TMex documents from " + tmexModel);
 
-      // ask the Kowari server for all the documents processed by TMex
+      // ask the Mulgara server for all the documents processed by TMex
       Response allDocsResponse =
         this.retrieveAllDocuments(soapEndpoint, tmexModel);
 
@@ -395,14 +395,14 @@ public class AlldocsTag extends TagSupport {
   // retrieveAllDocuments()
 
   /**
-   * Returns the URL of the SOAP endpoint of the Kowari server containing metadata
+   * Returns the URL of the SOAP endpoint of the Mulgara server containing metadata
    * we're interested in. <p>
    *
    * This tag looks first for an attribute defined on this tag, and then in the
    * <code>pageContext</code> for an attribute set using the <code>init</code>
    * tag. </p>
    *
-   * @return the URL of the SOAP endpoint of the Kowari server containing metadata
+   * @return the URL of the SOAP endpoint of the Mulgara server containing metadata
    *      we're interested in, or null if the model URI has not been defined as
    *      an attribute to this tag or using the <code>init</code> tag
    * @throws MalformedURLException if the SOAP endpoint is not a valid URL
@@ -470,10 +470,10 @@ public class AlldocsTag extends TagSupport {
   //
 
   /**
-   * Issues a query to a Kowari server asking for documents processed by TMex.
+   * Issues a query to a Mulgara server asking for documents processed by TMex.
    *
    * @param soapEndpoint the SOAP endpoint
-   * @param model the Kowari model
+   * @param model the Mulgara model
    * @return RETURNED VALUE TO DO
    * @throws SOAPException if an error occurs while sending information to, or
    *      retrieving information from the SOAP endpoint
@@ -484,8 +484,8 @@ public class AlldocsTag extends TagSupport {
     // construct the query
     String allDocsQuery =
       "select $url $title from <" + model.toString() + ">" + " where ($url <" +
-      RDF_TYPE_PROPERTY + "> <" + KOWARI_DOCUMENT_PROPERTY + "> )" +
-      " and ( $url <" + KOWARI_TITLE_PROPERTY + "> $title );";
+      RDF_TYPE_PROPERTY + "> <" + mULGARA_DOCUMENT_PROPERTY + "> )" +
+      " and ( $url <" + mULGARA_TITLE_PROPERTY + "> $title );";
 
     // log the query we're sending
     log.debug("Sending all documents query to " + soapEndpoint + ":\n" +

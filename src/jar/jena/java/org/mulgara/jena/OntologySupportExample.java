@@ -42,11 +42,11 @@ import com.hp.hpl.jena.shared.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.DOMConfigurator;
 
-// Internal Kowari APIs
+// Internal Mulgara APIs
 import com.hp.hpl.jena.util.iterator.*;
-//import org.kowari.client.jena.*;
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.SessionFactory;
+//import org.mulgara.client.jena.*;
+import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.server.SessionFactory;
 
 /**
  * Test case for {@link GraphMulgaraMaker}.

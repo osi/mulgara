@@ -46,9 +46,9 @@ import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.graph.test.*;
 import com.hp.hpl.jena.shared.*;
 
-// Internal Kowari APIs
-import org.kowari.server.*;
-import org.kowari.server.driver.*;
+// Internal Mulgara APIs
+import org.mulgara.server.*;
+import org.mulgara.server.driver.*;
 import com.hp.hpl.jena.graph.query.QueryHandler;
 
 /**
@@ -82,7 +82,7 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
   /**
    * The graph.
    */
-  private static Graph localGraphKowari;
+  private static Graph localGraphMulgara;
 
   /**
    * The URI of the server.
@@ -110,9 +110,9 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
   protected static LocalJenaSession sessionTest = null;
 
   /**
-   * The Kowari graph that we're adding statements to.
+   * The Mulgara graph that we're adding statements to.
    */
-  protected GraphMulgara graphKowari;
+  protected GraphMulgara graphMulgara;
 
   /**
    * Calls the super classes constructor.
@@ -133,11 +133,11 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
    */
   public static TestSuite suite() {
 
-    return MetaTestGraph.suite(GraphMulgaraUnitTest.class, LocalGraphKowari.class);
+    return MetaTestGraph.suite(GraphMulgaraUnitTest.class, LocalGraphMulgara.class);
 //    TestSuite result = new TestSuite();
-//    result.addTest(new GraphKowariUnitTest(LocalGraphKowari.class, "testContainsConcrete",
+//    result.addTest(new GraphMulgaraUnitTest(LocalGraphMulgara.class, "testContainsConcrete",
 //        ReificationStyle.Convenient));
-//    result.addTest(new GraphKowariUnitTest(LocalGraphKowari.class, "testContainsNode",
+//    result.addTest(new GraphMulgaraUnitTest(LocalGraphMulgara.class, "testContainsNode",
 //        ReificationStyle.Convenient));
 //    return result;
   }
@@ -174,8 +174,8 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
       graphMaker = new GraphMulgaraMaker((LocalJenaSession)
           sessionTest, serverURI, ReificationStyle.Minimal);
 
-      //localGraphKowari = new LocalGraphKowari(ReificationStyle.Minimal);
-      localGraphKowari = graphMaker.createGraph();
+      //localGraphMulgara = new LocalGraphMulgara(ReificationStyle.Minimal);
+      localGraphMulgara = graphMaker.createGraph();
 
       exceptionOccurred = false;
     }
@@ -235,7 +235,7 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
    */
   public void tearDown() throws Exception {
 
-    localGraphKowari.close();
+    localGraphMulgara.close();
 
     try {
       sessionTest.removeModel(graphURITest);
@@ -259,7 +259,7 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
   public static Graph getGraph(Object wrap, Class graphClass,
       ReificationStyle style) {
     try {
-      return localGraphKowari;
+      return localGraphMulgara;
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -268,18 +268,18 @@ public class GraphMulgaraUnitTest extends MetaTestGraph {
   }
 
   /**
-   * A local implementation of GraphKowari that accepts the reification
+   * A local implementation of GraphMulgara that accepts the reification
    * constructor.  Currently, this is ignored.
    */
-  public static class LocalGraphKowari extends GraphMulgara {
+  public static class LocalGraphMulgara extends GraphMulgara {
 
     /**
-     * Create a new LocalGraphKowari with the given reification style.
+     * Create a new LocalGraphMulgara with the given reification style.
      *
      * @param style ReificationStyle this is currentl ignored.
      * @throws GraphException if there was a failure in creating the graph.
      */
-    public LocalGraphKowari(ReificationStyle style) throws GraphException {
+    public LocalGraphMulgara(ReificationStyle style) throws GraphException {
       super(sessionTest, graphURITest);
     }
   }

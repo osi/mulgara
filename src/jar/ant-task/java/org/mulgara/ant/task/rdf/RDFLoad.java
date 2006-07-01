@@ -51,7 +51,7 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 
 /**
- * An Ant Task to load RDF into a Kowari database. If a log file is specified the
+ * An Ant Task to load RDF into a Mulgara database. If a log file is specified the
  * task can continue on from the last successfully loaded file in a previous
  * run. <p>
  *

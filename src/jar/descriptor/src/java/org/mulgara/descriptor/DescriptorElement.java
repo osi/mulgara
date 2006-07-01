@@ -319,7 +319,7 @@ public class DescriptorElement {
 
 
   /**
-   * Executes a query on a Kowari store and returns the result as a Node
+   * Executes a query on a Mulgara store and returns the result as a Node
    *
    * @param context Description of Parameter
    * @param extElem Description of Parameter
@@ -456,7 +456,7 @@ public class DescriptorElement {
     }
     catch (java.lang.Exception e) {
 
-      throw new DescriptorException("Kowari probs - query String:" +
+      throw new DescriptorException("Mulgara probs - query String:" +
                                     queryString, e);
     }
   }

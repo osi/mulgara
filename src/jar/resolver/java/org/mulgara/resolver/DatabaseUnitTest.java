@@ -158,20 +158,20 @@ public class DatabaseUnitTest extends TestCase
           null,  // no security domain
           new JotmTransactionManagerFactory(),
           0,  // default transaction timeout
-          "org.kowari.store.nodepool.memory.MemoryNodePoolFactory",
+          "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory",
           null,
-          "org.kowari.store.stringpool.memory.MemoryStringPoolFactory",
+          "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory",
           null,
-          "org.kowari.resolver.memory.MemoryResolverFactory",
+          "org.mulgara.resolver.memory.MemoryResolverFactory",
           null,
-          "org.kowari.store.nodepool.memory.MemoryNodePoolFactory",
+          "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory",
           null,
-          "org.kowari.store.stringpool.memory.MemoryStringPoolFactory",
+          "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory",
           null,
-          "org.kowari.resolver.memory.MemoryResolverFactory",
+          "org.mulgara.resolver.memory.MemoryResolverFactory",
           null,
           "",
-          "org.kowari.resolver.RelatedQueryHandlerImpl",
+          "org.mulgara.resolver.RelatedQueryHandlerImpl",
           null);  // no default content handler
     } catch (Exception e) {
       fail(e);

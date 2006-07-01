@@ -67,12 +67,12 @@ import org.w3c.dom.*;
 public class DescriptorUtil {
 
   /**
-   * descriptor username for Kowari access
+   * descriptor username for Mulgara access
    */
   final static String DESCRIPTOR_USERNAME = "descriptor";
 
   /**
-   * descriptor password for Kowari access
+   * descriptor password for Mulgara access
    */
   final static String DESCRIPTOR_PASSWORD = "ZZpj4i6p7r";
 
