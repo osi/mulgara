@@ -1334,7 +1334,7 @@ public class EmbeddedMulgaraServer extends Thread {
         else {
 
           // get the hostname from configuration file
-          String configHost = this.getConfig().getTucanaHost();
+          String configHost = this.getConfig().getMulgaraHost();
 
           if ( (configHost == null) || configHost.equals("")) {
 
@@ -1374,9 +1374,8 @@ public class EmbeddedMulgaraServer extends Thread {
         }
         else {
 
-          EmbeddedMulgaraServer.loadLoggingConfig(config.
-              getExternalConfigPaths()
-              .getTucanaLogging());
+          EmbeddedMulgaraServer.loadLoggingConfig(config.getExternalConfigPaths()
+              .getMulgaraLogging());
         } // end if
 
         EmbeddedMulgaraServer.setBoundHostname(this.getHost());

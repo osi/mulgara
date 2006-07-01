@@ -3,7 +3,7 @@
 
 <!DOCTYPE rdf:RDF [
   <!ENTITY dc           "http://purl.org/dc/elements/1.1/">
-  <!ENTITY desc         "http://tucana.org/descriptor#">
+  <!ENTITY desc         "http://mulgara.org/descriptor#">
   <!ENTITY rdf          "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <!ENTITY rdfs         "http://www.w3.org/2000/01/rdf-schema#">
 ]>
@@ -16,10 +16,10 @@
   xmlns:dc="&dc;"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
   xmlns:desc="&desc;"
   xmlns:ns1="urn:Query">
 
@@ -49,12 +49,12 @@
         <!-- store query answer in a variable called answer -->
         <xsl:variable name="answer">
           <!-- Query for list of models on server -->
-          <tucanaDescriptor:query server="{$server}">
+          <mulgaraDescriptor:query server="{$server}">
             <![CDATA[
             select $model from <@@server@@#> where 
-            $model <http://www.w3.org/1999/02/22-rdf-syntax-ns#type><http://tucana.org/tucana#Model>;
+            $model <http://www.w3.org/1999/02/22-rdf-syntax-ns#type><http://mulgara.org/mulgara#Model>;
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
         </xsl:variable>
 
         <!-- Now apply the templates to the answer -->
@@ -70,10 +70,10 @@
   <!-- #################################################################### -->
   <!-- converts models into a HTML List Element  -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:answer">
+  <xsl:template match="mulgaraAnswer:answer">
     <html>
       <head>
-        <title>Tucana models</title>
+        <title>Mulgara models</title>
       </head>
       <body>
 
@@ -89,16 +89,16 @@
   <!-- #################################################################### -->
   <!-- converts solution into a HTML List Element  -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:solution">
-    <li><xsl:value-of select="tucanaAnswer:model/@resource"/></li>
+  <xsl:template match="mulgaraAnswer:solution">
+    <li><xsl:value-of select="mulgaraAnswer:model/@resource"/></li>
   </xsl:template>
 
 
   <!-- #################################################################### -->
-  <!-- Calls a java class for Tucana queries -->
+  <!-- Calls a java class for Mulgara queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
-    <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
+    <lxslt:script lang="javaclass" src="xalan://org.mulgara.descriptor.DescriptorElement"/>
   </lxslt:component>
 
 
@@ -115,7 +115,7 @@
 
       <desc:Descriptor rdf:about="">
 
-        <dc:title>Lists models in a Tucana as HTML</dc:title>
+        <dc:title>Lists models in a Mulgara as HTML</dc:title>
 
         <desc:hasParam>
           <desc:Param>
@@ -129,7 +129,7 @@
         
         <!-- Parameter 1 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
           <desc:Param>
           <desc:name>server</desc:name>
           <desc:type>String</desc:type>
@@ -140,7 +140,7 @@
         
         <!-- MIME TYPE -->
         
-        <desc:hasMimetype xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+        <desc:hasMimetype xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
           <desc:Mimetype>
           <desc:mime-major>text</desc:mime-major>
           <desc:mime-minor>html</desc:mime-minor>

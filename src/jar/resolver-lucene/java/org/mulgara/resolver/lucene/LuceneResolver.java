@@ -247,7 +247,7 @@ public class LuceneResolver implements Resolver {
             logger.info(resource + " is not a URL; ignoring Lucene insert");
           } catch (IOException e) {
             throw new ResolverException("Can't obtain content of " + resource, e);
-          } catch (org.mulgara.rdql.util.conversion.html.ParseException e) {
+          } catch (org.mulgara.util.conversion.html.ParseException e) {
             throw new ResolverException("Couldn't parse content of " + resource, e);
           } catch (FullTextStringIndexException e) {
             throw new ResolverException("Unable to modify full text index", e);

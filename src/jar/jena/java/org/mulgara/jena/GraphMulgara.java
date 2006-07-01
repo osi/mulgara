@@ -45,7 +45,7 @@ import com.hp.hpl.jena.util.iterator.*;
 
 // Locally written classes
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.server.*;
 
 /**

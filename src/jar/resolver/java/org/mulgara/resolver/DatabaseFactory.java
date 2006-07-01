@@ -43,7 +43,7 @@ import javax.transaction.SystemException;
 import org.apache.log4j.Logger;  // Apache Log4J
 
 // Local packages
-import org.mulgara.config.TucanaConfig;
+import org.mulgara.config.MulgaraConfig;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.*;
@@ -101,7 +101,7 @@ public abstract class DatabaseFactory
    */
   public static Database newDatabase(URI          uri,
                                      File         directory,
-                                     TucanaConfig config)
+                                     MulgaraConfig config)
     throws ConfigurationException, InitializerException, LocalizeException,
            NamingException, NodePoolException, QueryException,
            ResolverException, ResolverFactoryException,
@@ -184,7 +184,7 @@ public abstract class DatabaseFactory
    * @throws SecurityAdapterFactoryException if a configured
    *   {@link SecurityAdapter} can't be created
    */
-  static void configure(Database database, TucanaConfig config)
+  static void configure(Database database, MulgaraConfig config)
     throws InitializerException, SecurityAdapterFactoryException
   {
     // Retrieve the enumeration of content handler classes

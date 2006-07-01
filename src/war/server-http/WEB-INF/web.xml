@@ -5,26 +5,26 @@
 
 <web-app>
   <display-name>http</display-name>
-  <description>HTTP query support for Kowari</description>
+  <description>HTTP query support for Mulgara</description>
   <servlet>
     <servlet-name>http-server</servlet-name>
-    <display-name>Kowari over HTTP server</display-name>
+    <display-name>Mulgara over HTTP server</display-name>
     <description>bridge between HTTP and an underlying protocol</description>
     <servlet-class>HttpServerServlet</servlet-class>
     <init-param>
       <param-name>dir</param-name>
       <param-value>/tmp</param-value>
-      <description>The persistence directory for the Kowari server</description>
+      <description>The persistence directory for the Mulgara server</description>
     </init-param>
     <init-param>
       <param-name>providerClassName</param-name>
-      <param-value>org.kowari.store.xa.DatabaseImpl</param-value>
+      <param-value>org.mulgara.store.xa.DatabaseImpl</param-value>
       <description>the name of the triple store implementation</description>
     </init-param>
     <init-param>
       <param-name>uri</param-name>
       <param-value>http://localhost:8080/server-http</param-value>
-      <description>The URI of the Kowari server</description>
+      <description>The URI of the Mulgara server</description>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

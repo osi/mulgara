@@ -5,10 +5,10 @@
 
 <web-app>
 
-  <display-name>Kowari Web Services</display-name>
-  <description>Kowaris Web Services</description>
+  <display-name>Mulgara Web Services</display-name>
+  <description>Mulgaras Web Services</description>
 
- <!-- Kowari initialisation servlet -->
+ <!-- Mulgara initialisation servlet -->
  <!--
   <servlet>
     <servlet-name>DeploymentServlet</servlet-name>
@@ -23,7 +23,7 @@
     </init-param>
    </servlet>
    -->
- <!-- End of Kowari configuration -->
+ <!-- End of Mulgara configuration -->
 
 <!-- AXIS -->
   <servlet>
@@ -61,18 +61,18 @@
   <!-- end AXIS -->
 
   <!-- ==================================================================== -->
-  <!-- Kowari servlets                                                      -->
+  <!-- Mulgara servlets                                                      -->
   <!-- ==================================================================== -->
 
   <servlet>
     <servlet-name>Execute</servlet-name>
-    <servlet-class>org.kowari.descriptor.DescriptorServlet</servlet-class>
+    <servlet-class>org.mulgara.descriptor.DescriptorServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet>
     <servlet-name>Deploy</servlet-name>
-    <servlet-class>org.kowari.descriptor.DeployServlet</servlet-class>
+    <servlet-class>org.mulgara.descriptor.DeployServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 

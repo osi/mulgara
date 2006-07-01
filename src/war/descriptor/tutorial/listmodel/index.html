@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-  <title>Kowari Descriptor model list tutorial</title>
+  <title>Mulgara Descriptor model list tutorial</title>
 <link media="all" href="/all.css" type="text/css" title="Default" rel="stylesheet">
 <link media="screen" href="/default.css" type="text/css" title="Default" rel="stylesheet">
 <link media="print" href="/print.css" type="text/css" rel="stylesheet">
@@ -15,7 +15,7 @@
 
   <!-- Banner -->
   <div id="banner">
-    <h1>kowari.sourceforge.net</h1>
+    <h1>mulgara.sourceforge.net</h1>
   </div>
 
   <div id="content">
@@ -33,7 +33,7 @@
   </div>  
        
 <div style="padding-left: 15px;">     
-<h1>Kowari Descriptor List Models Tutorial</h1>
+<h1>Mulgara Descriptor List Models Tutorial</h1>
    
 <h2></h2>
  In this tutorial we will to do the following:  
@@ -47,7 +47,7 @@
    
 <h2></h2>
  The purpose of this tutorial is to create and deploy a descriptor  which 
-returns a simple HTML page with a list of models available on a Kowari server 
+returns a simple HTML page with a list of models available on a Mulgara server 
 using an iTQL query.<br>
  <br>
  NOTE it is assumed the user has already completed the <a
@@ -62,11 +62,11 @@ in the Descriptor Tasks area. &nbsp;<br>
      
 <h2>Step 1 - Entering a Title</h2>
  For this tutorial enter a title such as:<b><br>
-   Lists models in a Kowari as HTML.</b><br>
+   Lists models in a Mulgara as HTML.</b><br>
    <br>
      
 <h2>Step 2 - Entering Parameters</h2>
- We could hard code this descriptor to only look on a certain Kowari server
+ We could hard code this descriptor to only look on a certain Mulgara server
 but if we supply the server name as a parameter then &nbsp;the descriptor
 is reusable. &nbsp;Lets use a parameter called 'server' to specify the server, 
 it will be a string.<br>
@@ -112,7 +112,7 @@ a variable called answer --&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xsl:variable name="answer"&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!-- Query for 
 list of models on server --&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;kowariDescriptor:query 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mulgaraDescriptor:query 
 server="{$server}"&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;![CDATA[<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select 
@@ -121,7 +121,7 @@ $model from &lt;@@server@@#&gt; where<br>
 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;
 &lt;http://tucana.org/tucana#Model&gt;;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]]&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/kowariDescriptor:query&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/mulgaraDescriptor:query&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/xsl:variable&gt;<br>
  <br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!-- Now apply the templates 
@@ -136,18 +136,18 @@ to the answer --&gt;<br>
  Several new things have been introduced in this descriptor over the simple 
 one in the Hello World Example, here they are in detail:<br>
  <br>
- <b>&lt;kowariDescriptor:query&gt; Tag</b><br>
+ <b>&lt;mulgaraDescriptor:query&gt; Tag</b><br>
  <br>
  &lt;!-- Query for list of models on server --&gt;<br>
-  &nbsp;&lt;kowariDescriptor:query server="{$server}"&gt;<br>
+  &nbsp;&lt;mulgaraDescriptor:query server="{$server}"&gt;<br>
   &nbsp; &lt;![CDATA[<br>
   &nbsp;&nbsp; select $model from &lt;@@server@@&gt; where<br>
   &nbsp;&nbsp;&nbsp; $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; 
 &lt;http://tucana.org/tucana#Model&gt;;<br>
   &nbsp;]]&gt;<br>
-  &nbsp;&lt;/kowariDescriptor:query&gt;<br>
+  &nbsp;&lt;/mulgaraDescriptor:query&gt;<br>
  <br>
- This tag is an entension to XSL allowing queries to to made to a Kowari database, 
+ This tag is an entension to XSL allowing queries to to made to a Mulgara database, 
 the tag is fully discussed here TODO!!. &nbsp;In a &nbsp;text child of this 
 tag (i.e. between the open an closing tags) an iTQL query is placed. &nbsp;The 
 query text is stored in a CDATA section so as to stop the XML parser having 
@@ -187,22 +187,22 @@ XSL file, make a change, save it, and invoke the descriptor for immediate
 results. &nbsp;If any of the parameters change then the descriptor must be 
 redeployed.<br>
  <b><br>
- NOTE</b> descriptors are cached by Kowari, if you change a descriptor the cache 
+ NOTE</b> descriptors are cached by Mulgara, if you change a descriptor the cache 
 must be cleared, this is one of the tasks available from the <a
  href="../../">Descriptor Management Page</a>.<br>
  <br>
- The <b>&lt;kowariDescriptor:query&gt;</b> tag is surrounded by an <b>&lt;xsl:variable&gt;</b> 
+ The <b>&lt;mulgaraDescriptor:query&gt;</b> tag is surrounded by an <b>&lt;xsl:variable&gt;</b> 
 tag which will store the results of the query in the variable <b>answer.</b> 
 &nbsp;We do this because the raw XML returned from a query is not very 
 useful on its own, if a developer directly wanted to work with the raw XML 
-then they should work with the Java API interface to Kowari. <br>
+then they should work with the Java API interface to Mulgara. <br>
  <br>
  The tag:<br>
  <br>
  &lt;xsl:copy-of select="xalan:nodeset($answer)/*"/&gt;<br>
  <br>
  Is a tag thats very useful for debugging, it copies the response from the 
-Kowari server (i.e. the raw XML) to the output. &nbsp;This is useful when working 
+Mulgara server (i.e. the raw XML) to the output. &nbsp;This is useful when working 
 with new descriptors where you do not know exactly what their output looks 
 like. &nbsp;<b>NOTE</b> future versions of descriptors will also declare an
 XML Schema of the results they produce - elimination the developer guesswork 
@@ -231,7 +231,7 @@ change the top most rule where we have the tag:<br>
  <br>
  &lt;xsl:apply-templates select="xalan:nodeset($answer)/*"/&gt;<br>
  <br>
- This applies the XSL template rules to the XML we received from the Kowari
+ This applies the XSL template rules to the XML we received from the Mulgara
 server i.e. its as if the raw XML was the input document to the XSL transformer. 
 &nbsp;Now we need to write the 2 rules, one to match the answer and one to 
 match the solution.<br>
@@ -247,10 +247,10 @@ match the solution.<br>
 &nbsp; &nbsp;&nbsp; --&gt;<br>
  &nbsp; &lt;!-- #################################################################### 
 --&gt;<br>
- &nbsp; &lt;xsl:template match="kowariAnswer:answer"&gt;<br>
+ &nbsp; &lt;xsl:template match="mulgaraAnswer:answer"&gt;<br>
  &nbsp;&nbsp;&nbsp; &lt;html&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;head&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;title&gt;Kowari models&lt;/title&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;title&gt;Mulgara models&lt;/title&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/head&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;body&gt;<br>
  <br>
@@ -278,12 +278,12 @@ the ordered list and closing all the HTML tags.<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; --&gt;<br>
  &nbsp; &lt;!-- #################################################################### 
 --&gt;<br>
- &nbsp; &lt;xsl:template match="kowariAnswer:solution"&gt;<br>
- &nbsp;&nbsp;&nbsp; &lt;li&gt;&lt;xsl:value-of select="kowariAnswer:model/@resource"/&gt;&lt;/li&gt;<br>
+ &nbsp; &lt;xsl:template match="mulgaraAnswer:solution"&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;li&gt;&lt;xsl:value-of select="mulgaraAnswer:model/@resource"/&gt;&lt;/li&gt;<br>
  &nbsp; &lt;/xsl:template&gt;<br>
  <br>
  This rule is very simple, it takes a solution and inserts the resource attribute 
-of the &lt;kowariAnswer:model&gt; tag (refer to the raw XML &nbsp;response if 
+of the &lt;mulgaraAnswer:model&gt; tag (refer to the raw XML &nbsp;response if 
 this is unclear) into a list element tag &lt;li&gt;. &nbsp;This effectively 
 adds the Model URI to the HTML list.<br>
  <br>
@@ -293,7 +293,7 @@ to check that the file is valid XML using a tool such as xmllint.<br>
  If you are having problems the file is available <a
  href="modellist.xsl" target="_blank">here</a>.<br>
      
-<h2>Step 7 - Deploy the Descriptor with Kowari</h2>
+<h2>Step 7 - Deploy the Descriptor with Mulgara</h2>
  Deploy as before<br>
  <br>
    Start an iTQL client.<br>
@@ -337,23 +337,23 @@ all is well a screen like the one below should be displayed.<br>
  This descriptor is <b>NOT</b> restricted to accessing or being accessed
 from other clients (with security restrictions). &nbsp;i.e. the server URI
 entered above could be a server on another machine - this descriptor can
-be used to get a list of models on <i>any </i>Kowari server (if allowed). &nbsp;Correspondingly 
+be used to get a list of models on <i>any </i>Mulgara server (if allowed). &nbsp;Correspondingly 
 if this descriptor was put on a web server it could be deployed onto a remote 
-Kowari server like this:<br>
+Mulgara server like this:<br>
    <br>
    iTQL&gt; load &lt;http://mulgara.org/descriptors/utils/modellist.xsl&gt; 
 into &lt;rmi://interal.acme.com/server1#descriptors&gt;;<br>
  <br>
  It is envisioned that lots of descriptors will be developed to perform many 
 different tasks.&nbsp; When developing or modifying an application to work 
-with a Kowari database it may be as simple as browsing the descriptors available 
+with a Mulgara database it may be as simple as browsing the descriptors available 
 and choosing the ones appropriate for the applications needs.<br>
  <br>
  
 <h2>Conclusion</h2>
  In this tutorial we learned to do the following: 
 <ol>
-   <li>Perform a Kowari query inside a descriptor</li>
+   <li>Perform a Mulgara query inside a descriptor</li>
    <li>Pass parameters to queries</li>
    <li>Transform query results into a form we desired - HTML</li>
  
@@ -366,7 +366,7 @@ to be changed with out affecting clients (as long as interfaces don't change).
 &nbsp;An example of this would be a portal where one descriptor called on 
 other descriptors to assemble a custom HTML page or WML page.<br>
   <br>
-  To learn how to invoke one descriptor from another and perform a Kowari query 
+  To learn how to invoke one descriptor from another and perform a Mulgara query 
 in a descriptor look at the <a href="../vcard/">VCard Tutorial</a>.<br>
   <br>
   See list of all <a href="..">tutorials</a> 

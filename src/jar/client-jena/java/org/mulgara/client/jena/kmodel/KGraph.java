@@ -47,7 +47,7 @@ import org.mulgara.itql.*;
 import org.mulgara.itql.lexer.*;
 import org.mulgara.itql.parser.*;
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Tucana;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.server.*;
 
 //JRDF packages

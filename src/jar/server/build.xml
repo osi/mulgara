@@ -63,9 +63,9 @@
           description="Prepares any configuration files/generated code for the
                        server">
 
-    <!-- Copy the Embedded Kowari server to obj directory -->
+    <!-- Copy the Embedded Mulgara server to obj directory -->
 
-    <!-- WARNING: The ServletKowariServer class hasn't been ported yet, which
+    <!-- WARNING: The ServletMulgaraerver class hasn't been ported yet, which
                   is why it gets removed here.  Eventually it needs to be
                   ported properly. -->
 
@@ -74,7 +74,7 @@
           preservelastmodified="yes">
         <fileset dir="${server.src.dir}/java/" 
                  includes="**/*.java" 
-                 excludes="**/ServletKowariServer.java"/>
+                 excludes="**/ServletMulgaraServer.java"/>
     </copy>
 
     <antcall target="-server-token-build-label"/>
@@ -86,7 +86,7 @@
           unless="server.token.build.label.uptodate">
 
     <!-- Insert the normal build label -->
-    <replace file="${server.obj.dir}/java/org/mulgara/server/EmbeddedKowariServer.java"
+    <replace file="${server.obj.dir}/java/org/mulgara/server/EmbeddedMulgaraServer.java"
              token="@@build.label@@" value="${build.label}"/>
 
   </target>
@@ -94,8 +94,8 @@
   <target name="-server-token-build-label-uptodate">
 
     <uptodate property="server.token.build.label.uptodate"
-              targetfile="${server.obj.dir}/classes/org/mulgara/server/EmbeddedKowariServer.java">
-      <srcfiles dir="${server.src.dir}" includes="**/EmbeddedKowariServer.java"/>
+              targetfile="${server.obj.dir}/classes/org/mulgara/server/EmbeddedMulgaraServer.java">
+      <srcfiles dir="${server.src.dir}" includes="**/EmbeddedMulgaraServer.java"/>
     </uptodate>
   </target>
 
@@ -125,7 +125,7 @@
       <fileset dir="${server.obj.dir}/classes" excludes="**/*.java"/>
     </jar>
 
-    <replace file="${server.src.dir}/java/org/mulgara/server/EmbeddedKowariServer.java"
+    <replace file="${server.src.dir}/java/org/mulgara/server/EmbeddedMulgaraServer.java"
              token="${build.label}" value="@@build.label@@"/>
   </target>
 

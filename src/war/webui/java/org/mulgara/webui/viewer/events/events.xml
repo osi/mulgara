@@ -4,7 +4,7 @@
     PUBLIC "-//Enhydra Barracuda//DTD Barracuda Events 1.0//EN"
     "http://barracudamvc.org/Barracuda/dtds/BarracudaEventBuilder.dtd">
 
-<build-events pkg="org.kowari.webui.viewer.events">
+<build-events pkg="org.mulgara.webui.viewer.events">
   <req-events>
     <event name="LocalRequestEvent">
       <event name="ViewerScreenEvent">

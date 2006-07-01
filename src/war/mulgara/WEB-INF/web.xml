@@ -8,9 +8,9 @@
   <!-- ==================================================================== -->
   <!-- Project settings                                                     -->
   <!-- ==================================================================== -->
-  <display-name>Kowari Metadata Store</display-name>
+  <display-name>Mulgara Metadata Store</display-name>
   <description>
-    WAR wrapper for a Kowari server.
+    WAR wrapper for a Mulgara server.
   </description>
 
 
@@ -18,28 +18,28 @@
   <!-- Parameters                                                           -->
   <!-- ==================================================================== -->
   <context-param>
-    <param-name>kowari.security.policy</param-name>
-    <param-value>/WEB-INF/conf/kowari.policy</param-value>
+    <param-name>mulgara.security.policy</param-name>
+    <param-value>/WEB-INF/conf/mulgara.policy</param-value>
   </context-param>
   <context-param>
-    <param-name>kowari.security.ldap</param-name>
+    <param-name>mulgara.security.ldap</param-name>
     <param-value>/WEB-INF/conf/ldap.conf</param-value>
   </context-param>
   <context-param>
-    <param-name>kowari.log4j.config</param-name>
-    <param-value>/WEB-INF/conf/log4j-kowari-war.properties</param-value>
+    <param-name>mulgara.log4j.config</param-name>
+    <param-value>/WEB-INF/conf/log4j-mulgara-war.properties</param-value>
   </context-param>
   <context-param>
-    <param-name>kowari.config.servername</param-name>
+    <param-name>mulgara.config.servername</param-name>
     <param-value>server1</param-value>
   </context-param>
   <context-param>
-    <param-name>kowari.config.persistencepath</param-name>
-    <param-value>/spare/kowari</param-value>
+    <param-name>mulgara.config.persistencepath</param-name>
+    <param-value>/spare/mulgara</param-value>
   </context-param>
   <context-param>
     <param-name>lucene.index.dir</param-name>
-    <param-value>/spare/kowari/text_index</param-value>
+    <param-value>/spare/mulgara/text_index</param-value>
   </context-param>
 
 
@@ -47,8 +47,8 @@
   <!-- Kowar servlets                                                       -->
   <!-- ==================================================================== -->
   <servlet>
-    <servlet-name>Kowari</servlet-name>
-    <servlet-class>org.kowari.server.ServletKowariServer</servlet-class>
+    <servlet-name>Mulgara</servlet-name>
+    <servlet-class>org.mulgara.server.ServletMulgaraServer</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 

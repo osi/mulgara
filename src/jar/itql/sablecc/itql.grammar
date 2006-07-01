@@ -1,4 +1,4 @@
-Package org.kowari.itql;
+Package org.mulgara.itql;
 
 /*
  * iTQL (SableCC grammar)
