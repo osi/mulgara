@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns:cas="urn:cas:" xmlns:date="http://tucana.org/tucana/tool/DateExtractor#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:document="http://tucana.org/tucana/Document#" xmlns:feature="http://tucana.org/tucana/tool/FeatureExtractor#" xmlns:med="urn:medline:" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:RDF xmlns:cas="urn:cas:" xmlns:date="http://mulgara.org/mulgara/tool/DateExtractor#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:document="http://mulgara.org/mulgara/Document#" xmlns:feature="http://mulgara.org/mulgara/tool/FeatureExtractor#" xmlns:med="urn:medline:" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 <med:Journal rdf:about="urn:nlm:10">
 <dc:coverage>UNITED STATES</dc:coverage>
 <dc:title>J Wildl Dis</dc:title>
