@@ -407,7 +407,7 @@ public class SessionFactoryFactory {
       }
 
       //serverURI (overrides URI set for serverName)
-      String host = mulgaraConfig.getTucanaHost();
+      String host = mulgaraConfig.getMulgaraHost();
       if ((host != null)
           && (!"".equals(host))) {
 
