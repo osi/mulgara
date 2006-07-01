@@ -7,12 +7,12 @@
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucana xalan ns1"
-  xmlns:tucana="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
-  xmlns:doc="http://tucana.org/tucana/Document#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgara xalan ns1"
+  xmlns:mulgara="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
+  xmlns:doc="http://mulgara.org/mulgara/Document#"
   xmlns:ns1="urn:Query">
 
 
@@ -39,7 +39,7 @@
         <desc:Document>
 
          <!-- get the concepts (concept-based) -->
-         <tucanaDescriptor:descriptor
+         <mulgaraDescriptor:descriptor
            _target="concept-based-concepts-descriptor.xsl"
            _source="{$_self}"
            document="{$node}"
@@ -47,11 +47,11 @@
 
           <!--TODO score generator quantity -->
           <xsl:variable name="answer">
-          <tucanaDescriptor:query model="{$model}" node="{$node}">
+          <mulgaraDescriptor:query model="{$model}" node="{$node}">
             <![CDATA[
             select $predicate from <@@model@@> where <@@node@@> $predicate $object;
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
           </xsl:variable>
           <!-- uncomment to see the raw XML response-->
           <!--
@@ -68,8 +68,8 @@
   <!-- #################################################################### -->
   <!-- Pass title to other descriptor                                       -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#title']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#title']">
+    <mulgaraDescriptor:descriptor
       _target="titles-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -81,8 +81,8 @@
   <!-- #################################################################### -->
   <!-- Pass subject to other descriptor                                       -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#subject']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#subject']">
+    <mulgaraDescriptor:descriptor
       _target="subjects-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -94,8 +94,8 @@
   <!-- #################################################################### -->
   <!-- Pass message ID to other descriptor                                  -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#messageID']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#messageID']">
+    <mulgaraDescriptor:descriptor
       _target="messageID-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -107,8 +107,8 @@
   <!-- #################################################################### -->
   <!-- Pass folder to other descriptor                                      -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#folder']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#folder']">
+    <mulgaraDescriptor:descriptor
       _target="folders-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -120,8 +120,8 @@
   <!-- #################################################################### -->
   <!-- Pass parent to other descriptor                                      -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#parent']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#parent']">
+    <mulgaraDescriptor:descriptor
       _target="parents-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -133,8 +133,8 @@
   <!-- #################################################################### -->
   <!-- Pass child to other descriptor                                      -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#child']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#child']">
+    <mulgaraDescriptor:descriptor
       _target="children-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -146,12 +146,12 @@
   <!-- #################################################################### -->
   <!-- Pass hasEmailAddress to other descriptor                              -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasEmailAddress']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasEmailAddress']">
     <!--
     Got Address - calling address descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allAddressesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -164,12 +164,12 @@
   <!-- #################################################################### -->
   <!-- Pass toAddress to other descriptor                                   -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#toAddress']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#toAddress']">
     <!--
     Got Address - calling address descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allAddressesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -182,12 +182,12 @@
   <!-- #################################################################### -->
   <!-- Pass fromAddress to other descriptor                                   -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#fromAddress']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#fromAddress']">
     <!--
     Got Address - calling address descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allAddressesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -201,12 +201,12 @@
   <!-- #################################################################### -->
   <!-- Pass ccAddress to other descriptor                                   -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#ccAddress']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#ccAddress']">
     <!--
     Got Address - calling address descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allAddressesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -219,12 +219,12 @@
   <!-- #################################################################### -->
   <!-- Pass replyToAddress to other descriptor                              -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#replyToAddress']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#replyToAddress']">
     <!--
     Got Address - calling address descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allAddressesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -237,12 +237,12 @@
   <!-- #################################################################### -->
   <!-- Pass containsDate to other descriptor                                -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#containsDate']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#containsDate']">
     <!--
     Got Date - calling date descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allDatesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -255,12 +255,12 @@
   <!-- #################################################################### -->
   <!-- Pass publishedDate to other descriptor (special kind of date)        -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#publishedDate']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#publishedDate']">
     <!--
     Got Date - calling date descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allDatesGenericDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -273,12 +273,12 @@
   <!-- #################################################################### -->
   <!-- Pass postingDate to other descriptor (special kind of date)          -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#postingDate']">
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#postingDate']">
     <!--
     Got Date - calling date descriptor with node <xsl:value-of select="{@resource}"/> and
     mode <xsl:value-of select="{$model}"/>
     -->
-    <tucanaDescriptor:descriptor
+    <mulgaraDescriptor:descriptor
       _target="allDatesGenericDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -291,8 +291,8 @@
   <!-- #################################################################### -->
   <!-- Pass category to other descriptor                                       -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#category']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#category']">
+    <mulgaraDescriptor:descriptor
       _target="categories-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -304,8 +304,8 @@
   <!-- #################################################################### -->
   <!-- Pass case names to other descriptor                              -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasCaseName']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasCaseName']">
+    <mulgaraDescriptor:descriptor
       _target="caseNames-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -317,8 +317,8 @@
   <!-- #################################################################### -->
   <!-- Pass case citations to other descriptor                              -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasCaseCitation']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasCaseCitation']">
+    <mulgaraDescriptor:descriptor
       _target="caseCitations-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -330,8 +330,8 @@
   <!-- #################################################################### -->
   <!-- Pass statute citations to other descriptor                           -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasStatuteCitation']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasStatuteCitation']">
+    <mulgaraDescriptor:descriptor
       _target="statuteCitations-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -343,8 +343,8 @@
   <!-- #################################################################### -->
   <!-- Pass genericFeatures to other descriptor                                       -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasGenericFeature']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasGenericFeature']">
+    <mulgaraDescriptor:descriptor
       _target="genericFeature-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -356,8 +356,8 @@
   <!-- #################################################################### -->
   <!-- Pass personalNames to other descriptor                                       -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasPersonalName']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasPersonalName']">
+    <mulgaraDescriptor:descriptor
       _target="allPersonsDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -370,8 +370,8 @@
   <!-- #################################################################### -->
   <!-- Pass companyNames to other descriptor                                       -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasCompanyName']|tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#companyAuthor']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasCompanyName']|mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#companyAuthor']">
+    <mulgaraDescriptor:descriptor
       _target="allCompaniesDescriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -384,8 +384,8 @@
   <!-- #################################################################### -->
   <!-- Pass geographicFeature to other descriptor                           -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasGeographicFeature']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasGeographicFeature']">
+    <mulgaraDescriptor:descriptor
       _target="geographicFeature-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -398,8 +398,8 @@
   <!-- #################################################################### -->
   <!-- Pass concept to other descriptor                                     -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution/tucana:predicate[@resource='http://tucana.org/tucana/Document#hasConcept']">
-    <tucanaDescriptor:descriptor
+  <xsl:template match="mulgara:solution/mulgara:predicate[@resource='http://mulgara.org/mulgara/Document#hasConcept']">
+    <mulgaraDescriptor:descriptor
       _target="document-based-concepts-descriptor.xsl"
       _source="{$_self}"
       document="{$node}"
@@ -412,14 +412,14 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
   <!-- #################################################################### -->
   <!-- Match on no metadata for a document                                  -->
   <!-- #################################################################### -->
-  <xsl:template match="ns1:executeResponse/return[not(tucana:answer)]">
+  <xsl:template match="ns1:executeResponse/return[not(mulgara:answer)]">
     <p>No metadata exists for the given document.</p>
     <xsl:apply-templates/>
   </xsl:template>
@@ -428,7 +428,7 @@
   <!-- #################################################################### -->
   <!-- Match on the solutions (document metadata)                           -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:title">
+  <xsl:template match="mulgara:title">
     <desc:title><xsl:value-of select="./text()"/></desc:title>
     <xsl:apply-templates/>
   </xsl:template>
@@ -436,7 +436,7 @@
   <!-- #################################################################### -->
   <!-- Match on the solutions (document metadata)                           -->
   <!-- #################################################################### -->
-  <xsl:template match="tucana:solution">
+  <xsl:template match="mulgara:solution">
     <!--Got solution applying templates -->
     <xsl:apply-templates/>
   </xsl:template>
@@ -458,7 +458,7 @@
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:desc="http://tucana.org/descriptor#">
+    xmlns:desc="http://mulgara.org/descriptor#">
 
     <!-- TODO define parameters with XML Schemas -->
     <desc:Descriptor rdf:about="">

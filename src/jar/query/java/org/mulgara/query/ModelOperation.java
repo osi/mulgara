@@ -159,7 +159,7 @@ public abstract class ModelOperation implements ModelExpression {
       // (s p o m)
       Transformation transformation,
       Value modelProperty,
-      // tucana:model
+      // mulgara:model
       Value systemModel,
       // #SYSTEM
       VariableFactory variableFactory) throws TransformationException;

@@ -80,7 +80,7 @@ public class Descriptor {
    * Description of the Field
    */
   public final static String DESCRIPTOR_NS_STRING =
-      "http://tucana.org/descriptor#";
+      "http://mulgara.org/descriptor#";
 
   /**
    * Description of the Field

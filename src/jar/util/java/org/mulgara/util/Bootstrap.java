@@ -190,7 +190,7 @@ public class Bootstrap extends URLClassLoader {
       }
 
       // end if
-      // Set the path of the jar as a System property - tucana.jar.path
+      // Set the path of the jar as a System property - mulgara.jar.path
       URL bootURL =
           Bootstrap.class.getClassLoader().getSystemResource(
           "org/mulgara/util/Bootstrap.class");
@@ -200,7 +200,7 @@ public class Bootstrap extends URLClassLoader {
       int startIndex = preString.length();
       int bangIndex = bootURLString.indexOf('!');
       String jarPath = bootURLString.substring(startIndex, bangIndex);
-      System.setProperty("tucana.jar.path", jarPath);
+      System.setProperty("mulgara.jar.path", jarPath);
 
       // ************************************************************************
       // HACK: This is a hack to get the ARP parser working inside the bootstrapper.

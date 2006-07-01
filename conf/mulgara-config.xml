@@ -78,7 +78,7 @@ Mulgara Metadata Store configuration file.
     model.
   -->
   <!--
-    <SecurityAdapterClass>com.tucana.store.security.model.ModelSecurityAdapterFactory</SecurityAdapterClass>
+    <SecurityAdapterClass>com.mulgara.store.security.model.ModelSecurityAdapterFactory</SecurityAdapterClass>
   -->
 
   <!--

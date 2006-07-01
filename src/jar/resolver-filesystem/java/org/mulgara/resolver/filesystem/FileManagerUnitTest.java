@@ -315,7 +315,7 @@ public class FileManagerUnitTest extends TestCase {
       assertTrue("First statement's object node was not the expected value, " +
                  "was [" + objectNode.toString() + "]",
                  objectNode.toString().equals(
-          "http://tucana.org/tucana#InvalidFileSystem"));
+          "http://mulgara.org/mulgara#InvalidFileSystem"));
     }
 
     /**
@@ -476,7 +476,7 @@ public class FileManagerUnitTest extends TestCase {
         assertTrue("First statement's object node was not the expected value, " +
                    "was [" + objectNode.toString() + "]",
                    objectNode.toString().equals(
-            "http://tucana.org/tucana#NonExistantFileSystem"));
+            "http://mulgara.org/mulgara#NonExistantFileSystem"));
     }
 
     /**

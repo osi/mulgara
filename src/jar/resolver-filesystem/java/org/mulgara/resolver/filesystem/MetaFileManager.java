@@ -276,20 +276,20 @@ public class MetaFileManager {
 
         // The default type is file
         object = (ObjectNode) elementFactory.createResource(
-            new URI("http://tucana.org/tucana#InvalidFileSystem"));
+            new URI("http://mulgara.org/mulgara#InvalidFileSystem"));
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new FileManagerException(
             "Failed to create object node for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#InvalidFileSystem>",
+            "<http://mulgara.org/mulgara#InvalidFileSystem>",
             graphElementFactoryException);
       } catch (URISyntaxException uriSyntaxException) {
 
         throw new FileManagerException(
             "Failed to create object uri for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#InvalidFileSystem>",
+            "<http://mulgara.org/mulgara#InvalidFileSystem>",
             uriSyntaxException);
       }
 
@@ -342,20 +342,20 @@ public class MetaFileManager {
 
         // The default type is file
         object = (ObjectNode) elementFactory.createResource(
-            new URI("http://tucana.org/tucana#InvalidFileSystem"));
+            new URI("http://mulgara.org/mulgara#InvalidFileSystem"));
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new FileManagerException(
             "Failed to create object node for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#FailedFileSystem>",
+            "<http://mulgara.org/mulgara#FailedFileSystem>",
             graphElementFactoryException);
       } catch (URISyntaxException uriSyntaxException) {
 
         throw new FileManagerException(
             "Failed to create object uri for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#FailedFileSystem>",
+            "<http://mulgara.org/mulgara#FailedFileSystem>",
             uriSyntaxException);
       }
 
@@ -411,20 +411,20 @@ public class MetaFileManager {
 
         // The default type is file
         object = (ObjectNode) elementFactory.createResource(
-            new URI("http://tucana.org/tucana#NonExistantFileSystem"));
+            new URI("http://mulgara.org/mulgara#NonExistantFileSystem"));
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new FileManagerException(
             "Failed to create object node for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#NonExistantFileSystem>",
+            "<http://mulgara.org/mulgara#NonExistantFileSystem>",
             graphElementFactoryException);
       } catch (URISyntaxException uriSyntaxException) {
 
         throw new FileManagerException(
             "Failed to create object uri for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#NonExistantFileSystem>",
+            "<http://mulgara.org/mulgara#NonExistantFileSystem>",
             uriSyntaxException);
       }
 

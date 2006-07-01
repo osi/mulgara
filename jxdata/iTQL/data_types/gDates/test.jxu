@@ -4,10 +4,10 @@
 
   <!-- Configure the data type model -->
   <set name="query" value="
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
     drop &lt;@server@#xsdmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
-    alias &lt;http://tucana.org/tucana#&gt; as exp ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
+    alias &lt;http://mulgara.org/mulgara#&gt; as exp ;
   "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -58,7 +58,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#is&gt; '2003'^^&lt;http://www.w3.org/2001/XMLSchema#gYear&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#is&gt; '2003'^^&lt;http://www.w3.org/2001/XMLSchema#gYear&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -74,7 +74,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#before&gt; '2002'^^&lt;http://www.w3.org/2001/XMLSchema#gYear&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#before&gt; '2002'^^&lt;http://www.w3.org/2001/XMLSchema#gYear&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -90,7 +90,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#after&gt; '2000'^^&lt;http://www.w3.org/2001/XMLSchema#gYear&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#after&gt; '2000'^^&lt;http://www.w3.org/2001/XMLSchema#gYear&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -134,7 +134,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#is&gt; '--05'^^&lt;http://www.w3.org/2001/XMLSchema#gMonth&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#is&gt; '--05'^^&lt;http://www.w3.org/2001/XMLSchema#gMonth&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -150,7 +150,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#before&gt; '--05'^^&lt;http://www.w3.org/2001/XMLSchema#gMonth&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#before&gt; '--05'^^&lt;http://www.w3.org/2001/XMLSchema#gMonth&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -166,7 +166,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#after&gt; '--09'^^&lt;http://www.w3.org/2001/XMLSchema#gMonth&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#after&gt; '--09'^^&lt;http://www.w3.org/2001/XMLSchema#gMonth&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -210,7 +210,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#is&gt; '---03'^^&lt;http://www.w3.org/2001/XMLSchema#gDay&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#is&gt; '---03'^^&lt;http://www.w3.org/2001/XMLSchema#gDay&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -226,7 +226,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#before&gt; '---04'^^&lt;http://www.w3.org/2001/XMLSchema#gDay&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#before&gt; '---04'^^&lt;http://www.w3.org/2001/XMLSchema#gDay&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -242,7 +242,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#after&gt; '---03'^^&lt;http://www.w3.org/2001/XMLSchema#gDay&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#after&gt; '---03'^^&lt;http://www.w3.org/2001/XMLSchema#gDay&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -286,7 +286,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#is&gt; '2004-03'^^&lt;http://www.w3.org/2001/XMLSchema#gYearMonth&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#is&gt; '2004-03'^^&lt;http://www.w3.org/2001/XMLSchema#gYearMonth&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -302,7 +302,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#before&gt; '2004-03'^^&lt;http://www.w3.org/2001/XMLSchema#gYearMonth&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#before&gt; '2004-03'^^&lt;http://www.w3.org/2001/XMLSchema#gYearMonth&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -318,7 +318,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#after&gt; '2004-01'^^&lt;http://www.w3.org/2001/XMLSchema#gYearMonth&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#after&gt; '2004-01'^^&lt;http://www.w3.org/2001/XMLSchema#gYearMonth&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -362,7 +362,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#is&gt; '--01-03'^^&lt;http://www.w3.org/2001/XMLSchema#gMonthDay&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#is&gt; '--01-03'^^&lt;http://www.w3.org/2001/XMLSchema#gMonthDay&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -378,7 +378,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#before&gt; '--01-04'^^&lt;http://www.w3.org/2001/XMLSchema#gMonthDay&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#before&gt; '--01-04'^^&lt;http://www.w3.org/2001/XMLSchema#gMonthDay&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -394,7 +394,7 @@
     select $label
     from &lt;@server@#dates&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://tucana.org/tucana#after&gt; '--01-04'^^&lt;http://www.w3.org/2001/XMLSchema#gMonthDay&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#after&gt; '--01-04'^^&lt;http://www.w3.org/2001/XMLSchema#gMonthDay&gt; in &lt;@server@#xsdmodel&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>

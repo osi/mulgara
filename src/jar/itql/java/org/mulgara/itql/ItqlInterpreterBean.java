@@ -90,7 +90,7 @@ public class ItqlInterpreterBean {
    *
    * TODO: Bring this into line with the Tucana.NAMESPACE, which may break existing client.
    */
-  private final static String TQL_NS = "http://tucana.org/tql#";
+  private final static String TQL_NS = "http://mulgara.org/tql#";
 
   /**
    * The ITQL interpreter Bean.

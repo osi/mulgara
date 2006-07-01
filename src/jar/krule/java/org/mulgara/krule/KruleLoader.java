@@ -411,7 +411,7 @@ public class KruleLoader implements RuleLoader {
         // get the query data for this rule
         query = interpreter.parseQuery("select $pre $v $t from <" + ruleModel +
             "> where <" + rule.getName() + "> <krule:hasQuery> $q and $q <krule:selectionVariables> $vs and" +
-            " $vs $pre $v and $pre <tucana:prefix> <rdf:_> in <"+ prefixModel +
+            " $vs $pre $v and $pre <mulgara:prefix> <rdf:_> in <"+ prefixModel +
             "> and $v <rdf:type> $t ;");
       } catch (Exception e) {
         throw new QueryException("Invalid query.", e);
@@ -564,7 +564,7 @@ public class KruleLoader implements RuleLoader {
       aliases.put("rdf", new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
       aliases.put("rdfs", new URI("http://www.w3.org/2000/01/rdf-schema#"));
       aliases.put("owl", new URI("http://www.w3.org/2002/07/owl#"));
-      aliases.put("tucana", new URI("http://tucana.org/tucana#"));
+      aliases.put("mulgara", new URI("http://mulgara.org/mulgara#"));
       aliases.put("krule", new URI("http://mulgara.org/owl/krule/#"));
     } catch (URISyntaxException e) {
       /* get those aliases which we could */
@@ -587,7 +587,7 @@ public class KruleLoader implements RuleLoader {
     try {
       // find the names of all prefix models
       query = interpreter.parseQuery("select $model from <" + systemModel +
-          "> where $model <rdf:type> <tucana:PrefixModel> ;");
+          "> where $model <rdf:type> <mulgara:PrefixModel> ;");
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }
@@ -741,8 +741,8 @@ public class KruleLoader implements RuleLoader {
       // find the URI references and the referred URIs.
       query = interpreter.parseQuery("select $c $p $o from <" + ruleModel +
           "> where $c <rdf:type> <krule:SimpleConstraint> and $c $p $o and " +
-          "($p <tucana:is> <krule:hasSubject> or $p <tucana:is> <krule:hasPredicate> or " +
-          "$p <tucana:is> <krule:hasObject> or $p <tucana:is> <krule:hasModel>);");
+          "($p <mulgara:is> <krule:hasSubject> or $p <mulgara:is> <krule:hasPredicate> or " +
+          "$p <mulgara:is> <krule:hasObject> or $p <mulgara:is> <krule:hasModel>);");
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }
@@ -810,7 +810,7 @@ public class KruleLoader implements RuleLoader {
       // find the URI references and the referred URIs.
       query = interpreter.parseQuery("select $constraint $constraint2 $type from <" + ruleModel +
           "> where $constraint <krule:argument> $constraint2 and $constraint <rdf:type> $type and " +
-          "($type <tucana:is> <krule:ConstraintConjunction> or $type <tucana:is> <krule:ConstraintDisjuntion>);");
+          "($type <mulgara:is> <krule:ConstraintConjunction> or $type <mulgara:is> <krule:ConstraintDisjuntion>);");
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }
@@ -922,7 +922,7 @@ public class KruleLoader implements RuleLoader {
       // find the URI references and the referred URIs.
       query = interpreter.parseQuery("select $c $p $arg from <" + ruleModel +
           "> where $c <rdf:type> <krule:TransitiveConstraint> and $c $p $arg and " +
-          "($p <tucana:is> <krule:transitiveArgument> or $p <tucana:is> <krule:anchorArgument>);");
+          "($p <mulgara:is> <krule:transitiveArgument> or $p <mulgara:is> <krule:anchorArgument>);");
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }

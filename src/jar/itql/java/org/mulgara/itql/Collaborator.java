@@ -127,7 +127,7 @@ public class Collaborator {
    * Namespace for document
    */
   private final static String NS =
-      "http://tucana.org/tucana/Annotation#";
+      "http://mulgara.org/mulgara/Annotation#";
 
   /**
    * Email address predicate
@@ -205,7 +205,7 @@ public class Collaborator {
   private final static String CHECK_MODEL =
       "select $model from <" + SERVER + "> " +
       "where $model <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> " +
-      "<http://tucana.org/tucana#Model> ;";
+      "<http://mulgara.org/mulgara#Model> ;";
 
   /**
    * Create model for collaborator

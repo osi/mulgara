@@ -1016,7 +1016,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
         "from <" + dcSchemaURI + "> " +
         "where (($x $y 'Subject') " +
         "and ($x <" + rdfSchemaNamespace + "label> 'Subject')) " +
-        "having $k0 <http://tucana.org/tucana#occurs> '1.0'^^<http://www.w3.org/2001/XMLSchema#double> ;";
+        "having $k0 <http://mulgara.org/mulgara#occurs> '1.0'^^<http://www.w3.org/2001/XMLSchema#double> ;";
 
     // log the query we'll be sending
     log.debug("Executing statement : " + statement);
@@ -1169,7 +1169,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a create statement. Executes the following
    * query: <pre>
-   *   create &lt;tucana://localhost/database&gt; ;
+   *   create &lt;mulgara://localhost/database&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails
@@ -1180,7 +1180,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Starting create test 1");
 
     // create the statement
-    String statement = "create <tucana://localhost/database> ;";
+    String statement = "create <mulgara://localhost/database> ;";
 
     // log the query we'll be sending
     log.debug("Executing statement : " + statement);
@@ -1203,7 +1203,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a create statement. Executes the following
    * query: <pre>
-   *   create &lt;tucana://localhost/database#model&gt; ;
+   *   create &lt;mulgara://localhost/database#model&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails
@@ -1214,7 +1214,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Starting create test 2");
 
     // create the statement
-    String statement = "create <tucana://localhost/database#model> ;";
+    String statement = "create <mulgara://localhost/database#model> ;";
 
     // log the query we'll be sending
     log.debug("Executing statement : " + statement);
@@ -1237,7 +1237,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a drop statement. Executes the following query:
    * <pre>
-   *   drop &lt;tucana://localhost/database#model&gt; ;
+   *   drop &lt;mulgara://localhost/database#model&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails
@@ -1248,7 +1248,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Starting drop test 1");
 
     // create the statement
-    String statement = "drop <tucana://localhost/database> ;";
+    String statement = "drop <mulgara://localhost/database> ;";
 
     // log the query we'll be sending
     log.debug("Executing statement : " + statement);
@@ -1271,7 +1271,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a drop statement. Executes the following query:
    * <pre>
-   *   drop &lt;tucana://localhost/database#model&gt; ;
+   *   drop &lt;mulgara://localhost/database#model&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails
@@ -1282,7 +1282,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Starting drop test 2");
 
     // create the statement
-    String statement = "drop <tucana://localhost/database#model> ;";
+    String statement = "drop <mulgara://localhost/database#model> ;";
 
     // log the query we'll be sending
     log.debug("Executing statement : " + statement);
@@ -1363,7 +1363,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load &lt;http://purl.org/dc/elements/1.1&gt; into
-   *       &lt;tucana://localhost/database#model&gt; ;
+   *       &lt;mulgara://localhost/database#model&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails
@@ -1399,7 +1399,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
-   * &lt;tucana://localhost/database&gt; ; </pre> Expects results:
+   * &lt;mulgara://localhost/database&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -1435,7 +1435,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
-   * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
+   * &lt;mulgara://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -1470,7 +1470,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load as rdf &lt;http://<it>dchost</it> /<it>path</it> /dc.rdfs&gt; into
-   * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
+   * &lt;mulgara://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -1506,7 +1506,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load as rdf &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
-   * &lt;tucana://localhost/database&gt; ; </pre> Expects results:
+   * &lt;mulgara://localhost/database&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -1542,7 +1542,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load as rdf &lt;file:<it>mulgarahome</it> /data/dc.rdfs&gt; into
-   * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
+   * &lt;mulgara://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -1578,7 +1578,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load as serial &lt;http://<it>dchost</it> /<it>path</it> /<it>database
-   * </it>&gt; into &lt;tucana://localhost/database#model&gt; ; </pre> Expects
+   * </it>&gt; into &lt;mulgara://localhost/database#model&gt; ; </pre> Expects
    * results: ParserException
    *
    * @throws Exception if the test fails
@@ -1615,7 +1615,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load as serial &lt;file:<it>mulgarahome</it> /data/<it>database</it> &gt;
-   * into &lt;tucana://localhost/database&gt; ; </pre> Expects results:
+   * into &lt;mulgara://localhost/database&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -1651,7 +1651,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * Test the interpreter using a load statement. Executes the following query:
    * <pre>
    *   load as serial &lt;file:<it>mulgarahome</it> /<it>database</it> &gt; into
-   * &lt;tucana://localhost/database#model&gt; ; </pre> Expects results:
+   * &lt;mulgara://localhost/database#model&gt; ; </pre> Expects results:
    * ParserException
    *
    * @throws Exception if the test fails
@@ -2059,7 +2059,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     // Check that the result is as expected
     assertEquals(expected, interpreter.parseQuery("select $x from <x:m> " +
         "where $x <x:p> 'o' " +
-        "having $x <http://tucana.org/tucana#occurs> " +
+        "having $x <http://mulgara.org/mulgara#occurs> " +
         "'2.0'^^<http://www.w3.org/2001/XMLSchema#double> limit 10 offset 2;"));
   }
 
@@ -2115,7 +2115,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   /**
    * Test the interpreter using a create statement. Executes the following
    * query: <pre>
-   *   create &lt;tucana://localhost/database&gt; ;
+   *   create &lt;mulgara://localhost/database&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails

@@ -224,7 +224,7 @@ public abstract class ConstraintHaving extends AbstractConstraintExpression impl
 
   /**
    * Creates a string representation of these constraints. A typical result
-   * might be <code>[$x &lt;tucana:is&gt; 'bar' $0 ~100]</code> where <code>100</code>
+   * might be <code>[$x &lt;mulgara:is&gt; 'bar' $0 ~100]</code> where <code>100</code>
    * is the number of rows this constraint is estimated to produce during query
    * resolution.
    *

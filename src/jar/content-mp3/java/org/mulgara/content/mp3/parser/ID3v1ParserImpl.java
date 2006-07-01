@@ -58,7 +58,7 @@ import org.mulgara.content.mp3.parser.exception.*;
  * @company Tucana Technologies
  *
  * @copyright &copy; 2004
- *   <A href="http://www.tucanatech.com/">Tucana Technologies</A>
+ *   <A href="http://www.mulgaratech.com/">Tucana Technologies</A>
  *
  * @licence <A href="{@docRoot}/LICENCE">License description</A>
  */

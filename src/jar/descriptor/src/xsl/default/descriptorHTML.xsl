@@ -8,11 +8,11 @@
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
   <!-- ============================================== -->
@@ -37,16 +37,16 @@
       <xsl:otherwise>
         <!-- EXECUTE THE QUERY to get Reflector info  -->
         <xsl:variable name="answer">
-          <tucanaDescriptor:query url="{$url}" model="{$model}">
+          <mulgaraDescriptor:query url="{$url}" model="{$model}">
             <![CDATA[
               select $title $pname $pdesc $ptype from <@@model@@> where
               <@@url@@> <http://purl.org/dc/elements/1.1/title> $title and
-              <@@url@@> <http://tucana.org/descriptor#hasParam> $param and
-              $param <http://tucana.org/descriptor#name> $pname and
-              $param <http://tucana.org/descriptor#description> $pdesc and
-              $param <http://tucana.org/descriptor#type> $ptype;
+              <@@url@@> <http://mulgara.org/descriptor#hasParam> $param and
+              $param <http://mulgara.org/descriptor#name> $pname and
+              $param <http://mulgara.org/descriptor#description> $pdesc and
+              $param <http://mulgara.org/descriptor#type> $ptype;
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
         </xsl:variable>
         <!-- Now apply the templates to the answer -->
         <xsl:apply-templates select="xalan:nodeset($answer)/*"/>
@@ -54,7 +54,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tucanaAnswer:query">
+  <xsl:template match="mulgaraAnswer:query">
     <html>
     <head>
     <title>Descriptor HTML for <xsl:value-of select="$url"/></title>
@@ -68,7 +68,7 @@
 
     <!-- Banner -->
     <div id="banner">
-      <h1>tucana.sourceforge.net</h1>
+      <h1>mulgara.sourceforge.net</h1>
     </div>
 
     <div id="content">
@@ -86,7 +86,7 @@
     <!-- first get the title -->
     <h2>Descriptor URL</h2>
     <a href="{$url}" target="xslsource"><xsl:value-of select="$url"/></a>
-    <h2><xsl:value-of select="tucanaAnswer:solution/tucanaAnswer:title/text()"/></h2>
+    <h2><xsl:value-of select="mulgaraAnswer:solution/mulgaraAnswer:title/text()"/></h2>
 
     <form action="execute">
     <!-- now set up params -->
@@ -108,7 +108,7 @@
       <td>If usage is set the RDF statements about this Descriptor are returned</td>
       <td></td>
     </tr>
-    <xsl:for-each select="tucanaAnswer:solution/tucanaAnswer:pname">
+    <xsl:for-each select="mulgaraAnswer:solution/mulgaraAnswer:pname">
     <tr>
       <td>
         <!-- name -->
@@ -116,11 +116,11 @@
       </td>
       <td>
         <!-- type -->
-        <xsl:value-of select="../tucanaAnswer:ptype/text()"/>
+        <xsl:value-of select="../mulgaraAnswer:ptype/text()"/>
       </td>
       <td>
         <!-- description -->
-        <xsl:value-of select="../tucanaAnswer:pdesc/text()"/>
+        <xsl:value-of select="../mulgaraAnswer:pdesc/text()"/>
       </td>
       <td>
 
@@ -206,7 +206,7 @@ Private Function InvokeDescriptor() As String
     Serializer.startElement "name"
     Serializer.startElement "params"
     ]]>
-<xsl:for-each select="tucanaAnswer:solution/tucanaAnswer:pname">
+<xsl:for-each select="mulgaraAnswer:solution/mulgaraAnswer:pname">
 <xsl:choose>
 <xsl:when test="text()='_self'">
     Serializer.startElement "_self"
@@ -215,7 +215,7 @@ Private Function InvokeDescriptor() As String
 </xsl:when>
 <xsl:otherwise>
     Serializer.startElement "<xsl:value-of select="text()"/>"
-    Serializer.writeString " TODO INSERT <xsl:value-of select="text()"/> VALUE HERE AS A <xsl:value-of select="../tucanaAnswer:ptype/text()"/>"
+    Serializer.writeString " TODO INSERT <xsl:value-of select="text()"/> VALUE HERE AS A <xsl:value-of select="../mulgaraAnswer:ptype/text()"/>"
     Serializer.endElement
 </xsl:otherwise>
 </xsl:choose>
@@ -279,13 +279,13 @@ print SOAP::Lite
       ->encodingStyle('http://xml.apache.org/xml-soap/literalxml')
       ->name("name" => { "params" => { 
       ]]>
-<xsl:for-each select="tucanaAnswer:solution/tucanaAnswer:pname">
+<xsl:for-each select="mulgaraAnswer:solution/mulgaraAnswer:pname">
 <xsl:choose>
 <xsl:when test="text()='_self'">
         _self => "<xsl:value-of select="$url"/>",
 </xsl:when>
 <xsl:otherwise>
-  <xsl:value-of select="'        '"/><xsl:value-of select="text()"/> => "INSERT <xsl:value-of select="text()"/> VALUE HERE AS A <xsl:value-of select="../tucanaAnswer:ptype/text()"/>",
+  <xsl:value-of select="'        '"/><xsl:value-of select="text()"/> => "INSERT <xsl:value-of select="text()"/> VALUE HERE AS A <xsl:value-of select="../mulgaraAnswer:ptype/text()"/>",
 </xsl:otherwise>
 </xsl:choose>
 </xsl:for-each>
@@ -306,7 +306,7 @@ print SOAP::Lite
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
@@ -320,7 +320,7 @@ print SOAP::Lite
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <!-- Descriptor metadata -->
       <desc:Descriptor rdf:about="">

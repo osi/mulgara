@@ -39,10 +39,10 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
     DISABLED BECAUSE IT FAILS - TODO FIX 
     
     public void test1DescriptorServiceInvokeDescriptor() throws Exception {
-        org.tucana.descriptor.DescriptorServiceSoapBindingStub binding;
+        org.mulgara.descriptor.DescriptorServiceSoapBindingStub binding;
         try {
-            binding = (org.tucana.descriptor.DescriptorServiceSoapBindingStub)
-                          new org.tucana.descriptor.DescriptorUtilServiceLocator().getDescriptorService();
+            binding = (org.mulgara.descriptor.DescriptorServiceSoapBindingStub)
+                          new org.mulgara.descriptor.DescriptorUtilServiceLocator().getDescriptorService();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -65,10 +65,10 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
     */
 
     public void test1DescriptorServiceInvokeToString() throws Exception {
-        org.tucana.descriptor.DescriptorServiceSoapBindingStub binding;
+        org.mulgara.descriptor.DescriptorServiceSoapBindingStub binding;
         try {
-            binding = (org.tucana.descriptor.DescriptorServiceSoapBindingStub)
-                          new org.tucana.descriptor.DescriptorUtilServiceLocator().getDescriptorService();
+            binding = (org.mulgara.descriptor.DescriptorServiceSoapBindingStub)
+                          new org.mulgara.descriptor.DescriptorUtilServiceLocator().getDescriptorService();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -86,8 +86,8 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
         value = binding.invokeToString(map);
         System.out.println(this.getClass().getName() + " invoke to string returned:'" + value + "'");
 
-        //String testValue ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<desc:message xmlns:desc=\"http://tucana.org/descriptor#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">helloworld</desc:message>";
-        String testValue ="<desc:message xmlns:desc=\"http://tucana.org/descriptor#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">helloworld</desc:message>";
+        //String testValue ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<desc:message xmlns:desc=\"http://mulgara.org/descriptor#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">helloworld</desc:message>";
+        String testValue ="<desc:message xmlns:desc=\"http://mulgara.org/descriptor#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">helloworld</desc:message>";
 
         // finally, test for helloworld
         assertEquals(testValue, value);

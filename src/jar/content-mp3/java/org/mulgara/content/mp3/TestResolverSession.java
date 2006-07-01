@@ -56,7 +56,7 @@ import org.mulgara.store.tuples.Tuples;
  * @version $Revision: 1.8 $
  * @modified $Date: 2005/01/05 04:57:43 $
  * @maintenanceAuthor $Author: newmana $
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology,
+ * @copyright &copy;2004 <a href="http://www.mulgaratech.com/">Tucana Technology,
  *   Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */

@@ -10,7 +10,7 @@
     <fail>Output failed.  Check badLoadResult.xml for output.</fail>
   </ifEqual>
 
-  <set name="query" value="select $subject count( select $pmid $subject from &lt;@server@#model1&gt; where $pmid &lt;http://tucana.org/tucana/Document#subject&gt; $subject ) from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; $subject order by $subject $k0;"/>
+  <set name="query" value="select $subject count( select $pmid $subject from &lt;@server@#model1&gt; where $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject ) from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject order by $subject $k0;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult1.txt" name="queryResult">
@@ -19,7 +19,7 @@
   </ifEqual>
 
 
-  <set name="query" value="select $subject count( select $pmid $subject from &lt;@server@#model1&gt; where $pmid &lt;http://tucana.org/tucana/Document#subject&gt; $subject ) from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; $subject order by $k0 desc $subject;"/>
+  <set name="query" value="select $subject count( select $pmid $subject from &lt;@server@#model1&gt; where $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject ) from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject order by $k0 desc $subject;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult2.txt" name="queryResult">
@@ -27,7 +27,7 @@
     <fail>Output failed.  Check badQuery2Result.xml for output.</fail>
   </ifEqual>
 
-  <set name="query" value="select $subject from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; $subject order by $subject desc;"/>
+  <set name="query" value="select $subject from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject order by $subject desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult3.txt" name="queryResult">
@@ -36,7 +36,7 @@
   </ifEqual>
 
   <!-- Test #4: Query for the first 3 document subjects -->
-  <set name="query" value="select $subject from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; $subject order by $subject limit 3;"/>
+  <set name="query" value="select $subject from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject order by $subject limit 3;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult4.txt" name="queryResult">
@@ -45,7 +45,7 @@
   </ifEqual>
 
   <!-- Test #5: Query for the third to fifth document subjects -->
-  <set name="query" value="select $subject from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; $subject order by $subject limit 3 offset 2;"/>
+  <set name="query" value="select $subject from &lt;@server@#model1&gt; where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject order by $subject limit 3 offset 2;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult5.txt" name="queryResult">

@@ -86,7 +86,7 @@ public class ITQLCommandUnitTest extends TestCase {
   /**
    * Description of the Field
    */
-  String MODEL_URI = "http://tucana.org/tucana#Model";
+  String MODEL_URI = "http://mulgara.org/mulgara#Model";
 
   /**
    * Description of the Field

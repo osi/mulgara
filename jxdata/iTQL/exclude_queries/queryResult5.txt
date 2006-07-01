@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<answer xmlns="http://tucana.org/tql#"><query><variables><s/><p/><x/><k0/></variables><solution><s resource="urn:test:2"/><p resource="urn:test:hasParent"/><x resource="urn:test:human"/><k0>1.0</k0></solution><solution><s resource="urn:test:5"/><p resource="urn:test:hasParent"/><x resource="urn:test:human"/><k0>1.0</k0></solution></query></answer>
+<answer xmlns="http://mulgara.org/tql#"><query><variables><s/><p/><x/><k0/></variables><solution><s resource="urn:test:2"/><p resource="urn:test:hasParent"/><x resource="urn:test:human"/><k0>1.0</k0></solution><solution><s resource="urn:test:5"/><p resource="urn:test:hasParent"/><x resource="urn:test:human"/><k0>1.0</k0></solution></query></answer>

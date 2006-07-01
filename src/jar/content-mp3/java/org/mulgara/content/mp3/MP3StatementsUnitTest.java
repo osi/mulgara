@@ -814,7 +814,7 @@ public class MP3StatementsUnitTest extends TestCase {
     // Nodes can be in any order.
 //    assertTrue("First statement's object node was not the expected value, " +
 //               "was [" + objectNode.toString() + "]",
-//               objectNode.toString().equals("http://tucana.org/tucana/id3#MP3"));
+//               objectNode.toString().equals("http://mulgara.org/mulgara/id3#MP3"));
   }
 
   /**
@@ -1245,7 +1245,7 @@ public class MP3StatementsUnitTest extends TestCase {
     // Check that we have the right value for the node
 //    assertTrue("First statement's object node was not the expected value, " +
 //               "was [" + objectNode.toString() + "]",
-//               objectNode.toString().equals("http://tucana.org/tucana/id3#MP3"));
+//               objectNode.toString().equals("http://mulgara.org/mulgara/id3#MP3"));
   }
 
   /**

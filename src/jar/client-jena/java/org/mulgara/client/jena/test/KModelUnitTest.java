@@ -53,7 +53,7 @@ import com.hp.hpl.jena.rdql.*;
  *
  * @created 2004-08-16
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.9 $
  *
@@ -95,15 +95,15 @@ public class KModelUnitTest
 
   /** Small dataset used to test model */
   private static final String testStatements =
-      "<http://tucana.org/tucana#test1> <http://tucana.org/tucana#test4> <http://tucana.org/tucana#test2> " +
-      "<http://tucana.org/tucana#test1> <http://tucana.org/tucana#test5> <http://tucana.org/tucana#test3> " +
-      "<http://tucana.org/tucana#test1> <http://tucana.org/tucana#test6> 'Test1' " +
-      "<http://tucana.org/tucana#test2> <http://tucana.org/tucana#test4> <http://tucana.org/tucana#test1> " +
-      "<http://tucana.org/tucana#test2> <http://tucana.org/tucana#test5> <http://tucana.org/tucana#test3> " +
-      "<http://tucana.org/tucana#test2> <http://tucana.org/tucana#test6> 'Test2' " +
-      "<http://tucana.org/tucana#test3> <http://tucana.org/tucana#test4> <http://tucana.org/tucana#test1> " +
-      "<http://tucana.org/tucana#test3> <http://tucana.org/tucana#test5> <http://tucana.org/tucana#test2> " +
-      "<http://tucana.org/tucana#test3> <http://tucana.org/tucana#test6> 'Test3' ";
+      "<http://mulgara.org/mulgara#test1> <http://mulgara.org/mulgara#test4> <http://mulgara.org/mulgara#test2> " +
+      "<http://mulgara.org/mulgara#test1> <http://mulgara.org/mulgara#test5> <http://mulgara.org/mulgara#test3> " +
+      "<http://mulgara.org/mulgara#test1> <http://mulgara.org/mulgara#test6> 'Test1' " +
+      "<http://mulgara.org/mulgara#test2> <http://mulgara.org/mulgara#test4> <http://mulgara.org/mulgara#test1> " +
+      "<http://mulgara.org/mulgara#test2> <http://mulgara.org/mulgara#test5> <http://mulgara.org/mulgara#test3> " +
+      "<http://mulgara.org/mulgara#test2> <http://mulgara.org/mulgara#test6> 'Test2' " +
+      "<http://mulgara.org/mulgara#test3> <http://mulgara.org/mulgara#test4> <http://mulgara.org/mulgara#test1> " +
+      "<http://mulgara.org/mulgara#test3> <http://mulgara.org/mulgara#test5> <http://mulgara.org/mulgara#test2> " +
+      "<http://mulgara.org/mulgara#test3> <http://mulgara.org/mulgara#test6> 'Test3' ";
 
   /**
    * Directory for test files

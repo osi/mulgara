@@ -165,7 +165,7 @@
     <touch file="${tmp.dir}/filesystem/test-model8.rdf"/>
     <touch file="${tmp.dir}/filesystem/test-model9.rdf"/>
     <touch file="${tmp.dir}/filesystem/test-model.txt"/>
-    <touch file="${tmp.dir}/filesystem/tucana.rdfs"/>
+    <touch file="${tmp.dir}/filesystem/mulgara.rdfs"/>
     <touch file="${tmp.dir}/filesystem/w3c-news.rss"/>
     <mkdir dir="${tmp.dir}/filesystem/CVS"/>
     <touch file="${tmp.dir}/filesystem/CVS/Entries"/>

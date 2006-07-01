@@ -11,8 +11,8 @@
 
   <!-- Create the prefix and type models -->
   <set name="query" value="
-      create &lt;@server@#type&gt; &lt;http://tucana.org/tucana#TypeModel&gt; ;
-      create &lt;@server@#prefix&gt; &lt;http://tucana.org/tucana#PrefixModel&gt; ;
+      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeModel&gt; ;
+      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixModel&gt; ;
   "/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
 

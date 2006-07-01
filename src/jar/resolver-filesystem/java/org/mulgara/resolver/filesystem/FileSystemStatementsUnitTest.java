@@ -410,105 +410,105 @@ public class FileSystemStatementsUnitTest extends TestCase {
 
       // Allocate the filesystem node
       dataDirNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://fileserver.com/tucana/filesystem")));
+          "http://fileserver.com/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise bad inclusion node " +
-                "<http://fileserver.com/tucana/filesystem>", localiseException);
+                "<http://fileserver.com/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise bad inclusion node " +
-           "<http://fileserver.com/tucana/filesystem>");
+           "<http://fileserver.com/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create bad inclusion system uri " +
-                "<http://fileserver.com/tucana/filesystem>",
+                "<http://fileserver.com/mulgara/filesystem>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create bad inclusion system uri " +
-           "<http://fileserver.com/tucana/filesystem>");
+           "<http://fileserver.com/mulgara/filesystem>");
     }
 
     try {
 
       // Set the file system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise filesystem node " +
-                "<http://tucana.org/tucana/filesystem>", localiseException);
+                "<http://mulgara.org/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise filesystem node " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create filesystem node uri " +
-                "<http://tucana.org/tucana/filesystem>", uriSyntaxException);
+                "<http://mulgara.org/mulgara/filesystem>", uriSyntaxException);
 
       // Fail the test
       fail("Failed to create filesystem node uri " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     }
 
     try {
 
       // Define the inclusion node
       includeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise inclusion node " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise inclusion node " +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create inclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create inclusion node uri" +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     }
 
     try {
 
       // Define the exclusion node
       excludeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise exclusion node " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise exclusion node " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create exclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create exclusion node uri " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     }
 
     try {
@@ -713,7 +713,7 @@ public class FileSystemStatementsUnitTest extends TestCase {
     assertTrue("First statement's subject node was not the expected value, " +
                "was [" + subjectsNode.toString() + "]",
                subjectsNode.toString().equals(
-        "http://fileserver.com/tucana/filesystem"));
+        "http://fileserver.com/mulgara/filesystem"));
 
     try {
 
@@ -759,7 +759,7 @@ public class FileSystemStatementsUnitTest extends TestCase {
     assertTrue("First statement's object node was not the expected value, " +
                "was [" + objectNode.toString() + "]",
                objectNode.toString().equals(
-        "http://tucana.org/tucana#InvalidFileSystem"));
+        "http://mulgara.org/mulgara#InvalidFileSystem"));
 
   }
 
@@ -806,79 +806,79 @@ public class FileSystemStatementsUnitTest extends TestCase {
 
       // Set the file system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise filesystem node " +
-                "<http://tucana.org/tucana/filesystem>", localiseException);
+                "<http://mulgara.org/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise filesystem node " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create filesystem node uri " +
-                "<http://tucana.org/tucana/filesystem>", uriSyntaxException);
+                "<http://mulgara.org/mulgara/filesystem>", uriSyntaxException);
 
       // Fail the test
       fail("Failed to create filesystem node uri " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     }
 
     try {
 
       // Define the inclusion node
       includeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise inclusion node " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise inclusion node " +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create inclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create inclusion node uri" +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     }
 
     try {
 
       // Define the exclusion node
       excludeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise exclusion node " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise exclusion node " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create exclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create exclusion node uri " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     }
 
     try {
@@ -995,79 +995,79 @@ public class FileSystemStatementsUnitTest extends TestCase {
 
       // Set the file system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise filesystem node " +
-                "<http://tucana.org/tucana/filesystem>", localiseException);
+                "<http://mulgara.org/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise filesystem node " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create filesystem node uri " +
-                "<http://tucana.org/tucana/filesystem>", uriSyntaxException);
+                "<http://mulgara.org/mulgara/filesystem>", uriSyntaxException);
 
       // Fail the test
       fail("Failed to create filesystem node uri " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     }
 
     try {
 
       // Define the inclusion node
       includeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise inclusion node " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise inclusion node " +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create inclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create inclusion node uri" +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     }
 
     try {
 
       // Define the exclusion node
       excludeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise exclusion node " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise exclusion node " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create exclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create exclusion node uri " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     }
 
     try {
@@ -1318,7 +1318,7 @@ public class FileSystemStatementsUnitTest extends TestCase {
     assertTrue("First statement's object node was not the expected value, " +
                "was [" + objectNode.toString() + "]",
                objectNode.toString().equals(
-        "http://tucana.org/tucana#NonExistantFileSystem"));
+        "http://mulgara.org/mulgara#NonExistantFileSystem"));
   }
 
   /**
@@ -1363,79 +1363,79 @@ public class FileSystemStatementsUnitTest extends TestCase {
 
       // Set the file system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise filesystem node " +
-                "<http://tucana.org/tucana/filesystem>", localiseException);
+                "<http://mulgara.org/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise filesystem node " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create filesystem node uri " +
-                "<http://tucana.org/tucana/filesystem>", uriSyntaxException);
+                "<http://mulgara.org/mulgara/filesystem>", uriSyntaxException);
 
       // Fail the test
       fail("Failed to create filesystem node uri " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     }
 
     try {
 
       // Define the inclusion node
       includeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise inclusion node " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise inclusion node " +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create inclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create inclusion node uri" +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     }
 
     try {
 
       // Define the exclusion node
       excludeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise exclusion node " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise exclusion node " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create exclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create exclusion node uri " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     }
 
     try {
@@ -1662,7 +1662,7 @@ public class FileSystemStatementsUnitTest extends TestCase {
     assertTrue("First statement's predicate node was not the expected value, " +
                "was [" + predicateNode.toString() + "]",
                predicateNode.toString().equals(
-        "http://tucana.org/tucana#canWrite"));
+        "http://mulgara.org/mulgara#canWrite"));
 
     try {
 
@@ -1729,79 +1729,79 @@ public class FileSystemStatementsUnitTest extends TestCase {
 
       // Set the file system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise filesystem node " +
-                "<http://tucana.org/tucana/filesystem>", localiseException);
+                "<http://mulgara.org/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise filesystem node " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create filesystem node uri " +
-                "<http://tucana.org/tucana/filesystem>", uriSyntaxException);
+                "<http://mulgara.org/mulgara/filesystem>", uriSyntaxException);
 
       // Fail the test
       fail("Failed to create filesystem node uri " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     }
 
     try {
 
       // Define the inclusion node
       includeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise inclusion node " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise inclusion node " +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create inclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create inclusion node uri" +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     }
 
     try {
 
       // Define the exclusion node
       excludeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise exclusion node " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise exclusion node " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create exclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create exclusion node uri " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     }
 
     try {
@@ -2091,79 +2091,79 @@ public class FileSystemStatementsUnitTest extends TestCase {
 
       // Set the file system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise filesystem node " +
-                "<http://tucana.org/tucana/filesystem>", localiseException);
+                "<http://mulgara.org/mulgara/filesystem>", localiseException);
 
       // Fail the test
       fail("Failed to localise filesystem node " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create filesystem node uri " +
-                "<http://tucana.org/tucana/filesystem>", uriSyntaxException);
+                "<http://mulgara.org/mulgara/filesystem>", uriSyntaxException);
 
       // Fail the test
       fail("Failed to create filesystem node uri " +
-           "<http://tucana.org/tucana/filesystem>");
+           "<http://mulgara.org/mulgara/filesystem>");
     }
 
     try {
 
       // Define the inclusion node
       includeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise inclusion node " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise inclusion node " +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create inclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Include>",
+                "<http://mulgara.org/mulgara/filesystem#Include>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create inclusion node uri" +
-           "<http://tucana.org/tucana/filesystem#Include>");
+           "<http://mulgara.org/mulgara/filesystem#Include>");
     }
 
     try {
 
       // Define the exclusion node
       excludeNode = resolverSession.localize(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (LocalizeException localiseException) {
 
       // Log the error
       log.error("Failed to localise exclusion node " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 localiseException);
 
       // Fail the test
       fail("Failed to localise exclusion node " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     } catch (URISyntaxException uriSyntaxException) {
 
       // Log the error
       log.error("Failed to create exclusion node uri " +
-                "<http://tucana.org/tucana/filesystem#Exclude>",
+                "<http://mulgara.org/mulgara/filesystem#Exclude>",
                 uriSyntaxException);
 
       // Fail the test
       fail("Failed to create exclusion node uri " +
-           "<http://tucana.org/tucana/filesystem#Exclude>");
+           "<http://mulgara.org/mulgara/filesystem#Exclude>");
     }
 
     try {

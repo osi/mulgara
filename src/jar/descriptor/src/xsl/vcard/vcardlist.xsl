@@ -9,11 +9,11 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
   <!-- ============================================== -->
@@ -42,12 +42,12 @@
         <!-- store query answer in a variable called answer -->
         <xsl:variable name="answer">
           <!-- Query for list of VCards in server -->
-          <tucanaDescriptor:query model="{$model}">
+          <mulgaraDescriptor:query model="{$model}">
             <![CDATA[
             select $vcard from <@@model@@> where $vcard <http://www.w3.org/2001/vcard-rdf/3.0#FN> $o;
               ;
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
         </xsl:variable>
 
         <!-- Now apply the templates to the answer -->
@@ -67,7 +67,7 @@
   <!-- #################################################################### -->
   <!-- converts models into a HTML List Element  -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:answer">
+  <xsl:template match="mulgaraAnswer:answer">
     <desc:vcards>
     <xsl:apply-templates/>
   </desc:vcards>
@@ -78,8 +78,8 @@
   <!-- #################################################################### -->
   <!-- converts solution into a HTML List Element  -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:solution">
-    <desc:vcard resource="{tucanaAnswer:vcard/@resource}">
+  <xsl:template match="mulgaraAnswer:solution">
+    <desc:vcard resource="{mulgaraAnswer:vcard/@resource}">
     </desc:vcard>
   </xsl:template>
 
@@ -87,7 +87,7 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
@@ -101,7 +101,7 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <desc:Descriptor rdf:about="">
 
@@ -120,7 +120,7 @@
         
         <!-- Parameter 1 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>model</desc:name>
 <desc:type>String</desc:type>
@@ -132,7 +132,7 @@
         <!-- MIME TYPE -->
 
         
-<desc:hasMimetype xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+<desc:hasMimetype xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
 <desc:Mimetype>
 <desc:mime-major>text</desc:mime-major>
 <desc:mime-minor>xml</desc:mime-minor>

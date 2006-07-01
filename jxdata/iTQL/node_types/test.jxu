@@ -3,9 +3,9 @@
 
   <!-- Configure the data type model -->
   <set name="query" value="
-      create &lt;@server@#type&gt; &lt;http://tucana.org/tucana#TypeModel&gt; ;
+      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeModel&gt; ;
       drop &lt;@server@#type&gt; ;
-      create &lt;@server@#type&gt; &lt;http://tucana.org/tucana#TypeModel&gt; ;
+      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeModel&gt; ;
   "/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
 
@@ -29,7 +29,7 @@
   value="select $s $o
       from &lt;@server@#camera&gt;
       where $s &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; $o
-        and $s &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://tucana.org/tucana#uriReference&gt; in &lt;@server@#type&gt;
+        and $s &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://mulgara.org/mulgara#uriReference&gt; in &lt;@server@#type&gt;
       order by $s $o ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -89,7 +89,7 @@
   value="select $o
       from &lt;@server@#camera&gt;
       where $s $p $o
-          and ($o &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://tucana.org/tucana#uriReference&gt; in &lt;@server@#type&gt;
+          and ($o &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://mulgara.org/mulgara#uriReference&gt; in &lt;@server@#type&gt;
           or $o &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www.w3.org/2000/01/rdf-schema#Literal&gt; in &lt;@server@#type&gt;)
       order by $o;"/>
 

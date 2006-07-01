@@ -49,7 +49,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -71,7 +71,7 @@ public interface FileSystemModel extends Model {
       Mulgara.NAMESPACE + "extension"));
 
   /** Namespace used in TKS filesystem domain */
-  public final static String TKS_FS = "http://tucana.org/tucana/filesystem#";
+  public final static String TKS_FS = "http://mulgara.org/mulgara/filesystem#";
 
   /** Used to include directories */
   public final static String TKS_INCLUDE = " <" + TKS_FS + "Include>";

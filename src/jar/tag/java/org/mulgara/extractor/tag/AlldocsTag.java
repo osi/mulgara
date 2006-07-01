@@ -90,37 +90,37 @@ public class AlldocsTag extends TagSupport {
    * the Mulgara document property
    */
   protected final static String MULGARA_DOCUMENT_PROPERTY =
-    "http://tucana.org/tucana/Document#Document";
+    "http://mulgara.org/mulgara/Document#Document";
 
   /**
    * the TMex HTML title property
    */
   protected final static String MULGARA_HTMLTITLE_PROPERTY =
-    "http://tucana.org/tucana/tool/HtmlExtractor#title";
+    "http://mulgara.org/mulgara/tool/HtmlExtractor#title";
 
   /**
    * the TMex HTML property
    */
   protected final static String MULGARA_TITLE_PROPERTY =
-    "http://tucana.org/tucana/Document#title";
+    "http://mulgara.org/mulgara/Document#title";
 
   /**
    * the TMex has HTML property
    */
   protected final static String MULGARA_HASHHTML_PROPERTY =
-    "http://tucana.org/tucana/Document#hasHtml";
+    "http://mulgara.org/mulgara/Document#hasHtml";
 
   /**
    * the TMex processed property
    */
   protected final static String MULGARA_PROCESSED_PROPERTY =
-    "http://tucana.org/tucana/Document#processed";
+    "http://mulgara.org/mulgara/Document#processed";
 
   /**
    * the Mulgara generic String property
    */
   protected final static String TUCANA_STRING_PROPERTY =
-    "http://tucana.org/tucana/generic#string";
+    "http://mulgara.org/mulgara/generic#string";
 
   /**
    * the RDF type property

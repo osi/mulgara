@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<answer xmlns="http://tucana.org/tql#"><query><variables><label/></variables><solution><label>December</label></solution><solution><label>November</label></solution><solution><label>October</label></solution></query></answer>
+<answer xmlns="http://mulgara.org/tql#"><query><variables><label/></variables><solution><label>December</label></solution><solution><label>November</label></solution><solution><label>October</label></solution></query></answer>

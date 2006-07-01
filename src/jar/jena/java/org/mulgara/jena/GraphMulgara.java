@@ -679,10 +679,10 @@ public class GraphMulgara extends GraphBase {
 
   public String toString() {
     if (!closed) {
-      return toString("Graph tucana: ", this);
+      return toString("Graph mulgara: ", this);
     }
     else {
-      return "Graph tucana: closed";
+      return "Graph mulgara: closed";
     }
   }
 }

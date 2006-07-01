@@ -47,7 +47,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -68,7 +68,7 @@ public interface Id3Tag {
   public final static String NEWLINE = System.getProperty("line.separator");
 
   /** The Namespace used for id3 properties */
-  public static final String NAMESPACE = "http://tucana.org/tucana/id3#";
+  public static final String NAMESPACE = "http://mulgara.org/mulgara/id3#";
 
   /** Used in queries to represent an Mp3's URI */
   public final static String ID3_URI = " <" + Id3Tag.NAMESPACE + "uri>";

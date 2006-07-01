@@ -55,8 +55,8 @@
       where walk ($s $p $o and $s2 $p $o)
       order by $o)      
     from &lt;@server@#model1&gt; 
-    where $s &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:10&gt;
-    and $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt;
+    where $s &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:10&gt;
+    and $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt;
     order by $s $p;"/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult3.txt" name="queryResult">
@@ -73,7 +73,7 @@
     from &lt;@server@#model1&gt; 
     where &lt;urn:test:10&gt; $p $o
     and $s $p $o
-    and $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt;
+    and $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt;
     order by $s $p;"/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult4.txt" name="queryResult">
@@ -89,8 +89,8 @@
       where walk ($s $p $o and $s2 $p $o)
       order by $o)      
     from &lt;@server@#model1&gt; 
-    where $s &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:10&gt;
-    and $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt;
+    where $s &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:10&gt;
+    and $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt;
     order by $s $p;"/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult5.txt" name="queryResult">
@@ -107,7 +107,7 @@
     from &lt;@server@#model1&gt; 
     where &lt;urn:test:10&gt; $p $o
     and $s $p $o
-    and $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt;
+    and $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt;
     order by $s $p;"/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult6.txt" name="queryResult">

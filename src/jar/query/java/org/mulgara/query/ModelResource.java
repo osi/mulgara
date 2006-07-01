@@ -163,7 +163,7 @@ public class ModelResource implements Model {
   public ConstraintExpression toConstraintExpression(Constraint constraint,
       // (s p o m)
       Transformation transformation, Value modelProperty,
-      // tucana:model
+      // mulgara:model
       Value systemModel,
       // #SYSTEM
       VariableFactory variableFactory) throws TransformationException {
@@ -174,7 +174,7 @@ public class ModelResource implements Model {
     // Generate the anonymous join variable $group
     Variable group = variableFactory.newVariable();
 
-    // Return (s p o m) or ((s p o $group) and ($group tucana:model m #SYSTEM))
+    // Return (s p o m) or ((s p o $group) and ($group mulgara:model m #SYSTEM))
     return new ConstraintDisjunction(new ConstraintImpl(constraint.getElement(0),
         constraint.getElement(1), constraint.getElement(2), model),
         new ConstraintConjunction(new ConstraintImpl(constraint.getElement(0),

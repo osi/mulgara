@@ -118,7 +118,7 @@
       where trans($s $p $o)
       order by $s $o)
     from &lt;@server@#model1&gt; 
-    where $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt; ;" />
+    where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result9.txt" name="queryResult">
     <save name="queryResult" file="badResult9.xml"/>
@@ -133,7 +133,7 @@
       where trans($s $p &lt;urn:test:3&gt; and $s $p $o)
       order by $s $o)
     from &lt;@server@#model1&gt; 
-    where $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt; ;" />
+    where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result10.txt" name="queryResult">
     <save name="queryResult" file="badResult10.xml"/>
@@ -147,8 +147,8 @@
       where trans($s $p &lt;urn:test:3&gt; and $s $p $o)
       order by $s $o)
     from &lt;@server@#model1&gt; 
-    where $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt; 
-    and $o &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:3&gt; ;" />
+    where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; 
+    and $o &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:3&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result11.txt" name="queryResult">
     <save name="queryResult" file="badResult11.xml"/>
@@ -162,8 +162,8 @@
       where trans($s $p $o and $s2 $p $o)
       order by $s2 $o)
     from &lt;@server@#model1&gt; 
-    where $p &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:property&gt; 
-    and $s &lt;http://tucana.org/tucana#is&gt; &lt;urn:test:3&gt; ;" />
+    where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; 
+    and $s &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:3&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result12.txt" name="queryResult">
     <save name="queryResult" file="badResult12.xml"/>

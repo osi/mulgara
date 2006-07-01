@@ -71,7 +71,7 @@ public final class TempDir {
     if (tempDir == null) {
       // Initialize tempDir.
       File dir = new File(
-          systemTempDir, "tucana_" + System.getProperty("user.name")
+          systemTempDir, "mulgara_" + System.getProperty("user.name")
       );
       dir.mkdirs();
       if (dir.isDirectory()) {
@@ -110,7 +110,7 @@ public final class TempDir {
 
 
   /**
-   * Creates an empty file in the current tucana temp directory.
+   * Creates an empty file in the current mulgara temp directory.
    */
   public static synchronized File createTempFile(
       String prefix, String suffix

@@ -119,7 +119,7 @@ public class FileSystemVocab {
     dictionary = new HashMap();
 
     // Create a base URI
-    String baseURI = "http://tucana.org/tucana#";
+    String baseURI = "http://mulgara.org/mulgara#";
 
     try {
 

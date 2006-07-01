@@ -578,7 +578,7 @@
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
           includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
-      <zipfileset file="${obj.dir}/tucana-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>
@@ -1859,7 +1859,7 @@
       <zipfileset dir="${obj.dir}/war" prefix="webapps"
           includes="webservices.war"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda-core*.jar"/>
-      <zipfileset file="${obj.dir}/tucana-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data"
@@ -2007,7 +2007,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
       <zipfileset dir="${bin.dir}" prefix="webapps" includes="${webui.war}"/>
       <zipfileset dir="${obj.dir}/war" prefix="webapps" includes="webservices.war"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda-core*.jar"/>
-      <zipfileset file="${obj.dir}/tucana-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs,**/*.rss,**/*.n3"/>

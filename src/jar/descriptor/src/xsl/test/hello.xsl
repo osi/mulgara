@@ -8,11 +8,11 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
 <xsl:output omit-xml-declaration="yes"/>
@@ -46,7 +46,7 @@
              parameter
              -->
         <xsl:variable name="answer">
-          <tucanaDescriptor:descriptor
+          <mulgaraDescriptor:descriptor
             _target="world.xsl"
             _source="{$_self}"
             model="{$model}"
@@ -70,7 +70,7 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
@@ -84,7 +84,7 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <desc:Descriptor rdf:about="">
 
@@ -103,7 +103,7 @@
         
         <!-- Parameter 1 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
           <desc:Param>
           <desc:name>firstWord</desc:name>
           <desc:type>String</desc:type>
@@ -114,7 +114,7 @@
         
         <!-- Parameter 2 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
           <desc:Param>
           <desc:name>secondWord</desc:name>
           <desc:type>String</desc:type>
@@ -125,7 +125,7 @@
 
         <!-- Parameter 3 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
           <desc:Param>
           <desc:name>model</desc:name>
           <desc:type>String</desc:type>
@@ -135,7 +135,7 @@
           </desc:hasParam> 
 
         <!-- MIME TYPE -->
-      <desc:hasMimetype xmlns:desc="http://tucana.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
+      <desc:hasMimetype xmlns:desc="http://mulgara.org/descriptor#" xmlns="http://www.w3.org/1999/xhtml">
       <desc:Mimetype>
       <desc:mime-major>text</desc:mime-major>
       <desc:mime-minor>xml</desc:mime-minor>

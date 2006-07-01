@@ -3,9 +3,9 @@
 
   <!-- Configure the prefix model -->
   <set name="query" value="
-      create &lt;@server@#prefix&gt; &lt;http://tucana.org/tucana#PrefixModel&gt; ;
+      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixModel&gt; ;
       drop &lt;@server@#prefix&gt; ;
-      create &lt;@server@#prefix&gt; &lt;http://tucana.org/tucana#PrefixModel&gt; ;
+      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixModel&gt; ;
   "/>
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
 
@@ -29,7 +29,7 @@
   value="select $p
       from &lt;@server@#sequences&gt;
       where $s $p $o 
-      and $p &lt;http://tucana.org/tucana#prefix&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#_&gt;
+      and $p &lt;http://mulgara.org/mulgara#prefix&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#_&gt;
           in &lt;@server@#prefix&gt;
       order by $p ;"/>
 
@@ -45,7 +45,7 @@
     where $item &lt;urn:test:property&gt; $seq
       and $seq &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq&gt;
       and $seq $p $o
-      and $p &lt;http://tucana.org/tucana#prefix&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#_&gt; in &lt;@server@#prefix&gt;
+      and $p &lt;http://mulgara.org/mulgara#prefix&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#_&gt; in &lt;@server@#prefix&gt;
       order by $item $o; "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -59,7 +59,7 @@
   value="select $p
       from &lt;@server@#sequences&gt;
       where $s $p $o 
-      and $p &lt;http://tucana.org/tucana#prefix&gt; 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_'
+      and $p &lt;http://mulgara.org/mulgara#prefix&gt; 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_'
           in &lt;@server@#prefix&gt;
       order by $p ;"/>
 

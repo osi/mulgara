@@ -205,8 +205,8 @@
   <target name="config-database">
 
     <filter token="database-class" value="org.mulgara.resolver.Database"/>
-
-    <copy tofile="${obj.dir}/tucana-config.xml" filtering="yes">
+	<!-- we no longer need to worry about tucana-config.xml but I am leaving this in for now -B.S -->
+    <copy tofile="${obj.dir}/mulgara-config.xml" filtering="yes">
       <fileset file="${conf.dir}/mulgara-config.xml"/>
     </copy>
 

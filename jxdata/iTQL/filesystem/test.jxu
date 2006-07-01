@@ -3,16 +3,16 @@
 
   <!-- Configure the filesystem model -->
   <set name="query" value="
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
-    alias &lt;http://tucana.org/tucana#&gt; as exp ;
-    insert $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem&gt;
-           $x &lt;http://tucana.org/tucana/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/mp3&gt;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
+    alias &lt;http://mulgara.org/mulgara#&gt; as exp ;
+    insert $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem&gt;
+           $x &lt;http://mulgara.org/mulgara/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/mp3&gt;
     into &lt;@server@?def#fsmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
     drop &lt;@server@#xsdmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
   "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -25,7 +25,7 @@
   <set name="query"
   value="select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; $object
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; $object
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -38,7 +38,7 @@
   <set name="query"
   value="select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#extension&gt; 'mp3' and
+         where $subject &lt;http://mulgara.org/mulgara#extension&gt; 'mp3' and
                $subject $predicate $object
          order by $object desc;"/>
 
@@ -52,8 +52,8 @@
   <set name="query"
   value="select $name
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#extension&gt; 'txt' and
-               $subject &lt;http://tucana.org/tucana#filename&gt; $name
+         where $subject &lt;http://mulgara.org/mulgara#extension&gt; 'txt' and
+               $subject &lt;http://mulgara.org/mulgara#filename&gt; $name
          order by $name desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -68,9 +68,9 @@
   <!--set name="query"
   value="select $name
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#modified&gt; $object and
-               $object &lt;http://tucana.org/tucana#after&gt; '2004-01-01T00:00:00'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in &lt;@server@#xsdmodel&gt; and
-               $subject &lt;http://tucana.org/tucana#filename&gt; $name
+         where $subject &lt;http://mulgara.org/mulgara#modified&gt; $object and
+               $object &lt;http://mulgara.org/mulgara#after&gt; '2004-01-01T00:00:00'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in &lt;@server@#xsdmodel&gt; and
+               $subject &lt;http://mulgara.org/mulgara#filename&gt; $name
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -83,8 +83,8 @@
   <set name="query"
    value="select $name
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#size&gt; '71247' and
-               $subject &lt;http://tucana.org/tucana#filename&gt; $name
+         where $subject &lt;http://mulgara.org/mulgara#size&gt; '71247' and
+               $subject &lt;http://mulgara.org/mulgara#filename&gt; $name
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -97,8 +97,8 @@
   <set name="query"
   value="select $name
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; 'ical.rdf' and
-               $subject &lt;http://tucana.org/tucana#filename&gt; $name
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; 'ical.rdf' and
+               $subject &lt;http://mulgara.org/mulgara#filename&gt; $name
          order by $name desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -115,8 +115,8 @@
   <set name="query"
   value="
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
-    insert $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/&gt;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
+    insert $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/&gt;
     into &lt;@server@?def#fsmodel&gt; ;
     select $subject $predicate $object
          from &lt;@server@#fsmodel&gt;
@@ -129,12 +129,12 @@
   <set name="query"
   value="
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
-    insert $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/ical.rdf&gt;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
+    insert $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/ical.rdf&gt;
     into &lt;@server@?def#fsmodel&gt; ;
     select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; $object
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; $object
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -147,13 +147,13 @@
   <set name="query"
   value="
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
-    insert $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/ical.rdf&gt;
-           $x &lt;http://tucana.org/tucana/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/ical.rdf&gt;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
+    insert $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/ical.rdf&gt;
+           $x &lt;http://mulgara.org/mulgara/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/ical.rdf&gt;
     into &lt;@server@?def#fsmodel&gt; ;
     select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; $object
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; $object
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -166,10 +166,10 @@
   <set name="query"
   value="
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
     select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; $object
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; $object
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -182,13 +182,13 @@
   <set name="query"
   value="
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
-    insert $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/mp3&gt;
-           $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/mbox&gt;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
+    insert $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/mp3&gt;
+           $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/mbox&gt;
     into &lt;@server@?def#fsmodel&gt; ;
     select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; $object
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; $object
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -201,14 +201,14 @@
   <set name="query"
   value="
     drop &lt;@server@#fsmodel&gt; ;
-    create &lt;@server@#fsmodel&gt; &lt;http://tucana.org/tucana#FileSystemModel&gt; ;
-    insert $x &lt;http://tucana.org/tucana/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/mbox&gt;
-           $x &lt;http://tucana.org/tucana/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/mbox/Invalid&gt;
-           $x &lt;http://tucana.org/tucana/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/mbox/Empty&gt;
+    create &lt;@server@#fsmodel&gt; &lt;http://mulgara.org/mulgara#FileSystemModel&gt; ;
+    insert $x &lt;http://mulgara.org/mulgara/filesystem#Include&gt; &lt;@baseuri@/tmp/filesystem/mbox&gt;
+           $x &lt;http://mulgara.org/mulgara/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/mbox/Invalid&gt;
+           $x &lt;http://mulgara.org/mulgara/filesystem#Exclude&gt; &lt;@baseuri@/tmp/filesystem/mbox/Empty&gt;
     into &lt;@server@?def#fsmodel&gt; ;
     select $object
          from &lt;@server@#fsmodel&gt;
-         where $subject &lt;http://tucana.org/tucana#filename&gt; $object
+         where $subject &lt;http://mulgara.org/mulgara#filename&gt; $object
          order by $object desc;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />

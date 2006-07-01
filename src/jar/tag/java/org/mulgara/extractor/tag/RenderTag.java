@@ -73,49 +73,49 @@ public class RenderTag extends BodyTagSupport {
    * the class
    */
   protected final static String TMEX_CLASS_DOCUMENT =
-    "http://tucana.org/tucana/Document#Document";
+    "http://mulgara.org/mulgara/Document#Document";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_DATE =
-    "http://tucana.org/tucana/tool/DateExtractor#Date";
+    "http://mulgara.org/mulgara/tool/DateExtractor#Date";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_GENERICFEATURE =
-    "http://tucana.org/tucana/tool/FeatureExtractor#GenericFeature";
+    "http://mulgara.org/mulgara/tool/FeatureExtractor#GenericFeature";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_PERSON =
-    "http://tucana.org/tucana/tool/FeatureExtractor#Person";
+    "http://mulgara.org/mulgara/tool/FeatureExtractor#Person";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_COMPANY =
-    "http://tucana.org/tucana/tool/FeatureExtractor#Company";
+    "http://mulgara.org/mulgara/tool/FeatureExtractor#Company";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_GEOGRAPHIC =
-    "http://tucana.org/tucana/tool/FeatureExtractor#Geographic";
+    "http://mulgara.org/mulgara/tool/FeatureExtractor#Geographic";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_HTML =
-    "http://tucana.org/tucana/tool/HtmlExtractor#Html";
+    "http://mulgara.org/mulgara/tool/HtmlExtractor#Html";
 
   /**
    * the class
    */
   protected final static String TMEX_CLASS_SUMMARY =
-    "http://tucana.org/tucana/tool/SummaryExtractor#Summary";
+    "http://mulgara.org/mulgara/tool/SummaryExtractor#Summary";
 
   //
   // Constants

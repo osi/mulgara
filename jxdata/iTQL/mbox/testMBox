@@ -2,16 +2,16 @@ From - Fri Aug 27 13:47:56 2004
 X-Mozilla-Status: 0001
 X-Mozilla-Status2: 00000000
 Return-Path: <alford_py@mvv.de>
-X-Original-To: mludlow@mail-bne.tucanatech.com
-Delivered-To: mludlow@mail-bne.tucanatech.com
-Received: from ns1.tucanatech.com (ns1.tucanatech.com [205.177.124.123])
-	by mail-bne.tucanatech.com (Postfix) with ESMTP id B92701C006
-	for <mludlow@mail-bne.tucanatech.com>; Tue, 24 Aug 2004 21:22:40 +1000 (EST)
-Received: by ns1.tucanatech.com (Postfix)
+X-Original-To: mludlow@mail-bne.mulgaratech.com
+Delivered-To: mludlow@mail-bne.mulgaratech.com
+Received: from ns1.mulgaratech.com (ns1.mulgaratech.com [205.177.124.123])
+	by mail-bne.mulgaratech.com (Postfix) with ESMTP id B92701C006
+	for <mludlow@mail-bne.mulgaratech.com>; Tue, 24 Aug 2004 21:22:40 +1000 (EST)
+Received: by ns1.mulgaratech.com (Postfix)
 	id 29D5D32C96; Tue, 24 Aug 2004 07:26:29 -0400 (EDT)
 Delivered-To: mludlow@pisoftware.com
 Received: from csaa.fr (unknown [220.84.203.166])
-	by ns1.tucanatech.com (Postfix) with SMTP id 705F132C94
+	by ns1.mulgaratech.com (Postfix) with SMTP id 705F132C94
 	for <mludlow@pisoftware.com>; Tue, 24 Aug 2004 07:25:56 -0400 (EDT)
 Received: from 80.42.133.136 by smtp.mvv.de;
 	Tue, 24 Aug 2004 05:14:48 +0000
@@ -26,7 +26,7 @@ Content-Type: text/plain;
 Content-Transfer-Encoding: 8bit
 X-Spam-Flag: YES
 X-Spam-Checker-Version: SpamAssassin 2.63 (2004-01-11) on 
-	mail-bne.tucanatech.com
+	mail-bne.mulgaratech.com
 X-Spam-Level: ***********
 X-Spam-Status: Yes, hits=11.9 required=5.0 tests=ALL_NATURAL,BAYES_99,
 	LOSE_POUNDS,RCVD_IN_BL_SPAMCOP_NET autolearn=no version=2.63

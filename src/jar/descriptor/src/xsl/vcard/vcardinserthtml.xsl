@@ -8,11 +8,11 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
   <!-- ============================================== -->
@@ -52,7 +52,7 @@
       <xsl:choose>
         <xsl:when test="($model and $uri and $fullName and $email)">
 
-         <tucanaDescriptor:descriptor
+         <mulgaraDescriptor:descriptor
             _target="vcardinsert.xsl" 
             _source="{$_self}"
             model="{$model}"
@@ -171,7 +171,7 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for Kowari queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug"
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug"
  functions="test">
     <lxslt:script lang="javaclass"
  src="xalan://org.kowari.descriptor.DescriptorElement"/>
@@ -187,7 +187,7 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <desc:Descriptor rdf:about="">
 
@@ -206,7 +206,7 @@
 
         <!-- Parameter 1 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>model</desc:name>
@@ -219,7 +219,7 @@
    <!-- Parameter 2 -->
 
 
-<desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+<desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>uri</desc:name>
@@ -232,7 +232,7 @@
 
 <!-- Parameter 3 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>fullName</desc:name>
@@ -245,7 +245,7 @@
 
 <!-- Parameter 4 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>title</desc:name>
@@ -257,7 +257,7 @@
 
 <!-- Parameter 5 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>role</desc:name>
@@ -269,7 +269,7 @@
 
 <!-- Parameter 6 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>street</desc:name>
@@ -282,7 +282,7 @@
 
 <!-- Parameter 7 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>locality</desc:name>
@@ -294,7 +294,7 @@
 
 <!-- Parameter 8 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>pcode</desc:name>
@@ -307,7 +307,7 @@
 
 <!-- Parameter 9 -->
 
-        <desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+        <desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>country</desc:name>
@@ -320,7 +320,7 @@
 <!-- Parameter 10 -->
 
 
-<desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+<desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>email</desc:name>
@@ -332,7 +332,7 @@
 
 <!-- Parameter 11 -->
 
-<desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+<desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>note</desc:name>
@@ -345,7 +345,7 @@
 
 <!-- Parameter 12 -->
 
-<desc:hasParam xmlns:desc="http://tucana.org/descriptor#"
+<desc:hasParam xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Param>
 <desc:name>telephone</desc:name>
@@ -358,7 +358,7 @@
 <!-- MIME TYPE -->
 
 
-<desc:hasMimetype xmlns:desc="http://tucana.org/descriptor#"
+<desc:hasMimetype xmlns:desc="http://mulgara.org/descriptor#"
  xmlns="http://www.w3.org/1999/xhtml">
 <desc:Mimetype>
 <desc:mime-major>text</desc:mime-major>

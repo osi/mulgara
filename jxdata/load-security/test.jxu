@@ -3,7 +3,7 @@
   <!-- load the Kowari security schema -->
   <set name="query"
     value="load &lt;@baseuri@/jxtest/security/security-tks.rdf&gt; into &lt;@server@#_&gt;;
-           load &lt;@baseuri@/data/tucana.rdfs&gt; into &lt;@server@#_&gt; ;"/>
+           load &lt;@baseuri@/data/mulgara.rdfs&gt; into &lt;@server@#_&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result1.txt" name="queryResult">

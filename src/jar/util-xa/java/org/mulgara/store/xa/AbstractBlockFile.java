@@ -75,7 +75,7 @@ public abstract class AbstractBlockFile implements BlockFile {
 
   /** Determine the byte order of this machine, and select an ordering to use. */
   static {
-    String useByteOrderProp = System.getProperty("tucana.xa.useByteOrder");
+    String useByteOrderProp = System.getProperty("mulgara.xa.useByteOrder");
     ByteOrder bo = ByteOrder.nativeOrder();
 
     // Default.
@@ -88,7 +88,7 @@ public abstract class AbstractBlockFile implements BlockFile {
         bo = ByteOrder.LITTLE_ENDIAN;
       } else {
         logger.warn(
-            "Invalid value for property tucana.xa.useByteOrder: " +
+            "Invalid value for property mulgara.xa.useByteOrder: " +
             useByteOrderProp
         );
       }
@@ -190,7 +190,7 @@ public abstract class AbstractBlockFile implements BlockFile {
   public static BlockFile openBlockFile(
       File file, int blockSize, IOType ioType
   ) throws IOException {
-    String forceIOTypeProp = System.getProperty("tucana.xa.forceIOType");
+    String forceIOTypeProp = System.getProperty("mulgara.xa.forceIOType");
 
     if (forceIOTypeProp != null) {
       if (forceIOTypeProp.equalsIgnoreCase("mapped")) {
@@ -199,7 +199,7 @@ public abstract class AbstractBlockFile implements BlockFile {
         ioType = IOType.EXPLICIT;
       } else {
         logger.warn(
-            "Invalid value for property tucana.xa.forceIOType: " +
+            "Invalid value for property mulgara.xa.forceIOType: " +
             forceIOTypeProp
         );
       }

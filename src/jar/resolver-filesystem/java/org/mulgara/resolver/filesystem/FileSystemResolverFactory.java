@@ -142,21 +142,21 @@ public class FileSystemResolverFactory implements ResolverFactory {
 
       // Set the file system type node
       fileSystemNode = initializer.preallocate(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem")));
+          "http://mulgara.org/mulgara/filesystem")));
 
       // Define the inclusion node
       includeNode = initializer.preallocate(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Include")));
+          "http://mulgara.org/mulgara/filesystem#Include")));
 
       // Define the exclusion node
       excludeNode = initializer.preallocate(new URIReferenceImpl(new URI(
-          "http://tucana.org/tucana/filesystem#Exclude")));
+          "http://mulgara.org/mulgara/filesystem#Exclude")));
     } catch (URISyntaxException eu) {
 
       throw new InitializerException("Attempt to create invalid uri", eu);
     }
 
-    // Claim tucana:FileSystemModel
+    // Claim mulgara:FileSystemModel
     initializer.addModelType(modelTypeURI, this);
 
     if (logger.isDebugEnabled()) {

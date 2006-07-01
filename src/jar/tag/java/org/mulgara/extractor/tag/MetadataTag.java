@@ -126,55 +126,55 @@ public class MetadataTag extends TagSupport {
    * the title property
    */
   private final static String TITLE_PROPERTY =
-    "http://tucana.org/tucana/Document#title";
+    "http://mulgara.org/mulgara/Document#title";
 
   /**
    * the HTML title property
    */
   private final static String HTML_TITLE_PROPERTY =
-    "http://tucana.org/tucana/tool/HtmlExtractor#title";
+    "http://mulgara.org/mulgara/tool/HtmlExtractor#title";
 
   /**
    * the has HTML property
    */
   private final static String HAS_HTML_PROPERTY =
-    "http://tucana.org/tucana/Document#hasHtml";
+    "http://mulgara.org/mulgara/Document#hasHtml";
 
   /**
    * the date property
    */
   private final static String DATE_PROPERTY =
-    "http://tucana.org/tucana/Document#containsDate";
+    "http://mulgara.org/mulgara/Document#containsDate";
 
   /**
    * the processed property
    */
   private final static String PROCESSED_PROPERTY =
-    "http://tucana.org/tucana/Document#processed";
+    "http://mulgara.org/mulgara/Document#processed";
 
   /**
    * the company property
    */
   private final static String COMPANY_PROPERTY =
-    "http://tucana.org/tucana/Document#hasCompanyName";
+    "http://mulgara.org/mulgara/Document#hasCompanyName";
 
   /**
    * the person property
    */
   private final static String PERSON_PROPERTY =
-    "http://tucana.org/tucana/Document#hasPersonalName";
+    "http://mulgara.org/mulgara/Document#hasPersonalName";
 
   /**
    * the key phrase property
    */
   private final static String KEYPHRASE_PROPERTY =
-    "http://tucana.org/tucana/Document#hasKeyPhrase";
+    "http://mulgara.org/mulgara/Document#hasKeyPhrase";
 
   /**
    * the highlight property
    */
   private final static String HIGHLIGHT_PROPERTY =
-    "http://tucana.org/tucana/Document#hasHighlight";
+    "http://mulgara.org/mulgara/Document#hasHighlight";
 
   /**
    * the link property
@@ -185,13 +185,13 @@ public class MetadataTag extends TagSupport {
    * the generic feature property
    */
   private final static String GENERIC_FEATURE_PROPERTY =
-    "http://tucana.org/tucana/Document#hasGenericFeature";
+    "http://mulgara.org/mulgara/Document#hasGenericFeature";
 
   /**
    * the geographic feature property
    */
   private final static String GEO_FEATURE_PROPERTY =
-    "http://tucana.org/tucana/Document#hasGeographicFeature";
+    "http://mulgara.org/mulgara/Document#hasGeographicFeature";
 
   /**
    * the image property
@@ -202,13 +202,13 @@ public class MetadataTag extends TagSupport {
    * the email property
    */
   private final static String EMAIL_PROPERTY =
-    "http://tucana.org/tucana/Document#hasEmailAddress";
+    "http://mulgara.org/mulgara/Document#hasEmailAddress";
 
   /**
    * the case property
    */
   private final static String CASE_PROPERTY =
-    "http://tucana.org/tucana/Document#hasCaseName";
+    "http://mulgara.org/mulgara/Document#hasCaseName";
 
   //
   // Members
@@ -758,8 +758,8 @@ public class MetadataTag extends TagSupport {
         "and   ( $z         <http://www.w3.org/2000/01/rdf-schema#label>          $classLabel     ) " +
         "and   ( $docNode   $z                                                    $value          )) " +
         "or   (( $id        <http://www.w3.org/1999/02/22-rdf-syntax-ns#object>   $docNode ) " +
-        "and   ( $id        <http://tucana.org/tucana/Document#score>     $score ) " +
-        "and   ( $id        <http://tucana.org/tucana/Document#generator> $generator )) ;");
+        "and   ( $id        <http://mulgara.org/mulgara/Document#score>     $score ) " +
+        "and   ( $id        <http://mulgara.org/mulgara/Document#generator> $generator )) ;");
     }
     else {
 

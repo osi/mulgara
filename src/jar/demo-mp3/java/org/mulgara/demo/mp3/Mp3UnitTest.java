@@ -49,7 +49,7 @@ import java.util.*;
  *
  * @created 2004-12-21
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.2 $
  *
@@ -84,7 +84,7 @@ public class Mp3UnitTest extends TestCase {
       "/data/mp3";
 
   /** Property used in find */
-  private static final String FIND_PROPERTY = "http://tucana.org/tucana/id3#title";
+  private static final String FIND_PROPERTY = "http://mulgara.org/mulgara/id3#title";
 
   /** Value used in find */
   private static final String FIND_VALUE = "Residence";

@@ -309,9 +309,9 @@ public class FileSystemStatements extends AbstractTuples implements Statements {
           // We cannot work with non-URI nodes so warn and ignore
           log.warn("Found an inclusion triple that did not reference the file " +
                    "system correctly.  Triples must be of the format: " +
-                   "[$subject <http://tucana.org/tucana/filesystem#Include> " +
+                   "[$subject <http://mulgara.org/mulgara/filesystem#Include> " +
                    "<file://path/myDirectory>] or [$subject " +
-                   "<http://tucana.org/tucana/filesystem#Exclude> " +
+                   "<http://mulgara.org/mulgara/filesystem#Exclude> " +
                    "<file://path/myDirectory>]");
         }
       }
@@ -598,20 +598,20 @@ public class FileSystemStatements extends AbstractTuples implements Statements {
 
         // The default type is file
         object = (ObjectNode) elementFactory.createResource(
-            new URI("http://tucana.org/tucana#InvalidFileSystem"));
+            new URI("http://mulgara.org/mulgara#InvalidFileSystem"));
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new TuplesException(
             "Failed to create object node for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#InvalidFileSystem>",
+            "<http://mulgara.org/mulgara#InvalidFileSystem>",
             graphElementFactoryException);
       } catch (URISyntaxException uriSyntaxException) {
 
         throw new TuplesException(
             "Failed to create object uri for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#InvalidFileSystem>",
+            "<http://mulgara.org/mulgara#InvalidFileSystem>",
             uriSyntaxException);
       }
 
@@ -652,20 +652,20 @@ public class FileSystemStatements extends AbstractTuples implements Statements {
 
         // The default type is file
         object = (ObjectNode) elementFactory.createResource(
-            new URI("http://tucana.org/tucana#NonExistantFileSystem"));
+            new URI("http://mulgara.org/mulgara#NonExistantFileSystem"));
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new TuplesException(
             "Failed to create object node for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#NonExistantFileSystem>",
+            "<http://mulgara.org/mulgara#NonExistantFileSystem>",
             graphElementFactoryException);
       } catch (URISyntaxException uriSyntaxException) {
 
         throw new TuplesException(
             "Failed to create object uri for invalid file " +
             "system node " +
-            "<http://tucana.org/tucana#NonExistantFileSystem>",
+            "<http://mulgara.org/mulgara#NonExistantFileSystem>",
             uriSyntaxException);
       }
 

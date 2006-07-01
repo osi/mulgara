@@ -85,7 +85,7 @@ public class Bootstrap {
     itql.executeUpdate("alias <http://purl.org/dc/elements/1.1/> as dcns ;");
     itql.executeUpdate("alias <http://www.w3.org/1999/02/22-rdf-syntax-ns#> as rdfns ;");
     itql.executeUpdate("alias <http://www.w3.org/2000/01/rdf-schema#> as rdfsns ;");
-    itql.executeUpdate("alias <http://tucana.org/tucana#> as tucanans ;");
+    itql.executeUpdate("alias <http://mulgara.org/mulgara#> as mulgarans ;");
   }
 
 

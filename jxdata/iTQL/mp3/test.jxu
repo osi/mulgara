@@ -18,7 +18,7 @@
   <set name="query" value="
     select $predicate $value
     from &lt;@baseuri@/jxdata/iTQL/mp3/test.mp3&gt;
-    where $subject &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://tucana.org/tucana/id3#MP3&gt; and
+    where $subject &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://mulgara.org/mulgara/id3#MP3&gt; and
           $subject $predicate $value order by $predicate;
   "/>
 

@@ -7,11 +7,11 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
   <!-- ============================================== -->
@@ -37,7 +37,7 @@
       <xsl:otherwise>
         <!-- EXECUTE THE QUERY to get a caseName -->
         <xsl:variable name="answer">
-          <tucanaDescriptor:query model="{$model}" document="{$document}">
+          <mulgaraDescriptor:query model="{$model}" document="{$document}">
             <![CDATA[
             select $docNode $caseName
               count (
@@ -45,15 +45,15 @@
                 from
                   <@@model@@>
                 where
-                  $allCitations <http://tucana.org/tucana/Document#hasCaseName> $caseNode and
-                  $caseNode <http://tucana.org/tucana/tool/FeatureExtractor#name> $caseName )
+                  $allCitations <http://mulgara.org/mulgara/Document#hasCaseName> $caseNode and
+                  $caseNode <http://mulgara.org/mulgara/tool/FeatureExtractor#name> $caseName )
             from
               <@@model@@>
             where
-              ( <@@document@@> <http://tucana.org/tucana/Document#hasCaseName> $docNode) and
-              ( $docNode <http://tucana.org/tucana/tool/FeatureExtractor#name> $caseName );
+              ( <@@document@@> <http://mulgara.org/mulgara/Document#hasCaseName> $docNode) and
+              ( $docNode <http://mulgara.org/mulgara/tool/FeatureExtractor#name> $caseName );
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
         </xsl:variable>
         <!-- Now apply the templates to the answer -->
         <xsl:apply-templates select="xalan:nodeset($answer)/*"/>
@@ -68,8 +68,8 @@
   <!-- #################################################################### -->
   <!-- CITATIONS converts caseNames to nice XML format -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:answer">
-    <desc:property desc:predicate="http://tucana.org/tucana/Document#hasCaseName">
+  <xsl:template match="mulgaraAnswer:answer">
+    <desc:property desc:predicate="http://mulgara.org/mulgara/Document#hasCaseName">
     <xsl:apply-templates/>
     </desc:property>
   </xsl:template>
@@ -77,10 +77,10 @@
   <!-- #################################################################### -->
   <!-- CITATIONS converts caseNames to nice XML format -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:solution">
-      <xsl:if test="tucanaAnswer:caseName">
-        <desc:caseName desc:count="{tucanaAnswer:k0/text()}">
-          <desc:caseName><xsl:value-of select="tucanaAnswer:caseName/text()"/></desc:caseName>
+  <xsl:template match="mulgaraAnswer:solution">
+      <xsl:if test="mulgaraAnswer:caseName">
+        <desc:caseName desc:count="{mulgaraAnswer:k0/text()}">
+          <desc:caseName><xsl:value-of select="mulgaraAnswer:caseName/text()"/></desc:caseName>
         </desc:caseName>
       </xsl:if>
   </xsl:template>
@@ -97,7 +97,7 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
@@ -111,7 +111,7 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <desc:Descriptor rdf:about="">
 

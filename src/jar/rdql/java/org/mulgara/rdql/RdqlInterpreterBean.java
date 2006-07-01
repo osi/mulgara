@@ -96,7 +96,7 @@ public class RdqlInterpreterBean {
   /**
    * Description of the Field
    */
-  private final static String TQL_NS = "http://tucana.org/tql#";
+  private final static String TQL_NS = "http://mulgara.org/tql#";
 
   /**
    * The RDQL interpreter Bean.

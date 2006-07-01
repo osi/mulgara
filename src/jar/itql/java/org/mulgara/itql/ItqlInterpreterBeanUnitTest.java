@@ -248,7 +248,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     String lineChar = System.getProperty("line.separator");
 
     String result =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + lineChar + "<answer xmlns=\"http://tucana.org/tql#\"><query><message>Successfully inserted statements into rmi://" +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + lineChar + "<answer xmlns=\"http://mulgara.org/tql#\"><query><message>Successfully inserted statements into rmi://" +
         hostName + "/server1#model</message></query></answer>";
 
     String directAnswer = bean.executeQueryToString(queryString);
@@ -286,7 +286,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     String dataFile = "file:" + dataDirectory + "/numbers.rdf.gz";
     query = "load <" + dataFile + "> into <" + model + "> ;";
     //number of statements must be more than 1 page size (1000 statements)
-    System.setProperty("tucana.rmi.prefetchsize", "10");
+    System.setProperty("mulgara.rmi.prefetchsize", "10");
     bean.executeQueryToString(query);
     bean.executeQueryToString(query);
 
@@ -381,7 +381,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   /**
    * Test the interpreter using a create statement. Executes the following
    * query: <pre>
-   *   create &lt;tucana://localhost/database&gt; ;
+   *   create &lt;mulgara://localhost/database&gt; ;
    * </pre> Expects results: ParserException
    *
    * @throws Exception if the test fails

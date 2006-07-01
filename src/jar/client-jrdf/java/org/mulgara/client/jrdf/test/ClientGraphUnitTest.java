@@ -55,7 +55,7 @@ import org.mulgara.query.Answer;
  *
  * @created 2001-08-27
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.9 $
  *
@@ -112,15 +112,15 @@ public class ClientGraphUnitTest extends TestCase {
 
   /** Small dataset used to test model */
   private static final String testStatements =
-      "<http://tucana.org/tucana#test1> <http://tucana.org/tucana#test4> <http://tucana.org/tucana#test2> " +
-      "<http://tucana.org/tucana#test1> <http://tucana.org/tucana#test5> <http://tucana.org/tucana#test3> " +
-      "<http://tucana.org/tucana#test1> <http://tucana.org/tucana#test6> 'Test1' " +
-      "<http://tucana.org/tucana#test2> <http://tucana.org/tucana#test4> <http://tucana.org/tucana#test1> " +
-      "<http://tucana.org/tucana#test2> <http://tucana.org/tucana#test5> <http://tucana.org/tucana#test3> " +
-      "<http://tucana.org/tucana#test2> <http://tucana.org/tucana#test6> 'Test2' " +
-      "<http://tucana.org/tucana#test3> <http://tucana.org/tucana#test4> <http://tucana.org/tucana#test1> " +
-      "<http://tucana.org/tucana#test3> <http://tucana.org/tucana#test5> <http://tucana.org/tucana#test2> " +
-      "<http://tucana.org/tucana#test3> <http://tucana.org/tucana#test6> 'Test3' ";
+      "<http://mulgara.org/mulgara#test1> <http://mulgara.org/mulgara#test4> <http://mulgara.org/mulgara#test2> " +
+      "<http://mulgara.org/mulgara#test1> <http://mulgara.org/mulgara#test5> <http://mulgara.org/mulgara#test3> " +
+      "<http://mulgara.org/mulgara#test1> <http://mulgara.org/mulgara#test6> 'Test1' " +
+      "<http://mulgara.org/mulgara#test2> <http://mulgara.org/mulgara#test4> <http://mulgara.org/mulgara#test1> " +
+      "<http://mulgara.org/mulgara#test2> <http://mulgara.org/mulgara#test5> <http://mulgara.org/mulgara#test3> " +
+      "<http://mulgara.org/mulgara#test2> <http://mulgara.org/mulgara#test6> 'Test2' " +
+      "<http://mulgara.org/mulgara#test3> <http://mulgara.org/mulgara#test4> <http://mulgara.org/mulgara#test1> " +
+      "<http://mulgara.org/mulgara#test3> <http://mulgara.org/mulgara#test5> <http://mulgara.org/mulgara#test2> " +
+      "<http://mulgara.org/mulgara#test3> <http://mulgara.org/mulgara#test6> 'Test3' ";
 
   /**
    * Directory for test files
@@ -284,7 +284,7 @@ public class ClientGraphUnitTest extends TestCase {
       Exception {
 
     //subject 1
-    String subject = "http://tucana.org/tucana#test1";
+    String subject = "http://mulgara.org/mulgara#test1";
     Triple triple = factory.createTriple(factory.createResource(URI.create(
         subject)),
                                          null, null);
@@ -294,7 +294,7 @@ public class ClientGraphUnitTest extends TestCase {
     iter.close();
 
     //subject 2
-    subject = "http://tucana.org/tucana#test2";
+    subject = "http://mulgara.org/mulgara#test2";
     triple = factory.createTriple(factory.createResource(URI.create(subject)),
                                   null, null);
     iter = client.find(triple);
@@ -303,7 +303,7 @@ public class ClientGraphUnitTest extends TestCase {
     iter.close();
 
     //subject 3
-    subject = "http://tucana.org/tucana#test3";
+    subject = "http://mulgara.org/mulgara#test3";
     triple = factory.createTriple(factory.createResource(URI.create(subject)),
                                   null, null);
     iter = client.find(triple);
@@ -322,7 +322,7 @@ public class ClientGraphUnitTest extends TestCase {
       Exception {
 
     //predicate 4
-    String predicate = "http://tucana.org/tucana#test4";
+    String predicate = "http://mulgara.org/mulgara#test4";
     Triple triple = factory.createTriple(null,
                                          factory.createResource(URI.create(
         predicate)),
@@ -333,7 +333,7 @@ public class ClientGraphUnitTest extends TestCase {
     iter.close();
 
     //predicate 5
-    predicate = "http://tucana.org/tucana#test5";
+    predicate = "http://mulgara.org/mulgara#test5";
     triple = factory.createTriple(null,
                                   factory.createResource(URI.create(predicate)),
                                   null);
@@ -343,7 +343,7 @@ public class ClientGraphUnitTest extends TestCase {
     iter.close();
 
     //predicate 6
-    predicate = "http://tucana.org/tucana#test6";
+    predicate = "http://mulgara.org/mulgara#test6";
     triple = factory.createTriple(null,
                                   factory.createResource(URI.create(predicate)),
                                   null);
@@ -363,7 +363,7 @@ public class ClientGraphUnitTest extends TestCase {
       Exception {
 
     //object 1
-    String object = "http://tucana.org/tucana#test1";
+    String object = "http://mulgara.org/mulgara#test1";
     Triple triple = factory.createTriple(null, null,
                                          factory.createResource(URI.
         create(object)));
@@ -373,7 +373,7 @@ public class ClientGraphUnitTest extends TestCase {
     iter.close();
 
     //object 2
-    object = "http://tucana.org/tucana#test2";
+    object = "http://mulgara.org/mulgara#test2";
     triple = factory.createTriple(null, null,
                                   factory.createResource(URI.create(object)));
     iter = client.find(triple);
@@ -382,7 +382,7 @@ public class ClientGraphUnitTest extends TestCase {
     iter.close();
 
     //object 3
-    object = "http://tucana.org/tucana#test3";
+    object = "http://mulgara.org/mulgara#test3";
     triple = factory.createTriple(null, null,
                                   factory.createResource(URI.create(object)));
     iter = client.find(triple);
@@ -486,7 +486,7 @@ public class ClientGraphUnitTest extends TestCase {
     //select ALL query
     String query = "select $s $p $o " +
         "from <" + this.graphURI + "> " +
-        "where " + variable + "<http://tucana.org/tucana#is> " + uri + " " +
+        "where " + variable + "<http://mulgara.org/mulgara#is> " + uri + " " +
         "and $s $p $o " +
         //needed for comparision
         "order by $s $p $o ;";

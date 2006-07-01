@@ -44,7 +44,7 @@ import org.mulgara.server.*;
  *
  * @maintenanceAuthor $Author: newmana $
  *
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
+ * @copyright &copy;2004 <a href="http://www.mulgaratech.com/">Tucana
  *   Technology, Inc</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>

@@ -84,8 +84,8 @@
                     where $s $p $o in $model
                     order by $p )
            from &lt;@server@#&gt;
-           where $model &lt;http://tucana.org/tucana#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards.rdf&gt; or
-                 $model &lt;http://tucana.org/tucana#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards2.rdf&gt;
+           where $model &lt;http://mulgara.org/mulgara#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards.rdf&gt; or
+                 $model &lt;http://mulgara.org/mulgara#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards2.rdf&gt;
            order by $model;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -100,8 +100,8 @@
                  from &lt;@server@#&gt;
                  where $s $p $o in $model)
            from &lt;@server@#&gt;
-           where $model &lt;http://tucana.org/tucana#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards.rdf&gt; or
-                 $model &lt;http://tucana.org/tucana#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards2.rdf&gt;
+           where $model &lt;http://mulgara.org/mulgara#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards.rdf&gt; or
+                 $model &lt;http://mulgara.org/mulgara#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards2.rdf&gt;
            order by $model;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -117,8 +117,8 @@
                  from &lt;@server@#&gt;
                  where $s $p $o in $model)
            from &lt;@server@#&gt;
-           where $model &lt;http://tucana.org/tucana#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards.rdf&gt; or
-                 $model &lt;http://tucana.org/tucana#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards2.rdf&gt;
+           where $model &lt;http://mulgara.org/mulgara#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards.rdf&gt; or
+                 $model &lt;http://mulgara.org/mulgara#is&gt; &lt;@baseuri@/jxdata/iTQL/vcards2.rdf&gt;
            order by $model;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />

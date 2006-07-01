@@ -7,11 +7,11 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
   <!-- ============================================== -->
@@ -41,32 +41,32 @@
           -->
         <!-- EXECUTE THE QUERY to get a date -->
         <xsl:variable name="answer">
-          <tucanaDescriptor:query model="{$model}" document="{$document}" predicate="{$predicate}">
+          <mulgaraDescriptor:query model="{$model}" document="{$document}" predicate="{$predicate}">
             <![CDATA[
               select $address $addressNumber $userId $node
                 subquery(
                   select $personal
                     from <@@model@@>
-                    where ( $node <http://tucana.org/tucana/EmailAddress#personal> $personal ) )
+                    where ( $node <http://mulgara.org/mulgara/EmailAddress#personal> $personal ) )
                 subquery(
                   select $domain
                     from <@@model@@>
-                    where ( $node <http://tucana.org/tucana/EmailAddress#domain> $domain ) )
+                    where ( $node <http://mulgara.org/mulgara/EmailAddress#domain> $domain ) )
                 count( select $docURI
                   from <@@model@@>
                   where (
                     ( $docURI <@@predicate@@> $addressNode ) and
-                    ( $addressNode <http://tucana.org/tucana/EmailAddress#address> $address ) and
-                    ( $addressNode <http://tucana.org/tucana/EmailAddress#addressNumber> $addressNumber ) and
-                    ( $addressNode <http://tucana.org/tucana/EmailAddress#userId> $userId ) ) )
+                    ( $addressNode <http://mulgara.org/mulgara/EmailAddress#address> $address ) and
+                    ( $addressNode <http://mulgara.org/mulgara/EmailAddress#addressNumber> $addressNumber ) and
+                    ( $addressNode <http://mulgara.org/mulgara/EmailAddress#userId> $userId ) ) )
               from <@@model@@>
               where
                 ( <@@document@@> <@@predicate@@> $node ) and
-                ( $node <http://tucana.org/tucana/EmailAddress#address> $address ) and
-                ( $node <http://tucana.org/tucana/EmailAddress#addressNumber> $addressNumber ) and
-                ( $node <http://tucana.org/tucana/EmailAddress#userId> $userId ) ;
+                ( $node <http://mulgara.org/mulgara/EmailAddress#address> $address ) and
+                ( $node <http://mulgara.org/mulgara/EmailAddress#addressNumber> $addressNumber ) and
+                ( $node <http://mulgara.org/mulgara/EmailAddress#userId> $userId ) ;
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
         </xsl:variable>
         <!-- Now apply the templates to the answer -->
         <xsl:apply-templates select="xalan:nodeset($answer)/*"/>
@@ -79,7 +79,7 @@
   <!-- #################################################################### -->
   <!-- Addresses grouping element -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:answer">
+  <xsl:template match="mulgaraAnswer:answer">
     <desc:property desc:predicate="{$predicate}">
     <xsl:apply-templates/>
     </desc:property>
@@ -89,23 +89,23 @@
   <!-- #################################################################### -->
   <!-- Converts dates to nice XML format -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:solution">
-    <xsl:if test="tucanaAnswer:address|tucanaAnswer:personal|tucanaAnswer:addressNumber|tucanaAnswer:domain|tucanaAnswer:userId">
-      <desc:emailAddress desc:count="{tucanaAnswer:k2/text()}">
-      <xsl:if test="tucanaAnswer:address">
-        <desc:address><xsl:value-of select="tucanaAnswer:address/text()"/></desc:address>
+  <xsl:template match="mulgaraAnswer:solution">
+    <xsl:if test="mulgaraAnswer:address|mulgaraAnswer:personal|mulgaraAnswer:addressNumber|mulgaraAnswer:domain|mulgaraAnswer:userId">
+      <desc:emailAddress desc:count="{mulgaraAnswer:k2/text()}">
+      <xsl:if test="mulgaraAnswer:address">
+        <desc:address><xsl:value-of select="mulgaraAnswer:address/text()"/></desc:address>
       </xsl:if>
-      <xsl:if test="tucanaAnswer:k0/tucanaAnswer:solution/tucanaAnswer:personal">
-        <desc:personal><xsl:value-of select="tucanaAnswer:k0/tucanaAnswer:solution/tucanaAnswer:personal/text()"/></desc:personal>
+      <xsl:if test="mulgaraAnswer:k0/mulgaraAnswer:solution/mulgaraAnswer:personal">
+        <desc:personal><xsl:value-of select="mulgaraAnswer:k0/mulgaraAnswer:solution/mulgaraAnswer:personal/text()"/></desc:personal>
       </xsl:if>
-      <xsl:if test="tucanaAnswer:addressNumber">
-        <desc:addressNumber><xsl:value-of select="tucanaAnswer:addressNumber/text()"/></desc:addressNumber>
+      <xsl:if test="mulgaraAnswer:addressNumber">
+        <desc:addressNumber><xsl:value-of select="mulgaraAnswer:addressNumber/text()"/></desc:addressNumber>
       </xsl:if>
-      <xsl:if test="tucanaAnswer:k1/tucanaAnswer:solution/tucanaAnswer:domain">
-        <desc:domain><xsl:value-of select="tucanaAnswer:domain/text()"/></desc:domain>
+      <xsl:if test="mulgaraAnswer:k1/mulgaraAnswer:solution/mulgaraAnswer:domain">
+        <desc:domain><xsl:value-of select="mulgaraAnswer:domain/text()"/></desc:domain>
       </xsl:if>
-      <xsl:if test="tucanaAnswer:userId">
-        <desc:userId><xsl:value-of select="tucanaAnswer:userId/text()"/></desc:userId>
+      <xsl:if test="mulgaraAnswer:userId">
+        <desc:userId><xsl:value-of select="mulgaraAnswer:userId/text()"/></desc:userId>
       </xsl:if>
       </desc:emailAddress>
     </xsl:if>
@@ -116,7 +116,7 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
@@ -130,7 +130,7 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <desc:Descriptor rdf:about="">
 

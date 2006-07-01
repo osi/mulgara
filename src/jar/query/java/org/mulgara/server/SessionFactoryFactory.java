@@ -80,7 +80,7 @@ public class SessionFactoryFactory {
   private final static String DEFAULT_SERVER_NAME = "server1";
 
   /** default location of the config file */
-  private static final String CONFIG_PATH = "conf/tucana-config.xml";
+  private static final String CONFIG_PATH = "conf/mulgara-config.xml";
 
   /** Config to use when creating new sessions */
   private MulgaraConfig mulgaraConfig;

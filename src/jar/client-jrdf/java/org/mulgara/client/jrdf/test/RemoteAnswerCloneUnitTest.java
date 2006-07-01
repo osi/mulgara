@@ -53,7 +53,7 @@ import org.mulgara.server.driver.*;
  *
  * @created 2004-08-24
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.9 $
  *
@@ -330,7 +330,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
 
     //create arbitary triples
     int NUM_TRIPLES = 5000;
-    String baseURI = "http://tucana.org/tucana#triple_";
+    String baseURI = "http://mulgara.org/mulgara#triple_";
     URIReference currentNode = null;
 
     for (int i = 0; i < NUM_TRIPLES; i++) {
@@ -368,8 +368,8 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
       this.session = (JRDFSession) sessionFactory.newJRDFSession();
 
       //create test triples
-      this.reference1 = new URIReferenceImpl(new URI("http://tucana.org/tucana#testReference"));
-      this.reference2 = new URIReferenceImpl(new URI("http://tucana.org/tucana#testReference2"));
+      this.reference1 = new URIReferenceImpl(new URI("http://mulgara.org/mulgara#testReference"));
+      this.reference2 = new URIReferenceImpl(new URI("http://mulgara.org/mulgara#testReference2"));
       this.literal = new LiteralImpl("test Literal");
 
       //initialize model
@@ -414,7 +414,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
    */
   private void createModel(URI modelURI) throws Exception {
 
-    this.session.createModel(modelURI, new URI("http://tucana.org/tucana#Model"));
+    this.session.createModel(modelURI, new URI("http://mulgara.org/mulgara#Model"));
   }
 
   /**

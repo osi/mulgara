@@ -169,7 +169,7 @@ public class ViewerScreen
     // Get the path to the mulgara jar
     if (jarPath == null) {
 
-      jarPath = System.getProperty("tucana.jar.path");
+      jarPath = System.getProperty("mulgara.jar.path");
 
       if (log.isDebugEnabled()) {
 
@@ -322,7 +322,7 @@ public class ViewerScreen
               // inside the jar.
               if (jarPath != null) {
 
-                queryText = queryText.replaceAll("tucana.jar.path", jarPath);
+                queryText = queryText.replaceAll("mulgara.jar.path", jarPath);
               }
 
               queryText = queryText.replaceAll("host.name", hostName);

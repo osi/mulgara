@@ -88,14 +88,14 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
       throw new IllegalArgumentException("null e0 parameter");
     }
     if (!(e0 instanceof Variable)) {
-      throw new IllegalArgumentException("Subject of tucana:is must be a variable" + e0);
+      throw new IllegalArgumentException("Subject of mulgara:is must be a variable" + e0);
     }
 
     if (e2 == null) {
       throw new IllegalArgumentException("null e2 parameter");
     }
     if (e2 instanceof Variable) {
-      throw new IllegalArgumentException("Object of tucana:is must not be a variable" + e2);
+      throw new IllegalArgumentException("Object of mulgara:is must not be a variable" + e2);
     }
 
     if (e3 == null) {
@@ -245,14 +245,14 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
 
   /**
    * Creates a string representation of these constraints. A typical result
-   * might be <code>[$x &lt;tucana:is&gt; 'bar' $0]</code>.
+   * might be <code>[$x &lt;mulgara:is&gt; 'bar' $0]</code>.
    *
    * @return String representation of this object
    */
   public String toString() {
 
     StringBuffer buffer = new StringBuffer("[");
-    buffer.append(element[0]).append(" <tucana:is> ").append(element[2]).append(" ").append(element[3]);
+    buffer.append(element[0]).append(" <mulgara:is> ").append(element[2]).append(" ").append(element[3]);
     buffer.append("]");
 
     return buffer.toString();

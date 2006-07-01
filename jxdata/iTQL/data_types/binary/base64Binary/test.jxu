@@ -4,10 +4,10 @@
 
   <!-- Configure the data type model -->
   <set name="query" value="
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
     drop &lt;@server@#xsdmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
-    alias &lt;http://tucana.org/tucana#&gt; as exp ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
+    alias &lt;http://mulgara.org/mulgara#&gt; as exp ;
   "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -30,7 +30,7 @@
     select $value2
     from &lt;@server@#binary&gt;
     where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'textfile.txt' and
-          $value &lt;http://tucana.org/tucana#content&gt; $value2 ;
+          $value &lt;http://mulgara.org/mulgara#content&gt; $value2 ;
   "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -43,7 +43,7 @@
   <set name="query" value="
     select $label
     from &lt;@server@#binary&gt;
-    where $value &lt;http://tucana.org/tucana#content&gt; 'dGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIGEgbGF6eSBkb2cKVEhFIFFVSUNLIEJST1dO
+    where $value &lt;http://mulgara.org/mulgara#content&gt; 'dGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIGEgbGF6eSBkb2cKVEhFIFFVSUNLIEJST1dO
 IEZPWCBKVU1QUyBPVkVSIFRIRSBMQVpZIERPRwowMTIzNDU2Nzg5Cn4hQCMkJV4mKigpXytgLT0='^^&lt;http://www.w3.org/2001/XMLSchema#base64Binary&gt;
     and $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label ;
   "/>
@@ -58,7 +58,7 @@ IEZPWCBKVU1QUyBPVkVSIFRIRSBMQVpZIERPRwowMTIzNDU2Nzg5Cn4hQCMkJV4mKigpXytgLT0='^^&
   <set name="query" value="
     select $label
     from &lt;@server@#binary&gt;
-    where $value &lt;http://tucana.org/tucana#content&gt; 'VBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAXVBMVEWzxuEaU6NIdbbx9PkqXqlI
+    where $value &lt;http://mulgara.org/mulgara#content&gt; 'VBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAXVBMVEWzxuEaU6NIdbbx9PkqXqlI
 dbVnjMI5aq/h6fPS3e3C0eaFo84aUqPD0ud2mMg4aa+Vr9RYgbzv8/ikutrg6PIpXqlmjMF1l8ey
 xeCjutqUrtRXgLvR3Oz///8LR519eGbUAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZ
 cwAACxIAAAsSAdLdfvwAAAAHdElNRQfUBggBGAZlNX6NAAAAaUlEQVR4nF2OwQ6AIAxDhyiKMyTK

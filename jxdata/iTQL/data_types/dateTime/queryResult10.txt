@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<answer xmlns="http://tucana.org/tql#"><query><variables><label/></variables><solution><label>Ascension Sunday</label></solution><solution><label>Easter Monday</label></solution><solution><label>Easter Sunday</label></solution><solution><label>Good Friday</label></solution><solution><label>Shrove Tuesday</label></solution></query></answer>
+<answer xmlns="http://mulgara.org/tql#"><query><variables><label/></variables><solution><label>Ascension Sunday</label></solution><solution><label>Easter Monday</label></solution><solution><label>Easter Sunday</label></solution><solution><label>Good Friday</label></solution><solution><label>Shrove Tuesday</label></solution></query></answer>

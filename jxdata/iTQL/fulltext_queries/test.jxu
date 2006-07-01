@@ -13,7 +13,7 @@
 
   <!-- Create first full text model -->
   <set name="modelName" value="@server@#fulltext" />
-  <set name="modelType" value="http://tucana.org/tucana#LuceneModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#LuceneModel" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result2.txt" name="createResult">
@@ -23,7 +23,7 @@
 
   <!-- Create a second fulltext model -->
   <set name="modelName" value="@server@#fulltext2" />
-  <set name="modelType" value="http://tucana.org/tucana#LuceneModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#LuceneModel" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result3.txt" name="createResult">
@@ -42,7 +42,7 @@
 
   <!-- Create another lucene model -->
   <set name="modelName" value="@server@#numbers_fulltext" />
-  <set name="modelType" value="http://tucana.org/tucana#LuceneModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#LuceneModel" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result5.txt" name="createResult">
@@ -61,7 +61,7 @@
 
   <!-- Create Lucene Model for Chinese encoded data -->
   <set name="modelName" value="@server@#fulltext_zh"/>
-  <set name="modelType" value="http://tucana.org/tucana#LuceneModel"/>
+  <set name="modelType" value="http://mulgara.org/mulgara#LuceneModel"/>
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result7.txt" name="createResult">
@@ -79,8 +79,8 @@
   </ifEqual>
 
   <set name="query"
-    value="insert select $pmid &lt;http://tucana.org/tucana/Document#subject&gt; $subject
-          from &lt;@server@#model1&gt; where $pmid &lt;http://tucana.org/tucana/Document#subject&gt; $subject
+    value="insert select $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject
+          from &lt;@server@#model1&gt; where $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; $subject
           into &lt;@server@#fulltext&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -92,8 +92,8 @@
   <set name="query"
     value="select $pmid $title
            from &lt;@server@#model1&gt;
-           where $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title and
-           $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Diseases'
+           where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title and
+           $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Diseases'
            in &lt;@server@#fulltext&gt;
            order by $pmid $title;"/>
 
@@ -104,8 +104,8 @@
   </ifEqual>
 
   <set name="query"
-    value="insert select $pmid &lt;http://tucana.org/tucana/Document#title&gt; $subject
-          from &lt;@server@#model1&gt; where $pmid &lt;http://tucana.org/tucana/Document#title&gt; $subject
+    value="insert select $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $subject
+          from &lt;@server@#model1&gt; where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $subject
           into &lt;@server@#fulltext2&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -117,8 +117,8 @@
   <!-- check that statements from fulltext model are NOT present in fulltext2 -->
   <set name="query"
     value="select $pmid $title from &lt;@server@#model1&gt;
-           where $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title and
-           $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Diseases'
+           where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title and
+           $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Diseases'
            in &lt;@server@#fulltext2&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -130,8 +130,8 @@
   <!-- check that statements from fulltext model are present in fulltext2 -->
   <set name="query"
     value="select $pmid $title from &lt;@server@#model1&gt;
-           where $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title and
-           $pmid &lt;http://tucana.org/tucana/Document#title&gt; 'Diseases'
+           where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title and
+           $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; 'Diseases'
            in &lt;@server@#fulltext2&gt;
            order by $pmid $title;"/>
 
@@ -144,7 +144,7 @@
   <!-- check fulltext results from the 'FROM' clause - some results -->
   <set name="query"
     value="select $pmid from &lt;@server@#fulltext&gt;
-           where $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Diseases'
+           where $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Diseases'
            order by $pmid;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -156,7 +156,7 @@
   <!-- check fulltext results from the 'FROM' clause - no results -->
   <set name="query"
     value="select $pmid from &lt;@server@#fulltext&gt;
-           where $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'dsfdsfjk' ;"/>
+           where $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'dsfdsfjk' ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
@@ -169,7 +169,7 @@
   <!-- Query it out -->
   <!-- Drop the model -->
   <set name="query"
-   value="create &lt;@server@#lucenetest&gt; &lt;http://tucana.org/tucana#LuceneModel&gt; ;
+   value="create &lt;@server@#lucenetest&gt; &lt;http://mulgara.org/mulgara#LuceneModel&gt; ;
           insert &lt;http://subject/&gt; &lt;http://foo/&gt; &apos;prova titolo&apos;
             into &lt;@server@#lucenetest&gt; ;
           select $page
@@ -248,7 +248,7 @@
     value=" 
       select $subject 
       from &lt;@server@#fulltext&gt; 
-      where $subject &lt;http://tucana.org/tucana/Document#subject&gt; 'Diseases*' 
+      where $subject &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Diseases*' 
       order by $subject; "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
@@ -262,7 +262,7 @@
     value=" 
       select $subject 
       from &lt;@server@#fulltext&gt; 
-      where $subject &lt;http://tucana.org/tucana/Document#subject&gt; 'Diseases*' 
+      where $subject &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Diseases*' 
       and $subject $p &apos;Heart*&apos; 
       order by $subject ; "/>
 
@@ -277,7 +277,7 @@
     value=" 
       select $subject 
       from &lt;@server@#fulltext&gt; 
-      where $subject &lt;http://tucana.org/tucana/Document#subject&gt; 'barramewe*' 
+      where $subject &lt;http://mulgara.org/mulgara/Document#subject&gt; 'barramewe*' 
       or $subject $p &apos;Heart*&apos; 
       order by $subject ; "/>
 
@@ -292,9 +292,9 @@
     value=" 
       select $subject 
       from &lt;@server@#model1&gt; 
-      where ( $subject &lt;http://tucana.org/tucana/Document#subject&gt; 'Heart*' in &lt;@server@#fulltext&gt;
+      where ( $subject &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Heart*' in &lt;@server@#fulltext&gt;
       and $pmid $p $subject )
-      and ( $subject &lt;http://tucana.org/tucana/Document#subject&gt; 'Diseases*' in &lt;@server@#fulltext&gt;
+      and ( $subject &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Diseases*' in &lt;@server@#fulltext&gt;
       and $pmid $p $subject )
       order by $subject ; "/>
 

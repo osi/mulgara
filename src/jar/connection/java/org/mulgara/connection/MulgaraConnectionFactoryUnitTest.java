@@ -22,7 +22,7 @@ public class MulgaraConnectionFactoryUnitTest extends TestCase {
   private static final URI NULL_SECURITY_DOMAIN = MulgaraConnectionFactory.NULL_SECURITY_DOMAIN;
 
   public void testNoSecurityConstant() {
-    assertEquals(URI.create("http://tucana.org/tucana#NO_SECURITY"), MulgaraConnectionFactory.NULL_SECURITY_DOMAIN);
+    assertEquals(URI.create("http://mulgara.org/mulgara#NO_SECURITY"), MulgaraConnectionFactory.NULL_SECURITY_DOMAIN);
   }
 
   public void testGetItqlConnection() {

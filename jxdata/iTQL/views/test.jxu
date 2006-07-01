@@ -20,7 +20,7 @@
   </ifEqual>
 
   <set name="modelName" value="@server@#view1" />
-  <set name="modelType" value="http://tucana.org/tucana#ViewModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#ViewModel" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxtest/iTQL/views/view1.rdf&gt; into &lt;@server@#view1&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
 
@@ -42,7 +42,7 @@
 
 
   <set name="modelName" value="@server@#view2" />
-  <set name="modelType" value="http://tucana.org/tucana#ViewModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#ViewModel" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxtest/iTQL/views/view2.rdf&gt; into
 &lt;@server@#view2&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
@@ -64,7 +64,7 @@
   </ifEqual>
 
   <set name="modelName" value="@server@#view3" />
-  <set name="modelType" value="http://tucana.org/tucana#ViewModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#ViewModel" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxtest/iTQL/views/view3.rdf&gt; into
 &lt;@server@#view3&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
@@ -86,7 +86,7 @@
   </ifEqual>
 
   <set name="modelName" value="@server@#view4" />
-  <set name="modelType" value="http://tucana.org/tucana#ViewModel" />
+  <set name="modelType" value="http://mulgara.org/mulgara#ViewModel" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxtest/iTQL/views/view4.rdf&gt; into 
 &lt;@server@#view4&gt; ;" />
   <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
@@ -119,8 +119,8 @@
   </ifEqual>
 
  <set name="query"
-  value="delete ( &lt;http://tucana.org/tucana/view&gt;
-                &lt;http://tucana.org/tucana/view#enabled&gt; 'true' ) 
+  value="delete ( &lt;http://mulgara.org/mulgara/view&gt;
+                &lt;http://mulgara.org/mulgara/view#enabled&gt; 'true' ) 
          from &lt;@server@#view4&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />

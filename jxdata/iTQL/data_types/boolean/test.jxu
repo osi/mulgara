@@ -4,10 +4,10 @@
 
   <!-- Configure the data type model -->
   <set name="query" value="
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
     drop &lt;@server@#xsdmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://tucana.org/tucana#XMLSchemaModel&gt; ;
-    alias &lt;http://tucana.org/tucana#&gt; as exp ;
+    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
+    alias &lt;http://mulgara.org/mulgara#&gt; as exp ;
   "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />

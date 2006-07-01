@@ -9,11 +9,11 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:lxslt="http://xml.apache.org/xslt"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:tucanaDescriptor="tucanaDescriptor"
-  extension-element-prefixes="tucanaDescriptor"
-  exclude-result-prefixes="xsl rdf rdfs lxslt tucanaAnswer xalan ns1"
-  xmlns:tucanaAnswer="http://tucana.org/tql#"
-  xmlns:desc="http://tucana.org/descriptor#"
+  xmlns:mulgaraDescriptor="mulgaraDescriptor"
+  extension-element-prefixes="mulgaraDescriptor"
+  exclude-result-prefixes="xsl rdf rdfs lxslt mulgaraAnswer xalan ns1"
+  xmlns:mulgaraAnswer="http://mulgara.org/tql#"
+  xmlns:desc="http://mulgara.org/descriptor#"
   xmlns:ns1="urn:Query">
 
   <!-- ============================================== -->
@@ -42,14 +42,14 @@
         <desc:component>
         <!-- EXECUTE THE QUERY to get a person -->
         <xsl:variable name="answer">
-          <tucanaDescriptor:query model="{$model}" month="{$month}" year="{$year}">
+          <mulgaraDescriptor:query model="{$model}" month="{$month}" year="{$year}">
             <![CDATA[
-            select $title $url from <@@model@@> where $url <http://tucana.org/tucana/Document#title> $title and 
-            $url <http://tucana.org/tucana/Document#containsDate> $dateNode and 
-            $dateNode <http://tucana.org/tucana/tool/DateExtractor#month> '@@month@@' and 
-            $dateNode <http://tucana.org/tucana/tool/DateExtractor#year> '@@year@@';
+            select $title $url from <@@model@@> where $url <http://mulgara.org/mulgara/Document#title> $title and 
+            $url <http://mulgara.org/mulgara/Document#containsDate> $dateNode and 
+            $dateNode <http://mulgara.org/mulgara/tool/DateExtractor#month> '@@month@@' and 
+            $dateNode <http://mulgara.org/mulgara/tool/DateExtractor#year> '@@year@@';
             ]]>
-          </tucanaDescriptor:query>
+          </mulgaraDescriptor:query>
         </xsl:variable>
         <!-- Now apply the templates to the answer -->
         <xsl:apply-templates select="xalan:nodeset($answer)/*"/>
@@ -62,7 +62,7 @@
   <!-- #################################################################### -->
   <!-- assemble controller and content -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:answer">
+  <xsl:template match="mulgaraAnswer:answer">
     <desc:controller>
       <form action="@@DESCRIPTOR_SERVLET@@">
         <input type="hidden" name="_target" value="{$parentController}"/>
@@ -108,14 +108,14 @@
   <!-- #################################################################### -->
   <!-- Make the title list -->
   <!-- #################################################################### -->
-  <xsl:template match="tucanaAnswer:solution">
-      <xsl:if test="tucanaAnswer:title">
+  <xsl:template match="mulgaraAnswer:solution">
+      <xsl:if test="mulgaraAnswer:title">
         <li>
         <a>
         <xsl:attribute name="href">
-        <xsl:value-of select="tucanaAnswer:url/@resource"/>
+        <xsl:value-of select="mulgaraAnswer:url/@resource"/>
         </xsl:attribute>
-        <xsl:value-of select="tucanaAnswer:title/text()"/>
+        <xsl:value-of select="mulgaraAnswer:title/text()"/>
         </a>
         </li>
       </xsl:if>
@@ -125,7 +125,7 @@
   <!-- #################################################################### -->
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
-  <lxslt:component prefix="tucanaDescriptor" elements="descriptor query debug" functions="test">
+  <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
     <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
   </lxslt:component>
 
@@ -139,7 +139,7 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:desc="http://tucana.org/descriptor#">
+      xmlns:desc="http://mulgara.org/descriptor#">
 
       <desc:Descriptor rdf:about="">
 

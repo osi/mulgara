@@ -62,7 +62,7 @@ import org.mulgara.content.mp3.parser.exception.*;
  * @company Tucana Technologies
  *
  * @copyright &copy; 2004
- *   <A href="http://www.tucanatech.com/">Tucana Technologies</A>
+ *   <A href="http://www.mulgaratech.com/">Tucana Technologies</A>
  *
  * @licence <A href="{@docRoot}/LICENCE">License description</A>
  */
@@ -148,7 +148,7 @@ public final class IdentifierProcessor {
   public static final String WXXX = WXXXUrlLinkID3V2Frame.class.toString();
   public static final String MP3_TYPE = "MP3_TYPE";
   public static final String MP3_URI = "URI";
-  public static final String ID3_NAMESPACE = "http://tucana.org/tucana/id3#";
+  public static final String ID3_NAMESPACE = "http://mulgara.org/mulgara/id3#";
 
   /** Mapping of identifiers to their RDF equivalent */
   private HashMap idMap;
@@ -349,7 +349,7 @@ public final class IdentifierProcessor {
 //        idMap.put(TSOT,
 //            factory.createResource(new URI(ID3_NAMESPACE + "titleSortOrder")));
         idMap.put(TSRC,
-            factory.createResource(new URI("http://tucanatech.org#ISRC")));
+            factory.createResource(new URI("http://mulgaratech.org#ISRC")));
         idMap.put(TSSE,
             factory.createResource(new URI(ID3_NAMESPACE + "encodingSettings")));
 //        idMap.put(TSST,

@@ -88,8 +88,8 @@
           unless="query.jar.uptodate"
           description="Creates the query's jar/s">
 
-    <copy file="${obj.dir}/tucana-config.xml"
-          tofile="${query.obj.dir}/classes/conf/tucana-config.xml"/>
+    <copy file="${obj.dir}/mulgara-config.xml"
+          tofile="${query.obj.dir}/classes/conf/mulgara-config.xml"/>
 
     <jar jarfile="${query.dist.dir}/${query.jar}">
 

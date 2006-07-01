@@ -186,7 +186,7 @@
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
           includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
-      <zipfileset file="${obj.dir}/tucana-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>

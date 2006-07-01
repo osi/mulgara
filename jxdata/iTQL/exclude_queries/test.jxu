@@ -34,7 +34,7 @@
            from &lt;@server@#vcard2&gt;
            where $s $p $o ) 
          from &lt;@server@#&gt; 
-         where $tmp &lt;http://tucana.org/tucana#is&gt; &lt;urn:foo:bar:baz&gt; ;"/>
+         where $tmp &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:foo:bar:baz&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult1.txt" name="queryResult">
@@ -48,7 +48,7 @@
            from &lt;@server@#vcard2&gt;
            where $s &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; $o ) 
          from &lt;@server@#&gt; 
-         where $tmp &lt;http://tucana.org/tucana#is&gt; &lt;urn:foo:bar:baz&gt; ;"/>
+         where $tmp &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:foo:bar:baz&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult2.txt" name="queryResult">
@@ -62,7 +62,7 @@
            from &lt;@server@#vcard2&gt;
            where exclude $s &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; $o ) 
          from &lt;@server@#&gt; 
-         where $tmp &lt;http://tucana.org/tucana#is&gt; &lt;urn:foo:bar:baz&gt; ;"/>
+         where $tmp &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:foo:bar:baz&gt; ;"/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult3.txt" name="queryResult">
@@ -75,7 +75,7 @@
          from &lt;@server@#vcard2&gt; 
          where $s $p $o 
          and exclude($s &lt;http://www.w3.org/2001/vcard-rdf/3.0#EMAIL&gt; $o ) 
-         and $s &lt;http://tucana.org/tucana#is&gt; &lt;http://qqq.com/staff/lsimpson&gt; 
+         and $s &lt;http://mulgara.org/mulgara#is&gt; &lt;http://qqq.com/staff/lsimpson&gt; 
          and exclude ($s &lt;http://www.w3.org/2001/vcard-rdf/3.0#N&gt; $o ) 
          and exclude ($s &lt;http://www.w3.org/2001/vcard-rdf/3.0#ADR&gt; $o ) 
          and exclude ($s &lt;http://www.w3.org/2001/vcard-rdf/3.0#TEL&gt; $o )
@@ -100,7 +100,7 @@
     and $r &lt;http://www.w3.org/2002/07/owl#onProperty&gt; $p
     and $r &lt;http://www.w3.org/2002/07/owl#allValuesFrom&gt; $x
     and $s $p $o2
-    having $k0 &lt;http://tucana.org/tucana#occursMoreThan&gt; '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+    having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
     order by $s ; "/>
 
   <eval stepClass="org.kowari.store.jxunit.QueryJX" />

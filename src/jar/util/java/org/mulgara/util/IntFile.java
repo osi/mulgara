@@ -68,7 +68,7 @@ public abstract class IntFile {
       Category.getInstance(IntFile.class.getName());
 
   static {
-    String useByteOrderProp = System.getProperty("tucana.xa.useByteOrder");
+    String useByteOrderProp = System.getProperty("mulgara.xa.useByteOrder");
     ByteOrder bo = ByteOrder.nativeOrder();
 
     // Default.
@@ -80,7 +80,7 @@ public abstract class IntFile {
       } else if (useByteOrderProp.equalsIgnoreCase("little_endian")) {
         bo = ByteOrder.LITTLE_ENDIAN;
       } else {
-        logger.warn("Invalid value for property tucana.xa.useByteOrder: " +
+        logger.warn("Invalid value for property mulgara.xa.useByteOrder: " +
             useByteOrderProp);
       }
     }
@@ -133,7 +133,7 @@ public abstract class IntFile {
 
   /**
    * Returns a newly constructed IntFile for the specified file.
-   * The value of the system property tucana.xa.forceIOType determines
+   * The value of the system property mulgara.xa.forceIOType determines
    * if the file is accessed using mapped or explicit I/O.
    *
    * @param file The name of the file to open.
@@ -143,7 +143,7 @@ public abstract class IntFile {
   public static IntFile open(File file) throws IOException {
     boolean explicitIO = false;
 
-    String forceIOTypeProp = System.getProperty("tucana.xa.forceIOType");
+    String forceIOTypeProp = System.getProperty("mulgara.xa.forceIOType");
 
     if (forceIOTypeProp != null) {
       if (forceIOTypeProp.equalsIgnoreCase("mapped")) {
@@ -151,7 +151,7 @@ public abstract class IntFile {
       } else if (forceIOTypeProp.equalsIgnoreCase("explicit")) {
         explicitIO = true;
       } else {
-        logger.warn("Invalid value for property tucana.xa.forceIOType: " +
+        logger.warn("Invalid value for property mulgara.xa.forceIOType: " +
             forceIOTypeProp);
       }
     }
@@ -179,7 +179,7 @@ public abstract class IntFile {
 
   /**
    * Returns a newly constructed IntFile for the specified file.
-   * The value of the system property tucana.xa.forceIOType determines
+   * The value of the system property mulgara.xa.forceIOType determines
    * if the file is accessed using mapped or explicit I/O.
    *
    * @param fileName The name of the file to open.

@@ -50,7 +50,7 @@ import org.mulgara.server.driver.*;
  *
  * @created 2004-08-24
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -250,7 +250,7 @@ public class SessionGraphUnitTest extends AbstractGraphUnitTest {
    */
   private void createModel(URI modelURI) throws Exception {
 
-    this.session.createModel(modelURI, new URI("http://tucana.org/tucana#Model"));
+    this.session.createModel(modelURI, new URI("http://mulgara.org/mulgara#Model"));
   }
 
   /**

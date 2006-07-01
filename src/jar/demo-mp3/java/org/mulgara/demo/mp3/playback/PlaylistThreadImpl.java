@@ -41,7 +41,7 @@ import org.jrdf.graph.*;
  *
  * @created 2004-12-10
  *
- * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *

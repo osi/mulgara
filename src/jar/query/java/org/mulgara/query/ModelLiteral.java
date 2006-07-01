@@ -160,7 +160,7 @@ public class ModelLiteral implements Model {
   public ConstraintExpression toConstraintExpression(Constraint constraint,
       // (s p o m)
       Transformation transformation, Value modelProperty,
-      // tucana:model
+      // mulgara:model
       Value systemModel,
       // #SYSTEM
       VariableFactory variableFactory) {

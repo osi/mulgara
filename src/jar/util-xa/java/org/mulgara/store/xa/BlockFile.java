@@ -234,7 +234,7 @@ public interface BlockFile {
 
       IOType defIOType = AUTO;
 
-      String defIOTypeProp = System.getProperty("tucana.xa.defaultIOType");
+      String defIOTypeProp = System.getProperty("mulgara.xa.defaultIOType");
       if (defIOTypeProp != null) {
         if (defIOTypeProp.equalsIgnoreCase("mapped")) {
           defIOType = MAPPED;
@@ -244,7 +244,7 @@ public interface BlockFile {
           defIOType = AUTO;
         } else {
           logger.warn(
-              "Invalid value for property tucana.xa.defaultIOType: " +
+              "Invalid value for property mulgara.xa.defaultIOType: " +
               defIOTypeProp
           );
         }
