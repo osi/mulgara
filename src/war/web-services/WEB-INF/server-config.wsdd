@@ -27,14 +27,14 @@
   <parameter name="allowedMethods" value="invokeToString invokeDescriptor"/>
   <parameter name="className" value="org.mulgara.descriptor.DescriptorUtil"/>
   <parameter name="scope" value="Session"/>
-  <namespace>http://tucana.org/descriptor</namespace>
+  <namespace>http://mulgara.org/descriptor</namespace>
  </service>
  <!-- TUCANA Itql Bean -->
  <service name="ItqlBeanService" provider="java:RPC">
   <parameter name="allowedMethods" value="executeQueryToString"/>
   <parameter name="className" value="org.mulgara.itql.ItqlInterpreterBean"/>
   <parameter name="scope" value="Session"/>
-  <namespace>http://tucana.org/</namespace>
+  <namespace>http://mulgara.org/</namespace>
  </service>
  <!-- AXIS ADMIN SERVICE -->
  <service name="AdminService" provider="java:MSG">
