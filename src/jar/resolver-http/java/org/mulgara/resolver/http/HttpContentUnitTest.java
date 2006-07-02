@@ -130,9 +130,9 @@ public class HttpContentUnitTest extends TestCase {
     content = new HttpContent(new URL(
         "https://sourceforge.net/export/rss_sfnewreleases.php"));
     mimeType = content.getContentType();
-    assertTrue("Expecting mime type of application/xml but found " + mimeType,
-        mimeType != null && mimeType.getPrimaryType().equals("application")
-            && mimeType.getSubType().equals("html"));
+    assertTrue("Expecting mime type of text/xml but found " + mimeType,
+        mimeType != null && mimeType.getPrimaryType().equals("text")
+            && mimeType.getSubType().equals("xml"));
 
   }
 
