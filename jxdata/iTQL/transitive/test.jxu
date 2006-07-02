@@ -3,11 +3,11 @@
 
   <set name="modelName" value="@server@#model1" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/testpred.rdf&gt; into &lt;@server@#model1&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <set name="label" value="load testpred.rdf" />
   <set name="print" value="loadResult" indirect="true" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <!-- Test inferring all statements with a given predicate -->
   <set name="query" value="
@@ -15,7 +15,7 @@
     from &lt;@server@#model1&gt; 
     where trans( $s &lt;urn:test:property&gt; $o ) 
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result.txt" name="queryResult">
     <save name="queryResult" file="badResult.xml"/>
     <fail>Output failed.  Check badResult.xml for output.</fail>
@@ -27,7 +27,7 @@
     from &lt;@server@#model1&gt; 
     where trans( &lt;urn:test:10&gt; &lt;urn:test:property&gt; $o ) 
     order by $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result2.txt" name="queryResult">
     <save name="queryResult" file="badResult2.xml"/>
     <fail>Output failed.  Check badResult2.xml for output.</fail>
@@ -39,7 +39,7 @@
     from &lt;@server@#model1&gt; 
     where trans( $s &lt;urn:test:property&gt; &lt;urn:test:4&gt; ) 
     order by $s ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result3.txt" name="queryResult">
     <save name="queryResult" file="badResult3.xml"/>
     <fail>Output failed.  Check badResult3.xml for output.</fail>
@@ -52,7 +52,7 @@
     where trans( &lt;urn:test:1&gt; &lt;urn:test:property&gt; $o 
     and $s &lt;urn:test:property&gt; $o ) 
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result4.txt" name="queryResult">
     <save name="queryResult" file="badResult4.xml"/>
     <fail>Output failed.  Check badResult4.xml for output.</fail>
@@ -65,7 +65,7 @@
     where trans( &lt;urn:test:8&gt; &lt;urn:test:property&gt; $o 
     and $s &lt;urn:test:property&gt; $o ) 
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result5.txt" name="queryResult">
     <save name="queryResult" file="badResult5.xml"/>
     <fail>Output failed.  Check badResult5.xml for output.</fail>
@@ -78,7 +78,7 @@
     where trans( &lt;urn:test:4&gt; &lt;urn:test:property&gt; $o 
     and $s &lt;urn:test:property&gt; $o ) 
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result6.txt" name="queryResult">
     <save name="queryResult" file="badResult6.xml"/>
     <fail>Output failed.  Check badResult6.xml for output.</fail>
@@ -91,7 +91,7 @@
     where trans( $s &lt;urn:test:property&gt; &lt;urn:test:6&gt;
     and $s &lt;urn:test:property&gt; $o ) 
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result7.txt" name="queryResult">
     <save name="queryResult" file="badResult7.xml"/>
     <fail>Output failed.  Check badResult7.xml for output.</fail>
@@ -104,7 +104,7 @@
     where trans( $s &lt;urn:test:property&gt; &lt;urn:test:3&gt;
     and $s &lt;urn:test:property&gt; $o ) 
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result8.txt" name="queryResult">
     <save name="queryResult" file="badResult8.xml"/>
     <fail>Output failed.  Check badResult8.xml for output.</fail>
@@ -119,7 +119,7 @@
       order by $s $o)
     from &lt;@server@#model1&gt; 
     where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result9.txt" name="queryResult">
     <save name="queryResult" file="badResult9.xml"/>
     <fail>Output failed.  Check badResult9.xml for output.</fail>
@@ -134,7 +134,7 @@
       order by $s $o)
     from &lt;@server@#model1&gt; 
     where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result10.txt" name="queryResult">
     <save name="queryResult" file="badResult10.xml"/>
     <fail>Output failed.  Check badResult10.xml for output.</fail>
@@ -149,7 +149,7 @@
     from &lt;@server@#model1&gt; 
     where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; 
     and $o &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:3&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result11.txt" name="queryResult">
     <save name="queryResult" file="badResult11.xml"/>
     <fail>Output failed.  Check badResult11.xml for output.</fail>
@@ -164,7 +164,7 @@
     from &lt;@server@#model1&gt; 
     where $p &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:property&gt; 
     and $s &lt;http://mulgara.org/mulgara#is&gt; &lt;urn:test:3&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result12.txt" name="queryResult">
     <save name="queryResult" file="badResult12.xml"/>
     <fail>Output failed.  Check badResult12.xml for output.</fail>
@@ -176,7 +176,7 @@
     from &lt;@server@#model1&gt; 
     where trans($s $p $o)
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result13.txt" name="queryResult">
     <save name="queryResult" file="badResult13.xml"/>
     <fail>Output failed.  Check badResult13.xml for output.</fail>
@@ -187,7 +187,7 @@
     from &lt;@server@#model1&gt; 
     where trans($s $p $o and $s $p $o)
     order by $s $o ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result14.txt" name="queryResult">
     <save name="queryResult" file="badResult14.xml"/>
     <fail>Output failed.  Check badResult14.xml for output.</fail>

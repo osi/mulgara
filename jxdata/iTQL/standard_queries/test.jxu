@@ -3,7 +3,7 @@
 
   <set name="modelName" value="@server@#model1" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/data.rdf&gt; into &lt;@server@#model1&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result1.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult.xml"/>
@@ -12,7 +12,7 @@
 
   <set name="modelName" value="@server@#model2" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/coins.rdf&gt; into &lt;@server@#model2&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result2.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult2.xml"/>
@@ -21,7 +21,7 @@
 
   <set name="modelName" value="@server@#model3" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/security-tks.rdf&gt; into &lt;@server@#model3&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result3.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult3.xml"/>
@@ -31,7 +31,7 @@
   <!--  Add a dummy model to test duplicate constraint bug -->
   <set name="modelName" value="@server@#allsame2" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/testpred.rdf&gt; into &lt;@server@#allsame2&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result8.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult8.xml"/>
@@ -40,7 +40,7 @@
 
   <set name="modelName" value="@server@#allsame" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/testsame.rdf&gt; into &lt;@server@#allsame&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result4.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult4.xml"/>
@@ -49,7 +49,7 @@
 
   <set name="query" value="select $pmid $title from &lt;@server@#model1&gt; where $date &lt;http://tucana.org/tucana/tool/DateExtractor#year&gt; '2000' and $date &lt;http://tucana.org/tucana/tool/DateExtractor#month&gt; '08' and $pmid &lt;urn:medline:creationDate&gt; $date and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult1.txt" name="queryResult">
     <save name="queryResult" file="badQuery1Result.xml"/>
     <fail>Output failed.  Check badQuery1Result.xml for output.</fail>
@@ -57,7 +57,7 @@
 
   <set name="query" value="select $pmid $title from &lt;@server@#model1&gt; where ( $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Birds' or $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Bird Diseases' )  and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult2.txt" name="queryResult">
     <save name="queryResult" file="badQuery2Result.xml"/>
     <fail>Output failed.  Check badQuery2Result.xml for output.</fail>
@@ -68,7 +68,7 @@
 
   <set name="query" value="select $pmid $title from &lt;@server@#badmodel&gt; where ( $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Birds' or $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Bird Diseases' )  and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult3.txt" name="queryResult">
     <save name="queryResult" file="badQuery3Result.xml"/>
     <fail>Output failed.  Check badQuery3Result.xml for output.</fail>
@@ -76,7 +76,7 @@
 
   <set name="query"
   value="select $pmid2 $title from &lt;@server@#model1&gt; where $date &lt;http://tucana.org/tucana/tool/DateExtractor#year&gt; '2000' and $date &lt;http://tucana.org/tucana/tool/DateExtractor#month&gt; '08' and $pmid &lt;urn:medline:creationDate&gt; $date and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult4.txt" name="queryResult">
     <save name="queryResult" file="badQuery4Result.xml"/>
     <fail>Output failed.  Check badQuery4Result.xml for output.</fail>
@@ -87,7 +87,7 @@
 
   <set name="query" value="select $coin $metal $shape from &lt;@server@#model2&gt; where ( ($coin &lt;coin:metal&gt; $metal) or ($coin &lt;coin:shape&gt; $shape) ) and ( ($metal &lt;coin:value&gt; &lt;coin:high&gt;) or ($shape &lt;coin:surface&gt; &lt;coin:smooth&gt;) ) order by $coin $metal $shape ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult5.txt" name="queryResult">
     <save name="queryResult" file="badQuery5Result.xml"/>
     <fail>Output failed.  Check badQuery5Result.xml for output.</fail>
@@ -96,21 +96,21 @@
 <!-- Check for conjunction/disjunction bug -->
 
   <set name="query" value="select $predicate $object from &lt;@server@#model3&gt; where &lt;http://tucana.org/tucana#user/test&gt; $predicate $object and ( $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canCreate&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canRead&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canWrite&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canDelete&gt; ) order by $predicate $object ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult6.txt" name="queryResult">
     <save name="queryResult" file="badQuery6Result.xml"/>
     <fail>Output failed.  Check badQuery6Result.xml for output.</fail>
   </ifEqual>
 
   <set name="query" value="select $subject $predicate $object from &lt;@server@#model3&gt; where $subject $predicate $object and $subject &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#user/test&gt; and ( $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canCreate&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canRead&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canWrite&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canDelete&gt; ) order by $predicate $object ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
     <save name="queryResult" file="badQuery7Result.xml"/>
     <fail>Output failed.  Check badQuery7Result.xml for output.</fail>
   </ifEqual>
 
   <set name="query" value="select $predicate $object from &lt;@server@#model3&gt; where &lt;http://tucana.org/tucana#group/dev&gt; $predicate $object and ( $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canCreate&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canRead&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canWrite&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canDelete&gt; ) order by $predicate $object ;" />
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult8.txt" name="queryResult">
     <save name="queryResult" file="badQuery8Result.xml"/>
     <fail>Output failed.  Check badQuery8Result.xml for output.</fail>
@@ -122,7 +122,7 @@
     from &lt;@server@#model1&gt;
     where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#title&gt; 'Methylmercury accumulation in tissues and its effects on growth and appetite in captive great egrets.' ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult9.txt" name="queryResult">
     <save name="queryResult" file="badQuery9Result.xml"/>
     <fail>Output failed.  Check badQuery9Result.xml for output.</fail>
@@ -135,7 +135,7 @@
     where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#title&gt; 'Methylmercury accumulation in tissues and its effects on growth and appetite in captive great egrets.' 
     and &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; 'Selenium; pharmacokinetics' ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult10.txt" name="queryResult">
     <save name="queryResult" file="badQuery10Result.xml"/>
     <fail>Output failed.  Check badQuery10Result.xml for output.</fail>
@@ -147,7 +147,7 @@
   from &lt;@server@#model1&gt;
   where &lt;urn:pmid:pmid&gt; &lt;urn:pmid:pmid&gt; &lt;urn:pmid:pmid&gt; ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult11.txt" name="queryResult">
     <save name="queryResult" file="badQuery11Result.xml"/>
     <fail>Output failed.  Check badQuery11Result.xml for output.</fail>
@@ -160,7 +160,7 @@
   where $s &lt;http://tucana.org/tucana/Document#subject&gt; $o 
   and $o &lt;urn:cas:name&gt; $o2 ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult12.txt" name="queryResult">
     <save name="queryResult" file="badQuery12Result.xml"/>
     <fail>Output failed.  Check badQuery12Result.xml for output.</fail>
@@ -176,7 +176,7 @@
   and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title 
   order by $pmid $title;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult13.txt" name="queryResult">
     <save name="queryResult" file="badQuery13Result.xml"/>
     <fail>Output failed.  Check badQuery13Result.xml for output.</fail>
@@ -189,7 +189,7 @@
     where $x $x $x
     order by $x;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult14.txt" name="queryResult">
     <save name="queryResult" file="badQuery14Result.xml"/>
     <fail>Output failed.  Check badQuery14Result.xml for output.</fail>
@@ -202,7 +202,7 @@
     where $x &lt;urn:test:property&gt; $x
     order by $x ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult15.txt" name="queryResult">
     <save name="queryResult" file="badQuery15Result.xml"/>
     <fail>Output failed.  Check badQuery15Result.xml for output.</fail>
@@ -211,7 +211,7 @@
   <!-- local and remote model loading -->
   <set name="modelName" value="@server@#model4" />
   <set name="loadCommand" value="load local &lt;@baseuri@/jxdata/iTQL/data.rdf&gt; into &lt;@server@#model4&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result5.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult5.xml"/>
@@ -220,7 +220,7 @@
 
   <set name="modelName" value="@server@#model5" />
   <set name="loadCommand" value="load local &lt;@baseuri@/jxdata/iTQL/coins.rdf&gt; into &lt;@server@#model5&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result6.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult6.xml"/>
@@ -229,7 +229,7 @@
 
   <set name="modelName" value="@server@#model6" />
   <set name="loadCommand" value="load remote &lt;@baseuri@/jxdata/iTQL/security-tks.rdf&gt; into &lt;@server@#model6&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result7.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult7.xml"/>
@@ -238,8 +238,8 @@
 
   <!-- jar loading -->
   <set name="modelName" value="@server@#model7" />
-  <set name="loadCommand" value="load remote &lt;jar:@baseuri@/dist/@kowari.jar@!/data/w3c-news.rss&gt; into &lt;@server@#model7&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <set name="loadCommand" value="load remote &lt;jar:@baseuri@/dist/@mulgara.jar@!/data/w3c-news.rss&gt; into &lt;@server@#model7&gt; ;" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result9.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult9.xml"/>
@@ -247,8 +247,8 @@
   </ifEqual>
 
   <set name="modelName" value="@server@#model7" />
-  <set name="loadCommand" value="load local &lt;jar:@baseuri@/dist/@kowari.jar@!/data/w3c-news.rss&gt; into &lt;@server@#model7&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <set name="loadCommand" value="load local &lt;jar:@baseuri@/dist/@mulgara.jar@!/data/w3c-news.rss&gt; into &lt;@server@#model7&gt; ;" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result9.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult9.xml"/>
@@ -257,7 +257,7 @@
 
   <set name="modelName" value="@server@#model8" />
   <set name="loadCommand" value="load local &lt;@baseuri@/jxdata/iTQL/numbers.rdf.gz&gt; into &lt;@server@#model8&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="result10.txt" name="loadResult">
     <save name="loadResult" file="badLoadResult10.xml"/>
@@ -270,7 +270,7 @@
     where $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; $type
     and $s $p $o in $model ; "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
 
   <!-- Test error message for non-existant model -->
   <set name="query" value="
@@ -278,7 +278,7 @@
       &lt;http://cdls.nstl.gov.cn/cdls2/w3c/2003/Metadata/elements/title&gt;
       &apos;test2 escape char &lt;&apos; into &lt;rmi://localhost/server1#nomodelexistswiththisname&gt; ; "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult17.txt" name="queryResult">
     <save name="queryResult" file="badQuery17Result.xml"/>
     <fail>Output failed.  Check badQuery17Result.xml for output.</fail>
@@ -288,7 +288,7 @@
   <set name="query" value="
     select $s $p $o from &lt;mailto:foo@bar.com&gt; where $s $p $o ; "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult18.txt" name="queryResult">
     <save name="queryResult" file="badQuery18Result.xml"/>
     <fail>Output failed.  Check badQuery18Result.xml for output.</fail>
@@ -300,7 +300,7 @@
       &lt;http://cdls.nstl.gov.cn/cdls2/w3c/2003/Metadata/elements/title&gt;
       &apos;test2 escape char &lt;&apos; into &lt;rmi://localhost/server2#nomodelexistswiththisname&gt; ; "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult19.txt" name="queryResult">
     <save name="queryResult" file="badQuery19Result.xml"/>
     <fail>Output failed.  Check badQuery19Result.xml for output.</fail>

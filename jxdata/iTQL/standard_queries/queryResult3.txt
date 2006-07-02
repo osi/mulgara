@@ -1,4 +1,4 @@
-ItqlInterpreter error - org.kowari.query.QueryException: Error ending previous query
+ItqlInterpreter error - org.mulgara.query.QueryException: Error ending previous query
 Caused by: (QueryException) Error ending previous query
 Caused by: (QueryException) javax.transaction.RollbackException: null
 Caused by: (QueryException) Error resolving [$pmid http://tucana.org/tucana/Document#subject "Birds" $_from] from @server@#badmodel

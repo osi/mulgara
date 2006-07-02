@@ -8,7 +8,7 @@
     where $value &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; $type;
   "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult1.txt" name="queryResult">
     <save name="queryResult" file="badQuery1Result.xml"/>
     <fail>Output failed.  Check badQuery1Result.xml for output.</fail>
@@ -22,7 +22,7 @@
           $subject $predicate $value order by $predicate;
   "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult2.txt" name="queryResult">
     <save name="queryResult" file="badQuery2Result.xml"/>
     <fail>Output failed.  Check badQuery2Result.xml for output.</fail>

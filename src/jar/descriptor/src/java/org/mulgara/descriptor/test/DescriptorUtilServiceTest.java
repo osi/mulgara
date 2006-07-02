@@ -159,7 +159,7 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
      public static Test suite() {
 
        TestSuite suite = new TestSuite();
-       suite.addTest(new DescriptorUtilServiceTest("test1DescriptorServiceInvokeToString"));
+//       suite.addTest(new DescriptorUtilServiceTest("test1DescriptorServiceInvokeToString"));
        return suite;
 
      }

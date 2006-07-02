@@ -5,7 +5,7 @@
     value="load &lt;@baseuri@/jxtest/security/security-tks.rdf&gt; into &lt;@server@#_&gt;;
            load &lt;@baseuri@/data/mulgara.rdfs&gt; into &lt;@server@#_&gt; ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result1.txt" name="queryResult">
     <save name="queryResult" file="badResult1.xml"/>
     <fail>Output failed.  Check badResult1.xml for output.</fail>

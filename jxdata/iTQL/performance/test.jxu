@@ -4,7 +4,7 @@
 
   <set name="server" value="@server@" />
   <set name="file" value="@baseuri@/jxdata/iTQL/wordnet.gz" />
-  <eval stepClass="org.kowari.store.jxunit.RestoreDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.RestoreDataJX" />
 
   <set name="queryName" value="aeroplane"/>
   <set name="query"
@@ -16,7 +16,7 @@
        $id &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; 'aeroplane'
        order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query1.txt" name="queryResult">
     <save name="queryResult" file="badQuery1.xml"/>
     <fail>Output failed.  Check badQuery1.xml for output.</fail>
@@ -32,7 +32,7 @@
       $id &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; 'word'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query2.txt" name="queryResult">
     <save name="queryResult" file="badQuery2.xml"/>
     <fail>Output failed.  Check badQuery2.xml for output.</fail>
@@ -48,7 +48,7 @@
       $id &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; 'word'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query3.txt" name="queryResult">
     <save name="queryResult" file="badQuery3.xml"/>
     <fail>Output failed.  Check badQuery3.xml for output.</fail>
@@ -64,7 +64,7 @@
       $id $wtype 'word'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query4.txt" name="queryResult">
     <save name="queryResult" file="badQuery4.xml"/>
     <fail>Output failed.  Check badQuery4.xml for output.</fail>
@@ -80,7 +80,7 @@
       $id $wtype 'word'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query5.txt" name="queryResult">
     <save name="queryResult" file="badQuery5.xml"/>
     <fail>Output failed.  Check badQuery5.xml for output.</fail>
@@ -104,7 +104,7 @@
       $id $wtype 'car'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query6.txt" name="queryResult">
     <save name="queryResult" file="badQuery6.xml"/>
     <fail>Output failed.  Check badQuery6.xml for output.</fail>
@@ -129,7 +129,7 @@ count (
      $id $wtype 'word'
      order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query7.txt" name="queryResult">
     <save name="queryResult" file="badQuery7.xml"/>
     <fail>Output failed.  Check badQuery7.xml for output.</fail>
@@ -156,7 +156,7 @@ subquery (
       order by $concept;
 "/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query8.txt" name="queryResult">
     <save name="queryResult" file="badQuery8.xml"/>
     <fail>Output failed.  Check badQuery8.xml for output.</fail>
@@ -182,7 +182,7 @@ subquery (
       $id $wtype 'word'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query9.txt" name="queryResult">
     <save name="queryResult" file="badQuery9.xml"/>
     <fail>Output failed.  Check badQuery9.xml for output.</fail>
@@ -208,7 +208,7 @@ subquery (
       $id $wtype 'fog'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query10.txt" name="queryResult">
     <save name="queryResult" file="badQuery10.xml"/>
     <fail>Output failed.  Check badQuery10.xml for output.</fail>
@@ -234,7 +234,7 @@ subquery (
       $id $wtype 'cat'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query11.txt" name="queryResult">
     <save name="queryResult" file="badQuery11.xml"/>
     <fail>Output failed.  Check badQuery11.xml for output.</fail>
@@ -250,7 +250,7 @@ subquery (
       $id $wtype 'word'
       order by $concept;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query12.txt" name="queryResult">
     <save name="queryResult" file="badQuery12.xml"/>
     <fail>Output failed.  Check badQuery12.xml for output.</fail>
@@ -266,7 +266,7 @@ subquery (
       $id &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; $wordForm
       order by $concept $wordForm;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query13.txt" name="queryResult">
     <save name="queryResult" file="badQuery13.xml"/>
     <fail>Output failed.  Check badQuery13.xml for output.</fail>
@@ -282,7 +282,7 @@ subquery (
       $id &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; $wordForm
       order by $concept $wordForm;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query14.txt" name="queryResult">
     <save name="queryResult" file="badQuery14.xml"/>
     <fail>Output failed.  Check badQuery14.xml for output.</fail>
@@ -296,7 +296,7 @@ subquery (
       $termId &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; $wordForm
       order by $wordForm;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query15.txt" name="queryResult">
     <save name="queryResult" file="badQuery15.xml"/>
     <fail>Output failed.  Check badQuery15.xml for output.</fail>
@@ -312,7 +312,7 @@ subquery (
       $id $wtype 'human'
       order by $concept $wtype $relation $rtype $ctype;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query16.txt" name="queryResult">
     <save name="queryResult" file="badQuery16.xml"/>
     <fail>Output failed.  Check badQuery16.xml for output.</fail>
@@ -326,7 +326,7 @@ subquery (
           $termId &lt;http://www.cogsci.princeton.edu/~wn/schema/wordForm&gt; $wordForm
           order by $wordForm;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="query17.txt" name="queryResult">
     <save name="queryResult" file="badQuery17.xml"/>
     <fail>Output failed.  Check badQuery17.xml for output.</fail>

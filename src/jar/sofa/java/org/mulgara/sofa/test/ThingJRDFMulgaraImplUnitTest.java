@@ -210,7 +210,7 @@ public class ThingJRDFMulgaraImplUnitTest extends ThingJRDFMemoryImplUnitTest {
    */
   private void createModel(URI modelURI, Session session) throws Exception {
 
-    session.createModel(modelURI, new URI("http://tucana.org/tucana#Model"));
+    session.createModel(modelURI, new URI("http://mulgara.org/mulgara#Model"));
   }
 
   /**

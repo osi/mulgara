@@ -5,10 +5,10 @@
 
   <set name="label" value="parsing" />
   <set name="print" value="rdf-ns-prefix-confusion/test0001.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0001.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 1 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0001.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad1.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad1.xml</fail>
@@ -16,10 +16,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0002.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0002.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 7 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0002.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad2.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad2.xml</fail>
@@ -27,10 +27,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0003.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0003.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 1 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0003.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad3.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad3.xml</fail>
@@ -38,10 +38,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0004.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0004.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 1 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0004.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad4.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad4.xml</fail>
@@ -49,10 +49,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0005.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0005.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 2 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0005.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad5.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad5.xml</fail>
@@ -60,10 +60,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0006.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0006.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 1 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0006.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad6.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad6.xml</fail>
@@ -71,10 +71,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0007.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0007.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 3 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0007.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad7.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad7.xml</fail>
@@ -82,10 +82,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0009.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0009.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 1 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0009.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad9.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad9.xml</fail>
@@ -93,10 +93,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0010.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0010.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 1 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0010.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad10.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad10.xml</fail>
@@ -104,10 +104,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0011.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0011.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 2 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0011.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad11.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad11.xml</fail>
@@ -115,10 +115,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0012.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0012.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 2 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0012.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad12.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad12.xml</fail>
@@ -126,10 +126,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0013.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0013.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 2 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0013.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad13.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad13.xml</fail>
@@ -137,10 +137,10 @@
 
 
   <set name="print" value="rdf-ns-prefix-confusion/test0014.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0014.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;Successfully loaded 2 statements from file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/test0014.rdf into @server1@#w3c&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badLoad14.xml"/>
     <fail>RDF load failed. Check rdf-ns-prefix-confusion/badLoad14.xml</fail>
@@ -149,127 +149,127 @@
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0001.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0001.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0001.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad1.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad1.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0002.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0002.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0002.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad2.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad2.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0003.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0003.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0003.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad3.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad3.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0004.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0004.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0004.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad4.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad4.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0005.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0005.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0005.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad5.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad5.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0006.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0006.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0006.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad6.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad6.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0007.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0007.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0007.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad7.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad7.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0008.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0008.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0008.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad8.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad8.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 
   <set name="label" value="parsing"/>
   <set name="print" value="rdf-ns-prefix-confusion/error0009.rdf" />
-  <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+  <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
 
   <set name="loadCommand" value="load &lt;file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0009.rdf&gt; into &lt;@server1@#w3c&gt; ;" />
-  <eval stepClass="org.kowari.store.jxunit.LoadDataJX" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
   <ifEqual converse="true" value="&lt;answers&gt;&lt;query&gt;WARNING: No valid RDF statements found in file:@basedir@/jxdata/w3c/rdf-ns-prefix-confusion/error0009.rdf&lt;/query&gt;&lt;/answers&gt;" name="loadResult">
     <save name="loadResult" file="badErrorLoad9.xml"/>
     <set name="label" value="WARNING"/>
     <set name="print" value="RDF load succeeded on bad data. Check rdf-ns-prefix-confusion/badErrorLoad9.xml"/>
-    <eval stepClass="org.kowari.store.jxunit.DebugPrint" />
+    <eval stepClass="org.mulgara.store.jxunit.DebugPrint" />
   </ifEqual>
 
 </jxu>

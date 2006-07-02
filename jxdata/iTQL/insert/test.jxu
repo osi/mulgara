@@ -22,7 +22,7 @@
   select $p $o from &lt;@server@#inserttest&gt; where $s $p $o order by $p $o ;
   drop &lt;@server@#inserttest&gt; ;"/>
 
-  <eval stepClass="org.kowari.store.jxunit.QueryJX" />
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult1.txt" name="queryResult">
     <save name="queryResult" file="badQuery1Result.xml"/>
     <fail>Output failed.  Check badQuery1Result.xml for output.</fail>

@@ -1,4 +1,4 @@
-ItqlInterpreter error - org.kowari.query.QueryException: Unable to reconnect to rmi://localhost/server2
+ItqlInterpreter error - org.mulgara.query.QueryException: Unable to reconnect to rmi://localhost/server2
 Caused by: (QueryException) Unable to reconnect to rmi://localhost/server2
 Caused by: (SessionFactoryFinderException) Cannot find server rmi://localhost/server2
 Caused by: (NameNotFoundException) server2

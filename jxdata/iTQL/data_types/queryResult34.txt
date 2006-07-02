@@ -1,7 +1,7 @@
-ItqlInterpreter error - org.kowari.query.QueryException: Could not commit insert
+ItqlInterpreter error - org.mulgara.query.QueryException: Could not commit insert
 Caused by: (QueryException) Could not commit insert
 Caused by: (QueryException) javax.transaction.RollbackException: null
-Caused by: (QueryException) org.kowari.resolver.spi.ResolverException: Unable to read input statements
-Caused by: (QueryException) org.kowari.query.TuplesException: Failed to localize node
-Caused by: (QueryException) org.kowari.resolver.spi.LocalizeException: Unable to localize "<test>test escape char</foo>"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral> - Couldn't convert Node to SPObject
+Caused by: (QueryException) org.mulgara.resolver.spi.ResolverException: Unable to read input statements
+Caused by: (QueryException) org.mulgara.query.TuplesException: Failed to localize node
+Caused by: (QueryException) org.mulgara.resolver.spi.LocalizeException: Unable to localize "<test>test escape char</foo>"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral> - Couldn't convert Node to SPObject
 Caused by: (IllegalArgumentException) Failed to validate: <test>test escape char</foo>

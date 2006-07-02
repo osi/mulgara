@@ -1,5 +1,5 @@
-ItqlInterpreter error - org.kowari.query.QueryException: Error ending previous query
+ItqlInterpreter error - org.mulgara.query.QueryException: Error ending previous query
 Caused by: (QueryException) Error ending previous query
 Caused by: (QueryException) javax.transaction.RollbackException: null
 Caused by: (QueryException) Failed to resolve query
-Caused by: (QueryException) org.kowari.query.TuplesException: No such variable $v in tuples [$s, $k0] (class org.kowari.resolver.AppendAggregateTuples)
+Caused by: (QueryException) org.mulgara.query.TuplesException: No such variable $v in tuples [$s, $k0] (class org.mulgara.resolver.AppendAggregateTuples)

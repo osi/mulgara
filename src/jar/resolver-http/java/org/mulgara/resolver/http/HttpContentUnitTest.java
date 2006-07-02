@@ -105,7 +105,7 @@ public class HttpContentUnitTest extends TestCase {
   public void testValidContentType() throws Exception {
 
     // obtain a valid content type
-    HttpContent content = new HttpContent(new URL("http://www.tucanatech.com"));
+    HttpContent content = new HttpContent(new URL("http://www.mulgara.org"));
     MimeType mimeType = content.getContentType();
     assertTrue("Expecting mime type of text/html but found " + mimeType,
         mimeType != null && mimeType.getPrimaryType().equals("text")
@@ -124,16 +124,15 @@ public class HttpContentUnitTest extends TestCase {
     mimeType = content.getContentType();
     assertTrue("Expecting mime type of text/html but found " + mimeType,
         mimeType != null && mimeType.getPrimaryType().equals("text")
-            && mimeType.getSubType().equals("xml"));
+            && mimeType.getSubType().equals("html"));
 
     // obtain a valid content type of XML via https
     content = new HttpContent(new URL(
         "https://sourceforge.net/export/rss_sfnewreleases.php"));
     mimeType = content.getContentType();
-    // this was text/html but has changed recently to application/xml
     assertTrue("Expecting mime type of application/xml but found " + mimeType,
         mimeType != null && mimeType.getPrimaryType().equals("application")
-            && mimeType.getSubType().equals("xml"));
+            && mimeType.getSubType().equals("html"));
 
   }
 
