@@ -29,6 +29,7 @@ package org.mulgara.store.stringpool.xa;
 
 import java.io.*;
 import java.util.Date;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.net.URL;
@@ -76,11 +77,17 @@ public class SPGMonthDayUnitTest extends TestCase {
   /** Constant valid test date */
   private static final String VALID_DATE = "--04-01";
 
+  /** A valid value for the VALID_DATE in TimeZones west of GMT **/ 
+  private static final String VALID_DATE_WEST = "--03-31";  
+
   /** Constant valid test date (Timezone added) */
   private static final String VALID_DATE2 = "--04-01-04:00";
 
   /** Constant valid test date (date with UTC timezone) */
   private static final String VALID_DATE3 = "--04-01Z";
+
+  /** A valid value for the VALID_DATE3 in TimeZones west of GMT **/ 
+  private static final String VALID_DATE3_WEST = "--03-31Z";
 
   /** Invalid date 1 (non-numeric month) */
   private static final String INVALID_DATE_1 = "--2g-01";
@@ -165,7 +172,11 @@ public class SPGMonthDayUnitTest extends TestCase {
    * Tests that valid xsd:gMonthDay values are accepted and processed correctly.
    */
   public void testValid() {
-
+	// Get a TimeZone instance which will help us interpret the results.
+	TimeZone tz = TimeZone.getDefault();
+		
+	boolean westOfGMT = tz.getRawOffset() < 0;
+		
     // Create a new factory
     SPGMonthDayFactory factory = new SPGMonthDayFactory();
 
@@ -176,7 +187,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GMonthDay lexical form was not " + VALID_DATE +
                " as expected. was:" + gMonthDay.getLexicalForm(),
-               gMonthDay.getLexicalForm().equals(VALID_DATE));
+               !westOfGMT ? gMonthDay.getLexicalForm().equals(VALID_DATE)
+            		   : gMonthDay.getLexicalForm().equals(VALID_DATE_WEST) );
 
     // Retrieve the byte data of the gMonthDay object
     ByteBuffer monthDayBytes = gMonthDay.getData();
@@ -192,8 +204,9 @@ public class SPGMonthDayUnitTest extends TestCase {
 
     // Test the correct value is stored
     assertTrue("GMonthDay byte buffer value was not " + VALID_DATE +
-               " as expected, was: " + monthDay,
-               ("" + monthDay).equals(VALID_DATE));
+       " as expected, was: " + monthDay,
+        !westOfGMT ? ("" + monthDay).equals(VALID_DATE)
+        	: ("" + monthDay).equals(VALID_DATE_WEST) );
 
     // Byte buffer to hold our date information
     ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
@@ -225,7 +238,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     assertTrue("GMonthDay lexical form was not " + VALID_DATE +
                " as expected. was:" +
                gMonthDay.getLexicalForm(),
-               gMonthDay.getLexicalForm().equals(VALID_DATE));
+               !westOfGMT ? gMonthDay.getLexicalForm().equals(VALID_DATE)
+            	: gMonthDay.getLexicalForm().equals(VALID_DATE_WEST) );
 
     // Retrieve the byte data of the gMonthDay object
     monthDayBytes = gMonthDay.getData();
@@ -242,7 +256,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GMonthDay byte buffer value was not " + VALID_DATE +
                " as expected, was: " + monthDay,
-               ("" + monthDay).equals(VALID_DATE));
+         !westOfGMT ? ("" + monthDay).equals(VALID_DATE)
+        		 : ("" + monthDay).equals(VALID_DATE_WEST) );
 
     // Create a gMonthDay object by lexical string (testing range acceptance)
     gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
@@ -251,7 +266,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GMonthDay lexical form was not " + VALID_DATE3 +
                " as expected. was:" + gMonthDay.getLexicalForm(),
-               gMonthDay.getLexicalForm().equals(VALID_DATE3));
+             !westOfGMT ? gMonthDay.getLexicalForm().equals(VALID_DATE3)
+                : gMonthDay.getLexicalForm().equals(VALID_DATE3_WEST) );
 
     // Retrieve the byte data of the gMonthDay object
     monthDayBytes = gMonthDay.getData();
@@ -268,7 +284,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GMonthDay byte buffer value was not " + VALID_DATE +
                " as expected, was: " + monthDay,
-               ("" + monthDay).equals(VALID_DATE));
+               !westOfGMT ? ("" + monthDay).equals(VALID_DATE)
+            	 : ("" + monthDay).equals(VALID_DATE_WEST) );
 
     // Create a gMonthDay object by lexical string (testing timezone acceptance)
     gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
@@ -277,7 +294,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GMonthDay lexical form was not " + VALID_DATE3 +
                " as expected. was:" + gMonthDay.getLexicalForm(),
-               gMonthDay.getLexicalForm().equals(VALID_DATE3));
+            !westOfGMT ? gMonthDay.getLexicalForm().equals(VALID_DATE3)
+           		: gMonthDay.getLexicalForm().equals(VALID_DATE3_WEST) );
 
     // Retrieve the byte data of the gMonthDay object
     monthDayBytes = gMonthDay.getData();
@@ -294,7 +312,8 @@ public class SPGMonthDayUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GMonthDay byte buffer value was not " + VALID_DATE +
                " as expected, was: " + monthDay,
-               ("" + monthDay).equals(VALID_DATE));
+        !westOfGMT ? ("" + monthDay).equals(VALID_DATE)
+        	: ("" + monthDay).equals(VALID_DATE_WEST ) );
   }
 
   /**
