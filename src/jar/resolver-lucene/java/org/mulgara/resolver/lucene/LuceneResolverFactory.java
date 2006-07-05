@@ -101,7 +101,7 @@ public class LuceneResolverFactory implements ResolverFactory {
 
       systemResolverFactory = initializer.getSystemResolverFactory();
 
-      // Claim tucana:LuceneModel
+      // Claim mulgara:LuceneModel
       initializer.addModelType(modelTypeURI, this);
 
     } catch (URISyntaxException eu) {

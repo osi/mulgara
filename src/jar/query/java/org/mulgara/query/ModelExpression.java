@@ -78,7 +78,7 @@ public interface ModelExpression extends Transformable, Cloneable {
    *      according to this FROM clause
    * @param transformation localizing transformation
    * @param modelProperty the local node representing the
-   *   <code>tks:model</code> property
+   *   <code>mulgara:model</code> property
    * @param systemModel the local node representing the system model
    *   (<code>#</code>)
    * @param variableFactory a factory for anonymous link variables

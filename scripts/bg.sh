@@ -2,7 +2,7 @@
 
 # ==============================================================================
 #
-# Starts Kowari. Expects the following environment/arguments:
+# Starts Mulgara. Expects the following environment/arguments:
 #
 #   OUTPUT_FILE       The file to append std out and std err to
 #

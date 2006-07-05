@@ -58,7 +58,7 @@ import java.net.URLEncoder;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -82,7 +82,7 @@ public abstract class AbstractModel implements Model {
       getName());
 
   /** Used in queries */
-  protected final static String TKS_IS = " <" + Mulgara.NAMESPACE + "is>";
+  protected final static String MULGARA_IS = " <" + Mulgara.NAMESPACE + "is>";
 
   /** Newline character ('\n' on Unix) */
   protected final static String NEWLINE = System.getProperty("line.separator");

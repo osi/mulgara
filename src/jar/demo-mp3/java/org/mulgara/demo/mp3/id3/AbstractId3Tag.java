@@ -55,7 +55,7 @@ import java.util.*;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -187,10 +187,10 @@ public abstract class AbstractId3Tag implements Id3Tag {
    *  from <model.getResource()>
    *  where $s $p $o
    *  and $s <id3:uri> <mp3>
-   *  and ($p <tks:is> <schemaProperty-1>
-   *    or $p <tks:is> <schemaProperty-2>
+   *  and ($p <mulgara:is> <schemaProperty-1>
+   *    or $p <mulgara:is> <schemaProperty-2>
    *              ...
-   *    or $p <tks:is> <schemaProperty-n>) ;
+   *    or $p <mulgara:is> <schemaProperty-n>) ;
    *  </pre> where <schemaProperty> is a property of the ID3Tags schema.
    *
    * @return String
@@ -212,11 +212,11 @@ public abstract class AbstractId3Tag implements Id3Tag {
     query.append("where $s $p $o" + NEWLINE);
 
     query.append("and $s" + ID3_URI + asString(mp3) + " " + NEWLINE);
-    query.append("and ( $p" + TKS_IS + asString((URIReference) currentProperty) +
+    query.append("and ( $p" + MULGARA_IS + asString((URIReference) currentProperty) +
         " " + NEWLINE);
     while (properties.hasNext()) {
       currentProperty = ((Triple) properties.next()).getSubject();
-      query.append("  or $p" + TKS_IS + asString((URIReference) currentProperty) +
+      query.append("  or $p" + MULGARA_IS + asString((URIReference) currentProperty) +
           " " + NEWLINE);
     }
     //results must be ordered

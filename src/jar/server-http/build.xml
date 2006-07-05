@@ -64,7 +64,7 @@
                        source code">
 
     <javac destdir="${obj.dir}/jar/server-http/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="server-http-classpath"/>
 
@@ -142,16 +142,16 @@
     <mkdir dir="${obj.dir}/META-INF"/>
 
     <!-- generate the core manifest -->
-    <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_HTTP_BASE.MF">
+    <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_HTTP_BASE.MF">
       <attribute name="Main-Class" value="org.mulgara.store.Main"/>
     </manifest>
 
     <!-- generate the bootstrap manifest -->
-    <manifest file="${obj.dir}/META-INF/MANIFEST_Kowari_HTTP_BOOTSTRAP.MF">
+    <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_HTTP_BOOTSTRAP.MF">
 
       <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="lib/${driver.jar}, lib/${query.jar},lib/${itql.jar}, lib/${rules.jar}, lib/${server.jar}, lib/${util.jar}, lib/${config.jar}, lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar,lib/antlr.jar, lib/${commons-logging.jar}, lib/log4j-1.2.8.jar, lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,lib/castor-0.9.3.9-xml.jar, lib/xercesImpl.jar, lib/xmlParserAPIs.jar, lib/${jrdf.jar},lib/jakarta-oro-2.0.5.jar, lib/${emory-util.jar}"/>
-      <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedKowariHttpServer"/>
+      <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraHttpServer"/>
     </manifest>
 
     <!-- HACK!!!!! -->
@@ -166,7 +166,7 @@
     <mkdir dir="${dist.dir}"/>
 
     <jar jarfile="${dist.dir}/${mulgara-http.jar}"
-        manifest="${obj.dir}/META-INF/MANIFEST_Kowari_HTTP_BOOTSTRAP.MF">
+        manifest="${obj.dir}/META-INF/MANIFEST_Mulgara_HTTP_BOOTSTRAP.MF">
 
       <zipfileset dir="${conf.dir}" prefix="conf"
                   includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy,
@@ -186,7 +186,7 @@
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
           includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
-      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>

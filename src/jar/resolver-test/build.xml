@@ -78,7 +78,7 @@
                        source code">
 
     <javac destdir="${resolver-test.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="resolver-test-pkg-classpath"/>
 

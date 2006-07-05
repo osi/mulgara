@@ -49,7 +49,7 @@ DTD.  An example <category/> element is as follows:
   <!-- Turn on info level logging for "important" classes  -->
 
   <!-- (Insert category elements here) -->
-  <category name="org.mulgara.server.EmbeddedKowariServer">
+  <category name="org.mulgara.server.EmbeddedmulgaraServer">
     <priority value="INFO"/>
   </category>
 

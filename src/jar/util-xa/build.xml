@@ -58,7 +58,7 @@
                        source code">
 
     <javac destdir="${util-xa.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="util-xa-classpath"/>
 

@@ -364,7 +364,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    */
   private void createModel(URI modelURI, Session session) throws Exception {
 
-//    session.createModel(modelURI, new URI(Tucana.NAMESPACE + "Model"));
+//    session.createModel(modelURI, new URI(Mulgara.NAMESPACE + "Model"));
     session.createModel(modelURI, memoryModelURI);
   }
 

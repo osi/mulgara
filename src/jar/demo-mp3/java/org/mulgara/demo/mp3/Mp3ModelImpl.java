@@ -48,7 +48,7 @@ import org.mulgara.query.QueryException;
  * 
  * @created 2004-12-03
  * 
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner </a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner </a>
  * 
  * @version $Revision: 1.4 $
  * 
@@ -188,7 +188,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
      * have the specified metadata properties and values.
      * 
      * @param properties
-     *            Iterator metadata predicates (eg. "tks:title")
+     *            Iterator metadata predicates (eg. "mulgara:title")
      * @param values
      *            Iterator metadata objects (eg. "Vertigo")
      * @return Mp3Iterator
@@ -227,7 +227,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
      *      select $s $p $o
      *      from &lt;getResource()&gt;
      *      where $s $p $o
-     *      and $s &lt;rdf:type&gt; &lt;tks:mp3&gt;;
+     *      and $s &lt;rdf:type&gt; &lt;mulgara:mp3&gt;;
      *    
      *   
      *  
@@ -238,7 +238,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
     private String getMp3sQuery() {
         StringBuffer query = new StringBuffer();
         query
-                .append("select $s <" + RDF.TYPE + ">" + Mp3File.TKS_MP3
+                .append("select $s <" + RDF.TYPE + ">" + Mp3File.MULGARA_MP3
                         + NEWLINE);
         query.append("from <" + getResource() + "> " + NEWLINE);
         query.append("where $x" + Id3Tag.ID3_URI + " $s" + NEWLINE);
@@ -286,7 +286,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
         String currentValue = null;
         StringBuffer query = new StringBuffer();
         query
-                .append("select $s <" + RDF.TYPE + ">" + Mp3File.TKS_MP3
+                .append("select $s <" + RDF.TYPE + ">" + Mp3File.MULGARA_MP3
                         + NEWLINE);
         query.append("from <" + getResource() + "> " + NEWLINE);
         query.append("where $x" + Id3Tag.ID3_URI + " $s" + NEWLINE);
@@ -311,11 +311,11 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
      *     select $s $p $o
      *     from &lt;getResource()&gt;
      *     where $s $p $o
-     *     and $s &lt;tks:is&gt; &lt;mp3&gt;
-     *     and ($p &lt;tks:is&gt; &lt;schemaProperty-1&gt;
-     *       or $p &lt;tks:is&gt; &lt;schemaProperty-2&gt;
+     *     and $s &lt;mulgara:is&gt; &lt;mp3&gt;
+     *     and ($p &lt;mulgara:is&gt; &lt;schemaProperty-1&gt;
+     *       or $p &lt;mulgara:is&gt; &lt;schemaProperty-2&gt;
      *                 ...
-     *       or $p &lt;tks:is&gt; &lt;schemaProperty-n&gt;) ;
+     *       or $p &lt;mulgara:is&gt; &lt;schemaProperty-n&gt;) ;
      *     
      *   
      *  
@@ -341,13 +341,13 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
         StringBuffer query = new StringBuffer("select $s $p $o" + NEWLINE);
         query.append("from <" + getResource().getURI() + ">" + NEWLINE);
         query.append("where $s $p $o" + NEWLINE);
-        query.append("and " + getTksIsConstraint("$s", mp3));
+        query.append("and " + getMulgaraIsConstraint("$s", mp3));
         query.append("and ( "
-                + getTksIsConstraint("$p", (URIReference) currentProperty));
+                + getMulgaraIsConstraint("$p", (URIReference) currentProperty));
         while (properties.hasNext()) {
             currentProperty = ((Triple) properties.next()).getSubject();
             query.append("  or "
-                    + getTksIsConstraint("$p", (URIReference) currentProperty));
+                    + getMulgaraIsConstraint("$p", (URIReference) currentProperty));
         }
         //results must be ordered
         query.append(") order by $s $p $o ; ");
@@ -355,7 +355,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
     }
 
     /**
-     * Returns an iTQL constraint in the form of: $var <tks:is><value>
+     * Returns an iTQL constraint in the form of: $var <mulgara:is><value>
      * 
      * @param var
      *            String
@@ -363,7 +363,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
      *            Node
      * @return String
      */
-    private String getTksIsConstraint(String var, Node value) {
+    private String getMulgaraIsConstraint(String var, Node value) {
 
         if (var == null) {
             throw new IllegalArgumentException("'var' is null");
@@ -371,7 +371,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
         if (value == null) {
             throw new IllegalArgumentException("'value' is null");
         }
-        return var + TKS_IS + asString(value) + " " + NEWLINE;
+        return var + MULGARA_IS + asString(value) + " " + NEWLINE;
     }
 
     /**

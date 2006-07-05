@@ -86,7 +86,7 @@
       <classpath>
 
         <pathelement location="${java.home}/../lib/tools.jar"/>
-        <pathelement location="${lib.dir}/ant-1.6.1.jar"/>
+        <pathelement location="${lib.dir}/ant-1.6.5.jar"/>
         <pathelement location="${lib.dir}/${jasper.runtime.jar}"/>
         <pathelement location="${lib.dir}/${jasper.compiler.jar}"/>
         <pathelement location="${lib.dir}/${servlet.jar}"/>
@@ -205,8 +205,8 @@
   <target name="config-database">
 
     <filter token="database-class" value="org.mulgara.resolver.Database"/>
-	<!-- we no longer need to worry about tucana-config.xml but I am leaving this in for now -B.S -->
-    <copy tofile="${obj.dir}/mulgara-config.xml" filtering="yes">
+	<!-- we no longer need to worry about this config file but I am leaving this in for now -B.S -->
+    <copy tofile="${obj.dir}/mulgara-x-config.xml" filtering="yes">
       <fileset file="${conf.dir}/mulgara-config.xml"/>
     </copy>
 
@@ -287,7 +287,7 @@
       <jvmarg value="${arch.bits}"/>
       <jvmarg value="-server"/>
       <jvmarg value="-Djava.io.tmpdir=${tmp.dir}"/>
-      <jvmarg value="-Dtucana.xa.defaultIOType=explicit"/>
+      <jvmarg value="-Dmulgara.xa.defaultIOType=explicit"/>
       <jvmarg value="-Djava.naming.factory.initial=com.sun.jndi.rmi.registry.RegistryContextFactory"/>
       <jvmarg value="-Djava.naming.provider.url=rmi://localhost"/>
       <jvmarg value="-Djava.rmi.server.codebase=${bin.uri}/${rmi.base.jar}"/>
@@ -733,7 +733,7 @@
         use="true"
         bottom="Copyright &amp;copy; ${year} Tucana Technologies, Inc. (http://www.tucanatech.com/)."
         author="true"
-        additionalParam="-breakiterator -source 1.4">
+        additionalParam="-breakiterator -source 1.5">
 
       <doclet name="org.mulgara.doclet.MulgaraDoclet"
               path="${bin.dir}/doclet.jar">

@@ -117,7 +117,7 @@
                        source code">
 
     <javac destdir="${descriptor.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="descriptor-classpath"/>
 
@@ -169,7 +169,7 @@
           depends="host.name, descriptor-jar, descriptor-wsdl-client.jar"
           description="Carries out unit testing for this descriptor">
 
-    <!-- start the Kowari server -->
+    <!-- start the Mulgara server -->
     <antcall target="start"/>
 
     <mkdir dir="${junit.results.tmpdir}"/>
@@ -186,7 +186,7 @@
       <param name="jar" value="${client.jar}"/>
     </antcall>
 
-    <!-- shutdown the Kowari server -->
+    <!-- shutdown the Mulgara server -->
     <antcall target="stop"/>
   </target>
 
@@ -194,7 +194,7 @@
           depends="host.name, wsdl2java"
           unless="webservice.uptodate">
 
-    <!-- start the Kowari server -->
+    <!-- start the Mulgara server -->
     <antcall target="start"/>
 
     <!-- wait a couple of seconds -->
@@ -206,7 +206,7 @@
       src="http://${host.name}:8080/webservices/services/DescriptorService?wsdl"
       dest="${obj.dir}/Descriptor.wsdl"/>
 
-    <!-- shutdown the Kowari server -->
+    <!-- shutdown the Mulgara server -->
     <antcall target="stop"/>
 
     <echo message="wsdl-gen wrote to ${obj.dir}/Descriptor.wsdl"/>
@@ -254,10 +254,10 @@
 
 
   <!-- =================================================================== -->
-  <!-- Kowari Descriptor Deploy - Kowari HTTP                                    -->
+  <!-- Mulgara Descriptor Deploy - Mulgara HTTP                                    -->
   <!-- =================================================================== -->
   <target name="descriptor-add-to-war-dir"
-    description="Deploys Descriptors for use within the Jetty servlet server in Kowari"
+    description="Deploys Descriptors for use within the Jetty servlet server in Mulgara"
     depends="set.host.name, descriptors-uptodate"
     unless="descriptors-uptodate">
 
@@ -285,7 +285,7 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Kowari Descriptor Deploy - Kowari FILE                                    -->
+  <!-- Mulgara Descriptor Deploy - Mulgara FILE                                    -->
   <!-- =================================================================== -->
   <target name="descriptor-deploy-file-script"
     description="deploys Descriptors suitable for file URLs"
@@ -305,7 +305,7 @@
 
 
   <!-- =================================================================== -->
-  <!-- Kowari Descriptor Deploy                                               -->
+  <!-- Mulgara Descriptor Deploy                                               -->
   <!-- =================================================================== -->
   <target name="descriptor-deploy"
     depends="set.host.name"
@@ -327,7 +327,7 @@
 
 
   <!-- =================================================================== -->
-  <!-- Kowari Descriptor Deploy                                               -->
+  <!-- Mulgara Descriptor Deploy                                               -->
   <!-- =================================================================== -->
   <target name="descriptor-copy-docs"
     description="copies descriptor documentation to the docs dir">

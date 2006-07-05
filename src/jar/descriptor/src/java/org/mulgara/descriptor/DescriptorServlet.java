@@ -418,15 +418,15 @@ public class DescriptorServlet extends HttpServlet {
       // fill paramsList with modifiable copy of descriptor list
       // Collections.copy(paramsList, des.getParams(descURL));
       // Extract the remaining parameters
-      Enumeration enum = req.getParameterNames();
+      Enumeration enumeration = req.getParameterNames();
 
       // check if we have any params, if not show usage screen
-      if (enum.hasMoreElements()) {
+      if (enumeration.hasMoreElements()) {
 
         //Output the parameters to the debug logger
-        while (enum.hasMoreElements()) {
+        while (enumeration.hasMoreElements()) {
 
-          String name = (String) enum.nextElement();
+          String name = (String) enumeration.nextElement();
           String[] values = req.getParameterValues(name);
 
           // if param is required then value can NOT be null or empty string

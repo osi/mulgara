@@ -71,7 +71,7 @@
           unless="client-jena.classes.uptodate">
 
     <javac destdir="${obj.dir}/jar/client-jena/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="client-jena-classpath"/>
 

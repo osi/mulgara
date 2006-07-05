@@ -1,13 +1,13 @@
 # set up aliases
-alias <http://tucana.org/tucana#> as tucana;
+alias <http://mulgara.org/mulgara#> as mulgara;
 alias <http://www.w3.org/1999/02/22-rdf-syntax-ns#> as rdf;
 alias <http://www.w3.org/2000/01/rdf-schema#> as rdfs;
 alias <http://www.w3.org/2002/07/owl#> as owl;
-alias <http://kowari.org/owl/krule/#> as krule;
+alias <http://mulgara.org/owl/krule/#> as krule;
 
 # create utility models
-create <rmi://localhost/server1#type> <tucana:TypeModel>;
-create <rmi://localhost/server1#prefix> <tucana:PrefixModel>;
+create <rmi://localhost/server1#type> <mulgara:TypeModel>;
+create <rmi://localhost/server1#prefix> <mulgara:PrefixModel>;
 
 # clear and create the rules model
 drop <rmi://localhost/server1#krule>;

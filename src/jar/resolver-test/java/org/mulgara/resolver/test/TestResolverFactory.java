@@ -111,7 +111,7 @@ public class TestResolverFactory implements ResolverFactory {
 
     systemModel = resolverFactoryInitializer.getSystemModel();
 
-    // Claim tucana:TestModel
+    // Claim mulgara:TestModel
     resolverFactoryInitializer.addModelType(modelTypeURI, this);
 
     resolverFactoryInitializer.registerNewConstraint(new TestConstraintDescriptor());

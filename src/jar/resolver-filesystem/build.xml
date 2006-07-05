@@ -75,7 +75,7 @@
                        source code">
 
     <javac destdir="${resolver-filesystem.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="resolver-filesystem-classpath"/>
 
@@ -282,7 +282,7 @@
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_101.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_102.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_103.txt"/>
-    <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_104.txt"/>
+    <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_1.5.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_105.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_106.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_107.txt"/>
@@ -292,7 +292,7 @@
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_111.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_112.txt"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_113.txt"/>
-    <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_114.txt"/>
+    <touch file="${tmp.dir}/filesystem/fullTextTestData/hounds_1.5.txt"/>
     <mkdir dir="${tmp.dir}/filesystem/fullTextTestData/CVS"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/CVS/Entries"/>
     <touch file="${tmp.dir}/filesystem/fullTextTestData/CVS/Repository"/>

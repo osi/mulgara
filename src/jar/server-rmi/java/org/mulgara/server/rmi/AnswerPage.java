@@ -55,7 +55,7 @@ import org.mulgara.query.TuplesException;
  */
 public interface AnswerPage extends Serializable {
   /** The name of the property to read to get the page size */
-  public static final String PAGE_SIZE_PROPERTY = "tucana.rmi.prefetchsize";
+  public static final String PAGE_SIZE_PROPERTY = "mulgara.rmi.prefetchsize";
 
   /** The default number of rows to use for a page */
   public static final int DEFAULT_PAGE_SIZE = 1000;

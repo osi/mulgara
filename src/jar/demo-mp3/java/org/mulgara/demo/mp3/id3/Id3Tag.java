@@ -47,7 +47,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -74,13 +74,13 @@ public interface Id3Tag {
   public final static String ID3_URI = " <" + Id3Tag.NAMESPACE + "uri>";
 
   /** Used in queries */
-  public final static String TKS_IS = " <" + Mulgara.NAMESPACE + "is>";
+  public final static String MULGARA_IS = " <" + Mulgara.NAMESPACE + "is>";
 
   /** Version URI for a version 1 ID3 tag */
-  public static final URIReference ID3V1 = Mp3File.TKS_MP3_DOMAIN;
+  public static final URIReference ID3V1 = Mp3File.MULGARA_MP3_DOMAIN;
 
   /** Version URI for a version 2 ID3 tag */
-  public static final URIReference ID3V2 = Mp3File.TKS_MP3_DOMAIN;
+  public static final URIReference ID3V2 = Mp3File.MULGARA_MP3_DOMAIN;
 
 
   /**

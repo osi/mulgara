@@ -37,7 +37,7 @@ public class CameraPhoneOntologyApp {
       ontology = OntoConnector.getInstance().createOntology(ontologyURI);
 
       //    uncomment this to..
-      // Create Ontology on the client (communicates with TKS/Mulgara server)
+      // Create Ontology on the client (communicates with Mulgara server)
       //ontology = OntoConnector.getInstance().createOntology(
       //    app.createClientOntologyModel(), ontologyURI);
 

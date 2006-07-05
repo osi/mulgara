@@ -56,7 +56,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  * variables are bound.
  *
  * TO DO: Support <code>$p $x $x</code> - i.e. where we have two variables and
- * another variable not a constant.  Also, support <code>tucana:is</code>
+ * another variable not a constant.  Also, support <code>mulgara:is</code>
  * re-binding.
  *
  * @created 2004-08-26

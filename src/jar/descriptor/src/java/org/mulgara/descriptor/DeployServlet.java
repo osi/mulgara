@@ -118,7 +118,7 @@ public class DeployServlet extends HttpServlet {
     PrintWriter out = res.getWriter();
 
     // Extract the parameters
-    Enumeration enum = req.getParameterNames();
+    Enumeration enumeration = req.getParameterNames();
 
     // commands
     boolean deployLocalDescriptors = false;
@@ -127,12 +127,12 @@ public class DeployServlet extends HttpServlet {
     try {
 
       // check if we have any params, if not show usage screen
-      if (enum.hasMoreElements()) {
+      if (enumeration.hasMoreElements()) {
 
         // analyse parameters and set variables
-        while (enum.hasMoreElements()) {
+        while (enumeration.hasMoreElements()) {
 
-          String name = (String) enum.nextElement();
+          String name = (String) enumeration.nextElement();
           String[] values = req.getParameterValues(name);
 
           if (values != null) {

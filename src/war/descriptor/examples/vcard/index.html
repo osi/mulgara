@@ -31,14 +31,14 @@
         </ul>
       </ul>  ]
   </div>  
-<h1>Kowari Descriptor VCard Example</h1>
+<h1>Mulgara Descriptor VCard Example</h1>
      
 <h2></h2>
 <b></b>
 <h2>Overview</h2>
 This example uses several descriptors to generate a HTML page containing
-all the VCards in a specified Kowari Model. &nbsp;Furthermore the VCard can
-be exported from Kowari in VCard format which is used by applications such as
+all the VCards in a specified Mulgara Model. &nbsp;Furthermore the VCard can
+be exported from Mulgara in VCard format which is used by applications such as
 Netscape Address book, MS Outlook etc.  New VCards can be entered from a HTML interface.<br>
 &nbsp;<br>
 Here is a sample screenshot.<br>
@@ -78,11 +78,11 @@ a VCard URI return a XML version of the VCard</a></li>
   <li><a href="../../descriptors/vcard/vcard.xsl" target="_blank">Given a
 VCard URI return a VCard Format version of the VCard</a><br></li>
   <li><a href="../../descriptors/vcard/vcardinsert.xsl" target="_blank">Given VCard 
-    parameters insert a VCard into a Kowari model</a><br></li>
+    parameters insert a VCard into a Mulgara model</a><br></li>
   <li><a href="../../descriptors/vcard/vcardinserthtml.xsl" target="_blank">Given a model
- return a HTML page which will take VCard parameters and insert them into Kowari model</a><br></li>
+ return a HTML page which will take VCard parameters and insert them into Mulgara model</a><br></li>
 </ol>
-The descriptors are part of the default descriptor installation in Kowari and
+The descriptors are part of the default descriptor installation in Mulgara and
 are available from the List descriptors task on the <a href="../../">Descriptor
 management page</a>.<br>
 <br>
@@ -100,13 +100,13 @@ by both browser tasks. &nbsp;This is to demonstrate the reusability of well
 designed descriptors.
 <h2>Try the Example</h2>
 First you must load some VCard RDF into a model. &nbsp;Using the command
-line iTQL client or the <a href="/webui/">Kowari Web UI</a> create a model for
+line iTQL client or the <a href="/webui/">Mulgara Web UI</a> create a model for
 storing the VCards e.g.<br>
 <br>
 iTQL&gt; create &lt;rmi://localhost/server1#vcard&gt;;<br>
 <br>
 <b>NOTE</b> replace localhost with the fully qualified hostname of your
-Kowari server.<br>
+Mulgara server.<br>
 <br>
 Load some VCard RDF into this model, here is a sample file: <a href="vcards.rdf">vcards.rdf</a>.  
 Copy the link address  and load it into the vcard model using an iTQL command such as this:
@@ -119,7 +119,7 @@ Now locate the Descriptor "Given a Model show all VCards in that
 model as HTML" from the task list of descriptors available from&nbsp; the
 <a href="../../" target="descriptor">descriptor management page</a>.  &nbsp;<br>
 Enter rmi://localhost/server1#vcard (replace localhost with the fully qualified
-hostname of your Kowari server) as the model parameter and invoke and instance
+hostname of your Mulgara server) as the model parameter and invoke and instance
 of the descriptor.<br>
 <br>
    

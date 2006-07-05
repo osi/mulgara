@@ -72,7 +72,7 @@
           unless="rules.classes.uptodate">
 
     <javac destdir="${rules.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="rules-classpath"/>
 

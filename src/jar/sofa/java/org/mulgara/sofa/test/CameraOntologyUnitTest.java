@@ -6,8 +6,6 @@ import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.sun.rsasign.t;
-
 import junit.framework.TestCase;
 import net.java.dev.sofa.*;
 import net.java.dev.sofa.impl.*;

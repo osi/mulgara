@@ -124,7 +124,7 @@ public class XSDResolverFactory implements ResolverFactory {
 
     systemModel = resolverFactoryInitializer.getSystemModel();
 
-    // Claim tucana:MemoryModel
+    // Claim mulgara:MemoryModel
     resolverFactoryInitializer.addModelType(modelTypeURI, this);
 
     try {

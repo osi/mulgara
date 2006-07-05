@@ -52,7 +52,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -126,7 +126,7 @@ public class FileSystemModelImpl extends AbstractModel implements
    * Returns an Iterator containing all the Files (as URIReferenece's) that have
    * the specified metadata property/value.
    *
-   * @param property PredicateNode metadata predicate (eg. "tks:extension")
+   * @param property PredicateNode metadata predicate (eg. "mulgara:extension")
    * @param value ObjectNode metadata object (eg. "mp3")
    * @return ClosableIterator
    * @throws QueryException
@@ -158,8 +158,8 @@ public class FileSystemModelImpl extends AbstractModel implements
    *   select $s $p $o
    *   from <getResource()>
    *   where $s $p $o
-   *   and $p <tks:is> <property>
-   *   and $o <tks:is> 'object' ;
+   *   and $p <mulgara:is> <property>
+   *   and $o <mulgara:is> 'object' ;
    * </pre>
    *  ('object' will be replaced with <object> for resource objects)
    *
@@ -173,16 +173,16 @@ public class FileSystemModelImpl extends AbstractModel implements
     query.append("select $s $p $o " + NEWLINE);
     query.append("from <" + getResource() + "> " + NEWLINE);
     query.append("where $s $p $o " + NEWLINE);
-    query.append("and $p " + TKS_IS + " <" + predicate.getURI() + "> " +
+    query.append("and $p " + MULGARA_IS + " <" + predicate.getURI() + "> " +
         NEWLINE);
-    query.append("and $o " + TKS_IS + asString(object) + " ;" + NEWLINE);
+    query.append("and $o " + MULGARA_IS + asString(object) + " ;" + NEWLINE);
     return query.toString();
   }
 
   /**
    * Returns a statement in the following format:
    * <p><pre>
-   *   <getResource()> <tks:include> <directory>
+   *   <getResource()> <mulgara:include> <directory>
    * </pre>
    *
    * @param directory URL
@@ -190,14 +190,14 @@ public class FileSystemModelImpl extends AbstractModel implements
    */
   private String getIncludeStatement(URL directory) {
 
-    return "<" + getResource().getURI() + ">" + TKS_INCLUDE +
+    return "<" + getResource().getURI() + ">" + MULGARA_INCLUDE +
         " <" + directory + "> ";
   }
 
   /**
    * Returns a statement in the following format:
    * <p><pre>
-   *   <getResource()> <tks:exclude> <directory>
+   *   <getResource()> <mulgara:exclude> <directory>
    * </pre>
    *
    * @param directory URL
@@ -205,7 +205,7 @@ public class FileSystemModelImpl extends AbstractModel implements
    */
   private String getExcludeStatement(URL directory) {
 
-    return "<" + getResource().getURI() + ">" + TKS_EXCLUDE +
+    return "<" + getResource().getURI() + ">" + MULGARA_EXCLUDE +
         " <" + directory + "> ";
   }
 

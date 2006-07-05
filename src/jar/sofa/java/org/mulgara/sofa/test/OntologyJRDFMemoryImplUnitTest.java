@@ -12,7 +12,6 @@ import java.util.Date;
 
 
 import org.jrdf.graph.*;
-import com.sun.rsasign.t;
 
 import junit.framework.TestCase;
 import net.java.dev.sofa.*;

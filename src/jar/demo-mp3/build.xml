@@ -51,7 +51,7 @@
           description="Compiles all demo-mp3 related files included generated
                        source code">
     <javac destdir="${demo-mp3.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
       <classpath refid="demo-mp3-classpath"/>
       <src path="${demo-mp3.obj.src.dir}/java"/>
       <src path="${demo-mp3.src.dir}/java"/>

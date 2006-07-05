@@ -49,7 +49,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -70,14 +70,14 @@ public interface FileSystemModel extends Model {
   public final static URIReference FILE_EXT = new URIReferenceImpl(URI.create(
       Mulgara.NAMESPACE + "extension"));
 
-  /** Namespace used in TKS filesystem domain */
-  public final static String TKS_FS = "http://mulgara.org/mulgara/filesystem#";
+  /** Namespace used in MULGARA filesystem domain */
+  public final static String MULGARA_FS = "http://mulgara.org/mulgara/filesystem#";
 
   /** Used to include directories */
-  public final static String TKS_INCLUDE = " <" + TKS_FS + "Include>";
+  public final static String MULGARA_INCLUDE = " <" + MULGARA_FS + "Include>";
 
   /** Used to exclude directories */
-  public final static String TKS_EXCLUDE = " <" + TKS_FS + "Exclude>";
+  public final static String MULGARA_EXCLUDE = " <" + MULGARA_FS + "Exclude>";
 
 
   /**
@@ -100,7 +100,7 @@ public interface FileSystemModel extends Model {
    * Returns an Iterator containing all the Files (as URIReferenece's) that have
    * the specified metadata property/value.
    *
-   * @param property PredicateNode metadata predicate (eg. "tks:extension")
+   * @param property PredicateNode metadata predicate (eg. "mulgara:extension")
    * @param value ObjectNode metadata object (eg. "mp3")
    * @return ClosableIterator
    * @throws QueryException

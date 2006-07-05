@@ -107,7 +107,7 @@
           unless="rdql.classes.uptodate">
 
     <javac destdir="${rdql.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="rdql-classpath"/>
 

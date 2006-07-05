@@ -32,7 +32,7 @@ import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.itql.ItqlInterpreterException;
 
 /**
- * Startup wrapper to infer rules on a TKS session using the Drools framework.
+ * Startup wrapper to infer rules on a Mulgara session using the Drools framework.
  *
  * @created 2004-07-12
  *
@@ -54,7 +54,7 @@ public class Infer {
   public static void main(String[] args) {
     // confirm that there are 2 arguments
     if (args.length != 2) {
-      System.err.println("usage: java org.tks.rules.Infer base_model inference_model");
+      System.err.println("usage: java org.mulgara.client.drools.Infer base_model inference_model");
     }
 
     RuleBase ruleBase;

@@ -1,10 +1,10 @@
 # Set aliases
 alias http://purl.org/dc/elements/1.1/ as dc ;
 alias http://www.w3.org/2000/01/rdf-schema# as rdfs ;
-alias http://tucana.org/tucana/tool# as tool ;
-alias http://tucana.org/tucana/tool/DateExtractor# as date ;
-alias http://tucana.org/tucana/tool/EmailExtractor# as email ;
-alias http://tucana.org/tucana/tool/FeatureExtractor# as feature ;
+alias http://mulgara.org/mulgara/tool# as tool ;
+alias http://mulgara.org/mulgara/tool/DateExtractor# as date ;
+alias http://mulgara.org/mulgara/tool/EmailExtractor# as email ;
+alias http://mulgara.org/mulgara/tool/FeatureExtractor# as feature ;
 
 # Create the model
 create rmi://localhost/server1#model1 ;
@@ -12,7 +12,7 @@ create rmi://localhost/server1#model1 ;
 # Populate the model
 load file:@basedir@/../data/schema/rdfs.rdfs into rmi://localhost/server1#model1 ;
 load file:@basedir@/../data/schema/dc.rdfs into rmi://localhost/server1#model1 ;
-load file:@basedir@/../data/schema/kowari.rdfs into rmi://localhost/server1#model1 ;
+load file:@basedir@/../data/schema/mulgara.rdfs into rmi://localhost/server1#model1 ;
 load file:@basedir@/data/tmex-sample.rdf into rmi://localhost/server1#model1 ;
 
 # We don't have synthetic properties yet, so...

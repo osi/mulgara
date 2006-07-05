@@ -477,10 +477,10 @@
 
 
   <!-- #################################################################### -->
-  <!-- Calls a java class for Kowari queries -->
+  <!-- Calls a java class for Mulgara queries -->
   <!-- #################################################################### -->
   <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
-    <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
+    <lxslt:script lang="javaclass" src="xalan://org.mulgara.descriptor.DescriptorElement"/>
   </lxslt:component>
 
 
@@ -637,10 +637,10 @@
 
 
   <!-- #################################################################### -->
-  <!-- Calls a java class for Kowari queries -->
+  <!-- Calls a java class for Mulgara queries -->
   <!-- #################################################################### -->
   <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
-    <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
+    <lxslt:script lang="javaclass" src="xalan://org.mulgara.descriptor.DescriptorElement"/>
   </lxslt:component>
 
 

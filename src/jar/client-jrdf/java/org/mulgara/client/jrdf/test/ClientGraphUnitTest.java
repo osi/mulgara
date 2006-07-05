@@ -55,7 +55,7 @@ import org.mulgara.query.Answer;
  *
  * @created 2001-08-27
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.9 $
  *

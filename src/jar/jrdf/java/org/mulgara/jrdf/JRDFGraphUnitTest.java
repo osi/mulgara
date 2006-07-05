@@ -149,7 +149,8 @@ public class JRDFGraphUnitTest extends AbstractGraphUnitTest {
     }
   }
 
-  public void testFactory() throws Exception {
+  // wrap exception in a RuntimeException since JRDF has a bug missing the Exception signature
+  public void testFactory() {
 
     try {
 
@@ -157,7 +158,7 @@ public class JRDFGraphUnitTest extends AbstractGraphUnitTest {
     } catch (Exception e) {
 
       e.printStackTrace();
-      throw e;
+      throw new RuntimeException(e);
     }
   }
 

@@ -405,7 +405,7 @@ public class LocalJenaDatabaseSession extends LocalJRDFDatabaseSession
     //where $Subject $Predicate $Object
     ConstraintImpl varConstraint = new ConstraintImpl(vars[0], vars[1], vars[2]);
 
-    // Replace with tucana:is instead.  This will be much faster.
+    // Replace with mulgara:is instead.  This will be much faster.
     //and ... ... ...
     ConstraintElement[] e = new ConstraintElement[3];
 

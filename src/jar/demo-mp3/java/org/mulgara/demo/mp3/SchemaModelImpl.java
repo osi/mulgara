@@ -45,7 +45,7 @@ import org.mulgara.query.QueryException;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -119,8 +119,8 @@ public class SchemaModelImpl extends AbstractModel implements SchemaModel {
    *   select $s $p $o
    *   from <getResource()>
    *   where $s $p $o
-   *   and $p <tks:is> <rdf:domain>
-   *   and $o <tks:is> <domain> ;
+   *   and $p <mulgara:is> <rdf:domain>
+   *   and $o <mulgara:is> <domain> ;
    * </pre>
    *
    * @param domain URIReference
@@ -131,8 +131,8 @@ public class SchemaModelImpl extends AbstractModel implements SchemaModel {
     query.append("select $s $p $o " + NEWLINE);
     query.append("from <" + getResource().getURI() + "> " + NEWLINE);
     query.append("where $s $p $o " + NEWLINE);
-    query.append("and $p " + TKS_IS + " <" + RDFS.DOMAIN + ">" + NEWLINE);
-    query.append("and $o " + TKS_IS + " <" + domain.getURI() + "> ;");
+    query.append("and $p " + MULGARA_IS + " <" + RDFS.DOMAIN + ">" + NEWLINE);
+    query.append("and $o " + MULGARA_IS + " <" + domain.getURI() + "> ;");
     return query.toString();
   }
 

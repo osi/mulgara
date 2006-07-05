@@ -62,7 +62,7 @@ public interface RemoteAnswer extends Remote
 {
   /** Size limit on Marshalled Answers. */
   public static final int MARSHALL_SIZE_LIMIT = 
-    Integer.parseInt(System.getProperty("tucana.rmi.marshallsizelimit", "100"));
+    Integer.parseInt(System.getProperty("mulgara.rmi.marshallsizelimit", "100"));
 
   /**
    * Reset the instance to iterate from the beginning.

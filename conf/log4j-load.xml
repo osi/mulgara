@@ -10,7 +10,7 @@ messages of a class you're working on.  Any <category/> elements must appear
 after the <appender/> elements and before the <root/> element to satisfy the
 DTD.  An example <category/> element is as follows:
 
-  <category name="org.kowari.store.AbstractDatabaseSession">
+  <category name="org.mulgara.store.AbstractDatabaseSession">
     <priority value="debug"/>
   </category>
 
@@ -33,7 +33,7 @@ DTD.  An example <category/> element is as follows:
 
   <!-- Log to a file -->
   <appender name="LOGFILE" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="./kowari.log"/>
+    <param name="File" value="./mulgara.log"/>
     <param name="MaxFileSize" value="5MB"/>
     <param name="MaxBackupIndex" value="3"/>
     <layout class="org.apache.log4j.PatternLayout">
@@ -49,17 +49,17 @@ DTD.  An example <category/> element is as follows:
   <!-- Turn on info level logging for "important" classes  -->
 
   <!-- (Insert category elements here) -->
-  <category name="org.kowari.server.EmbeddedMulgaraServer">
+  <category name="org.mulgara.server.EmbeddedMulgaraServer">
     <priority value="INFO"/>
   </category>
 
   <!-- (Insert category elements here) -->
-  <category name="org.kowari.content.rdfxml.Parser">
+  <category name="org.mulgara.content.rdfxml.Parser">
     <priority value="INFO"/>
   </category>
 
   <!--
-  <category name="org.kowari.resolver.DatabaseSession">
+  <category name="org.mulgara.resolver.DatabaseSession">
     <priority value="debug"/>
   </category>
   -->

@@ -148,7 +148,7 @@ N:<xsl:value-of select="text()"/>
   <!-- Calls a java class for queries -->
   <!-- #################################################################### -->
   <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug" functions="test">
-    <lxslt:script lang="javaclass" src="xalan://org.kowari.descriptor.DescriptorElement"/>
+    <lxslt:script lang="javaclass" src="xalan://org.mulgara.descriptor.DescriptorElement"/>
   </lxslt:component>
 
 

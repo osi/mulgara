@@ -45,7 +45,7 @@ import org.mulgara.query.rdf.*;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -63,10 +63,10 @@ import org.mulgara.query.rdf.*;
 public interface Mp3File extends Comparable {
 
   /** Used in queries to represent an Mp3 */
-  public final static String TKS_MP3 = " <" + Mulgara.NAMESPACE + "mp3>";
+  public final static String MULGARA_MP3 = " <" + Mulgara.NAMESPACE + "mp3>";
 
   /** Used to represent the Mp3 file domain */
-  public final static URIReference TKS_MP3_DOMAIN = new URIReferenceImpl(URI.
+  public final static URIReference MULGARA_MP3_DOMAIN = new URIReferenceImpl(URI.
       create(Mulgara.NAMESPACE + "MP3"));
 
   /**

@@ -24,10 +24,8 @@
 # Original Code Source Code for Your Modifications.]
 
 #
-# Shell script for starting and stopping embedded KOWARI server fo use in
+# Shell script for starting and stopping embedded MULGARA server fo use in
 # automated testing.
-#
-# $Id: kowari-2serv,v 1.5 2004/12/22 05:02:07 newmana Exp $
 #
 
 
@@ -39,26 +37,26 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-# check KOWARI_DIR environment variable
-if [ "$KOWARI_DIR" = "" ] ; then
-  echo "Please set a KOWARI_DIR environment variable pointing to the location of the" >&2
-  echo -e "KOWARI executable JAR\n" >&2
+# check MULGARA_DIR environment variable
+if [ "$MULGARA_DIR" = "" ] ; then
+  echo "Please set a MULGARA_DIR environment variable pointing to the location of the" >&2
+  echo -e "MULGARA executable JAR\n" >&2
   echo -e "For example:\n" >&2
-  echo -e "  $ export KOWARI_DIR=/home/jsmith/kowari/dbms/dist\n" >&2
+  echo -e "  $ export MULGARA_DIR=/home/jsmith/mulgara/dbms/dist\n" >&2
   exit 1
 fi
 
 # set variables
 SLEEP_TIME=5
 OLD_DIR=$PWD
-RMIPID=$KOWARI_DIR/rmiregistry.pid
-KOWARI1PID=$KOWARI_DIR/kowari1.pid
-KOWARI2PID=$KOWARI_DIR/kowari2.pid
+RMIPID=$MULGARA_DIR/rmiregistry.pid
+MULGARA1PID=$MULGARA_DIR/mulgara1.pid
+MULGARA2PID=$MULGARA_DIR/mulgara2.pid
 
 # perform the requested action
 case "$1" in
     start)
-        cd $KOWARI_DIR
+        cd $MULGARA_DIR
         /sbin/start-stop-daemon \
             --start \
             --pidfile $RMIPID \
@@ -67,25 +65,25 @@ case "$1" in
             --exec $JAVA_HOME/bin/rmiregistry
         /sbin/start-stop-daemon \
             --start \
-            --pidfile $KOWARI1PID \
+            --pidfile $MULGARA1PID \
             --make-pidfile  \
-            --exec $JAVA_HOME/bin/java -- -jar $KOWARI_DIR/kowari-1.0.jar \
-            >> kowari1-output 2>> kowari1-output &
+            --exec $JAVA_HOME/bin/java -- -jar $MULGARA_DIR/mulgara-1.0.jar \
+            >> mulgara1-output 2>> mulgara1-output &
         /sbin/start-stop-daemon \
             --start \
-            --pidfile $KOWARI2PID \
+            --pidfile $MULGARA2PID \
             --make-pidfile  \
-            --exec $JAVA_HOME/bin/java -- -jar $KOWARI_DIR/kowari-1.0.jar -l file://$KOWARI_DIR/../conf/log4j-kowari-2servers.xml -t file://$KOWARI_DIR/../conf/kowari-config-2servers.xml \
-            >> kowari2-output 2>> kowari2-output &
+            --exec $JAVA_HOME/bin/java -- -jar $MULGARA_DIR/mulgara-1.0.jar -l file://$MULGARA_DIR/../conf/log4j-mulgara-2servers.xml -t file://$MULGARA_DIR/../conf/mulgara-config-2servers.xml \
+            >> mulgara2-output 2>> mulgara2-output &
         cd $OLD_DIR
-        echo "Started embedded KOWARI servers"
+        echo "Started embedded MULGARA servers"
     ;;
 
     stop)
         # stop the rmiregistry and the server
-        /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $KOWARI1PID
+        /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $MULGARA1PID
         sleep $SLEEP_TIME
-        /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $KOWARI2PID
+        /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $MULGARA2PID
         sleep $SLEEP_TIME
         /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $RMIPID
 
@@ -93,14 +91,14 @@ case "$1" in
         if [ -f $RMIPID ] ; then
           /bin/rm $RMIPID
         fi
-        if [ -f $KOWARI1PID ] ; then
-          /bin/rm $KOWARI1PID
+        if [ -f $MULGARA1PID ] ; then
+          /bin/rm $MULGARA1PID
         fi
-        if [ -f $KOWARI2PID ] ; then
-          /bin/rm $KOWARI2PID
+        if [ -f $MULGARA2PID ] ; then
+          /bin/rm $MULGARA2PID
         fi
 
-        echo "Stopped embedded Kowari servers"
+        echo "Stopped embedded Mulgara servers"
     ;;
 
     restart)
@@ -110,7 +108,7 @@ case "$1" in
     ;;
 
     *)
-        echo "Starts/stops two embedded Kowari servers and the rmiregistry." >&2
+        echo "Starts/stops two embedded Mulgara servers and the rmiregistry." >&2
         echo "Usage: $0 {start|stop|restart}" >&2
         exit 1
     ;;

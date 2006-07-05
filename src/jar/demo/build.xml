@@ -50,7 +50,7 @@
           description="Compiles all demo related files included generated
                        source code">
     <javac destdir="${obj.dir}/jar/demo/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
       <classpath refid="demo-classpath"/>
       <src path="${demo.src.dir}/java"/>
     </javac>

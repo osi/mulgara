@@ -147,7 +147,7 @@ public class HttpContentUnitTest extends TestCase {
     MimeType mimeType = null;
 
     //  obtain an invalid content type
-    content = new HttpContent(new URL("http://bad.tucanatech.com"));
+    content = new HttpContent(new URL("http://bad.google.org/"));
     mimeType = content.getContentType();
     assertTrue("Expecting mime type of null but found " + mimeType,
         mimeType == null);
@@ -156,12 +156,12 @@ public class HttpContentUnitTest extends TestCase {
   public void testValidInputStream() throws Exception {
 
     // obtain a valid content type
-    HttpContent content = new HttpContent(new URL("http://www.tucanatech.com"));
+    HttpContent content = new HttpContent(new URL("http://mulgara.org/"));
     InputStream stream = content.newInputStream();
     assertTrue("Expecting an input stream ", stream != null);
 
     //  obtain an invalid content type
-    content = new HttpContent(new URL("http://bad.tucanatech.com"));
+    content = new HttpContent(new URL("http://bad.google.org/"));
     try {
       stream = null;
       stream = content.newInputStream();
@@ -208,7 +208,7 @@ public class HttpContentUnitTest extends TestCase {
     InputStream stream = null;
     
     //  obtain an invalid content type
-    content = new HttpContent(new URL("http://bad.tucanatech.com"));
+    content = new HttpContent(new URL("http://bad.google.org/"));
     try {
       stream = null;
       stream = content.newInputStream();

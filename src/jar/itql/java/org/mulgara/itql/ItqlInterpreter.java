@@ -3755,7 +3755,7 @@ public class ItqlInterpreter extends DepthFirstAdapter {
    * Builds a HAVING compliant {@link org.mulgara.rdql.query.ConstraintExpression} object from a
    * {@link org.mulgara.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
    * to resolve aliases.  To comply with a HAVING clause the predicate must be one of:
-   * tks:occurs tks:occursLessThan tks:occursMoreThan.
+   * mulgara:occurs mulgara:occursLessThan mulgara:occursMoreThan.
    *
    * @param expression a constraint expression from the parser
    * @return RETURNED VALUE TO DO

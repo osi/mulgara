@@ -43,7 +43,7 @@
     <mkdir dir="${connection.test.dir}"/>
     <mkdir dir="${connection.dist.dir}"/>
     <mkdir dir="${connection.obj.dir}/classes"/>
-    <javac destdir="${obj.dir}/jar/connection/classes" debug="on" deprecation="on" source="1.4">
+    <javac destdir="${obj.dir}/jar/connection/classes" debug="on" deprecation="on" source="1.5">
       <classpath refid="connection-classpath"/>
       <src path="${connection.src.dir}/java"/>
     </javac>

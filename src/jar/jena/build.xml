@@ -68,7 +68,7 @@
     <javac destdir="${jena.obj.dir}/classes"
            debug="on"
            deprecation="on"
-           source="1.4">
+           source="1.5">
 
       <classpath refid="jena-classpath"/>
       <src path="${jena.src.dir}/java"/>
@@ -136,7 +136,7 @@
          is specific to this jena -->
 
     <echo message="Welcome to the build script for ${jena.name}."/>
-    <echo message="(Component jar for Kowari's Jena support)"/>
+    <echo message="(Component jar for Mulgara's Jena support)"/>
     <echo message=""/>
     <echo message="These targets can be invoked as follows:"/>
     <echo message="  ./build.sh &lt;target&gt;"/>

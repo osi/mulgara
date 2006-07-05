@@ -262,7 +262,7 @@ public class JRDFResolverSession extends StringPoolSession {
     }
 
     //blank node will not have an id
-    return BlankNodeImpl.valueOf(uid + "#0");
+    return (BlankNodeImpl)BlankNodeImpl.valueOf(uid + "#0");
   }
 
   //

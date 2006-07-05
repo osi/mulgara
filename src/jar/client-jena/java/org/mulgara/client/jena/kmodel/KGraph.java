@@ -118,8 +118,8 @@ public class KGraph
   /** New line character(s) */
   private static final String EOL = System.getProperty("line.separator");
 
-  /** special <tks:is> predicate */
-  private static final String TKS_IS = "<" + Mulgara.NAMESPACE + "is> " ;
+  /** special <mulgara:is> predicate */
+  private static final String MULGARA_IS = "<" + Mulgara.NAMESPACE + "is> " ;
 
   /**
    * Construct a KGraph against the given Mulgara model.
@@ -247,9 +247,9 @@ public class KGraph
    *   select $s $p $o
    *   from <modelURI>
    *   where $s $p $o
-   *   and $s <tks:is> <subjectNode>
-   *   and $p <tks:is> <predicateNode>
-   *   and $o <tks:is> <objectNode> ;
+   *   and $s <mulgara:is> <subjectNode>
+   *   and $p <mulgara:is> <predicateNode>
+   *   and $o <mulgara:is> <objectNode> ;
    * </code>
    *
    * @param match TripleMatch
@@ -279,7 +279,7 @@ public class KGraph
    * Returns a constraint for a given Node/Variable binding.
    *
    * <pre>
-   *   and $var <tks:is> <Node>
+   *   and $var <mulgara:is> <Node>
    * </pre>
    *
    * @param var char
@@ -299,18 +299,18 @@ public class KGraph
       StringBuffer constraint = new StringBuffer();
       constraint.append("and $");
       constraint.append(var);
-      constraint.append(TKS_IS);
+      constraint.append(MULGARA_IS);
 
       if (node.isURI()) {
 
-        // and $var <tks:is> <NodeURI>
+        // and $var <mulgara:is> <NodeURI>
         constraint.append('<');
         constraint.append(node.toString());
         constraint.append(">");
       }
       else if (node.isLiteral()) {
 
-        // and $var <tks:is> 'literal'
+        // and $var <mulgara:is> 'literal'
         constraint.append('\'');
         LiteralLabel lit = node.getLiteral();
         String lang = lit.language();
@@ -320,13 +320,13 @@ public class KGraph
 
         if (lang != null && !lang.equals("")) {
 
-          // and $var <tks:is> 'literal'@language
+          // and $var <mulgara:is> 'literal'@language
           constraint.append('@');
           constraint.append(lang);
         }
         else if (typeURI != null && !typeURI.equals("")) {
 
-          // and $var <tks:is> 'literal'^^<datatypeURI>
+          // and $var <mulgara:is> 'literal'^^<datatypeURI>
           constraint.append("^^<");
           constraint.append(typeURI);
           constraint.append(">");

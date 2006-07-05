@@ -104,7 +104,7 @@ public class GISResolverFactory implements ResolverFactory {
           "null Resolverfactory.");
     }
 
-    // Claim the "tks:GISModel" type
+    // Claim the "mulgara:GISModel" type
     resolverFactoryInitializer.addModelType(ReadOnlyGISResolver.MODEL_TYPE, this);
     resolverFactoryInitializer.cacheModelAccess(this);
 

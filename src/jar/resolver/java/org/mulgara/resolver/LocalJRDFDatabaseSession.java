@@ -186,12 +186,12 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
       //where $s $p $o
       ConstraintExpression constraint = varConstraint;
       //and $s <is> <s>
-      constraint = appendTksIsConstraint(vars[0], toValue(subject), constraint);
+      constraint = appendMulgaraIsConstraint(vars[0], toValue(subject), constraint);
       //and $p <is> <p>
-      constraint = appendTksIsConstraint(vars[1], toValue(predicate),
+      constraint = appendMulgaraIsConstraint(vars[1], toValue(predicate),
           constraint);
       //and $o <is> <o>
-      constraint = appendTksIsConstraint(vars[2], toValue(object), constraint);
+      constraint = appendMulgaraIsConstraint(vars[2], toValue(object), constraint);
 
       Query query = new Query(
           Arrays.asList(vars),             // variable list
@@ -215,7 +215,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
   }
 
   /**
-   * If the node is not null, a "and [var] <tks:is> [node]" is appended to the
+   * If the node is not null, a "and [var] <MULGARA:is> [node]" is appended to the
    * ConstraintExpression.
    *
    * If the node is null, the ConstraintExpression is returned unchanged.
@@ -226,7 +226,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
    * @throws QueryException
    * @return ConstraintExpression
    */
-  private ConstraintExpression appendTksIsConstraint(Variable var, Value node,
+  private ConstraintExpression appendMulgaraIsConstraint(Variable var, Value node,
       ConstraintExpression expression) throws QueryException {
 
     if (var == null) {

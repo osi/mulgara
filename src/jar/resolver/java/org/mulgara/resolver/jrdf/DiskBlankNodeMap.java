@@ -110,7 +110,7 @@ public class DiskBlankNodeMap implements BlankNodeMap {
 
       String nodeString = longToNodeMap.get(id);
 
-      return (nodeString == null) ? null : BlankNodeImpl.valueOf(nodeString);
+      return (nodeString == null) ? null : (BlankNodeImpl)BlankNodeImpl.valueOf(nodeString);
     }
     catch (IOException ioException) {
 

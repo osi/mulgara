@@ -24,10 +24,8 @@
 # Original Code Source Code for Your Modifications.]
 
 #
-# Shell script for starting and stopping embedded Kowari server fo use in
+# Shell script for starting and stopping embedded Mulgara server fo use in
 # automated testing.
-#
-# $Id: kowari-security,v 1.5 2004/12/22 05:02:07 newmana Exp $
 #
 
 
@@ -39,25 +37,25 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-# check KOWARI_DIR environment variable
-if [ "$KOWARI_DIR" = "" ] ; then
-  echo "Please set a KOWARI_DIR environment variable pointing to the location of the" >&2
-  echo -e "KOWARI executable JAR\n" >&2
+# check MULGARA_DIR environment variable
+if [ "$MULGARA_DIR" = "" ] ; then
+  echo "Please set a MULGARA_DIR environment variable pointing to the location of the" >&2
+  echo -e "MULGARA executable JAR\n" >&2
   echo -e "For example:\n" >&2
-  echo -e "  $ export KOWARI_DIR=/home/jsmith/kowari/dbms/dist\n" >&2
+  echo -e "  $ export MULGARA_DIR=/home/jsmith/mulgara/dbms/dist\n" >&2
   exit 1
 fi
 
 # set variables
 SLEEP_TIME=2
 OLD_DIR=$PWD
-RMIPID=$KOWARI_DIR/rmiregistry.pid
-KOWARIPID=$KOWARI_DIR/kowari.pid
-CONFDIR=$KOWARI_DIR/../conf
+RMIPID=$MULGARA_DIR/rmiregistry.pid
+MULGARAPID=$MULGARA_DIR/mulgara.pid
+CONFDIR=$MULGARA_DIR/../conf
 
 case "$1" in
     start)
-        cd $KOWARI_DIR
+        cd $MULGARA_DIR
         /sbin/start-stop-daemon \
             --start \
             --pidfile $RMIPID \
@@ -66,20 +64,20 @@ case "$1" in
             --exec $JAVA_HOME/bin/rmiregistry
         /sbin/start-stop-daemon \
             --start \
-            --pidfile $KOWARIPID \
+            --pidfile $MULGARAPID \
             --make-pidfile  \
             --exec $JAVA_HOME/bin/java --  \
-                             -Djava.security.auth.login.config=../jxtest/security/kowari-jaas.conf \
-                             -Dtucana.security.domain=$KOWARI_SERVER   \
-                             -jar $KOWARI_DIR/kowari-1.0.jar \
-            >> kowari-output 2>> kowari-output &
+                             -Djava.security.auth.login.config=../jxtest/security/mulgara-jaas.conf \
+                             -Dmulgara.security.domain=$MULGARA_SERVER   \
+                             -jar $MULGARA_DIR/mulgara-1.0.jar \
+            >> mulgara-output 2>> mulgara-output &
         cd $OLD_DIR
-        echo "Started embedded Kowari server with security domain $KOWARI_SERVER"
+        echo "Started embedded Mulgara server with security domain $MULGARA_SERVER"
     ;;
 
     stop)
         # stop the rmiregistry and the server
-        /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $KOWARIPID
+        /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $MULGARAPID
         sleep $SLEEP_TIME
         /sbin/start-stop-daemon --stop --oknodo --quiet --pidfile $RMIPID
 
@@ -87,11 +85,11 @@ case "$1" in
         if [ -f $RMIPID ] ; then
           /bin/rm $RMIPID
         fi
-        if [ -f $KOWARIPID ] ; then
-          /bin/rm $KOWARIPID
+        if [ -f $MULGARAPID ] ; then
+          /bin/rm $MULGARAPID
         fi
 
-        echo "Stopped embedded Kowari server"
+        echo "Stopped embedded Mulgara server"
     ;;
 
     restart)
@@ -101,7 +99,7 @@ case "$1" in
     ;;
 
     *)
-        echo "Starts/stops an embedded Kowari server and the rmiregistry." >&2
+        echo "Starts/stops an embedded Mulgara server and the rmiregistry." >&2
         echo "Usage: $0 {start|stop|restart}" >&2
         exit 1
     ;;

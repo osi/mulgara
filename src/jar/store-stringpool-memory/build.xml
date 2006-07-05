@@ -65,7 +65,7 @@
                        generated source code">
 
     <javac destdir="${store-stringpool-memory.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="store-stringpool-memory-classpath"/>
 

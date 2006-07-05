@@ -2,7 +2,7 @@ Rules Format
 ===========
 
 This file describes the format of data files containing rules for use with the
-Kowari Rule Engine (Krule).
+Mulgara Rule Engine (Krule).
 
 
 Contents
@@ -63,12 +63,12 @@ command:
 
 File Type
 ---------
-Kowari rules are described in RDF.  This means that data can be stored in any
+Mulgara rules are described in RDF.  This means that data can be stored in any
 acceptable RDF format, including RDF-XML, N3 and NT files.  This document
 describes RDF using RDF-XML.
 
-The domain of the elements specific to Kowari Rules is:
-  http://kowari.org/owl/krule/#
+The domain of the elements specific to Mulgara Rules is:
+  http://mulgara.org/owl/krule/#
 This is typically abbreviated to "krule".
 
 Other important domains and their abbreviations are shown here:
@@ -76,10 +76,7 @@ Other important domains and their abbreviations are shown here:
   rdf     http://www.w3.org/1999/02/22-rdf-syntax-ns#
   rdfs    http://www.w3.org/2000/01/rdf-schema#
   xsd     http://www.w3.org/2001/XMLSchema#
-  tucana  http://tucana.org/tucana#
-
-Note that the "tucana" may eventually be replaced with a domain called
-"kowari".
+  mulgara http://mulgara.org/mulgara#
 
 
 Schema
@@ -393,4 +390,4 @@ This is a complete example rule from the RDFS entailment model:
 
 
 
-
+Copyright 2005.  Paul Gearon.

@@ -14,7 +14,7 @@ public class CameraPhoneInferenceExample {
   public static void main(String[] args) {
 
     try {
-      // Create in memory based Ontology, use TKS ontology model  for persistence
+      // Create in memory based Ontology, use MULGARA ontology model  for persistence
       Ontology ontology = OntoConnector.getInstance().createOntology(
           "http://www.xfront.com/owl/ontologies/camera/");
       // Load Camera Phone Ontology

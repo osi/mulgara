@@ -15,7 +15,7 @@ import com.hp.hpl.jena.rdf.model.impl.*;
  * OWLReader.java
  * <br>
  * This is a version of the OWLReader supplied with SOFA which is compatible with
- * Jena 2.1 as used in mulgara/tks.
+ * Jena 2.1 as used in mulgara.
  * <pre>
  * Modified by       Keith Ahern
  *                   [keith@tucanatech.com]
@@ -137,11 +137,11 @@ public class OWLReader implements Reader {
             if (!checkNS(di.getNameSpace()))
                 continue;
             //Thing t = null;
-            // TUCANA FIX TO LOAD INSTANCES if (onto.hasThing(getNS(di.getNameSpace()) + di.getLocalName()))
+            // FIX TO LOAD INSTANCES if (onto.hasThing(getNS(di.getNameSpace()) + di.getLocalName()))
             if (onto.hasThing(di.getLocalName()))
               c.addInstance(onto.getThing(getNS(di.getNameSpace()) + di.getLocalName()));
             else
-              // TUCANA FIX TO LOAD INSTANCES c.createInstance(getNS(di.getNameSpace()) + di.getLocalName());
+              // FIX TO LOAD INSTANCES c.createInstance(getNS(di.getNameSpace()) + di.getLocalName());
               c.createInstance(di.getLocalName());
         }
         for (ResIterator it = _model.listSubjectsWithProperty(RDFS.domain, dcl); it.hasNext();) {

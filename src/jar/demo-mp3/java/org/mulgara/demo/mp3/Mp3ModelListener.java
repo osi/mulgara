@@ -35,7 +35,7 @@ package org.mulgara.demo.mp3;
  *
  * @created 2005-04-20
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.1 $
  *

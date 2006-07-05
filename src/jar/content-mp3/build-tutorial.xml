@@ -21,7 +21,7 @@
       tofile="${obj.dir}/handler/classes/parserfactory.conf"/>
 
     <javac destdir="${obj.dir}/handler/classes"
-      debug="on" deprecation="on" source="1.4">
+      debug="on" deprecation="on" source="1.5">
       <classpath refid="content-mp3-classpath"/>
       <src path="${handler.src.dir}/java"/>
     </javac>
@@ -35,7 +35,7 @@
     description="Builds the Http Resolver JAR">
 
     <javac destdir="${obj.dir}/resolver/classes"
-      debug="on" deprecation="on" source="1.4">
+      debug="on" deprecation="on" source="1.5">
       <classpath refid="resolver-http-classpath"/>
       <src path="${resolver.src.dir}/java"/>
     </javac>

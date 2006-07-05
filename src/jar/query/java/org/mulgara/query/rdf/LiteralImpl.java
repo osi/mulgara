@@ -163,7 +163,7 @@ public class LiteralImpl extends AbstractLiteral implements Comparable,
 
       Literal literal = (Literal) object;
 
-      return lexicalForm.compareTo(literal.getLexicalForm());
+      return getLexicalForm().compareTo(literal.getLexicalForm());
     }
     else {
 

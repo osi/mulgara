@@ -3025,15 +3025,15 @@ public final class XAStringPoolImpl implements XAStringPool {
     private Reference cacheRef;
 
     static {
-      String cacheSizeProp = System.getProperty("tucana.sp.localizeCacheSize");
+      String cacheSizeProp = System.getProperty("mulgara.sp.localizeCacheSize");
       if (cacheSizeProp == null) {
-        cacheSizeProp = System.getProperty("tucana.sp.cacheSize");
+        cacheSizeProp = System.getProperty("mulgara.sp.cacheSize");
       }
       if (cacheSizeProp != null) {
         MAX_SIZE = Integer.parseInt(cacheSizeProp);
         if (MAX_SIZE < 1) {
           throw new ExceptionInInitializerError(
-              "bad tucana.sp.cacheSize property: " + cacheSizeProp
+              "bad mulgara.sp.cacheSize property: " + cacheSizeProp
           );
         }
       } else {
@@ -3086,15 +3086,15 @@ public final class XAStringPoolImpl implements XAStringPool {
     private Reference cacheRef;
 
     static {
-      String cacheSizeProp = System.getProperty("tucana.sp.globalizeCacheSize");
+      String cacheSizeProp = System.getProperty("mulgara.sp.globalizeCacheSize");
       if (cacheSizeProp == null) {
-        cacheSizeProp = System.getProperty("tucana.sp.cacheSize");
+        cacheSizeProp = System.getProperty("mulgara.sp.cacheSize");
       }
       if (cacheSizeProp != null) {
         MAX_SIZE = Integer.parseInt(cacheSizeProp);
         if (MAX_SIZE < 1) {
           throw new ExceptionInInitializerError(
-              "bad tucana.sp.cacheSize property: " + cacheSizeProp
+              "bad mulgara.sp.cacheSize property: " + cacheSizeProp
           );
         }
       } else {

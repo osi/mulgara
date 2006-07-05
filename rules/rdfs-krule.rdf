@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE rdf:RDF [
-<!ENTITY owl   "http://www.w3.org/2002/07/owl#">
-<!ENTITY rdf   "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-<!ENTITY rdfs  "http://www.w3.org/2000/01/rdf-schema#">
-<!ENTITY xsd   "http://www.w3.org/2001/XMLSchema#">
-<!ENTITY tucana "http://tucana.org/tucana#">
-<!ENTITY krule "http://kowari.org/owl/krule/#">
+<!ENTITY owl     "http://www.w3.org/2002/07/owl#">
+<!ENTITY rdf     "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<!ENTITY rdfs    "http://www.w3.org/2000/01/rdf-schema#">
+<!ENTITY xsd     "http://www.w3.org/2001/XMLSchema#">
+<!ENTITY mulgara "http://mulgara.org/mulgara#">
+<!ENTITY krule   "http://mulgara.org/owl/krule/#">
 ]>
 
 <rdf:RDF xmlns:rdf="&rdf;"
@@ -14,7 +14,7 @@
          xmlns:xsd="&xsd;"
          xmlns="&krule;"
          xmlns:krule="&krule;"
-         xml:base="http://kowari.org/owl/krule/">
+         xml:base="http://mulgara.org/owl/krule/">
 
   <krule:URIReference rdf:about="#ref_rdftype">
     <rdf:value rdf:resource="&rdf;type"/>
@@ -133,7 +133,7 @@
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_uriType">
-    <rdf:value rdf:resource="&tucana;uriReference"/>
+    <rdf:value rdf:resource="&mulgara;uriReference"/>
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_rdftypeModel">
@@ -141,7 +141,7 @@
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_prefix">
-    <rdf:value rdf:resource="&tucana;prefix"/>
+    <rdf:value rdf:resource="&mulgara;prefix"/>
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_prefixModel">

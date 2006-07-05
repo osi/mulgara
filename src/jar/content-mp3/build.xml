@@ -85,7 +85,7 @@
                        source code">
 
     <javac destdir="${obj.dir}/jar/content-mp3/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="content-mp3-classpath"/>
 

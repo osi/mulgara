@@ -10,7 +10,7 @@ ModelURI = @@model-uri@@
 # Put queries here. The text -model- will be replaced by the model URI above and 
 # is the model the user can edit in the text box on the UI. The text 'host.name'
 # will be rplaced by the machine host name and the text 'mulgara.jar.path' will be 
-# replaced by the path to the user's Kowari jar file. 
+# replaced by the path to the user's Mulgara jar file. 
 Step 1. Create a model = create <-model->;
 Step 2. Load RSS data into the model = load <@@data-dir@@/w3c-news.rss> into <-model->;
 Step 3. List everything in the model = select $subject $predicate $object from <-model-> where $subject $predicate $object;

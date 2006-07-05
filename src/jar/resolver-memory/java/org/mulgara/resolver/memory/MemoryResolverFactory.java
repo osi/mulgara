@@ -124,7 +124,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
 
     systemModel = initializer.getSystemModel();
 
-    // Claim tucana:MemoryModel
+    // Claim mulgara:MemoryModel
     initializer.addModelType(modelTypeURI, this);
 
     this.sessionFactory = null;

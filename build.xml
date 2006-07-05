@@ -578,7 +578,7 @@
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
           includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
-      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>
@@ -794,7 +794,7 @@
         use="true"
         bottom="Copyright &amp;copy; ${year} Tucana Technologies, Inc. (http://www.tucanatech.com/)."
         author="true"
-        additionalParam="-breakiterator -source 1.4">
+        additionalParam="-breakiterator -source 1.5">
       <doclet name="org.mulgara.doclet.MulgaraDoclet"
         path="${bin.dir}/doclet.jar">
         <param name="-author"/>
@@ -1203,7 +1203,7 @@
          webxml="${obj.dir}/war/web-services/WEB-INF/web.xml"
          excludes="WEB-INF/web.xml">
 
-        <!-- TUCANA AXIS WSDD FILE -->
+        <!-- AXIS WSDD FILE -->
         <webinf dir="${webservices.src.dir}/WEB-INF/" includes="server-config.wsdd"/>
 
         <!-- descriptors -->
@@ -1493,7 +1493,7 @@
     <replace file="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer/ExampleQueries.txt"
        token="@@model-uri@@" value="rmi://host.name/server1#sampledata"/>
     <replace file="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer/ExampleQueries.txt"
-       token="@@data-dir@@" value="jar:file:tucana.jar.path!/data"/>
+       token="@@data-dir@@" value="jar:file:mulgara.jar.path!/data"/>
 
   </target>
 
@@ -1830,28 +1830,6 @@
       <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
 
-      <!-- Tucana Tech -->
-      <!--
-      <zipfileset dir="${bin.dir}" prefix="lib"
-        includes="${client-jrdf.jar}, ${client-jena.jar}, ${config.jar},
-                  ${content-mbox.jar}, ${content-mp3.jar},
-                  ${content-n3.jar}, ${content-rdfxml.jar}, ${content-rio.jar},
-                  ${descriptor.jar}, ${dtd.jar}, ${itql.jar}, ${rules.jar},
-                  ${jrdf.base.jar}, ${store.jar}, ${store-xa.jar},
-                  ${store-nodepool.jar},
-                  ${store-nodepool-memory.jar}, ${store-nodepool-xa.jar},
-                  ${resolver.jar}, ${resolver-filesystem.jar},
-                  ${resolver-file.jar}, ${resolver-http.jar}, ${resolver-jar.jar},
-                  ${resolver-lucene.jar}, ${resolver-memory.jar},
-                  ${resolver-nodetype.jar}, ${resolver-prefix.jar}, ${resolver-spi.jar},
-                  ${resolver-store.jar},  ${resolver-url.jar}, ${resolver-view.jar},
-                  ${resolver-xsd.jar}, ${resolver-test.jar}
-                  ${server-local.jar},
-                  ${sofa.base.jar}, ${krule.base.jar}, ${rules.base.jar}, ${store-stringpool.jar},
-                  ${store-stringpool-memory.jar}, ${store-stringpool-xa.jar},
-                  ${tuples.jar}, ${tuples-hybrid.jar},
-                  ${util.jar}, ${util-xa.jar}"/>
-       -->
 
       <!-- include pre-bundled webapps -->
       <zipfileset dir="${bin.dir}" prefix="webapps"
@@ -1859,7 +1837,7 @@
       <zipfileset dir="${obj.dir}/war" prefix="webapps"
           includes="webservices.war"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda-core*.jar"/>
-      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data"
@@ -2007,7 +1985,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
       <zipfileset dir="${bin.dir}" prefix="webapps" includes="${webui.war}"/>
       <zipfileset dir="${obj.dir}/war" prefix="webapps" includes="webservices.war"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda-core*.jar"/>
-      <zipfileset file="${obj.dir}/mulgara-config.xml" prefix="conf" />
+      <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs,**/*.rss,**/*.n3"/>

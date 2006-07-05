@@ -190,28 +190,28 @@ public class HttpContent implements Content {
 
     connection = new HttpConnection(host, port, protocol);
 
-    String proxyHost = System.getProperty("tucana.httpcontent.proxyHost");
+    String proxyHost = System.getProperty("mulgara.httpcontent.proxyHost");
 
     if (proxyHost != null && proxyHost.length() > 0) {
       connection.setProxyHost(proxyHost);
     }
 
-    String proxyPort = System.getProperty("tucana.httpcontent.proxyPort");
+    String proxyPort = System.getProperty("mulgara.httpcontent.proxyPort");
     if (proxyPort != null && proxyPort.length() > 0) {
       connection.setProxyPort(Integer.parseInt(proxyPort));
     }
 
     // default timeout to 30 seconds
     connection.setConnectionTimeout(Integer.parseInt(System.getProperty(
-        "tucana.httpcontent.timeout", "30000")));
+        "mulgara.httpcontent.timeout", "30000")));
 
     String proxyUserName = System
-        .getProperty("tucana.httpcontent.proxyUserName");
+        .getProperty("mulgara.httpcontent.proxyUserName");
     if (proxyUserName != null) {
-      state.setCredentials(System.getProperty("tucana.httpcontent.proxyRealm"),
-          System.getProperty("tucana.httpcontent.proxyRealmHost"),
+      state.setCredentials(System.getProperty("mulgara.httpcontent.proxyRealm"),
+          System.getProperty("mulgara.httpcontent.proxyRealmHost"),
           new UsernamePasswordCredentials(proxyUserName, System
-              .getProperty("tucana.httpcontent.proxyPassword")));
+              .getProperty("mulgara.httpcontent.proxyPassword")));
     }
 
     HttpMethod method = null;

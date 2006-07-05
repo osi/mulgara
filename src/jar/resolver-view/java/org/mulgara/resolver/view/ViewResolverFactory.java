@@ -128,19 +128,19 @@ public class ViewResolverFactory implements ResolverFactory
 
     try {
       rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
-      viewNode = initializer.preallocate(new URIReferenceImpl(new URI("http://tucana.org/tucana/view")));;
-      enabledNode = initializer.preallocate(new URIReferenceImpl(new URI("http://tucana.org/tucana/view#enabled")));
+      viewNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view")));;
+      enabledNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#enabled")));
       trueNode = initializer.preallocate(new LiteralImpl("true"));
       typeNode = initializer.preallocate(new URIReferenceImpl(new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")));
-      exprNode = initializer.preallocate(new URIReferenceImpl(new URI("http://tucana.org/tucana/view#expr")));
-      modelNode = initializer.preallocate(new URIReferenceImpl(new URI("http://tucana.org/tucana/view#model")));
-      unionNode = initializer.preallocate(new URIReferenceImpl(new URI("http://tucana.org/tucana/view#Union")));
-      intersectNode = initializer.preallocate(new URIReferenceImpl(new URI("http://tucana.org/tucana/view#Intersection")));
+      exprNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#expr")));
+      modelNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#model")));
+      unionNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#Union")));
+      intersectNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#Intersection")));
     } catch (URISyntaxException eu) {
       throw new InitializerException("Attempt to create invalid uri", eu);
     }
 
-    // Claim tucana:ViewModel
+    // Claim mulgara:ViewModel
     initializer.addModelType(modelTypeURI, this);
     if (logger.isDebugEnabled()) {
       logger.debug("Registered view resolver to handle " + modelTypeURI);

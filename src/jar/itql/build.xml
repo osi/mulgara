@@ -75,7 +75,7 @@
       <fileset dir="${itql.src.dir}/java/" includes="**/*.java"/>
     </copy>
     <antcall target="-itql-token-build-label"/>
-    <javac destdir="${itql.obj.dir}/classes" debug="on" deprecation="on" source="1.4" classpathref="itql-classpath">
+    <javac destdir="${itql.obj.dir}/classes" debug="on" deprecation="on" source="1.5" classpathref="itql-classpath">
       <src path="${itql.obj.dir}/java"/>
     </javac>
   </target>
@@ -164,7 +164,7 @@
           depends="itql-jar, test-data"
           description="Carries out unit testing for this itql">
 
-    <!-- start the Kowari server -->
+    <!-- start the Mulgara server -->
     <antcall target="start"/>
 
     <antcall target="component-test">
@@ -174,7 +174,7 @@
       <param name="jar" value="${itql.jar}"/>
     </antcall>
 
-    <!-- stop the Kowari server -->
+    <!-- stop the Mulgara server -->
     <antcall target="stop"/>
   </target>
 

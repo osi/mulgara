@@ -57,7 +57,7 @@
           description="Compiles all resolver-gis related files included generated
                        source code">
     <javac destdir="${obj.dir}/jar/resolver-gis/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
       <classpath refid="resolver-gis-classpath"/>
       <src path="${resolver-gis.src.dir}/java"/>
     </javac>

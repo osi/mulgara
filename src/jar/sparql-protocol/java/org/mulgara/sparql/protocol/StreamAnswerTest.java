@@ -213,7 +213,7 @@ public class StreamAnswerTest extends TestCase
   */
   public void test1RoundTrip() throws Exception
   {
-    String string = "<?itql-row-count 3?><?itql-variables s p o?><RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><Solution><s>EMPTY_GROUP</s><p rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"></p><o rdf:resource=\"http://tucana.org/tucana-int#Group\"></o></Solution><Solution><s rdf:resource=\"beep://10.0.1.2#\"></s><p rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"></p><o rdf:resource=\"http://tucana.org/tucana#Model\"></o></Solution><Solution><s rdf:resource=\"beep://10.0.1.2#_\"></s><p rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"></p><o rdf:resource=\"http://tucana.org/tucana#Model\"></o></Solution></RDF>";
+    String string = "<?itql-row-count 3?><?itql-variables s p o?><RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><Solution><s>EMPTY_GROUP</s><p rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"></p><o rdf:resource=\"http://mulgara.org/mulgara-int#Group\"></o></Solution><Solution><s rdf:resource=\"beep://10.0.1.2#\"></s><p rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"></p><o rdf:resource=\"http://mulgara.org/mulgara#Model\"></o></Solution><Solution><s rdf:resource=\"beep://10.0.1.2#_\"></s><p rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"></p><o rdf:resource=\"http://mulgara.org/mulgara#Model\"></o></Solution></RDF>";
 
     // Parse the string into an Answer, and then serialize it back
     ByteArrayOutputStream baos = new ByteArrayOutputStream();

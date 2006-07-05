@@ -1,4 +1,4 @@
-Kowari Tests
+Mulgara Tests
 
 The contents of this directory come from:
 http://www.w3.org/2000/10/rdf-tests/rdfcore/rdfs-subPropertyOf-semantics/

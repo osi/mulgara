@@ -51,7 +51,7 @@ import org.mulgara.server.driver.*;
  *
  * @created 2004-08-24
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.10 $
  *
@@ -204,7 +204,7 @@ public class ItqlGraphUnitTest extends AbstractGraphUnitTest {
     assertEquals(1, graph.getNumberOfTriples());
 
     // add in a whole triple
-    Triple triple2 = elementFactory.createTriple(ref2, ref1, ref1);
+    Triple triple2 = graph.getElementFactory().createTriple(ref2, ref1, ref1);
     graph.add(triple2);
 
     assertFalse(graph.isEmpty());
@@ -217,7 +217,7 @@ public class ItqlGraphUnitTest extends AbstractGraphUnitTest {
     assertEquals(2, graph.getNumberOfTriples());
 
     // add in the second whole triple again
-    Triple triple2b = elementFactory.createTriple(ref2, ref1, ref1);
+    Triple triple2b = graph.getElementFactory().createTriple(ref2, ref1, ref1);
     graph.add(triple2b);
     assertFalse(graph.isEmpty());
     assertEquals(2, graph.getNumberOfTriples());
@@ -229,8 +229,8 @@ public class ItqlGraphUnitTest extends AbstractGraphUnitTest {
 
     // Add using iterator
     ArrayList list = new ArrayList();
-    list.add(elementFactory.createTriple(ref2, ref2, ref1));
-    list.add(elementFactory.createTriple(ref1, ref2, ref2));
+    list.add(graph.getElementFactory().createTriple(ref2, ref2, ref1));
+    list.add(graph.getElementFactory().createTriple(ref1, ref2, ref2));
 
     graph.add(list.iterator());
     assertFalse(graph.isEmpty());

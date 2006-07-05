@@ -106,7 +106,7 @@
                        source code">
 
     <javac destdir="${server.obj.dir}/classes" 
-           debug="on" source="1.4"
+           debug="on" source="1.5"
            deprecation="on"
            classpathref="server-classpath">
 

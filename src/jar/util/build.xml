@@ -64,7 +64,7 @@
       outputdirectory="${util.obj.dir}/java/org/mulgara/util/conversion/html"/>
 
     <javac destdir="${obj.dir}/jar/util/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="util-classpath"/>
 

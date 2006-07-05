@@ -58,7 +58,7 @@
                        source code">
 
     <javac destdir="${obj.dir}/jar/ant-task/classes" debug="on"
-           deprecation="on" source="1.4">
+           deprecation="on" source="1.5">
 
       <classpath refid="ant-task-classpath"/>
 

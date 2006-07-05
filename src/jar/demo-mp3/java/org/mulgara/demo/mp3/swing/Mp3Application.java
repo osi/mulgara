@@ -54,7 +54,7 @@ import org.mulgara.demo.mp3.swing.search.SearchPanel;
  *
  * @created 2004-12-07
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.3 $
  *
@@ -78,7 +78,7 @@ public class Mp3Application extends JFrame {
       getName());
 
   /** Name of the Application */
-  private static final String DEFAULT_APPLICATION_NAME = "Tucana Mp3 Player";
+  private static final String DEFAULT_APPLICATION_NAME = "Mulgara Mp3 Player";
 
   /** Configured application name */
   private static String applicationName = DEFAULT_APPLICATION_NAME;

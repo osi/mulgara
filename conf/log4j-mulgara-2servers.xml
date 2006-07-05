@@ -21,7 +21,7 @@ Log4J configuration for the Mulgara Metadata Store project.
 
   <!-- Log to a file -->
   <appender name="LOGFILE" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="./kowari-server2.log"/>
+    <param name="File" value="./mulgara-server2.log"/>
     <param name="MaxFileSize" value="5MB"/>
     <param name="MaxBackupIndex" value="3"/>
     <layout class="org.apache.log4j.PatternLayout">

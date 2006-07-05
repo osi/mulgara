@@ -3,13 +3,13 @@
 <!DOCTYPE rdf:RDF [
  <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
  <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
- <!ENTITY tucana 'http://tucana.org/tucana#'>
+ <!ENTITY mulgara 'http://mulgara.org/mulgara#'>
 ]>
 
-<rdf:RDF xml:base="http://tucana.org/tucana" xml:lang="en"
+<rdf:RDF xml:base="http://mulgara.org/mulgara" xml:lang="en"
   xmlns:rdf="&rdf;"
   xmlns:rdfs="&rdfs;"
-  xmlns:tucana="&tucana;" >
+  xmlns:mulgara="&mulgara;" >
 
 <rdfs:Class rdf:ID="Model"
   rdfs:label="Model"
@@ -18,7 +18,7 @@
 
 <!-- A reified RDF Statement is a Model with a single statement -->
 <rdfs:Class rdf:about="&rdf;Statement">
-  <rdfs:subClassOf rdf:resource="&tucana;Model"/>
+  <rdfs:subClassOf rdf:resource="&mulgara;Model"/>
 </rdfs:Class>
 
 <rdfs:Class rdf:ID="LuceneModel"
@@ -56,13 +56,13 @@ authentication see the section below.
 Use 'Group' and 'User' definitions to specify Permissions when using TKS for 
 authentication and authorization.
 
-Groups and Users are assigned URLs. The scheme part is "tucana:" and the path 
+Groups and Users are assigned URLs. The scheme part is "mulgara:" and the path 
 part is ether 'group' or 'user', followed by a "/" and then the name of the 
 group or the username of the user.
 
-Example: tucana:group/dev or tucana:user/fred
+Example: mulgara:group/dev or mulgara:user/fred
 
-An example config file is in data/security-tucana.rdf. If using LDAP for 
+An example config file is in data/security-mulgara.rdf. If using LDAP for 
 authentication see the section above.
 -->
 
@@ -115,41 +115,41 @@ authentication see the section above.
 
 <!--======================  Permissions  ======================-->
 
-<!-- All instances of tucana:Permission should have a domain of tucana:Principal and
-     a range of tucana:Model. -->
+<!-- All instances of mulgara:Permission should have a domain of mulgara:Principal and
+     a range of mulgara:Model. -->
 <rdfs:Class rdf:ID="Permission" 
   rdfs:label="Permission"
-  rdfs:comment="The four RDF properties tucana:canRead, tucana:canWrite, tucana:canCreate and tucana:canDelete">
+  rdfs:comment="The four RDF properties mulgara:canRead, mulgara:canWrite, mulgara:canCreate and mulgara:canDelete">
   <rdfs:subclassOf rdf:resource="&rdf;Property"/>
 </rdfs:Class>
 
-<tucana:Permission rdf:ID="canCreate"
+<mulgara:Permission rdf:ID="canCreate"
   rdfs:label="can create"
-  rdfs:comment="Permission for a tucana:Principal (the subject) to create a tucana:Model from a specified rdf:Resource (the object)">
-  <rdfs:domain rdf:resource="&tucana;Principal"/>
-  <rdfs:range rdf:resource="&tucana;Model"/>
-</tucana:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to create a mulgara:Model from a specified rdf:Resource (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
-<tucana:Permission rdf:ID="canDelete"
+<mulgara:Permission rdf:ID="canDelete"
   rdfs:label="can delete"
-  rdfs:comment="Permission for a tucana:Principal (the subject) to remove a tucana:Model (the object)">
-  <rdfs:domain rdf:resource="&tucana;Principal"/>
-  <rdfs:range rdf:resource="&tucana;Model"/>
-</tucana:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to remove a mulgara:Model (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
-<tucana:Permission rdf:ID="canRead"
+<mulgara:Permission rdf:ID="canRead"
   rdfs:label="can read"
-  rdfs:comment="Permission for a tucana:Principal (the subject) to know if a statement occurs within a tucana:Model (the object)">
-  <rdfs:domain rdf:resource="&tucana;Principal"/>
-  <rdfs:range rdf:resource="&tucana;Model"/>
-</tucana:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to know if a statement occurs within a mulgara:Model (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
-<tucana:Permission rdf:ID="canWrite"
+<mulgara:Permission rdf:ID="canWrite"
   rdfs:label="can write"
-  rdfs:comment="Permission for a tucana:Principal (the subject) to modify the occurence of statements within a tucana:Model (the object)">
-  <rdfs:domain rdf:resource="&tucana;Principal"/>
-  <rdfs:range rdf:resource="&tucana;Model"/>
-</tucana:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to modify the occurence of statements within a mulgara:Model (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
 </rdf:RDF>
 

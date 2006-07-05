@@ -269,7 +269,7 @@ public class EmbeddedMulgaraServer extends Thread {
   // Static block
   static {
 
-    CONFIG_PATH = "conf/mulgara-config.xml";
+    CONFIG_PATH = "conf/mulgara-x-config.xml";
     RMI_SECURITY_POLICY_PATH = "conf/mulgara-rmi.policy";
 
     // Configure the logger for this class

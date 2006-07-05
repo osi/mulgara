@@ -73,7 +73,7 @@
 
         <html>
           <head>
-          <title>Add a VCard to a Kowari database</title>
+          <title>Add a VCard to a Mulgara database</title>
           <script type="text/javascript">
           function genURI() {
             document.getElementById("uri").value="urn:vcard:" + Math.round(Math.random() * 100000000);
@@ -169,12 +169,12 @@
 
 
   <!-- #################################################################### -->
-  <!-- Calls a java class for Kowari queries -->
+  <!-- Calls a java class for Mulgara queries -->
   <!-- #################################################################### -->
   <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug"
  functions="test">
     <lxslt:script lang="javaclass"
- src="xalan://org.kowari.descriptor.DescriptorElement"/>
+ src="xalan://org.mulgara.descriptor.DescriptorElement"/>
   </lxslt:component>
 
 
@@ -192,7 +192,7 @@
       <desc:Descriptor rdf:about="">
 
         <dc:title>Given a model return a HTML page which will take VCard 
-          parameters and insert them into a Kowari Knowledge store</dc:title>
+          parameters and insert them into a Mulgara Knowledge store</dc:title>
 
         <desc:hasParam>
           <desc:Param>

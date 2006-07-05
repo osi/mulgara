@@ -3,22 +3,22 @@
 <!DOCTYPE rdf:RDF [
  <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
  <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
- <!ENTITY kowari 'http://tucana.org/tucana#'>
+ <!ENTITY mulgara 'http://mulgara.org/mulgara#'>
 ]>
 
-<rdf:RDF xml:base="http://tucana.org/tucana" xml:lang="en"
+<rdf:RDF xml:base="http://mulgara.org/mulgara" xml:lang="en"
   xmlns:rdf="&rdf;"
   xmlns:rdfs="&rdfs;"
-  xmlns:kowari="&kowari;" >
+  xmlns:mulgara="&mulgara;" >
 
 <rdfs:Class rdf:ID="Model"
   rdfs:label="Model"
   rdfs:comment="A set of rdf:Statements">
 </rdfs:Class>
 
-<!-- A reified RDF Statement is a Kowari Model with a single statement -->
+<!-- A reified RDF Statement is a mulgara Model with a single statement -->
 <rdfs:Class rdf:about="&rdf;Statement">
-  <rdfs:subClassOf rdf:resource="&kowari;Model"/>
+  <rdfs:subClassOf rdf:resource="&mulgara;Model"/>
 </rdfs:Class>
 
 <rdfs:Class rdf:ID="LuceneModel"
@@ -28,7 +28,7 @@
 </rdfs:Class>
 
 
-<!--========== LDAP Authentication / Kowari Authorization ============-->
+<!--========== LDAP Authentication / mulgara Authorization ============-->
 <!-- 
 Use Principals to define Permissions when using LDAP for authentication. 
 
@@ -39,7 +39,7 @@ class constructor.
 
 Example: java:com.sun.security.auth.UnixPrincipal/jsmith
 
-An example config is in data/security-unix.rdf. If using Kowari for 
+An example config is in data/security-unix.rdf. If using mulgara for 
 authentication see the section below.
 -->
 
@@ -50,19 +50,19 @@ authentication see the section below.
 
 
 
-<!--===========  Kowari Authentication/ Kowari Authorization  ===========-->
+<!--===========  mulgara Authentication/ mulgara Authorization  ===========-->
 
 <!--
-Use 'Group' and 'User' definitions to specify Permissions when using Kowari for 
+Use 'Group' and 'User' definitions to specify Permissions when using mulgara for 
 authentication and authorization.
 
-Groups and Users are assigned URLs. The scheme part is "kowari:" and the path 
+Groups and Users are assigned URLs. The scheme part is "mulgara:" and the path 
 part is ether 'group' or 'user', followed by a "/" and then the name of the 
 group or the username of the user.
 
-Example: kowari:group/dev or kowari:user/fred
+Example: mulgara:group/dev or mulgara:user/fred
 
-An example config file is in data/security-kowari.rdf. If using LDAP for 
+An example config file is in data/security-mulgara.rdf. If using LDAP for 
 authentication see the section above.
 -->
 
@@ -86,7 +86,7 @@ authentication see the section above.
 
 <rdfs:Class rdf:ID="User"
   rdfs:label="User"
-  rdfs:comment="A Kowari user">
+  rdfs:comment="A mulgara user">
   <rdfs:subclassOf rdf:resource="#Principal"/>
 </rdfs:Class>
 
@@ -115,41 +115,41 @@ authentication see the section above.
 
 <!--======================  Permissions  ======================-->
 
-<!-- All instances of kowari:Permission should have a domain of kowari:Principal and
-     a range of kowari:Model. -->
+<!-- All instances of mulgara:Permission should have a domain of mulgara:Principal and
+     a range of mulgara:Model. -->
 <rdfs:Class rdf:ID="Permission" 
   rdfs:label="Permission"
-  rdfs:comment="The four RDF properties kowari:canRead, kowari:canWrite, kowari:canCreate and kowari:canDelete">
+  rdfs:comment="The four RDF properties mulgara:canRead, mulgara:canWrite, mulgara:canCreate and mulgara:canDelete">
   <rdfs:subclassOf rdf:resource="&rdf;Property"/>
 </rdfs:Class>
 
-<kowari:Permission rdf:ID="canCreate"
+<mulgara:Permission rdf:ID="canCreate"
   rdfs:label="can create"
-  rdfs:comment="Permission for a kowari:Principal (the subject) to create a kowari:Model from a specified rdf:Resource (the object)">
-  <rdfs:domain rdf:resource="&kowari;Principal"/>
-  <rdfs:range rdf:resource="&kowari;Model"/>
-</kowari:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to create a mulgara:Model from a specified rdf:Resource (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
-<kowari:Permission rdf:ID="canDelete"
+<mulgara:Permission rdf:ID="canDelete"
   rdfs:label="can delete"
-  rdfs:comment="Permission for a kowari:Principal (the subject) to remove a kowari:Model (the object)">
-  <rdfs:domain rdf:resource="&kowari;Principal"/>
-  <rdfs:range rdf:resource="&kowari;Model"/>
-</kowari:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to remove a mulgara:Model (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
-<kowari:Permission rdf:ID="canRead"
+<mulgara:Permission rdf:ID="canRead"
   rdfs:label="can read"
-  rdfs:comment="Permission for a kowari:Principal (the subject) to know if a statement occurs within a kowari:Model (the object)">
-  <rdfs:domain rdf:resource="&kowari;Principal"/>
-  <rdfs:range rdf:resource="&kowari;Model"/>
-</kowari:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to know if a statement occurs within a mulgara:Model (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
-<kowari:Permission rdf:ID="canWrite"
+<mulgara:Permission rdf:ID="canWrite"
   rdfs:label="can write"
-  rdfs:comment="Permission for a kowari:Principal (the subject) to modify the occurence of statements within a kowari:Model (the object)">
-  <rdfs:domain rdf:resource="&kowari;Principal"/>
-  <rdfs:range rdf:resource="&kowari;Model"/>
-</kowari:Permission>
+  rdfs:comment="Permission for a mulgara:Principal (the subject) to modify the occurence of statements within a mulgara:Model (the object)">
+  <rdfs:domain rdf:resource="&mulgara;Principal"/>
+  <rdfs:range rdf:resource="&mulgara;Model"/>
+</mulgara:Permission>
 
 </rdf:RDF>
 

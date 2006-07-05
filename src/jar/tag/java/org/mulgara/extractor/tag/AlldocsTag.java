@@ -119,7 +119,7 @@ public class AlldocsTag extends TagSupport {
   /**
    * the Mulgara generic String property
    */
-  protected final static String TUCANA_STRING_PROPERTY =
+  protected final static String MULGARA_STRING_PROPERTY =
     "http://mulgara.org/mulgara/generic#string";
 
   /**

@@ -101,8 +101,8 @@ import org.mulgara.server.Session;
  */
 public abstract class ItqlQueryUtil {
 
-  /** Special <tks:is> predicate */
-  private static final String TKS_IS = "<" + Mulgara.NAMESPACE + "is> ";
+  /** Special <mulgara:is> predicate */
+  private static final String MULGARA_IS = "<" + Mulgara.NAMESPACE + "is> ";
 
   /**
    * Returns an Answer for the executed query.
@@ -347,7 +347,7 @@ public abstract class ItqlQueryUtil {
 
   /**
    * Returns the query part: <pre>
-   *    and $var <tks:is> <Node>
+   *    and $var <mulgara:is> <Node>
    *  </pre>
    *
    * @param var String
@@ -372,7 +372,7 @@ public abstract class ItqlQueryUtil {
       constraint.append("and $");
       constraint.append(var);
       constraint.append(" ");
-      constraint.append(TKS_IS);
+      constraint.append(MULGARA_IS);
       constraint.append(getEscapedForm(node));
     }
 

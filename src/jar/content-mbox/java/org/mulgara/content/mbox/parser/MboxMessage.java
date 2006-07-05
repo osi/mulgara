@@ -223,8 +223,8 @@ public class MboxMessage extends MimeMessage {
       MessagingException {
     super(folder, msgnum);
     headers = new InternetHeaders();
-    for (Enumeration enum = message.getAllHeaderLines(); enum.hasMoreElements(); )
-      headers.addHeaderLine((String) enum.nextElement());
+    for (Enumeration enumeration = message.getAllHeaderLines(); enumeration.hasMoreElements(); )
+      headers.addHeaderLine((String) enumeration.nextElement());
     try {
       InputStream in = message.getInputStream();
       ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -1,4 +1,4 @@
-# Kowari graph in N3
+# Mulgara graph in N3
 <http://www.xfront.com/owl/ontologies/camera/#Money> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.xfront.com/owl/ontologies/camera/#Money> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
 <http://www.xfront.com/owl/ontologies/camera/#currency> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .

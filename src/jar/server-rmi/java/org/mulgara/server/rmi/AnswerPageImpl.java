@@ -73,7 +73,7 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
   static final long serialVersionUID = 2899965036062665141L;
 
   /** System property to set the level of compression to use  */
-  static final String COMPRESSION_LEVEL = "tucana.rmi.compression";
+  static final String COMPRESSION_LEVEL = "mulgara.rmi.compression";
 
   /** Size of compression buffer */
   static final int SERVER_BUFFER_SIZE = 8192;

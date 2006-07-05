@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE rdf:RDF [
-<!ENTITY math  "http://kowari.org/math#">
+<!ENTITY math  "http://mulgara.org/math#">
 <!ENTITY owl   "http://www.w3.org/2002/07/owl#">
 <!ENTITY rdf   "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 <!ENTITY rdfs  "http://www.w3.org/2000/01/rdf-schema#">
@@ -10,12 +10,12 @@
 <rdf:RDF xmlns:rdf="&rdf;"
          xmlns:rdfs="&rdfs;"
          xmlns:owl="&owl;"
-         xmlns="http://kowari.org/owl/krule/#"
-         xmlns:krule="http://kowari.org/owl/krule/#"
-         xml:base="http://kowari.org/owl/krule/">
+         xmlns="http://mulgara.org/owl/krule/#"
+         xmlns:krule="http://mulgara.org/owl/krule/#"
+         xml:base="http://mulgara.org/owl/krule/">
 
   <owl:Ontology>
-    <rdfs:comment>Kowari Rules Ontology</rdfs:comment>
+    <rdfs:comment>mulgara Rules Ontology</rdfs:comment>
     <owl:imports rdf:resource="http://www.w3.org/2002/07/owl"/>
   </owl:Ontology>
 

@@ -227,8 +227,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
       int stringsAdded = 0;
       int stringsFound = 0;
 
-      String document = "http://tucana.org/tucana/document#";
-      String has = "http://tucana.org/tucana/document#has";
+      String document = "http://mulgara.org/mulgara/document#";
+      String has = "http://mulgara.org/mulgara/document#has";
 
       //Clean any existing indexes.
       index.removeAll();
@@ -405,7 +405,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
           // Add the text document to the index
           if (index.add(textDocuments[fileNo].toURI().toString(),
-              "http://tucana.org/tucana/Document#Content",
+              "http://mulgara.org/mulgara/Document#Content",
               textDocuments[fileNo].toURI().toString(), reader)) {
 
             logger.debug("Indexed text document " +
@@ -425,7 +425,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // Perform a search for 'supernatural' in the
       // document content predicate
-      Hits hits = index.find(null, "http://tucana.org/tucana/Document#Content",
+      Hits hits = index.find(null, "http://mulgara.org/mulgara/Document#Content",
           "supernatural");
 
       // check if all text documents were indexed
@@ -444,7 +444,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
         logger.debug("Found supernatural in :" + uri);
 
         // Remove the text documents from the index
-        if (index.remove(uri, "http://tucana.org/tucana/Document#Content", uri)) {
+        if (index.remove(uri, "http://mulgara.org/mulgara/Document#Content", uri)) {
 
           docsRemoved++;
         }
@@ -456,7 +456,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // Perform a search for 'supernatural' in the
       // document content predicate
       hits =
-          index.find(null, "http://tucana.org/tucana/Document#Content",
+          index.find(null, "http://mulgara.org/mulgara/Document#Content",
           "supernatural");
 
       // check if all text documents are not present.

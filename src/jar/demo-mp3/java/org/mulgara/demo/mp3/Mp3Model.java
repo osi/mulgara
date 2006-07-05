@@ -48,7 +48,7 @@ import org.jrdf.graph.ObjectNode;
  *
  * @created 2004-12-03
  *
- * @author <a href="mailto:robert.turner@mulgaratech.com">Robert Turner</a>
+ * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
  *
  * @version $Revision: 1.4 $
  *
@@ -117,7 +117,7 @@ public interface Mp3Model extends Model {
    * the specified metadata properties and values. Empty/null constraints will
    * return all mp3s in the model.
    *
-   * @param properties Iterator metadata predicates (eg. "tks:title")
+   * @param properties Iterator metadata predicates (eg. "mulgara:title")
    * @param values Iterator metadata objects (eg. "Vertigo")
    * @return Mp3Iterator
    * @throws QueryException

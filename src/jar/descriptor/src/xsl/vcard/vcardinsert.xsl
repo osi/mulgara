@@ -92,10 +92,10 @@
   <xsl:template match="mulgara:answer">
     <html>
     <head>
-    <title>Kowari answer</title>
+    <title>Mulgara answer</title>
     </head>
     <body>
-      <h2>Kowari response</h2>
+      <h2>Mulgara response</h2>
       <xsl:value-of select="mulgara:query/mulgara:message/text()"/>
       <p/>
 
@@ -116,12 +116,12 @@
 
 
   <!-- #################################################################### -->
-  <!-- Calls a java class for Kowari queries -->
+  <!-- Calls a java class for Mulgara queries -->
   <!-- #################################################################### -->
   <lxslt:component prefix="mulgaraDescriptor" elements="descriptor query debug"
  functions="test">
     <lxslt:script lang="javaclass"
- src="xalan://org.kowari.descriptor.DescriptorElement"/>
+ src="xalan://org.mulgara.descriptor.DescriptorElement"/>
   </lxslt:component>
 
 
@@ -138,7 +138,7 @@
 
       <desc:Descriptor rdf:about="">
 
-        <dc:title>Given VCard parameters insert a VCard into a Kowari Store</dc:title>
+        <dc:title>Given VCard parameters insert a VCard into a Mulgara Store</dc:title>
         <desc:hasParam>
           <desc:Param>
             <desc:name>_self</desc:name>

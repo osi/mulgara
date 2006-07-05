@@ -63,7 +63,7 @@ class RemoteAnswerWrapperAnswer
   /**
    * Default timeout period to wait for a new page.
    */
-  public static String PREFETCH_TIMEOUT_PROPERTY = "tucana.rmi.pagetimeout";
+  public static String PREFETCH_TIMEOUT_PROPERTY = "mulgara.rmi.pagetimeout";
 
   /**
    * Default timeout period to wait for a new page.
