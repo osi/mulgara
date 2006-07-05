@@ -47,7 +47,7 @@
     <fail>Output failed.  Check badLoadResult4.xml for output.</fail>
   </ifEqual>
 
-  <set name="query" value="select $pmid $title from &lt;@server@#model1&gt; where $date &lt;http://tucana.org/tucana/tool/DateExtractor#year&gt; '2000' and $date &lt;http://tucana.org/tucana/tool/DateExtractor#month&gt; '08' and $pmid &lt;urn:medline:creationDate&gt; $date and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
+  <set name="query" value="select $pmid $title from &lt;@server@#model1&gt; where $date &lt;http://mulgara.org/mulgara/tool/DateExtractor#year&gt; '2000' and $date &lt;http://mulgara.org/mulgara/tool/DateExtractor#month&gt; '08' and $pmid &lt;urn:medline:creationDate&gt; $date and $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult1.txt" name="queryResult">
@@ -55,7 +55,7 @@
     <fail>Output failed.  Check badQuery1Result.xml for output.</fail>
   </ifEqual>
 
-  <set name="query" value="select $pmid $title from &lt;@server@#model1&gt; where ( $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Birds' or $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Bird Diseases' )  and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
+  <set name="query" value="select $pmid $title from &lt;@server@#model1&gt; where ( $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Birds' or $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Bird Diseases' )  and $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult2.txt" name="queryResult">
@@ -66,7 +66,7 @@
 
   <!-- check for invalid model name -->
 
-  <set name="query" value="select $pmid $title from &lt;@server@#badmodel&gt; where ( $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Birds' or $pmid &lt;http://tucana.org/tucana/Document#subject&gt; 'Bird Diseases' )  and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
+  <set name="query" value="select $pmid $title from &lt;@server@#badmodel&gt; where ( $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Birds' or $pmid &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Bird Diseases' )  and $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult3.txt" name="queryResult">
@@ -75,7 +75,7 @@
   </ifEqual>
 
   <set name="query"
-  value="select $pmid2 $title from &lt;@server@#model1&gt; where $date &lt;http://tucana.org/tucana/tool/DateExtractor#year&gt; '2000' and $date &lt;http://tucana.org/tucana/tool/DateExtractor#month&gt; '08' and $pmid &lt;urn:medline:creationDate&gt; $date and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title order by $pmid $title;"/>
+  value="select $pmid2 $title from &lt;@server@#model1&gt; where $date &lt;http://mulgara.org/mulgara/tool/DateExtractor#year&gt; '2000' and $date &lt;http://mulgara.org/mulgara/tool/DateExtractor#month&gt; '08' and $pmid &lt;urn:medline:creationDate&gt; $date and $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title order by $pmid $title;"/>
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult4.txt" name="queryResult">
     <save name="queryResult" file="badQuery4Result.xml"/>
@@ -95,21 +95,21 @@
 
 <!-- Check for conjunction/disjunction bug -->
 
-  <set name="query" value="select $predicate $object from &lt;@server@#model3&gt; where &lt;http://tucana.org/tucana#user/test&gt; $predicate $object and ( $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canCreate&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canRead&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canWrite&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canDelete&gt; ) order by $predicate $object ;" />
+  <set name="query" value="select $predicate $object from &lt;@server@#model3&gt; where &lt;http://mulgara.org/mulgara#user/test&gt; $predicate $object and ( $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canCreate&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canRead&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canWrite&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canDelete&gt; ) order by $predicate $object ;" />
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult6.txt" name="queryResult">
     <save name="queryResult" file="badQuery6Result.xml"/>
     <fail>Output failed.  Check badQuery6Result.xml for output.</fail>
   </ifEqual>
 
-  <set name="query" value="select $subject $predicate $object from &lt;@server@#model3&gt; where $subject $predicate $object and $subject &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#user/test&gt; and ( $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canCreate&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canRead&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canWrite&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canDelete&gt; ) order by $predicate $object ;" />
+  <set name="query" value="select $subject $predicate $object from &lt;@server@#model3&gt; where $subject $predicate $object and $subject &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#user/test&gt; and ( $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canCreate&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canRead&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canWrite&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canDelete&gt; ) order by $predicate $object ;" />
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
     <save name="queryResult" file="badQuery7Result.xml"/>
     <fail>Output failed.  Check badQuery7Result.xml for output.</fail>
   </ifEqual>
 
-  <set name="query" value="select $predicate $object from &lt;@server@#model3&gt; where &lt;http://tucana.org/tucana#group/dev&gt; $predicate $object and ( $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canCreate&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canRead&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canWrite&gt; or $predicate &lt;http://tucana.org/tucana#is&gt; &lt;http://tucana.org/tucana#canDelete&gt; ) order by $predicate $object ;" />
+  <set name="query" value="select $predicate $object from &lt;@server@#model3&gt; where &lt;http://mulgara.org/mulgara#group/dev&gt; $predicate $object and ( $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canCreate&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canRead&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canWrite&gt; or $predicate &lt;http://mulgara.org/mulgara#is&gt; &lt;http://mulgara.org/mulgara#canDelete&gt; ) order by $predicate $object ;" />
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult8.txt" name="queryResult">
     <save name="queryResult" file="badQuery8Result.xml"/>
@@ -120,7 +120,7 @@
   <set name="query" value="
     select
     from &lt;@server@#model1&gt;
-    where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#title&gt; 'Methylmercury accumulation in tissues and its effects on growth and appetite in captive great egrets.' ;"/>
+    where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#title&gt; 'Methylmercury accumulation in tissues and its effects on growth and appetite in captive great egrets.' ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult9.txt" name="queryResult">
@@ -132,8 +132,8 @@
   <set name="query" value="
     select
     from &lt;@server@#model1&gt;
-    where &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#title&gt; 'Methylmercury accumulation in tissues and its effects on growth and appetite in captive great egrets.' 
-    and &lt;urn:pmid:10941725&gt; &lt;http://tucana.org/tucana/Document#subject&gt; 'Selenium; pharmacokinetics' ;"/>
+    where &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#title&gt; 'Methylmercury accumulation in tissues and its effects on growth and appetite in captive great egrets.' 
+    and &lt;urn:pmid:10941725&gt; &lt;http://mulgara.org/mulgara/Document#subject&gt; 'Selenium; pharmacokinetics' ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult10.txt" name="queryResult">
@@ -157,7 +157,7 @@
   <set name="query" value="
   select
   from &lt;@server@#model1&gt;
-  where $s &lt;http://tucana.org/tucana/Document#subject&gt; $o 
+  where $s &lt;http://mulgara.org/mulgara/Document#subject&gt; $o 
   and $o &lt;urn:cas:name&gt; $o2 ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -170,10 +170,10 @@
   <set name="query" value="
   select $pmid $pmid $title $pmid 
   from &lt;@server@#model1&gt; 
-  where $date &lt;http://tucana.org/tucana/tool/DateExtractor#year&gt; '2000' 
-  and $date &lt;http://tucana.org/tucana/tool/DateExtractor#month&gt; '08' 
+  where $date &lt;http://mulgara.org/mulgara/tool/DateExtractor#year&gt; '2000' 
+  and $date &lt;http://mulgara.org/mulgara/tool/DateExtractor#month&gt; '08' 
   and $pmid &lt;urn:medline:creationDate&gt; $date 
-  and $pmid &lt;http://tucana.org/tucana/Document#title&gt; $title 
+  and $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title 
   order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
