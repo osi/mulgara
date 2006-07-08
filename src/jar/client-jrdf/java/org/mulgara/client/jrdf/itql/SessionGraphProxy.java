@@ -65,6 +65,9 @@ import org.mulgara.server.*;
  *   Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ *
+ * Portions by Paul Gearon.
+ * @copyright &copy;2006 <a href="http://www.herzumsoftware.com/">Herzum Software LLC</a>
  */
 public class SessionGraphProxy implements RemoteGraphProxy {
 
@@ -134,6 +137,9 @@ public class SessionGraphProxy implements RemoteGraphProxy {
       throw new GraphException("Graph has been closed.");
     }
 
+    if (this.session == null) {
+      throw new IllegalStateException("Session not initialized");
+    }
     return this.session.contains(this.modelURI, triple.getSubject(),
         triple.getPredicate(), triple.getObject());
   }
