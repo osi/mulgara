@@ -50,6 +50,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  *
  * @created 2004-09-22
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
+ * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @version $Revision: 1.8 $
  * @modified $Date: 2005/01/05 04:58:24 $
  * @maintenanceAuthor $Author: newmana $
@@ -57,6 +58,8 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ * Portions by Paul Gearon.
+ * @copyright &copy;2006 <a href="http://www.herzumsoftware.com/">Herzum Software LLC</a>
  */
 abstract class NTriples
 {
@@ -92,7 +95,7 @@ abstract class NTriples
    * to ASCII.
    */
   private static final Pattern escapedCharacterPattern = Pattern.compile(
-    "\\p{InHighSurrogates}\\p{InLowSurrogates}" +  // surrogate pairs
+    "[\\ud800\\udc00-\\udbff\\udfff]" +  // surrogate pairs
     "|" +                                          // ...or...
     "[\\x00-\\x1F\\x22\\\\\\x7F-\\uFFFF]"          // all other escaped chars
   );
@@ -347,10 +350,8 @@ abstract class NTriples
         break;
 
         case 2: // surrogate pairs are represented as 8-digit hex escapes
-          assert Character.getType(groupString.charAt(0)) ==
-              Character.SURROGATE;
-          assert Character.getType(groupString.charAt(1)) ==
-              Character.SURROGATE;
+          assert Character.getType(groupString.charAt(0)) == Character.SURROGATE;
+          assert Character.getType(groupString.charAt(1)) == Character.SURROGATE;
 
           String hexString = Integer.toHexString(
               ( (groupString.charAt(0) & 0x3FF) << 10) + // high surrogate
