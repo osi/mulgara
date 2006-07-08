@@ -95,7 +95,7 @@ abstract class NTriples
    * to ASCII.
    */
   private static final Pattern escapedCharacterPattern = Pattern.compile(
-    "[\\ud800\\udc00-\\udbff\\udfff]" +  // surrogate pairs
+    "[\ud800\udc00-\udbff\udfff]" +                // surrogate pairs
     "|" +                                          // ...or...
     "[\\x00-\\x1F\\x22\\\\\\x7F-\\uFFFF]"          // all other escaped chars
   );
