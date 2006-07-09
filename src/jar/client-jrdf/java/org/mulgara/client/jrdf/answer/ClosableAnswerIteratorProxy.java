@@ -60,6 +60,8 @@ import org.mulgara.query.*;
  *   Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ * Portions by Paul Gearon.
+ * @copyright &copy;2006 <a href="http://www.herzumsoftware.com/">Herzum Software LLC</a>
  */
 public class ClosableAnswerIteratorProxy
     implements VirtualClosableIteratorProxy {
@@ -69,6 +71,9 @@ public class ClosableAnswerIteratorProxy
    */
   private final static Logger log = Logger.getLogger(
       ClosableAnswerIteratorProxy.class.getName());
+
+  /** An error string that JRDF expects. */
+  private final static String JRDF_STATE_ERROR_STRING = "Next not called or beyond end of data";
 
   /** Data Source used by the iterator */
   private Answer answer = null;
@@ -449,6 +454,9 @@ public class ClosableAnswerIteratorProxy
 
       try {
 
+        if (this.lastTriple == null) {
+          throw new IllegalStateException(JRDF_STATE_ERROR_STRING);
+        }
         //wrap the last triple to be returned in an Iterator
         Set lastTriple = new HashSet();
         lastTriple.add(this.lastTriple);

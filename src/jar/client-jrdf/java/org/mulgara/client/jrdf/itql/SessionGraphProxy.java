@@ -140,6 +140,9 @@ public class SessionGraphProxy implements RemoteGraphProxy {
     if (this.session == null) {
       throw new IllegalStateException("Session not initialized");
     }
+    if (triple == null) {
+      throw new IllegalArgumentException("Cannot search for null Triple");
+    }
     return this.session.contains(this.modelURI, triple.getSubject(),
         triple.getPredicate(), triple.getObject());
   }
@@ -223,6 +226,9 @@ public class SessionGraphProxy implements RemoteGraphProxy {
       while (triples.hasNext()) {
 
         currentTriple = (Triple) triples.next();
+        if (currentTriple == null) {
+          throw new IllegalStateException("Calling remove with no current triple");
+        }
 
         //check that the triple occurs before adding it
         if (!this.contains(currentTriple)) {
