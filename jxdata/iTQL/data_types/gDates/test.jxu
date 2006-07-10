@@ -186,10 +186,28 @@
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <ifEqual converse="true" file="queryResult11.txt" name="queryResult">
-    <save name="queryResult" file="badQuery11Result.xml"/>
-    <fail>Output failed.  Check badQuery11Result.xml for output.</fail>
-  </ifEqual>
+
+  <!-- Because of implementation details, the results of this
+       test depend on the TimeZone in which it is run. We 
+       therefore have two possible outcomes that can be
+       considered valid. We probably want to lock this
+       down further at some point, but this should do for
+	   now. If you are east of GMT, the 1st results should
+	   be valid. If you are west of GMT, the 2nd results should
+	   be valid.
+	-->
+
+   <ifEqual file="queryResult11-1.txt" name="queryResult">
+	 <set name="queryResult11Matched" value="true"/>
+   </ifEqual>
+   <ifEqual file="queryResult11-2.txt" name="queryResult">
+	 <set name="queryResult11Matched" value="true"/>
+   </ifEqual>
+
+   <ifNull name="queryResult11Matched">
+     <save name="queryResult" file="badQuery11Result.xml"/>
+     <fail>Output failed.  Check badQuery11Result.xml for output.</fail>
+   </ifNull>
 
   <!-- Test 12:  Determine if a gDay label is correctly returned by date-->
   <set name="query" value="
@@ -338,10 +356,27 @@
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <ifEqual converse="true" file="queryResult21.txt" name="queryResult">
-    <save name="queryResult" file="badQuery21Result.xml"/>
-    <fail>Output failed.  Check badQuery21Result.xml for output.</fail>
-  </ifEqual>
+
+  <!-- Because of implementation details, the results of this
+       test depend on the TimeZone in which it is run. We 
+       therefore have two possible outcomes that can be
+       considered valid. We probably want to lock this
+       down further at some point, but this should do for
+	   now. If you are east of GMT, the 1st results should
+	   be valid. If you are west of GMT, the 2nd results should
+	   be valid.
+	-->
+	
+   <ifEqual file="queryResult21-1.txt" name="queryResult">
+	 <set name="queryResult21Matched" value="true"/>
+   </ifEqual>
+   <ifEqual file="queryResult21-2.txt" name="queryResult">
+	 <set name="queryResult21Matched" value="true"/>
+   </ifEqual>
+   <ifNull name="queryResult21Matched">
+     <save name="queryResult" file="badQuery21Result.xml"/>
+     <fail>Output failed.  Check badQuery21Result.xml for output.</fail>
+   </ifNull>
 
   <!-- Test 22:  Determine if a gMonthDay label is correctly returned by date-->
   <set name="query" value="
