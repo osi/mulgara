@@ -26,13 +26,21 @@ public class TimeZoneSubstituteJX implements JXTestStep {
 		String queryResult = checkGetValue( props, QUERYRESULT );
 		String returnProperty = checkGetValue( props, PROPERTY );
 		
+		System.out.println("timedate: " + timedate );
+		System.out.println("token: " + token );
+		System.out.println("template: " + template );
+		System.out.println("queryResult: " + queryResult );
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 		Date d = sdf.parse( timedate );
 		sdf = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
 		String localTime = sdf.format(d);
 		
-		success = queryResult.equals( template.replace( token, localTime ) );
+		System.out.println("localTime: " + localTime );
 		
+		success = queryResult.equals( template.replace( token, localTime ) );
+
+		System.out.println("Success: " + success );
 		if( success ) {
 			props.put( returnProperty, "true" );
 		}
