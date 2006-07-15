@@ -24,24 +24,16 @@
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
 
-  <!-- Because of implementation details, the results of this
-       test depend on the TimeZone in which it is run. We 
-       therefore have two possible outcomes that can be
-       considered valid. We probably want to lock this
-       down further at some point, but this should do for
-	   now. If you are east of GMT, the 1st results should
-	   be valid. If you are west of GMT, the 2nd results should
-	   be valid.
-	-->
+  <set name="timedate" value="2004-08-24T06:14:26+0100"/>
+  <set name="token" value="@TIMEZONE_TOKEN@"/>
+  <set name="template" file="queryResult2.txt" />
+  <set name="returnProperty" value="queryResult2Matched" />
 
-  <ifEqual file="queryResult2-1.txt" name="queryResult">
-	 <set name="queryResult2Matched" value="true"/>
-  </ifEqual>
-  <ifEqual file="queryResult2-2.txt" name="queryResult">
-	 <set name="queryResult2Matched" value="true"/>
-  </ifEqual>
+  <eval stepClass="org.mulgara.store.jxunit.TimeZoneSubstituteJX" />
+
   <ifNull name="queryResult2Matched">
     <save name="queryResult" file="badQuery2Result.xml"/>
     <fail>Output failed.  Check badQuery2Result.xml for output.</fail>
   </ifNull>
+
 </jxu>
