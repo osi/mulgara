@@ -135,8 +135,8 @@ public class NTriplesUnitTest extends TestCase
 
       // embedded non-ASCII character
       escapeAndUnescape(
-        "\u00a92004 Tucana Technology",
-        "\\u00A92004 Tucana Technology"
+        "\u00a92004 Mulgara Unicode Test",
+        "\\u00A92004 Mulgara Unicode Test"
       );
 
       // embedded Unicode surrogate pair
