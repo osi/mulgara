@@ -302,7 +302,7 @@ public abstract class TuplesOperations {
       Set matchingVars = getMatchingVars(minuend, subtrahend);
       if (matchingVars.isEmpty()) {
         // check to see if the subtrahend is empty
-        if (subtrahend.getVariables().length == 0) {
+        if (subtrahend.getVariables().length == 0 || minuend.getVariables().length == 0) {
           return (Tuples)minuend.clone();
         }
         throw new TuplesException("Unable to subtract: no common variables.");
