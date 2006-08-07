@@ -122,9 +122,9 @@ public class HttpContentUnitTest extends TestCase {
     content = new HttpContent(new URL(
         "http://rss.news.yahoo.com/rss/topstories"));
     mimeType = content.getContentType();
-    assertTrue("Expecting mime type of text/html but found " + mimeType,
+    assertTrue("Expecting mime type of text/xml but found " + mimeType,
         mimeType != null && mimeType.getPrimaryType().equals("text")
-            && mimeType.getSubType().equals("html"));
+            && mimeType.getSubType().equals("xml"));
 
     // obtain a valid content type of XML via https
     content = new HttpContent(new URL(
