@@ -360,26 +360,26 @@ public class FullTextStringIndex {
 
       // Add the literal value to the predicate field and tokenize it for
       // fulltext searching
-      indexDocument.add(new Field(LITERAL_KEY, literal, true, true, true));
+      indexDocument.add(new Field(LITERAL_KEY, literal, Field.Store.YES, Field.Index.TOKENIZED));
 
       // Add the literal value to the predicate field and tokenize it for
       // fulltext searching in reverse order
       if (enableReverseTextIndex) {
 
         indexDocument.add(new Field(REVERSE_LITERAL_KEY,
-            (new StringBuffer(literal).reverse()).toString(), true, true, true));
+            (new StringBuffer(literal).reverse()).toString(), Field.Store.YES, Field.Index.TOKENIZED));
       }
 
       // Add the actual literal, do not tokenize it. Required for exact
       // matching. ie. removal
       indexDocument.add(new Field(ID_KEY,
-          this.createKey(subject, predicate, literal), true, true, false));
+          this.createKey(subject, predicate, literal), Field.Store.YES, Field.Index.UN_TOKENIZED));
 
       // Add the predicate, do not tokenize it, required for exact matching
-      indexDocument.add(new Field(PREDICATE_KEY, predicate, true, true, false));
+      indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.UN_TOKENIZED));
 
       // Add the subject, do not tokenize it, required for exact matching
-      indexDocument.add(new Field(SUBJECT_KEY, subject, true, true, false));
+      indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.UN_TOKENIZED));
 
       try {
 
@@ -463,18 +463,18 @@ public class FullTextStringIndex {
 
     // Add the resource content to the predicate field and tokenize it for
     // fulltext searching
-    indexDocument.add(Field.Text(LITERAL_KEY, reader));
+    indexDocument.add(new Field(LITERAL_KEY, reader));
 
     // Add the resource label, do not tokenize it. Required for exact
     // matching. ie. removal
     indexDocument.add(new Field(ID_KEY,
-        this.createKey(subject, predicate, resource), true, true, false));
+        this.createKey(subject, predicate, resource), Field.Store.YES, Field.Index.UN_TOKENIZED));
 
     // Add the predicate, do not tokenize it, required for exact matching
-    indexDocument.add(new Field(PREDICATE_KEY, predicate, true, true, false));
+    indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.UN_TOKENIZED));
 
     // Add the subject, do not tokenize it, required for exact matching
-    indexDocument.add(new Field(SUBJECT_KEY, subject, true, true, false));
+    indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.UN_TOKENIZED));
 
     try {
 
@@ -667,7 +667,7 @@ public class FullTextStringIndex {
           // openReadIndex();
         }
 
-        int deleted = indexDelete.delete(term);
+        int deleted = indexDelete.deleteDocuments(term);
 
         //set the index status to modified
         indexLock.setStatus(indexLock.MODIFIED);
@@ -805,13 +805,13 @@ public class FullTextStringIndex {
 
       if ((subject != null) && (subject.length() > 0)) {
         TermQuery tSubject = new TermQuery(new Term(SUBJECT_KEY, subject));
-        bQuery.add(tSubject, true, false);
+        bQuery.add(tSubject, BooleanClause.Occur.MUST);
       }
 
       if ((predicate != null) && (predicate.length() > 0)) {
         TermQuery tPredicate =
             new TermQuery(new Term(PREDICATE_KEY, predicate));
-        bQuery.add(tPredicate, true, false);
+        bQuery.add(tPredicate, BooleanClause.Occur.MUST);
       }
 
       Query qliteral = null;
@@ -819,14 +819,16 @@ public class FullTextStringIndex {
       // Are we performing a reverse string lookup?
       if (enableReverseTextIndex && isLeadingWildcard(literal)) {
         literal = reverseLiteralSearch(literal);
-        qliteral = QueryParser.parse(literal, REVERSE_LITERAL_KEY, analyzer);
+        QueryParser parser = new QueryParser(REVERSE_LITERAL_KEY, analyzer);
+        qliteral = parser.parse(literal);
       }
       else {
-        qliteral = QueryParser.parse(literal, LITERAL_KEY, analyzer);
+        QueryParser parser = new QueryParser(LITERAL_KEY, analyzer);
+        qliteral = parser.parse(literal);
       }
 
       // submit the literal to the boolean query
-      bQuery.add(qliteral, true, false);
+      bQuery.add(qliteral, BooleanClause.Occur.MUST);
 
       // debug logging
       if (logger.isDebugEnabled()) {
