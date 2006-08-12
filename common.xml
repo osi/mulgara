@@ -476,7 +476,7 @@
 
     <echo message="Fixing CR LF for Windows"/>
 
-    <fixcrlf srcdir="${jxtest.dir}"/>
+    <fixcrlf encoding="utf-8" srcdir="${jxtest.dir}"/>
   </target>
 
   <!-- =================================================================== -->
