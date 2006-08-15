@@ -437,8 +437,13 @@
     <filter token="mulgara.jar" value="${mulgara.jar}"/>
 
     <copy todir="${jxtest.dir}" filtering="yes">
-      <fileset dir="jxdata" excludes="**/*.gz"/>
+      <fileset dir="jxdata">
+        <exclude name="**/*.gz"/>
+        <exclude name="iTQL/fulltext_queries/queryResult11.txt"/>
+      </fileset>
     </copy>
+
+    <copy encoding="utf-8" file="jxdata/iTQL/fulltext_queries/queryResult11.txt" todir="${jxtest.dir}/iTQL/fulltext_queries" filtering="yes"/>
 
     <condition property="isWindows">
       <os family="windows"/>
