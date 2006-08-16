@@ -1979,7 +1979,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
 
   /**
-   * Creates the Mulgara Metadata Store Query Tool (webui).
+   * Creates the Mulgara Semantic Store Query Tool (webui).
    *
    * @throws IOException if the driver WAR file could not be found
    */

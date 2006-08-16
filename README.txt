@@ -1,4 +1,4 @@
-Mulgara Metadata Store (Mulgara) Installation Guide
+Mulgara Semantic Store (Mulgara) Installation Guide
 -------------------------------------------------
 
 Table of Contents
@@ -16,7 +16,7 @@ VI. License
 I. Introduction
 ===============
 
-Mulgara Metadata Store is a directed graph daatabase designed to store metadata in
+Mulgara Semantic Store is a directed graph daatabase designed to store metadata in
 a highly scalable, transaction safe environment.
 
 i. Directory Layout
@@ -216,12 +216,13 @@ $java -jar mulgara-1.1.0.jar -a c:\mulgara-data
 VI. License
 ==========
 
-The Mulgara Metadata Store is licensed under the Mozilla Public License
+The Mulgara Semantic Store is licensed under the Open Software License
 version 1.1 which is included with the distribution in a file called
 LICENSE.txt.
 
 Copyright (c) 2001-2004 Tucana Technologies, Inc. All rights reserved.
-Copyright (c) 2005 Mulgara Project. All rights reserved.
+Copyright (c) 2005 Kowari Project. All rights reserved.
+Copyright (c) 2006 Mulgara Project. Some rights reserved.
 
 Last updated on 1 April 2005
 

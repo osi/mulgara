@@ -2,7 +2,7 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!--
-Log4J configuration for the Mulgara Metadata Store project (distributable
+Log4J configuration for the Mulgara Semantic Store project (distributable
 version).
 
 Typically, you'll want to add <category/> elements to display the debug

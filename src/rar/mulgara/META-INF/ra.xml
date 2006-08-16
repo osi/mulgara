@@ -4,8 +4,8 @@
   "http://java.sun.com/dtd/connector_1_0.dtd">
 
 <connector>
-  <display-name>Mulgara Metadata Store RAR</display-name>
-  <description>Mulgara Metadata Store Resource Adaptor</description>
+  <display-name>Mulgara Semantic Store RAR</display-name>
+  <description>Mulgara Semantic Store Resource Adaptor</description>
   <icon>
     <small-icon>Jar16.gif</small-icon>
     <large-icon>Jar24.gif</large-icon>

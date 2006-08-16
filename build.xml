@@ -1368,10 +1368,10 @@
 
 
   <!-- =================================================================== -->
-  <!-- Builds Mulgara Metadata Store (Mulgara) WAR                           -->
+  <!-- Builds Mulgara Semantic Store (Mulgara) WAR                           -->
   <!-- =================================================================== -->
   <target name="mulgara-war"
-      description="Builds the Mulgara Metadata Store (Mulgara) WAR"
+      description="Builds the Mulgara Semantic Store (Mulgara) WAR"
       depends="driver-jar, itql-jar, query-jar, rmi-jar, server-jar,
       server-beep-jar, server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
       set.host.name, mulgara.war-uptodate"

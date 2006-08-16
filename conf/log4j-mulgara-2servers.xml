@@ -2,7 +2,7 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!--
-Log4J configuration for the Mulgara Metadata Store project.
+Log4J configuration for the Mulgara Semantic Store project.
 -->
 
 <log4j:configuration>

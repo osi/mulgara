@@ -8,7 +8,7 @@
   <!-- ==================================================================== -->
   <!-- Project settings                                                     -->
   <!-- ==================================================================== -->
-  <display-name>Mulgara Metadata Store</display-name>
+  <display-name>Mulgara Semantic Store</display-name>
   <description>
     WAR wrapper for a Mulgara server.
   </description>

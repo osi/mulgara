@@ -10,7 +10,7 @@
   <!-- ==================================================================== -->
   <display-name>MulgaraV</display-name>
   <description>
-    The Mulgara Metadata Store Viewer (MulgaraV) is a web-based application that
+    The Mulgara Semantic Store Viewer (MulgaraV) is a web-based application that
     allows you to view and traverse the data contained on a Mulgara server.
   </description>
 
