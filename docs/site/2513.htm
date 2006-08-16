@@ -10,8 +10,8 @@ href="./media/images/icons/siteicon.png" />
 <meta name="author" content="Tom Adams" />
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
 <meta name="robots" content="all" />
-<meta name="description" content="Kowari Project Home" />
-<meta name="keywords" content="Exampleskowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="description" content="Mulgara Project Home" />
+<meta name="keywords" content="Examples, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage" />
 <meta name="location" content="Global" />
 <meta name="document-distribution" content="Global" />
 
@@ -20,22 +20,22 @@ href="./media/images/icons/siteicon.png" />
 <meta http-equiv="language" content="English" />
 <meta http-equiv="window-target" content="_top" />
 
-<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Title" content="mulgara : semantic store" />
 <meta name="DC.Creator" content="Tom Adams" />
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
 <!--<meta name="DC.Contributor" content="Andrew Newman" />-->
-<meta name="DC.Subject" content="Kowari Project Home" />
-<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Subject" content="Mulgara Project Home" />
+<meta name="DC.Description" content="Mulgara Project Home" />
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Language" scheme="rfc1766" content="en" />
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
 <meta name="DC.Type" content="Text.Homepage.Personal" />
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
 
 <meta name="Generator" content="AITPublish" />
 
-<link rel="stylesheet" href="kowari_stylesheet.css">
+<link rel="stylesheet" href="mulgara_stylesheet.css">
 <!-- <link rel="stylesheet" href="44.css"> -->
 <base target="BODY">
 </head>
@@ -56,7 +56,7 @@ href="./media/images/icons/siteicon.png" />
 <table cellpadding="0" cellspacing="0" border="0">
 <tr valign="top">
 <td width= "226.8">
-<p class="relatedheading">In This Section</p><p class="relateditem"><a href="2513.htm#o2514" target="_self">JRDF Graph (Memory)</a></p><p class="relateditem"><a href="2513.htm#o2518" target="_self">Kowari Backed JRDF Graph (Client)</a></p><p class="relateditem"><a href="2513.htm#o2521" target="_self">Display iTQL Results as an JRDF Graph</a></p></td>
+<p class="relatedheading">In This Section</p><p class="relateditem"><a href="2513.htm#o2514" target="_self">JRDF Graph (Memory)</a></p><p class="relateditem"><a href="2513.htm#o2518" target="_self">Mulgara Backed JRDF Graph (Client)</a></p><p class="relateditem"><a href="2513.htm#o2521" target="_self">Display iTQL Results as an JRDF Graph</a></p></td>
 <td width= "226.8">
 <p class="relatedheading">See Also</p><p class="relateditem"><a href="2466.htm" target="_self">Java RDF (JRDF)</a></p><p class="relateditem"><a href="3002.htm" target="_self">JRDF APIs</a></p><p class="relateditem"><a href="2467.htm" target="_self">JRDF Graphs</a></p><p class="relateditem"><a href="2467.htm#o2479" target="_self">Querying a JRDF Graph</a></p><p class="relateditem"><a href="2526.htm" target="_self">TKS Client Support</a></p><p class="relateditem"><a href="2511.htm" target="_self">JRDF Memory Implementation</a></p><p class="relateditem"><a href="2512.htm" target="_self">Containers and Collections</a></p><p class="relateditem"><a href="2528.htm" target="_self">Built-in Visitor Pattern</a></p></td>
 </tr>
@@ -81,20 +81,20 @@ href="./media/images/icons/siteicon.png" />
 <p class="commandtext">//remove Triple<br />graph.remove(triple4);</p>
 <p class="bodytext">The JRDF graph now contains:</p>
 <p class="commandtext">_blankNode123 &lt;http://example.org#predicate&gt; 'object'<br />&lt;http://example.org#subject&gt; &lt;http://example.org#predicate&gt; 'object'<br />&lt;http://example.org#subject&gt; &lt;http://example.org#predicate&gt; _blankNode123</p>
-<a name="o2518"></a><h4 class="heading4">Kowari Backed JRDF Graph (Client)</h4>
+<a name="o2518"></a><h4 class="heading4">Mulgara Backed JRDF Graph (Client)</h4>
 <p class="bodytext">This example demonstrates how to:</p>
-<ul class="listbullet"><li class="listbullet">Create a Kowari session</li><li class="listbullet">Create a Kowari backed JRDF graph</li></ul>
-<a name="o2519"></a><h5 class="heading5">Create a Kowari Session</h5>
-<p class="bodytext">The following code creates a Kowari session object:</p>
-<p class="commandtext">//location of the Kowari Server<br />URI serverURI = new URI(&quot;rmi://mysite.com/server1&quot;);<br /><br />//connect to the Kowari Server<br />//true indicates a remote Server, if the Server is not remote use false <br />SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, true);<br />Session session = sessionFactory.newSession();</p>
-<p class="note"><strong class="strong">Note -</strong> The Kowari server must be running. <code class="monospace">rmi://mysite.com/server1</code> is an example only. Replace this with the URI for your Kowari server.</p>
-<a name="o2520"></a><h5 class="heading5">Create a Kowari Backed JRDF Graph</h5>
+<ul class="listbullet"><li class="listbullet">Create a Mulgara session</li><li class="listbullet">Create a Mulgara backed JRDF graph</li></ul>
+<a name="o2519"></a><h5 class="heading5">Create a Mulgara Session</h5>
+<p class="bodytext">The following code creates a Mulgara session object:</p>
+<p class="commandtext">//location of the Mulgara Server<br />URI serverURI = new URI(&quot;rmi://mysite.com/server1&quot;);<br /><br />//connect to the Mulgara Server<br />//true indicates a remote Server, if the Server is not remote use false <br />SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, true);<br />Session session = sessionFactory.newSession();</p>
+<p class="note"><strong class="strong">Note -</strong> The Mulgara server must be running. <code class="monospace">rmi://mysite.com/server1</code> is an example only. Replace this with the URI for your Mulgara server.</p>
+<a name="o2520"></a><h5 class="heading5">Create a Mulgara Backed JRDF Graph</h5>
 <p class="bodytext">The following code creates a new JRDF graph:</p>
-<p class="commandtext">//create a new Kowari Model<br />URI modelURI = new URI(&quot;rmi://mysite.com/server1#exampleGraph&quot;);<br />URI modelType = new URI(&quot;http://tucana.org/tucana#Model&quot;);<br />session.createModel(modelURI, modelType);<br /><br />//create a JRDF Graph using the model<br />ItqlInterpreter interpreter = new ItqlInterpreter(new HashMap());<br />Graph = AbstractGraphFactory.createGraph(modelURI, session);</p>
+<p class="commandtext">//create a new Mulgara Model<br />URI modelURI = new URI(&quot;rmi://mysite.com/server1#exampleGraph&quot;);<br />URI modelType = new URI(&quot;http://tucana.org/tucana#Model&quot;);<br />session.createModel(modelURI, modelType);<br /><br />//create a JRDF Graph using the model<br />ItqlInterpreter interpreter = new ItqlInterpreter(new HashMap());<br />Graph = AbstractGraphFactory.createGraph(modelURI, session);</p>
 <p class="note"><strong class="strong">Note -</strong> You only have to create the model once. If using an existing model you do not have to create it.</p>
 <a name="o2521"></a><h4 class="heading4">Display iTQL Results as an JRDF Graph</h4>
 <p class="bodytext">This example demonstrates how to:</p>
-<ul class="listbullet"><li class="listbullet">Execute an iTQL query</li><li class="listbullet">Create a read-only JRDF Graph using the results</li></ul><p class="note"><strong class="strong">Note -</strong> This example assumes you have already <a id="h2522" class="documentlinktemplate" title="Create a Kowari Session" href="2513.htm#o2519" target="_self">created a Kowari session</a>.</p>
+<ul class="listbullet"><li class="listbullet">Execute an iTQL query</li><li class="listbullet">Create a read-only JRDF Graph using the results</li></ul><p class="note"><strong class="strong">Note -</strong> This example assumes you have already <a id="h2522" class="documentlinktemplate" title="Create a Mulgara Session" href="2513.htm#o2519" target="_self">created a Mulgara session</a>.</p>
 <a name="o2523"></a><h5 class="heading5">Execute an iTQL Query</h5>
 <p class="bodytext">The following code returns all triples for a model:</p>
 <p class="commandtext">//create the query<br />String queryText = &quot;select $s $p $o from &lt;rmi://mysite.com/server1#testModel&gt; where $s $p $o ; &quot;;<br />ItqlInterpreter interpreter = new ItqlInterpreter(new HashMap());<br />Query query = interpreter.parseQuery(queryText);<br /><br />//execute the query<br />Answer queryResult = session.query(query);</p>
@@ -110,6 +110,8 @@ href="./media/images/icons/siteicon.png" />
 		</td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
@@ -126,8 +128,8 @@ href="./media/images/icons/siteicon.png" />
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">

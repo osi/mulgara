@@ -10,8 +10,8 @@ href="./media/images/icons/siteicon.png" />
 <meta name="author" content="Tom Adams" />
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
 <meta name="robots" content="all" />
-<meta name="description" content="Kowari Project Home" />
-<meta name="keywords" content="Factorieskowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="description" content="Mulgara Project Home" />
+<meta name="keywords" content="Factories, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage" />
 <meta name="location" content="Global" />
 <meta name="document-distribution" content="Global" />
 
@@ -20,22 +20,22 @@ href="./media/images/icons/siteicon.png" />
 <meta http-equiv="language" content="English" />
 <meta http-equiv="window-target" content="_top" />
 
-<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Title" content="mulgara : semantic store" />
 <meta name="DC.Creator" content="Tom Adams" />
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
 <!--<meta name="DC.Contributor" content="Andrew Newman" />-->
-<meta name="DC.Subject" content="Kowari Project Home" />
-<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Subject" content="Mulgara Project Home" />
+<meta name="DC.Description" content="Mulgara Project Home" />
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Language" scheme="rfc1766" content="en" />
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
 <meta name="DC.Type" content="Text.Homepage.Personal" />
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
 
 <meta name="Generator" content="AITPublish" />
 
-<link rel="stylesheet" href="kowari_stylesheet.css">
+<link rel="stylesheet" href="mulgara_stylesheet.css">
 <!-- <link rel="stylesheet" href="44.css"> -->
 <base target="BODY">
 </head>
@@ -66,10 +66,10 @@ href="./media/images/icons/siteicon.png" />
 
 <a name="o2692"></a><h5 class="heading5">Writing a Factory</h5>
 <p class="bodytext">After deciding on the protocol to resolve, write the factory to obtain instances of the resolver. This is a compulsory step for any type of resolver, as without it, the database has no way of obtaining resolver instances for its sessions. The following code represents a factory that creates and manages our http resolver instances (extracted from <code class="monospace">HttpResolverFactory.java</code>):</p>
-<p class="commandtext">package org.kowari.resolver.http;<br /><br />// Java 2 standard packages<br />import java.io.*;<br />import java.net.*;<br />import java.util.List;<br /><br />// Third party packages<br />import org.apache.log4j.Logger;<br /><br />// Locally written packages<br />import org.kowari.query.rdf.Tucana;<br />import org.kowari.query.rdf.URIReferenceImpl;<br />import org.kowari.resolver.spi.*;<br /><br />public class HttpResolverFactory implements ResolverFactory {<br />  /**<br />   * Logger.<br />   */<br />  private static Logger logger =<br />      Logger.getLogger(HttpResolverFactory.class.getName());<br /><br />  private final List contentHandlerList;<br /><br />  /**<br />   * Instantiate a {@link HttpResolverFactory}.<br />   */<br />  private HttpResolverFactory(ResolverFactoryInitializer resolverFactoryInitializer)<br />                                            throws FactoryInitializerException {<br /><br />    // Validate &quot;resolverFactoryInitializer&quot; parameter<br />    if (resolverFactoryInitializer == null) {<br /><br />      throw new IllegalArgumentException(<br />                &quot;Null \&quot;resolverFactoryInitializer\&quot; parameter&quot;);<br />    }<br /><br />    // Obtain the content handler list<br />    contentHandlerList = resolverFactoryInitializer.getContentHandlerList();<br /><br />    // Claim the http: protocol<br />    resolverFactoryInitializer.addProtocol(&quot;http&quot;, this);<br />    ***resolverFactoryInitializer.addProtocol(&quot;https&quot;, this);***<br />  }<br /><br />  /**<br />   * {@inheritDoc ResolverFactory}<br />   *<br />   * This is actually a non-operation, because the only persistent resources<br />   * are outside the database.<br />   */<br />  public void close() {<br />    // null implementation<br />  }<br /><br />  /**<br />   * {@inheritDoc ResolverFactory}<br />   *<br />   * This is actually a non-operation, because the only persistent resources<br />   * are outside the database.<br />   */<br />  public void delete() {<br />    // null implementation<br />  }<br /><br />  /**<br />   * Register this resolver upon database startup.<br />   *<br />   * @param resolverFactoryInitializer  the database within which to find or<br />   *   create the various XML Schema resources<br />   * @throws FactoryInitializerException if the XML Schema resources<br />   *   can't be found or created<br />   */<br />  public static ResolverFactory newInstance(ResolverFactoryInitializer resolverFactoryInitializer)<br />                                            throws FactoryInitializerException {<br /><br />    return new HttpResolverFactory(resolverFactoryInitializer);<br />  }<br /><br />  /**<br />   * Obtain an http resolver.<br />   *<br />   * @param resolverSession  the session which this query is local to<br />   * @param canWrite  {@inheritDoc}; ignored in this implementation<br />   *<br />   * @throws IllegalArgumentException if resolverSession is<br />   *   null<br />   * @throws ResolverFactoryException {@inheritDoc}<br />   */<br />  public Resolver newResolver(boolean canWrite, ResolverSession resolverSession,<br />                              Resolver systemResolver)<br />                              throws ResolverFactoryException {<br /><br />    return new HttpResolver(resolverSession, systemResolver, contentHandlerList);<br />  }<br />}</p>
+<p class="commandtext">package org.mulgara.resolver.http;<br /><br />// Java 2 standard packages<br />import java.io.*;<br />import java.net.*;<br />import java.util.List;<br /><br />// Third party packages<br />import org.apache.log4j.Logger;<br /><br />// Locally written packages<br />import org.mulgara.query.rdf.Tucana;<br />import org.mulgara.query.rdf.URIReferenceImpl;<br />import org.mulgara.resolver.spi.*;<br /><br />public class HttpResolverFactory implements ResolverFactory {<br />  /**<br />   * Logger.<br />   */<br />  private static Logger logger =<br />      Logger.getLogger(HttpResolverFactory.class.getName());<br /><br />  private final List contentHandlerList;<br /><br />  /**<br />   * Instantiate a {@link HttpResolverFactory}.<br />   */<br />  private HttpResolverFactory(ResolverFactoryInitializer resolverFactoryInitializer)<br />                                            throws FactoryInitializerException {<br /><br />    // Validate &quot;resolverFactoryInitializer&quot; parameter<br />    if (resolverFactoryInitializer == null) {<br /><br />      throw new IllegalArgumentException(<br />                &quot;Null \&quot;resolverFactoryInitializer\&quot; parameter&quot;);<br />    }<br /><br />    // Obtain the content handler list<br />    contentHandlerList = resolverFactoryInitializer.getContentHandlerList();<br /><br />    // Claim the http: protocol<br />    resolverFactoryInitializer.addProtocol(&quot;http&quot;, this);<br />    ***resolverFactoryInitializer.addProtocol(&quot;https&quot;, this);***<br />  }<br /><br />  /**<br />   * {@inheritDoc ResolverFactory}<br />   *<br />   * This is actually a non-operation, because the only persistent resources<br />   * are outside the database.<br />   */<br />  public void close() {<br />    // null implementation<br />  }<br /><br />  /**<br />   * {@inheritDoc ResolverFactory}<br />   *<br />   * This is actually a non-operation, because the only persistent resources<br />   * are outside the database.<br />   */<br />  public void delete() {<br />    // null implementation<br />  }<br /><br />  /**<br />   * Register this resolver upon database startup.<br />   *<br />   * @param resolverFactoryInitializer  the database within which to find or<br />   *   create the various XML Schema resources<br />   * @throws FactoryInitializerException if the XML Schema resources<br />   *   can't be found or created<br />   */<br />  public static ResolverFactory newInstance(ResolverFactoryInitializer resolverFactoryInitializer)<br />                                            throws FactoryInitializerException {<br /><br />    return new HttpResolverFactory(resolverFactoryInitializer);<br />  }<br /><br />  /**<br />   * Obtain an http resolver.<br />   *<br />   * @param resolverSession  the session which this query is local to<br />   * @param canWrite  {@inheritDoc}; ignored in this implementation<br />   *<br />   * @throws IllegalArgumentException if resolverSession is<br />   *   null<br />   * @throws ResolverFactoryException {@inheritDoc}<br />   */<br />  public Resolver newResolver(boolean canWrite, ResolverSession resolverSession,<br />                              Resolver systemResolver)<br />                              throws ResolverFactoryException {<br /><br />    return new HttpResolver(resolverSession, systemResolver, contentHandlerList);<br />  }<br />}</p>
 <p class="bodytext">An analysis of the factory is as follows:</p>
-<p class="indentcommandtext">package org.kowari.resolver.http;<br /><br />// Java 2 standard packages<br />import java.io.*;<br />import java.net.*;<br />import java.util.List;<br /><br />// Third party packages<br />import org.apache.log4j.Logger;<br /><br />// Locally written packages<br />import org.kowari.query.rdf.Tucana;<br />import org.kowari.query.rdf.URIReferenceImpl;<br />import org.kowari.resolver.spi.*;</p>
-<p class="indent">Factories and resolvers are not required to be in the same package as the Kowari resolvers. As long as the custom resolver classes are accessible by the Kowari resolver framework it does not matter how you structure the packaging. The <code class="monospace">org.kowari.resolver.spi</code> package requires importing to allow access to the resolver framework and APIs.</p>
+<p class="indentcommandtext">package org.mulgara.resolver.http;<br /><br />// Java 2 standard packages<br />import java.io.*;<br />import java.net.*;<br />import java.util.List;<br /><br />// Third party packages<br />import org.apache.log4j.Logger;<br /><br />// Locally written packages<br />import org.mulgara.query.rdf.Tucana;<br />import org.mulgara.query.rdf.URIReferenceImpl;<br />import org.mulgara.resolver.spi.*;</p>
+<p class="indent">Factories and resolvers are not required to be in the same package as the Mulgara resolvers. As long as the custom resolver classes are accessible by the Mulgara resolver framework it does not matter how you structure the packaging. The <code class="monospace">org.mulgara.resolver.spi</code> package requires importing to allow access to the resolver framework and APIs.</p>
 <p class="indentcommandtext">    public class HttpResolverFactory implements ResolverFactory {</p>
 <p class="indent">All factories are required to implement the <code class="monospace">ResoverFactory</code> API.</p>
 <p class="indentcommandtext">  /**<br />   * Instantiate a {@link HttpResolverFactory}.<br />   */<br />  private HttpResolverFactory(ResolverFactoryInitializer resolverFactoryInitializer)<br />                                            throws FactoryInitializerException {<br /><br />    // Validate &quot;resolverFactoryInitializer&quot; parameter<br />    if (resolverFactoryInitializer == null) {<br /><br />      throw new IllegalArgumentException(<br />                &quot;Null \&quot;resolverFactoryInitializer\&quot; parameter&quot;);<br />    }<br /><br />    // Obtain the content handler list<br />    contentHandlerList = resolverFactoryInitializer.getContentHandlerList();<br /><br />    // Claim the http: protocol<br />    resolverFactoryInitializer.addProtocol(&quot;http&quot;, this);<br />    resolverFactoryInitializer.addProtocol(&quot;https&quot;, this);<br />  }</p>
@@ -88,6 +88,8 @@ href="./media/images/icons/siteicon.png" />
 		</td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
@@ -104,8 +106,8 @@ href="./media/images/icons/siteicon.png" />
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">

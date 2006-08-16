@@ -7,8 +7,8 @@
 <meta name="author" content="Tom Adams">
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project">
 <meta name="robots" content="all">
-<meta name="description" content="Kowari Project Home">
-<meta name="keywords" content="Version 1.0.1 (Build 1.0.52)kowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage">
+<meta name="description" content="Mulgara Project Home">
+<meta name="keywords" content="Version 1.0.0, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage">
 <meta name="location" content="Global">
 <meta name="document-distribution" content="Global">
 
@@ -17,22 +17,22 @@
 <meta http-equiv="language" content="English">
 <meta http-equiv="window-target" content="_top">
 
-<meta name="DC.Title" content="kowari : metastore">
+<meta name="DC.Title" content="mulgara : semantic store">
 <meta name="DC.Creator" content="Tom Adams">
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php"><!--<meta name="DC.Contributor" content="Andrew Newman" />-->
 
-<meta name="DC.Subject" content="Kowari Project Home">
-<meta name="DC.Description" content="Kowari Project Home">
+<meta name="DC.Subject" content="Mulgara Project Home">
+<meta name="DC.Description" content="Mulgara Project Home">
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22">
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22">
 <meta name="DC.Language" scheme="rfc1766" content="en">
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright">
 <meta name="DC.Type" content="Text.Homepage.Personal">
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php">
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/">
 
 <meta name="Generator" content="AITPublish">
 
-<link rel="stylesheet" href="kowari_stylesheet.css"><!-- <link rel="stylesheet" href="44.css"> -->
+<link rel="stylesheet" href="mulgara_stylesheet.css"><!-- <link rel="stylesheet" href="44.css"> -->
 
 <base target="BODY"></head>
 
@@ -48,32 +48,8 @@
 <p class="prevnextbutton"><a href="1207.htm" target="_self"><img src="next.gif" alt="Next Topic" align="bottom" border="0" height="25" hspace="2" vspace="2" width="23"></a></p></td>
 </tr>
 </tbody></table>
-<h2 class="heading2">Version 1.0.1 (Build 1.0.52)</h2>
-<p class="bodytext"><a class="jumptemplate" title="" href="http://prdownloads.sourceforge.net/kowari/kowari-1.0.1.zip?download" target="_blank">Download this release</a>.</p>
-<p class="bodytext">The outstanding bugs in this release are as follows:</p>
-<ul class="listbullet"><li class="listbullet">Parsing approximately 3,500,000 triples causes an OutOfMemory exception. SF Bug <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=877346&amp;group_id=89874&amp;atid=591704" target="_blank">877346</a>.</li><li class="listbullet">Support for Solaris<sup class="superscript">TM</sup> 64-bit currently fails when in 64 bit mode. SF bug <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=877350&amp;group_id=89874&amp;atid=591704" target="_blank">887350</a>.</li><li class="listbullet">On systems running a Windows<sup class="superscript">&reg;</sup>
-operating system, the use of the mapped I/O can cause certain
-operations (such as truncate) to fail. If any MappedByteBuffers
-(including DirectByteBuffers) are still mapped when a truncate is
-called (or other operation on a mapped file) it can fail. This does not
-cause data corruption or loss it merely leaves the files with unused
-space. On re-initialization of the database these files are truncated
-before being mapped, so this will always succeed. SF bug <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=877351&amp;group_id=89874&amp;atid=591704" target="_blank">877351</a>.</li><li class="listbullet">FileTuples are not currently closed correctly under some circumstances. A non-fatal (no data lost) error. SF bug <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=877352&amp;group_id=89874&amp;atid=591704" target="_blank">877352</a>. This has been reduced in the current version.</li><li class="listbullet">Locking
-of the database files has been removed. Users should not try and run
-two instances of the same database at the same time. SF bug <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=896251&amp;group_id=89874&amp;atid=591704" target="_blank">89651</a>.</li><li class="listbullet">The current implementation of the Jena API in Kowari is incomplete. SF feature <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=877348&amp;group_id=89874&amp;atid=591707" target="_blank">877348</a>. An incomplete version of the Graph has been introduced.</li><li class="listbullet">Kowari's
-low-level file operations have been observed to fail under NFS, with
-the message "No more locks". It's strongly suggested that the database
-be run from a local file system. This may have changed with the removal
-of locking (see SF bug <a class="jumptemplate" title="" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=896251&amp;group_id=89874&amp;atid=591704" target="_blank">89651</a>) but is currently unverified.</li><li class="listbullet">Under
-OS X you should kill the Kowari process rather than hitting Ctrl-C as
-it causes the operating system to become unstable. This may be related
-to mapped I/O problems. Again, this does not lead to corruption of the
-database.</li></ul><table border="0" cellpadding="0" cellspacing="0">
-<tbody><tr valign="top">
-<td width="226">
-<p class="relatedheading">See Also</p><p class="relateditem"><a href="1163.htm" target="_self">Kowari Downloads</a></p><p class="relateditem"><a href="3194.htm" target="_self">Version 1.1.0 Pre-release 1 (Build 1.1.0.192)</a></p><p class="relateditem"><a href="2590.htm" target="_self">Version 1.0.5 (Build 1.0.831)</a></p><p class="relateditem"><a href="1676.htm" target="_self">Version 1.0.4.1 (Build 1.0.509)</a></p><p class="relateditem"><a href="1567.htm" target="_self">Version 1.0.4 (Build 1.0.508)</a></p><p class="relateditem"><a href="1474.htm" target="_self">Version 1.0.3 (Build 1.0.294)</a></p><p class="relateditem"><a href="1172.htm" target="_self">Version 1.0.2 (Build 1.0.222)</a></p><p class="relateditem"><a href="1207.htm" target="_self">Version 1.0 (Build 1.0.4)</a></p><p class="relateditem"><a href="1218.htm" target="_self">Source Access</a></p><p class="relateditem"><a href="1217.htm" target="_self">Revision History</a></p></td>
-</tr>
-</tbody></table>
+<h2 class="heading2">Version 1.0.0</h2>
+<p class="bodytext"><a class="jumptemplate" title="" href="http://mulgara.org/#download" target="_blank">Download this release</a>.</p>
 
 
 			
@@ -83,6 +59,8 @@ database.</li></ul><table border="0" cellpadding="0" cellspacing="0">
 </td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			
       <p class="bodytext"><a href="1452.htm#o3199">Kowari 1.1.0 Pre-release 2 Released</a></p>
 <p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
@@ -101,8 +79,8 @@ database.</li></ul><table border="0" cellpadding="0" cellspacing="0">
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border: 0pt none ; width: 110px;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo"></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border: 0pt none ; height: 72px;" src="tucana%20logo.gif" alt="Tucana Technologies Logo"></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border: 0pt none ; height: 37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo"></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">

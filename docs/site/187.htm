@@ -10,8 +10,8 @@ href="./media/images/icons/siteicon.png" />
 <meta name="author" content="Tom Adams" />
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
 <meta name="robots" content="all" />
-<meta name="description" content="Kowari Project Home" />
-<meta name="keywords" content="selectkowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="description" content="Mulgara Project Home" />
+<meta name="keywords" content="select, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage" />
 <meta name="location" content="Global" />
 <meta name="document-distribution" content="Global" />
 
@@ -20,22 +20,22 @@ href="./media/images/icons/siteicon.png" />
 <meta http-equiv="language" content="English" />
 <meta http-equiv="window-target" content="_top" />
 
-<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Title" content="mulgara : semantic store" />
 <meta name="DC.Creator" content="Tom Adams" />
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
 <!--<meta name="DC.Contributor" content="Andrew Newman" />-->
-<meta name="DC.Subject" content="Kowari Project Home" />
-<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Subject" content="Mulgara Project Home" />
+<meta name="DC.Description" content="Mulgara Project Home" />
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Language" scheme="rfc1766" content="en" />
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
 <meta name="DC.Type" content="Text.Homepage.Personal" />
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
 
 <meta name="Generator" content="AITPublish" />
 
-<link rel="stylesheet" href="kowari_stylesheet.css">
+<link rel="stylesheet" href="mulgara_stylesheet.css">
 <!-- <link rel="stylesheet" href="44.css"> -->
 <base target="BODY">
 </head>
@@ -52,7 +52,7 @@ href="./media/images/icons/siteicon.png" />
 </tr>
 </table>
 <h2 class="heading2">select</h2>
-<p class="bodytext">Issues queries to Kowari<sup class="superscript">TM</sup> servers and displays the corresponding results. The command consists of a sequence of <code class="monospace"><a id="h217" class="documentlinktemplate" title="select Clause" href="187.htm#o188" target="_self">select</a></code>, <code class="monospace"><a id="h218" class="documentlinktemplate" title="from Clause" href="187.htm#o189" target="_self">from</a></code>, and <code class="monospace"><a id="h206" class="documentlinktemplate" title="where Clause" href="187.htm#o197" target="_self">where</a></code> clauses; and may optionally include <code class="monospace"><a id="h219" class="documentlinktemplate" title="order by Clause" href="187.htm#o190" target="_self">order by</a></code>, <code class="monospace"><a id="h220" class="documentlinktemplate" title="offset Clause" href="187.htm#o192" target="_self">offset</a></code> and <code class="monospace"><a id="h221" class="documentlinktemplate" title="limit Clause" href="187.htm#o191" target="_self">limit</a></code> clauses. With all clauses present, the general syntax is as follows:</p>
+<p class="bodytext">Issues queries to Mulgara servers and displays the corresponding results. The command consists of a sequence of <code class="monospace"><a id="h217" class="documentlinktemplate" title="select Clause" href="187.htm#o188" target="_self">select</a></code>, <code class="monospace"><a id="h218" class="documentlinktemplate" title="from Clause" href="187.htm#o189" target="_self">from</a></code>, and <code class="monospace"><a id="h206" class="documentlinktemplate" title="where Clause" href="187.htm#o197" target="_self">where</a></code> clauses; and may optionally include <code class="monospace"><a id="h219" class="documentlinktemplate" title="order by Clause" href="187.htm#o190" target="_self">order by</a></code>, <code class="monospace"><a id="h220" class="documentlinktemplate" title="offset Clause" href="187.htm#o192" target="_self">offset</a></code> and <code class="monospace"><a id="h221" class="documentlinktemplate" title="limit Clause" href="187.htm#o191" target="_self">limit</a></code> clauses. With all clauses present, the general syntax is as follows:</p>
 <p class="commandtext">select columns from models where constraints order by variables limit count offset count;</p>
 <p class="bodytext">The purpose of the <code class="monospace">select</code> command is to find values for some set of variables that satisfy the specified constraints. All variable names start with a dollar sign (<code class="monospace">$)</code>, for example <code class="monospace">$x</code> or <code class="monospace">$title</code>.</p>
 <table cellpadding="0" cellspacing="0" border="0">
@@ -78,7 +78,7 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">The following example queries only the statements appearing in all three models. </p>
 <p class="commandtext">... from &lt;rmi://mysite.com/server1#model1&gt; and &lt;rmi://mysite.com/server1#model2&gt;<br />      and &lt;rmi://mysite.com/server1#model3&gt; ...</p>
 <a name="o197"></a><h3 class="heading3">where Clause</h3>
-<p class="bodytext">The <code class="monospace">where</code> clause is usually the largest and most detailed clause of the <code class="monospace"><a id="h207" class="documentlinktemplate" title="select" href="187.htm" target="_self">select</a></code> command. It specifies the constraints that must be satisfied by the variable values in each solution. A constraint is a sequence of subject, predicate and object that represents an RDF statement. Each of the three positions is either a constant value (a resource or a literal) or a variable. The Kowari server finds values for any variables such that the resulting statement is present in the model that was specified in the preceding <code class="monospace"><a id="h1326" class="documentlinktemplate" title="from Clause" href="187.htm#o189" target="_self">from</a></code> clause.</p>
+<p class="bodytext">The <code class="monospace">where</code> clause is usually the largest and most detailed clause of the <code class="monospace"><a id="h207" class="documentlinktemplate" title="select" href="187.htm" target="_self">select</a></code> command. It specifies the constraints that must be satisfied by the variable values in each solution. A constraint is a sequence of subject, predicate and object that represents an RDF statement. Each of the three positions is either a constant value (a resource or a literal) or a variable. The Mulgara server finds values for any variables such that the resulting statement is present in the model that was specified in the preceding <code class="monospace"><a id="h1326" class="documentlinktemplate" title="from Clause" href="187.htm#o189" target="_self">from</a></code> clause.</p>
 <p class="bodytext">For example, the following <code class="monospace">where</code> clause constrains that in all solutions, the value of <code class="monospace">$title</code> is the title of the resource referred to in <code class="monospace">$document</code>.</p>
 <p class="commandtext">... where $document &lt;dc:title&gt; $title ...</p>
 <p class="bodytext">Constraints may be composed using <code class="monospace">and</code> and <code class="monospace">or</code> operations, with parentheses to control association.</p>
@@ -279,6 +279,8 @@ href="./media/images/icons/siteicon.png" />
 		</td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
@@ -295,8 +297,8 @@ href="./media/images/icons/siteicon.png" />
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">

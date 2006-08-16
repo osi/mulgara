@@ -2,7 +2,7 @@
  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title> Kowari Overview </title>
+<title> Mulgara Overview </title>
 <link rel="icon" type="text/png"
 href="./media/images/icons/siteicon.png" />
 <link rel="shortcut icon" type="text/png" href="siteicon.png" />
@@ -10,8 +10,8 @@ href="./media/images/icons/siteicon.png" />
 <meta name="author" content="Tom Adams" />
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
 <meta name="robots" content="all" />
-<meta name="description" content="Kowari Project Home" />
-<meta name="keywords" content="Kowari Overviewkowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="description" content="Mulgara Project Home" />
+<meta name="keywords" content="Mulgara Overview, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage" />
 <meta name="location" content="Global" />
 <meta name="document-distribution" content="Global" />
 
@@ -20,22 +20,22 @@ href="./media/images/icons/siteicon.png" />
 <meta http-equiv="language" content="English" />
 <meta http-equiv="window-target" content="_top" />
 
-<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Title" content="Mulgara : semantic store" />
 <meta name="DC.Creator" content="Tom Adams" />
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
 <!--<meta name="DC.Contributor" content="Andrew Newman" />-->
-<meta name="DC.Subject" content="Kowari Project Home" />
-<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Subject" content="Mulgara Project Home" />
+<meta name="DC.Description" content="Mulgara Project Home" />
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Language" scheme="rfc1766" content="en" />
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
 <meta name="DC.Type" content="Text.Homepage.Personal" />
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
 
 <meta name="Generator" content="AITPublish" />
 
-<link rel="stylesheet" href="kowari_stylesheet.css">
+<link rel="stylesheet" href="mulgara_stylesheet.css">
 <!-- <link rel="stylesheet" href="44.css"> -->
 <base target="BODY">
 </head>
@@ -51,9 +51,8 @@ href="./media/images/icons/siteicon.png" />
 <p class="prevnextbutton"><a href="1081.htm" target="_self"><img src="next.gif" alt="Next Topic" height="25px" width="23px" vspace="2" hspace="2" align="bottom" border="0" /></a></p></td>
 </tr>
 </table>
-<h1 class="heading1">Kowari Overview</h1>
-<p class="bodytext">The features and benefits of Kowari<sup class="superscript">TM</sup> are outlined in the following sections.</p>
-<p class="note"><strong class="strong">Note -</strong> The features of user and role security and JAAS support are only available in the <a class="internetlinktemplate" title="Tucana Technologies" href="http://www.tucanatech.com" target="_blank">commercial version</a> of Kowari, the <a class="internetlinktemplate" title="" href="http://www.tucanatech.com/solutions/products.html" target="_blank">Tucana Knowledge Server</a><sup class="superscript"><a class="internetlinktemplate" title="" href="http://www.tucanatech.com/solutions/products.html" target="_blank">TM</a></sup>. </p>
+<h1 class="heading1">Mulgara Overview</h1>
+<p class="bodytext">The features and benefits of Mulgara<sup class="superscript">TM</sup> are outlined in the following sections.</p>
 <table cellpadding="0" cellspacing="0" border="0">
 <tr valign="top">
 <td width= "453.6">
@@ -74,9 +73,9 @@ href="./media/images/icons/siteicon.png" />
 <a name="o1026"></a><h2 class="heading2">Cross OS/Platform Support</h2>
 <ul class="listbullet"><li class="listbullet">Microsoft<sup class="superscript">&reg;</sup> Windows NT<sup class="superscript">&reg;</sup>, Windows<sup class="superscript">&reg;</sup> 2000 and XP</li><li class="listbullet">UNIX<sup class="superscript">&reg;</sup> and Linux<sup class="superscript">&reg;</sup></li><li class="listbullet">Solaris<sup class="superscript">TM</sup></li><li class="listbullet">Mac OS<sup class="superscript">&reg;</sup> X</li><li class="listbullet">IRIX<sup class="superscript">&reg;</sup></li></ul>
 <a name="o1020"></a><h2 class="heading2">Scalability</h2>
-<p class="bodytext">The storage engine of Kowari<sup class="superscript">TM</sup> is a transactional triplestore known as the XA Triplestore. Much of the scalability of Kowari is due to the following features of the XA Triplestore.</p>
+<p class="bodytext">The storage engine of Mulgara<sup class="superscript">TM</sup> is a transactional triplestore known as the XA Triplestore. Much of the scalability of Mulgara is due to the following features of the XA Triplestore.</p>
 <a name="o1024"></a><h3 class="heading3">64-bit Data Structures</h3>
-<p class="bodytext">All relevant fields of in-memory and on-disk data structures are 64 bits wide, thus ensuring that Kowari<sup class="superscript">TM</sup> can store very large amounts of data up to the limits imposed by the host operating system.</p>
+<p class="bodytext">All relevant fields of in-memory and on-disk data structures are 64 bits wide, thus ensuring that Mulgara<sup class="superscript">TM</sup> can store very large amounts of data up to the limits imposed by the host operating system.</p>
 <a name="o1030"></a><h3 class="heading3">Multiple Sessions with no Lock Contention</h3>
 <p class="bodytext">A single writing session in addition to multiple reading sessions can access the triplestore concurrently without the reading sessions being required to acquire a global lock while processing a query. This completely avoids the possibility of any lock contention. In general, each session executes in its own thread. The lack of lock contention means that the maximum number of active reading sessions is only limited by the concurrency of the host operating system and I/O subsystem.</p>
 <p class="bodytext">When a session initiates a query, which may involve multiple requests to the triplestore, it first takes a snapshot of the entire database. This ensures that all requests to the triplestore during the processing of the query see the database in a consistent state.</p>
@@ -96,8 +95,8 @@ href="./media/images/icons/siteicon.png" />
 <ul class="listbullet"><li class="listbullet">Positioned reads and writes<p class="listcontinue">NIO file channels allow multiple threads to concurrently read and write different parts of the same file without having to use thread synchronization to protect the current file position.</p>
 </li><li class="listbullet">Forcing out dirty buffers to physical storage<p class="listcontinue">The NIO force operation can be used to ensure that all written data has been forced out to physical storage and can also be used to impose write ordering. This is an essential feature for providing permanent integrity and implementing transaction support.</p>
 </li><li class="listbullet">Memory mapped file I/O<p class="listcontinue">The NIO API can be used to map files into virtual memory. Once a file has been mapped its content is accessed through a NIO ByteBuffer as if it had been loaded into memory. This form of I/O can be much more efficient than I/O that uses explicit read and write calls because it uses the virtual memory paging hardware to eliminate some system call overhead and the overhead of copying data between the operating system buffer cache and the application's buffers.</p>
-<p class="listcontinue">On 32-bit platforms the amount of virtual memory that is available for mapping files is usually limited to less than 2 GB. As this would impose a restriction on the maximum size of database that can be used by Kowari on 32-bit platforms, the XA Triplestore has an I/O abstraction layer that allows the file I/O mechanism for accessing a file to be selected when the file is opened.</p>
-<p class="listcontinue">Kowari can be started in one of three modes: all files mapped, index files mapped and no files mapped. Each of these modes allow Kowari to use successively larger databases. By trading off database size for performance in this way it is possible to use databases of any size on 32-bit platforms while still retaining maximum performance for smaller databases.</p>
+<p class="listcontinue">On 32-bit platforms the amount of virtual memory that is available for mapping files is usually limited to less than 2 GB. As this would impose a restriction on the maximum size of database that can be used by Mulgara on 32-bit platforms, the XA Triplestore has an I/O abstraction layer that allows the file I/O mechanism for accessing a file to be selected when the file is opened.</p>
+<p class="listcontinue">Mulgara can be started in one of three modes: all files mapped, index files mapped and no files mapped. Each of these modes allow Mulgara to use successively larger databases. By trading off database size for performance in this way it is possible to use databases of any size on 32-bit platforms while still retaining maximum performance for smaller databases.</p>
 </li></ul>
 
 			
@@ -106,6 +105,8 @@ href="./media/images/icons/siteicon.png" />
 		</td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
@@ -122,8 +123,8 @@ href="./media/images/icons/siteicon.png" />
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">

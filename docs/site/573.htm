@@ -10,8 +10,8 @@ href="./media/images/icons/siteicon.png" />
 <meta name="author" content="Tom Adams" />
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
 <meta name="robots" content="all" />
-<meta name="description" content="Kowari Project Home" />
-<meta name="keywords" content="The <query> Tagkowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="description" content="Mulgara Project Home" />
+<meta name="keywords" content="The <query> Tag, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage" />
 <meta name="location" content="Global" />
 <meta name="document-distribution" content="Global" />
 
@@ -20,22 +20,22 @@ href="./media/images/icons/siteicon.png" />
 <meta http-equiv="language" content="English" />
 <meta http-equiv="window-target" content="_top" />
 
-<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Title" content="mulgara : semantic store" />
 <meta name="DC.Creator" content="Tom Adams" />
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
 <!--<meta name="DC.Contributor" content="Andrew Newman" />-->
-<meta name="DC.Subject" content="Kowari Project Home" />
-<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Subject" content="Mulgara Project Home" />
+<meta name="DC.Description" content="Mulgara Project Home" />
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Language" scheme="rfc1766" content="en" />
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
 <meta name="DC.Type" content="Text.Homepage.Personal" />
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
 
 <meta name="Generator" content="AITPublish" />
 
-<link rel="stylesheet" href="kowari_stylesheet.css">
+<link rel="stylesheet" href="mulgara_stylesheet.css">
 <!-- <link rel="stylesheet" href="44.css"> -->
 <base target="BODY">
 </head>
@@ -66,14 +66,14 @@ href="./media/images/icons/siteicon.png" />
 <a name="o3132"></a>
 <p class="bodytext">The results, in XML format, are normally transformed into something more suitable for the client or into a presentation format like HTML or PDF. Other Descriptors make calls on a Descriptor to perform a task without needing to know how that task is performed. For example, to return the title of a document in between two <code class="monospace">&lt;title&gt;</code> tags.</p>
 <a name="o3133"></a>
-<p class="bodytext">Most commands require parameters, such as the model, to make them reusable across Kowari<sup class="superscript">TM</sup> instances and models.</p>
+<p class="bodytext">Most commands require parameters, such as the model, to make them reusable across Mulgara instances and models.</p>
 <p class="bodytext">The model parameter is inserted in several ways, as outlined in the <a class="internetlinktemplate" title="" href="http://www.w3.org/style/xsl/" target="_blank">XSL specification</a>. However, because the command is contained within a <code class="monospace">CDATA</code> segment, breaking out of it makes the command difficult for people to read. For example:</p>
 <p class="commandtext">&lt;query&gt;<br />&lt;!CDATA[[<br />select $person from &lt;]]&gt;&lt;xsl:variable select=&quot;$model&quot;/&gt;<br />  &lt;!CDATA[[&gt; where $person &lt;http://foo#hasName&gt; 'James Gosling';<br />]]&gt;<br />&lt;/query&gt;</p>
 <a name="o3134"></a>
 <p class="bodytext">The <code class="monospace">&lt;query&gt;</code> tag has a workaround to avoid this. If any string in the <code class="monospace">CDATA</code> section is surrounded by <code class="monospace">@@</code> symbols, then the string is replaced with the value of an attribute of the same from within the <code class="monospace">&lt;query&gt;</code> tag. This is shown in the example below.</p>
 <p class="commandtext">&lt;query model=&quot;rmi://mysite.com/server1#people&quot;&gt;<br />&lt;!CDATA[[<br />select $person from &lt;@@model@@&gt; where $person &lt;http://foo#hasName&gt; 'James Gosling';<br />]]&gt;<br />&lt;/query&gt;</p>
 <a name="o3135"></a>
-<p class="bodytext">When the Descriptor executes, it substitutes <code class="monospace">rmi://mysite.com/server1#people</code> for <code class="monospace">@@model@@</code> before passing the command to Kowari.</p>
+<p class="bodytext">When the Descriptor executes, it substitutes <code class="monospace">rmi://mysite.com/server1#people</code> for <code class="monospace">@@model@@</code> before passing the command to Mulgara.</p>
 <p class="bodytext">By specifying the parameter as a Descriptor parameter, the value can be passed in by the client. For example:</p>
 <p class="commandtext">&lt;query model=&quot;{$model}&quot;&gt;<br />&lt;!CDATA[[<br />select $person from &lt;@@model@@&gt; where $person &lt;http://foo#hasName&gt; 'James Gosling';<br />]]&gt;<br />&lt;/query&gt;</p>
 <p class="bodytext">If the Descriptor is created with a model parameter defined as a string, the query is now portable across models.</p>
@@ -85,6 +85,8 @@ href="./media/images/icons/siteicon.png" />
 		</td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
@@ -101,8 +103,8 @@ href="./media/images/icons/siteicon.png" />
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">

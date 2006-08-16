@@ -10,8 +10,8 @@ href="./media/images/icons/siteicon.png" />
 <meta name="author" content="Tom Adams" />
 <meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
 <meta name="robots" content="all" />
-<meta name="description" content="Kowari Project Home" />
-<meta name="keywords" content="JavaServer Pages Tag Librarykowari, kowari project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source, tucana, tucana technologies, tucana technologies inc.,homepage" />
+<meta name="description" content="Mulgara Project Home" />
+<meta name="keywords" content="JavaServer Pages Tag Library, mulgara project, metadata, metastore, metadatabase, datastore, database, scaleable, scalable, transaction, java, open source,homepage" />
 <meta name="location" content="Global" />
 <meta name="document-distribution" content="Global" />
 
@@ -20,22 +20,22 @@ href="./media/images/icons/siteicon.png" />
 <meta http-equiv="language" content="English" />
 <meta http-equiv="window-target" content="_top" />
 
-<meta name="DC.Title" content="kowari : metastore" />
+<meta name="DC.Title" content="mulgara : semantic store" />
 <meta name="DC.Creator" content="Tom Adams" />
 <meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" />
 <!--<meta name="DC.Contributor" content="Andrew Newman" />-->
-<meta name="DC.Subject" content="Kowari Project Home" />
-<meta name="DC.Description" content="Kowari Project Home" />
+<meta name="DC.Subject" content="Mulgara Project Home" />
+<meta name="DC.Description" content="Mulgara Project Home" />
 <meta name="DC.Date.Created" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Modified" scheme="iso8601" content="2003-09-22" />
 <meta name="DC.Language" scheme="rfc1766" content="en" />
 <meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
 <meta name="DC.Type" content="Text.Homepage.Personal" />
-<meta name="DC.Identifier" scheme="URI" content="http://www.kowari.org/index.php" />
+<meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
 
 <meta name="Generator" content="AITPublish" />
 
-<link rel="stylesheet" href="kowari_stylesheet.css">
+<link rel="stylesheet" href="mulgara_stylesheet.css">
 <!-- <link rel="stylesheet" href="44.css"> -->
 <base target="BODY">
 </head>
@@ -52,7 +52,7 @@ href="./media/images/icons/siteicon.png" />
 </tr>
 </table>
 <h2 class="heading2">JavaServer Pages Tag Library</h2>
-<p class="bodytext">This tutorial outlines the steps for creating a simple web-based application using Kowari<sup class="superscript">TM</sup> JavaServer Pages<sup class="superscript">TM</sup> (JSP) tags.</p>
+<p class="bodytext">This tutorial outlines the steps for creating a simple web-based application using Mulgara JavaServer Pages<sup class="superscript">TM</sup> (JSP) tags.</p>
 <p class="note"><strong class="strong">Note -</strong> Some sections of this tutorial are still under construction.</p>
 <table cellpadding="0" cellspacing="0" border="0">
 <tr valign="top">
@@ -66,11 +66,11 @@ href="./media/images/icons/siteicon.png" />
 <a name="o991"></a><h3 class="heading3">Before you Begin</h3>
 <p class="bodytext">Before you begin this tutorial, you should be familiar with <a class="internetlinktemplate" title="" href="http://java.sun.com/products/jsp/" target="_blank">JSP</a> development, including topics such as using tag libraries, deploying JSP pages and creating WAR files. You should also read the <a id="h1309" class="documentlinktemplate" title="JavaServer Pages Tag Library" href="485.htm" target="_self">JavaServer Pages Tag Library section</a> for detailed information on using the JSP tags used in this tutorial.</p>
 <p class="bodytext">A completed version of this tutorial is available on the <a class="internetlinktemplate" title="" href="http://downloads.tucanatech.com/tks/2.0b1/Demos/" target="_blank">Demos section</a> of the Tucana<sup class="superscript">TM</sup> Downloads Web site. This version uses <a class="internetlinktemplate" title="" href="http://ant.apache.org/" target="_blank">Apache Ant</a> to simplify the build process, and <a class="internetlinktemplate" title="" href="http://jakarta.apache.org/tomcat/" target="_blank">Apache Tomcat</a> as the servlet container. Please contact <a class="" title="" href="mailto:support@tucanatech.com" target="_self">support@tucanatech.com</a> to obtain a username and password.</p>
-<p class="bodytext">You also need Kowari to be running.</p>
+<p class="bodytext">You also need Mulgara to be running.</p>
 <a name="o993"></a><h3 class="heading3">Load the Sample Data</h3>
 <p class="bodytext">This tutorial uses sample vCards in RDF/XML format. Complete the following steps:</p>
 <ol class="listnumber"><li class="listnumber">Copy the following RDF and paste it into a file called <code class="monospace">vcards.rdf</code>.<p class="listcontinuecommandtext">&lt;?xml version=&quot;1.0&quot;?&gt;<br />&lt;rdf:RDF xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;<br />         xmlns:vCard =&quot; http://www.w3.org/2001/vcard-rdf/3.0#&quot;&gt;<br /><br />&lt;rdf:Description rdf:about =&quot; http://qqq.com/staff/ataylor&quot; &gt;<br />  &lt;vCard:FN&gt;Alex Taylor &lt;/vCard:FN&gt;<br />  &lt;vCard:N rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Family&gt;Taylor&lt;/vCard:Family&gt;<br />   &lt;vCard:Given&gt;Alex&lt;/vCard:Given&gt;<br />   &lt;vCard:Other&gt;Perry&lt;/vCard:Other&gt;<br />   &lt;vCard:Prefix&gt;Mr&lt;/vCard:Prefix&gt;<br />  &lt;/vCard:N&gt;<br />  &lt;vCard:BDAY&gt;1981-01-01&lt;/vCard:BDAY&gt;<br />  &lt;vCard:TITLE&gt;Project Manager&lt;/vCard:TITLE&gt;<br />  &lt;vCard:ROLE&gt;Management of projects&lt;/vCard:ROLE&gt;<br />  &lt;vCard:TEL rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;rdf:value&gt;+61 7 455 234&lt;/rdf:value&gt;<br />   &lt;rdf:type rdf:resource =&quot;http://imc.org/vCard/3.0#work&quot; /&gt;<br />   &lt;rdf:type rdf:resource =&quot;http://imc.org/vCard/3.0#voice&quot; /&gt;<br />  &lt;/vCard:TEL&gt;<br />  &lt;vCard:EMAIL&gt;<br />   &lt;vCard:internet rdf:value=&quot;ataylor@qqq.com&quot;/&gt;<br />  &lt;/vCard:EMAIL&gt;<br />  &lt;vCard:ADR rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Street&gt;45 Peterson Drive &lt;/vCard:Street&gt;<br />   &lt;vCard:Locality&gt;Brisbane&lt;/vCard:Locality&gt;<br />   &lt;vCard:Pcode&gt;4066&lt;/vCard:Pcode&gt;<br />   &lt;vCard:Country&gt;Australia &lt;/vCard:Country&gt;<br />  &lt;/vCard:ADR&gt;<br />  &lt;vCard:NOTE&gt;Interested in eXtreme Programing&lt;/vCard:NOTE&gt;<br />&lt;/rdf:Description&gt;<br /><br />&lt;rdf:Description rdf:about =&quot; http://qqq.com/staff/ppan&quot; &gt;<br />  &lt;vCard:FN&gt;Peter Pan&lt;/vCard:FN&gt;<br />  &lt;vCard:N rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Family&gt;Pan&lt;/vCard:Family&gt;<br />   &lt;vCard:Given&gt;Peter&lt;/vCard:Given&gt;<br />   &lt;vCard:Prefix&gt;Mr&lt;/vCard:Prefix&gt;<br />  &lt;/vCard:N&gt;<br />  &lt;vCard:TITLE&gt;Deck hand&lt;/vCard:TITLE&gt;<br />  &lt;vCard:ROLE&gt;Actor&lt;/vCard:ROLE&gt;<br />  &lt;vCard:TEL rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;rdf:value&gt;+61 4193 34223&lt;/rdf:value&gt;<br />   &lt;rdf:type rdf:resource =&quot;http://imc.org/vCard/3.0#mobile&quot; /&gt;<br />  &lt;/vCard:TEL&gt;<br />  &lt;vCard:EMAIL&gt;<br />   &lt;vCard:internet rdf:value=&quot;peter@qqq.com&quot;/&gt;<br />  &lt;/vCard:EMAIL&gt;<br />  &lt;vCard:ADR rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Street&gt; Ocean Rd&lt;/vCard:Street&gt;<br />   &lt;vCard:Locality&gt;Morton Bay&lt;/vCard:Locality&gt;<br />   &lt;vCard:Pcode&gt;4239&lt;/vCard:Pcode&gt;<br />   &lt;vCard:Country&gt;Australia&lt;/vCard:Country&gt;<br />  &lt;/vCard:ADR&gt;<br />  &lt;vCard:NOTE&gt;Mobile phone maybe out-of-range during week days&lt;/vCard:NOTE&gt;<br />&lt;/rdf:Description&gt;<br /><br />&lt;rdf:Description rdf:about =&quot; http://qqq.com/staff/bsimpson&quot; &gt;<br />  &lt;vCard:FN&gt;Bart Simpson&lt;/vCard:FN&gt;<br />  &lt;vCard:N rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Family&gt;Simpson&lt;/vCard:Family&gt;<br />   &lt;vCard:Given&gt;Bart&lt;/vCard:Given&gt;<br />   &lt;vCard:Prefix&gt;Master&lt;/vCard:Prefix&gt;<br />  &lt;/vCard:N&gt;<br />  &lt;vCard:TITLE&gt;Comic character&lt;/vCard:TITLE&gt;<br />  &lt;vCard:ROLE&gt;Cause mayhem&lt;/vCard:ROLE&gt;<br />  &lt;vCard:TEL rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;rdf:value&gt;+61 045 45665 456&lt;/rdf:value&gt;<br />   &lt;rdf:type rdf:resource =&quot;http://imc.org/vCard/3.0#mobile&quot; /&gt;<br />  &lt;/vCard:TEL&gt;<br />  &lt;vCard:EMAIL&gt;<br />   &lt;vCard:internet rdf:value=&quot;bart@simpsons.com&quot;/&gt;<br />  &lt;/vCard:EMAIL&gt;<br />  &lt;vCard:ADR rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Street&gt;Jackson Rd&lt;/vCard:Street&gt;<br />   &lt;vCard:Locality&gt;New York&lt;/vCard:Locality&gt;<br />   &lt;vCard:Pcode&gt;4249&lt;/vCard:Pcode&gt;<br />   &lt;vCard:Country&gt;US&lt;/vCard:Country&gt;<br />  &lt;/vCard:ADR&gt;<br />  &lt;vCard:NOTE&gt;Possesses little brains&lt;/vCard:NOTE&gt;<br />&lt;/rdf:Description&gt;<br /><br />&lt;rdf:Description rdf:about =&quot; http://qqq.com/staff/lsimpson&quot; &gt;<br />  &lt;vCard:FN&gt;Lisa Simpson&lt;/vCard:FN&gt;<br />  &lt;vCard:N rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Family&gt;Simpson&lt;/vCard:Family&gt;<br />   &lt;vCard:Given&gt;Lisa&lt;/vCard:Given&gt;<br />   &lt;vCard:Prefix&gt;Ms&lt;/vCard:Prefix&gt;<br />  &lt;/vCard:N&gt;<br />  &lt;vCard:ROLE&gt;Smart Responsible Student&lt;/vCard:ROLE&gt;<br />  &lt;vCard:TEL rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;rdf:value&gt;+61 045 45665 456&lt;/rdf:value&gt;<br />   &lt;rdf:type rdf:resource =&quot;http://imc.org/vCard/3.0#mobile&quot; /&gt;<br />  &lt;/vCard:TEL&gt;<br />  &lt;vCard:EMAIL&gt;<br />   &lt;vCard:internet rdf:value=&quot;lisa@simpsons.com&quot;/&gt;<br />  &lt;/vCard:EMAIL&gt;<br />  &lt;vCard:ADR rdf:parseType=&quot;Resource&quot;&gt;<br />   &lt;vCard:Street&gt;Jackson Rd&lt;/vCard:Street&gt;<br />   &lt;vCard:Locality&gt;New York&lt;/vCard:Locality&gt;<br />   &lt;vCard:Pcode&gt;4249&lt;/vCard:Pcode&gt;<br />   &lt;vCard:Country&gt;US&lt;/vCard:Country&gt;<br />  &lt;/vCard:ADR&gt;<br />  &lt;vCard:NOTE&gt;Possesses mostly of brains&lt;/vCard:NOTE&gt;<br />&lt;/rdf:Description&gt;<br /><br />&lt;/rdf:RDF&gt;</p>
-</li><li class="listnumber">Using the Kowari Viewer<sup class="superscript">TM</sup> or the iTQL<sup class="superscript">TM</sup> command line interface, create a model to store the vCard data. Use the following iTQL command:<p class="listcontinuecommandtext">create &lt;rmi://mysite.com/server1#vcards&gt;;</p>
+</li><li class="listnumber">Using the Mulgara Viewer<sup class="superscript">TM</sup> or the iTQL<sup class="superscript">TM</sup> command line interface, create a model to store the vCard data. Use the following iTQL command:<p class="listcontinuecommandtext">create &lt;rmi://mysite.com/server1#vcards&gt;;</p>
 <p class="listcontinue">The following message displays:</p>
 <p class="listcontinuecommandtext">Successfully created model rmi://mysite.com/server1#vcard</p>
 </li><li class="listnumber">Load the sample vCard data into the model just created, using the following iTQL command:<p class="listcontinuecommandtext">load &lt;file:/home/user/jspdemo/vcards.rdf&gt; into<br />  &lt;rmi://mysite.com/server1#vcard&gt;;</p>
@@ -88,6 +88,8 @@ href="./media/images/icons/siteicon.png" />
 		</td>
 		<td align="left">
 		  <h3 class="heading3">Latest News</h3>
+      <p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
+      <p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
 			<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
 			<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
@@ -104,8 +106,8 @@ href="./media/images/icons/siteicon.png" />
 			<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
       <br>
 		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
-      <a href="http://www.tucanatech.com/" title="Sponsored by Tucana Technologies" target="_blank"><img style="border:0;width:150;height:72px;" src="tucana logo.gif" alt="Tucana Technologies Logo" /></a>
-      <a href="http://sourceforge.net/" title="Hosted by Sourceforge.net" target="_blank"><img style="border:0;width:125;height:37px;" src="http://sourceforge.net/sflogo.php?group_id=89874&amp;type=2" alt="SourceForge.net Logo" /></a>
+
+
 		</td>
 	</tr>
   <tr valign="bottom">
