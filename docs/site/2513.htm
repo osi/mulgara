@@ -90,7 +90,7 @@ href="./media/images/icons/siteicon.png" />
 <p class="note"><strong class="strong">Note -</strong> The Mulgara server must be running. <code class="monospace">rmi://mysite.com/server1</code> is an example only. Replace this with the URI for your Mulgara server.</p>
 <a name="o2520"></a><h5 class="heading5">Create a Mulgara Backed JRDF Graph</h5>
 <p class="bodytext">The following code creates a new JRDF graph:</p>
-<p class="commandtext">//create a new Mulgara Model<br />URI modelURI = new URI(&quot;rmi://mysite.com/server1#exampleGraph&quot;);<br />URI modelType = new URI(&quot;http://tucana.org/tucana#Model&quot;);<br />session.createModel(modelURI, modelType);<br /><br />//create a JRDF Graph using the model<br />ItqlInterpreter interpreter = new ItqlInterpreter(new HashMap());<br />Graph = AbstractGraphFactory.createGraph(modelURI, session);</p>
+<p class="commandtext">//create a new Mulgara Model<br />URI modelURI = new URI(&quot;rmi://mysite.com/server1#exampleGraph&quot;);<br />URI modelType = new URI(&quot;http://mulgara.org/mulgara#Model&quot;);<br />session.createModel(modelURI, modelType);<br /><br />//create a JRDF Graph using the model<br />ItqlInterpreter interpreter = new ItqlInterpreter(new HashMap());<br />Graph = AbstractGraphFactory.createGraph(modelURI, session);</p>
 <p class="note"><strong class="strong">Note -</strong> You only have to create the model once. If using an existing model you do not have to create it.</p>
 <a name="o2521"></a><h4 class="heading4">Display iTQL Results as an JRDF Graph</h4>
 <p class="bodytext">This example demonstrates how to:</p>
@@ -104,30 +104,12 @@ href="./media/images/icons/siteicon.png" />
 <p class="commandtext">//create a JRDF Graph<br />Graph = AbstractGraphFactory.createGraph(queryResult);</p>
 <p class="note"><strong class="strong">Note -</strong><code class="monospace"> queryResult</code> must contain three columns to be valid for use as a JRDF graph.</p>
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

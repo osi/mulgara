@@ -67,7 +67,7 @@ href="./media/images/icons/siteicon.png" />
 <p class="listcontinuecommandtext">./itql</p>
 </li></ul><p class="bodytext">Starting iTQL with the executable jar file allows you to pass arguments to the shell, changing the way iTQL operates. See the iTQL Shell Options section for more information about these arguments.</p>
 <p class="bodytext">After starting iTQL, a message similar to the following displays:</p>
-<p class="commandtext">Tucana Knowledge Server (TKS) version 2.1 Build 0.226<br />Command Line Interface<br />Copyright (C) 2001 Tucana Technologies Pty Ltd<br />iTQL&gt;</p>
+<p class="commandtext">iTQL Command Line Interface<br />Copyright (C) 2001-2004 Tucana Technologies Inc.<br /><br />Type "help ;", then enter for help.<br /><br />iTQL&gt;</p>
 <p class="bodytext">The last line is the iTQL prompt. This is where you issue iTQL commands.</p>
 <p class="bodytext">To display a list of iTQL commands:</p>
 <p class="commandtext">iTQL&gt;help;</p>
@@ -75,10 +75,10 @@ href="./media/images/icons/siteicon.png" />
 <p class="commandtext">iTQL&gt;help command;</p>
 <p class="bodytext">Where <code class="monospace">command</code> is the name of the iTQL command.</p>
 <p class="bodytext">The following example queries a model named <code class="monospace">documents</code> on a Mulgara server on the machine <code class="monospace">mysite.com</code><em class="emphasis"> </em>to find the URLs and titles of all documents.</p>
-<p class="commandtext">iTQL&gt;select $url $title<br />  from &lt;rmi://mysite.com/server1#documents&gt;<br />  where ($url $y &lt;http://www.tucanatech.com/tucana/Document#Document&gt; )<br />  and ( $url &lt;http://www.tucanatech.com/tucana/Document#hasHtml&gt; $node )<br />  and ( $node &lt;http://www.tucanatech.com/tucana/tool/HtmlExtractor#title&gt; $title );</p>
+<p class="commandtext">iTQL&gt;select $url $title<br />  from &lt;rmi://mysite.com/server1#documents&gt;<br />  where ($url $y &lt;http://mulgara.org/mulgara/Document#Document&gt; )<br />  and ( $url &lt;http://mulgara.org/mulgara/Document#hasHtml&gt; $node )<br />  and ( $node &lt;http://mulgara.org/mulgara/tool/HtmlExtractor#title&gt; $title );</p>
 <p class="note"><strong class="strong">Note -</strong> iTQL supports the <code class="monospace">AND</code> and <code class="monospace">OR</code> operators as well as standards such as <a class="internetlinktemplate" title="" href="http://www.w3.org/tr/rec-xml-names" target="_blank">XML namespaces</a> and <a class="internetlinktemplate" title="" href="http://www.ietf.org/rfc/rfc2396.txt" target="_blank">URIs</a>.</p>
 <p class="bodytext">The following is an example of submitting the above query to the iTQL shell.</p>
-<p class="commandtext">iTQL&gt;select $url $title<br />  from rmi://mysite.com/server1#documents<br />  where ($url $y &lt;http://www.tucanatech.com/tucana/Document#Document&gt; )<br />  and ( $url &lt;http://www.tucanatech.com/tucana/Document#hasHtml&gt; $node )<br />  and ( $node &lt;http://www.tucanatech.com/tucana/tool/HtmlExtractor#title&gt; $title ) ;<br /><br />2 columns: url title (2 rows)<br />   url=http://www.bne.tucanatech.com/projects/tucana/data/docs/doc95.htm<br />     title=&quot;Expect lower rate of gain in the value of homes&quot;<br />   url=http://www.bne.tucanatech.com/projects/tucana/data/docs/doc49.htm<br />     title=&quot;District Court refuses to certify class alleging notice violations&quot;</p>
+<p class="commandtext">iTQL&gt;select $url $title<br />  from rmi://mysite.com/server1#documents<br />  where ($url $y &lt;http://mulgara.org/mulgara/Document#Document&gt; )<br />  and ( $url &lt;http://mulgara.org/mulgara/Document#hasHtml&gt; $node )<br />  and ( $node &lt;http://mulgara.org/mulgara/tool/HtmlExtractor#title&gt; $title ) ;<br /><br />2 columns: url title (2 rows)<br />   url=http://mulgara.org/projects/mulgara/data/docs/doc95.htm<br />     title=&quot;Expect lower rate of gain in the value of homes&quot;<br />   url=http://mulgara.org/projects/mulgara/data/docs/doc49.htm<br />     title=&quot;District Court refuses to certify class alleging notice violations&quot;</p>
 <table cellpadding="0" cellspacing="0" border="0">
 <tr valign="top">
 <td width= "226.8">
@@ -87,30 +87,12 @@ href="./media/images/icons/siteicon.png" />
 </table>
 
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

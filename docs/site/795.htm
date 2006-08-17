@@ -79,7 +79,7 @@ href="./media/images/icons/siteicon.png" />
 </li><li class="listnumber">Deploy the Descriptor in Mulgara.<p class="listcontinue">To use a Descriptor it must be deployed in a Mulgara database. The RDF embedded in the Descriptor XSL file is loaded into a model in a Mulgara database.</p>
 <p class="listcontinue">Start an iTQL client.</p>
 <p class="listcontinue">Check if the Descriptor model already exists by querying for a list of models. For example:</p>
-<p class="listcontinuecommandtext">select $model from &lt;rmi://mysite.com/server1#&gt;<br />  where $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://tucana.org/tucana#Model&gt;;</p>
+<p class="listcontinuecommandtext">select $model from &lt;rmi://mysite.com/server1#&gt;<br />  where $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://mulgara.org/mulgara#Model&gt;;</p>
 <p class="listnote"><strong class="strong">Note -</strong> Replace <code class="monospace">mysite.com</code> with the fully qualified hostname (FQHN) of your machine/server.</p>
 <p class="listcontinue">If the <code class="monospace">#descriptors</code> model does not exist then you need to deploy the local Descriptors. This will create the Descriptors model and load some useful Descriptors. It is one of the tasks available from the Descriptor Management page.</p>
 <p class="listcontinue">Create the Descriptor model. For example:</p>
@@ -89,7 +89,7 @@ href="./media/images/icons/siteicon.png" />
 <p class="listnote"><strong class="strong">Note -</strong> The location of the Descriptor must be accessible by Mulgara. In Windows, the file specification would look something like <code class="monospace">&lt;file:/C:/work/helloworld.xsl&gt;</code>.</p>
 <p class="listcontinue">If there were no errors in the XSL, then the Descriptor is deployed and available for use. If there were errors check your XML for bad syntax such as unclosed tags. The Descriptor Wizard generates correct XML and XSL.</p>
 </li><li class="listnumber">Invoke the Descriptor.<p class="listcontinue">There are several tools available to list, create and invoke Descriptors from the Descriptor Management page. Most of the tools, such as the Descriptor Wizard, are other Descriptors that are run by a Descriptor servlet.</p>
-<p class="listcontinue">From the Descriptor Management page choose the Lists all Descriptors on this Host task. The Tucana Descriptor List displays.</p>
+<p class="listcontinue">From the Descriptor Management page choose the Lists all Descriptors on this Host task. The Mulgara Descriptor List displays.</p>
 <p class="listcontinue"><img src="792.gif" alt="" height="92.15" width="679.25" vspace="0" hspace="0" align="bottom" border="1" /></p>
 <p class="listcontinue">Click on the Usage button for your Descriptor to see details about the Descriptor, similar to the window below.</p>
 <p class="listcontinue"><img src="793.gif" alt="" height="728.65" width="682.1" vspace="0" hspace="0" align="bottom" border="1" /></p>
@@ -112,30 +112,12 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">See the <a id="h930" class="documentlinktemplate" title="List Models Descriptor" href="802.htm" target="_self">List Models</a> example for information on how to issue iTQL commands from within a Descriptor.</p>
 <p class="bodytext">See the <a id="h931" class="documentlinktemplate" title="VCard Descriptors" href="920.htm" target="_self">VCard</a> example for information on how to invoke one Descriptor from another.</p>
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

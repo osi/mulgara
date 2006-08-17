@@ -58,18 +58,18 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">Model URIs are formed by adding a fragment part to the URI of the server they reside on. The following example creates a model named <code class="monospace">MyModel</code> on the server at <code class="monospace">rmi://mysite.com/server1</code>.</p>
 <p class="commandtext">create &lt;rmi://mysite.com/server1#MyModel&gt;;</p>
 <p class="bodytext">The optional model types are:</p>
-<ul class="listbullet"><li class="listbullet"><code class="monospace">http://tucana.org/tucana#Model</code><p class="listcontinue">This is the default triple store model. Specifying this type is equivalent to omitting the type parameter.</p>
-</li><li class="listbullet"><code class="monospace">http://tucana.org/tucana#ViewModel</code><p class="listcontinue">A view model that represents a combined set of models. See the <a id="h1497" class="documentlinktemplate" title="Views" href="255.htm" target="_self">Views section</a> for more information.</p>
-</li><li class="listbullet"><code class="monospace">http://tucana.org/tucana#LuceneModel</code><p class="listcontinue">A full-text string index model based on Lucene.</p>
+<ul class="listbullet"><li class="listbullet"><code class="monospace">http://mulgara.org/mulgara#Model</code><p class="listcontinue">This is the default triple store model. Specifying this type is equivalent to omitting the type parameter.</p>
+</li><li class="listbullet"><code class="monospace">http://mulgara.org/mulgara#ViewModel</code><p class="listcontinue">A view model that represents a combined set of models. See the <a id="h1497" class="documentlinktemplate" title="Views" href="255.htm" target="_self">Views section</a> for more information.</p>
+</li><li class="listbullet"><code class="monospace">http://mulgara.org/mulgara#LuceneModel</code><p class="listcontinue">A full-text string index model based on Lucene.</p>
 <p class="listcontinue">All statements placed into a full-text model must have a literal-valued object. Queries against a full-text model result in a match if the object in the query constraint is similar to any stored statements, rather than needing to be identical.</p>
 <p class="listcontinue">See the <a id="h731" class="documentlinktemplate" title="Full-Text Models" href="257.htm" target="_self">Full-Text Models section</a> for more information.</p>
-</li><li class="listbullet"><code class="monospace">http://tucana.org/tucana#XMLSchemaModel</code><p class="listcontinue">A datatyping model that represents the property of orderedness that literals like dates and numbers possess.</p>
+</li><li class="listbullet"><code class="monospace">http://mulgara.org/mulgara#XMLSchemaModel</code><p class="listcontinue">A datatyping model that represents the property of orderedness that literals like dates and numbers possess.</p>
 <p class="listcontinue">Datatyping models are used to constrain results to be above, below, or between specified dates or numbers.</p>
 <p class="listcontinue">See the <a id="h729" class="documentlinktemplate" title="Datatyping Models" href="262.htm" target="_self">Datatyping Models section</a> for more information.</p>
-</li><li class="listbullet"><code class="monospace">http://tucana.org/tucana#TypeModel</code><p class="listcontinue">A nodetyping model that represents the type the RDF nodes have in a graph.</p>
+</li><li class="listbullet"><code class="monospace">http://mulgara.org/mulgara#TypeModel</code><p class="listcontinue">A nodetyping model that represents the type the RDF nodes have in a graph.</p>
 <p class="listcontinue">Nodetyping models are used to constrain results to be literals or URI references.</p>
 <p class="listcontinue">See the <a id="h2784" class="documentlinktemplate" title="Nodetyping Models" href="2779.htm" target="_self">Nodetyping Models section</a> for more information.</p>
-</li><li class="listbullet"><code class="monospace">http://tucana.org/tucana#FileSystemModel</code><p class="listcontinue">A filesystem model that can be queried to return information about files and directories on filesystems.</p>
+</li><li class="listbullet"><code class="monospace">http://mulgara.org/mulgara#FileSystemModel</code><p class="listcontinue">A filesystem model that can be queried to return information about files and directories on filesystems.</p>
 <p class="listcontinue">See the <a id="h3205" class="documentlinktemplate" title="Filesystem Models" href="3201.htm" target="_self">Filesystem Model section</a> for more information.</p>
 </li></ul><p class="bodytext">The Mulgara server must exist before you can create models on it. If you try to create a model on a nonexistent or unreachable server, the command fails with the message <code class="monospace">Couldn't contact server</code>.</p>
 <table cellpadding="0" cellspacing="0" border="0">
@@ -80,30 +80,12 @@ href="./media/images/icons/siteicon.png" />
 </table>
 
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

@@ -88,10 +88,10 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">Constraints may optionally contain an <code class="monospace">in</code> specifier to resolve the constraint against the statements in a specified model, rather than the one specified in the <code class="monospace"><a id="h1303" class="documentlinktemplate" title="from Clause" href="187.htm#o189" target="_self">from</a></code> clause.</p>
 <p class="bodytext">The following example constrains the result by titles in the <code class="monospace">#books</code> model rather than the one specified in the <code class="monospace">from</code> clause.</p>
 <p class="commandtext">... where $document &lt;dc:title&gt; $title in &lt;rmi://mysite.com/server1#books&gt; ...</p>
-<a name="o1531"></a><h4 class="heading4">Assigning a Value to a Variable (tucana:is)</h4>
-<p class="bodytext">Constraints may also assign a value to a variable rather then querying for it. The special property <code class="monospace">http://tucana.org/tucana#is </code>(or the aliased form <code class="monospace">&lt;tucana:is&gt;</code>) can be used with a variable as its subject and a non-variable value as its object. This assigns the non-variable value to the variable.</p>
+<a name="o1531"></a><h4 class="heading4">Assigning a Value to a Variable (mulgara:is)</h4>
+<p class="bodytext">Constraints may also assign a value to a variable rather then querying for it. The special property <code class="monospace">http://mulgara.org/mulgara#is </code>(or the aliased form <code class="monospace">&lt;mulgara:is&gt;</code>) can be used with a variable as its subject and a non-variable value as its object. This assigns the non-variable value to the variable.</p>
 <p class="bodytext">The following example results in every document authored by Mendel about genetics, or by Mendeleev about chemistry.</p>
-<p class="commandtext">... where $document &lt;dc:title&gt; $title and $document &lt;dc:creator&gt; $author <br />      and $document &lt;dc:subject&gt; $subject <br />      and (($author &lt;tucana:is&gt; 'Mendel'    and $subject &lt;tucana:is&gt; 'genetics' ) <br />      or ($author &lt;tucana:is&gt; 'Mendeleev' and $subject &lt;tucana:is&gt; 'chemistry')) ...</p>
+<p class="commandtext">... where $document &lt;dc:title&gt; $title and $document &lt;dc:creator&gt; $author <br />      and $document &lt;dc:subject&gt; $subject <br />      and (($author &lt;mulgara:is&gt; 'Mendel'    and $subject &lt;mulgara:is&gt; 'genetics' ) <br />      or ($author &lt;mulgara:is&gt; 'Mendeleev' and $subject &lt;mulgara:is&gt; 'chemistry')) ...</p>
 <a name="o1532"></a><h4 class="heading4">Traversing a Graph (walk Function)</h4>
 <p class="bodytext">Traversing a graph allows a query to return values, based on a predicate, by following up or down a hierarchy of statements. In a schema language such as RDFS, these hierarchies are expressed as a sub-class or sub-property predicate. Traversing a graph is performed with the <code class="monospace">walk</code> function within a <code class="monospace"><a id="h1321" class="documentlinktemplate" title="where Clause" href="187.htm#o197" target="_self">where</a></code> clause.</p>
 <p class="bodytext">The syntax of the <code class="monospace">walk</code> function is either:</p>
@@ -179,19 +179,19 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">Returns:</p>
 <p class="commandtext"><code class="monospace">[ (&lt;redMaple&gt;, &lt;leaves&gt;, 'red') ]</code></p>
 <a name="o2769"></a><h5 class="heading5">Standard Queries</h5>
-<p class="bodytext">The variable names used in the <code class="monospace">exclude</code> function are not bound by other constraints, including the <code class="monospace"><code class="monospace"><a id="h2772" class="documentlinktemplate" title="Assigning a Value to a Variable (tucana:is)" href="187.htm#o1531" target="_self">&lt;tucana:is&gt;</a></code></code> operation. All other operations match statements in the graph. So it is not the same thing as replacing positively matching values from the graph and assigning these values to the <code class="monospace">exclude</code> function. The variable names used in the <code class="monospace">exclude</code> function and other operations are only used to join the column values from the results of each constraint.</p>
+<p class="bodytext">The variable names used in the <code class="monospace">exclude</code> function are not bound by other constraints, including the <code class="monospace"><code class="monospace"><a id="h2772" class="documentlinktemplate" title="Assigning a Value to a Variable (mulgara:is)" href="187.htm#o1531" target="_self">&lt;mulgara:is&gt;</a></code></code> operation. All other operations match statements in the graph. So it is not the same thing as replacing positively matching values from the graph and assigning these values to the <code class="monospace">exclude</code> function. The variable names used in the <code class="monospace">exclude</code> function and other operations are only used to join the column values from the results of each constraint.</p>
 <p class="bodytext">For example, the query:</p>
-<p class="commandtext"><code class="monospace">select $s $p $o<br />...<br />where exclude($s $p 'green')<br />and $p &lt;tucana:is&gt; &lt;leaves&gt;<br />and $s $p $o;</code></p>
+<p class="commandtext"><code class="monospace">select $s $p $o<br />...<br />where exclude($s $p 'green')<br />and $p &lt;mulgara:is&gt; &lt;leaves&gt;<br />and $s $p $o;</code></p>
 <p class="bodytext">Results in all the statements that do not have the object value 'green', combined with all the statements with the predicate <code class="monospace">&lt;leaves&gt;</code>:</p>
 <p class="commandtext"><code class="monospace">[ (&lt;redMaple&gt;, &lt;leaves&gt;, 'red')<br />  (&lt;binderRefill&gt;, &lt;leaves&gt;, '50') ]</code></p>
 <p class="bodytext">Note that this is not the same as:</p>
-<p class="commandtext"><code class="monospace">select $s $p $o<br />...<br />where exclude ($s &lt;urn:leaves&gt; 'green')<br />and $p &lt;tucana:is&gt; &lt;leaves&gt;<br />and $s $p $o;</code></p>
+<p class="commandtext"><code class="monospace">select $s $p $o<br />...<br />where exclude ($s &lt;urn:leaves&gt; 'green')<br />and $p &lt;mulgara:is&gt; &lt;leaves&gt;<br />and $s $p $o;</code></p>
 <p class="bodytext">Which returns:</p>
 <p class="commandtext"><code class="monospace">[ (&lt;maple&gt;, &lt;leaves&gt;, 'green')<br />  (&lt;oak&gt;, &lt;leaves&gt;, 'green') ]</code></p>
 <a name="o2770"></a><h5 class="heading5">exclude($s $p $o)</h5>
-<p class="bodytext"><code class="monospace">exclude</code> functions that only contain variables usually return no result. If joined to other constraints with <code class="monospace">and</code>, it will return no result. As stated above, this cannot be changed by using <code class="monospace"><a id="h2772_2" class="documentlinktemplate" title="Assigning a Value to a Variable (tucana:is)" href="187.htm#o1531" target="_self">&lt;tucana:is&gt;</a></code> or other constraints. The only exception to this is when the <code class="monospace">exclude</code> function is used in a subquery or aggregate function. See the next section on subqueries for more details.</p>
+<p class="bodytext"><code class="monospace">exclude</code> functions that only contain variables usually return no result. If joined to other constraints with <code class="monospace">and</code>, it will return no result. As stated above, this cannot be changed by using <code class="monospace"><a id="h2772_2" class="documentlinktemplate" title="Assigning a Value to a Variable (mulgara:is)" href="187.htm#o1531" target="_self">&lt;mulgara:is&gt;</a></code> or other constraints. The only exception to this is when the <code class="monospace">exclude</code> function is used in a subquery or aggregate function. See the next section on subqueries for more details.</p>
 <p class="bodytext">For example, the following query returns no result.</p>
-<p class="commandtext"><code class="monospace">select $s $p $o<br />...<br />where exclude ($s $p $o)<br />and $o &lt;tucana:is&gt; 'green'<br />and $s $p $o;</code></p>
+<p class="commandtext"><code class="monospace">select $s $p $o<br />...<br />where exclude ($s $p $o)<br />and $o &lt;mulgara:is&gt; 'green'<br />and $s $p $o;</code></p>
 <a name="o2771"></a><h5 class="heading5">Subqueries</h5>
 <p class="bodytext">Subqueries allow the results from one query to be used in another. That is, the values of the outer queries bind to the variables with the same name in the inner query. So a constraint such as <code class="monospace">exclude($s $p $o)</code>, which normally returns no result, could return results if used in a <code class="monospace"><code class="monospace"><a id="h211" class="documentlinktemplate" title="subquery Function" href="187.htm#o193" target="_self">subquery</a></code></code> or <code class="monospace"><a id="h733" class="documentlinktemplate" title="count Function" href="187.htm#o194" target="_self">count</a></code> function when any of the variables <code class="monospace">$s</code>, <code class="monospace">$p</code> or <code class="monospace">$o</code> are bound by the outer query.</p>
 <p class="bodytext">For example, the following query binds the <code class="monospace">$s</code> and <code class="monospace">$o</code> values of the internal query:</p>
@@ -217,7 +217,7 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">In the following example the value of <code class="monospace">$vcard</code> is bound to the inner query. The outer result set contains nested result sets for each subquery.</p>
 <p class="commandtext">select $vcard $fn <br />  subquery( select $title <br />    from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title<br />    order by $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />    order by $fn;</p>
 <p class="bodytext">The above example produces the following XML output from a SOAP call:</p>
-<p class="commandtext">&lt;?xml version=&quot;1.0&quot;?&gt;<br />&lt;answer xmlns=&quot;http://tucanatech.com/tql#&quot;&gt;<br />  &lt;query&gt;<br />    &lt;variables&gt;<br />      &lt;vcard/&gt;<br />      &lt;fn/&gt;<br />      &lt;k0/&gt;<br />    &lt;/variables&gt;<br />    &lt;solution&gt;<br />      &lt;vcard resource=&quot;http://qqq.com/staff/superman&quot;/&gt;<br />      &lt;fn&gt;Superman&lt;/fn&gt;<br />      &lt;k0&gt;<br />        &lt;variables&gt;<br />          &lt;title/&gt;<br />        &lt;/variables&gt;<br />      &lt;/k0&gt;<br />    &lt;/solution&gt;<br />    &lt;solution&gt;<br />      &lt;vcard resource=&quot;http://qqq.com/staff/spiderman&quot;/&gt;<br />      &lt;fn&gt;Peter Parker&lt;/fn&gt;<br />      &lt;k0&gt;<br />        &lt;variables&gt;<br />          &lt;title/&gt;<br />        &lt;/variables&gt;<br />        &lt;solution&gt;<br />          &lt;title&gt;Super Hero&lt;/title&gt;<br />        &lt;/solution&gt;<br />        &lt;solution&gt;<br />          &lt;title&gt;PO2&lt;/title&gt;<br />        &lt;/solution&gt;<br />      &lt;/k0&gt;<br />    &lt;/solution&gt;<br />    &lt;solution&gt;<br />      &lt;vcard resource=&quot;http://qqq.com/staff/corky&quot;/&gt;<br />      &lt;fn&gt;Corky Crystal&lt;/fn&gt;<br />      &lt;k0&gt;<br />        &lt;variables&gt;<br />          &lt;title/&gt;<br />        &lt;/variables&gt;<br />        &lt;solution&gt;<br />          &lt;title&gt;Computer Officer Class 3&lt;/title&gt;<br />        &lt;/solution&gt;<br />      &lt;/k0&gt;<br />    &lt;/solution&gt;<br />  &lt;/query&gt;<br />&lt;/answer&gt;</p>
+<p class="commandtext">&lt;?xml version=&quot;1.0&quot;?&gt;<br />&lt;answer xmlns=&quot;http://mulgara.org/tql#&quot;&gt;<br />  &lt;query&gt;<br />    &lt;variables&gt;<br />      &lt;vcard/&gt;<br />      &lt;fn/&gt;<br />      &lt;k0/&gt;<br />    &lt;/variables&gt;<br />    &lt;solution&gt;<br />      &lt;vcard resource=&quot;http://qqq.com/staff/superman&quot;/&gt;<br />      &lt;fn&gt;Superman&lt;/fn&gt;<br />      &lt;k0&gt;<br />        &lt;variables&gt;<br />          &lt;title/&gt;<br />        &lt;/variables&gt;<br />      &lt;/k0&gt;<br />    &lt;/solution&gt;<br />    &lt;solution&gt;<br />      &lt;vcard resource=&quot;http://qqq.com/staff/spiderman&quot;/&gt;<br />      &lt;fn&gt;Peter Parker&lt;/fn&gt;<br />      &lt;k0&gt;<br />        &lt;variables&gt;<br />          &lt;title/&gt;<br />        &lt;/variables&gt;<br />        &lt;solution&gt;<br />          &lt;title&gt;Super Hero&lt;/title&gt;<br />        &lt;/solution&gt;<br />        &lt;solution&gt;<br />          &lt;title&gt;PO2&lt;/title&gt;<br />        &lt;/solution&gt;<br />      &lt;/k0&gt;<br />    &lt;/solution&gt;<br />    &lt;solution&gt;<br />      &lt;vcard resource=&quot;http://qqq.com/staff/corky&quot;/&gt;<br />      &lt;fn&gt;Corky Crystal&lt;/fn&gt;<br />      &lt;k0&gt;<br />        &lt;variables&gt;<br />          &lt;title/&gt;<br />        &lt;/variables&gt;<br />        &lt;solution&gt;<br />          &lt;title&gt;Computer Officer Class 3&lt;/title&gt;<br />        &lt;/solution&gt;<br />      &lt;/k0&gt;<br />    &lt;/solution&gt;<br />  &lt;/query&gt;<br />&lt;/answer&gt;</p>
 <a name="o194"></a><h3 class="heading3">count Function</h3>
 <p class="bodytext">Similar to <code class="monospace"><a id="h211_2" class="documentlinktemplate" title="subquery Function" href="187.htm#o193" target="_self">subquery</a></code> except that it only returns a dummy variable with value of the total row count of the inner query. See the <code class="monospace"><a id="h1320" class="documentlinktemplate" title="select Clause" href="187.htm#o188" target="_self">select</a></code><a id="h1320_2" class="documentlinktemplate" title="select Clause" href="187.htm#o188" target="_self"> clause section</a> for a description of dummy variables. For example:</p>
 <p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn ;</p>
@@ -234,25 +234,25 @@ href="./media/images/icons/siteicon.png" />
 </td>
 </tr>
 <tr align="left" valign="top">
-<td width="294"><p class="tablebodytext"><code class="monospace">http://tucana.org/tucana#occurs</code></p>
+<td width="294"><p class="tablebodytext"><code class="monospace">http://mulgara.org/mulgara#occurs</code></p>
 </td>
 <td width="156"><p class="tablebodytext">=</p>
 </td>
 </tr>
 <tr align="left" valign="top">
-<td width="294"><p class="tablebodytext"><code class="monospace">http://tucana.org/tucana#occursMoreThan</code></p>
+<td width="294"><p class="tablebodytext"><code class="monospace">http://mulgara.org/mulgara#occursMoreThan</code></p>
 </td>
 <td width="156"><p class="tablebodytext">&gt;</p>
 </td>
 </tr>
 <tr align="left" valign="top">
-<td width="294"><p class="tablebodytext"><code class="monospace">http://tucana.org/tucana#occursLessThan</code></p>
+<td width="294"><p class="tablebodytext"><code class="monospace">http://mulgara.org/mulgara#occursLessThan</code></p>
 </td>
 <td width="156"><p class="tablebodytext">&lt;</p>
 </td>
 </tr>
 <tr align="left" valign="top">
-<td width="294"><p class="tablebodytext"><code class="monospace">http://tucana.org/tucana#notOccurs</code></p>
+<td width="294"><p class="tablebodytext"><code class="monospace">http://mulgara.org/mulgara#notOccurs</code></p>
 </td>
 <td width="156"><p class="tablebodytext">?</p>
 </td>
@@ -260,43 +260,25 @@ href="./media/images/icons/siteicon.png" />
 
 </table>
 <p class="bodytext">Expanding on the example shown in the <code class="monospace"><a id="h1323_2" class="documentlinktemplate" title="subquery Function" href="187.htm#o193" target="_self">subquery</a></code> and <code class="monospace"><a id="h733_2" class="documentlinktemplate" title="count Function" href="187.htm#o194" target="_self">count</a></code> sections, the following query restricts the result to those with a count of 1:</p>
-<p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />  having $k0 &lt;http://tucana.org/tucana#occurs&gt;<br />    '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; ;</p>
+<p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />  having $k0 &lt;http://mulgara.org/mulgara#occurs&gt;<br />    '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; ;</p>
 <p class="bodytext">The above example returns:</p>
 <p class="commandtext">vcard=http://qqq.com/staff/corky    fn=&quot;Corky Crystal&quot;    k0=&quot;1&quot;</p>
 <p class="bodytext">Similarly, to restrict the result to those with a count greater than 0 would be: </p>
-<p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />  having $k0 &lt;http://tucana.org/tucana#occursMoreThan&gt;<br />    '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; ;</p>
+<p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />  having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt;<br />    '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; ;</p>
 <p class="bodytext">The above example returns:</p>
 <p class="commandtext">vcard=http://qqq.com/staff/corky        fn=&quot;Corky Crystal&quot;    k0=&quot;1&quot;<br />vcard=http://qqq.com/staff/spiderman    fn=&quot;Peter Parker&quot;     k0=&quot;2&quot;</p>
 <p class="bodytext">The form of the constraint for the <code class="monospace">having</code> clause must be:</p>
 <p class="commandtext">$kx predicate value^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;</p>
 <p class="bodytext">Where p<code class="monospace">redicate</code> is one of the predicates from the above table.</p>
 <p class="bodytext">Note that compound constraints for the <code class="monospace">having</code> clause are not allowed. For example, the following query is <em class="emphasis">not</em> legal:</p>
-<p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />  having $k0 &lt;http://tucana.org/tucana#occurs&gt;<br />    '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; <br />  or $k0 &lt;http://tucana.org/tucana#occurs&gt; <br />    '2.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; ;</p>
+<p class="commandtext">select $vcard $fn <br />  count( select $title from &lt;rmi://mysite.com/server1#vcard&gt; <br />    where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#TITLE&gt; $title )<br />  from &lt;rmi://mysite.com/server1#vcard&gt; <br />  where $vcard &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt; $fn <br />  having $k0 &lt;http://mulgara.org/mulgara#occurs&gt;<br />    '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; <br />  or $k0 &lt;http://mulgara.org/mulgara#occurs&gt; <br />    '2.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; ;</p>
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

@@ -66,9 +66,9 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">The Mulgara custom tag libraries depend on a servlet container that supports the <a class="internetlinktemplate" title="" href="http://java.sun.com/products/jsp/download.html" target="_blank">JavaServer Pages Specification, version 1.1</a> or higher. Some of the examples listed in this section make use of the <a class="internetlinktemplate" title="" href="http://jakarta.apache.org/taglibs/" target="_blank">Jakarta Taglib</a> libraries.</p>
 <a name="o487"></a><h3 class="heading3">Configuring your Web Application</h3>
 <p class="bodytext">Follow these steps to configure your web application to use the Mulgara tag libraries:</p>
-<ol class="listnumber"><li class="listnumber">Copy the tag library JAR files to the <code class="monospace">/WEB-INF/lib</code> subdirectory of your web application</li><li class="listnumber">Add a <code class="monospace">&lt;taglib&gt;</code> element to your web application deployment Descriptor in <code class="monospace">/WEB-INF/web.xml</code>, as follows:<p class="listcontinuecommandtext">&lt;taglib&gt;<br />  &lt;taglib-uri&gt;http://www.tucanatech.com/tucana/taglibs/tks&lt;/taglib-uri&gt;<br />  &lt;taglib-location&gt;/WEB-INF/lib/tks-tag-2.1.jar&lt;/taglib-location&gt;<br />&lt;/taglib&gt;</p>
+<ol class="listnumber"><li class="listnumber">Copy the tag library JAR files to the <code class="monospace">/WEB-INF/lib</code> subdirectory of your web application</li><li class="listnumber">Add a <code class="monospace">&lt;taglib&gt;</code> element to your web application deployment Descriptor in <code class="monospace">/WEB-INF/web.xml</code>, as follows:<p class="listcontinuecommandtext">&lt;taglib&gt;<br />  &lt;taglib-uri&gt;http://mulgara.org/mulgara/taglibs/tks&lt;/taglib-uri&gt;<br />  &lt;taglib-location&gt;/WEB-INF/lib/tks-tag-2.1.jar&lt;/taglib-location&gt;<br />&lt;/taglib&gt;</p>
 </li></ol><p class="bodytext">To use the general Mulgara tags from the library in your JSP pages, add the following directive at the top of each page:</p>
-<p class="commandtext">&lt;%@ taglib prefix=&quot;tks&quot; uri=&quot;http://www.tucanatech.com/tucana/taglibs/tks&quot;%&gt;</p>
+<p class="commandtext">&lt;%@ taglib prefix=&quot;tks&quot; uri=&quot;http://mulgara.org/mulgara/taglibs/tks&quot;%&gt;</p>
 <p class="bodytext">Where <code class="monospace">tks</code> is the tag name prefix you want to use for tags from the Mulgara library. You can change this to any prefix you like, but do not change the URL.</p>
 <p class="note"><strong class="strong">Note -</strong> All the examples in this section assume that the tag libraries are prefixed as shown above.</p>
 <a name="o493"></a><h3 class="heading3">answer</h3>
@@ -208,7 +208,7 @@ href="./media/images/icons/siteicon.png" />
 <tr align="left" valign="top">
 <td width="89"><p class="tableheading3">Example</p>
 </td>
-<td colspan="5" width="445"><p class="tablecommandtext">&lt;%-- execute a statement (saving a list of answers to a variable named stmt2) --%&gt;<br />&lt;tks:statement id=&quot;stmt2&quot;&gt;<br /><br />&lt;%-- set the iTQL query --%&gt;<br />&lt;tks:query&gt;<br />  select $subj $obj from rmi://mysite.com/server1#dc<br />    where $subj rdfs:label $obj ;<br />&lt;/tks:query&gt;<br /><br />&lt;%-- set another iTQL query --%&gt;<br />&lt;tks:query id=&quot;alltriples&quot;&gt;<br />  select $subj $obj $pred from rmi://mysite.com/server1#foo<br />    where $subj $pred $obj ;<br />&lt;/tks:query&gt;<br /><br />&lt;%-- execute the query --%&gt;<br />&lt;tks:execute/&gt;<br /><br />&lt;%-- execute the query --%&gt;<br />&lt;tks:execute query=&quot;alltriples&quot;/&gt;<br /><br />&lt;/tks:statement&gt;<br /><br />&lt;%-- get the answer to a named query --%&gt;<br />&lt;tks:answer statement=&quot;stmt2&quot; query=&quot;alltriples&quot;/&gt;<br /><br />&lt;%-- save the answer to a named query in a request scoped variable named allTriplesAnswer --%&gt;<br />&lt;tks:answer statement=&quot;stmt2&quot; id=&quot;allTriplesAnswer&quot; query=&quot;alltriples&quot;<br />  scope=&quot;request&quot;/&gt;<br /><br />&lt;%-- the following will not return any results as the execute tag does not specify a query --%&gt;<br />&lt;tks:statement id=&quot;answers2&quot;&gt;<br />  &lt;tks:query id=&quot;query1&quot;&gt;<br />    select $title from rmi://mysite.com/server1#tmex <br />      where (http://www.bne.tucanatech.com/projects/tucana/data/doc49.htm<br />      $y http://www.tucanatech.com/tucana/Document#Document ) and <br />      ( $node http://www.tucanatech.com/tucana/tool/HtmlExtractor#title<br />      $title ) ;<br />  &lt;/tks:query&gt;<br />  &lt;tks:execute/&gt;<br />&lt;/tks:statement&gt;<br /><br />&lt;tks:answer statement=&quot;answers2&quot; query=&quot;query1&quot;/&gt;</p>
+<td colspan="5" width="445"><p class="tablecommandtext">&lt;%-- execute a statement (saving a list of answers to a variable named stmt2) --%&gt;<br />&lt;tks:statement id=&quot;stmt2&quot;&gt;<br /><br />&lt;%-- set the iTQL query --%&gt;<br />&lt;tks:query&gt;<br />  select $subj $obj from rmi://mysite.com/server1#dc<br />    where $subj rdfs:label $obj ;<br />&lt;/tks:query&gt;<br /><br />&lt;%-- set another iTQL query --%&gt;<br />&lt;tks:query id=&quot;alltriples&quot;&gt;<br />  select $subj $obj $pred from rmi://mysite.com/server1#foo<br />    where $subj $pred $obj ;<br />&lt;/tks:query&gt;<br /><br />&lt;%-- execute the query --%&gt;<br />&lt;tks:execute/&gt;<br /><br />&lt;%-- execute the query --%&gt;<br />&lt;tks:execute query=&quot;alltriples&quot;/&gt;<br /><br />&lt;/tks:statement&gt;<br /><br />&lt;%-- get the answer to a named query --%&gt;<br />&lt;tks:answer statement=&quot;stmt2&quot; query=&quot;alltriples&quot;/&gt;<br /><br />&lt;%-- save the answer to a named query in a request scoped variable named allTriplesAnswer --%&gt;<br />&lt;tks:answer statement=&quot;stmt2&quot; id=&quot;allTriplesAnswer&quot; query=&quot;alltriples&quot;<br />  scope=&quot;request&quot;/&gt;<br /><br />&lt;%-- the following will not return any results as the execute tag does not specify a query --%&gt;<br />&lt;tks:statement id=&quot;answers2&quot;&gt;<br />  &lt;tks:query id=&quot;query1&quot;&gt;<br />    select $title from rmi://mysite.com/server1#tmex <br />      where (http://mulgara.org/projects/mulgara/data/doc49.htm<br />      $y http://mulgara.org/mulgara/Document#Document ) and <br />      ( $node http://mulgara.org/mulgara/tool/HtmlExtractor#title<br />      $title ) ;<br />  &lt;/tks:query&gt;<br />  &lt;tks:execute/&gt;<br />&lt;/tks:statement&gt;<br /><br />&lt;tks:answer statement=&quot;answers2&quot; query=&quot;query1&quot;/&gt;</p>
 </td>
 </tr>
 
@@ -596,30 +596,12 @@ href="./media/images/icons/siteicon.png" />
 </table>
 <p class="allowpagebreak"></p>
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

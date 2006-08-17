@@ -66,20 +66,20 @@ href="./media/images/icons/siteicon.png" />
 </table>
 
 <a name="o258"></a><h3 class="heading3">Creating Full-Text Models</h3>
-<p class="bodytext">Use the <code class="monospace"><a id="h209" class="documentlinktemplate" title="create" href="176.htm" target="_self">create</a></code> command with an optional type argument of <code class="monospace">&lt;http://tucana.org/tucana#LuceneModel&gt;</code> in addition to the model name.</p>
+<p class="bodytext">Use the <code class="monospace"><a id="h209" class="documentlinktemplate" title="create" href="176.htm" target="_self">create</a></code> command with an optional type argument of <code class="monospace">&lt;http://mulgara.org/mulgara#LuceneModel&gt;</code> in addition to the model name.</p>
 <p class="bodytext">For example, to create the full-text model <code class="monospace">#foo</code>:</p>
-<p class="commandtext">create &lt;rmi://mysite.com/server1#foo&gt; &lt;http://tucana.org/tucana#LuceneModel&gt;;</p>
+<p class="commandtext">create &lt;rmi://mysite.com/server1#foo&gt; &lt;http://mulgara.org/mulgara#LuceneModel&gt;;</p>
 <p class="note"><strong class="strong">Note -</strong> Specifying no type at all creates a normal Mulgara model.</p>
 <p class="bodytext">Full-text models are removed in exactly the same way as normal models. For example:</p>
 <p class="commandtext">drop &lt;rmi://mysite.com/server1#foo&gt;;</p>
 <a name="o259"></a><h3 class="heading3">Modifying Full-Text Models</h3>
 <p class="bodytext">As with normal models, use the <code class="monospace"><a id="h212" class="documentlinktemplate" title="insert" href="182.htm" target="_self">insert</a></code> command to insert statements into a full-text model.</p>
 <p class="bodytext">When inserting statements into a full-text model, the object is the text that is specially indexed for partial matching. If the object is a literal, the text of the literal is indexed. Indexing literals into a model uses the same as for any other model. For example:</p>
-<p class="commandtext">insert &lt;http://www.mysite.com/somedoc.txt&gt;<br />  &lt;http://www.tucanatech.com/tucana/Document#title&gt; 'Document title'<br />  into &lt;rmi://mysite.com/server1#foo&gt;;</p>
+<p class="commandtext">insert &lt;http://www.mysite.com/somedoc.txt&gt;<br />  &lt;http://mulgara.org/mulgara/Document#title&gt; 'Document title'<br />  into &lt;rmi://mysite.com/server1#foo&gt;;</p>
 <p class="bodytext">If the object is a resource, the resource is converted into a URL, the URL is accessed by the server, and the content of the URL is indexed. The resource must have either a <code class="monospace">http:</code> or <code class="monospace">file:</code> protocol, or the <code class="monospace">insert</code> fails, sometimes without generating an error. For example:</p>
-<p class="commandtext">insert &lt;http://www.mysite.com/somedoc.txt&gt;<br />  &lt;http://www.tucanatech.com/tucana/Document#abstract&gt;<br />  &lt;http://www.mysite.com/abstract.txt&gt;<br />  into &lt;rmi://mysite.com/server1#foo&gt;;</p>
+<p class="commandtext">insert &lt;http://www.mysite.com/somedoc.txt&gt;<br />  &lt;http://mulgara.org/mulgara/Document#abstract&gt;<br />  &lt;http://www.mysite.com/abstract.txt&gt;<br />  into &lt;rmi://mysite.com/server1#foo&gt;;</p>
 <p class="bodytext">To perform full-text searching on literals stored in a normal model, the contents of the normal model must be copied into a full-text model. The following example shows how the document titles stored in the normal model <code class="monospace">#data</code> are copied into the full-text model <code class="monospace">#foo</code>.</p>
-<p class="commandtext">insert select $url &lt;http://www.tucanatech.com/tucana/Document#title&gt; $title<br />  from &lt;rmi://mysite.com/server1#data&gt;<br />  where $url &lt;http://www.tucanatech.com/tucana/Document#title&gt; $title <br />  into &lt;rmi://mysite.com/server1#foo&gt;;</p>
+<p class="commandtext">insert select $url &lt;http://mulgara.org/mulgara/Document#title&gt; $title<br />  from &lt;rmi://mysite.com/server1#data&gt;<br />  where $url &lt;http://mulgara.org/mulgara/Document#title&gt; $title <br />  into &lt;rmi://mysite.com/server1#foo&gt;;</p>
 <p class="bodytext">If a statement is inserted into a full-text model and the server determines that the MIME type of the document is text/html, then the HTML tags are filtered out before indexing.</p>
 <p class="note"><strong class="strong">Note -</strong> The ability of Mulgara to correctly identify HTML input is limited, and only works when fetching a resource via HTTP from a web server that accurately reports the content type.</p>
 <p class="bodytext">Use the <code class="monospace"><a id="h214" class="documentlinktemplate" title="delete" href="178.htm" target="_self">delete</a></code> command to delete text from full-text models.</p>
@@ -87,37 +87,19 @@ href="./media/images/icons/siteicon.png" />
 <p class="bodytext">Queries on full-text models work differently on normal models, as follows:</p>
 <ul class="listbullet"><li class="listbullet">The <code class="monospace"><a id="h1335" class="documentlinktemplate" title="where Clause" href="187.htm#o197" target="_self">where</a></code> clause must have a literal-valued object.</li><li class="listbullet">The object portion of the <code class="monospace">where</code> clause is passed to the underlying search engine as a pattern. The following types of pattern searches are possible:<ul class="listbullet2"><li class="listbullet2">Wildcards</li><li class="listbullet2">Fuzzy</li><li class="listbullet2">Word proximity</li><li class="listbullet2">Boosting a term</li><li class="listbullet2">Boolean operators (and, or, not, +, -)<p class="listcontinue">For more information on Lucene searching, see the <a class="internetlinktemplate" title="Lucene query syntax" href="http://jakarta.apache.org/lucene/docs/queryparsersyntax.html" target="_blank">Lucene query syntax</a>.</p>
 </li></ul></li><li class="listbullet">If the <code class="monospace">$score</code> variable is specified in the <code class="monospace"><a id="h1298" class="documentlinktemplate" title="select Clause" href="187.htm#o188" target="_self">select</a></code> clause, it is assigned a number from 0 to 1 indicating how close the match was. The <code class="monospace">$score</code> variable must be part of the <code class="monospace">select</code> clause in order to see it in the result.</li></ul><p class="bodytext">Given the full-text model <code class="monospace">#foo</code> populated in the previous section, the following query returns titles with the words &quot;duty&quot; and &quot;care&quot; in the title, as well as an indication of the quality of the match:</p>
-<p class="commandtext">select $url $title $score<br />  from &lt;rmi://mysite.com/server1#data&gt;<br />  where $url &lt;http://www.tucanatech.com/tucana/Document#title&gt; $title<br />    and $url &lt;http://www.tucanatech.com/tucana/Document#title&gt; '+duty +care'<br />    in &lt;rmi://mysite.com/server1#foo&gt;;</p>
+<p class="commandtext">select $url $title $score<br />  from &lt;rmi://mysite.com/server1#data&gt;<br />  where $url &lt;http://mulgara.org/mulgara/Document#title&gt; $title<br />    and $url &lt;http://mulgara.org/mulgara/Document#title&gt; '+duty +care'<br />    in &lt;rmi://mysite.com/server1#foo&gt;;</p>
 <p class="note"><strong class="strong">Note -</strong> In the example above, the join is performed across the <code class="monospace">$url</code> column, and the second <code class="monospace">where</code> constraint is only executed against the full-text model <code class="monospace">#foo.</code></p>
 <p class="bodytext">The index files for full-text models are stored in the <code class="monospace">server1/fulltext</code><em class="emphasis"> </em>directory.</p>
 <a name="o261"></a><h3 class="heading3">Limitations of Full-Text Models</h3>
 <p class="bodytext">Full-text models are an attempt to make a text index act like a Mulgara model, allowing both exact and partial matching to be mixed within queries. Full-text models have the following limitations:</p>
 <ul class="listbullet"><li class="listbullet">Lucene is not transactional, so neither are the full-text models. If an operation fails, full-text models do not roll back along with the normal models.</li><li class="listbullet">The <code class="monospace"><a id="h215" class="documentlinktemplate" title="backup" href="171.htm" target="_self">backup</a></code> and <code class="monospace"><a id="h222" class="documentlinktemplate" title="restore" href="185.htm" target="_self">restore</a></code> commands do not include the content of full-text models.</li></ul>
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>

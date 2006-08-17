@@ -102,7 +102,7 @@ href="./media/images/icons/siteicon.png" />
 <a name="o582"></a>
 <p class="bodytext"><strong class="specialbold">How do I check that the Descriptor model exists on a Mulgara server?</strong></p>
 <p class="bodytext">There are two ways to check if the Descriptor model exists:</p>
-<ol class="listnumber"><li class="listnumber">Use the List of Descriptors Available on this Host task from the <a class="" title="" href="http://localhost:8080/webservices/descriptor/index.jsp" target="_blank">Descriptor Management page</a>. If it fails, no Descriptor model exists and the built-in Descriptors need to be deployed.</li><li class="listnumber">Use an iTQL command. For example:<p class="listcontinuecommandtext">select $model from &lt;rmi://mysite.com/server1#&gt; <br />  where $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;<br />        &lt;http://tucana.org/tucana#Model&gt;;</p>
+<ol class="listnumber"><li class="listnumber">Use the List of Descriptors Available on this Host task from the <a class="" title="" href="http://localhost:8080/webservices/descriptor/index.jsp" target="_blank">Descriptor Management page</a>. If it fails, no Descriptor model exists and the built-in Descriptors need to be deployed.</li><li class="listnumber">Use an iTQL command. For example:<p class="listcontinuecommandtext">select $model from &lt;rmi://mysite.com/server1#&gt; <br />  where $model &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;<br />        &lt;http://mulgara.org/mulgara#Model&gt;;</p>
 </li></ol><p class="note"><strong class="strong">Note -</strong> In the above command, replace <code class="monospace">mysite.com</code> with the fully qualified hostname of the Mulgara server. For example, <code class="monospace">foo.bar.com</code> rather than just <code class="monospace">foo</code>.</p>
 <p class="bodytext">This query returns all models on the server. If there is no <code class="monospace">#descriptor</code> model, then you need to deploy the built-in Descriptors and any Descriptors you have developed.</p>
 <p class="backtotop"><a id="h1361_7" class="" title="Descriptors FAQ" href="576.htm" target="_self">Back to Top</a></p>
@@ -156,12 +156,12 @@ href="./media/images/icons/siteicon.png" />
 <a name="o591"></a>
 <p class="bodytext"><strong class="specialbold">How do I store the result of a Mulgara command in a variable?</strong></p>
 <p class="bodytext">Use the following example as a guide.</p>
-<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;tucanaDescriptor:query model=&quot;{$model}&quot; node=&quot;{$node}&quot;&gt;<br />  &lt;![CDATA[<br />  select $predicate from &lt;@@model@@&gt; <br />    where &lt;@@node@@&gt; $predicate $object;<br />  ]]&gt;<br />  &lt;/tucanaDescriptor:query&gt;<br /><br />&lt;/xsl:variable&gt;</p>
+<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;mulgaraDescriptor:query model=&quot;{$model}&quot; node=&quot;{$node}&quot;&gt;<br />  &lt;![CDATA[<br />  select $predicate from &lt;@@model@@&gt; <br />    where &lt;@@node@@&gt; $predicate $object;<br />  ]]&gt;<br />  &lt;/mulgaraDescriptor:query&gt;<br /><br />&lt;/xsl:variable&gt;</p>
 <p class="backtotop"><a id="h1361_15" class="" title="Descriptors FAQ" href="576.htm" target="_self">Back to Top</a></p>
 <a name="o592"></a>
 <p class="bodytext"><strong class="specialbold">How do I store the returned data from a Descriptor invoked from another Descriptor?</strong></p>
 <p class="bodytext">Use the following example as a guide.</p>
-<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;tucanaDescriptor:descriptor<br />    _target=&quot;otherDescriptor.xsl<br />    _source=&quot;{$_self}&quot;<br />    model=&quot;{$model}&quot;<br />    myParameter=&quot;aParameter&quot;/&gt;<br />&lt;/xsl:variable&gt;</p>
+<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;mulgaraDescriptor:descriptor<br />    _target=&quot;otherDescriptor.xsl<br />    _source=&quot;{$_self}&quot;<br />    model=&quot;{$model}&quot;<br />    myParameter=&quot;aParameter&quot;/&gt;<br />&lt;/xsl:variable&gt;</p>
 <p class="backtotop"><a id="h1361_16" class="" title="Descriptors FAQ" href="576.htm" target="_self">Back to Top</a></p>
 <a name="o593"></a>
 <p class="bodytext"><strong class="specialbold">What is the 'Can not convert TREEFRAG into NodeSet' error?</strong></p>
@@ -170,12 +170,12 @@ href="./media/images/icons/siteicon.png" />
 <a name="o594"></a>
 <p class="bodytext"><strong class="specialbold">How do I apply the current stylesheets rules to XML returned from a query or another Descriptor?</strong></p>
 <p class="bodytext">XSL does not directly allow for this and a XALAN extension must be used. The XML must be converted from a Tree fragment to a proper DOM NodeSet. To apply XML to the stylesheet, use the following example as a guide.</p>
-<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;tucanaDescriptor:query model=&quot;{$model}&quot; node=&quot;{$node}&quot;&gt;<br />  &lt;![CDATA[<br />  select $predicate from &lt;@@model@@&gt; <br />    where &lt;@@node@@&gt; $predicate $object;<br />  ]]&gt;<br />  &lt;/tucanaDescriptor:query&gt;<br /><br />&lt;/xsl:variable&gt;<br /><br />&lt;!-- Now apply the templates to the answer --&gt;<br />&lt;xsl:apply-templates select=&quot;xalan:nodeset($answer)/*&quot;/&gt;</p>
+<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;mulgaraDescriptor:query model=&quot;{$model}&quot; node=&quot;{$node}&quot;&gt;<br />  &lt;![CDATA[<br />  select $predicate from &lt;@@model@@&gt; <br />    where &lt;@@node@@&gt; $predicate $object;<br />  ]]&gt;<br />  &lt;/mulgaraDescriptor:query&gt;<br /><br />&lt;/xsl:variable&gt;<br /><br />&lt;!-- Now apply the templates to the answer --&gt;<br />&lt;xsl:apply-templates select=&quot;xalan:nodeset($answer)/*&quot;/&gt;</p>
 <p class="backtotop"><a id="h1361_18" class="" title="Descriptors FAQ" href="576.htm" target="_self">Back to Top</a></p>
 <a name="o595"></a>
 <p class="bodytext"><strong class="specialbold">How can I see the raw XML result from a Mulgara command?</strong></p>
 <p class="bodytext">Copy the result to the output stream as follows:</p>
-<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;tucanaDescriptor:query model=&quot;{$model}&quot; node=&quot;{$node}&quot;&gt;<br />  &lt;![CDATA[<br />  select $predicate from &lt;@@model@@&gt; <br />    where &lt;@@node@@&gt; $predicate $object;<br />  ]]&gt;<br />  &lt;/tucanaDescriptor:query&gt;<br /><br />&lt;/xsl:variable&gt;<br /><br />&lt;!-- Now apply the templates to the answer --&gt;<br />&lt;xsl:copy-of select=&quot;xalan:nodeset($answer)/*&quot;/&gt;</p>
+<p class="commandtext">&lt;xsl:variable name=&quot;answer&quot;&gt;<br /><br />  &lt;mulgaraDescriptor:query model=&quot;{$model}&quot; node=&quot;{$node}&quot;&gt;<br />  &lt;![CDATA[<br />  select $predicate from &lt;@@model@@&gt; <br />    where &lt;@@node@@&gt; $predicate $object;<br />  ]]&gt;<br />  &lt;/mulgaraDescriptor:query&gt;<br /><br />&lt;/xsl:variable&gt;<br /><br />&lt;!-- Now apply the templates to the answer --&gt;<br />&lt;xsl:copy-of select=&quot;xalan:nodeset($answer)/*&quot;/&gt;</p>
 <p class="bodytext">If you are viewing the response in a web browser, the XML tags may not be visible, so wrap them in <code class="monospace">&lt;xmp&gt;</code> tags to see them. For example:</p>
 <p class="commandtext">&lt;!-- Now apply the templates to the answer --&gt;<br />&lt;xmp&gt;<br />&lt;xsl:copy-of select=&quot;xalan:nodeset($answer)/*&quot;/&gt;<br />&lt;/xmp&gt;</p>
 <p class="backtotop"><a id="h1361_19" class="" title="Descriptors FAQ" href="576.htm" target="_self">Back to Top</a></p>
@@ -189,30 +189,12 @@ href="./media/images/icons/siteicon.png" />
 <p class="commandtext">&lt;a href=&quot;{$homepage}&quot;&gt;Home Page&lt;/a&gt;</p>
 <p class="backtotop"><a id="h1361_20" class="" title="Descriptors FAQ" href="576.htm" target="_self">Back to Top</a></p>
 
-
-</td>
-<td width=20>
-</td>
-<td align="left">
-<h3 class="heading3">Latest News</h3>
-<p class="bodytext"><a href="1452.htm#mulgara-release1">Mulgara 1.0.0 Released</a></p>
-<p class="bodytext">Old news items refer to Kowari rather than the more recent Mulgara</p>
-<p class="bodytext"><a href="1452.htm#o3198">Kowari 1.1.0 Pre-release 1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o2619">Kowari 1.0.5 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1675">Kowari 1.0.4.1 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1553">Kowari 1.0.4 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1559">DAWG Evaluates iTQL</a></p>
-<p class="bodytext"><a href="1452.htm#o1551">Kowari article in XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1453">Kowari mentioned on XML.com</a></p>
-<p class="bodytext"><a href="1452.htm#o1454">Kowari 1.0.3 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1455">Kowari Lite Introduced</a></p>
-<p class="bodytext"><a href="1452.htm#o1456">Kowari 1.0.2 Released</a></p>
-<p class="bodytext"><a href="1452.htm#o1457">Kowari 1.0.1 Released</a></p>
-<!-- <p class="bodytext"><a href="1452.htm#o1458">Updated Documentation</a></p>
-<p class="bodytext"><a href="1452.htm#o1459">Kowari Open Source Release</a></p> -->
-<p class="bodytext"><b><a href="1452.htm">View all news items</a></b></p>
-<br>
-<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
+			
+    </td>
+		<td width=20>
+		</td>
+		<td align="left">
+		  <a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative" target="_blank"><img style="border:0;width:110px;height:95;" src="http://www.opensource.org/trademarks/opensource/web/opensource-110x95.png" alt="Open Source logo" /></a>
 
 
 </td>
