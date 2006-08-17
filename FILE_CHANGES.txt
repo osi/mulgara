@@ -1,3 +1,17 @@
+U   trunk/docs/site/1129.htm
+D   trunk/docs/site/OSL-1.1.txt
+A   trunk/docs/site/OSL-3.0.txt
+pag
+2006-08-16 23:00:48 -0500 (Wed, 16 Aug 2006)
+20
+updated license file
+
+A   trunk/FILE_CHANGES.txt
+pgearon
+2006-08-16 22:36:32 -0500 (Wed, 16 Aug 2006)
+40
+Log of all changes moving to version 1.0
+
 U   trunk/LEGAL.txt
 U   trunk/README.txt
 U   trunk/build.properties
