@@ -16,7 +16,7 @@ I.  Open Source Components
     Source code for Open Source components may be obtained from
     the URL provided for each project.
 
-    Kowari Metastore
+    Kowari Metastore (Modified)
     Source:   src/jar/* (roughly).  Mulgara is a fork of Kowari and
               so includes modifications to most of Kowari.  Package
               names have been changed globally in this release.  For
@@ -26,6 +26,12 @@ I.  Open Source Components
     LICENSE:  Mozilla Public License, v1.1
               http://kowari.org/mpl1.1.html
     
+    Kowari Metastore Documentation (Modified)
+    Source:   docs/*
+    URL:      http://kowari.org/oldsite/index.htm
+    LICENSE:  GNU Free Documentation License, Version 1.2
+              http://www.gnu.org/copyleft/fdl.html
+
     ANTLR
     JARs:     antlr.jar
     URL:      http://www.antlr.org/
