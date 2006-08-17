@@ -171,12 +171,6 @@ I.  Open Source Components
     LICENSE:  BSD
               http://www.opensource.org/licenses/bsd-license.php
 
-    Java Mini Web Server
-    JARs:     SimpleWebServerFull.jar
-    URL:      http://www.jibble.org/miniwebserver/
-    LICENSE:  GPL
-              http://www.gnu.org/copyleft/gpl.html
-    
     JBoss
     JARs:     jboss-j2ee.jar
     URL:      http://jboss.org

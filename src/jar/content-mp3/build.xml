@@ -22,7 +22,7 @@
     <path refid="common-classpath"/>
 
     <fileset dir="${lib.dir}"
-      includes="jid3-0.34.jar, SimpleWebServerFull.jar"/>
+      includes="jid3-0.34.jar"/>
 
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>

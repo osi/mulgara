@@ -808,7 +808,6 @@
       <classpath path="${lib.dir}/${jid3.jar}"/>
       <classpath path="${lib.dir}/jsr173_07_api.jar"/>
       <classpath path="${lib.dir}/${lucene.jar}"/>
-      <classpath path="${lib.dir}/SimpleWebServerFull.jar"/>
       <classpath path="${lib.dir}/krule-1.0-alpha.jar"/>
       <classpath path="${lib.dir}/rules-1.0-alpha.jar"/>
       <classpath path="${lib.dir}/${sofa.jar}"/>

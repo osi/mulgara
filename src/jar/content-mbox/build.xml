@@ -22,7 +22,7 @@
     <path refid="common-classpath"/>
 
     <fileset dir="${lib.dir}"
-      includes="SimpleWebServerFull.jar, concurrent-1.3.4.jar"/>
+      includes="concurrent-1.3.4.jar"/>
 
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>

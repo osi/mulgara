@@ -48,7 +48,7 @@ import org.jrdf.vocabulary.RDF; // JRDF
 import org.jrdf.graph.Node;
 import org.jrdf.graph.BlankNode;
 import org.apache.log4j.xml.*; // Log4J
-import org.jibble.simplewebserver.*;
+// import org.jibble.simplewebserver.*;
 
 // Locally written packages
 import org.mulgara.content.*;
@@ -137,7 +137,7 @@ public class MP3StatementsUnitTest extends TestCase {
     suite.addTest(new MP3StatementsUnitTest("testBeforeFirst"));
     suite.addTest(new MP3StatementsUnitTest("testNext"));
     suite.addTest(new MP3StatementsUnitTest("testNonMP3"));
-    suite.addTest(new MP3StatementsUnitTest("testNonFileProtocol"));
+    // suite.addTest(new MP3StatementsUnitTest("testNonFileProtocol"));
 
     return suite;
   }
@@ -924,7 +924,9 @@ public class MP3StatementsUnitTest extends TestCase {
 
   /**
    * Test that statements are still generated for http protocol files.
+   * TODO: Need new web server
    */
+  /*
   public void testNonFileProtocol() {
 
     // Container for our webserver
@@ -1247,6 +1249,7 @@ public class MP3StatementsUnitTest extends TestCase {
 //               "was [" + objectNode.toString() + "]",
 //               objectNode.toString().equals("http://mulgara.org/mulgara/id3#MP3"));
   }
+  */
 
   /**
    * Default text runner.
