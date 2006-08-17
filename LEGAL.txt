@@ -31,6 +31,8 @@ I.  Open Source Components
     URL:      http://kowari.org/oldsite/index.htm
     LICENSE:  GNU Free Documentation License, Version 1.2
               http://www.gnu.org/copyleft/fdl.html
+    NB:       Modified documentation retains licensing under the same
+              terms.  See the file DOC_LICENSE.txt.
 
     ANTLR
     JARs:     antlr.jar
