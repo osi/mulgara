@@ -1,3 +1,495 @@
+U   trunk/docs/site/1012.htm
+pag
+2006-08-17 16:00:50 -0500 (Thu, 17 Aug 2006)
+22
+Removed a conflict tag
+
+U   trunk/docs/site/1007.htm
+U   trunk/docs/site/1012.htm
+U   trunk/docs/site/1061.htm
+U   trunk/docs/site/1075.htm
+U   trunk/docs/site/1076.htm
+U   trunk/docs/site/1077.htm
+U   trunk/docs/site/1078.htm
+U   trunk/docs/site/1079.htm
+U   trunk/docs/site/1081.htm
+U   trunk/docs/site/1090.htm
+U   trunk/docs/site/1091.htm
+U   trunk/docs/site/1092.htm
+U   trunk/docs/site/1093.htm
+U   trunk/docs/site/1094.htm
+U   trunk/docs/site/1095.htm
+U   trunk/docs/site/1128.htm
+U   trunk/docs/site/1129.htm
+U   trunk/docs/site/1132.htm
+U   trunk/docs/site/1133.htm
+U   trunk/docs/site/1134.htm
+U   trunk/docs/site/1139.htm
+U   trunk/docs/site/1163.htm
+D   trunk/docs/site/1172.htm
+D   trunk/docs/site/1198.htm
+D   trunk/docs/site/1207.htm
+D   trunk/docs/site/1217.htm
+D   trunk/docs/site/1218.htm
+U   trunk/docs/site/1225.htm
+U   trunk/docs/site/1226.htm
+U   trunk/docs/site/1227.htm
+U   trunk/docs/site/1232.htm
+U   trunk/docs/site/1236.htm
+U   trunk/docs/site/1246.htm
+U   trunk/docs/site/1350.htm
+U   trunk/docs/site/1452.htm
+D   trunk/docs/site/1474.htm
+U   trunk/docs/site/1565.htm
+D   trunk/docs/site/1567.htm
+U   trunk/docs/site/1636.htm
+D   trunk/docs/site/1676.htm
+U   trunk/docs/site/170.htm
+U   trunk/docs/site/171.htm
+U   trunk/docs/site/174.htm
+U   trunk/docs/site/176.htm
+U   trunk/docs/site/178.htm
+U   trunk/docs/site/179.htm
+U   trunk/docs/site/180.htm
+U   trunk/docs/site/181.htm
+U   trunk/docs/site/182.htm
+U   trunk/docs/site/183.htm
+U   trunk/docs/site/184.htm
+U   trunk/docs/site/185.htm
+U   trunk/docs/site/186.htm
+U   trunk/docs/site/187.htm
+U   trunk/docs/site/195.htm
+U   trunk/docs/site/223.htm
+U   trunk/docs/site/230.htm
+U   trunk/docs/site/2466.htm
+U   trunk/docs/site/2467.htm
+U   trunk/docs/site/2511.htm
+U   trunk/docs/site/2512.htm
+U   trunk/docs/site/2513.htm
+U   trunk/docs/site/2526.htm
+U   trunk/docs/site/2528.htm
+U   trunk/docs/site/254.htm
+U   trunk/docs/site/255.htm
+U   trunk/docs/site/2552.htm
+U   trunk/docs/site/2553.htm
+U   trunk/docs/site/257.htm
+D   trunk/docs/site/2590.htm
+U   trunk/docs/site/262.htm
+U   trunk/docs/site/2622.htm
+U   trunk/docs/site/2641.htm
+U   trunk/docs/site/2642.htm
+U   trunk/docs/site/2643.htm
+U   trunk/docs/site/2649.htm
+U   trunk/docs/site/2686.htm
+U   trunk/docs/site/2687.htm
+U   trunk/docs/site/2689.htm
+U   trunk/docs/site/2693.htm
+U   trunk/docs/site/2697.htm
+U   trunk/docs/site/2701.htm
+U   trunk/docs/site/2707.htm
+U   trunk/docs/site/271.htm
+U   trunk/docs/site/2714.htm
+U   trunk/docs/site/2720.htm
+U   trunk/docs/site/2725.htm
+U   trunk/docs/site/2733.htm
+U   trunk/docs/site/2737.htm
+U   trunk/docs/site/2779.htm
+U   trunk/docs/site/2800.htm
+U   trunk/docs/site/2801.htm
+U   trunk/docs/site/2816.htm
+U   trunk/docs/site/2827.htm
+U   trunk/docs/site/2892.htm
+U   trunk/docs/site/2893.htm
+U   trunk/docs/site/2900.htm
+U   trunk/docs/site/2904.htm
+U   trunk/docs/site/2905.htm
+U   trunk/docs/site/2906.htm
+U   trunk/docs/site/2911.htm
+U   trunk/docs/site/2912.htm
+U   trunk/docs/site/2951.htm
+U   trunk/docs/site/3002.htm
+U   trunk/docs/site/3074.htm
+U   trunk/docs/site/3183.htm
+U   trunk/docs/site/3184.htm
+D   trunk/docs/site/3194.htm
+D   trunk/docs/site/3196.htm
+U   trunk/docs/site/3201.htm
+U   trunk/docs/site/415.htm
+U   trunk/docs/site/417.htm
+U   trunk/docs/site/419.htm
+U   trunk/docs/site/485.htm
+U   trunk/docs/site/526.htm
+U   trunk/docs/site/527.htm
+U   trunk/docs/site/528.htm
+U   trunk/docs/site/530.htm
+U   trunk/docs/site/571.htm
+U   trunk/docs/site/572.htm
+U   trunk/docs/site/573.htm
+U   trunk/docs/site/574.htm
+U   trunk/docs/site/575.htm
+U   trunk/docs/site/576.htm
+U   trunk/docs/site/597.htm
+U   trunk/docs/site/618.htm
+U   trunk/docs/site/619.htm
+U   trunk/docs/site/746.htm
+U   trunk/docs/site/752.htm
+U   trunk/docs/site/779.htm
+U   trunk/docs/site/795.htm
+U   trunk/docs/site/802.htm
+U   trunk/docs/site/920.htm
+U   trunk/docs/site/947.htm
+U   trunk/docs/site/990.htm
+U   trunk/docs/site/indexpage.htm
+D   trunk/docs/site/mulgara-release1.htm
+U   trunk/docs/site/toc.htm
+U   trunk/docs/site/toc11623.htm
+U   trunk/docs/site/toc124722.htm
+U   trunk/docs/site/toc124727.htm
+pag
+2006-08-17 15:58:14 -0500 (Thu, 17 Aug 2006)
+79
+Removed references to 'tucana'.  Removed all News items, and centralized in TOC
+
+U   trunk/docs/news/1452.htm
+U   trunk/docs/news/index.htm
+U   trunk/docs/news/mulgara_logo.htm
+U   trunk/docs/news/mulgara_stylesheet.css
+U   trunk/docs/news/stylesheet.css
+U   trunk/docs/news/tab_index.htm
+U   trunk/docs/news/tab_toc.htm
+U   trunk/docs/news/tks_stylesheet.css
+U   trunk/docs/news/toc.htm
+U   trunk/docs/news/toc14513.htm
+U   trunk/docs/site/1007.htm
+U   trunk/docs/site/1012.htm
+U   trunk/docs/site/1061.htm
+U   trunk/docs/site/1075.htm
+U   trunk/docs/site/1076.htm
+U   trunk/docs/site/1077.htm
+U   trunk/docs/site/1078.htm
+U   trunk/docs/site/1079.htm
+U   trunk/docs/site/1081.htm
+U   trunk/docs/site/1090.htm
+U   trunk/docs/site/1091.htm
+U   trunk/docs/site/1092.htm
+U   trunk/docs/site/1093.htm
+U   trunk/docs/site/1094.htm
+U   trunk/docs/site/1095.htm
+U   trunk/docs/site/1128.htm
+U   trunk/docs/site/1129.htm
+U   trunk/docs/site/1132.htm
+U   trunk/docs/site/1133.htm
+U   trunk/docs/site/1134.htm
+U   trunk/docs/site/1139.htm
+U   trunk/docs/site/1163.htm
+U   trunk/docs/site/1172.htm
+U   trunk/docs/site/1198.htm
+U   trunk/docs/site/1207.htm
+U   trunk/docs/site/1217.htm
+U   trunk/docs/site/1218.htm
+U   trunk/docs/site/1225.htm
+U   trunk/docs/site/1226.htm
+U   trunk/docs/site/1227.htm
+U   trunk/docs/site/1232.htm
+U   trunk/docs/site/1236.htm
+U   trunk/docs/site/1246.htm
+U   trunk/docs/site/1350.htm
+U   trunk/docs/site/1452.htm
+U   trunk/docs/site/1474.htm
+U   trunk/docs/site/1565.htm
+U   trunk/docs/site/1567.htm
+U   trunk/docs/site/1636.htm
+U   trunk/docs/site/1676.htm
+U   trunk/docs/site/170.htm
+U   trunk/docs/site/171.htm
+U   trunk/docs/site/174.htm
+U   trunk/docs/site/176.htm
+U   trunk/docs/site/178.htm
+U   trunk/docs/site/179.htm
+U   trunk/docs/site/180.htm
+U   trunk/docs/site/181.htm
+U   trunk/docs/site/182.htm
+U   trunk/docs/site/183.htm
+U   trunk/docs/site/184.htm
+U   trunk/docs/site/185.htm
+U   trunk/docs/site/186.htm
+U   trunk/docs/site/187.htm
+U   trunk/docs/site/195.htm
+U   trunk/docs/site/223.htm
+U   trunk/docs/site/230.htm
+U   trunk/docs/site/2466.htm
+U   trunk/docs/site/2467.htm
+U   trunk/docs/site/2511.htm
+U   trunk/docs/site/2512.htm
+U   trunk/docs/site/2513.htm
+U   trunk/docs/site/2526.htm
+U   trunk/docs/site/2528.htm
+U   trunk/docs/site/254.htm
+U   trunk/docs/site/255.htm
+U   trunk/docs/site/2552.htm
+U   trunk/docs/site/2553.htm
+U   trunk/docs/site/257.htm
+U   trunk/docs/site/2590.htm
+U   trunk/docs/site/262.htm
+U   trunk/docs/site/2622.htm
+U   trunk/docs/site/2641.htm
+U   trunk/docs/site/2642.htm
+U   trunk/docs/site/2643.htm
+U   trunk/docs/site/2649.htm
+U   trunk/docs/site/2686.htm
+U   trunk/docs/site/2687.htm
+U   trunk/docs/site/2689.htm
+U   trunk/docs/site/2693.htm
+U   trunk/docs/site/2697.htm
+U   trunk/docs/site/2701.htm
+U   trunk/docs/site/2707.htm
+U   trunk/docs/site/271.htm
+U   trunk/docs/site/2714.htm
+U   trunk/docs/site/2720.htm
+U   trunk/docs/site/2725.htm
+U   trunk/docs/site/2733.htm
+U   trunk/docs/site/2737.htm
+U   trunk/docs/site/2779.htm
+U   trunk/docs/site/2800.htm
+U   trunk/docs/site/2801.htm
+U   trunk/docs/site/2816.htm
+U   trunk/docs/site/2827.htm
+U   trunk/docs/site/2892.htm
+U   trunk/docs/site/2893.htm
+U   trunk/docs/site/2900.htm
+U   trunk/docs/site/2904.htm
+U   trunk/docs/site/2905.htm
+U   trunk/docs/site/2906.htm
+U   trunk/docs/site/2911.htm
+U   trunk/docs/site/2912.htm
+U   trunk/docs/site/2951.htm
+U   trunk/docs/site/3002.htm
+U   trunk/docs/site/3074.htm
+U   trunk/docs/site/3183.htm
+U   trunk/docs/site/3184.htm
+U   trunk/docs/site/3194.htm
+U   trunk/docs/site/3196.htm
+U   trunk/docs/site/3201.htm
+U   trunk/docs/site/415.htm
+U   trunk/docs/site/417.htm
+U   trunk/docs/site/419.htm
+U   trunk/docs/site/485.htm
+U   trunk/docs/site/526.htm
+U   trunk/docs/site/527.htm
+U   trunk/docs/site/528.htm
+U   trunk/docs/site/530.htm
+U   trunk/docs/site/571.htm
+U   trunk/docs/site/572.htm
+U   trunk/docs/site/573.htm
+U   trunk/docs/site/574.htm
+U   trunk/docs/site/575.htm
+U   trunk/docs/site/576.htm
+U   trunk/docs/site/597.htm
+U   trunk/docs/site/618.htm
+U   trunk/docs/site/619.htm
+U   trunk/docs/site/746.htm
+U   trunk/docs/site/752.htm
+U   trunk/docs/site/779.htm
+U   trunk/docs/site/795.htm
+U   trunk/docs/site/802.htm
+U   trunk/docs/site/920.htm
+U   trunk/docs/site/947.htm
+U   trunk/docs/site/990.htm
+U   trunk/docs/site/all.css
+U   trunk/docs/site/burnt.css
+U   trunk/docs/site/default.css
+U   trunk/docs/site/fdl.txt
+U   trunk/docs/site/history.htm
+U   trunk/docs/site/index.htm
+U   trunk/docs/site/indexpage.htm
+U   trunk/docs/site/mulgara-release1.htm
+U   trunk/docs/site/mulgara_logo.htm
+U   trunk/docs/site/mulgara_stylesheet.css
+U   trunk/docs/site/print.css
+U   trunk/docs/site/stylesheet.css
+U   trunk/docs/site/tab_index.htm
+U   trunk/docs/site/tab_toc.htm
+U   trunk/docs/site/tks_stylesheet.css
+U   trunk/docs/site/toc.htm
+U   trunk/docs/site/toc10163.htm
+U   trunk/docs/site/toc103710.htm
+U   trunk/docs/site/toc10373.htm
+U   trunk/docs/site/toc10693.htm
+U   trunk/docs/site/toc10803.htm
+U   trunk/docs/site/toc10963.htm
+U   trunk/docs/site/toc10965.htm
+U   trunk/docs/site/toc11353.htm
+U   trunk/docs/site/toc11354.htm
+U   trunk/docs/site/toc113811.htm
+U   trunk/docs/site/toc11383.htm
+U   trunk/docs/site/toc11623.htm
+U   trunk/docs/site/toc122417.htm
+U   trunk/docs/site/toc12243.htm
+U   trunk/docs/site/toc12248.htm
+U   trunk/docs/site/toc123718.htm
+U   trunk/docs/site/toc123722.htm
+U   trunk/docs/site/toc12373.htm
+U   trunk/docs/site/toc12374.htm
+U   trunk/docs/site/toc124718.htm
+U   trunk/docs/site/toc124720.htm
+U   trunk/docs/site/toc124722.htm
+U   trunk/docs/site/toc124727.htm
+U   trunk/docs/site/toc12473.htm
+U   trunk/docs/site/toc124913.htm
+U   trunk/docs/site/toc124918.htm
+U   trunk/docs/site/toc124921.htm
+U   trunk/docs/site/toc12493.htm
+U   trunk/docs/site/toc12494.htm
+U   trunk/docs/site/toc12498.htm
+U   trunk/docs/site/toc12513.htm
+U   trunk/docs/site/toc246519.htm
+U   trunk/docs/site/toc246521.htm
+U   trunk/docs/site/toc246524.htm
+U   trunk/docs/site/toc246525.htm
+U   trunk/docs/site/toc246529.htm
+U   trunk/docs/site/toc246532.htm
+U   trunk/docs/site/toc24654.htm
+U   trunk/docs/site/toc24656.htm
+U   trunk/docs/site/toc25514.htm
+U   trunk/docs/site/toc25515.htm
+U   trunk/docs/site/toc26213.htm
+U   trunk/docs/site/toc26403.htm
+U   trunk/docs/site/toc26404.htm
+U   trunk/docs/site/toc26408.htm
+U   trunk/docs/site/toc26409.htm
+U   trunk/docs/site/toc27243.htm
+U   trunk/docs/site/toc27244.htm
+U   trunk/docs/site/toc27247.htm
+U   trunk/docs/site/toc27249.htm
+U   trunk/docs/site/toc27314.htm
+U   trunk/docs/site/toc27323.htm
+U   trunk/docs/site/toc279918.htm
+U   trunk/docs/site/toc279927.htm
+U   trunk/docs/site/toc279928.htm
+U   trunk/docs/site/toc27993.htm
+U   trunk/docs/site/toc279930.htm
+U   trunk/docs/site/toc279932.htm
+U   trunk/docs/site/toc279939.htm
+U   trunk/docs/site/toc27994.htm
+U   trunk/docs/site/toc27999.htm
+U   trunk/docs/site/toc28913.htm
+U   trunk/docs/site/toc28917.htm
+U   trunk/docs/site/toc318111.htm
+U   trunk/docs/site/toc318113.htm
+U   trunk/docs/site/toc318114.htm
+U   trunk/docs/site/toc318120.htm
+U   trunk/docs/site/toc318124.htm
+U   trunk/docs/site/toc318126.htm
+U   trunk/docs/site/toc31813.htm
+U   trunk/docs/site/toc31816.htm
+U   trunk/docs/site/toc31817.htm
+U   trunk/docs/site/toc31819.htm
+U   trunk/docs/site/toc31912.htm
+U   trunk/docs/site/toc57016.htm
+U   trunk/docs/site/toc57021.htm
+U   trunk/docs/site/toc5703.htm
+U   trunk/docs/site/toc57032.htm
+U   trunk/docs/site/toc57043.htm
+U   trunk/docs/site/toc57044.htm
+U   trunk/docs/site/toc57046.htm
+U   trunk/docs/site/toc57048.htm
+U   trunk/docs/site/toc5705.htm
+U   trunk/docs/site/toc5709.htm
+dwood
+2006-08-17 13:02:53 -0500 (Thu, 17 Aug 2006)
+87
+Added Mulgara Project copyright to changed files and GNU Free Documentation statement.
+
+
+U   trunk/LEGAL.txt
+U   trunk/build.xml
+U   trunk/src/jar/content-mbox/build.xml
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/MBoxStatementsUnitTest.java
+U   trunk/src/jar/content-mp3/build.xml
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/MP3StatementsUnitTest.java
+pag
+2006-08-17 11:45:16 -0500 (Thu, 17 Aug 2006)
+51
+Removed SimpleWebServer due to incompatible license
+
+U   trunk/docs/site/history.htm
+dwood
+2006-08-17 11:39:56 -0500 (Thu, 17 Aug 2006)
+105
+Corrected the version number of the Kowari documentation which was modified for Mulgara's first release.
+
+
+A   trunk/docs/site/history.htm
+dwood
+2006-08-17 11:38:07 -0500 (Thu, 17 Aug 2006)
+100
+Added a documentation history file, as required by the GNU Free Documentation License, version 1.2.
+
+
+U   trunk/docs/site/1012.htm
+dwood
+2006-08-17 11:25:01 -0500 (Thu, 17 Aug 2006)
+103
+Added Mulgara copyright and other legal information as required by the GNU Free Documentation License.
+
+
+U   trunk/docs/site/1452.htm
+dwood
+2006-08-17 11:11:35 -0500 (Thu, 17 Aug 2006)
+38
+Changed HTML title to read "Mulgara".
+
+
+A   trunk/docs/site/fdl.txt
+dwood
+2006-08-17 10:53:33 -0500 (Thu, 17 Aug 2006)
+107
+Added copy of GNU Free Documentation License to the documentation so it could be referenced from the docs.
+
+
+A   trunk/DOC_LICENCE.txt
+dwood
+2006-08-17 10:45:22 -0500 (Thu, 17 Aug 2006)
+75
+Added documentation license (GNU Free Documentation License, version 1.2).
+
+
+U   trunk/LEGAL.txt
+dwood
+2006-08-17 10:38:06 -0500 (Thu, 17 Aug 2006)
+73
+Ammended the legal notice for the Kowari documentation to be more clear.
+
+
+U   trunk/LEGAL.txt
+dwood
+2006-08-17 10:32:59 -0500 (Thu, 17 Aug 2006)
+90
+Added listing for Kowari documentation as required by the GNU Free Documentation License.
+
+
+D   trunk/FILE_CHANGES.txt
+A   trunk/KOWARI-MODIFICATIONS.txt
+D   trunk/lib/SimpleWebServerFull.jar
+dwood
+2006-08-17 10:20:20 -0500 (Thu, 17 Aug 2006)
+168
+Neaerly final preparations for Release 1.0.0.  Removed the GPL-licensed SimpleWebServerFull.jar and added a list of changes to Kowari files as required by its license.
+
+
+A   tags/release-1.0.0-rc2/
+pag
+2006-08-17 00:32:45 -0500 (Thu, 17 Aug 2006)
+75
+Windows tests pass.  All versioning and documentation should be completed.
+
+
+U   trunk/FILE_CHANGES.txt
+pgearon
+2006-08-16 23:09:15 -0500 (Wed, 16 Aug 2006)
+58
+updated changes for intial release, to include license fix
+
 U   trunk/docs/site/1129.htm
 D   trunk/docs/site/OSL-1.1.txt
 A   trunk/docs/site/OSL-3.0.txt
