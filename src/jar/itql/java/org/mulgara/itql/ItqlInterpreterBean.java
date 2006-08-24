@@ -373,15 +373,13 @@ public class ItqlInterpreterBean {
         log.debug("Received a TQL query : " + queryString);
       }
 
-      Element QUERY = doc.createElementNS(TQL_NS, "query");
-
       String[] queries = splitQuery(queryString);
 
       for (int queryIndex = 0; queryIndex < queries.length; queryIndex++) {
         String singleQuery = queries[queryIndex];
 
         // Attach the answer
-        Element query = (Element) answerDom.appendChild(QUERY);
+        Element query = (Element) answerDom.appendChild(doc.createElementNS(TQL_NS, "query"));
 
         // Resolve the query
         if (log.isDebugEnabled()) {
