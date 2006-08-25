@@ -48,7 +48,7 @@ import org.apache.log4j.Category;
  *
  * @modified $Date: 2005/07/05 04:23:54 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

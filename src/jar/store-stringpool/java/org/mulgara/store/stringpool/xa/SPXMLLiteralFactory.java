@@ -48,7 +48,7 @@ import org.mulgara.store.stringpool.*;
  *
  * @modified $Date: 2005/03/11 04:15:22 $ by $Author: raboczi $
  *
- * @company: <a href="http://www.tucanatech.com/">Tucana Technologies</a>
+ * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
  *
  * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
  *   Software Pty Ltd</a>

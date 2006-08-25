@@ -39,7 +39,7 @@ package org.mulgara.query;
  *
  * @modified $Date: 2005/02/22 08:16:04 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

@@ -40,7 +40,7 @@ import org.mulgara.query.TuplesException;
  *
  * @modified $Date: 2005/01/05 04:59:10 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  *

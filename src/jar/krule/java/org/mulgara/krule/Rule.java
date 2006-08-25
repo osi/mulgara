@@ -134,7 +134,7 @@ public class Rule implements Serializable {
   /**
    * Sets the query for this rule.
    *
-   * @param query The query which retrieves data for this rule.
+   * @param queryStruct The query which retrieves data for this rule.
    */
   public void setQueryStruct(QueryStruct queryStruct) {
     this.query = queryStruct.extractQuery();

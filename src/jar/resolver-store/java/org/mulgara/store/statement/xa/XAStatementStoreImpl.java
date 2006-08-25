@@ -64,7 +64,7 @@ import org.mulgara.util.Constants;
  *
  * @modified $Date: 2005/02/22 08:16:34 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

@@ -52,7 +52,7 @@ import org.mulgara.server.driver.*;
  *
  * @modified $Date: 2005/04/03 10:22:46 $
  *
- * @maintenanceAuthor: $Author: tomadams $
+ * @maintenanceAuthor $Author: tomadams $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

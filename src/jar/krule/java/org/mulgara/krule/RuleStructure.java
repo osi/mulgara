@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.rules.InitializerException;
@@ -130,7 +131,8 @@ public class RuleStructure implements Rules, Serializable {
   /**
    * Sets a set of axioms for these rules.
    *
-   * @param axioms A {@link java.util.Set} of {@link org.jrdf.Triple} of axiomatic statements.
+   * @param axioms A {@link java.util.Set} of {@link org.jrdf.graph.Triple}s
+   *   comprising axiomatic statements.
    */
   public void setAxioms(Set axioms) {
     this.axioms = axioms;
@@ -170,7 +172,7 @@ public class RuleStructure implements Rules, Serializable {
   /**
    * Debug method to view the contents of a rule structure.
    * 
-   * @returns A string representation of this structure.
+   * @return A string representation of this structure.
    */
   public String toString() {
     String result = "Rules = {\n";
@@ -201,7 +203,7 @@ public class RuleStructure implements Rules, Serializable {
   /**
    * Set the target model for the rules.
    *
-   * @param base The URI of the target model to insert inferences into.
+   * @param target The URI of the target model to insert inferences into.
    */
   public void setTargetModel(URI target) {
     targetModel = target;

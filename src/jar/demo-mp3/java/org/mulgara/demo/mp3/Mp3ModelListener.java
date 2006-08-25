@@ -41,7 +41,7 @@ package org.mulgara.demo.mp3;
  *
  * @modified $Date: 2005/04/20 19:03:35 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

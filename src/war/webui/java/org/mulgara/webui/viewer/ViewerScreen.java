@@ -699,9 +699,6 @@ public class ViewerScreen
      * @param resultIndex The index into the result list.
      * @param resultTableTemplate The template table to use.
      * @param modelURI The model URI.
-     * @return The result which will be a list of ResultObjects which contain a
-     *      String message and the query time or list of HTMLTableElements and
-     *      the query time. NOTE: null will be returned if queryString is null.
      * @throws Exception if there is a problem executing or processing the
      *      query.
      */

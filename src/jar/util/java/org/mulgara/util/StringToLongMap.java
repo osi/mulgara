@@ -53,7 +53,7 @@ import org.mulgara.util.TempDir;
  *
  * @modified $Date: 2005/01/05 04:59:29 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -133,7 +133,6 @@ public final class StringToLongMap {
    * Associates a long with a String.
    *
    * @param str the String.
-   * @return the long to be associated with the String.
    * @throws IOException if an I/O error occurs.
    */
   public void put(String str, long value) throws IOException {

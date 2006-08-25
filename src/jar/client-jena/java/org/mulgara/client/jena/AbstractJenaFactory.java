@@ -58,7 +58,7 @@ import org.mulgara.client.jena.model.*;
  *
  * @modified $Date: 2005/02/02 21:09:59 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

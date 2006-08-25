@@ -52,7 +52,7 @@ import org.mulgara.store.stringpool.SPTypedLiteral;
  *
  * @modified $Date: 2005/03/12 02:53:28 $ by $Author: newmana $
  *
- * @company: <a href="http://www.tucanatech.com/">Tucana Technologies</a>
+ * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
  *
  * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
  *   Software Pty Ltd</a>

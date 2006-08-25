@@ -54,7 +54,7 @@ import org.mulgara.util.IntFile;
  *
  * @modified $Date: 2005/07/21 19:13:48 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -149,10 +149,10 @@ public final class FreeList {
    */
   private long firstFree;
 
-  /** Set to <code>true</code> if the {@link reallocateBlock} is dirty. */
+  /** Set to <code>true</code> if the {@link #reallocateBlock} is dirty. */
   private boolean reallocateBlockDirty = false;
 
-  /** The buffer used for reading and writing the block containing the {@link reallocate} item. */
+  /** The buffer used for reading and writing the block containing the {@link #reallocate} item. */
   private Block reallocateBlock = null;
 
   /**
@@ -1315,9 +1315,7 @@ public final class FreeList {
     }
 
     /**
-     * The number of valid items in this phase.
-     *
-     * @return The number of valid items in this phase.
+     * Increment the number of valid items in this phase.
      */
     void incNrValidItems() {
       ++nrValidItems;
@@ -1436,7 +1434,7 @@ public final class FreeList {
       }
 
       /**
-       * Gets the {@link FreeList#Phase} that this token refers to.
+       * Gets the {@link FreeList.Phase} that this token refers to.
        *
        * @return The Phase referred to by this token.
        */

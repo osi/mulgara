@@ -56,7 +56,7 @@ import org.mulgara.util.Constants;
  *
  * @modified $Date: 2005/07/05 04:23:54 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -393,7 +393,7 @@ public final class AVLFile {
     /**
      * Add a new reference to this phase.
      *
-     * @return a {@link #Token} representing a reference to this phase.
+     * @return a {@link Token} representing a reference to this phase.
      */
     public Token use() {
       return new Token();
@@ -417,7 +417,7 @@ public final class AVLFile {
     /**
      * Get the phase of the underlying block file.
      *
-     * @return The {@link ManagedBlockFile#Phase} associated with this phase.
+     * @return The {@link ManagedBlockFile.Phase} associated with this phase.
      */
     ManagedBlockFile.Phase getAVLBlockFilePhase() {
       return avlBlockFilePhase;

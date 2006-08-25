@@ -56,7 +56,7 @@ import org.mulgara.util.Constants;
  *
  * @version $Revision: 1.9 $
  *
- * @modified $Date: 2005/05/16 11:07:08 $ @maintenanceAuthor: $Author: amuys $
+ * @modified $Date: 2005/05/16 11:07:08 $ @maintenanceAuthor $Author: amuys $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -1067,8 +1067,6 @@ public final class TripleAVLFile {
      * Asynchronously adds a triple to the graph.
      *
      * @param triple The triple to add
-     * @return the current 3 node for an existing triple or NodePool.NONE if the
-     *      triple doesn't exist
      */
     public void asyncAddTriple(long[] triple) {
       if (this != currentPhase) {

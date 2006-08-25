@@ -360,7 +360,6 @@ public class ItqlSession {
    * via getLastMessages and getLastAnswers.
    *
    * @param command the command to execute
-   * @return the results of the command in human-readable format
    */
   public void executeCommand(String command) {
 

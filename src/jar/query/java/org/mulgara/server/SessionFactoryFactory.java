@@ -54,7 +54,7 @@ import java.lang.reflect.Constructor;
  *
  * @modified $Date: 2005/01/13 01:55:09 $
  *
- * @maintenanceAuthor: $Author: raboczi $
+ * @maintenanceAuthor $Author: raboczi $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

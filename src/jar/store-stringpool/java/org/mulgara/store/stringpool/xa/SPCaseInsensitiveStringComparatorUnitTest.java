@@ -49,7 +49,7 @@ import org.mulgara.store.stringpool.SPComparator;
  *
  * @modified $Date: 2005/03/12 02:49:47 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

@@ -49,7 +49,7 @@ import org.jrdf.graph.*;
  *
  * @modified $Date: 2005/02/02 21:13:36 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  *

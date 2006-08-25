@@ -46,7 +46,7 @@ public interface RuleLoader {
   /**
    * Reads the ruleModel in the database and constructs the rules from it.
    *
-   * @return A {@link RuleStructure} containing all the loaded rules.
+   * @return A {@link org.mulgara.krule.RuleStructure} containing all the loaded rules.
    */
   public Rules readRules(Object session, URI systemModel) throws InitializerException, RemoteException;
 

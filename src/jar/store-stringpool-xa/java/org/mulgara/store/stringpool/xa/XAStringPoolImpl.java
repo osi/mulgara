@@ -67,7 +67,7 @@ import org.mulgara.util.*;
  *
  * @modified $Date: 2005/07/21 19:16:31 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -3185,7 +3185,7 @@ public final class XAStringPoolImpl implements XAStringPool {
     /**
      * Constucts a new cache.
      *
-     * @param param largest number of elements to store in the cache.
+     * @param maxSize largest number of elements to store in the cache.
      */
     public Cache(int maxSize) {
       super((int)Math.ceil(maxSize / LOAD_FACTOR + 1), LOAD_FACTOR, true);

@@ -36,7 +36,7 @@ import java.nio.channels.*;
 import org.apache.log4j.Category;
 
 /**
- * This interface provides access to files using {@link Blocks} of data which are
+ * This interface provides access to files using {@link Block}s of data which are
  * all the same size.
  * <p>
  *
@@ -53,7 +53,7 @@ import org.apache.log4j.Category;
  *
  * @modified $Date: 2005/06/30 01:14:40 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

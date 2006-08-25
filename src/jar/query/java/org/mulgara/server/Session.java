@@ -40,6 +40,7 @@ import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.rules.InitializerException;
+import org.mulgara.rules.Rules;  // Required only for Javadoc
 import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
 

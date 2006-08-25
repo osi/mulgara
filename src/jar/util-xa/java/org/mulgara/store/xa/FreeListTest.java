@@ -52,7 +52,7 @@ import org.mulgara.util.TempDir;
  *
  * @modified $Date: 2005/07/21 19:13:49 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

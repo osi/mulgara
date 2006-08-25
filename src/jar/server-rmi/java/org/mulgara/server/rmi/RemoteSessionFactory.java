@@ -129,7 +129,6 @@ interface RemoteSessionFactory extends Remote {
   /**
    * Factory method. Remove session reference from factory.
    *
-   * @return an unauthenticated session
    * @throws QueryException EXCEPTION TO DO
    * @throws RemoteException EXCEPTION TO DO
    */

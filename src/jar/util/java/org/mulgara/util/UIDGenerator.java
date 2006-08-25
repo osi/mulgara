@@ -44,7 +44,7 @@ import java.nio.*;
  *
  * @modified $Date: 2005/02/03 20:07:37 $ by $Author: newmana $
  *
- * @company: <a href="http://www.tucanatech.com/">Tucana Technologies</a>
+ * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
  *
  * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
  *   Software Pty Ltd</a>

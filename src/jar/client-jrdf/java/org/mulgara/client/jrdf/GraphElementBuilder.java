@@ -49,7 +49,7 @@ import org.mulgara.client.jrdf.util.*;
  *
  * @modified $Date: 2005/01/27 11:36:13 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

@@ -45,7 +45,7 @@ import com.hp.hpl.jena.util.iterator.Filter;
  *
  * @modified $Date: 2005/01/28 20:07:31 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

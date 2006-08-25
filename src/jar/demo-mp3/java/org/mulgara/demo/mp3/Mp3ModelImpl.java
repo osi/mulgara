@@ -54,7 +54,7 @@ import org.mulgara.query.QueryException;
  * 
  * @modified $Date: 2005/04/20 19:02:50 $
  * 
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  * 
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software </A>
  * 

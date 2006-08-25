@@ -257,7 +257,6 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
   /**
    * {@inheritDoc RemoteSessionFactory}
    *
-   * @return RETURNED VALUE TO DO
    * @throws QueryException EXCEPTION TO DO
    */
   public void removeSession(RemoteSession session)  {

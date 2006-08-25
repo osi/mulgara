@@ -53,11 +53,11 @@ import org.mulgara.content.mbox.parser.exception.*;
  * @author <a href="http://staff.pisoftware.com/raboczi"/>Simon Raboczi</a>
  * @author Mark Ludlow
  *
- * @version: $Revision: 1.8 $
+ * @version $Revision: 1.8 $
  *
  * @modified $Date: 2005/01/05 04:57:41 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

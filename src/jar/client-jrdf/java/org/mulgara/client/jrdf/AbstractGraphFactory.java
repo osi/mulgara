@@ -56,7 +56,7 @@ import org.mulgara.server.driver.*;
  *
  * @modified $Date: 2005/01/26 21:01:29 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

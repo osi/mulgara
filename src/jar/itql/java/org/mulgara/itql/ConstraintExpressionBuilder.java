@@ -689,7 +689,7 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
   }
 
   /**
-   * Constructs a {@link org.mulgara.rdql.query.ConstraintElement} from a
+   * Constructs a {@link org.mulgara.query.ConstraintElement} from a
    * {@link org.mulgara.itql.node.PElement}.
    *
    * @param element an element of a constraint (variable, resource or literal)

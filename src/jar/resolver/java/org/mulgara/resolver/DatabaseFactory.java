@@ -52,7 +52,7 @@ import org.mulgara.store.stringpool.StringPoolException;
 
 /**
  * Construct and configure {@link Database} instances, based on a
- * {@link TucanaConfig} configuration.
+ * {@link MulgaraConfig} configuration.
  *
  * @created 2004-10-07
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>

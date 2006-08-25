@@ -46,7 +46,7 @@ import org.apache.log4j.Category;
  *
  * @modified $Date: 2005/07/05 04:23:54 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -442,7 +442,7 @@ public final class ObjectPool {
    *
    * @param type The ID of the type of object to store.
    * @param key The key for this object type.  This is the size of the data it holds.
-   * @return A new {@link #Key} instance.
+   * @return A new {@link Key} instance.
    */
   private Key newKeyInstance(int type, int key) {
 

@@ -150,10 +150,10 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
 
 
   /**
-   * Construct a {@link ContentHandler}.
+   * Construct a {@link ContentHandler} and add it to the
+   * {@link #contentLoaderList}.
    *
    * @param className  the name of a class implementing {@link ContentHandler}
-   * @return the constructed {@link ContentHandler}
    */
   void registerContentHandler(String className)
   {

@@ -128,9 +128,9 @@ public class KGraph
    * non-null, the KGraph will keep that model's literals up-to-date with the
    * regular model's.</p>
    *
-   * @see org.mulgara.rdql.client.jena.kmodel.KModel#getInstance(URI, URI)
-   * @see org.mulgara.rdql.client.jena.kmodel.KModel#getInstance(URI, URI, URI)
-   * @see org.mulgara.rdql.client.jena.kmodel.KModel#getGraph()
+   * @see org.mulgara.client.jena.kmodel.KModel#getInstance(URI, URI)
+   * @see org.mulgara.client.jena.kmodel.KModel#getInstance(URI, URI, URI)
+   * @see org.mulgara.client.jena.kmodel.KModel#getGraph()
    *
    * @param modelURI URI
    * @param modelSession Session

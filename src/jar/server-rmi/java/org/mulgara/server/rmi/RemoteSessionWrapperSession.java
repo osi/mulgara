@@ -584,7 +584,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    * Tests if an RMIException was caused by a retryable condition.
    * If so, then obtains a new session for retrying.
    *
-   * @return <code>true</code> If a remote method can be retried.
+   * @throws QueryException if remote method can't be retried.
    */
   protected void testRetry(RemoteException e) throws QueryException {
 

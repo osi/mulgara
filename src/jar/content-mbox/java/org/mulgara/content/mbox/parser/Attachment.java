@@ -34,11 +34,11 @@ package org.mulgara.content.mbox.parser;
  *
  * @author Mark Ludlow
  *
- * @version: $Revision: 1.8 $
+ * @version $Revision: 1.8 $
  *
  * @modified $Date: 2005/01/05 04:57:40 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

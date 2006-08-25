@@ -47,7 +47,7 @@ import org.mulgara.util.TempDir;
  * @created 2001-09-20
  * @author David Makepeace
  * @version $Revision: 1.1 $
- * @modified $Date: 2005/02/22 08:16:45 $ @maintenanceAuthor: $Author: newmana $
+ * @modified $Date: 2005/02/22 08:16:45 $ @maintenanceAuthor $Author: newmana $
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
  *      Software Pty Ltd</a>

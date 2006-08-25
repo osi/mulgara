@@ -40,7 +40,7 @@ package org.mulgara.util;
  *
  * @maintenanceAuthor $Author: newmana $
  *
- * @company: <a href="http://www.tucanatech.com/">Tucana Technologies</a>
+ * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
  *
  * @copyright &copy;2002-2003
  *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
@@ -106,7 +106,6 @@ public class WebBrowser {
    *
    * @param url String
    * @throws Exception
-   * @return Process
    */
   private static void launchBrowserWindows(String url) throws Exception {
 
@@ -119,7 +118,6 @@ public class WebBrowser {
    *
    * @param url String
    * @throws Exception
-   * @return Process
    */
   private static void launchBrowserMac(String url) throws Exception {
 
@@ -132,7 +130,6 @@ public class WebBrowser {
    *
    * @param url String
    * @throws Exception
-   * @return Process
    */
   private static void launchBrowserUnix(String url) throws Exception {
 
@@ -153,7 +150,6 @@ public class WebBrowser {
    *
    * @param url String
    * @throws Exception
-   * @return Process
    */
   private static void launchMozillaBrowserUnix(String url) throws Exception {
 
@@ -165,7 +161,6 @@ public class WebBrowser {
    *
    * @param url String
    * @throws Exception
-   * @return Process
    */
   private static void launchNetscapeBrowserUnix(String url) throws Exception {
 
@@ -177,7 +172,6 @@ public class WebBrowser {
    *
    * @param url String
    * @throws Exception
-   * @return Process
    */
   private static void launchGeckoBrowserUnix(String browser, String url) throws
       Exception {

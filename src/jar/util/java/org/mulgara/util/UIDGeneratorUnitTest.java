@@ -46,7 +46,7 @@ import java.util.*;
  *
  * @modified $Date: 2005/02/03 20:07:37 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software </A>
  *

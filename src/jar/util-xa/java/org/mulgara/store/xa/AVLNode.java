@@ -37,7 +37,7 @@ import org.apache.log4j.Category;
 import org.mulgara.util.Constants;
 
 /**
- * These are the nodes which make up an {@link AVLTree}.
+ * These are the nodes which make up an AVL tree.
  * Each node contains up to two children, with the difference between the maximum
  * depths of the left and right children being no more than one.  This difference
  * is called the balance.
@@ -51,7 +51,7 @@ import org.mulgara.util.Constants;
  *
  * @modified $Date: 2005/07/05 04:23:54 $
  *
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -1159,8 +1159,8 @@ public final class AVLNode {
   /**
    * Gets the ChildNode on a given side of the current node.
    *
-   * @param index The index of the child.  Either {@link IDX_LEFT}
-   * or {@link IDX_RIGHT}
+   * @param index The index of the child.  Either {@link #IDX_LEFT}
+   * or {@link #IDX_RIGHT}
    * @return The Child node, or <code>null</code> if there is no
    * child on the given side.
    */
@@ -1181,8 +1181,8 @@ public final class AVLNode {
    * @param parentNode The parent node for this node.  Only
    *     <code>null</code> at the root of the tree.
    * @param childIndex Indicates if this is to the left or the
-   *     right of the parent node.  Either {@link IDX_LEFT} or
-   *     {@link IDX_RIGHT}.
+   *     right of the parent node.  Either {@link #IDX_LEFT} or
+   *     {@link #IDX_RIGHT}.
    * @param nodeId This ID for this node.
    */
   private void init(
@@ -1257,8 +1257,8 @@ public final class AVLNode {
   /**
    * Perform a rebalance from this node down, after having done an insert.
    *
-   * @param ci The index of this node in its parent.  Either {@link IDX_LEFT}
-   * or {@link IDX_RIGHT}.
+   * @param ci The index of this node in its parent.  Either {@link #IDX_LEFT}
+   * or {@link #IDX_RIGHT}.
    * @throws IOException If an I/O error occurs.
    */
   private void rebalanceInsert(int ci) throws IOException {
@@ -1295,8 +1295,8 @@ public final class AVLNode {
   /**
    * Perform a rebalance from this node up, after having removed a node.
    *
-   * @param ci The index of this node in its parent.  Either {@link IDX_LEFT}
-   * or {@link IDX_RIGHT}.
+   * @param ci The index of this node in its parent.  Either {@link #IDX_LEFT}
+   * or {@link #IDX_RIGHT}.
    * @throws IOException If an I/O error occurs.
    */
   private void rebalanceRemove(int ci) throws IOException {

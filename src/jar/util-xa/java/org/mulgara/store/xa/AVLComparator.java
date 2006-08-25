@@ -39,7 +39,7 @@ import java.nio.*;
  *
  * @version $Revision: 1.10 $
  *
- * @modified $Date: 2005/07/05 04:23:54 $ @maintenanceAuthor: $Author: pgearon $
+ * @modified $Date: 2005/07/05 04:23:54 $ @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

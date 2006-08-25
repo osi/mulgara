@@ -53,11 +53,11 @@ import org.mulgara.content.mp3.parser.exception.*;
  *
  * @author Mark Ludlow
  *
- * @version: $Revision: 1.8 $
+ * @version $Revision: 1.8 $
  *
  * @modified $Date: 2005/01/11 07:02:25 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company Tucana Technologies
  *

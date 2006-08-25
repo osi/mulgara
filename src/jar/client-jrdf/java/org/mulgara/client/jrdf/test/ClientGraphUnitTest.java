@@ -61,7 +61,7 @@ import org.mulgara.query.Answer;
  *
  * @modified $Date: 2005/01/13 11:55:50 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

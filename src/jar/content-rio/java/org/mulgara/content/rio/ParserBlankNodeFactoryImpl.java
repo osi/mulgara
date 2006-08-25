@@ -48,7 +48,7 @@ import org.jrdf.parser.ParserBlankNodeFactory;
  *
  * @modified $Date: 2005/01/05 04:58:04 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  *

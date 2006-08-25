@@ -50,7 +50,7 @@ import org.mulgara.store.stringpool.*;
  *
  * @modified $Date: 2005/03/11 04:15:22 $
  *
- * @maintenanceAuthor: $Author: raboczi $
+ * @maintenanceAuthor $Author: raboczi $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

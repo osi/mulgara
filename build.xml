@@ -795,11 +795,16 @@
         bottom="Copyright &amp;copy; ${year} Tucana Technologies, Inc. (http://www.tucanatech.com/)."
         author="true"
         additionalParam="-breakiterator -source 1.5">
-      <doclet name="org.mulgara.doclet.MulgaraDoclet"
-        path="${bin.dir}/doclet.jar">
-        <param name="-author"/>
-        <param name="-version"/>
-      </doclet>
+      <tag name="company" description="Company:"/>
+      <tag name="copyright" description="Copyright:"/>
+      <tag name="created" description="Creation date:"/>
+      <tag name="licence" description="Licence:"/>
+      <taglet name="org.mulgara.doclet.MaintenanceAuthorTaglet"
+        path="${bin.dir}/doclet.jar"/>
+      <taglet name="org.mulgara.doclet.ModifiedTaglet"
+        path="${bin.dir}/doclet.jar"/>
+      <taglet name="org.mulgara.doclet.VersionTaglet"
+        path="${bin.dir}/doclet.jar"/>
       <classpath refid="project-classpath"/>
       <classpath path="${lib.dir}/antlr.jar"/>
       <classpath path="${lib.dir}/barracuda-1.2.6.jar"/>

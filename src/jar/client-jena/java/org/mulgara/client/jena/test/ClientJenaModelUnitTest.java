@@ -61,7 +61,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
  *
  * @modified $Date: 2005/01/27 20:12:02 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

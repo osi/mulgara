@@ -48,7 +48,7 @@ import org.mulgara.util.TempDir;
  *
  * @modified $Date: 2005/01/05 04:59:29 $ by $Author: newmana $
  *
- * @company: <a href="http://www.tucanatech.com/">Tucana Technologies</a>
+ * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
  *
  * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
  *   Software Pty Ltd</a>

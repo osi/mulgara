@@ -55,7 +55,7 @@ import org.mulgara.util.Constants;
  *
  * @modified $Date: 2005/03/11 04:15:22 $
  *
- * @maintenanceAuthor: $Author: raboczi $
+ * @maintenanceAuthor $Author: raboczi $
  *
  * @copyright &copy;2005
  *

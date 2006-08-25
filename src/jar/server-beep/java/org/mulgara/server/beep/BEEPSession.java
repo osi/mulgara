@@ -74,9 +74,9 @@ import org.mulgara.sparql.protocol.StreamFormatException;
  *
  * @modified $Date: 2005/06/26 12:48:13 $
  *
- * @maintenanceAuthor: $Author: pgearon $
- * @maintenanceAuthor: $Author: pgearon $
- * @maintenanceAuthor: $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
+ * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

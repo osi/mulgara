@@ -54,7 +54,7 @@ import org.mulgara.server.Session;
  *
  * @modified $Date: 2005/01/13 11:54:40 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *

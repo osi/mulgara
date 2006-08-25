@@ -191,8 +191,8 @@ public class QueryStruct implements Serializable {
   /**
    * Sets the default models for the query.
    *
-   * @param firstModelURI The first URI of the model for the query.
-   * @param secondModelURI The second URI of the model for the query.
+   * @param firstModelUri The first URI of the model for the query.
+   * @param secondModelUri The second URI of the model for the query.
    */
   public void setModelExpression(URI firstModelUri, URI secondModelUri) {
     if (firstModelUri.equals(secondModelUri)) {

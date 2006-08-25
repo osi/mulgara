@@ -324,7 +324,6 @@ public class KruleLoader implements RuleLoader {
   /**
    * Finds all the rules, and creates empty Rule objects to represent each one.
    *
-   * @param interpreter The connection for executing queries.
    * @return A Rules structure containing all found rules.
    * @throws TuplesException There was an error retrieving data from the model.
    * @throws QueryException When there is an exception finding the rules.
@@ -989,7 +988,7 @@ public class KruleLoader implements RuleLoader {
    * to be created.  The constraintLinks and typeMap arguments are for constructing new
    * constraint objects.
    *
-   * @param args The set of constraint nodes to get the constraints for.  Whenever possible,
+   * @param constraints The set of constraint nodes to get the constraints for.  Whenever possible,
    *             the constraints come from constraintMap.
    * @param constraintLinks Linkage of join constraints to their arguments.  Used to create a new constraint.
    * @param typeMap Maps constraint nodes to their type.  Used to create a new constraint.

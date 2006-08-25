@@ -60,7 +60,7 @@ import org.mulgara.demo.mp3.swing.search.SearchPanel;
  *
  * @modified $Date: 2005/01/05 04:58:07 $
  *
- * @maintenanceAuthor: $Author: newmana $
+ * @maintenanceAuthor $Author: newmana $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
