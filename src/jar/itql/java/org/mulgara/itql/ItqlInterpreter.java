@@ -87,6 +87,35 @@ public class ItqlInterpreter extends DepthFirstAdapter {
   //
   // Constants
   //
+  /** The rdf namespace prefix. */
+  public static final String RDF = "rdf";
+    
+  /** The rdfs namespace prefix. */
+  public static final String RDFS = "rdfs";
+    
+  /** The owl namespace prefix. */
+  public static final String OWL = "owl";
+    
+  /** The mulgara namespace prefix. */
+  public static final String MULGARA = "mulgara";
+    
+  /** The krule namespace prefix. */
+  public static final String KRULE = "krule";
+    
+  /** The URI of the rdf namespace. */
+  public static final String RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    
+  /** The URI of the rdfs namespace. */
+  public static final String RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
+    
+  /** The URI of the owl namespace. */
+  public static final String OWL_NS = "http://www.w3.org/2002/07/owl#";
+    
+  /** The URI of the mulgara namespace. */
+  public static final String MULGARA_NS = "http://mulgara.org/mulgara#";
+    
+  /** The URI of the krule namespace. */
+  public static final String KRULE_NS = "http://mulgara.org/owl/krule/#";
 
   /**
    * Get line separator.
@@ -289,6 +318,28 @@ public class ItqlInterpreter extends DepthFirstAdapter {
     this.providedSession = providedSession;
     this.session = providedSession;
   }
+
+
+  /**   
+   * Set up default aliases.
+   *
+   * @return A map of aliases to their fully qualified names
+   */        
+  public static Map getDefaultAliases() {
+    Map aliases = new HashMap();
+    try {     
+      aliases.put(RDF, new URI(RDF_NS));
+      aliases.put(RDFS, new URI(RDFS_NS));
+      aliases.put(OWL, new URI(OWL_NS));
+      aliases.put(MULGARA, new URI(MULGARA_NS));
+      aliases.put(KRULE, new URI(KRULE_NS));
+    } catch (URISyntaxException e) {
+      /* get those aliases which we could */
+      logger.error("Error defining internal aliases: ", e);
+    }
+    return aliases;
+  }  
+
 
   /**
    * @return whether there are unparsed tokens from an unterminated command

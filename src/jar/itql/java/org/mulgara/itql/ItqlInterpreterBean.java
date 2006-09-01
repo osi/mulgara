@@ -96,7 +96,7 @@ public class ItqlInterpreterBean {
    * The ITQL interpreter Bean.
    */
   private final ItqlInterpreter interpreter =
-    new ItqlInterpreter(new HashMap());
+    new ItqlInterpreter(ItqlInterpreter.getDefaultAliases());
 
   /**
    * Create the ITQL interpreter.
