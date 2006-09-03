@@ -36,7 +36,7 @@ import org.apache.soap.SOAPException;
 import org.apache.soap.rpc.Call;
 import org.apache.soap.rpc.Parameter;
 import org.apache.soap.rpc.Response;
-import org.mulgara.util.SoapClient;
+import org.mulgara.util.TagSoapClient;
 
 /**
  * This class queries the "#" model in a Mulgara server for permissions.
@@ -56,7 +56,7 @@ import org.mulgara.util.SoapClient;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class SoapClient {
+public class TagSoapClient {
 
   //
   // Constants
@@ -73,7 +73,7 @@ public class SoapClient {
    * the category to log to
    */
   private final static Logger log =
-    Logger.getLogger(SoapClient.class.getName());
+    Logger.getLogger(TagSoapClient.class.getName());
 
   /**
    * Extract content from Response

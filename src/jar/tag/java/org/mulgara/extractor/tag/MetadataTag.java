@@ -470,7 +470,7 @@ public class MetadataTag extends TagSupport {
       }
       else {
 
-        pageContext.getOut().println(SoapClient.getContent(metadataResponse));
+        pageContext.getOut().println(TagSoapClient.getContent(metadataResponse));
       }
 
       // end if
@@ -802,7 +802,7 @@ public class MetadataTag extends TagSupport {
       log.debug("Sending queries to " + soapEndpoint);
     }
 
-    return SoapClient.invoke(soapEndpoint, metadataQuery.toString());
+    return TagSoapClient.invoke(soapEndpoint, metadataQuery.toString());
   }
 
   // getQueries()

@@ -333,7 +333,7 @@ public class AlldocsTag extends TagSupport {
       }
       else {
 
-        pageContext.getOut().println(SoapClient.getContent(allDocsResponse));
+        pageContext.getOut().println(TagSoapClient.getContent(allDocsResponse));
       }
 
       // end if
@@ -491,7 +491,7 @@ public class AlldocsTag extends TagSupport {
     log.debug("Sending all documents query to " + soapEndpoint + ":\n" +
       allDocsQuery);
 
-    return SoapClient.invoke(soapEndpoint, allDocsQuery);
+    return TagSoapClient.invoke(soapEndpoint, allDocsQuery);
   }
 
   // getTmexModel()

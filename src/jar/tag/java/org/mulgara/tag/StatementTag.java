@@ -355,7 +355,7 @@ public class StatementTag extends BodyTagSupport {
           for (Iterator ansIterator = this.getAnswers().iterator();
                ansIterator.hasNext(); ) {
 
-            pageContext.getOut().println(SoapClient.getContent(
+            pageContext.getOut().println(TagSoapClient.getContent(
                 (Response) ansIterator.next()));
           }
 
@@ -720,7 +720,7 @@ public class StatementTag extends BodyTagSupport {
     }
 
     // try-catch
-    return SoapClient.invoke(url, query);
+    return TagSoapClient.invoke(url, query);
   }
 
   // sendQuery()
