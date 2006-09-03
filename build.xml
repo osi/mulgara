@@ -1975,7 +1975,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
     description="Runs all jxunit based testing">
   </target>
 
-<target name="ideSupport" depends="dist">
+<target name="ideSupport" depends="dist,demo-mp3-jar">
 
      <jar jarfile="${dist.dir}/ideSupport.jar">
       <zipfileset dir="${obj.dir}/jar/itql/classes" includes="org/mulgara/itql/**"/>
@@ -1984,11 +1984,14 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
       <zipfileset dir="${obj.dir}/jar/config/classes" includes="org/mulgara/config/**"/>
       <zipfileset dir="${obj.dir}/jar/util/classes" includes="org/mulgara/util/conversion/**"/>
       <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="org/mulgara/server/rmi/**"/>
+	  <zipfileset dir="${obj.dir}/jar/demo-mp3/classes" includes="org/mulgara/demo/mp3/**"/>
+      <zipfileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/barracuda/**"/>
+      <zipfileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/webui/**"/>
       <zipfileset dir="${basedir}" includes="conf/**"/>
       <!-- include pre-bundled webapps -->
       <zipfileset dir="${bin.dir}" prefix="webapps" includes="${webui.war}"/>
       <zipfileset dir="${obj.dir}/war" prefix="webapps" includes="webservices.war"/>
-      <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda-core*.jar"/>
+      <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda*.jar"/>
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <!-- Schemas -->
