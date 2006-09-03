@@ -27,53 +27,78 @@
 
 package org.mulgara.webui.viewer;
 
-import java.io.*;
-import java.net.*;
-
-// For result sets
-import java.sql.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
 import javax.naming.Context;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.*;
-
+import org.apache.log4j.Logger;
+import org.enhydra.barracuda.core.comp.AbstractTemplateModel;
+import org.enhydra.barracuda.core.comp.BComponent;
+import org.enhydra.barracuda.core.comp.BInput;
+import org.enhydra.barracuda.core.comp.BSelect;
+import org.enhydra.barracuda.core.comp.BTemplate;
+import org.enhydra.barracuda.core.comp.BText;
+import org.enhydra.barracuda.core.comp.DefaultItemMap;
+import org.enhydra.barracuda.core.comp.DefaultListModel;
+import org.enhydra.barracuda.core.comp.DefaultTemplateView;
+import org.enhydra.barracuda.core.comp.ListModel;
+import org.enhydra.barracuda.core.comp.TemplateView;
+import org.enhydra.barracuda.core.comp.ViewContext;
+import org.enhydra.barracuda.core.event.BaseEvent;
+import org.enhydra.barracuda.core.event.BaseEventListener;
+import org.enhydra.barracuda.core.event.ClientSideRedirectException;
+import org.enhydra.barracuda.core.event.ControlEventContext;
+import org.enhydra.barracuda.core.event.DefaultBaseEventListener;
+import org.enhydra.barracuda.core.event.DefaultEventGateway;
+import org.enhydra.barracuda.core.event.DefaultListenerFactory;
+import org.enhydra.barracuda.core.event.EventException;
+import org.enhydra.barracuda.core.event.InterruptDispatchException;
+import org.enhydra.barracuda.core.event.ListenerFactory;
+import org.enhydra.barracuda.core.event.ViewEventContext;
+import org.enhydra.barracuda.core.event.helper.DefaultViewHandler;
+import org.enhydra.barracuda.core.event.helper.EventForwardingFactory;
+import org.enhydra.barracuda.core.util.dom.DOMUtil;
+import org.enhydra.barracuda.core.util.dom.DefaultDOMLoader;
+import org.enhydra.barracuda.core.util.http.SessionServices;
+import org.enhydra.barracuda.plankton.data.MapStateMap;
+import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.URIReference;
-import org.jrdf.graph.BlankNode;
-
-import org.enhydra.barracuda.core.comp.*;
-import org.enhydra.barracuda.core.event.*;
-import org.enhydra.barracuda.core.event.helper.*;
-import org.enhydra.barracuda.core.forms.*;
-import org.enhydra.barracuda.core.forms.validators.*;
-import org.enhydra.barracuda.plankton.data.MapStateMap;
-import org.enhydra.barracuda.core.util.dom.*;
-import org.enhydra.barracuda.core.util.http.*;
-import org.w3c.dom.*;
-import org.w3c.dom.html.*;
-
-// Other locally required classes
 import org.mulgara.barracuda.dom.util.HtmlTableBuilder;
 import org.mulgara.barracuda.gateway.ExceptionHandlerGateway;
-
-// For queries
-import org.mulgara.itql.*;
-
-// For answers
-import org.mulgara.query.*;
-import org.mulgara.query.rdf.*;
+import org.mulgara.itql.ItqlInterpreterBean;
+import org.mulgara.query.Answer;
+import org.mulgara.query.TuplesException;
 import org.mulgara.server.EmbeddedMulgaraServer;
-
-// For displaying exceptions
-import org.mulgara.webui.viewer.events.*;
-import javax.servlet.ServletException;
-import org.enhydra.barracuda.core.event.EventException;
-import java.util.List;
+import org.mulgara.webui.viewer.events.ExecuteQuery;
+import org.mulgara.webui.viewer.events.GetViewerScreen;
+import org.mulgara.webui.viewer.events.RenderViewerScreen;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.html.HTMLAnchorElement;
+import org.w3c.dom.html.HTMLCollection;
+import org.w3c.dom.html.HTMLElement;
+import org.w3c.dom.html.HTMLTableCellElement;
 import org.w3c.dom.html.HTMLTableElement;
+import org.w3c.dom.html.HTMLTableRowElement;
 
 /**
  * Event handlers (both Controller and View) for the Viewer screen.
