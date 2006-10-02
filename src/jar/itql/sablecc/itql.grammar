@@ -102,6 +102,13 @@ Tokens
   {esc->lit}           escapedtext = character;
   {lit}                text        = nonquote+;
 
+  {def}                lbrace     = '{';
+  {def}                rbrace     = '}';
+  {def}                lbracket   = '[';
+  {def}                rbracket   = ']';
+  {def}                colon      = ':';
+  {def}                comma      = ',';
+
 Ignored Tokens
   blank, comment, escape, endcomment, endurl, hash, url;
 
@@ -241,9 +248,25 @@ Productions
 
   constraint_factor =
     {constraint} exclude? constraint                  |
+    {compound} lbrace [subject]:element exists_expression in_clause? rbrace |
+    {existential} lbracket exists_expression in_clause? rbracket |
     {expression} exclude? lpar constraint_expression rpar |
     {transitive} transitive_clause |
     {walk} walk_clause ;
+
+  exists_expression =
+    {eterm} exists_pterm  |
+    {colon} exists_expression colon exists_pterm ;
+
+  exists_pterm =
+    {pterm} [predicate]:element exists_oterm ;
+
+  exists_oterm =
+    {eo1} oterm |
+    {eo2} exists_oterm comma oterm ;
+
+  oterm = 
+    {oterm} [object]:element ;
 
   transitive_clause =
     {transitive1} trans lpar constraint rpar |

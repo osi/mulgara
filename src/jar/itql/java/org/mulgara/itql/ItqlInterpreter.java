@@ -16,7 +16,15 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *  Copywrite in the anon-variable support:
+ *  The Australian Commonwealth Government
+ *  Department of Defense
+ *  Developed by Netymon Pty Ltd
+ *  under contract 4500507038
+ *  contributed to the Mulgara Project under the 
+ *    Mozilla Public License version 1.1
+ *  per clause 4.1.3 and 4.1.4 of the above contract.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -269,6 +277,11 @@ public class ItqlInterpreter extends DepthFirstAdapter {
    * the option to enable the timing of commands
    */
   private boolean timeOption = false;
+
+  /**
+   * The next anonymous variable suffix
+   */
+  private int anonSuffix = 0;
 
   //
   // Constructors
@@ -3800,6 +3813,15 @@ public class ItqlInterpreter extends DepthFirstAdapter {
 
     // return the contraint expression
     return constraintExpression;
+  }
+
+  /**
+   * Returns an anonymous variable unique for this interpreter.
+   * Note: We really should introduce a new subclass of Variable
+   * that is explicitly anonymous, but for now this will do.
+   */
+  public Variable nextAnonVariable() {
+    return new Variable("av__" + this.anonSuffix++);
   }
 
   /**

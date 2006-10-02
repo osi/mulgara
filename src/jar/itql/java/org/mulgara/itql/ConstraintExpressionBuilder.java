@@ -16,7 +16,15 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *  Copywrite in the compound-constraint syntax:
+ *  The Australian Commonwealth Government
+ *  Department of Defense
+ *  Developed by Netymon Pty Ltd (mailto:mail@netymon.com)
+ *  under contract 4500507038
+ *  contributed to the Mulgara Project under the 
+ *    Mozilla Public License version 1.1
+ *  per clause 4.1.3 and 4.1.4 of the above contract.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -29,6 +37,9 @@ package org.mulgara.itql;
 
 // Java 2 standard packages
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 // Third party packages
 import org.apache.log4j.Logger; // Apache Log4J
@@ -320,6 +331,95 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
     }
   }
 
+   /*
+    * Handle a existential compound constraint.
+    */
+   public void caseAExistentialConstraintFactor(
+       AExistentialConstraintFactor rawFactor) {
+    if (logger.isDebugEnabled()) {
+       logger.debug("Found existential - constraint factor " + rawFactor);
+     }
+     try {
+       setConstraintExpression(
+         buildExistential(
+           interpreter.nextAnonVariable(),
+           rawFactor.getExistsExpression(),
+           (AInClause)rawFactor.getInClause()));
+     } catch (URISyntaxException eu) {
+       uriException = eu;
+     } catch (QueryException qe) {
+       queryException = qe;
+     }
+   }
+
+   /*
+    * Handle a concrete compound constraint.
+    */
+   public void caseACompoundConstraintFactor(
+       ACompoundConstraintFactor rawFactor) {
+     if (logger.isDebugEnabled()) {
+       logger.debug("Found compound - constraint factor " + rawFactor);
+     }
+     try {
+       setConstraintExpression(
+         buildExistential(
+           toConstraintElement(rawFactor.getSubject()),
+           rawFactor.getExistsExpression(),
+           (AInClause)rawFactor.getInClause()));
+     } catch (URISyntaxException eu) {
+       uriException = eu;
+     } catch (QueryException qe) {
+       queryException = qe;
+     }
+   }
+           
+   public ConstraintExpression buildExistential(ConstraintElement subject, PExistsExpression rawTerm, AInClause in)
+       throws URISyntaxException, QueryException
+   {
+     if (logger.isDebugEnabled()) {
+       logger.debug("building existential subject: " + subject + " term.class: " + rawTerm.getClass());
+     }
+ 
+     CompoundPredListBuilder builder = new CompoundPredListBuilder();
+     rawTerm.apply(builder);
+ 
+     if (logger.isDebugEnabled()) {
+       logger.debug("CompoundPredListBuilder built: " + builder.getPredLists());
+     }
+ 
+     ConstraintElement model = in == null ? null : toConstraintElement(in.getElement());
+ 
+     // forall predicates in list forall objects in pred's obj-list
+     //    add new constraint(s,p,o) to argList.
+     List argList = new ArrayList();
+ 
+     Iterator p = builder.getPredLists().iterator();
+     while (p.hasNext()) {
+       CompoundPredicate plist = (CompoundPredicate)p.next();
+ 
+       ConstraintElement predicate = toConstraintElement(plist.getPredicate());
+ 
+       Iterator o = plist.getObjectList().iterator();
+       while (o.hasNext()) {
+         PElement oelem = (PElement)o.next();
+ 
+         ConstraintElement object = toConstraintElement(oelem);
+ 
+         if (model == null) {
+           argList.add(ConstraintFactory.newConstraint(subject, predicate, object));
+         } else {
+           argList.add(ConstraintFactory.newConstraint(subject, predicate, object, model));
+         }
+       }
+     }
+ 
+     if (logger.isDebugEnabled()) {
+       logger.debug("Existential term = and(" + argList + ")");
+     }
+ 
+     return new ConstraintConjunction(argList);
+   }
+                
   /**
    * Handle a walk constraint.
    *
@@ -463,7 +563,9 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
     try {
 
       // log that we've got a dterm constraint term
-      logger.debug("Found dterm contraint term " + rawConstraintTerm);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Found dterm contraint term " + rawConstraintTerm);
+      }
 
       // get the constraint factor
       PConstraintDterm constraintDterm =
