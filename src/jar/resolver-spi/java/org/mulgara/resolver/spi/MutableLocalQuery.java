@@ -26,6 +26,11 @@
  *     Mozilla Public License version 1.1
  *   per clause 4.1.3 of the above contract.
  *
+ * Modified 2006-04 by Netymon Pty Ltd under contract
+ *   4500507038.  Contributed to the Mulgara Project
+ *   (per clause 4.1.4) undr the Mozilla Public License
+ *   version 1.1 per clause 4.1.3 of the above contract.
+ *   
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
  * should use the text of this Exhibit A rather than the text found in the

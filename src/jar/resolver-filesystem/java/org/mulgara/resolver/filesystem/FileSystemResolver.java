@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -336,7 +338,7 @@ public class FileSystemResolver implements Resolver {
     }
 
     // Obtain the model of the constraint
-    ConstraintElement modelElem = constraint.getElement(3);
+    ConstraintElement modelElem = constraint.getModel();
 
     // Verify our model node is a local node
     if (!(modelElem instanceof LocalNode)) {

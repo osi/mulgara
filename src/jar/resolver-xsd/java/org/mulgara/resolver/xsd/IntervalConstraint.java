@@ -26,6 +26,9 @@
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
  *
+ *  getModel() contributed by Netymon Pty Ltd on behalf of
+ *  The Australian Commonwealth Government under contract 4500507038.
+ *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
  * should use the text of this Exhibit A rather than the text found in the
@@ -43,10 +46,13 @@ import java.util.Set;
 import org.apache.log4j.Logger; // Apache Log4J
 
 // Local classes
-import org.mulgara.query.ConstraintExpression;
+import org.mulgara.query.Constraint;
+import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
+import org.mulgara.query.rdf.URIReferenceImpl;
+import org.jrdf.graph.URIReference;
 
 /**
  * A constraint representing a bounded interval between two XSD values.
@@ -67,7 +73,7 @@ import org.mulgara.query.Variable;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class IntervalConstraint implements ConstraintExpression {
+public class IntervalConstraint implements Constraint {
 
   /** Logger */
   private static Logger logger =
@@ -95,6 +101,11 @@ public class IntervalConstraint implements ConstraintExpression {
   private final Bound upperBound;
 
   /**
+   * The model used to reference the XSD Resolver from this constraint.
+   */
+   private final URIReference model;
+
+  /**
    * Sole constructor.
    *
    * @param variable  the variable to constrain, never <code>null</code>
@@ -105,17 +116,16 @@ public class IntervalConstraint implements ConstraintExpression {
    * @throws IllegalArgumentException if <var>variable</var> is
    *   <code>null</code>
    */
-  IntervalConstraint(Variable variable, Bound lowerBound, Bound upperBound)
+  IntervalConstraint(Variable variable, Bound lowerBound, Bound upperBound, URIReference model)
   {
-    // Validate "variable" parameter
-    if (variable == null) {
-      throw new IllegalArgumentException("Null \"variable\" parameter");
-    }
+    if (variable == null) { throw new IllegalArgumentException("Null \"variable\" parameter"); }
+    if (model == null) { throw new IllegalArgumentException("Null 'model' parameter"); }
 
     // Initialize field
     this.variable = variable;
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
+    this.model =  model;
   }
 
   /**
@@ -142,8 +152,22 @@ public class IntervalConstraint implements ConstraintExpression {
     return new IntervalConstraint(
       variable,
       maximumBound(lowerBound, intervalConstraint.lowerBound),
-      minimumBound(upperBound, intervalConstraint.upperBound)
+      minimumBound(upperBound, intervalConstraint.upperBound),
+      model
     );
+  }
+
+
+  public ConstraintElement getModel() {
+    return new URIReferenceImpl(model.getURI());
+  }
+
+  public ConstraintElement getElement(int index) {
+    throw new IllegalStateException("Cannot index IntervalConstraint");
+  }
+
+  public boolean isRepeating() {
+    return false;
   }
 
   /**

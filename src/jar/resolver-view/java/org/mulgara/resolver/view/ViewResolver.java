@@ -17,6 +17,8 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s): N/A.
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -243,7 +245,7 @@ public class ViewResolver implements Resolver, ViewMarker
     if (logger.isDebugEnabled()) {
       logger.debug("Resolve " + constraint);
     }
-    ConstraintElement modelElem = constraint.getElement(3);
+    ConstraintElement modelElem = constraint.getModel();
     if (!(modelElem instanceof LocalNode)) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);

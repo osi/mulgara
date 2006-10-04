@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -105,6 +107,10 @@ public abstract class ConstraintHaving extends AbstractConstraintExpression impl
     element = new ConstraintElement[] {e0, e1, e2, e3};
   }
 
+
+  public ConstraintElement getModel() {
+    return element[3];
+  }
 
   /**
    * Constructor. The meta node is initialized with the variable <code>$_from</code>.

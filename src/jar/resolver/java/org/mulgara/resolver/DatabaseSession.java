@@ -17,6 +17,8 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s): N/A.
+ *   SymbolicTransformation refactor contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -770,7 +772,10 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
 
     Tuples result = null;
     try {
-      result = localQuery.resolve();
+      LocalQuery lq = (LocalQuery)localQuery.clone();
+      transform(this, lq);
+      result = lq.resolve();
+      lq.close();
     } catch (Throwable th) {
       try {
         logger.warn("Inner Query failed", th);
@@ -812,31 +817,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       LocalQuery localQuery =
         new LocalQuery(query, systemResolver, databaseSession);
 
-      // Start with the symbolic phase of resolution
-      LocalQuery.MutableLocalQueryImpl mutableLocalQueryImpl =
-        localQuery.new MutableLocalQueryImpl();
-      if (symbolicLogger.isDebugEnabled()) {
-        symbolicLogger.debug("Before transformation: " + mutableLocalQueryImpl);
-      }
-      Iterator i = databaseSession.symbolicTransformationList.iterator();
-      while (i.hasNext()) {
-        SymbolicTransformation symbolicTransformation =
-          (SymbolicTransformation) i.next();
-        assert symbolicTransformation != null;
-        symbolicTransformation.transform(mutableLocalQueryImpl);
-        if (mutableLocalQueryImpl.isModified()) {
-          // When a transformation succeeds, we rewind and start from the
-          // beginning of the symbolicTransformationList again
-          if (symbolicLogger.isDebugEnabled()) {
-            symbolicLogger.debug("Symbolic transformation: " +
-                                 mutableLocalQueryImpl);
-          }
-          mutableLocalQueryImpl.close();
-          mutableLocalQueryImpl = localQuery.new MutableLocalQueryImpl();
-          i = databaseSession.symbolicTransformationList.iterator();
-        }
-      }
-      mutableLocalQueryImpl.close();
+      transform(databaseSession, localQuery);
 
       // Complete the numerical phase of resolution
       Tuples tuples = localQuery.resolve();
@@ -850,6 +831,40 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       logger.debug("Answer rows = " + result.getRowCount());
     }
     return result;
+  }
+
+
+  /**
+   *
+   * Perform in-place transformation of localQuery.
+   * Note: we really want to convert this to a functional form eventually.
+   */
+  private static void transform(DatabaseSession databaseSession, LocalQuery localQuery) throws Exception {
+    // Start with the symbolic phase of resolution
+    LocalQuery.MutableLocalQueryImpl mutableLocalQueryImpl =
+      localQuery.new MutableLocalQueryImpl();
+    if (symbolicLogger.isDebugEnabled()) {
+      symbolicLogger.debug("Before transformation: " + mutableLocalQueryImpl);
+    }
+    Iterator i = databaseSession.symbolicTransformationList.iterator();
+    while (i.hasNext()) {
+      SymbolicTransformation symbolicTransformation =
+        (SymbolicTransformation) i.next();
+      assert symbolicTransformation != null;
+      symbolicTransformation.transform(databaseSession.operationContext, mutableLocalQueryImpl);
+      if (mutableLocalQueryImpl.isModified()) {
+        // When a transformation succeeds, we rewind and start from the
+        // beginning of the symbolicTransformationList again
+        if (symbolicLogger.isDebugEnabled()) {
+          symbolicLogger.debug("Symbolic transformation: " +
+                               mutableLocalQueryImpl);
+        }
+        mutableLocalQueryImpl.close();
+        mutableLocalQueryImpl = localQuery.new MutableLocalQueryImpl();
+        i = databaseSession.symbolicTransformationList.iterator();
+      }
+    }
+    mutableLocalQueryImpl.close();
   }
 
   private void endPreviousQueryTransaction() throws QueryException {

@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -207,7 +209,7 @@ public abstract class ContentResolver implements Resolver {
     if (constraint == null) {
       throw new IllegalArgumentException("constraint null");
     }
-    else if (!(constraint.getElement(3) instanceof LocalNode)) {
+    else if (!(constraint.getModel() instanceof LocalNode)) {
       throw new QueryException("Constraint model can't be variable");
     }
 
@@ -215,7 +217,7 @@ public abstract class ContentResolver implements Resolver {
     URIReference modelURIReference;
     long modelNode;
     try {
-      modelNode = ((LocalNode) constraint.getElement(3)).getValue();
+      modelNode = ((LocalNode) constraint.getModel()).getValue();
       Node node = resolverSession.globalize(modelNode);
 
       if (!(node instanceof URIReference)) {

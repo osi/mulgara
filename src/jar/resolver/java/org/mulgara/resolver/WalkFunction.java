@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -190,7 +192,7 @@ public abstract class WalkFunction {
           // build the constraint with the temporary variable name
           openConstraint = new ConstraintImpl(anchoredConstraintVariable,
               anchoredConstraint.getElement(1), tmpVariable,
-              anchoredConstraint.getElement(3));
+              anchoredConstraint.getModel());
           // set up the final result built from the second constraint
           inferredResult = new LiteralTuples(new Variable[] {
               (Variable) predConstraint.getUnanchoredConstraint().getElement(2),
@@ -212,7 +214,7 @@ public abstract class WalkFunction {
           // build the constraint with the temporary variable name
           openConstraint = new ConstraintImpl(tmpVariable,
               anchoredConstraint.getElement(1), anchoredConstraintVariable,
-              anchoredConstraint.getElement(3));
+              anchoredConstraint.getModel());
 
           // set up the final result built from the second constraint
           inferredResult = new LiteralTuples(new Variable[] {

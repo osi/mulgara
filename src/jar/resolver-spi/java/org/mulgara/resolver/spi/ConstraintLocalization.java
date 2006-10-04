@@ -14,20 +14,18 @@
  * The Initial Developer of the Original Code is Plugged In Software Pty
  * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
- * Plugged In Software Pty Ltd. All Rights Reserved.
+ * Northrop Grumman Corporation. All Rights Reserved.
  *
  * Contributor(s):
  *   The copyright on this file is held by:
  *     The Australian Commonwealth Government
  *     Department of Defense
  *   Developed by Netymon Pty Ltd
- *   under contract 4500430665
- *   contributed to the Mulgara Project under the
+ *   under contract 4500507038
+ *   contributed to the Mulgara Project
+ *   (per clause 4.1.4) under the
  *     Mozilla Public License version 1.1
  *   per clause 4.1.3 of the above contract.
- *
- *   SymbolicTransfomationContext contributed by Netymon Pty Ltd on behalf of
- *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -38,28 +36,34 @@
 
 package org.mulgara.resolver.spi;
 
+// Java 2 standard packages
+import java.net.URI;
+
+// Local packages
+import org.mulgara.query.Constraint;
+import org.mulgara.query.ConstraintElement;
+
 /**
- * A transformation rule involving knowledge specific to a particular
- * {@link ResolverFactory}.
+ * Used to constrain a given constraint to a specified model
  *
- * @created 2005-05-12
- * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- * @version $Revision: 1.3 $
- * @modified $Date: 2005/06/09 09:26:20 $ by $Author: raboczi $
- * @maintenanceAuthor $Author: raboczi $
- * @copyright &copy;2005 <a href="http://www.defence.gov.au/">
- *      Australian Commonwealth Government, Department of Defence</a>
+ * @created 2006-04-18
+ * @author <a href="http://www.pisoftware.com/andrae">Andrae Muys</a>
+ * @version $Revision: 1.1.1.1 $
+ * @modified $Date: 2005/10/30 19:21:16 $ 
+ * @maintenanceAuthor $Author: prototypo $
+ * @company <a href="mailto:mail@netymon.com">Netymon Pty Ltd</a>
+ * @copyright &copy;2006 Australian Commonwealth Government
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface SymbolicTransformation
+
+public interface ConstraintLocalization
 {
   /**
-   * @param mutableLocalQuery  the query to transform, never <code>null</code>
-   * @throws IllegalArgumentException if <var>mutableLocalQuery</var> is
-   *   <code>null</code>
-   * @throws SymbolicTransformationException if the transformation can't be
-   *   performed
+   * Localize this Constraint.
+   *
+   * Note: the correct type of this function is forall a&lt;:Constraint, a -&lt; a
+   *
+   * @param constraint the constraint to localize
    */
-  public void transform(SymbolicTransformationContext context, MutableLocalQuery mutableLocalQuery)
-    throws SymbolicTransformationException;
+    public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception;
 }

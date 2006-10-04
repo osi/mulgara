@@ -17,6 +17,8 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s): N/A.
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -164,7 +166,7 @@ public abstract class DirectTransitiveFunction extends TransitiveFunction {
             variable,
             predConstraint.getElement(1),
             tmpVariable,
-            predConstraint.getElement(3));
+            predConstraint.getModel());
       } else {
         // forward anchor  [anchor predicate $x]
         value = new Long(session.lookup((Node)predConstraint.getElement(0)));

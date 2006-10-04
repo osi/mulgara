@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -182,7 +184,7 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
       long subject = toGraphTuplesIndex(constraint.getElement(0));
       long predicate = toGraphTuplesIndex(constraint.getElement(1));
       long object = toGraphTuplesIndex(constraint.getElement(2));
-      long meta = toGraphTuplesIndex(constraint.getElement(3));
+      long meta = toGraphTuplesIndex(constraint.getModel());
 
       // Return the tuples using the s, p, o hints.
       baseTuples = store.findTuples(subject, predicate, object, meta);

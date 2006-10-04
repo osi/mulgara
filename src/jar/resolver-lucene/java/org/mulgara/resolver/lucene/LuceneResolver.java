@@ -17,6 +17,8 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s): N/A.
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -319,7 +321,7 @@ public class LuceneResolver implements Resolver {
       logger.debug("Resolve " + constraint);
     }
 
-    ConstraintElement modelElement = constraint.getElement(3);
+    ConstraintElement modelElement = constraint.getModel();
     if (modelElement instanceof Variable) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);

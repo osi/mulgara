@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -206,7 +208,7 @@ public class XSDResolver implements Resolver {
       logger.debug("!! Resolving " + constraint);
     }
 
-    if (constraint.getElement(3) instanceof Variable) {
+    if (constraint.getModel() instanceof Variable) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
@@ -222,7 +224,7 @@ public class XSDResolver implements Resolver {
                                         (LocalNode) oppositePropertyMap.get(
             constraint.getElement(1)),
                                         constraint.getElement(0),
-                                        constraint.getElement(3));
+                                        constraint.getModel());
       }
 
       long property = ((LocalNode) constraint.getElement(1)).getValue();

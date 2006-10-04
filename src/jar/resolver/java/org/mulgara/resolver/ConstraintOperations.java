@@ -16,7 +16,11 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   ConstraintLocalizations contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -41,6 +45,7 @@ import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
+import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.ConstraintModelRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.ModelResolutionHandler;
@@ -98,12 +103,10 @@ class ConstraintOperations
              ConstraintExpression.class, ConstraintModelRewrite.class);
   }
 
-/*
-  static void addConstraintLocalizations(NVPair[] resolutionHandlers) throws Exception {
-    addToMap(resolutionHandlers, modelResolutionHandlers,
-             ConstraintExpression.class, ConstraintLocalization.class);
+  static void addConstraintLocalizations(NVPair[] resolutionHandlers) throws RuntimeException {
+    addToMap(resolutionHandlers, constraintLocalizations,
+             Constraint.class, ConstraintLocalization.class);
   }
-*/
 
   static boolean constraintRegistered(Class constraintClass) {
   return modelResolutionHandlers.containsKey(constraintClass) ||
@@ -211,33 +214,25 @@ class ConstraintOperations
   }
 
 
-/*
-  public static ConstraintElement localize(QueryEvaluationContext context,
-                                           ConstraintExpression constraintExpr) throws QueryException {
-    try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Localizing ConstraintExpression[" + constraintExpr.getClass() + "]");
-      }
-
-      ConstraintLocalization op = (ConstraintLocalization)constraintLocalizations.get(constraintExpr.getClass());
-      if (op == null) {
-        throw new QueryException("Unknown ConstraintExpression type: " + constraintExpr.getClass() + " known types: " + constraintLocalizations.keySet());
-      }
-
-      ConstraintElement result = op.localize(context, constraintExpr);
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("Localized ConstraintExpression[" + constraintExpr.getClass() + "] to: " + result);
-      }
-
-      return result;
-    } catch (QueryException eq) {
-      throw eq;
-    } catch (Exception e) {
-      throw new QueryException("Failed to localize constraintExpression", e);
+  public static Constraint localize(QueryEvaluationContext context,
+                                    Constraint constraint) throws Exception {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Localizing Constraint[" + constraint.getClass() + "]");
     }
+
+    ConstraintLocalization op = (ConstraintLocalization)constraintLocalizations.get(constraint.getClass());
+    if (op == null) {
+      throw new QueryException("Unknown Constraint type: " + constraint.getClass() + " known types: " + constraintLocalizations.keySet());
+    }
+
+    Constraint result = op.localize(context, constraint);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Localized Constraint[" + constraint.getClass() + "] to: " + result);
+    }
+
+    return result;
   }
-*/
 
 
   static Constraint rewriteConstraintModel(ConstraintElement newModel,
@@ -270,7 +265,7 @@ class ConstraintOperations
     return ConstraintFactory.newConstraint(replace(bindings, constraint.getElement(0)),
                                            replace(bindings, constraint.getElement(1)),
                                            replace(bindings, constraint.getElement(2)),
-                                           replace(bindings, constraint.getElement(3)));
+                                           replace(bindings, constraint.getModel()));
   }
 
 

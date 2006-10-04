@@ -26,6 +26,10 @@
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
  *
+ * SymbolicTransformation context and test's 6 and 7
+ * contributed by Netymon Pty Ltd on behalf of
+ * The Australian Commonwealth Government under contract 4500507038.
+ *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
  * should use the text of this Exhibit A rather than the text found in the
@@ -37,6 +41,7 @@ package org.mulgara.resolver.xsd;
 
 // Java 2 standard packages
 import java.net.URI;
+import java.util.Arrays;
 
 // Third party packages
 import junit.framework.*;        // JUnit
@@ -47,6 +52,7 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.resolver.spi.SymbolicTransformationContext;
 
 /**
  * Unit testing suite for {@link IntervalTransformation}.
@@ -80,6 +86,31 @@ public class IntervalTransformationUnitTest extends TestCase
   private IntervalTransformation intervalTransformation;
 
   /**
+   * Test context for transformation.
+   */
+  private SymbolicTransformationContext context;
+
+  /**
+   * ModelTypeURI for XSD resolver.
+   */
+  private URI modelTypeURI;
+
+  /**
+   * ModelTypeURI for non XSD resolver.
+   */
+  private URI nonXSDTypeURI;
+
+  /**
+   * model that is an XSD model.
+   */
+  private URIReferenceImpl xsdModel;
+
+  /**
+   * Fake model that isn't an XSD model.
+   */
+  private URIReferenceImpl nonXSDModel;
+
+  /**
    * Constructs a new test with the given name.
    *
    * @param name the name of the test
@@ -103,6 +134,8 @@ public class IntervalTransformationUnitTest extends TestCase
     suite.addTest(new IntervalTransformationUnitTest("test3Transform"));
     suite.addTest(new IntervalTransformationUnitTest("test4Transform"));
     suite.addTest(new IntervalTransformationUnitTest("test5Transform"));
+    suite.addTest(new IntervalTransformationUnitTest("test6IgnoreNonXSD"));
+    suite.addTest(new IntervalTransformationUnitTest("test7PreserveNonXSD"));
 
     return suite;
   }
@@ -114,7 +147,26 @@ public class IntervalTransformationUnitTest extends TestCase
   {
     greaterThan     = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt"));
     lessThan        = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt"));
-    intervalTransformation = new IntervalTransformation(lessThan, greaterThan);
+
+    modelTypeURI = new URI(Mulgara.NAMESPACE + "XMLSchemaModel");
+    nonXSDTypeURI = new URI(Mulgara.NAMESPACE + "NotAXSDModel");
+
+    nonXSDModel = new URIReferenceImpl(new URI("non:xsd:model"));
+    xsdModel = new URIReferenceImpl(new URI("xsd:model"));
+
+    intervalTransformation = new IntervalTransformation(modelTypeURI, lessThan, greaterThan);
+    context = new SymbolicTransformationContext() {
+        public URI mapToModelTypeURI(URI modelURI) throws QueryException {
+          if (logger.isDebugEnabled()) {
+            logger.debug("comparing " + modelURI + " against " + xsdModel);
+          }
+          if (modelURI.equals(xsdModel.getURI())) {
+            return modelTypeURI;
+          } else {
+            return nonXSDTypeURI;
+          }
+        }
+      };
   }
 
   /**
@@ -137,7 +189,7 @@ public class IntervalTransformationUnitTest extends TestCase
   public void test1Transform() throws Exception
   {
     try {
-      intervalTransformation.transform((ConstraintExpression) null);
+      intervalTransformation.transformExpression(context, (ConstraintExpression) null);
       fail("Expected an IllegalArgumentException");
     }
     catch (IllegalArgumentException e) {
@@ -150,7 +202,7 @@ public class IntervalTransformationUnitTest extends TestCase
    */
   public void test2Transform() throws Exception
   {
-    assertNull(intervalTransformation.transform(ConstraintTrue.INSTANCE));
+    assertNull(intervalTransformation.transformExpression(context, ConstraintTrue.INSTANCE));
   }
 
   /**
@@ -166,10 +218,10 @@ public class IntervalTransformationUnitTest extends TestCase
       new IntervalConstraint(
         x,
         null,
-        new Bound(3, false)
+        new Bound(3, false),
+        xsdModel
       ),
-      intervalTransformation.transform(
-        (ConstraintExpression) new ConstraintImpl(x, lessThan, new LiteralImpl(3))
+      intervalTransformation.transformExpression(context, new ConstraintImpl(x, lessThan, new LiteralImpl(3), xsdModel)
       )
     );
   }
@@ -183,16 +235,15 @@ public class IntervalTransformationUnitTest extends TestCase
   {
     Variable x = new Variable("x");
 
-    assertEquals(
-      new IntervalConstraint(
+    assertEquals(new IntervalConstraint(
         x,
         new Bound(2, false),
-        new Bound(3, false)
+        new Bound(3, false),
+        xsdModel
       ),
-      intervalTransformation.transform(
-        (ConstraintExpression) new ConstraintConjunction(
-          new ConstraintImpl(x, greaterThan, new LiteralImpl(2)),
-          new ConstraintImpl(x, lessThan, new LiteralImpl(3))
+      intervalTransformation.transformExpression(context, new ConstraintConjunction(
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(2), xsdModel),
+          new ConstraintImpl(x, lessThan, new LiteralImpl(3), xsdModel)
         )
       )
     );
@@ -209,16 +260,63 @@ public class IntervalTransformationUnitTest extends TestCase
     Variable x = new Variable("x");
     Variable y = new Variable("y");
 
-    assertEquals(
-      new ConstraintConjunction(
-        new IntervalConstraint(y, null, new Bound(3, false)),
-        new IntervalConstraint(x, new Bound(2, false), null)
+    assertEquals(new ConstraintConjunction(
+        new IntervalConstraint(y, null, new Bound(3, false), xsdModel),
+        new IntervalConstraint(x, new Bound(2, false), null, xsdModel)
       ),
-      intervalTransformation.transform(
-        (ConstraintExpression) new ConstraintConjunction(
-          new ConstraintImpl(x, greaterThan, new LiteralImpl(2)),
-          new ConstraintImpl(y, lessThan, new LiteralImpl(3))
+      intervalTransformation.transformExpression(context, new ConstraintConjunction(
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(2), xsdModel),
+          new ConstraintImpl(y, lessThan, new LiteralImpl(3), xsdModel)
         )
+      )
+    );
+  }
+
+  /**
+   * Test #6 for the {@link IntervalTransformation#transform} method.
+   *
+   * This checks that non-xsd models will not be transformed.
+   */
+  public void test6IgnoreNonXSD() throws Exception {
+    Variable x = new Variable("x");
+    Variable y = new Variable("y");
+
+    assertEquals(
+      intervalTransformation.transformExpression(context, new ConstraintConjunction(
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(2), nonXSDModel),
+          new ConstraintImpl(y, lessThan, new LiteralImpl(3), nonXSDModel)
+        )
+      ),
+      null);
+  }
+
+  /**
+   * Test #7 for the {@link IntervalTransformation#transform} method.
+   *
+   * This checks that xsd models will be transformed in the presence of
+   * non-xsd models which will be preserved.
+   */
+  public void test7PreserveNonXSD() throws Exception
+  {
+    Variable x = new Variable("x");
+
+    assertEquals(
+      new ConstraintConjunction(Arrays.asList(new Object[] {
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(3), nonXSDModel),
+          new ConstraintImpl(x, lessThan, new LiteralImpl(4), nonXSDModel),
+          new IntervalConstraint(
+            x,
+            new Bound(2, false),
+            new Bound(3, false),
+            xsdModel)
+      })),
+      intervalTransformation.transformExpression(context,
+        new ConstraintConjunction(Arrays.asList(new Object[] {
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(3), nonXSDModel),
+          new ConstraintImpl(x, lessThan, new LiteralImpl(4), nonXSDModel),
+          new ConstraintImpl(x, greaterThan, new LiteralImpl(2), xsdModel),
+          new ConstraintImpl(x, lessThan, new LiteralImpl(3), xsdModel)
+        }))
       )
     );
   }

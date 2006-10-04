@@ -26,6 +26,9 @@
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
  *
+ *   Various contributions by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
+ *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
  * should use the text of this Exhibit A rather than the text found in the
@@ -35,12 +38,16 @@
 
 package org.mulgara.resolver.xsd;
 
+// Standard Java packages
+import java.net.URI;
+
 // Third party packages
 import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Apache Log4J
 
 // Local packages
 import org.mulgara.query.Variable;
+import org.mulgara.query.rdf.URIReferenceImpl;
 
 /**
  * Unit testing suite for {@link IntervalConstraint}.
@@ -64,6 +71,8 @@ public class IntervalConstraintUnitTest extends TestCase
   private static Logger logger =
     Logger.getLogger(IntervalConstraintUnitTest.class.getName());
 
+  private URIReferenceImpl xsdModel;
+
   /**
    * Constructs a new test with the given name.
    *
@@ -72,6 +81,12 @@ public class IntervalConstraintUnitTest extends TestCase
   public IntervalConstraintUnitTest(String name)
   {
     super(name);
+
+    try {
+      xsdModel = new URIReferenceImpl(new URI("xsd:model"));
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to create IntervalConstraintUnitTest");
+    }
   }
 
   /**
@@ -109,9 +124,9 @@ public class IntervalConstraintUnitTest extends TestCase
   public void test1Conjoin() throws Exception
   {
     Variable x = new Variable("x");
-    IntervalConstraint lhs = new IntervalConstraint(x, null, null);
-    IntervalConstraint rhs = new IntervalConstraint(x, null, null);
-    IntervalConstraint expected = new IntervalConstraint(x, null, null);
+    IntervalConstraint lhs = new IntervalConstraint(x, null, null, xsdModel);
+    IntervalConstraint rhs = new IntervalConstraint(x, null, null, xsdModel);
+    IntervalConstraint expected = new IntervalConstraint(x, null, null, xsdModel);
     assertEquals(expected, lhs.conjoin(rhs));
   }
 
@@ -121,6 +136,6 @@ public class IntervalConstraintUnitTest extends TestCase
   public void test1ToString() throws Exception
   {
     Variable x = new Variable("x");
-    assertEquals("[$x]", (new IntervalConstraint(x, null, null)).toString());
+    assertEquals("[$x]", (new IntervalConstraint(x, null, null, xsdModel)).toString());
   }
 }

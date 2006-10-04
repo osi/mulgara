@@ -17,7 +17,7 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s):
- *   The copywrite in this file is held by:
+ *   The copyright in this file is held by:
  *     The Australian Commonwealth Government
  *     Department of Defense
  *   Developed by Netymon Pty Ltd
@@ -25,6 +25,9 @@
  *   contributed to the Mulgara Project under the
  *     Mozilla Public License version 1.1
  *   per clause 4.1.3 of the above contract.
+ *
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -128,6 +131,10 @@ public class TestConstraint implements Constraint {
     vars.add(var2);
 
     return vars;
+  }
+
+  public ConstraintElement getModel() {
+    throw new IllegalStateException("TestConstraint is of fixed extent, no model available");
   }
 
   public boolean equals(Object object) {

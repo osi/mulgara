@@ -16,7 +16,25 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ *   Various modifications to this file copyright:
+ *     The Australian Commonwealth Government
+ *     Department of Defense
+ *   Developed by Netymon Pty Ltd
+ *   under contract 4500430665
+ *   contributed to the Kowari Project under the
+ *     Mozilla Public License version 1.1
+ *   per clause 4.1.3 of the above contract.
+ *
+ *   Various modifications to this file copyright:
+ *     2005-2006 Netymon Pty Ltd <mail@netymon.com>
+ *
+ *   Various modifications to this file copyright:
+ *     2005-2006 Andrae Muys <andrae@muys.id.au>
+ *
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
+ *   ConstraintLocalization contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -41,6 +59,7 @@ import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
+import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.ConstraintModelRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.GlobalizeException;
@@ -165,7 +184,7 @@ class LocalQueryResolver implements QueryEvaluationContext
         new NVPair(ConstraintImpl.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             ConstraintElement constraintElem =
-              ((ConstraintImpl) constraintExpr).getElement(3);
+              ((ConstraintImpl) constraintExpr).getModel();
             assert constraintElem != null;
             if (constraintElem.equals(Variable.FROM)) {
               return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
@@ -186,7 +205,7 @@ class LocalQueryResolver implements QueryEvaluationContext
         }),
         new NVPair(ConstraintNegation.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            if (((ConstraintNegation)constraintExpr).getElement(3).equals(Variable.FROM)) {
+            if (((ConstraintNegation)constraintExpr).getModel().equals(Variable.FROM)) {
               return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
             } else {
               ConstraintElement constraintElem = ((ConstraintNegation)constraintExpr).getElement(3);
@@ -301,29 +320,31 @@ class LocalQueryResolver implements QueryEvaluationContext
             return new ConstraintNegation(new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel));
           }
         }),
-/*
-        new NVPair(WalkConstraint.class, new ConstraintModelRewrite() {
-          public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
-            logger.error("Rewriting walk constraint");
-            return constraint;
-          }
-        }),
-        new NVPair(SingleTransitiveConstraint.class, new ConstraintModelRewrite() {
-          public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
-            logger.error("Rewriting single transitive constraint");
-            return constraint;
-          }
-        }),
-        new NVPair(TransitiveConstraint.class, new ConstraintModelRewrite() {
-          public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
-            logger.error("Rewriting transitive constraint");
-            return constraint;
-          }
-        }),
-*/
       });
   }
 
+  static {
+    ConstraintOperations.addConstraintLocalizations(new NVPair[]
+      {
+        new NVPair(ConstraintImpl.class, new ConstraintLocalization() {
+          public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception {
+            return new ConstraintImpl(context.localize(constraint.getElement(0)),
+                context.localize(constraint.getElement(1)),
+                context.localize(constraint.getElement(2)),
+                context.localize(constraint.getElement(3)));
+          }
+        }),
+        new NVPair(ConstraintNegation.class, new ConstraintLocalization() {
+          public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception {
+            return new ConstraintNegation(new ConstraintImpl(
+                context.localize(constraint.getElement(0)),
+                context.localize(constraint.getElement(1)),
+                context.localize(constraint.getElement(2)),
+                context.localize(constraint.getElement(3))));
+          }
+        }),
+      });
+  }
 
   public List resolveConstraintOperation(ModelExpression modelExpr,
                                          ConstraintOperation constraintOper)
@@ -394,31 +415,19 @@ class LocalQueryResolver implements QueryEvaluationContext
    */
   public Tuples resolve(ModelResource modelResource, Constraint constraint) throws QueryException
   {
-    assert modelResource != null || !constraint.getElement(3).equals(Variable.FROM);
+    assert modelResource != null || !constraint.getModel().equals(Variable.FROM);
     assert constraint != null;
-    boolean inverted = constraint instanceof ConstraintNegation;
 
     // Delegate constraint resolution back to the database session
     try {
-      ConstraintElement subject = constraint.getElement(0);
-      ConstraintElement predicate = constraint.getElement(1);
-      ConstraintElement object = constraint.getElement(2);
-      ConstraintElement model = constraint.getElement(3).equals(Variable.FROM)
-          ? new URIReferenceImpl(modelResource.getURI())
-          : constraint.getElement(3);
+      Constraint localized = ConstraintOperations.localize(this, constraint);
 
-      // FIXME: Replace this with a call to localize on ConstraintDescriptor !!
-      Constraint newConstraint = new ConstraintImpl(
-          localize(subject),
-          localize(predicate),
-          localize(object),
-          localize(model)
-      );
-      if (inverted) {
-        newConstraint = new ConstraintNegation(newConstraint);
+      if (localized.getModel().equals(Variable.FROM)) {
+        localized = ConstraintOperations.rewriteConstraintModel(
+            localize(new URIReferenceImpl(modelResource.getURI())), localized);
       }
 
-      Tuples result = localQuery.resolve(newConstraint);
+      Tuples result = localQuery.resolve(localized);
 
       return result;
     } catch (LocalizeException e) {
@@ -426,6 +435,8 @@ class LocalQueryResolver implements QueryEvaluationContext
                                " WHERE " + constraint, e);
     } catch (QueryException eq) {
       throw new QueryException("Error resolving " + constraint + " from " + modelResource, eq);
+    } catch (Exception e) {
+      throw new QueryException("Unexpected error resolving " + constraint + " from " + modelResource, e);
     }
   }
 

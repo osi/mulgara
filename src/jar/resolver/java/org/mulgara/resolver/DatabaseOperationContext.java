@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   SymbolicTransformationContext contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -61,6 +63,7 @@ import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.SecurityAdapter;
+import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.resolver.view.ViewMarker;
 import org.mulgara.store.nodepool.NodePool;
@@ -78,7 +81,7 @@ import org.mulgara.store.nodepool.NodePool;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseOperationContext implements OperationContext
+class DatabaseOperationContext implements OperationContext, SymbolicTransformationContext
 {
   /**
    * Logger.
@@ -366,6 +369,32 @@ class DatabaseOperationContext implements OperationContext
     }
     // model was not recognised as being on this server, so leave it alone
     return model;
+  }
+
+  //
+  // Methods required by SymbolicTransformationContext
+  //
+
+  public URI mapToModelTypeURI(URI modelURI) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Finding modelTypeURI for " + modelURI);
+      }
+      long rawModel = databaseSession.getSystemResolver().localize(new URIReferenceImpl(modelURI));
+      long canModel = getCanonicalModel(rawModel);
+
+      URI modelTypeURI = findModelTypeURI(canModel);
+
+      if (logger.isInfoEnabled()) {
+        logger.info("Mapped " + modelURI + " via " + rawModel + ":" + canModel + " to ModelTypeURI: " + modelTypeURI);
+      }
+
+      return modelTypeURI;
+    } catch (GlobalizeException eg) {
+      throw new QueryException("Failed to map model to modelType", eg);
+    } catch (LocalizeException el) {
+      throw new QueryException("Failed to map model to modelType", el);
+    }
   }
 
   //

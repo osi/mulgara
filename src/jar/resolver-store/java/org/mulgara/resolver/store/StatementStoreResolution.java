@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -143,7 +145,7 @@ class StatementStoreResolution extends AbstractTuples implements DefinableResolu
         toGraphTuplesIndex(constraint.getElement(0)) < 0 ||
         toGraphTuplesIndex(constraint.getElement(1)) < 0 ||
         toGraphTuplesIndex(constraint.getElement(2)) < 0 ||
-        toGraphTuplesIndex(constraint.getElement(3)) < 0;
+        toGraphTuplesIndex(constraint.getModel()) < 0;
 
     baseDefinition = calculateBaseDefinition(constraint);
     fixedLength = calculatePrefixLength(baseDefinition);
@@ -158,7 +160,7 @@ class StatementStoreResolution extends AbstractTuples implements DefinableResolu
       Tuples countTuples = store.findTuples(toGraphTuplesIndex(constraint.getElement(0)),
                                             toGraphTuplesIndex(constraint.getElement(1)),
                                             toGraphTuplesIndex(constraint.getElement(2)),
-                                            toGraphTuplesIndex(constraint.getElement(3)));
+                                            toGraphTuplesIndex(constraint.getModel()));
       long rowCount = countTuples.getRowCount();
       countTuples.close();
 
@@ -176,7 +178,7 @@ class StatementStoreResolution extends AbstractTuples implements DefinableResolu
       countTuples = store.findTuples(toGraphTuplesIndex(constraint.getElement(0)),
                                      toGraphTuplesIndex(constraint.getElement(1)),
                                      toGraphTuplesIndex(constraint.getElement(2)),
-                                     toGraphTuplesIndex(constraint.getElement(3)));
+                                     toGraphTuplesIndex(constraint.getModel()));
       int rowCount = 0;
       countTuples.beforeFirst();
       while (countTuples.next()) {
@@ -218,7 +220,7 @@ class StatementStoreResolution extends AbstractTuples implements DefinableResolu
         constraint.getElement(0) instanceof LocalNode,
         constraint.getElement(1) instanceof LocalNode,
         constraint.getElement(2) instanceof LocalNode,
-        constraint.getElement(3) instanceof LocalNode
+        constraint.getModel() instanceof LocalNode
     };
   }
 

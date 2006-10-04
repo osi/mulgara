@@ -17,7 +17,7 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s):
- * The copyright to this file is held by:
+ * Various contributions copyright:
  *   The Australian Commonwealth Government
  *   Department of Defense
  * Developed by Netymon Pty Ltd
@@ -25,6 +25,9 @@
  * contributed to the Mulgara Project under the
  *   Mozilla Public License version 1.1
  * per clause 4.1.3 of the above contract.
+ *
+ *  getModel() contributed by Netymon Pty Ltd on behalf of
+ *  The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -166,7 +169,7 @@ public class XSDResolverFactory implements ResolverFactory {
     // Register the rule that generates XSD-specific constraints
     try {
       resolverFactoryInitializer.addSymbolicTransformation(
-        new IntervalTransformation(
+        new IntervalTransformation(modelTypeURI, 
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")),
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt"))
         )

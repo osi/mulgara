@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -171,7 +173,7 @@ class StatementStoreInverseResolution extends AbstractTuples implements Resoluti
     subject = toGraphTuplesIndex(constraint.getElement(0));
     predicate = toGraphTuplesIndex(constraint.getElement(1));
     object = toGraphTuplesIndex(constraint.getElement(2));
-    metanode = toGraphTuplesIndex(constraint.getElement(3));
+    metanode = toGraphTuplesIndex(constraint.getModel());
 
     allFixedConstraints = (subject != NodePool.NONE) &&
         (predicate != NodePool.NONE) && (object != NodePool.NONE);

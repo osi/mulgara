@@ -26,6 +26,9 @@
  *     Mozilla Public License version 1.1
  *   per clause 4.1.3 of the above contract.
  *
+ *   SymbolicTransformationContext contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
+ *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
  * should use the text of this Exhibit A rather than the text found in the
@@ -37,16 +40,19 @@ package org.mulgara.resolver.xsd;
 
 // Java 2 standard packages
 import java.util.*;
+import java.net.URI;
 
 // Third party packages
 import org.apache.log4j.Logger;
 import org.jrdf.graph.Literal;
+import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.MutableLocalQuery;
 import org.mulgara.resolver.spi.SymbolicTransformation;
+import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SymbolicTransformationException;
 import org.mulgara.store.stringpool.StringPoolException;
 
@@ -79,6 +85,11 @@ class IntervalTransformation implements SymbolicTransformation
    */
   private URIReferenceImpl greaterThan;
 
+  /**
+   * The model type URI identifying the XSD Resolver.
+   */
+  private URI modelTypeURI;
+
   //
   // Constructor
   //
@@ -91,12 +102,13 @@ class IntervalTransformation implements SymbolicTransformation
    * @param greaterThan  property representing &gt; for <tt>xsd:double</tt>s,
    *   never <code>null</code>
    */
-  IntervalTransformation(URIReferenceImpl lessThan, URIReferenceImpl greaterThan)
+  IntervalTransformation(URI modelTypeURI, URIReferenceImpl lessThan, URIReferenceImpl greaterThan)
   {
     assert lessThan    != null;
     assert greaterThan != null;
 
     // Initialize fields
+    this.modelTypeURI = modelTypeURI;
     this.greaterThan = greaterThan;
     this.lessThan    = lessThan;
   }
@@ -105,11 +117,11 @@ class IntervalTransformation implements SymbolicTransformation
   // Methods implementing Symbolic Transformation
   //
 
-  public void transform(MutableLocalQuery mutableLocalQuery)
+  public void transform(SymbolicTransformationContext context, MutableLocalQuery mutableLocalQuery)
     throws SymbolicTransformationException
   {
     ConstraintExpression constraintExpression =
-      transform(mutableLocalQuery.getConstraintExpression());
+      transformExpression(context, mutableLocalQuery.getConstraintExpression());
 
     if (constraintExpression != null) {
       mutableLocalQuery.setConstraintExpression(constraintExpression);
@@ -130,28 +142,31 @@ class IntervalTransformation implements SymbolicTransformation
    * @throws SymbolicTransformationException if the transformation can't be
    *   returned
    */
-  ConstraintExpression transform(ConstraintExpression constraintExpression)
+  ConstraintExpression transformExpression(SymbolicTransformationContext context, ConstraintExpression constraintExpression)
     throws SymbolicTransformationException
   {
     // Validate "constraintExpression" parameter
     if (constraintExpression == null) {
-      throw new IllegalArgumentException(
-        "Null \"constraintExpression\" parameter"
+      throw new IllegalArgumentException("Null \"constraintExpression\" parameter"
       );
     }
 
+    if (logger.isDebugEnabled()) {
+      logger.debug("Transforming ConstraintExpression: " + constraintExpression);
+    }
+
     if (constraintExpression instanceof ConstraintConjunction) {
-      return transform((ConstraintConjunction) constraintExpression);
+      return transformConjunction(context, (ConstraintConjunction) constraintExpression);
     }
     else if (constraintExpression instanceof ConstraintImpl) {
-      return transform((ConstraintImpl) constraintExpression);
+      return transformConstraint(context, (ConstraintImpl) constraintExpression);
     }
     else {
       return null;  // don't modify constraints we don't understand
     }
   }
 
-  private ConstraintExpression transform(ConstraintConjunction constraintConjunction)
+  private ConstraintExpression transformConjunction(SymbolicTransformationContext context, ConstraintConjunction constraintConjunction)
     throws SymbolicTransformationException
   {
     if (logger.isDebugEnabled()) {
@@ -172,7 +187,7 @@ class IntervalTransformation implements SymbolicTransformation
       ConstraintExpression element = (ConstraintExpression) i.next();
 
       // Recursively transform the element
-      ConstraintExpression transformedElement = transform(element);
+      ConstraintExpression transformedElement = transformExpression(context, element);
       if (transformedElement != null) {
         if (logger.isDebugEnabled()) {
           logger.debug("Recursively transformed " + element +
@@ -184,38 +199,30 @@ class IntervalTransformation implements SymbolicTransformation
       }
 
       // Merge any IntervalConstraints
-      if (element instanceof IntervalConstraint) {
-        IntervalConstraint intervalConstraint = (IntervalConstraint) element;
-        IntervalConstraint cumulativeIntervalConstraint =
-          (IntervalConstraint) map.get(intervalConstraint.getVariable());
-        if (cumulativeIntervalConstraint == null) {
-          cumulativeIntervalConstraint = intervalConstraint;
+      if (!(element instanceof IntervalConstraint)) {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Unknown conjunction element: " + element + " type " + element.getClass());
+        }
+        newElements.add(element);
+      } else {
+        IntervalConstraint interval = (IntervalConstraint) element;
+        IntervalConstraint cumulative = (IntervalConstraint) map.get(interval.getVariable());
+        if (cumulative == null) {
+          cumulative = interval;
 
           if (logger.isDebugEnabled()) {
-            logger.debug("Initial interval constraint: " +
-                         cumulativeIntervalConstraint);
+            logger.debug("Initial interval constraint: " + cumulative);
           }
-        }
-        else {
-          cumulativeIntervalConstraint =
-            cumulativeIntervalConstraint.conjoin(intervalConstraint);
+        } else {
+          cumulative = cumulative.conjoin(interval);
           modified = true;
 
           if (logger.isDebugEnabled()) {
-            logger.debug("Cumulative interval constraint: " +
-                         cumulativeIntervalConstraint);
+            logger.debug("Cumulative interval constraint: " + cumulative);
           }
         }
-        assert cumulativeIntervalConstraint != null;
-        map.put(intervalConstraint.getVariable(), cumulativeIntervalConstraint);
-      }
-      else {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Unknown conjunction element: " + element +
-                       " type " + element.getClass());
-        }
-
-        newElements.add(element);
+        assert cumulative != null;
+        map.put(interval.getVariable(), cumulative);
       }
     }
 
@@ -226,8 +233,7 @@ class IntervalTransformation implements SymbolicTransformation
       }
 
       return null;
-    }
-    else {
+    } else {
       newElements.addAll(map.values());
 
       // Convert the list of conjoined terms into a ConstraintExpression
@@ -240,14 +246,14 @@ class IntervalTransformation implements SymbolicTransformation
       assert result != null;
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Conjunction modified to " + result);
+        logger.debug("Conjunction modified returning " + result);
       }
 
       return result;
     }
   }
 
-  private ConstraintExpression transform(ConstraintImpl  constraintImpl)
+  private ConstraintExpression transformConstraint(SymbolicTransformationContext context, ConstraintImpl constraintImpl)
     throws SymbolicTransformationException
   {
     assert constraintImpl != null;
@@ -257,10 +263,28 @@ class IntervalTransformation implements SymbolicTransformation
     Bound    bound;
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Predicate: comparing " + constraintImpl.getElement(1) +
-                   " to " + lessThan + " (less than) and " + greaterThan +
-                   " (greater than)");
+      logger.debug("Transforming ConstraintImpl: " + constraintImpl);
     }
+
+    // Confirm model is of type XSDModel.
+    try {
+      ConstraintElement modelElement = constraintImpl.getModel();
+      if (!(modelElement instanceof URIReference)) {
+        logger.debug("model not URIReference; cannot participate in transform returning null");
+        return null;
+      }
+      URI modelURI = ((URIReference)modelElement).getURI();
+      URI modelTypeURI = context.mapToModelTypeURI(modelURI);
+      if (!this.modelTypeURI.equals(modelTypeURI)) {
+        logger.debug("model: " + modelURI + " is of type " + modelTypeURI + " not " + this.modelTypeURI + " ignoring constraint, returning null");
+
+        return null;
+      }
+    } catch (QueryException eq) {
+      throw new SymbolicTransformationException("Unable to check model on constraint", eq);
+    }
+
+    logger.debug("Model suitable for IntervalTransformation");
 
     // Figure out the direction of bounding, assuming [$var op value] order
     if (constraintImpl.getElement(1).equals(lessThan)) {
@@ -270,12 +294,14 @@ class IntervalTransformation implements SymbolicTransformation
       boundedBelow = true;
     }
     else {
+      logger.debug("Inapplicable predicate, returning null");
       return null;
     }
 
     // Determine whether we have a [$var op value] or [value op $var] form
     if (constraintImpl.getElement(0) instanceof Variable) {
       if (constraintImpl.getElement(2) instanceof Variable) {
+        logger.debug("Both Subject and Object are Variables, returning null");
         return null;
       }
       else {
@@ -285,12 +311,12 @@ class IntervalTransformation implements SymbolicTransformation
         );
         bound = new Bound(value, false);
       }
-    }
-    else {
+    } else {
       if (constraintImpl.getElement(2) instanceof Variable) {
+        logger.debug("Object is a variable returning null?");
+        // Is this right, surely the above should be not-instanceof !?
         return null;
-      }
-      else {
+      } else {
         variable = (Variable) constraintImpl.getElement(2);
         double value = Double.parseDouble(
           ((Literal) constraintImpl.getElement(0)).getLexicalForm()
@@ -304,7 +330,8 @@ class IntervalTransformation implements SymbolicTransformation
     return new IntervalConstraint(
       variable,
       boundedBelow ? bound : null,
-      boundedBelow ? null : bound
+      boundedBelow ? null : bound,
+      (URIReference)constraintImpl.getModel()
     );
   }
 }

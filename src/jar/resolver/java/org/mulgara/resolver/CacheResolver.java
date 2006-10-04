@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   getModel() contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -147,14 +149,14 @@ class CacheResolver implements Resolver {
     if (constraint == null) {
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
-    if (!(constraint.getElement(3) instanceof LocalNode)) {
+    if (!(constraint.getModel() instanceof LocalNode)) {
       throw new QueryException(
           "Unable to resolve constraint with unbound model: " + constraint
           );
     }
-    assert constraint.getElement(3) instanceof LocalNode;
+    assert constraint.getModel() instanceof LocalNode;
 
-    LocalNode modelLocalNode = (LocalNode) constraint.getElement(3);
+    LocalNode modelLocalNode = (LocalNode) constraint.getModel();
 
     // Obtain the resolver against the cached version
     Resolver temporaryResolver;
