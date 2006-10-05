@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   DefinablePrefixAnnotation contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -539,8 +541,10 @@ public abstract class TuplesOperations {
     while (!operands.isEmpty()) {
       Tuples bestTuples = removeBestTuples(operands, boundVars);
 
-      if (bestTuples instanceof DefinableResolution) {
-        defineIndex((DefinableResolution) bestTuples, boundVars);
+      DefinablePrefixAnnotation definable =
+          (DefinablePrefixAnnotation)bestTuples.getAnnotation(DefinablePrefixAnnotation.class);
+      if (definable != null) {
+        definable.definePrefix(boundVars);
       }
 
       // Add all variables that don't contain UNBOUND to boundVars set.
@@ -639,8 +643,8 @@ public abstract class TuplesOperations {
       Set boundVars) throws TuplesException {
     int numLeftBindings = 0;
     Variable[] vars = tuples.getVariables();
-    // Special case DefinableResolution until all tuples can propagate prefix-definitions.
-    if (tuples instanceof DefinableResolution) {
+    // If the tuples supports defining a prefix then
+    if (tuples.getAnnotation(DefinablePrefixAnnotation.class) != null) {
       for (int i = 0; i < vars.length; i++) {
         if (boundVars.contains(vars[i])) {
           numLeftBindings++;
@@ -657,28 +661,6 @@ public abstract class TuplesOperations {
     }
 
     return numLeftBindings;
-  }
-
-
-  private static void defineIndex(DefinableResolution tuples,
-      Set boundVars) throws TuplesException {
-    boolean[] bound = new boolean[4];
-    Constraint constraint = tuples.getConstraint();
-    for (int i = 0; i < 4; i++) {
-      ConstraintElement elem = constraint.getElement(i);
-      if (elem instanceof LocalNode) {
-        bound[i] = true;
-      } else if (boundVars.contains((Variable)elem)) {
-        bound[i] = true;
-      } else {
-        bound[i] = false;
-      }
-    }
-    if (logger.isDebugEnabled()) {
-      logger.debug("Tuples: " + tuplesSummary(tuples));
-      logger.debug("binding definition = " + AbstractTuples.toString(bound));
-    }
-    tuples.defineIndex(bound);
   }
 
 

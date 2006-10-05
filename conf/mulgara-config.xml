@@ -122,6 +122,7 @@ Mulgara Semantic Store configuration file.
   <ResolverFactory class="org.mulgara.resolver.view.ViewResolverFactory"/>
   <ResolverFactory class="org.mulgara.resolver.filesystem.FileSystemResolverFactory"/>
   <ResolverFactory class="org.mulgara.resolver.prefix.PrefixResolverFactory"/>
+  <ResolverFactory class="org.mulgara.resolver.relational.RelationalResolverFactory"/>
 
   <!-- iTQL script to run on startup -->
   <StartupScript>foo.itql</StartupScript>

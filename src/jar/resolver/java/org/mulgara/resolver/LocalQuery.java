@@ -288,6 +288,12 @@ class LocalQuery implements Cloneable
       try {
         List variables = new ArrayList(select.size());
 
+      /*
+       * Note that this code need not concern itself with the order of the select-list,
+       * only the contents.  The mapping is handled by the subsequent Answer object,
+       * and only becomes important if the row-order is important and is therefore
+       * deferred to order-by resolution.
+       */
         Variable[] vars = result.getVariables();
         for (int i = 0; i < vars.length; i++) {
           if (select.contains(vars[i])) {

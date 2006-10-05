@@ -294,7 +294,7 @@ class IntervalTransformation implements SymbolicTransformation
       boundedBelow = true;
     }
     else {
-      logger.debug("Inapplicable predicate, returning null");
+      logger.debug("Predicate not recognised by IntervalTransformation");
       return null;
     }
 

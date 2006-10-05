@@ -123,11 +123,8 @@ class UnorderedProjection extends AbstractTuples {
     Variable[] operandVariables = operand.getVariables();
 
     for (int i = 0; i < getNumberOfVariables(); i++) {
-
       for (int j = 0; j < operandVariables.length; j++) {
-
         if (vars[i].equals(operandVariables[j])) {
-
           columnMapping[i] = j;
 
           break;
@@ -204,7 +201,7 @@ class UnorderedProjection extends AbstractTuples {
 
     if (columnMapping[column] == ABSENT_COLUMN) {
 
-      logger.warn(getVariables()[column] + " is never bound", new Throwable());
+      logger.info(getVariables()[column] + " is never bound", new Throwable());
 
       return true;
     }

@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   ConstraintLocalization contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -209,6 +211,12 @@ class DatabaseResolverFactoryInitializer
       // FIXME: This needs refactoring.  With the constraint registration in place, ConstraintOperations can be simplifed.
       ConstraintOperations.addConstraintResolutionHandlers(new NVPair[] { new NVPair(constraintClass, descriptor), });
       ConstraintOperations.addConstraintModelRewrites(new NVPair[] { new NVPair(constraintClass, descriptor) });
+      if (descriptor instanceof ConstraintLocalization) {
+        ConstraintOperations.addConstraintLocalizations(new NVPair[] { new NVPair(constraintClass, descriptor) });
+      }
+      if (descriptor instanceof ConstraintBindingHandler) {
+        ConstraintOperations.addConstraintBindingHandlers(new NVPair[] { new NVPair(constraintClass, descriptor) });
+      }
     } else {
       // FIXME: We need to eliminate the use of static variables (as opposed to constants).
       // FIXME: This will allow multiple database instances within the same JVM

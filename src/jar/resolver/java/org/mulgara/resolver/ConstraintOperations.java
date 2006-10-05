@@ -70,7 +70,7 @@ import org.mulgara.util.NVPair;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class ConstraintOperations
+public class ConstraintOperations
 {
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(ConstraintOperations.class.getName());
@@ -134,7 +134,7 @@ class ConstraintOperations
   }
 
 
-  static Tuples resolveModelExpression(QueryEvaluationContext context, ModelExpression modelExpr,
+  public static Tuples resolveModelExpression(QueryEvaluationContext context, ModelExpression modelExpr,
                                       Constraint constraint) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
@@ -160,8 +160,8 @@ class ConstraintOperations
   }
 
 
-  static Tuples resolveConstraintExpression(QueryEvaluationContext context, ModelExpression modelExpr,
-                                           ConstraintExpression constraintExpr) throws QueryException {
+  public static Tuples resolveConstraintExpression(QueryEvaluationContext context,
+      ModelExpression modelExpr, ConstraintExpression constraintExpr) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("Resolving ConstraintExpression[" + constraintExpr.getClass() + "]");
@@ -235,8 +235,8 @@ class ConstraintOperations
   }
 
 
-  static Constraint rewriteConstraintModel(ConstraintElement newModel,
-                                           Constraint constraint) throws QueryException {
+  public static Constraint rewriteConstraintModel(ConstraintElement newModel,
+      Constraint constraint) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("Rewriting Model" + newModel + " in " + constraint);

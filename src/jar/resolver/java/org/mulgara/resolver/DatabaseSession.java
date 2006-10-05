@@ -1216,7 +1216,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
 
-    ConstraintElement modelElem = constraint.getElement(3);
+    ConstraintElement modelElem = constraint.getModel();
     if (modelElem instanceof Variable) {
       return resolveVariableModel(constraint);
     } else if (modelElem instanceof LocalNode) {

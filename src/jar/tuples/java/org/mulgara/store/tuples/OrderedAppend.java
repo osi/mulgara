@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   DefinablePrefixAnnotation contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -100,6 +102,8 @@ public class OrderedAppend extends AbstractTuples {
    */
   private long[] prefix;
 
+  private boolean prefixDefinable;
+
   /**
    * Conjoin a list of propositions.
    *
@@ -123,10 +127,13 @@ public class OrderedAppend extends AbstractTuples {
     if (operands.length == 0) {
 
       setVariables(new Variable[] {});
-    }
-    else {
-
+    } else {
       setVariables(operands[0].getVariables());
+    }
+    prefixDefinable = true;
+    for (int i = 0; i < operands.length; i++) {
+      prefixDefinable = prefixDefinable &&
+          (operands[i].getAnnotation(DefinablePrefixAnnotation.class) != null);
     }
   }
 
@@ -370,6 +377,27 @@ public class OrderedAppend extends AbstractTuples {
 
     return newVariables;
   }
+
+
+  public Annotation getAnnotation(Class annotation) {
+    if (annotation.equals(DefinablePrefixAnnotation.class) && prefixDefinable) {
+      return new DefinablePrefixAnnotation() {
+        public void definePrefix(Set boundVars) throws TuplesException {
+          for (int i = 0; i < operands.length; i++) {
+            DefinablePrefixAnnotation annotation = 
+                (DefinablePrefixAnnotation)operands[i].getAnnotation(DefinablePrefixAnnotation.class);
+            // Note: this should also probably check variable orderings, but this is deferred until
+            //   we are doing this more generally.  See bug report logged in mulgara tracking system:
+            //   http://mulgara.org/jira/browse/MGR-15
+            annotation.definePrefix(boundVars);
+          }
+        }
+      };
+    } else {
+      return null;
+    }
+  }
+
 
   /**
    * METHOD TO DO

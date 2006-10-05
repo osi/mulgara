@@ -40,6 +40,12 @@ I.  Open Source Components
     LICENSE:  BSD
               http://www.antlr.org/license.html
     
+    Apache Derby
+    JARs:     derby.jar
+    URL:      Apache License, Version 2.0
+    LICENSE:  Apache Software License, v2.0
+              http://www.apache.org/licenses/LICENSE-2.0
+
     Apache SOAP
     JARs:     apache-soap-2.2.jar
     URL:      http://xml.apache.org/soap/index.html

@@ -19,6 +19,8 @@
  * Contributor(s):
  *   getModel() contributed by Netymon Pty Ltd on behalf of
  *   The Australian Commonwealth Government under contract 4500507038.
+ *   DefinablePrefixAnnotation contributed by Netymon Pty Ltd on behalf of
+ *   The Australian Commonwealth Government under contract 4500507038.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -37,14 +39,15 @@ import java.util.*;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.resolver.spi.DefinableResolution;
 import org.mulgara.resolver.spi.ReresolvableResolution;
 import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.statement.StatementStoreException;
+import org.mulgara.store.tuples.Annotation;
 import org.mulgara.store.tuples.AbstractTuples;
+import org.mulgara.store.tuples.DefinablePrefixAnnotation;
 import org.mulgara.store.tuples.StoreTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
@@ -65,7 +68,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class StatementStoreResolution extends AbstractTuples implements DefinableResolution, ReresolvableResolution {
+class StatementStoreResolution extends AbstractTuples implements ReresolvableResolution {
   private final static long ROWCOUNT_UNCALCULATED = -1;
   private final static int ROWCARD_UNCALCULATED = -1;
 
@@ -239,7 +242,7 @@ class StatementStoreResolution extends AbstractTuples implements DefinableResolu
   /**
    * @param bound constraints to be bound post-beforeFirst.  In constraint-order.
    */
-  public void defineIndex(boolean[] bound) throws TuplesException {
+  protected void defineIndex(boolean[] bound) throws TuplesException {
     assert bound.length == 4;
 
     if (isEmpty) {
@@ -547,8 +550,39 @@ class StatementStoreResolution extends AbstractTuples implements DefinableResolu
     }
   }
 
-
   public String toString() {
     return indexedTuples.toString() + " from constraint " + constraint;
+  }
+
+  protected StatementStoreResolution getSSR() {
+    return this;
+  }
+
+  public Annotation getAnnotation(Class annotation) {
+    if (annotation.equals(DefinablePrefixAnnotation.class)) {
+      return new DefinablePrefixAnnotation() {
+        public void definePrefix(Set boundVars) throws TuplesException {
+          boolean[] bound = new boolean[4];
+          Constraint constraint = getConstraint();
+          for (int i = 0; i < 4; i++) {
+            ConstraintElement elem = constraint.getElement(i);
+            if (elem instanceof LocalNode) {
+              bound[i] = true;
+            } else if (boundVars.contains((Variable)elem)) {
+              bound[i] = true;
+            } else {
+              bound[i] = false;
+            }
+          }
+          if (logger.isDebugEnabled()) {
+            logger.debug("Tuples: " + TuplesOperations.tuplesSummary(getSSR()));
+            logger.debug("binding definition = " + AbstractTuples.toString(bound));
+          }
+          defineIndex(bound);
+        }
+      };
+    } else {
+      return null;
+    }
   }
 }

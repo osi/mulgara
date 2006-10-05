@@ -76,6 +76,10 @@ public class LocalizedTuples extends AbstractTuples {
    */
   protected Answer answer;
 
+  /**
+   * Does the localization need to be done in the persistent store.
+   */
+  protected boolean persist;
 
   /**
    * Wrap an {@link Answer} instance.
@@ -84,7 +88,7 @@ public class LocalizedTuples extends AbstractTuples {
    * @throws IllegalArgumentException  if <var>globalAnswer</var> is
    *                                   <code>null</code>
    */
-  public LocalizedTuples(ResolverSession session, Answer globalAnswer)
+  public LocalizedTuples(ResolverSession session, Answer globalAnswer, boolean persist)
   {
     if (session == null) {
       throw new IllegalArgumentException("Null \"session\" parameter");
@@ -96,8 +100,14 @@ public class LocalizedTuples extends AbstractTuples {
     this.session = session;
     answer = (Answer) globalAnswer.clone();
     setVariables(answer.getVariables());
+
+    this.persist = persist;
   }
 
+  public LocalizedTuples(ResolverSession session, Answer globalAnswer)
+  {
+    this(session, globalAnswer, false);
+  }
 
   public void beforeFirst() throws TuplesException {
     answer.beforeFirst();
@@ -134,7 +144,9 @@ public class LocalizedTuples extends AbstractTuples {
       Object node = answer.getObject(column);
       assert node instanceof Node;
 
-      return session.localize((Node)node);
+      return persist
+          ? session.localizePersistent((Node)node)
+          : session.localize((Node)node);
     } catch (LocalizeException e) {
       throw new TuplesException("Couldn't localize column " + column, e);
     }
