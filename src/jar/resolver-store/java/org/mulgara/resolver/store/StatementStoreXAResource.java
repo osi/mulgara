@@ -86,7 +86,9 @@ public class StatementStoreXAResource implements XAResource
   private XAResolverSession session;
   private boolean rollback;
   private Xid xid;
-  private static Xid preparing = null;
+  // Used to prevent multiple calls to prepare on the store layer.
+  // Set of session's that have been prepared.
+  private static Set preparing = new HashSet();
 
   //
   // Constructor
@@ -136,6 +138,11 @@ public class StatementStoreXAResource implements XAResource
         }
         break;
       case XAResource.TMJOIN:
+        if (!xid.equals(this.xid)) {
+          logger.error("Attempt to join with wrong transaction.");
+          throw new XAException(XAException.XAER_INVAL);
+        }
+        break;
       default:  // Currently fall-through.
         rollback = true;
         logger.warn("Unrecognised flags in start: " + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
@@ -149,7 +156,7 @@ public class StatementStoreXAResource implements XAResource
   public int prepare(Xid xid) throws XAException
   {
     if (logger.isDebugEnabled()) {
-      logger.debug("XAResource " + this + " Prepare " + System.identityHashCode(xid));
+      logger.debug("XAResource " + this + " Prepare " + System.identityHashCode(xid) + " With Session: " + System.identityHashCode(session));
     }
 
     if (rollback) {
@@ -160,16 +167,11 @@ public class StatementStoreXAResource implements XAResource
       logger.error("Attempting to prepare unknown transaction.");
       throw new XAException(XAException.XAER_NOTA);
     }
-    synchronized(StatementStoreXAResource.class) {
-      if (preparing != null) {
-        if (preparing.equals(xid)) {
-          return XA_OK;
-        } else {
-          logger.error("Attempting to prepare from different transaction. Multiple writers not supported");
-          throw new XAException(XAException.XAER_NOTA);
-        }
+    synchronized(preparing) {
+      if (preparing.contains(session)) {
+        return XA_OK;
       } else {
-        preparing = xid;
+        preparing.add(session);
       }
     }
 
@@ -177,6 +179,9 @@ public class StatementStoreXAResource implements XAResource
       session.prepare();
     } catch (SimpleXAResourceException es) {
       logger.warn("Attempt to prepare store failed", es);
+      synchronized(preparing) {
+        preparing.remove(session);
+      }
       throw new XAException(XAException.XA_RBROLLBACK);
     }
 
@@ -185,54 +190,48 @@ public class StatementStoreXAResource implements XAResource
 
   public void commit(Xid xid, boolean onePhase) throws XAException
   {
-    if (logger.isDebugEnabled()) {
-      logger.debug("XAResource " + this + " Commit xid=" + System.identityHashCode(xid) + " onePhase=" + onePhase);
-    }
-    if (rollback) {
-      logger.error("Attempting to commit in failed transaction");
-      throw new XAException(XAException.XA_RBROLLBACK);
-    }
-    if (!xid.equals(this.xid)) {
-      logger.error("Attempting to commit unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
     try {
-      if (onePhase) {
-        // Check return value is XA_OK.
-        prepare(xid);
+      if (logger.isDebugEnabled()) {
+        logger.debug("XAResource " + this + " Commit xid=" + System.identityHashCode(xid) + " onePhase=" + onePhase + " session=" + System.identityHashCode(session));
       }
-    } catch (Throwable th) {
-      this.rollback = true;
-      logger.error("Attempt to prepare in onePhaseCommit failed.", th);
-      throw new XAException(XAException.XA_RBROLLBACK);
-    }
-
-    synchronized(StatementStoreXAResource.class) {
-      if (preparing != null) {
-        if (!preparing.equals(xid)) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("Committing different transaction to prepare.");
-          }
-          throw new XAException(XAException.XA_RBROLLBACK);
-        } else {
-          logger.debug("Possible race condition here");
-          preparing = null;
+      if (rollback) {
+        logger.error("Attempting to commit in failed transaction");
+        throw new XAException(XAException.XA_RBROLLBACK);
+      }
+      if (!xid.equals(this.xid)) {
+        logger.error("Attempting to commit unknown transaction.");
+        throw new XAException(XAException.XAER_NOTA);
+      }
+      try {
+        if (onePhase) {
+          // Check return value is XA_OK.
+          prepare(xid);
         }
-      } else {
-        logger.debug("Already committed in this transaction");
-        return;
+      } catch (Throwable th) {
+        this.rollback = true;
+        logger.error("Attempt to prepare in onePhaseCommit failed.", th);
+        throw new XAException(XAException.XA_RBROLLBACK);
+      }
+
+      try {
+        session.commit();
+      } catch (Throwable th) {
+        // This is a serious problem since the database is now in an
+        // inconsistent state.
+        // Make sure the exception is logged.
+        logger.fatal("Failed to commit resource in transaction " + xid, th);
+        throw new XAException(XAException.XAER_RMERR);
+      }
+    } finally {
+      synchronized(preparing) {
+        if (preparing.contains(session)) {
+          preparing.remove(session);
+        } else {
+          logger.debug("Already committed in this transaction");
+        }
       }
     }
 
-    try {
-      session.commit();
-    } catch (Throwable th) {
-      // This is a serious problem since the database is now in an
-      // inconsistent state.
-      // Make sure the exception is logged.
-      logger.fatal("Failed to commit resource in transaction " + xid, th);
-      throw new XAException(XAException.XAER_RMERR);
-    }
   }
 
   public void end(Xid xid, int flags) throws XAException

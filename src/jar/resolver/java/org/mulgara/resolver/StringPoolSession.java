@@ -145,7 +145,7 @@ public class StringPoolSession implements XAResolverSession
                     Object globalLock)
   {
     if (logger.isDebugEnabled()) {
-      logger.debug("Constructing StringPoolSession " + System.identityHashCode(this));
+      logger.debug("Constructing StringPoolSession " + System.identityHashCode(this), new Throwable());
     }
 
     assert databaseURI.getFragment() == null;
@@ -239,10 +239,15 @@ public class StringPoolSession implements XAResolverSession
 
   public void prepare() throws SimpleXAResourceException
   {
-    logger.debug("Preparing phase on StringPoolSession " + System.identityHashCode(this));
-    if (state != OBTAIN) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Preparing phase on StringPoolSession " + System.identityHashCode(this) + " SP=" + System.identityHashCode(persistentStringPool));
+    }
+    if (state == PREPARE) {
+      return;
+    } else if (state != OBTAIN) {
       throw new SimpleXAResourceException("Attempting to prepare phase without obtaining phase");
     }
+
     state = PREPARE;
 
     persistentStringPool.prepare();
@@ -255,11 +260,17 @@ public class StringPoolSession implements XAResolverSession
 
   public void commit() throws SimpleXAResourceException
   {
-    logger.debug("Committing phase on StringPoolSession " + System.identityHashCode(this));
-    if (state != PREPARE) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Committing phase on StringPoolSession " + System.identityHashCode(this));
+    }
+    if (state == COMMIT) {
+      return;
+    } else if (state != PREPARE) {
       throw new SimpleXAResourceException("Attempting to commit phase without preparing");
     }
+
     state = COMMIT;
+
     synchronized (globalLock) {
       persistentStringPool.commit();
       persistentNodePool.commit();
@@ -288,10 +299,14 @@ public class StringPoolSession implements XAResolverSession
   public void release() throws SimpleXAResourceException
   {
     logger.debug("Release phase on StringPoolSession " + System.identityHashCode(this));
-    if (state != COMMIT && state != ROLLBACK) {
+    if (state == RELEASE) {
+      return;
+    } else if (state != COMMIT && state != ROLLBACK) {
       throw new SimpleXAResourceException("Attempting to release phase without commit or rollback");
     }
+
     state = RELEASE;
+
     persistentStringPool.release();
     persistentNodePool.release();
     // TODO determine if release() should be called for the temp components.

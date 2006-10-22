@@ -731,9 +731,9 @@ public class Database implements SessionFactory
 
     internalResolverFactoryMap.put(
       metadata.getSystemModelTypeURI(),
-      new InternalResolverFactory(systemResolverFactory,
-                                  metadata.getRdfTypeNode(),
-                                  metadata.getSystemModelNode())
+      new InternalSystemResolverFactory(systemResolverFactory,
+                                        metadata.getRdfTypeNode(),
+                                        metadata.getSystemModelNode())
     );
 
     // Add the mandatory security adapter that protects the system model

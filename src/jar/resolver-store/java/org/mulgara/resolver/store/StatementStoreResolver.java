@@ -111,9 +111,12 @@ public class StatementStoreResolver implements SystemResolver
 
   private final XAResolverSession xaResolverSession;
 
+  private final XAResource xaresource;
+
   private boolean isSystemResolver;
 
   private long systemModel;
+
 
   //
   // Constructors
@@ -145,6 +148,10 @@ public class StatementStoreResolver implements SystemResolver
     this.statementStore = statementStore;
     this.xaResolverSession = resolverSession;
     this.isSystemResolver = true;
+    this.xaresource = new StatementStoreXAResource(
+        10,  // transaction timeout in seconds
+        resolverSession,
+        new SimpleXAResource[] { statementStore });
   }
 
   StatementStoreResolver(Resolver systemResolver,
@@ -170,6 +177,10 @@ public class StatementStoreResolver implements SystemResolver
     this.statementStore = statementStore;
     this.xaResolverSession = resolverSession;
     this.isSystemResolver = false;
+    this.xaresource = new StatementStoreXAResource(
+        10,  // transaction timeout in seconds
+        resolverSession,
+        new SimpleXAResource[] { statementStore });
   }
 
 
@@ -182,10 +193,6 @@ public class StatementStoreResolver implements SystemResolver
   */
   public XAResource getXAResource()
   {
-    XAResource xaresource = new StatementStoreXAResource(
-        10,  // transaction timeout in seconds
-        (XAResolverSession) xaResolverSession,
-        new SimpleXAResource[] { statementStore });
     return xaresource;
   }
 

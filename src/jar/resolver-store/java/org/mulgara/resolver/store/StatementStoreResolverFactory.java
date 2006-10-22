@@ -205,12 +205,12 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
           rdfType,
           systemModel,
           modelTypeURI,
-          allowWrites ?
-          (XAResolverSession) resolverSessionFactory.newWritableResolverSession()
-          :
-          (XAResolverSession) resolverSessionFactory.newReadOnlyResolverSession(),
-          allowWrites ? statementStore.newWritableStatementStore()
-          : statementStore.newReadOnlyStatementStore());
+          allowWrites
+              ? (XAResolverSession) resolverSessionFactory.newWritableResolverSession()
+              : (XAResolverSession) resolverSessionFactory.newReadOnlyResolverSession(),
+          allowWrites
+              ? statementStore.newWritableStatementStore()
+              : statementStore.newReadOnlyStatementStore());
     }
     catch (ResolverSessionFactoryException er) {
       throw new ResolverFactoryException(

@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s): 
+ *    Change to field visibility from private to protected
+ *    (c) Netymon Pty Ltd 2006 All Rights Reserved.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -56,17 +58,17 @@ class InternalResolverFactory implements ResolverFactory
   /**
    * The preallocated node for <code>rdf:type</code>.
    */
-  private final long rdfType;
+  protected final long rdfType;
 
   /**
    * The wrapped factory.
    */
-  private final ResolverFactory resolverFactory;
+  protected final ResolverFactory resolverFactory;
 
   /**
    * The preallocated node for the system model (<code>#</code>).
    */
-  private final long systemModel;
+  protected final long systemModel;
 
   //
   // Constructor
