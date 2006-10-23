@@ -51,12 +51,6 @@ log4j-conf.xml with the new copy.  This is sure to upset them.
   </appender>
 
   <!-- (Insert category elements here) -->
-  <category name="org.mulgara.resolver.store.StatementStoreXAResource">
-    <priority value="debug"/>
-  </category>
-  <category name="org.mulgara.resolver.StringPoolSession">
-    <priority value="debug"/>
-  </category>
 
   <!-- Default is to log messages of "warn" priority to the logfile appender -->
   <root>
