@@ -155,9 +155,6 @@ public class BasicDatabaseSessionUnitTest extends TestCase
     String systemResolverFactoryClassName =
       "org.mulgara.resolver.memory.MemoryResolverFactory";
 
-    String relatedQueryHandlerClassName =
-      "org.mulgara.resolver.RelatedQueryHandlerImpl";
-
     // Create a database which keeps its system models on the Java heap
     database = new Database(
         databaseURI,
@@ -178,7 +175,6 @@ public class BasicDatabaseSessionUnitTest extends TestCase
         systemResolverFactoryClassName,   // temporary
         null,
         "",                               // no rules engine
-        relatedQueryHandlerClassName,
         "org.mulgara.content.rdfxml.RDFXMLContentHandler");
   }
 

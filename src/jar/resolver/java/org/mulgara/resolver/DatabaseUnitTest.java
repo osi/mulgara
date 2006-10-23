@@ -112,7 +112,7 @@ public class DatabaseUnitTest extends TestCase
   {
     try {
       new Database(null, null, null, null, 0, null, null, null, null, null,
-                   null, null, null, null, null, null, null, null, null, null);
+                   null, null, null, null, null, null, null, null, null);
       fail("Expected " + IllegalArgumentException.class);
     } catch (IllegalArgumentException e) {
       // correct behavior
@@ -170,8 +170,7 @@ public class DatabaseUnitTest extends TestCase
           null,
           "org.mulgara.resolver.memory.MemoryResolverFactory",
           null,
-          "",
-          "org.mulgara.resolver.RelatedQueryHandlerImpl",
+          null,
           null);  // no default content handler
     } catch (Exception e) {
       fail(e);

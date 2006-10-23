@@ -164,9 +164,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   /** Session transaction */
   private Transaction transaction;
 
-  /** The related query handler */
-  private RelatedQueryHandler relatedQueryHandler;
-
   /** The name of the rule loader to use */
   private String ruleLoaderClassName;
 
@@ -245,8 +242,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
    *   never <code>null</code>
    * @param contentHandlers contains the list of valid registered content handles
    *   never <code>null</code>
-   * @param relatedQueryClass the name of the class that implements
-   *   {@link RelatedQueryHandler}
    * @param temporaryModelTypeURI  the URI of the model type to use to cache
    *   external models
    * @throws IllegalArgumentException if any argument is <code>null</code>
@@ -263,7 +258,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       DatabaseMetadata metadata,
       ContentHandlerManager contentHandlers,
       Set cachedResolverFactorySet,
-      String relatedQueryClass,
       URI temporaryModelTypeURI,
       String ruleLoaderClassName) throws ResolverFactoryException {
 
@@ -296,8 +290,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       throw new IllegalArgumentException("Null \"contentHandlers\" parameter");
     } else if (metadata == null) {
       throw new IllegalArgumentException("Null \"metadata\" parameter");
-    } else if (relatedQueryClass == null) {
-      throw new IllegalArgumentException("Null \"relatedQueryClass\" parameter");
     } else if (ruleLoaderClassName == null) {
       ruleLoaderClassName = DUMMY_RULE_LOADER;
     }
@@ -312,26 +304,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       throw new IllegalArgumentException(
         "Null \"temporaryModelTypeURI\" parameter"
       );
-    }
-
-    try {
-      if (relatedQueryClass != null) {
-        //load class
-        Class storeClass = Class.forName(relatedQueryClass);
-
-        //get appropriate constructor
-        Constructor constructor = storeClass.getConstructor(new Class[] {
-            Session.class });
-
-        //instantiate
-        relatedQueryHandler = (RelatedQueryHandler) constructor.newInstance(
-            new Object[] { this });
-      }
-    }
-    catch (Exception e) {
-      //throw new IllegalArgumentException("Cannot find class: " +
-      throw new ResolverFactoryException("Cannot find class: " +
-          relatedQueryClass, e);
     }
 
     // Initialize fields
@@ -460,12 +432,11 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
       DatabaseMetadata metadata,
       ContentHandlerManager contentHandlers,
       Set cachedResolverFactorySet,
-      String relatedQueryClass,
       URI temporaryModelTypeURI) throws ResolverFactoryException {
     this(transactionManager, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
         systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
         internalResolverFactoryMap, metadata, contentHandlers, cachedResolverFactorySet,
-        relatedQueryClass, temporaryModelTypeURI, "");
+        temporaryModelTypeURI, "");
   }
 
   public ResolverSession getResolverSession() {
@@ -808,25 +779,17 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   {
     Answer result;
 
-    // If a related query, do not enter into a transaction as we can't have
-    // nested transactions.
-    if (query.getRelated() != null) {
-      RelatedExpression related = query.getRelated();
-      result = databaseSession.relatedQueryHandler.related(((Node) related.getBaseNode()),
-          new Query[] {query}, related.getLimit(), related.getThresholdValue());
-    } else {
-      LocalQuery localQuery =
-        new LocalQuery(query, systemResolver, databaseSession);
+    LocalQuery localQuery =
+      new LocalQuery(query, systemResolver, databaseSession);
 
-      transform(databaseSession, localQuery);
+    transform(databaseSession, localQuery);
 
-      // Complete the numerical phase of resolution
-      Tuples tuples = localQuery.resolve();
-      result = new SubqueryAnswer(databaseSession, systemResolver, tuples,
-          query.getVariableList());
-      tuples.close();
-      localQuery.close();
-    }
+    // Complete the numerical phase of resolution
+    Tuples tuples = localQuery.resolve();
+    result = new SubqueryAnswer(databaseSession, systemResolver, tuples,
+        query.getVariableList());
+    tuples.close();
+    localQuery.close();
 
     if (logger.isDebugEnabled()) {
       logger.debug("Answer rows = " + result.getRowCount());

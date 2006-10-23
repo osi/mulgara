@@ -271,11 +271,6 @@ public class Database implements SessionFactory
   private final SessionFactory unsecuredSessionFactory =
     new UnsecuredSessionFactory();
 
-  /**
-   * The related query handler.
-   */
-  private final String relatedQueryHandler;
-
   //
   // Constructor
   //
@@ -355,7 +350,6 @@ public class Database implements SessionFactory
            config.getTemporaryResolverFactory().getDir()
          ),
          config.getRuleLoader().getType(),
-         config.getRelatedQueryHandler().getType(),
          config.getDefaultContentHandler().getType());
 
     if (logger.isDebugEnabled()) {
@@ -402,8 +396,6 @@ public class Database implements SessionFactory
    * @param ruleLoaderClassName  the name of a
    *   {@link RuleLoader} implementation which will be used for loading
    *   rule frameworks, never <code>null</code>
-   * @param relatedQueryHandler the name of the class that implements
-   *   {@link RelatedQueryHandler}
    * @param defaultContentHandlerClassName the name of the class that should be
    *   used to parse external content of unknown MIME type, or
    *   <code>null</code> to disable blind parsing
@@ -433,7 +425,6 @@ public class Database implements SessionFactory
                   String temporaryResolverFactoryClassName,
                   File   temporaryResolverDirectory,
                   String ruleLoaderClassName,
-                  String relatedQueryHandler,
                   String defaultContentHandlerClassName)
     throws ConfigurationException, InitializerException, LocalizeException,
            NamingException, NodePoolException, QueryException,
@@ -495,12 +486,6 @@ public class Database implements SessionFactory
     if (temporaryResolverFactoryClassName == null) {
       throw new IllegalArgumentException("Null 'temporaryResolverFactoryClassName' parameter");
     }
-    if (ruleLoaderClassName == null) {
-      throw new IllegalArgumentException("Null 'ruleLoaderClassName' parameter");
-    }
-    if (relatedQueryHandler == null) {
-      throw new IllegalArgumentException("Null 'relatedQueryHandler' parameter");
-    }
 
     // Initialize fields
     this.uri                       = uri;
@@ -536,9 +521,6 @@ public class Database implements SessionFactory
         "Unable to set transaction timeout to " + transactionTimeout + "s", e
       );
     }
-
-    // Set related query handler
-    this.relatedQueryHandler = relatedQueryHandler;
 
     // Enable resolver initialization
     if (logger.isDebugEnabled()) {
@@ -716,7 +698,6 @@ public class Database implements SessionFactory
         metadata,
 		    contentHandlers,
         unmodifiableCachedResolverFactorySet,
-        relatedQueryHandler,
         temporaryModelTypeURI,
         ruleLoaderClassName);
 
@@ -933,7 +914,6 @@ public class Database implements SessionFactory
         metadata,
         contentHandlers,
         unmodifiableCachedResolverFactorySet,
-        relatedQueryHandler,
         temporaryModelTypeURI,
         ruleLoaderClassName);
     } catch (ResolverFactoryException e) {
@@ -962,7 +942,6 @@ public class Database implements SessionFactory
           metadata,
           contentHandlers,
           cachedResolverFactorySet,
-          relatedQueryHandler,
           temporaryModelTypeURI);
     }
     catch (ResolverFactoryException e) {
@@ -1202,7 +1181,6 @@ public class Database implements SessionFactory
           metadata,
           contentHandlers,
           unmodifiableCachedResolverFactorySet,
-          relatedQueryHandler,
           temporaryModelTypeURI,
           ruleLoaderClassName);
       }
@@ -1232,7 +1210,6 @@ public class Database implements SessionFactory
           metadata,
           contentHandlers,
           cachedResolverFactorySet,
-          relatedQueryHandler,
           temporaryModelTypeURI);
       }
       catch (ResolverFactoryException e) {

@@ -127,7 +127,6 @@ public abstract class DatabaseFactory
       config.getTemporaryResolverFactory().getType(),
       subdir(directory, config.getTemporaryResolverFactory().getDir()),
       config.getRuleLoader().getType(),
-      config.getRelatedQueryHandler().getType(),
       config.getDefaultContentHandler().getType());
 
     if (logger.isDebugEnabled()) {

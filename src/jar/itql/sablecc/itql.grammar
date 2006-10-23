@@ -60,7 +60,6 @@ Tokens
   {def}                order       = 'order';
   {def}                on          = 'on';
   {def}                quit        = 'quit';
-  {def}                relate      = 'relate';
   {def}                restore     = 'restore';
   {def}                rollback    = 'rollback';
   {def}                select      = 'select';
@@ -130,7 +129,6 @@ Productions
     {insert}    insert triple_factor into resource                           |
     {load}      load [locality]:locality? [source]:resource into [destination]:resource |
     {quit}      quit                                                         |
-    {relate}    relate base_clause? limit_clause? threshold_clause? query    |
     {restore}   restore [destination]:resource from [locality]:locality? [source]:resource |
     {rollback}  rollback                                                     |
     {select}    query                                                        |

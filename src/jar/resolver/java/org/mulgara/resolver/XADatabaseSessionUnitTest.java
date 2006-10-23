@@ -563,9 +563,6 @@ public class XADatabaseSessionUnitTest extends TestCase {
     String tempResolverFactoryClassName =
       "org.mulgara.resolver.memory.MemoryResolverFactory";
 
-    String relatedQueryHandlerClassName =
-      "org.mulgara.resolver.RelatedQueryHandlerImpl";
-
     String ruleLoaderFactoryClassName =
       "org.mulgara.rules.RuleLoaderFactory";
 
@@ -589,7 +586,6 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  tempResolverFactoryClassName,    // temporary models
                  null,                            // no dir for temp models
                  "",                              // no rule loader
-                 relatedQueryHandlerClassName,
                  "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
     database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);

@@ -62,18 +62,14 @@ public class Query implements Cloneable, Serializable {
   * have not occurred with the class.
   * NOTE : update this serialVersionUID when a method or a public member is
   * deleted.
+  * NOTE: Incremented UID to reflect removal of relatedTo.
   */
-  static final long serialVersionUID = 7973523792022156620L;
+  static final long serialVersionUID = 7973523792022156621L;
 
   /**
    * Logger.
    */
   private static Logger logger = Logger.getLogger(Query.class.getName());
-
-  /**
-   * The limited variables or null if not a related query.
-   */
-  private RelatedExpression related;
 
   /**
    * The variable list. This may only contain {@link Variable}s. It corresponds
@@ -212,42 +208,6 @@ public class Query implements Cloneable, Serializable {
   }
 
   /**
-   * Construct a query.
-   *
-   * @param variableList {@link Variable}s or node values to appear as bindings
-   *     in the solution (i.e. columns of the result {@link Answer});
-   *     <code>null</code> indicates that all columns are to be retained
-   * @param modelExpression an expression defining the model to query, never
-   *     <code>null</code>
-   * @param constraintExpression an expression defining the constraints to
-   *     satisfy, never <code>null</code>
-   * @param havingExpression an expression defining the conditions to apply to
-   *     aggregate functions or null if not given.
-   * @param orderList sort order column names, currently a list of {@link
-   *     Variable}s with the order assumed to be ascending in all cases
-   * @param limit the maximum number of rows to return, which must be
-   *     non-negative; <code>null</code> indicates no limit
-   * @param offset the number of rows to skip from the beginning of the result,
-   *     never negative
-   * @param answer an existing solution set to which results must belong, or
-   *     {@link UnconstrainedAnswer} for no constraints; never
-   *     <code>null</code> is
-   * @throws IllegalArgumentException if <var>limit</var> or <var>offset</var>
-   *     are negative, or if <var>modelExpression</var>,
-   *     <var>constraintExpression</var>, <var>orderList<var> or
-   *     <var>answer</var> are <code>null</code>
-   */
-  public Query(RelatedExpression related, List variableList,
-      ModelExpression modelExpression,
-      ConstraintExpression constraintExpression,
-      ConstraintHaving havingExpression, List orderList, Integer limit,
-      int offset, Answer answer) {
-    this(variableList, modelExpression, constraintExpression, havingExpression,
-        orderList, limit, offset, answer);
-    this.related = related;
-  }
-
-  /**
    * Cloning must always be supported.
    */
   public Object clone() {
@@ -280,16 +240,6 @@ public class Query implements Cloneable, Serializable {
   //
   // API methods
   //
-
-  /**
-   * Accessor for the <code>related</code> property.
-   *
-   * @return a related expression which is either null, not a related query,
-   *   or values to be used by a related query.
-   */
-  public RelatedExpression getRelated() {
-    return related;
-  }
 
   /**
    * Accessor for the <code>variableList</code> property.

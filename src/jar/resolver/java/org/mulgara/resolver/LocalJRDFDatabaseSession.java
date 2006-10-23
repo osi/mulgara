@@ -118,8 +118,6 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
    * @param cachedResolverFactorySet  contains the resolver factories that are
    *   to have access to their models cached, never <code>null</code>
    *   never <code>null</code>
-   * @param relatedQueryHandler the name of the class that implements
-   *   {@link RelatedQueryHandler}
    * @param temporaryModelTypeURI  the type of model to use as a cache for
    *   external models
    * @throws IllegalArgumentException if any argument is <code>null</code>
@@ -131,15 +129,13 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
       ResolverFactory temporaryResolverFactory, List resolverFactoryList,
       Map externalResolverFactoryMap, Map internalResolverFactoryMap,
       DatabaseMetadata metadata, ContentHandlerManager contentHandlers,
-      Set cachedResolverFactorySet, String relatedQueryHandler,
-      URI temporaryModelTypeURI)
+      Set cachedResolverFactorySet, URI temporaryModelTypeURI)
       throws ResolverFactoryException {
     super(transactionManager, securityAdapterList, symbolicTransformationList,
         resolverSessionFactory,
         systemResolverFactory, temporaryResolverFactory, resolverFactoryList,
         externalResolverFactoryMap, internalResolverFactoryMap, metadata,
-        contentHandlers, cachedResolverFactorySet, relatedQueryHandler,
-        temporaryModelTypeURI);
+        contentHandlers, cachedResolverFactorySet, temporaryModelTypeURI);
 
     jrdfFactory = new JRDFFactoryImpl();
   }

@@ -408,9 +408,6 @@ public class TestResolverUnitTest extends TestCase {
 
 			String tmfClassName = "org.mulgara.resolver.JotmTransactionManagerFactory";
 
-			String relatedQueryHandlerClassName =
-				"org.mulgara.resolver.RelatedQueryHandlerImpl";
-
 			TransactionManagerFactory transactionManagerFactory =
 				(TransactionManagerFactory) Beans.instantiate(null, tmfClassName);
 
@@ -434,7 +431,6 @@ public class TestResolverUnitTest extends TestCase {
 					systemResolverFactoryClassName,   // temporary
 					new File(persistenceDirectory, "cache"),
           "",                               // no rule loader
-					relatedQueryHandlerClassName,
 					null);                            // no default content handler
 
 			database.addResolverFactory("org.mulgara.resolver.test.TestResolverFactory", null);
