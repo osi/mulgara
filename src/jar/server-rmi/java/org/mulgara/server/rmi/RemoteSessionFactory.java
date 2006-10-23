@@ -107,15 +107,6 @@ interface RemoteSessionFactory extends Remote {
   public Session newJRDFSession() throws QueryException, RemoteException;
 
   /**
-   * Creates a session that can be used for a Jena Graph.
-   *
-   * @return an unauthenticated session
-   * @throws QueryException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
-   */
-  public Session newJenaSession() throws QueryException, RemoteException;
-
-  /**
    * Factory method. The session generated will be an unauthenticated (<q>guest
    * </q>) session. To authenticate it, the {@link Session#login} method must be
    * used.  The remote session should be wrapped in a Session object.

@@ -205,34 +205,6 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
     }
   }
 
-  /**
-   * {@inheritDoc RemoteSessionFactory}
-   *
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
-   */
-  public Session newJenaSession() throws QueryException {
-
-    try {
-
-      // Create the session
-      RemoteSession remoteSession =
-          new RemoteJenaSessionImpl((JenaSession) sessionFactory.newJenaSession(), this);
-      remoteSessionSet.add(remoteSession);
-
-      RemoteJenaSession exportedRemoteSession =
-          (RemoteJenaSession) UnicastRemoteObject.exportObject(remoteSession);
-
-      // Apply two wrappers to hide the RemoteExceptions of the
-      // RemoteSession interface so everything looks like a Session
-      return new RemoteSessionWrapperJenaSession(exportedRemoteSession,
-          this.getServerURI());
-    }
-    catch (RemoteException e) {
-
-      throw new QueryException("Couldn't export session", e);
-    }
-  }
 
   /**
    * {@inheritDoc RemoteSessionFactory}

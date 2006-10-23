@@ -970,35 +970,6 @@ public class Database implements SessionFactory
     }
   }
 
-  /**
-   * Creates a session that can be used for a Jena Graph.
-   *
-   * @throws QueryException
-   * @return Session
-   */
-  public Session newJenaSession() throws QueryException {
-    try {
-      return new LocalJenaDatabaseSession(
-          transactionManager,
-          unmodifiableSecurityAdapterList,
-          unmodifiableSymbolicTransformationList,
-          jrdfSessionFactory,
-          systemResolverFactory,
-          temporaryResolverFactory,
-          unmodifiableResolverFactoryList,
-          unmodifiableExternalResolverFactoryMap,
-          unmodifiableInternalResolverFactoryMap,
-          metadata,
-          contentHandlers,
-          cachedResolverFactorySet,
-          relatedQueryHandler,
-          temporaryModelTypeURI);
-    }
-    catch (ResolverFactoryException e) {
-      throw new QueryException("Couldn't create JRDF session", e);
-    }
-  }
-
   //
   // Internal methods
   //
@@ -1247,35 +1218,6 @@ public class Database implements SessionFactory
     {
       try {
         return new LocalJRDFDatabaseSession(
-          transactionManager,
-          Collections.singletonList(
-            new SystemModelSecurityAdapter(metadata.getSystemModelNode())
-          ),
-          unmodifiableSymbolicTransformationList,
-          jrdfSessionFactory,
-          systemResolverFactory,
-          temporaryResolverFactory,
-          unmodifiableResolverFactoryList,
-          unmodifiableExternalResolverFactoryMap,
-          unmodifiableInternalResolverFactoryMap,
-          metadata,
-          contentHandlers,
-          cachedResolverFactorySet,
-          relatedQueryHandler,
-          temporaryModelTypeURI);
-      }
-      catch (ResolverFactoryException e) {
-        throw new QueryException("Couldn't create session", e);
-      }
-    }
-
-    /**
-     * @return an unsecured {@link Session} to the outer {@link Database}
-     */
-    public Session newJenaSession() throws QueryException
-    {
-      try {
-        return new LocalJenaDatabaseSession(
           transactionManager,
           Collections.singletonList(
             new SystemModelSecurityAdapter(metadata.getSystemModelNode())

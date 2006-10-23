@@ -27,8 +27,6 @@
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${jrdf.dist.dir}/${jrdf.base.jar}"/>
-    <fileset file="${jena.dist.dir}/${jena.base.jar}"/>
-    <fileset file="${client-jrdf.dist.dir}/${client-jrdf.jar}"/>
     <fileset file="${resolver-http.dist.dir}/${resolver-http.jar}"/>
     <fileset file="${resolver-file.dist.dir}/${resolver-file.jar}"/>
     <fileset file="${resolver-jar.dist.dir}/${resolver-jar.jar}"/>
@@ -82,7 +80,7 @@
           depends="-resolver-prepare, resolver-spi-jar, rules-jar,
                    resolver-http-jar, resolver-file-jar, resolver-url-jar,
                    resolver-jar-jar, content-rdfxml-jar, content-rdfxml-jar,
-                   client-jrdf-jar, jrdf-jar, jena-jar"
+                   client-jrdf-jar, jrdf-jar"
           description="Compiles all resolver related files included generated
                        source code">
 
@@ -125,7 +123,7 @@
   </target>
 
   <target name="resolver-test"
-          depends="jrdf-jar, jena-jar, store-nodepool-memory-jar, 
+          depends="jrdf-jar, store-nodepool-memory-jar, 
                    resolver-jar, resolver-memory-jar,
                    store-nodepool-xa-jar, store-stringpool-xa-jar, resolver-store-jar,
                    resolver-url-jar, store-stringpool-memory-jar, tuples-hybrid-jar,

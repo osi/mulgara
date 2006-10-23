@@ -90,12 +90,6 @@
       <classpath refid="server-rmi-classpath"/>
       <classpath path="${obj.dir}/jar/server-rmi/classes"/>
     </rmic>
-    <rmic classname="org.mulgara.server.rmi.JenaSessionWrapperRemoteJenaSession"
-      base="${obj.dir}/jar/server-rmi/classes">
-
-      <classpath refid="server-rmi-classpath"/>
-      <classpath path="${obj.dir}/jar/server-rmi/classes"/>
-    </rmic>
 
     <rmic classname="org.mulgara.server.rmi.RemoteSessionImpl"
       base="${obj.dir}/jar/server-rmi/classes">
@@ -105,13 +99,6 @@
     </rmic>
 
     <rmic classname="org.mulgara.server.rmi.RemoteJRDFSessionImpl"
-      base="${obj.dir}/jar/server-rmi/classes">
-
-      <classpath refid="server-rmi-classpath"/>
-      <classpath path="${obj.dir}/jar/server-rmi/classes"/>
-    </rmic>
-
-    <rmic classname="org.mulgara.server.rmi.RemoteJenaSessionImpl"
       base="${obj.dir}/jar/server-rmi/classes">
 
       <classpath refid="server-rmi-classpath"/>

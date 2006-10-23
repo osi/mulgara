@@ -53,6 +53,7 @@ import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
+import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.view.SessionView;
 import org.mulgara.rules.*;
 import org.mulgara.server.Session;

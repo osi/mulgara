@@ -14,7 +14,6 @@
 
   <property file="${jar.src.dir}/ant-task/ant-task-build.properties"/>
   <property file="${jar.src.dir}/client-drools/client-drools-build.properties"/>
-  <property file="${jar.src.dir}/client-jena/client-jena-build.properties"/>
   <property file="${jar.src.dir}/client-jrdf/client-jrdf-build.properties"/>
   <property file="${jar.src.dir}/config/config-build.properties"/>
   <property file="${jar.src.dir}/demo/demo-build.properties"/>
@@ -30,7 +29,6 @@
   <property file="${jar.src.dir}/driver/driver-build.properties"/>
   <property file="${jar.src.dir}/dtd/dtd-build.properties"/>
   <property file="${jar.src.dir}/itql/itql-build.properties"/>
-  <property file="${jar.src.dir}/jena/jena-build.properties"/>
   <property file="${jar.src.dir}/jrdf/jrdf-build.properties"/>
   <property file="${jar.src.dir}/query/query-build.properties"/>
   <!--property file="${jar.src.dir}/rdql/rdql-build.properties"/-->
@@ -86,7 +84,6 @@
 
   <import file="${jar.src.dir}/ant-task/build.xml"/>
   <import file="${jar.src.dir}/client-drools/build.xml"/>
-  <import file="${jar.src.dir}/client-jena/build.xml"/>
   <import file="${jar.src.dir}/client-jrdf/build.xml"/>
   <import file="${jar.src.dir}/demo/build.xml"/>
   <import file="${jar.src.dir}/demo-mp3/build.xml"/>
@@ -102,7 +99,6 @@
   <import file="${jar.src.dir}/driver/build.xml"/>
   <import file="${jar.src.dir}/dtd/build.xml"/>
   <import file="${jar.src.dir}/itql/build.xml"/>
-  <import file="${jar.src.dir}/jena/build.xml"/>
   <import file="${jar.src.dir}/jrdf/build.xml"/>
   <import file="${jar.src.dir}/query/build.xml"/>
   <!--import file="${jar.src.dir}/rdql/build.xml"/-->
@@ -488,8 +484,7 @@
           lib/${content-n3.jar}, lib/${content-mbox.jar}, lib/${content-rdfxml.jar},
           lib/${content-rio.jar}, lib/${resolver-nodetype.jar}, lib/${resolver-prefix.jar},
           lib/${resolver-relational.jar}, lib/${resolver-xsd.jar}, lib/${resolver-test.jar},
-          lib/${resolver-jar.jar}, lib/${client-jena.jar}, lib/${dtd.jar},
-          lib/${jena.base.jar}, lib/${jrdf.base.jar}
+          lib/${resolver-jar.jar}, lib/${dtd.jar}, lib/${jrdf.base.jar}
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
           lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.8.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
@@ -571,8 +566,7 @@
           ${content-n3.jar}, ${content-mbox.jar}, ${content-rdfxml.jar},
           ${content-rio.jar}, ${resolver-nodetype.jar}, ${resolver-prefix.jar},
           ${resolver-xsd.jar}, ${resolver-test.jar}, ${resolver-relational.jar},
-          ${resolver-jar.jar}, ${client-jena.jar}, ${dtd.jar},
-          ${jena.base.jar}, ${jrdf.base.jar}"/>
+          ${resolver-jar.jar}, ${dtd.jar}, ${jrdf.base.jar}"/>
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data"
@@ -728,10 +722,10 @@
   <!-- =================================================================== -->
   <target name="javadoc"
     depends="javadoc-uptodate, javadoc-overview.html,
-             ant-task-jar, client-jena-jar, client-jrdf-jar, config-jar,
+             ant-task-jar, client-jrdf-jar, config-jar,
              connection-jar, content-mbox-jar, content-mp3-jar,
              content-n3-jar, content-rdfxml-jar, content-rio-jar,
-             doclet.jar, itql-jar, jena-jar, jrdf-jar, store-jar,
+             doclet.jar, itql-jar, jrdf-jar, store-jar,
              store-xa-jar, connection-jar,
              store-nodepool-jar, store-nodepool-memory-jar,
              store-nodepool-xa-jar, query-jar,
@@ -759,7 +753,6 @@
                       org.mulgara.driver.*,
                       org.mulgara.extractor.tag,
                       org.mulgara.itql,
-                      org.mulgara.jena,
                       org.mulgara.jrdf,
                       org.mulgara.local.*,
                       org.mulgara.query.*,
@@ -774,7 +767,6 @@
                       org.mulgara.store.*,
                       org.mulgara.store.graph.*,
                       org.mulgara.store.graph.xa.*,
-                      org.mulgara.store.jena.*,
                       org.mulgara.store.jxunit.*,
                       org.mulgara.store.loader.*,
                       org.mulgara.store.nodepool.*,
@@ -821,7 +813,6 @@
       <classpath path="${lib.dir}/xmlc-all-runtime-2.2.jar"/>
       <classpath path="${lib.dir}/xom-1.0d21.jar"/>
       <sourcepath path="${ant-task.src.dir}/java"/>
-      <sourcepath path="${client-jena.src.dir}/java"/>
       <sourcepath path="${client-jrdf.src.dir}/java"/>
       <sourcepath path="${connection.src.dir}/java"/>
       <sourcepath path="${content-mp3.src.dir}/java"/>
@@ -831,7 +822,6 @@
       <sourcepath path="${driver.src.dir}/java"/>
       <sourcepath path="${dtd.src.dir}/java"/>
       <sourcepath path="${itql.src.dir}/java"/>
-      <sourcepath path="${jena.src.dir}/java"/>
       <sourcepath path="${jrdf.src.dir}/java"/>
       <sourcepath path="${krule.src.dir}/java"/>
       <sourcepath path="${rules.src.dir}/java"/>
@@ -1710,7 +1700,7 @@
   <!-- Creates the distribution file for the Embedded Mulgara server        -->
   <!-- =================================================================== -->
   <target name="embedded-dist"
-          depends="client-jrdf-jar, client-jena-jar, config-jar,
+          depends="client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar, content-n3-jar,
              content-rdfxml-jar, content-rio-jar,
              create-manifest, demo-jar, dtd-jar, driver-jar, dtd-jar, itql-jar,
@@ -1725,7 +1715,7 @@
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, tuples-jar,
-             tuples-hybrid-jar, util-jar, util-xa-jar, jena-jar,
+             tuples-hybrid-jar, util-jar, util-xa-jar,
              webservices-war, webui-war, -embedded-dist-uptodate"
           description="Creates the executable JAR for the Embedded Mulgara server"
                 unless="embedded.dist.uptodate">
@@ -1829,10 +1819,8 @@
       <zipfileset src="${bin.dir}/${resolver-xsd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-test.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${client-jena.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jid3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${jena.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
@@ -1933,14 +1921,14 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
   </target>
 
   <target name="client-test"
-          depends="client-drools-test, client-jrdf-test, client-jena-test,
+          depends="client-drools-test, client-jrdf-test,
                    demo-mp3-test, driver-test, itql-test, query-test,
                    connector-test, connection-test, descriptor-test"
           description="Runs client side tests">
   </target>
 
   <target name="session-test"
-          depends="jena-test, jrdf-test, server-test,
+          depends="jrdf-test, server-test,
              server-beep-test, server-http-test, server-local-test,
              server-rmi-test"
           description="Runs session based tests">

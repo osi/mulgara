@@ -228,31 +228,6 @@ public class LocalSessionFactory
   }
 
   /**
-   * Factory method.
-   *
-   * @return an unauthenticated session
-   * @throws QueryException if a session couldn't be generated
-   */
-  public Session newJenaSession() throws QueryException {
-
-    try {
-
-      // Initialize session factory if not already in use.
-      if (sessionFactory == null) {
-        createDirectory();
-
-        SessionFactoryFactory factoryFinder = new SessionFactoryFactory();
-        sessionFactory = factoryFinder.newSessionFactory(serverURI, directory);
-      }
-    }
-    catch (Exception e) {
-      throw new QueryException("Couldn't create local database", e);
-    }
-
-    return sessionFactory.newJenaSession();
-  }
-
-  /**
    * Closes the local database.
    *
    * @throws QueryException EXCEPTION TO DO

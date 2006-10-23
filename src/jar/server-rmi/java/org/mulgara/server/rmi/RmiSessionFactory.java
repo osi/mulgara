@@ -216,15 +216,6 @@ public class RmiSessionFactory implements SessionFactory {
     }
   }
 
-  public Session newJenaSession() throws QueryException {
-    try {
-      return remoteSessionFactory.newJenaSession();
-    }
-    catch (RemoteException e) {
-      throw new QueryException("Couldn't contact server", e);
-    }
-  }
-
   /**
    * Close the remote session factory.
    */

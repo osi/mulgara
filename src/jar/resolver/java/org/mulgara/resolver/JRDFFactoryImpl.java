@@ -41,7 +41,6 @@ import org.jrdf.graph.*;
 import com.hp.hpl.jena.graph.impl.*;
 
 // Local packages
-import org.mulgara.jena.*;
 import org.mulgara.jrdf.*;
 import org.mulgara.server.*;
 
@@ -79,23 +78,9 @@ public class JRDFFactoryImpl implements org.mulgara.server.JRDFFactory {
   private HashMap anonMap = new HashMap();
 
   /**
-   * A link to the JenaFactory peer.
-   */
-  private JenaFactory jenaFactory = null;
-
-  /**
    * Constructs a JRDF Factory that is not tied to a Jena Factory.
    */
   public JRDFFactoryImpl() {
-  }
-
-  /**
-   * Constructs a JRDF Factory that is tied to a Jena Factory.
-   *
-   * @param newJenaFactory the Jena factory to map bnodes to.
-   */
-  public JRDFFactoryImpl(JenaFactory newJenaFactory) {
-    jenaFactory = newJenaFactory;
   }
 
   /**
@@ -274,9 +259,6 @@ public class JRDFFactoryImpl implements org.mulgara.server.JRDFFactory {
    */
   public void addNode(com.hp.hpl.jena.graph.Node key, BlankNode value) {
     anonMap.put(key.toString(), value);
-    if (jenaFactory != null) {
-      jenaFactory.addAnon(value, key);
-    }
   }
 
 

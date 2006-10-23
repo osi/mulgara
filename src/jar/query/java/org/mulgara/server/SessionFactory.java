@@ -86,14 +86,6 @@ public interface SessionFactory {
   public Session newJRDFSession() throws QueryException;
 
   /**
-   * Creates a session that can be used for a Jena Graph.
-   *
-   * @throws QueryException
-   * @return Session
-   */
-  public Session newJenaSession() throws QueryException;
-
-  /**
    * Flush and free persistent resources of the session factory.
    *
    * @throws QueryException if persistence resources couldn't be closed
