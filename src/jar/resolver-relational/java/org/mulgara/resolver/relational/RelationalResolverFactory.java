@@ -54,9 +54,6 @@ import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.xa.XAResolverSessionFactory;
-import org.mulgara.store.xa.SimpleXAResourceException;
 
 /**
  * Represents the time invariant concept of a relationally backed rdf-graph.

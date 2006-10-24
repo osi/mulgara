@@ -455,24 +455,10 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
    * @throws QueryException if the local node number can't be obtained
    */
   long preallocate(Node node) throws QueryException {
-    // Find or create the node
-    startTransactionalOperation(true);
-    try {
-      long localNode = systemResolver.localizePersistent(node);
+    PreallocateOperation preOp = new PreallocateOperation(node);
+    execute(preOp, "Failure to preallocated " + node);
 
-      // Create a statement linking the node to the graph so it's never reaped
-      systemResolver.modifyModel(metadata.getPreallocationModelNode(),
-          new SingletonStatements(metadata.getPreallocationSubjectNode(),
-          metadata.getPreallocationPredicateNode(),
-          localNode),
-          true);
-      return localNode;
-    } catch (Throwable e) {
-      rollbackTransactionalBlock(e);
-    } finally {
-      finishTransactionalOperation("Could not preallocate " + node);
-    }
-    throw new QueryException("Illegal transactional state in session");
+    return preOp.getResult();
   }
 
   //
