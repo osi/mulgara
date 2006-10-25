@@ -78,7 +78,7 @@ class LocalQuery implements Cloneable
   private final ResolverSession resolverSession;
 
   /** The session this query is local to.  */
-  private final DatabaseSession databaseSession;
+  private final DatabaseOperationContext context;
 
   /** The constraint expression. */
   private ConstraintExpression constraintExpression;
@@ -114,7 +114,7 @@ class LocalQuery implements Cloneable
    *   <var>resolverSession</var> are <code>null</code>
    * @throws LocalizeException if the <var>query</var> can't be localized
    */
-  LocalQuery(Query query, ResolverSession resolverSession, DatabaseSession databaseSession)
+  LocalQuery(Query query, ResolverSession resolverSession, DatabaseOperationContext context)
     throws LocalizeException
   {
     if (logger.isDebugEnabled()) {
@@ -134,7 +134,7 @@ class LocalQuery implements Cloneable
     // Initialize fields
     this.constraintExpression = query.getConstraintExpression();
     this.resolverSession = resolverSession;
-    this.databaseSession = databaseSession;
+    this.context = context;
     this.modelExpression = (ModelExpression)query.getModelExpression().clone();
     this.orderList = query.getOrderList();
     this.offset = query.getOffset();
@@ -152,7 +152,7 @@ class LocalQuery implements Cloneable
   LocalQuery(LocalQuery localQuery, ConstraintExpression constraintExpression) {
     this.constraintExpression = constraintExpression;
     this.resolverSession = localQuery.resolverSession;
-    this.databaseSession = localQuery.databaseSession;
+    this.context = localQuery.context;
     this.modelExpression = localQuery.modelExpression;
     this.orderList = localQuery.orderList;
     this.offset = localQuery.offset;
@@ -190,7 +190,7 @@ class LocalQuery implements Cloneable
   Tuples resolve(Map outerBindings) throws QueryException
   {
     try {
-      return databaseSession.innerCount(new LocalQuery(this,
+      return context.innerCount(new LocalQuery(this,
           new ConstraintConjunction(ConstraintOperations.bindVariables(outerBindings, constraintExpression),
                                     constrainBindings(outerBindings))));
     } catch (LocalizeException el) {
@@ -224,7 +224,7 @@ class LocalQuery implements Cloneable
 
 
   Tuples resolve(Constraint constraint) throws QueryException {
-    return databaseSession.resolve(constraint);
+    return context.resolve(constraint);
   }
 
 
@@ -315,7 +315,7 @@ class LocalQuery implements Cloneable
   {
     if (result.getRowCardinality() != Tuples.ZERO) {
       Tuples tmp = result;
-      result = new AppendAggregateTuples(resolverSession, databaseSession, result, filterSubqueries(select));
+      result = new AppendAggregateTuples(resolverSession, context, result, filterSubqueries(select));
       tmp.close();
     }
 

@@ -54,7 +54,6 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.resolver.spi.ResolverFactoryException;
-import org.mulgara.resolver.view.SessionView;
 import org.mulgara.rules.*;
 import org.mulgara.server.Session;
 import org.mulgara.store.nodepool.NodePool;
@@ -79,7 +78,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatabaseSession {
+class DatabaseSession implements Session, LocalSession {
   public static final boolean ASSERT_STATEMENTS = true;
   public static final boolean DENY_STATEMENTS = false;
 
@@ -162,7 +161,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   private final TransactionManager transactionManager;
 
   /** Session transaction */
-  private Transaction transaction;
+  Transaction transaction;
 
   /** The name of the rule loader to use */
   private String ruleLoaderClassName;
@@ -190,7 +189,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
    * This defaults to <code>true</code> until modified by the
    * {@link #setAutoCommit} method.
    */
-  private boolean autoCommit = true;
+  boolean autoCommit = true;
   private boolean inFailedTransaction = false;
 
   /**
@@ -337,7 +336,8 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
                                         securityAdapterList,
                                         temporaryModelTypeURI,
                                         temporaryResolverFactory,
-                                        transactionManager
+                                        transactionManager,
+                                        outstandingAnswers
                                       );
 
     if (logger.isDebugEnabled()) {
@@ -662,103 +662,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
     return queryOperation.getAnswer();
   }
 
-  public Answer innerQuery(Query query) throws QueryException {
-    // Validate "query" parameter
-    if (query == null) {
-      throw new IllegalArgumentException("Null \"query\" parameter");
-    }
-
-    if (logger.isInfoEnabled()) {
-      logger.info("Query: " + query);
-    }
-
-    boolean resumed;
-
-    if (this.transaction != null) {
-      resumeTransactionalBlock();
-      resumed = true;
-    } else {
-      resumed = false;
-    }
-
-    Answer result = null;
-    try {
-      result = doQuery(this, systemResolver, query);
-    } catch (Throwable th) {
-      try {
-        logger.warn("Inner Query failed", th);
-        rollbackTransactionalBlock(th);
-      } finally {
-        endPreviousQueryTransaction();
-        logger.error("Inner Query should have thrown exception", th);
-        throw new IllegalStateException(
-            "Inner Query should have thrown exception");
-      }
-    }
-
-    try {
-      if (resumed) {
-        suspendTransactionalBlock();
-      }
-
-      return result;
-    } catch (Throwable th) {
-      endPreviousQueryTransaction();
-      logger.error("Failed to suspend Transaction", th);
-      throw new QueryException("Failed to suspend Transaction");
-    }
-  }
-
-  Tuples innerCount(LocalQuery localQuery) throws QueryException {
-    // Validate "query" parameter
-    if (localQuery == null) {
-      throw new IllegalArgumentException("Null \"query\" parameter");
-    }
-
-    if (logger.isInfoEnabled()) {
-      logger.info("Inner Count: " + localQuery);
-    }
-
-    boolean resumed;
-
-    if (this.transaction != null) {
-      resumeTransactionalBlock();
-      resumed = true;
-    } else {
-      resumed = false;
-    }
-
-    Tuples result = null;
-    try {
-      LocalQuery lq = (LocalQuery)localQuery.clone();
-      transform(this, lq);
-      result = lq.resolve();
-      lq.close();
-    } catch (Throwable th) {
-      try {
-        logger.warn("Inner Query failed", th);
-        rollbackTransactionalBlock(th);
-      } finally {
-        endPreviousQueryTransaction();
-        logger.error("Inner Query should have thrown exception", th);
-        throw new IllegalStateException(
-            "Inner Query should have thrown exception");
-      }
-    }
-
-    try {
-      if (resumed) {
-        suspendTransactionalBlock();
-      }
-
-      return result;
-    } catch (Throwable th) {
-      endPreviousQueryTransaction();
-      logger.error("Failed to suspend Transaction", th);
-      throw new QueryException("Failed to suspend Transaction");
-    }
-  }
-
   static Answer doQuery(DatabaseSession databaseSession,
                         SystemResolver  systemResolver,
                         Query           query) throws Exception
@@ -766,13 +669,13 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
     Answer result;
 
     LocalQuery localQuery =
-      new LocalQuery(query, systemResolver, databaseSession);
+      new LocalQuery(query, systemResolver, databaseSession.operationContext);
 
     transform(databaseSession, localQuery);
 
     // Complete the numerical phase of resolution
     Tuples tuples = localQuery.resolve();
-    result = new SubqueryAnswer(databaseSession, systemResolver, tuples,
+    result = new SubqueryAnswer(databaseSession.operationContext, systemResolver, tuples,
         query.getVariableList());
     tuples.close();
     localQuery.close();
@@ -789,7 +692,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
    * Perform in-place transformation of localQuery.
    * Note: we really want to convert this to a functional form eventually.
    */
-  private static void transform(DatabaseSession databaseSession, LocalQuery localQuery) throws Exception {
+  static void transform(DatabaseSession databaseSession, LocalQuery localQuery) throws Exception {
     // Start with the symbolic phase of resolution
     LocalQuery.MutableLocalQueryImpl mutableLocalQueryImpl =
       localQuery.new MutableLocalQueryImpl();
@@ -817,7 +720,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
     mutableLocalQueryImpl.close();
   }
 
-  private void endPreviousQueryTransaction() throws QueryException {
+  void endPreviousQueryTransaction() throws QueryException {
     logger.debug("Clearing previous transaction");
 
     // Save the exception.
@@ -828,7 +731,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
     while (i.hasNext()) {
       try {
         SubqueryAnswer s = (SubqueryAnswer) i.next();
-        deregisterAnswer(s);
+        operationContext.deregisterAnswer(s);
         //Do not close tuples - for Jena and JRDF.
         //s.close();
       } catch (Throwable th) {
@@ -859,31 +762,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
     } catch (Throwable th) {
       endTransactionalBlock("Error ending previous query");
       throw new QueryException("Failure ending previous query", th);
-    }
-  }
-
-  public void registerAnswer(SubqueryAnswer answer) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("registering Answer: " + System.identityHashCode(answer));
-    }
-    outstandingAnswers.add(answer);
-  }
-
-  public void deregisterAnswer(SubqueryAnswer answer) throws QueryException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("deregistering Answer: " + System.identityHashCode(answer));
-    }
-
-    if (!outstandingAnswers.contains(answer)) {
-      logger.info("Stale answer being closed");
-    } else {
-      outstandingAnswers.remove(answer);
-      if (autoCommit && outstandingAnswers.isEmpty()) {
-        if (transaction != null) {
-          resumeTransactionalBlock();
-        }
-        endTransactionalBlock("Could not commit query");
-      }
     }
   }
 
@@ -1102,158 +980,6 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   }
 
   //
-  // Local query methods
-  //
-
-  /**
-   * Resolve a localized constraint into the tuples which satisfy it.
-   *
-   * This method must be called within a transactional context.
-   *
-   * @deprecated Will be made package-scope as soon as the View kludge is resolved.
-   * @param constraint  a localized constraint
-   * @return the tuples satisfying the <var>constraint</var>
-   * @throws IllegalArgumentException if <var>constraint</var> is
-   *   <code>null</code>
-   * @throws QueryException if the <var>constraint</var> can't be resolved
-   */
-  public Tuples resolve(Constraint constraint) throws QueryException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Resolving " + constraint);
-    }
-
-    // Validate "constraint" parameter
-    if (constraint == null) {
-      throw new IllegalArgumentException("Null \"constraint\" parameter");
-    }
-
-    ConstraintElement modelElem = constraint.getModel();
-    if (modelElem instanceof Variable) {
-      return resolveVariableModel(constraint);
-    } else if (modelElem instanceof LocalNode) {
-      long model = ((LocalNode) modelElem).getValue();
-      long realModel = operationContext.getCanonicalModel(model);
-
-      // Make sure security adapters are satisfied
-      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
-        SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
-
-        // Lie to the user
-        if (!securityAdapter.canSeeModel(realModel, systemResolver))
-        {
-          try {
-            throw new QueryException(
-              "No such model " + systemResolver.globalize(realModel)
-            );
-          }
-          catch (GlobalizeException e) {
-            logger.warn("Unable to globalize model " + realModel);
-            throw new QueryException("No such model");
-          }
-        }
-      }
-      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
-        SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
-
-        // Tell a different lie to the user
-        if (!securityAdapter.canResolve(realModel, systemResolver))
-        {
-          return TuplesOperations.empty();
-        }
-      }
-
-      // if the model was changed then update the constraint
-      if (model != realModel) {
-        constraint = ConstraintOperations.rewriteConstraintModel(new LocalNode(realModel), constraint);
-      }
-
-      // Evaluate the constraint
-      Tuples result = operationContext.obtainResolver(
-                        operationContext.findModelResolverFactory(realModel),
-                        systemResolver
-                      ).resolve(constraint);
-      assert result != null;
-
-      return result;
-    } else {
-      throw new QueryException("Non-localized model in resolve: " + modelElem);
-    }
-  }
-
-  /**
-  * Resolve a {@link Constraint} in the case where the model isn't fixed.
-  *
-  * This is mostly relevant in the case where the <code>in</code> clause takes
-  * a variable parameter.  It's tricky to resolve because external models may
-  * be accessible to the system, but aren't known to it unless they're named.
-  * The policy we take is to only consider internal models.
-  *
-  * @param constraint  a constraint with a {@link Variable}-valued model
-  *   element, never <code>null</code>
-  * @return the solutions to the <var>constraint</var> occurring in all
-  *   internal models, never <code>null</code>
-  * @throws QueryException if the solution can't be evaluated
-  */
-  private Tuples resolveVariableModel(Constraint constraint)
-    throws QueryException
-  {
-    assert constraint != null;
-    assert constraint.getElement(3) instanceof Variable;
-
-    Tuples tuples = TuplesOperations.empty();
-
-    // This is the alternate code we'd use if we were to consult external
-    // models as well as internal models during the resolution of variable IN
-    // clauses:
-    //
-    //Iterator i = resolverFactoryList.iterator();
-
-    Iterator i = internalResolverFactoryMap.values().iterator();
-    while (i.hasNext()) {
-      ResolverFactory resolverFactory = (ResolverFactory) i.next();
-      assert resolverFactory != null;
-
-      // Resolve the constraint
-      Resolver resolver = operationContext.obtainResolver(resolverFactory, systemResolver);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Resolving " + constraint + " against " + resolver);
-      }
-      Resolution resolution = resolver.resolve(constraint);
-      assert resolution != null;
-
-      try {
-        // If this is a complete resolution of the constraint, we won't have to
-        // consider any of the other resolvers
-        if (resolution.isComplete()) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("Returning complete resolution from " + resolver);
-          }
-          tuples.close();
-
-          return resolution;
-        } else {
-          // Append the resolution to the overall solutions
-          if (logger.isDebugEnabled()) {
-            logger.debug("Appending " + resolver);
-          }
-          Tuples oldTuples = tuples;
-          tuples = TuplesOperations.append(tuples, resolution);
-          oldTuples.close();
-        }
-      } catch (TuplesException e) {
-        throw new QueryException("Unable to resolve " + constraint, e);
-      }
-    }
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("Resolved " + constraint + " to " +
-          TuplesOperations.formatTuplesTree(tuples));
-    }
-
-    return tuples;
-  }
-
-  //
   // Internal methods
   //
 
@@ -1408,7 +1134,7 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
    * @throws QueryException if a transaction needed to be committed and
    *   couldn't be
    */
-  private void endTransactionalBlock(String failureMessage) throws QueryException {
+  void endTransactionalBlock(String failureMessage) throws QueryException {
     if (logger.isInfoEnabled()) {
       logger.info(
         "End Transactional Block autocommit=" + autoCommit +
@@ -1739,4 +1465,15 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   boolean isWriting() {
     return writing;
   }
+
+  boolean ensureTransactionResumed() throws QueryException {
+    if (this.transaction != null) {
+      resumeTransactionalBlock();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
 }

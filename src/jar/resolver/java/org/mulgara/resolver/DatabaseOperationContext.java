@@ -66,7 +66,10 @@ import org.mulgara.resolver.spi.SecurityAdapter;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.resolver.view.ViewMarker;
+import org.mulgara.resolver.view.SessionView;
 import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.tuples.Tuples;
+import org.mulgara.store.tuples.TuplesOperations;
 
 /**
  * Services provided by {@link DatabaseSession} to invocations of the
@@ -81,7 +84,8 @@ import org.mulgara.store.nodepool.NodePool;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseOperationContext implements OperationContext, SymbolicTransformationContext
+class DatabaseOperationContext implements OperationContext, SessionView,
+AnswerDatabaseSession, SymbolicTransformationContext
 {
   /**
    * Logger.
@@ -129,6 +133,7 @@ class DatabaseOperationContext implements OperationContext, SymbolicTransformati
   private final URI                temporaryModelTypeURI;
   private final ResolverFactory    temporaryResolverFactory;
   private final TransactionManager transactionManager;
+  private final Set                outstandingAnswers;
 
   //
   // Constructor
@@ -148,7 +153,8 @@ class DatabaseOperationContext implements OperationContext, SymbolicTransformati
                            List               securityAdapterList,
                            URI                temporaryModelTypeURI,
                            ResolverFactory    temporaryResolverFactory,
-                           TransactionManager transactionManager)
+                           TransactionManager transactionManager,
+                           Set                outstandingAnswers)
   {
     assert cachedModelSet             != null;
     assert cachedResolverFactorySet   != null;
@@ -176,6 +182,9 @@ class DatabaseOperationContext implements OperationContext, SymbolicTransformati
     this.temporaryModelTypeURI      = temporaryModelTypeURI;
     this.temporaryResolverFactory   = temporaryResolverFactory;
     this.transactionManager         = transactionManager;
+    // Note this is only temporary - we will be eliminating outstandingAnswers
+    // before the end of the transaction fix.
+    this.outstandingAnswers         = outstandingAnswers;
   }
 
   //
@@ -329,7 +338,7 @@ class DatabaseOperationContext implements OperationContext, SymbolicTransformati
       //        (specifically intervals), and distributed queries
       //        (specificially appended joins).
       if (resolver instanceof ViewMarker) {
-        ((ViewMarker) resolver).setSession(databaseSession);
+        ((ViewMarker) resolver).setSession(this);
       }
     }
     catch (ResolverFactoryException e) {
@@ -617,4 +626,260 @@ class DatabaseOperationContext implements OperationContext, SymbolicTransformati
     }
   }
 
+  /**
+   * Resolve a localized constraint into the tuples which satisfy it.
+   *
+   * This method must be called within a transactional context.
+   *
+   * @deprecated Will be made package-scope as soon as the View kludge is resolved.
+   * @param constraint  a localized constraint
+   * @return the tuples satisfying the <var>constraint</var>
+   * @throws IllegalArgumentException if <var>constraint</var> is
+   *   <code>null</code>
+   * @throws QueryException if the <var>constraint</var> can't be resolved
+   */
+  public Tuples resolve(Constraint constraint) throws QueryException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Resolving " + constraint);
+    }
+
+    // Validate "constraint" parameter
+    if (constraint == null) {
+      throw new IllegalArgumentException("Null \"constraint\" parameter");
+    }
+
+    SystemResolver systemResolver = databaseSession.getSystemResolver();
+
+    ConstraintElement modelElem = constraint.getModel();
+    if (modelElem instanceof Variable) {
+      return resolveVariableModel(constraint);
+    } else if (modelElem instanceof LocalNode) {
+      long model = ((LocalNode) modelElem).getValue();
+      long realModel = getCanonicalModel(model);
+
+      // Make sure security adapters are satisfied
+      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
+        SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+
+        // Lie to the user
+        if (!securityAdapter.canSeeModel(realModel, systemResolver)) {
+          try {
+            throw new QueryException(
+              "No such model " + systemResolver.globalize(realModel));
+          } catch (GlobalizeException e) {
+            logger.warn("Unable to globalize model " + realModel);
+            throw new QueryException("No such model");
+          }
+        }
+      }
+
+      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
+        SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+
+        // Tell a different lie to the user
+        if (!securityAdapter.canResolve(realModel, systemResolver)) {
+          return TuplesOperations.empty();
+        }
+      }
+
+      // if the model was changed then update the constraint
+      if (model != realModel) {
+        constraint = ConstraintOperations.rewriteConstraintModel(new LocalNode(realModel), constraint);
+      }
+
+      // Evaluate the constraint
+      Tuples result = obtainResolver(
+          findModelResolverFactory(realModel), systemResolver).resolve(constraint);
+      assert result != null;
+
+      return result;
+    } else {
+      throw new QueryException("Non-localized model in resolve: " + modelElem);
+    }
+  }
+
+  /**
+  * Resolve a {@link Constraint} in the case where the model isn't fixed.
+  *
+  * This is mostly relevant in the case where the <code>in</code> clause takes
+  * a variable parameter.  It's tricky to resolve because external models may
+  * be accessible to the system, but aren't known to it unless they're named.
+  * The policy we take is to only consider internal models.
+  *
+  * @param constraint  a constraint with a {@link Variable}-valued model
+  *   element, never <code>null</code>
+  * @return the solutions to the <var>constraint</var> occurring in all
+  *   internal models, never <code>null</code>
+  * @throws QueryException if the solution can't be evaluated
+  */
+  private Tuples resolveVariableModel(Constraint constraint)
+    throws QueryException
+  {
+    assert constraint != null;
+    assert constraint.getElement(3) instanceof Variable;
+
+    SystemResolver systemResolver = databaseSession.getSystemResolver();
+
+    Tuples tuples = TuplesOperations.empty();
+
+    // This is the alternate code we'd use if we were to consult external
+    // models as well as internal models during the resolution of variable IN
+    // clauses:
+    //
+    //Iterator i = resolverFactoryList.iterator();
+
+    Iterator i = internalResolverFactoryMap.values().iterator();
+    while (i.hasNext()) {
+      ResolverFactory resolverFactory = (ResolverFactory) i.next();
+      assert resolverFactory != null;
+
+      // Resolve the constraint
+      Resolver resolver = obtainResolver(resolverFactory, systemResolver);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resolving " + constraint + " against " + resolver);
+      }
+      Resolution resolution = resolver.resolve(constraint);
+      assert resolution != null;
+
+      try {
+        // If this is a complete resolution of the constraint, we won't have to
+        // consider any of the other resolvers
+        if (resolution.isComplete()) {
+          if (logger.isDebugEnabled()) {
+            logger.debug("Returning complete resolution from " + resolver);
+          }
+          tuples.close();
+
+          return resolution;
+        } else {
+          // Append the resolution to the overall solutions
+          if (logger.isDebugEnabled()) {
+            logger.debug("Appending " + resolver);
+          }
+          Tuples oldTuples = tuples;
+          tuples = TuplesOperations.append(tuples, resolution);
+          oldTuples.close();
+        }
+      } catch (TuplesException e) {
+        throw new QueryException("Unable to resolve " + constraint, e);
+      }
+    }
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Resolved " + constraint + " to " +
+          TuplesOperations.formatTuplesTree(tuples));
+    }
+
+    return tuples;
+  }
+
+  public Answer innerQuery(Query query) throws QueryException {
+    // Validate "query" parameter
+    if (query == null) {
+      throw new IllegalArgumentException("Null \"query\" parameter");
+    }
+
+    if (logger.isInfoEnabled()) {
+      logger.info("Query: " + query);
+    }
+
+    boolean resumed = databaseSession.ensureTransactionResumed();
+    SystemResolver systemResolver = databaseSession.getSystemResolver();
+
+    Answer result = null;
+    try {
+      result = DatabaseSession.doQuery(databaseSession, systemResolver, query);
+    } catch (Throwable th) {
+      try {
+        logger.warn("Inner Query failed", th);
+        databaseSession.rollbackTransactionalBlock(th);
+      } finally {
+        databaseSession.endPreviousQueryTransaction();
+        logger.error("Inner Query should have thrown exception", th);
+        throw new IllegalStateException(
+            "Inner Query should have thrown exception");
+      }
+    }
+
+    try {
+      if (resumed) {
+        databaseSession.suspendTransactionalBlock();
+      }
+
+      return result;
+    } catch (Throwable th) {
+      databaseSession.endPreviousQueryTransaction();
+      logger.error("Failed to suspend Transaction", th);
+      throw new QueryException("Failed to suspend Transaction");
+    }
+  }
+
+  public void registerAnswer(SubqueryAnswer answer) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("registering Answer: " + System.identityHashCode(answer));
+    }
+    outstandingAnswers.add(answer);
+  }
+
+  public void deregisterAnswer(SubqueryAnswer answer) throws QueryException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("deregistering Answer: " + System.identityHashCode(answer));
+    }
+
+    if (!outstandingAnswers.contains(answer)) {
+      logger.info("Stale answer being closed");
+    } else {
+      outstandingAnswers.remove(answer);
+      if (databaseSession.autoCommit && outstandingAnswers.isEmpty()) {
+        if (databaseSession.transaction != null) {
+          databaseSession.resumeTransactionalBlock();
+        }
+        databaseSession.endTransactionalBlock("Could not commit query");
+      }
+    }
+  }
+
+  Tuples innerCount(LocalQuery localQuery) throws QueryException {
+    // Validate "query" parameter
+    if (localQuery == null) {
+      throw new IllegalArgumentException("Null \"query\" parameter");
+    }
+
+    if (logger.isInfoEnabled()) {
+      logger.info("Inner Count: " + localQuery);
+    }
+
+    boolean resumed = databaseSession.ensureTransactionResumed();
+    SystemResolver systemResolver = databaseSession.getSystemResolver();
+
+    Tuples result = null;
+    try {
+      LocalQuery lq = (LocalQuery)localQuery.clone();
+      DatabaseSession.transform(databaseSession, lq);
+      result = lq.resolve();
+      lq.close();
+    } catch (Throwable th) {
+      try {
+        logger.warn("Inner Query failed", th);
+        databaseSession.rollbackTransactionalBlock(th);
+      } finally {
+        databaseSession.endPreviousQueryTransaction();
+        logger.error("Inner Query should have thrown exception", th);
+        throw new IllegalStateException(
+            "Inner Query should have thrown exception");
+      }
+    }
+
+    try {
+      if (resumed) {
+        databaseSession.suspendTransactionalBlock();
+      }
+
+      return result;
+    } catch (Throwable th) {
+      databaseSession.endPreviousQueryTransaction();
+      logger.error("Failed to suspend Transaction", th);
+      throw new QueryException("Failed to suspend Transaction");
+    }
+  }
 }

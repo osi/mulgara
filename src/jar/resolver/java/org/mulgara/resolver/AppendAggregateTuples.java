@@ -109,7 +109,7 @@ class AppendAggregateTuples extends AbstractTuples {
    * @throws TuplesException  if there's trouble reading <var>tuples</var>
    */
   AppendAggregateTuples(ResolverSession session,
-      DatabaseSession databaseSession, Tuples tuples,
+      DatabaseOperationContext context, Tuples tuples,
       List variableList) throws TuplesException {
     if (logger.isDebugEnabled()) {
       logger.debug("Generating variable list for " + tuples + " and " +
@@ -165,7 +165,7 @@ class AppendAggregateTuples extends AbstractTuples {
 
         try {
           Query query = ((Count) element).getQuery();
-          localQueryList.add(new LocalQuery(query, session, databaseSession));
+          localQueryList.add(new LocalQuery(query, session, context));
         }
         catch (LocalizeException e) {
           throw new TuplesException(
