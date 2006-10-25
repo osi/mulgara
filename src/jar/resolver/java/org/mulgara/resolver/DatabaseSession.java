@@ -944,50 +944,11 @@ class DatabaseSession implements Session, LocalSession, SessionView, AnswerDatab
   }
 
   public boolean modelExists(URI modelURI) throws QueryException {
+    ModelExistsOperation operation = new ModelExistsOperation(modelURI);
 
-    // Attempt to create a read only transaction
-    try {
-      startTransactionalOperation(false);
-    }
-    catch (IllegalArgumentException iae) {
+    execute(operation, "Failed to determine model existence");
 
-      // If we're in a transaction then try to do it anyway.
-      try {
-        long model = systemResolver.lookupPersistent(new URIReferenceImpl(
-            modelURI));
-
-        return systemResolver.modelExists(model);
-      }
-      catch (ResolverException re) {
-        throw new QueryException("Failed to resolve URI: " + modelURI, re);
-      }
-      catch (LocalizeException le) {
-        // Return false - we failed to find the node.
-        return false;
-      }
-    }
-
-    // If we created a new transaction perform the same operation with
-    // try/catches for correct handling of exceptions.
-    try {
-      long model;
-
-      try {
-        model = systemResolver.lookupPersistent(new URIReferenceImpl(
-            modelURI));
-      }
-      catch (LocalizeException le) {
-        // Return false - we failed to find the node.
-        return false;
-      }
-      return systemResolver.modelExists(model);
-
-    } catch (Throwable e) {
-      rollbackTransactionalBlock(e);
-    } finally {
-      finishTransactionalOperation("Could not find model " + modelURI);
-    }
-    throw new QueryException("Illegal transactional state in session");
+    return operation.getResult();
   }
 
   /**
