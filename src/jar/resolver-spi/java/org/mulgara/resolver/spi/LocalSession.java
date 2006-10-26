@@ -38,6 +38,8 @@ import org.mulgara.server.*;
  *       extension API.  Expect it to change in signifigant, non-backwards compatible
  *       ways.
  *
+ * Note: Deprecation warnings removed Oct 2006 to facilitate complete removal of
+ *       this interface.  THIS ENTIRE INTERFACE IS DEPRECATED DO NOT USE.
  * @created 2004-11-10
  *
  * @author Andrew Newman
@@ -61,8 +63,6 @@ public interface LocalSession extends Session {
    * Using start/finish TransactionalOperation ensures properly matched pairs of
    * begin/end and suspend/resume.
    *
-   * @deprecated This should not be relied upon to create resolvers as this
-   *     should go away.
    */
   public void startTransactionalOperation(boolean needsWrite)
       throws QueryException;
@@ -71,8 +71,6 @@ public interface LocalSession extends Session {
    * Mark the current transaction for rollback due to an exception.
    *
    * @param throwable  the exception which caused the rollback
-   * @deprecated This should not be relied upon to create resolvers as this
-   *     should go away.
    */
   public void rollbackTransactionalBlock(Throwable throwable)
       throws QueryException;
@@ -83,8 +81,6 @@ public interface LocalSession extends Session {
    * Using start/finish TransactionalOperation ensures properly matched pairs of
    * begin/end and suspend/resume.
    *
-   * @deprecated This should not be relied upon to create resolvers as this
-   *     should go away.
    */
   public void finishTransactionalOperation(String errorString)
       throws QueryException;
@@ -94,8 +90,6 @@ public interface LocalSession extends Session {
    *
    * @throws QueryException Must be called outside the try/catch(Throwable) block
    * protecting the transaction.
-   * @deprecated This should not be relied upon to create resolvers as this
-   *     should go away.
    */
   public void resumeTransactionalBlock() throws QueryException;
 
@@ -104,8 +98,6 @@ public interface LocalSession extends Session {
    *
    * @throws Throwable Must be called inside the try/catch(Throwable) block
    * protecting the transaction.
-   * @deprecated This should not be relied upon to create resolvers as this
-   *     should go away.
    */
   public void suspendTransactionalBlock() throws Throwable;
 
@@ -113,8 +105,6 @@ public interface LocalSession extends Session {
    * Returns the current Resolver Session.
    *
    * @return the current resolver session.
-   * @deprecated This should not be relied upon to create resolvers as this
-   *     should go away.
    */
   public ResolverSession getResolverSession();
 }

@@ -86,10 +86,6 @@ class DatabaseSession implements Session, LocalSession {
   private static final Logger logger =
     Logger.getLogger(DatabaseSession.class.getName());
 
-  /** Logger for {@link SymbolicTransformation} plugins. */
-  private static final Logger symbolicLogger =
-    Logger.getLogger(DatabaseSession.class.getName() + "#symbolic");
-
   private static DatabaseSession writeSession = null;
   private boolean writing;
 
@@ -161,7 +157,7 @@ class DatabaseSession implements Session, LocalSession {
   private final TransactionManager transactionManager;
 
   /** Session transaction */
-  Transaction transaction;
+  private Transaction transaction;
 
   /** The name of the rule loader to use */
   private String ruleLoaderClassName;
@@ -337,7 +333,8 @@ class DatabaseSession implements Session, LocalSession {
                                         temporaryModelTypeURI,
                                         temporaryResolverFactory,
                                         transactionManager,
-                                        outstandingAnswers
+                                        outstandingAnswers,
+                                        symbolicTransformationList
                                       );
 
     if (logger.isDebugEnabled()) {
@@ -352,6 +349,36 @@ class DatabaseSession implements Session, LocalSession {
     }
   }
 
+
+  /**
+   * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
+   */
+  DatabaseSession(TransactionManager transactionManager,
+      List securityAdapterList,
+      List symbolicTransformationList,
+      ResolverSessionFactory resolverSessionFactory,
+      SystemResolverFactory systemResolverFactory,
+      ResolverFactory temporaryResolverFactory,
+      List resolverFactoryList,
+      Map externalResolverFactoryMap,
+      Map internalResolverFactoryMap,
+      DatabaseMetadata metadata,
+      ContentHandlerManager contentHandlers,
+      Set cachedResolverFactorySet,
+      URI temporaryModelTypeURI) throws ResolverFactoryException {
+    this(transactionManager, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
+        systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
+        internalResolverFactoryMap, metadata, contentHandlers, cachedResolverFactorySet,
+        temporaryModelTypeURI, "");
+  }
+
+  //
+  // Internal methods required for database initialisation.
+  //
+
+  /**
+   * Used by Database *only* to bootstrap the system model on DB startup.
+   */
   long bootstrapSystemModel(DatabaseMetadataImpl metadata) throws
       QueryException {
     logger.info("Bootstrapping System Model");
@@ -416,33 +443,6 @@ class DatabaseSession implements Session, LocalSession {
     }
   }
 
-
-  /**
-   * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
-   */
-  DatabaseSession(TransactionManager transactionManager,
-      List securityAdapterList,
-      List symbolicTransformationList,
-      ResolverSessionFactory resolverSessionFactory,
-      SystemResolverFactory systemResolverFactory,
-      ResolverFactory temporaryResolverFactory,
-      List resolverFactoryList,
-      Map externalResolverFactoryMap,
-      Map internalResolverFactoryMap,
-      DatabaseMetadata metadata,
-      ContentHandlerManager contentHandlers,
-      Set cachedResolverFactorySet,
-      URI temporaryModelTypeURI) throws ResolverFactoryException {
-    this(transactionManager, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
-        systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
-        internalResolverFactoryMap, metadata, contentHandlers, cachedResolverFactorySet,
-        temporaryModelTypeURI, "");
-  }
-
-  public ResolverSession getResolverSession() {
-    return systemResolver;
-  }
-
   /**
    * Preallocate a local node number for an RDF {@link Node}.
    *
@@ -465,6 +465,22 @@ class DatabaseSession implements Session, LocalSession {
   // Methods implementing Session
   //
 
+  public void insert(URI modelURI, Set statements) throws QueryException {
+    modify(modelURI, statements, ASSERT_STATEMENTS);
+  }
+
+  public void insert(URI modelURI, Query query) throws QueryException {
+    modify(modelURI, query, ASSERT_STATEMENTS);
+  }
+
+  public void delete(URI modelURI, Set statements) throws QueryException {
+    modify(modelURI, statements, DENY_STATEMENTS);
+  }
+
+  public void delete(URI modelURI, Query query) throws QueryException {
+    modify(modelURI, query, DENY_STATEMENTS);
+  }
+
   /**
    * Backup all the data on the specified server. The database is not changed by
    * this method.
@@ -485,348 +501,8 @@ class DatabaseSession implements Session, LocalSession {
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI,
-      OutputStream outputStream) throws QueryException {
+  public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
     this.backup(outputStream, sourceURI, null);
-  }
-
-  /**
-   * Backup all the data on the specified server to a URI or an output stream.
-   * The database is not changed by this method.
-   *
-   * If an outputstream is supplied then the destinationURI is ignored.
-   *
-   * @param outputStream Optional output stream to receive the contents
-   * @param serverURI The URI of the server to backup.
-   * @param destinationURI Option URI of the file to backup into.
-   * @throws QueryException if the backup cannot be completed.
-   */
-  private synchronized void backup(OutputStream outputStream,
-      URI serverURI,
-      URI destinationURI) throws QueryException {
-    execute(
-        new BackupOperation(outputStream, serverURI, destinationURI),
-        "Unable to backup to " + destinationURI
-        );
-  }
-
-  public void close() throws QueryException {
-    logger.info("Closing session");
-    if (!autoCommit) {
-      logger.warn("Closing session while holding write-lock");
-
-      try {
-        resumeTransactionalBlock();
-      } catch (Throwable th) {
-        releaseWriteLock();
-        throw new QueryException("Error while resuming transaction in close", th);
-      }
-
-      try {
-        rollbackTransactionalBlock(
-            new QueryException("Attempt to close session whilst in transaction"));
-      } finally {
-        endTransactionalBlock("Failed to release write-lock in close");
-      }
-    } else {
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-    }
-  }
-
-  public void commit() throws QueryException {
-    logger.info("Committing transaction");
-    if (!autoCommit) {
-      synchronized (DatabaseSession.class) {
-        setAutoCommit(true);
-        setAutoCommit(false);
-      }
-    }
-  }
-
-  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("Creating Model " + modelURI + " with type " + modelTypeURI);
-    }
-
-    execute(new CreateModelOperation(modelURI, modelTypeURI),
-            "Could not commit creation of model " + modelURI + " of type " +
-              modelTypeURI);
-  }
-
-  public void delete(URI modelURI, Set statements) throws QueryException {
-    modify(modelURI, statements, DENY_STATEMENTS);
-  }
-
-  public void delete(URI modelURI, Query query) throws QueryException {
-    modify(modelURI, query, DENY_STATEMENTS);
-  }
-
-  public void insert(URI modelURI, Set statements) throws QueryException {
-    modify(modelURI, statements, ASSERT_STATEMENTS);
-  }
-
-  public void insert(URI modelURI, Query query) throws QueryException {
-    modify(modelURI, query, ASSERT_STATEMENTS);
-  }
-
-  protected void modify(URI modelURI, Set statements, boolean insert)
-    throws QueryException
-  {
-    if (logger.isInfoEnabled()) {
-      logger.info("Inserting statements into " + modelURI);
-    }
-    if (logger.isDebugEnabled()) {
-      logger.debug("Inserting statements: " + statements);
-    }
-
-    execute(new ModifyModelOperation(modelURI, statements, insert),
-            "Could not commit insert");
-  }
-
-  private void modify(URI modelURI, Query query,
-      boolean insert) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("INSERT QUERY: " + query + " into " + modelURI);
-    }
-
-    execute(new ModifyModelOperation(modelURI, query, insert, this),
-            "Unable to modify " + modelURI);
-  }
-
-  protected void doModify(SystemResolver systemResolver, URI modelURI,
-      Statements statements, boolean insert) throws Throwable {
-    long model = systemResolver.localize(new URIReferenceImpl(modelURI));
-    model = operationContext.getCanonicalModel(model);
-
-    // Make sure security adapters are satisfied
-    for (Iterator i = securityAdapterList.iterator(); i.hasNext(); ) {
-      SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
-
-      // Lie to the user
-      if (!securityAdapter.canSeeModel(model, systemResolver)) {
-        throw new QueryException("No such model " + modelURI);
-      }
-
-      // Tell the truth to the user
-      if (!securityAdapter.canModifyModel(model, systemResolver)) {
-        throw new QueryException("You aren't allowed to modify " + modelURI);
-      }
-    }
-
-    // Obtain a resolver for the destination model type
-    Resolver resolver = operationContext.obtainResolver(
-                          operationContext.findModelResolverFactory(model),
-                          systemResolver
-                        );
-    assert resolver != null;
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("Modifying " + modelURI + " using " + resolver);
-    }
-
-    resolver.modifyModel(model, statements, insert);
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("Modified " + modelURI);
-    }
-  }
-
-  public void login(URI securityDomain, String user, char[] password) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Login of " + user + " to " + securityDomain);
-    }
-
-    /*
-    execute(new LoginOperation(securityDomain, user, password),
-            "Unable to login " + user + " to " + securityDomain);
-    */
-    if (securityDomain.equals(metadata.getSecurityDomainURI())) {
-      // Propagate the login event to the security adapters
-      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
-        ((SecurityAdapter) i.next()).login(user, password);
-      }
-    }
-  }
-
-  public Answer query(Query query) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("QUERY: " + query);
-    }
-
-    // Evaluate the query
-    QueryOperation queryOperation = new QueryOperation(query, this);
-    executeQuery(queryOperation);
-    return queryOperation.getAnswer();
-  }
-
-  static Answer doQuery(DatabaseSession databaseSession,
-                        SystemResolver  systemResolver,
-                        Query           query) throws Exception
-  {
-    Answer result;
-
-    LocalQuery localQuery =
-      new LocalQuery(query, systemResolver, databaseSession.operationContext);
-
-    transform(databaseSession, localQuery);
-
-    // Complete the numerical phase of resolution
-    Tuples tuples = localQuery.resolve();
-    result = new SubqueryAnswer(databaseSession.operationContext, systemResolver, tuples,
-        query.getVariableList());
-    tuples.close();
-    localQuery.close();
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("Answer rows = " + result.getRowCount());
-    }
-    return result;
-  }
-
-
-  /**
-   *
-   * Perform in-place transformation of localQuery.
-   * Note: we really want to convert this to a functional form eventually.
-   */
-  static void transform(DatabaseSession databaseSession, LocalQuery localQuery) throws Exception {
-    // Start with the symbolic phase of resolution
-    LocalQuery.MutableLocalQueryImpl mutableLocalQueryImpl =
-      localQuery.new MutableLocalQueryImpl();
-    if (symbolicLogger.isDebugEnabled()) {
-      symbolicLogger.debug("Before transformation: " + mutableLocalQueryImpl);
-    }
-    Iterator i = databaseSession.symbolicTransformationList.iterator();
-    while (i.hasNext()) {
-      SymbolicTransformation symbolicTransformation =
-        (SymbolicTransformation) i.next();
-      assert symbolicTransformation != null;
-      symbolicTransformation.transform(databaseSession.operationContext, mutableLocalQueryImpl);
-      if (mutableLocalQueryImpl.isModified()) {
-        // When a transformation succeeds, we rewind and start from the
-        // beginning of the symbolicTransformationList again
-        if (symbolicLogger.isDebugEnabled()) {
-          symbolicLogger.debug("Symbolic transformation: " +
-                               mutableLocalQueryImpl);
-        }
-        mutableLocalQueryImpl.close();
-        mutableLocalQueryImpl = localQuery.new MutableLocalQueryImpl();
-        i = databaseSession.symbolicTransformationList.iterator();
-      }
-    }
-    mutableLocalQueryImpl.close();
-  }
-
-  void endPreviousQueryTransaction() throws QueryException {
-    logger.debug("Clearing previous transaction");
-
-    // Save the exception.
-    Throwable tmpThrowable = rollbackCause;
-
-    Set answers = new HashSet(outstandingAnswers);
-    Iterator i = answers.iterator();
-    while (i.hasNext()) {
-      try {
-        SubqueryAnswer s = (SubqueryAnswer) i.next();
-        operationContext.deregisterAnswer(s);
-        //Do not close tuples - for Jena and JRDF.
-        //s.close();
-      } catch (Throwable th) {
-        logger.debug("Failed to close preexisting answer", th);
-      }
-    }
-
-    // If by closing the answer we have called endTransactionalBlock then
-    // throw the saved exception.
-    if ((rollbackCause == null) && (tmpThrowable != null) &&
-        (systemResolver == null)) {
-      throw new QueryException("Failure ending previous query", tmpThrowable);
-    }
-
-    try {
-      if (!outstandingAnswers.isEmpty()) {
-        throw new QueryException("Failed to clear preexisting transaction");
-      }
-      if (this.transaction != null) {
-        throw new QueryException("Failed to void suspended transaction");
-      }
-      if (transactionManager.getTransaction() != null) {
-        throw new QueryException("Failed to end transaction");
-      }
-    } catch (QueryException eq) {
-      endTransactionalBlock("Error ending previous query");
-      throw eq;
-    } catch (Throwable th) {
-      endTransactionalBlock("Error ending previous query");
-      throw new QueryException("Failure ending previous query", th);
-    }
-  }
-
-  public List query(List queryList) throws QueryException {
-
-    if (logger.isInfoEnabled()) {
-      StringBuffer log = new StringBuffer("QUERYING LIST: ");
-      for (int i = 0; i < queryList.size(); i++) {
-        log.append(queryList.get(i));
-      }
-      logger.info(log.toString());
-    }
-
-    QueryOperation queryOperation = new QueryOperation(queryList, this);
-    executeQuery(queryOperation);
-    return queryOperation.getAnswerList();
-  }
-
-
-  /**
-   * {@inheritDoc}
-   */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, java.rmi.RemoteException {
-    if (logger.isInfoEnabled()) {
-      logger.info("BUILD RULES: " + ruleModel);
-    }
-
-    // Set up the rule parser
-    RuleLoader ruleLoader = RuleLoaderFactory.newRuleLoader(ruleLoaderClassName, ruleModel, baseModel, destModel);
-    if (ruleLoader == null) {
-      throw new org.mulgara.rules.InitializerException("No rule loader available");
-    }
-
-    // read in the rules
-    Rules rules =  ruleLoader.readRules(this, metadata.getSystemModelURI());
-    return new RulesRefImpl(rules);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void applyRules(RulesRef rulesRef) throws RulesException, java.rmi.RemoteException {
-    Rules rules = rulesRef.getRules();
-    rules.run(this);
-  }
-
-
-  public void removeModel(URI modelURI) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("REMOVE MODEL: " + modelURI);
-    }
-    // Validate "modelURI" parameter
-    if (modelURI == null) {
-      throw new IllegalArgumentException("Null \"modelURI\" parameter");
-    }
-
-    execute(new RemoveModelOperation(modelURI), "Unable to remove " + modelURI);
-  }
-
-  public boolean modelExists(URI modelURI) throws QueryException {
-    ModelExistsOperation operation = new ModelExistsOperation(modelURI);
-
-    execute(operation, "Failed to determine model existence");
-
-    return operation.getResult();
   }
 
   /**
@@ -859,66 +535,61 @@ class DatabaseSession implements Session, LocalSession {
             "Unable to restore from " + sourceURI);
   }
 
-  public void rollback() throws QueryException {
-    logger.info("Rollback transaction");
-    if (autoCommit) {
-      throw new QueryException(
-          "Attempt to rollback transaction outside transaction");
+  public Answer query(Query query) throws QueryException {
+    if (logger.isInfoEnabled()) {
+      logger.info("QUERY: " + query);
     }
-    resumeTransactionalBlock();
-    try {
-      explicitRollback = true;
-      rollbackTransactionalBlock(new QueryException(
-          "Explicit rollback requested on session"));
-    } catch (Throwable th) {
-      logger.error("Failed to rollback transaction", th);
-      throw new QueryException("Rollback failed", th);
-    } finally {
-      synchronized (DatabaseSession.class) {
-        try {
-          endTransactionalBlock("Rollback failed, ending transaction");
-        } catch (Throwable th) {
-          throw new QueryException("Rollback failed", th);
-        }
-        setAutoCommit(false);
-      }
-    }
+
+    // Evaluate the query
+    QueryOperation queryOperation = new QueryOperation(query, this);
+    executeQuery(queryOperation);
+    return queryOperation.getAnswer();
   }
 
-  public void setAutoCommit(boolean autoCommit) throws QueryException {
+  public List query(List queryList) throws QueryException {
+
     if (logger.isInfoEnabled()) {
-      logger.info("setAutoCommit(" + autoCommit + ") called with autoCommit = " + this.autoCommit);
+      StringBuffer log = new StringBuffer("QUERYING LIST: ");
+      for (int i = 0; i < queryList.size(); i++) {
+        log.append(queryList.get(i));
+      }
+      logger.info(log.toString());
     }
 
-    if (!this.autoCommit && autoCommit) { // Turning autoCommit on
-      try {
-        resumeTransactionalBlock();
-      } finally {
-        this.autoCommit = true;
-        this.inFailedTransaction = false;
-        endTransactionalBlock("Extended transaction failed");
-      }
-    } else if (this.autoCommit && !autoCommit) { // Turning autoCommit off
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-      systemResolver = beginTransactionalBlock(true);
-      try {
-        suspendTransactionalBlock();
-      } catch (Throwable th) {
-        logger.error("Failed to suspend transaction", th);
-        rollbackTransactionalBlock(th);
-        endTransactionalBlock("Could set auto Commit off");
-      }
-      this.autoCommit = false;
-    } else if (this.inFailedTransaction) { // Reset after failed autoCommit off based transaction.
-      this.inFailedTransaction = false;
-    } else { // Leaving autoCommit the same
-      if (logger.isInfoEnabled()) {
-        logger.info("Invalid call to setAutoCommit(" + autoCommit + ") called with autoCommit = " + this.autoCommit);
-      }
+    QueryOperation queryOperation = new QueryOperation(queryList, this);
+    executeQuery(queryOperation);
+    return queryOperation.getAnswerList();
+  }
+
+
+  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
+    if (logger.isInfoEnabled()) {
+      logger.info("Creating Model " + modelURI + " with type " + modelTypeURI);
     }
+
+    execute(new CreateModelOperation(modelURI, modelTypeURI),
+            "Could not commit creation of model " + modelURI + " of type " +
+              modelTypeURI);
+  }
+
+  public void removeModel(URI modelURI) throws QueryException {
+    if (logger.isInfoEnabled()) {
+      logger.info("REMOVE MODEL: " + modelURI);
+    }
+    // Validate "modelURI" parameter
+    if (modelURI == null) {
+      throw new IllegalArgumentException("Null \"modelURI\" parameter");
+    }
+
+    execute(new RemoveModelOperation(modelURI), "Unable to remove " + modelURI);
+  }
+
+  public boolean modelExists(URI modelURI) throws QueryException {
+    ModelExistsOperation operation = new ModelExistsOperation(modelURI);
+
+    execute(operation, "Failed to determine model existence");
+
+    return operation.getResult();
   }
 
   /**
@@ -979,8 +650,312 @@ class DatabaseSession implements Session, LocalSession {
     return op.getStatementCount();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, java.rmi.RemoteException {
+    if (logger.isInfoEnabled()) {
+      logger.info("BUILD RULES: " + ruleModel);
+    }
+
+    // Set up the rule parser
+    RuleLoader ruleLoader = RuleLoaderFactory.newRuleLoader(ruleLoaderClassName, ruleModel, baseModel, destModel);
+    if (ruleLoader == null) {
+      throw new org.mulgara.rules.InitializerException("No rule loader available");
+    }
+
+    // read in the rules
+    Rules rules =  ruleLoader.readRules(this, metadata.getSystemModelURI());
+    return new RulesRefImpl(rules);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void applyRules(RulesRef rulesRef) throws RulesException, java.rmi.RemoteException {
+    Rules rules = rulesRef.getRules();
+    rules.run(this);
+  }
+
+
+  public void setAutoCommit(boolean autoCommit) throws QueryException {
+    if (logger.isInfoEnabled()) {
+      logger.info("setAutoCommit(" + autoCommit + ") called with autoCommit = " + this.autoCommit);
+    }
+
+    if (!this.autoCommit && autoCommit) { // Turning autoCommit on
+      try {
+        resumeTransactionalBlock();
+      } finally {
+        this.autoCommit = true;
+        this.inFailedTransaction = false;
+        endTransactionalBlock("Extended transaction failed");
+      }
+    } else if (this.autoCommit && !autoCommit) { // Turning autoCommit off
+      if (this.transaction != null) {
+        resumeTransactionalBlock();
+        endPreviousQueryTransaction();
+      }
+      systemResolver = beginTransactionalBlock(true);
+      try {
+        suspendTransactionalBlock();
+      } catch (Throwable th) {
+        logger.error("Failed to suspend transaction", th);
+        rollbackTransactionalBlock(th);
+        endTransactionalBlock("Could set auto Commit off");
+      }
+      this.autoCommit = false;
+    } else if (this.inFailedTransaction) { // Reset after failed autoCommit off based transaction.
+      this.inFailedTransaction = false;
+    } else { // Leaving autoCommit the same
+      if (logger.isInfoEnabled()) {
+        logger.info("Invalid call to setAutoCommit(" + autoCommit + ") called with autoCommit = " + this.autoCommit);
+      }
+    }
+  }
+
+  public void commit() throws QueryException {
+    logger.info("Committing transaction");
+    if (!autoCommit) {
+      synchronized (DatabaseSession.class) {
+        setAutoCommit(true);
+        setAutoCommit(false);
+      }
+    }
+  }
+
+  public void rollback() throws QueryException {
+    logger.info("Rollback transaction");
+    if (autoCommit) {
+      throw new QueryException(
+          "Attempt to rollback transaction outside transaction");
+    }
+    resumeTransactionalBlock();
+    try {
+      explicitRollback = true;
+      rollbackTransactionalBlock(new QueryException(
+          "Explicit rollback requested on session"));
+    } catch (Throwable th) {
+      logger.error("Failed to rollback transaction", th);
+      throw new QueryException("Rollback failed", th);
+    } finally {
+      synchronized (DatabaseSession.class) {
+        try {
+          endTransactionalBlock("Rollback failed, ending transaction");
+        } catch (Throwable th) {
+          throw new QueryException("Rollback failed", th);
+        }
+        setAutoCommit(false);
+      }
+    }
+  }
+
+  public void close() throws QueryException {
+    logger.info("Closing session");
+    if (!autoCommit) {
+      logger.warn("Closing session while holding write-lock");
+
+      try {
+        resumeTransactionalBlock();
+      } catch (Throwable th) {
+        releaseWriteLock();
+        throw new QueryException("Error while resuming transaction in close", th);
+      }
+
+      try {
+        rollbackTransactionalBlock(
+            new QueryException("Attempt to close session whilst in transaction"));
+      } finally {
+        endTransactionalBlock("Failed to release write-lock in close");
+      }
+    } else {
+      if (this.transaction != null) {
+        resumeTransactionalBlock();
+        endPreviousQueryTransaction();
+      }
+    }
+  }
+
+  public boolean isLocal() {
+    return true;
+  }
+
+  public void login(URI securityDomain, String user, char[] password) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Login of " + user + " to " + securityDomain);
+    }
+
+    /*
+    execute(new LoginOperation(securityDomain, user, password),
+            "Unable to login " + user + " to " + securityDomain);
+    */
+    if (securityDomain.equals(metadata.getSecurityDomainURI())) {
+      // Propagate the login event to the security adapters
+      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
+        ((SecurityAdapter) i.next()).login(user, password);
+      }
+    }
+  }
+
   //
-  // Internal methods
+  // Transaction control methods.  Implements LocalSession.
+  //
+
+  /**
+   * Start's or resumes a transaction for an operation.
+   *
+   * Using start/finish TransactionalOperation ensures properly matched pairs of
+   * begin/end and suspend/resume.
+   */
+  public void startTransactionalOperation(boolean needsWrite) throws
+      QueryException {
+    logger.info("Starting Transactional Operation");
+    if (opState != FINISH) {
+      throw new IllegalArgumentException(
+          "Attempt to start transactional operation during: " +
+          opStates[opState]);
+    }
+    if (autoCommit) {
+      if (this.transaction != null) {
+        resumeTransactionalBlock();
+        endPreviousQueryTransaction();
+      }
+      beginTransactionalBlock(needsWrite);
+      logger.info("BEGIN new transaction.");
+      opState = BEGIN;
+    } else {
+      resumeTransactionalBlock();
+      logger.info("RESUME old transaction.");
+      opState = RESUME;
+    }
+  }
+
+  /**
+   * Mark the current transaction for rollback due to an exception.
+   *
+   * This records the exception which caused the rollback in the
+   * {@link #rollbackCause} field.
+   */
+  public void rollbackTransactionalBlock(Throwable throwable) throws
+      QueryException {
+    logger.info("Rollback Transactional Block");
+    assert throwable != null;
+
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Marking transaction for rollback", throwable);
+      }
+      transactionManager.setRollbackOnly();
+    } catch (Throwable e) {
+      logger.error("Needed to mark transaction for rollback", throwable);
+      logger.error("Unable to mark transaction for rollback", e);
+      throw new QueryException("Unable to mark transaction for rollback", e);
+    }
+
+    rollbackCause = throwable;
+  }
+
+  /**
+   * Ends's or suspends a transaction for an operation.
+   *
+   * Using start/finish TransactionalOperation ensures properly matched pairs of
+   * begin/end and suspend/resume.
+   */
+  public void finishTransactionalOperation(String errorString) throws
+      QueryException {
+    logger.info("Finishing Transactional Operation");
+    if (logger.isDebugEnabled()) {
+      logger.debug("opState = " + opStates[opState]);
+      logger.debug("autoCommit = " + autoCommit);
+    }
+    if (opState == FINISH) {
+      throw new IllegalArgumentException(
+          "Attempt to finish transactional operation during: " + opStates[opState]);
+    }
+    if (autoCommit) {
+      try {
+        endTransactionalBlock(errorString);
+      } finally {
+        logger.info("FINISH(end) implicit transaction.");
+        opState = FINISH;
+      }
+    } else {
+      try {
+        suspendTransactionalBlock();
+      } catch (Throwable th) {
+        logger.error("Failed to suspend transaction", th);
+        try {
+          rollbackTransactionalBlock(new QueryException("Failed to suspend transaction"));
+        } finally {
+          endTransactionalBlock("Failed to suspend transaction at end of operation");
+        }
+      } finally {
+        logger.info("FINISH(suspend) explicit transaction.");
+        opState = FINISH;
+      }
+    }
+  }
+
+  /**
+   * Resumes the previously suspended transaction from the current session.
+   *
+   * @throws QueryException Must be called outside the try/catch(Throwable) block
+   * protecting the transaction.
+   */
+  public void resumeTransactionalBlock() throws QueryException {
+    logger.info("Resume Transactional Block");
+    if (transaction == null) {
+      throw new IllegalStateException("Attempt to resume unsuspended transaction");
+    } else if (inFailedTransaction == true) {
+      throw new IllegalStateException("Transaction already failed, set autocommit true to reset");
+    }
+
+    try {
+      transactionManager.resume(this.transaction);
+      this.transaction = null;
+    } catch (Exception e) {
+      logger.error("Resume failed", e);
+      throw new QueryException("Failed to resume transaction", e);
+    }
+  }
+
+  /**
+   * Suspends current transaction, storing it in session for latter resumption.
+   *
+   * @throws Throwable Must be called inside the try/catch(Throwable) block
+   * protecting the transaction.
+   */
+  public void suspendTransactionalBlock() throws Throwable {
+    logger.info("Suspend Transactional Block");
+    if (transaction != null) {
+      throw new IllegalStateException(
+          "Attempt to suspend unresumed transaction.");
+    }
+    if (logger.isInfoEnabled()) {
+      logger.info(
+         "Suspend Transactional Block autocommit=" + autoCommit +
+         " transaction status=" + StatusFormat.formatStatus(transactionManager)
+      );
+    }
+
+    int status = transactionManager.getStatus();
+    if (!autoCommit &&
+        (status == Status.STATUS_MARKED_ROLLBACK ||
+         status == Status.STATUS_ROLLEDBACK ||
+         status == Status.STATUS_ROLLING_BACK)) {
+      inFailedTransaction = true;
+      throw new QueryException("Transaction marked for rollback");
+    }
+
+    this.transaction = transactionManager.suspend();
+  }
+
+  public ResolverSession getResolverSession() {
+    return systemResolver;
+  }
+
+  //
+  // Internal Transactional Methods.  Not exposed via the interface.
   //
 
   /**
@@ -1021,107 +996,6 @@ class DatabaseSession implements Session, LocalSession {
       return (SystemResolver) operationContext.enlistResolver(systemResolver);
     } catch (Exception e) {
       throw new QueryException("Unable to begin transaction", e);
-    }
-  }
-
-  /**
-   * Execute an {@link Operation}.
-   *
-   * @param operation  the {@link Operation} to execute
-   * @param failureMessage  text to appear as the exception message if the
-   *   <var>operation</var> fails
-   * @throws QueryException if the <var>operation</var> fails
-   */
-  private void execute(Operation operation, String failureMessage)
-    throws QueryException
-  {
-    assert operation != null;
-
-    startTransactionalOperation(operation.isWriteOperation());
-
-    assert systemResolver != null;
-    try {
-      operation.execute(operationContext, systemResolver, resolverSessionFactory, metadata);
-    } catch (Throwable e) {
-      rollbackTransactionalBlock(e);
-    } finally {
-      finishTransactionalOperation(failureMessage);
-    }
-  }
-
-  /**
-   * Execute an {@link Operation}.
-   *
-   * @param operation  the {@link Operation} to execute
-   * @throws QueryException if the <var>operation</var> fails
-   */
-  private void executeQuery(Operation operation) throws QueryException
-  {
-    /*
-     * Transaction semantics:
-     * AC && Suspended  -> R clr E B . S
-     * AC && !Suspended -> B . S
-     * !AC              -> R clr . S
-     */
-    if (autoCommit) {
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-      beginTransactionalBlock(operation.isWriteOperation());
-    }
-    else {
-      resumeTransactionalBlock();
-    }
-
-    try {
-      operation.execute(operationContext,
-                        systemResolver,
-                        resolverSessionFactory,
-                        metadata);
-    }
-    catch (Throwable th) {
-      try {
-        logger.warn("Query failed", th);
-        rollbackTransactionalBlock(th);
-      } finally {
-        endPreviousQueryTransaction();
-        throw new QueryException("Failed to rollback failed transaction", th);
-      }
-    }
-
-    try {
-      suspendTransactionalBlock();
-    } catch (Throwable th) {
-      endPreviousQueryTransaction();
-      logger.error("Query should have thrown exception", th);
-      throw new IllegalStateException("Query should have thrown exception");
-    }
-  }
-
-  private void obtainWriteLock() throws InterruptedException {
-    logger.info("Trying to obtain write lock. ");
-    synchronized (DatabaseSession.class) {
-      if (DatabaseSession.writeSession == this) {
-        return;
-      }
-      while (DatabaseSession.writeSession != null) {
-        DatabaseSession.class.wait();
-      }
-      DatabaseSession.writeSession = this;
-      this.writing = true;
-      logger.info("Obtained write lock. ");
-    }
-  }
-
-  private void releaseWriteLock() {
-    synchronized (DatabaseSession.class) {
-      if (DatabaseSession.writeSession == this) {
-        logger.info("Releasing write lock");
-        DatabaseSession.writeSession = null;
-        this.writing = false;
-        DatabaseSession.class.notifyAll();
-      }
     }
   }
 
@@ -1175,6 +1049,81 @@ class DatabaseSession implements Session, LocalSession {
       autoCommit = true;
     }
   }
+
+  void endPreviousQueryTransaction() throws QueryException {
+    logger.debug("Clearing previous transaction");
+
+    // Save the exception.
+    Throwable tmpThrowable = rollbackCause;
+
+    Set answers = new HashSet(outstandingAnswers);
+    Iterator i = answers.iterator();
+    while (i.hasNext()) {
+      try {
+        SubqueryAnswer s = (SubqueryAnswer) i.next();
+        operationContext.deregisterAnswer(s);
+        //Do not close tuples - for Jena and JRDF.
+        //s.close();
+      } catch (Throwable th) {
+        logger.debug("Failed to close preexisting answer", th);
+      }
+    }
+
+    // If by closing the answer we have called endTransactionalBlock then
+    // throw the saved exception.
+    if ((rollbackCause == null) && (tmpThrowable != null) &&
+        (systemResolver == null)) {
+      throw new QueryException("Failure ending previous query", tmpThrowable);
+    }
+
+    try {
+      if (!outstandingAnswers.isEmpty()) {
+        throw new QueryException("Failed to clear preexisting transaction");
+      }
+      if (this.transaction != null) {
+        throw new QueryException("Failed to void suspended transaction");
+      }
+      if (transactionManager.getTransaction() != null) {
+        throw new QueryException("Failed to end transaction");
+      }
+    } catch (QueryException eq) {
+      endTransactionalBlock("Error ending previous query");
+      throw eq;
+    } catch (Throwable th) {
+      endTransactionalBlock("Error ending previous query");
+      throw new QueryException("Failure ending previous query", th);
+    }
+  }
+
+  private void obtainWriteLock() throws InterruptedException {
+    logger.info("Trying to obtain write lock. ");
+    synchronized (DatabaseSession.class) {
+      if (DatabaseSession.writeSession == this) {
+        return;
+      }
+      while (DatabaseSession.writeSession != null) {
+        DatabaseSession.class.wait();
+      }
+      DatabaseSession.writeSession = this;
+      this.writing = true;
+      logger.info("Obtained write lock. ");
+    }
+  }
+
+  private void releaseWriteLock() {
+    synchronized (DatabaseSession.class) {
+      if (DatabaseSession.writeSession == this) {
+        logger.info("Releasing write lock");
+        DatabaseSession.writeSession = null;
+        this.writing = false;
+        DatabaseSession.class.notifyAll();
+      }
+    }
+  }
+
+  //
+  // Internal support methods.
+  //
 
   /**
    * Clear the cache of temporary models.
@@ -1297,159 +1246,6 @@ class DatabaseSession implements Session, LocalSession {
     }
   }
 
-  /**
-   * Mark the current transaction for rollback due to an exception.
-   *
-   * This records the exception which caused the rollback in the
-   * {@link #rollbackCause} field.
-   */
-  public void rollbackTransactionalBlock(Throwable throwable) throws
-      QueryException {
-    logger.info("Rollback Transactional Block");
-    assert throwable != null;
-
-    try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Marking transaction for rollback", throwable);
-      }
-      transactionManager.setRollbackOnly();
-    } catch (Throwable e) {
-      logger.error("Needed to mark transaction for rollback", throwable);
-      logger.error("Unable to mark transaction for rollback", e);
-      throw new QueryException("Unable to mark transaction for rollback", e);
-    }
-
-    rollbackCause = throwable;
-  }
-
-  /**
-   * Suspends current transaction, storing it in session for latter resumption.
-   *
-   * @throws Throwable Must be called inside the try/catch(Throwable) block
-   * protecting the transaction.
-   */
-  public void suspendTransactionalBlock() throws Throwable {
-    logger.info("Suspend Transactional Block");
-    if (transaction != null) {
-      throw new IllegalStateException(
-          "Attempt to suspend unresumed transaction.");
-    }
-    if (logger.isInfoEnabled()) {
-      logger.info(
-         "Suspend Transactional Block autocommit=" + autoCommit +
-         " transaction status=" + StatusFormat.formatStatus(transactionManager)
-      );
-    }
-
-    int status = transactionManager.getStatus();
-    if (!autoCommit &&
-        (status == Status.STATUS_MARKED_ROLLBACK ||
-         status == Status.STATUS_ROLLEDBACK ||
-         status == Status.STATUS_ROLLING_BACK)) {
-      inFailedTransaction = true;
-      throw new QueryException("Transaction marked for rollback");
-    }
-
-    this.transaction = transactionManager.suspend();
-  }
-
-  /**
-   * Resumes the previously suspended transaction from the current session.
-   *
-   * @throws QueryException Must be called outside the try/catch(Throwable) block
-   * protecting the transaction.
-   */
-  public void resumeTransactionalBlock() throws QueryException {
-    logger.info("Resume Transactional Block");
-    if (transaction == null) {
-      throw new IllegalStateException("Attempt to resume unsuspended transaction");
-    } else if (inFailedTransaction == true) {
-      throw new IllegalStateException("Transaction already failed, set autocommit true to reset");
-    }
-
-    try {
-      transactionManager.resume(this.transaction);
-      this.transaction = null;
-    } catch (Exception e) {
-      logger.error("Resume failed", e);
-      throw new QueryException("Failed to resume transaction", e);
-    }
-  }
-
-  /**
-   * Start's or resumes a transaction for an operation.
-   *
-   * Using start/finish TransactionalOperation ensures properly matched pairs of
-   * begin/end and suspend/resume.
-   */
-  public void startTransactionalOperation(boolean needsWrite) throws
-      QueryException {
-    logger.info("Starting Transactional Operation");
-    if (opState != FINISH) {
-      throw new IllegalArgumentException(
-          "Attempt to start transactional operation during: " +
-          opStates[opState]);
-    }
-    if (autoCommit) {
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-      beginTransactionalBlock(needsWrite);
-      logger.info("BEGIN new transaction.");
-      opState = BEGIN;
-    } else {
-      resumeTransactionalBlock();
-      logger.info("RESUME old transaction.");
-      opState = RESUME;
-    }
-  }
-
-  /**
-   * Ends's or suspends a transaction for an operation.
-   *
-   * Using start/finish TransactionalOperation ensures properly matched pairs of
-   * begin/end and suspend/resume.
-   */
-  public void finishTransactionalOperation(String errorString) throws
-      QueryException {
-    logger.info("Finishing Transactional Operation");
-    if (logger.isDebugEnabled()) {
-      logger.debug("opState = " + opStates[opState]);
-      logger.debug("autoCommit = " + autoCommit);
-    }
-    if (opState == FINISH) {
-      throw new IllegalArgumentException(
-          "Attempt to finish transactional operation during: " + opStates[opState]);
-    }
-    if (autoCommit) {
-      try {
-        endTransactionalBlock(errorString);
-      } finally {
-        logger.info("FINISH(end) implicit transaction.");
-        opState = FINISH;
-      }
-    } else {
-      try {
-        suspendTransactionalBlock();
-      } catch (Throwable th) {
-        logger.error("Failed to suspend transaction", th);
-        try {
-          rollbackTransactionalBlock(new QueryException("Failed to suspend transaction"));
-        } finally {
-          endTransactionalBlock("Failed to suspend transaction at end of operation");
-        }
-      } finally {
-        logger.info("FINISH(suspend) explicit transaction.");
-        opState = FINISH;
-      }
-    }
-  }
-
-  public boolean isLocal() {
-    return true;
-  }
-
   //
   // Private accessors intended only for DatabaseOperationContext
   //
@@ -1475,5 +1271,126 @@ class DatabaseSession implements Session, LocalSession {
     }
   }
 
+
+  /**
+   * Backup all the data on the specified server to a URI or an output stream.
+   * The database is not changed by this method.
+   *
+   * If an outputstream is supplied then the destinationURI is ignored.
+   *
+   * @param outputStream Optional output stream to receive the contents
+   * @param serverURI The URI of the server to backup.
+   * @param destinationURI Option URI of the file to backup into.
+   * @throws QueryException if the backup cannot be completed.
+   */
+  private synchronized void backup(OutputStream outputStream,
+      URI serverURI,
+      URI destinationURI) throws QueryException {
+    execute(
+        new BackupOperation(outputStream, serverURI, destinationURI),
+        "Unable to backup to " + destinationURI
+        );
+  }
+
+  //
+  // Internal utility methods.
+  //
+  protected void modify(URI modelURI, Set statements, boolean insert) throws QueryException
+  {
+    if (logger.isInfoEnabled()) {
+      logger.info("Inserting statements into " + modelURI);
+    }
+    if (logger.isDebugEnabled()) {
+      logger.debug("Inserting statements: " + statements);
+    }
+
+    execute(new ModifyModelOperation(modelURI, statements, insert),
+            "Could not commit insert");
+  }
+
+  private void modify(URI modelURI, Query query, boolean insert) throws QueryException
+  {
+    if (logger.isInfoEnabled()) {
+      logger.info("INSERT QUERY: " + query + " into " + modelURI);
+    }
+
+    execute(new ModifyModelOperation(modelURI, query, insert, this),
+            "Unable to modify " + modelURI);
+  }
+
+  /**
+   * Execute an {@link Operation}.
+   *
+   * @param operation  the {@link Operation} to execute
+   * @param failureMessage  text to appear as the exception message if the
+   *   <var>operation</var> fails
+   * @throws QueryException if the <var>operation</var> fails
+   */
+  private void execute(Operation operation, String failureMessage)
+    throws QueryException
+  {
+    assert operation != null;
+
+    startTransactionalOperation(operation.isWriteOperation());
+
+    assert systemResolver != null;
+    try {
+      operation.execute(operationContext, systemResolver, resolverSessionFactory, metadata);
+    } catch (Throwable e) {
+      rollbackTransactionalBlock(e);
+    } finally {
+      finishTransactionalOperation(failureMessage);
+    }
+  }
+
+  /**
+   * Execute an {@link Operation}.
+   *
+   * @param operation  the {@link Operation} to execute
+   * @throws QueryException if the <var>operation</var> fails
+   */
+  private void executeQuery(Operation operation) throws QueryException
+  {
+    /*
+     * Transaction semantics:
+     * AC && Suspended  -> R clr E B . S
+     * AC && !Suspended -> B . S
+     * !AC              -> R clr . S
+     */
+    if (autoCommit) {
+      if (this.transaction != null) {
+        resumeTransactionalBlock();
+        endPreviousQueryTransaction();
+      }
+      beginTransactionalBlock(operation.isWriteOperation());
+    }
+    else {
+      resumeTransactionalBlock();
+    }
+
+    try {
+      operation.execute(operationContext,
+                        systemResolver,
+                        resolverSessionFactory,
+                        metadata);
+    }
+    catch (Throwable th) {
+      try {
+        logger.warn("Query failed", th);
+        rollbackTransactionalBlock(th);
+      } finally {
+        endPreviousQueryTransaction();
+        throw new QueryException("Failed to rollback failed transaction", th);
+      }
+    }
+
+    try {
+      suspendTransactionalBlock();
+    } catch (Throwable th) {
+      endPreviousQueryTransaction();
+      logger.error("Query should have thrown exception", th);
+      throw new IllegalStateException("Query should have thrown exception");
+    }
+  }
 
 }

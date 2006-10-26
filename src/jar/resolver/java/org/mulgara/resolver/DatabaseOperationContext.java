@@ -63,6 +63,8 @@ import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.SecurityAdapter;
+import org.mulgara.resolver.spi.Statements;
+import org.mulgara.resolver.spi.SymbolicTransformation;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.resolver.view.ViewMarker;
@@ -93,7 +95,11 @@ AnswerDatabaseSession, SymbolicTransformationContext
    * This is named after the class.
    */
   private static final Logger logger =
-    Logger.getLogger("DatabaseOperationContext.class,getName()");
+    Logger.getLogger(DatabaseOperationContext.class.getName());
+
+  /** Logger for {@link SymbolicTransformation} plugins. */
+  private static final Logger symbolicLogger =
+    Logger.getLogger(DatabaseOperationContext.class.getName() + "#symbolic");
 
   /**
    * The models from external resolvers which have been cached as temporary
@@ -134,6 +140,8 @@ AnswerDatabaseSession, SymbolicTransformationContext
   private final ResolverFactory    temporaryResolverFactory;
   private final TransactionManager transactionManager;
   private final Set                outstandingAnswers;
+  /** Symbolic transformations this instance should apply. */
+  private final List symbolicTransformationList;
 
   //
   // Constructor
@@ -154,7 +162,8 @@ AnswerDatabaseSession, SymbolicTransformationContext
                            URI                temporaryModelTypeURI,
                            ResolverFactory    temporaryResolverFactory,
                            TransactionManager transactionManager,
-                           Set                outstandingAnswers)
+                           Set                outstandingAnswers,
+                           List               symbolicTransformationList)
   {
     assert cachedModelSet             != null;
     assert cachedResolverFactorySet   != null;
@@ -185,6 +194,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     // Note this is only temporary - we will be eliminating outstandingAnswers
     // before the end of the transaction fix.
     this.outstandingAnswers         = outstandingAnswers;
+    this.symbolicTransformationList = symbolicTransformationList;
   }
 
   //
@@ -631,7 +641,10 @@ AnswerDatabaseSession, SymbolicTransformationContext
    *
    * This method must be called within a transactional context.
    *
-   * @deprecated Will be made package-scope as soon as the View kludge is resolved.
+   * Will be made package-scope as soon as the View kludge is resolved.
+   *
+   * Deprecation warning removed to assist development.
+   *
    * @param constraint  a localized constraint
    * @return the tuples satisfying the <var>constraint</var>
    * @throws IllegalArgumentException if <var>constraint</var> is
@@ -788,7 +801,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
 
     Answer result = null;
     try {
-      result = DatabaseSession.doQuery(databaseSession, systemResolver, query);
+      result = doQuery(systemResolver, query);
     } catch (Throwable th) {
       try {
         logger.warn("Inner Query failed", th);
@@ -831,7 +844,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     } else {
       outstandingAnswers.remove(answer);
       if (databaseSession.autoCommit && outstandingAnswers.isEmpty()) {
-        if (databaseSession.transaction != null) {
+        if (databaseSession.getTransaction() != null) {
           databaseSession.resumeTransactionalBlock();
         }
         databaseSession.endTransactionalBlock("Could not commit query");
@@ -855,7 +868,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     Tuples result = null;
     try {
       LocalQuery lq = (LocalQuery)localQuery.clone();
-      DatabaseSession.transform(databaseSession, lq);
+      transform(lq);
       result = lq.resolve();
       lq.close();
     } catch (Throwable th) {
@@ -882,4 +895,93 @@ AnswerDatabaseSession, SymbolicTransformationContext
       throw new QueryException("Failed to suspend Transaction");
     }
   }
+
+  protected void doModify(SystemResolver systemResolver, URI modelURI,
+      Statements statements, boolean insert) throws Throwable {
+    long model = systemResolver.localize(new URIReferenceImpl(modelURI));
+    model = getCanonicalModel(model);
+
+    // Make sure security adapters are satisfied
+    for (Iterator i = securityAdapterList.iterator(); i.hasNext(); ) {
+      SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+
+      // Lie to the user
+      if (!securityAdapter.canSeeModel(model, systemResolver)) {
+        throw new QueryException("No such model " + modelURI);
+      }
+
+      // Tell the truth to the user
+      if (!securityAdapter.canModifyModel(model, systemResolver)) {
+        throw new QueryException("You aren't allowed to modify " + modelURI);
+      }
+    }
+
+    // Obtain a resolver for the destination model type
+    Resolver resolver = obtainResolver(findModelResolverFactory(model), systemResolver);
+    assert resolver != null;
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Modifying " + modelURI + " using " + resolver);
+    }
+
+    resolver.modifyModel(model, statements, insert);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Modified " + modelURI);
+    }
+  }
+
+  public Answer doQuery(SystemResolver systemResolver, Query query) throws Exception
+  {
+    Answer result;
+
+    LocalQuery localQuery = new LocalQuery(query, systemResolver, this);
+
+    transform(localQuery);
+
+    // Complete the numerical phase of resolution
+    Tuples tuples = localQuery.resolve();
+    result = new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList());
+    tuples.close();
+    localQuery.close();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Answer rows = " + result.getRowCount());
+    }
+    return result;
+  }
+
+  /**
+   *
+   * Perform in-place transformation of localQuery.
+   * Note: we really want to convert this to a functional form eventually.
+   */
+  void transform(LocalQuery localQuery) throws Exception {
+    // Start with the symbolic phase of resolution
+    LocalQuery.MutableLocalQueryImpl mutableLocalQueryImpl =
+      localQuery.new MutableLocalQueryImpl();
+    if (symbolicLogger.isDebugEnabled()) {
+      symbolicLogger.debug("Before transformation: " + mutableLocalQueryImpl);
+    }
+    Iterator i = symbolicTransformationList.iterator();
+    while (i.hasNext()) {
+      SymbolicTransformation symbolicTransformation =
+        (SymbolicTransformation) i.next();
+      assert symbolicTransformation != null;
+      symbolicTransformation.transform(this, mutableLocalQueryImpl);
+      if (mutableLocalQueryImpl.isModified()) {
+        // When a transformation succeeds, we rewind and start from the
+        // beginning of the symbolicTransformationList again
+        if (symbolicLogger.isDebugEnabled()) {
+          symbolicLogger.debug("Symbolic transformation: " +
+                               mutableLocalQueryImpl);
+        }
+        mutableLocalQueryImpl.close();
+        mutableLocalQueryImpl = localQuery.new MutableLocalQueryImpl();
+        i = symbolicTransformationList.iterator();
+      }
+    }
+    mutableLocalQueryImpl.close();
+  }
+
 }

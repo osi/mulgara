@@ -199,8 +199,7 @@ class ModifyModelOperation implements Operation
     else {
       assert query != null;
 
-      Answer answer =
-        DatabaseSession.doQuery(databaseSession, systemResolver, query);
+      Answer answer = operationContext.doQuery(systemResolver, query);
       Variable[] vars = answer.getVariables();
       assert vars.length == 3;
       statements = new TuplesWrapperStatements(

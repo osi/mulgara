@@ -246,7 +246,6 @@ class LocalQuery implements Cloneable
 
       if (logger.isDebugEnabled()) {
         logger.debug("Tuples result = " + TuplesOperations.formatTuplesTree(result));
-        logger.debug("Raw result " + result);
       }
 
       result = projectSelectClause(result);

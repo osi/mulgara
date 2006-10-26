@@ -37,8 +37,14 @@ import org.mulgara.store.tuples.Tuples;
  * the ResolverFactory query rewriting interface.
  *
  * Use of this interface is HIGHLY discouraged!  
- * @deprecated If you require this functionality, let the core team know as it
- *             may affect scheduling of the new query rewriting interface.
+ *
+ * If you require this functionality, let the core team know as it
+ * may affect scheduling of the new query rewriting interface.
+ *
+ * Deprecation warnings removed to assist with development in this area.
+ * Note: This interface is considered deprecated.  If you don't tell us you're
+ * using it it might just disappear without warning.
+ *
  * @created 2004-09-22
  * @author <a href="http://staff.tucanatech.com/andrae">Andrae Muys</a>
  * @version $Revision: 1.8 $

@@ -17,6 +17,8 @@
 
 package org.mulgara.resolver;
 
+import org.mulgara.query.TuplesException;
+
 public abstract class AnswerOperation {
   // Should use enum here.
   public static final int OBJECT = 1;
@@ -31,7 +33,7 @@ public abstract class AnswerOperation {
   protected long longint;
   protected boolean bool;
 
-  public abstract void execute();
+  public abstract void execute() throws TuplesException;
 
   protected void returnObject(Object object) {
     returnType = OBJECT;

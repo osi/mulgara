@@ -153,16 +153,14 @@ class QueryOperation implements Operation
     if (query != null) {
       assert queryList == null;
 
-      answer = DatabaseSession.doQuery(databaseSession, systemResolver, query);
+      answer = operationContext.doQuery(systemResolver, query);
     }
     else {
       assert queryList != null;
 
       answerList = new ArrayList(queryList.size());
       for (Iterator i = queryList.iterator(); i.hasNext();) {
-        answerList.add(DatabaseSession.doQuery(databaseSession,
-                                               systemResolver,
-                                               (Query) i.next()));
+        answerList.add(operationContext.doQuery(systemResolver, (Query) i.next()));
       }
     }
   }

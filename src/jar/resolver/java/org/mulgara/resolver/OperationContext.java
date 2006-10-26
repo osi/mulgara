@@ -32,6 +32,8 @@ import java.net.URI;
 import java.util.List;
 
 // Local packages
+import org.mulgara.query.Answer;
+import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.Resolver;
@@ -114,4 +116,10 @@ interface OperationContext
    */
   public long getCanonicalModel(long model);
 
+  /**
+   * Here for the moment while we fix transactions.
+   * Oct 2006 - if it's still here after Dec 2006 let someone know it's been
+   * forgotten.
+   */
+  public Answer doQuery(SystemResolver systemResolver, Query query) throws Exception;
 }
