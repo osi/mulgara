@@ -80,6 +80,7 @@ public class MulgaraTransaction {
   private Throwable rollbackCause;
 
   public MulgaraTransaction(MulgaraTransactionManager manager, OperationContext context) {
+    report("Creating Transaction");
     this.manager = manager;
     this.context = context;
 
@@ -96,12 +97,14 @@ public class MulgaraTransaction {
 
 //    FIXME: need this added to context. Allows context to cleanup caches at end of transaction.
 //    this.transaction.enlistResource(context.getXAResource());
+    report("Created Transaction");
   }
 
   // FIXME: Not yet certain I have the error handling right here.
   // Need to clarify semantics and ensure the error conditions are 
   // properly handled.
   private synchronized void activate() throws MulgaraTransactionException {
+    report("Activating Transaction");
     if (currentThread == null) {
       currentThread = Thread.currentThread();
     } else if (!currentThread.equals(Thread.currentThread())) {
@@ -109,57 +112,84 @@ public class MulgaraTransaction {
     }
 
     if (inuse == 0) {
-      try {
-        manager.transactionResumed(this);
-      } catch (Throwable th) {
-        logger.warn("Error resuming transaction: ", th);
-        failTransaction();
-        throw new MulgaraTransactionException("Error resuming transaction", th);
-      }
+      report("Resuming transaction");
+//      try {
+//        manager.transactionResumed(this);
+//      } catch (Throwable th) {
+//        logger.warn("Error resuming transaction: ", th);
+//        failTransaction();
+//        throw new MulgaraTransactionException("Error resuming transaction", th);
+//      }
     }
 
     inuse++;
+
+    report("Activated transaction");
   }
 
+
+  public synchronized void tempDeactivate() throws MulgaraTransactionException {
+    deactivate();
+  }
 
   // FIXME: Not yet certain I have the error handling right here.
   // Need to clarify semantics and ensure the error conditions are 
   // properly handled.
   private synchronized void deactivate() throws MulgaraTransactionException {
+    report("Deactivating transaction");
 
     inuse--;
 
     if (inuse < 0) {
-      throw implicitRollback(
-          new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 0: " + inuse));
+        throw new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 0: " + inuse);
+//      throw implicitRollback(
+//          new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 0: " + inuse));
+    } else if (using < 0) {
+        throw new MulgaraTransactionException("Reference Failure.  using < 0: " + using);
     }
 
     if (inuse == 0) {
       if (using == 0) {
+        report("Completing Transaction");
         // END TRANSACTION HERE.  But commit might fail.
-        manager.transactionComplete(this);
+//        manager.transactionComplete(this);
+          manager = null;
+          transaction = null;
       } else {
+        report("Suspending Transaction");
         // What happens if suspend fails?
         // Rollback and terminate transaction.
         // JTA isn't entirely unambiguous as to the long-term stability of the original
         // transaction object - can suspend return a new object?
-        this.transaction = manager.transactionSuspended(this);
+//        this.transaction = manager.transactionSuspended(this);
       }
       currentThread = null;
     }
+    report("Deactivated Transaction");
   }
 
   // Do I want to check for currentThread here?  Do I want a seperate check() method to 
   // cover precondition checks against currentThread?
-  void reference() {
+  void reference() throws MulgaraTransactionException {
+    report("Referencing Transaction");
+    if (inuse < 1) {
+        throw new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 1: " + inuse);
+    } else if (using < 0) {
+        throw new MulgaraTransactionException("Reference Failure.  using < 0: " + using);
+    }
     using++;
+    report("Referenced Transaction");
   }
 
   void dereference() throws MulgaraTransactionException {
-    using--;
-    if (using < 0) {
-      throw implicitRollback(new MulgaraTransactionException("ERROR: Transaction dereferenced more times than referenced!"));
+    report("Dereferencing Transaction");
+    if (inuse < 1) {
+        throw new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 1: " + inuse);
+    } else if (using < 1) {
+        throw new MulgaraTransactionException("Reference Failure.  using < 1: " + using);
     }
+    using--;
+    report("Dereferenced Transaction");
   }
 
   void execute(Operation operation,
@@ -182,15 +212,22 @@ public class MulgaraTransaction {
   /** Should rename this 'wrap' */
   AnswerOperationResult execute(AnswerOperation ao) throws TuplesException {
 //    FIXME: activate/deactivate won't work until we have MTMgr operational.
-//    activate();
+    report("Executing Operation");
     try {
-      ao.execute();
-      return ao.getResult();
-    } catch (Throwable th) {
-      throw new TuplesException("Error accessing Answer", th);
-//      throw implicitRollback(th);
+      activate();
+      try {
+        ao.execute();
+        return ao.getResult();
+      } catch (Throwable th) {
+        throw new TuplesException("Error accessing Answer", th);
+  //      throw implicitRollback(th);
+      } finally {
+        deactivate();
+      }
+    } catch (MulgaraTransactionException em) {
+      throw new TuplesException("Transaction error", em);
     } finally {
-//      deactivate();
+      report("Executed Operation");
     }
   }
 
@@ -230,7 +267,7 @@ public class MulgaraTransaction {
     } catch (Exception e) {
       throw new MulgaraTransactionException("Error while trying to commit", e);
     } finally {
-      manager.transactionComplete(this);
+//      manager.transactionComplete(this);
     }
   }
 
@@ -253,5 +290,22 @@ public class MulgaraTransaction {
    */
   protected Transaction getTransaction() {
     return transaction;
+  }
+
+  protected void finalize() {
+    report("GC-finalize");
+    if (inuse != 0 || using != 0) {
+      logger.error("Referernce counting error in transaction, inuse=" + inuse + ", using=" + using);
+    }
+    if (manager != null || transaction != null) {
+      logger.error("Transaction not terminated properly");
+    }
+  }
+
+  private void report(String desc) {
+    if (logger.isInfoEnabled()) {
+      logger.info(desc + ": " + System.identityHashCode(this) +
+          ", inuse=" + inuse + ", using=" + using);
+    }
   }
 }
