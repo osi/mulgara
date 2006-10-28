@@ -1070,6 +1070,7 @@ public final class FreeList {
     public Phase() throws IOException {
       synchronized (FreeList.this) {
         if (currentPhase != null) {
+          // removeClosedPhases();
           sequenceNumber = currentPhase.sequenceNumber + 1;
           head = currentPhase.head;
           tail = currentPhase.tail;
