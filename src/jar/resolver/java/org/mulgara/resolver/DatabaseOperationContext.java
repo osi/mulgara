@@ -143,7 +143,6 @@ AnswerDatabaseSession, SymbolicTransformationContext
   /** Symbolic transformations this instance should apply. */
   private final List symbolicTransformationList;
 
-  private WeakHashMap answers;  // Used as a set, all values are null.  Java doesn't provide a WeakHashSet.
   //
   // Constructor
   //
@@ -196,7 +195,6 @@ AnswerDatabaseSession, SymbolicTransformationContext
     // before the end of the transaction fix.
     this.outstandingAnswers         = outstandingAnswers;
     this.symbolicTransformationList = symbolicTransformationList;
-    this.answers                    = new WeakHashMap();
   }
 
   //
@@ -943,10 +941,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
 
     // Complete the numerical phase of resolution
     Tuples tuples = localQuery.resolve();
-    MulgaraTransaction xa = new MulgaraTransaction(null, this);
-    result = new TransactionalAnswer(new MulgaraTransaction(null, this), new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList()));
-    xa.tempDeactivate();  // FIXME: Only necessary while we introduce the manager.
-    answers.put(result, null);
+    result = new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList());
     tuples.close();
     localQuery.close();
 
@@ -989,14 +984,4 @@ AnswerDatabaseSession, SymbolicTransformationContext
     mutableLocalQueryImpl.close();
   }
 
-  void close() throws QueryException {
-    try {
-      Iterator i = answers.keySet().iterator();
-      while (i.hasNext()) {
-        ((TransactionalAnswer)i.next()).sessionClose();
-      }
-    } catch (TuplesException et) {
-      throw new QueryException("Error force-closing answers", et);
-    }
-  }
 }

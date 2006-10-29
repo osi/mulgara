@@ -204,8 +204,6 @@ class DatabaseSession implements Session, LocalSession {
    */
   private ContentHandlerManager contentHandlers;
 
-  private MulgaraTransactionManager manager;
-
   //
   // Constructor
   //
@@ -338,8 +336,6 @@ class DatabaseSession implements Session, LocalSession {
                                         outstandingAnswers,
                                         symbolicTransformationList
                                       );
-    // FIXME: This will eventually be passed as a parameter from Database.
-    this.manager                    = new MulgaraTransactionManager(null);
 
     if (logger.isDebugEnabled()) {
       logger.debug("Constructed DatabaseSession");
@@ -756,31 +752,27 @@ class DatabaseSession implements Session, LocalSession {
 
   public void close() throws QueryException {
     logger.info("Closing session");
-    try {
-      if (!autoCommit) {
-        logger.warn("Closing session while holding write-lock");
+    if (!autoCommit) {
+      logger.warn("Closing session while holding write-lock");
 
-        try {
-          resumeTransactionalBlock();
-        } catch (Throwable th) {
-          releaseWriteLock();
-          throw new QueryException("Error while resuming transaction in close", th);
-        }
-
-        try {
-          rollbackTransactionalBlock(
-              new QueryException("Attempt to close session whilst in transaction"));
-        } finally {
-          endTransactionalBlock("Failed to release write-lock in close");
-        }
-      } else {
-        if (this.transaction != null) {
-          resumeTransactionalBlock();
-          endPreviousQueryTransaction();
-        }
+      try {
+        resumeTransactionalBlock();
+      } catch (Throwable th) {
+        releaseWriteLock();
+        throw new QueryException("Error while resuming transaction in close", th);
       }
-    } finally {
-      operationContext.close();
+
+      try {
+        rollbackTransactionalBlock(
+            new QueryException("Attempt to close session whilst in transaction"));
+      } finally {
+        endTransactionalBlock("Failed to release write-lock in close");
+      }
+    } else {
+      if (this.transaction != null) {
+        resumeTransactionalBlock();
+        endPreviousQueryTransaction();
+      }
     }
   }
 
@@ -1401,7 +1393,4 @@ class DatabaseSession implements Session, LocalSession {
     }
   }
 
-  OperationContext getOperationContext() {
-    return operationContext;
-  }
 }

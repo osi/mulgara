@@ -17,10 +17,6 @@
 
 package org.mulgara.resolver;
 
-// Third party packages
-import org.apache.log4j.Logger;
-
-// Local packages
 import org.mulgara.query.Answer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
@@ -49,26 +45,15 @@ import org.mulgara.query.Variable;
  */
 
 public class TransactionalAnswer implements Answer {
-  /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(MulgaraTransaction.class.getName());
 
   private Answer answer;
 
   private MulgaraTransaction transaction;
 
-  public TransactionalAnswer(MulgaraTransaction transaction, Answer answer) throws TuplesException {
-    try {
-      report("Creating Answer");
-
-      this.answer = answer;
-      this.transaction = transaction;
-      transaction.reference();
-
-      report("Created Answer");
-    } catch (MulgaraTransactionException em) {
-      throw new TuplesException("Failed to associate with transaction", em);
-    }
+  public TransactionalAnswer(MulgaraTransaction transaction, Answer answer) {
+    this.answer = answer;
+    this.transaction = transaction;
+    transaction.reference();
   }
 
   public Object getObject(final int column) throws TuplesException {
@@ -96,24 +81,16 @@ public class TransactionalAnswer implements Answer {
   }
 
   public void close() throws TuplesException {
-    report("Closing Answer");
-    try {
-      transaction.execute(new AnswerOperation() {
-          public void execute() throws TuplesException {
-            answer.close();
-            try {
-              transaction.dereference();
-            } catch (MulgaraTransactionException em) {
-              throw new TuplesException("Error dereferencing transaction", em);
-            }
+    transaction.execute(new AnswerOperation() {
+        public void execute() throws TuplesException {
+          answer.close();
+          try {
+            transaction.dereference();
+          } catch (MulgaraTransactionException em) {
+            throw new TuplesException("Error dereferencing transaction", em);
           }
-        });
-    } finally {
-      // !!FIXME: Note - We will need to add checks for null to all operations.
-      transaction = null;
-      answer = null;    // Note this permits the gc of the answer.
-      report("Closed Answer");
-    }
+        }
+      });
   }
 
   public int getColumnIndex(final Variable column) throws TuplesException {
@@ -197,29 +174,6 @@ public class TransactionalAnswer implements Answer {
       return c;
     } catch (CloneNotSupportedException ec) {
       throw new IllegalStateException("Clone failed on Cloneable");
-    } catch (MulgaraTransactionException em) {
-      throw new IllegalStateException("Failed to associate with transaction", em);
-    }
-  }
-
-  private void report(String desc) {
-    if (logger.isInfoEnabled()) {
-      logger.info(desc + ": " + System.identityHashCode(this) + ", xa=" + System.identityHashCode(transaction));
-    }
-  }
-
-  public void finalize() {
-    report("GC-finalizing");
-    if (transaction != null) {
-      logger.error("TransactionalAnswer not closed");
-    }
-  }
-
-
-  void sessionClose() throws TuplesException {
-    if (answer != null) {
-      report("Session forced close");
-      close();
     }
   }
 }

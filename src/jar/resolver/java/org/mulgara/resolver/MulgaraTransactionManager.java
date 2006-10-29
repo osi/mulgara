@@ -108,7 +108,8 @@ public class MulgaraTransactionManager {
     }
 
 //    FIXME: Need to finish 1-N DS-OC and provide this method - should really be newOperationContext.
-    return new MulgaraTransaction(this, session.getOperationContext());
+//    return new MulgaraTransaction(this, session.getOperationContext());
+    return new MulgaraTransaction(this, null);
   }
 
 
@@ -205,7 +206,7 @@ public class MulgaraTransactionManager {
 
   public synchronized void closingSession(Session session) throws MulgaraTransactionException {
     // Check if we hold the write lock, if we do then rollback and throw exception.
-    // Regardless we need to close all associated Answer objects
+    // Otherwise - no-op.
   }
 
   public void finalizeTransaction() {
@@ -276,7 +277,6 @@ public class MulgaraTransactionManager {
       throw new MulgaraTransactionException("Commit Failed", e);
     } finally {
       activeTransactions.remove(Thread.currentThread());
-//    Remove transaction from Session's list.
     }
   }
 }
