@@ -1,5 +1,5 @@
-External Contributors to Kowari
-===============================
+External Contributors to Mulgara
+================================
 * Chris Wilper (cwilper@cs.cornell.edu) - KModel (http://www.fedora.info/~cwilper/kmodel/)
 a client/server version of Jena using Kowari (became
 org.kowari.client.jena).
