@@ -1,0 +1,52 @@
+
+        #logo, #backTop1, #sfx    {
+            display: none;    
+            }
+        #backTop2, #pageNaviBack, #pageNavi, #leftCol, #creator {
+            position: absolute; 
+            }    
+        #backTop2        {
+            background-image: url(../img-layout/ieBack-3.jpg);
+             background-repeat:no-repeat;
+            left: -10px;
+            top: 0;
+            height: 80px;
+            }
+        #pageNaviBack, #siteNaviTopBack    {
+            background-image: none; 
+            background-color: #000; 
+            filter:alpha(opacity=45);
+            }
+        #main             {
+            background-image: none; 
+            background-color: #ddd; 
+            }
+        .anchor            { 
+            top: 0; 
+            }
+       #pageNaviBack, #siteNaviTopBack    {
+            height: 20px;
+        }
+        #siteNaviTop, #pageNavi    {
+            top: 62px;
+            }
+        #main, #leftCol        {
+            top: 80px;
+            }
+         #pageNavi, #pageNaviBack, #main  {
+            left: 210px;
+            right: 10%;
+         	}
+        #siteNavi	{
+        	width: 180px;
+        #sponsors	{
+        	padding: 0;
+        	margin: 0;
+        	left: 0;
+        	}
+        #leftCol{
+        	width: 180px;
+        	}
+        #leftCol, #siteNaviTopBack, #siteNaviTop	{
+        	left: 10px;
+        	}
