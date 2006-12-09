@@ -23,7 +23,8 @@
 		<!--#include virtual='/overview/includeTOC.inc' -->
 	<!--#endif -->	
 		</ul>
-	
+		
+		<div class="navtocseperator"></div>
 	
 		<!-- system -->
 		<ul class="section">		
@@ -67,7 +68,8 @@
 		<!--#include virtual='/integration/includeTOC.inc' -->
 	<!--#endif --> 
 		</ul>
-
+		
+		<div class="navtocseperator"></div>
 
 		<!-- itqlcommands -->
 		<ul class="section">	
@@ -100,9 +102,11 @@
 		<!--#include virtual='/inferencing/includeTOC.inc' -->
 	<!--#endif --> 
 		</ul>
-	
+		
+		<div class="navtocseperator"></div>
+		
 		<!-- therest -->
 		<ul class="section">	
-			<li class="secindex"><a href="/toc.html">Table of Contents</a></li>
-			<li class="secindex"><a href="/backofbook.html">Index</a></li>
+			<li class="secindex2"><a href="/toc.html">Table of Contents</a></li>
+			<li class="secindex2"><a href="/backofbook.html">Index</a></li>
 		</ul>

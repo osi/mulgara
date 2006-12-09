@@ -11,6 +11,7 @@
 		img			{ border: 0; }	
 		h3			{ margin-bottom: -2px;}
 		h4			{ margin-bottom: -5px;}
+			
 		#logo	{
 			z-index: 100;
 			left: 12px;
@@ -154,15 +155,28 @@
 		#siteNavi a	{
 			font-weight: normal;
 			}
-		#siteNavi li.secindex {
+		#siteNavi li.secindex, #siteNavi li.secindex2 {
 			list-style-type: none;
 			list-style-image: none;
 			position: relative;
 			left: 0px;
 			}	
 			
-		#siteNavi li.secindex a	{
+		#siteNavi li.secindex a, .ABC	{
 			font-weight: bold;
+			}
+			
+		li.secindex a	{
+			font-weight: bold;
+			list-style-type: none;
+			list-style-image: none;
+			}
+
+		#main li.secindex	{
+				margin:  2em 0 0.4em 0;
+				list-style-type: none;
+				list-style-image: none;
+			font-size: large;
 			}
 			
 		#siteNavi .toc 		{
@@ -236,6 +250,9 @@
 			font-size: x-small;
 		}
 		
+		div.navtocseperator	{
+			padding: 4px;
+		}
 		/* simple version */
 		 
 		#logo						{ position: absolute; }

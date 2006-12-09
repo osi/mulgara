@@ -9,10 +9,14 @@ font-size: 10pt;
 }
 .relatedheading 
 {
-font-weight: bold;
+font-weight: bold;	
+margin: 2em 0 0.7em 0;
 }
 .relateditem 
-{	
+{
+		font-weight: bold; 
+		margin: 0.4em 0 0 0;
+		padding: 0 0 0 1em;
 }
 .backtotop 
 {
@@ -31,11 +35,10 @@ color: #800040;
 
 .commandtext 
 {font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
-
-font-size: 9pt;
+line-height: 0.95em;
+font-size: small;
 color: #000000;
 background-color: #EFEFEF;
-line-height: 15px;
 margin: 12pt 0 12pt 0;
 padding: 5pt 5pt 5pt 5pt;
 border-color: #7F7F7F;
@@ -56,9 +59,9 @@ margin: 6pt 0 0 0;
 }
 .listcontinuecommandtext 
 {font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
-font-size: 9pt;
+line-height: 0.95em;
+font-size: small;
 background-color: #EFEFEF;
-line-height: 15px;
 margin: 6pt 0 6pt 0;
 padding: 5px 5px 5px 5px;
 border-color: #7F7F7F;
@@ -73,7 +76,7 @@ padding: 0 0 0 0;
 }
 .note 
 {
-margin: 6pt 0 6pt 0;
+margin: 16pt 0 16pt 0;
 padding: 4pt 4pt 4pt 4pt;
 border-color: #004080;
 border-top-style: solid;
@@ -165,18 +168,26 @@ padding: 6pt 6pt 6pt 6pt;
 {
 margin: 12pt 0 3pt 1.1cm;
 padding: 0 0 0 0;
-text-indent: 0cm;
+text-indent: 4em;
 }
 .indentcommandtext 
-{font-family: "Courier New", verdana, arial, helvetica, sans-serif;
-font-size: 9pt;
+{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
+line-height: 0.95em;
+font-size: small;
 background-color: #EFEFEF;
-line-height: 15px;
 margin: 12pt 0 12pt 1.1cm;
 padding: 5pt 5pt 5pt 5pt;
 border-color: #7F7F7F;
 border-style: solid;
 border-width: thin;
-text-indent: 0cm;
+text-indent: 4em;
 white-space: pre;
+}
+.indexanchor
+{
+	margin-top: 12px;
+}
+.indexlist
+{
+	margin-top: 4px;
 }
