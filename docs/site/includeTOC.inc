@@ -6,14 +6,14 @@
 		
 		<!-- index -->
 		<ul class="section toc">
-			<li class="secindex"><a href="/index.html">Home</a></li>
+			<li class="secindex"><a href="/index.html">Documentation Home</a></li>
 			<ul class="toc">
 					<li><a href="/index.html#o1011">Downloads</a></li>
 					<li><a href="/index.html#o1015">Support</a></li>
 					<li><a href="/index.html#o1013">License</a></li>
 			</ul>
 		</ul>
-	
+
 		<!-- overview -->
 		<ul class="section">
 			<li class="secindex"><a href="/overview/index.html"><span class="toc">Mulgara </span>Overview</a></li>
@@ -21,6 +21,17 @@
 		<!--#include virtual='/overview/includeTOC.inc' -->
 	<!--#elif expr="${DOCUMENT_URI} = /overview/" -->
 		<!--#include virtual='/overview/includeTOC.inc' -->
+	<!--#endif -->	
+		</ul>
+		
+		
+		<!-- tutorial -->
+		<ul class="section">
+			<li class="secindex"><a href="/tutorial/index.html"><span class="toc">Mulgara </span>Tutorial</a></li>
+<!--#if expr="${DOCUMENT_NAME} = /toc/" --> 	
+		<!--#include virtual='/tutorial/includeTOC.inc' -->
+	<!--#elif expr="${DOCUMENT_URI} = /tutorial/" -->
+		<!--#include virtual='/tutorial/includeTOC.inc' -->
 	<!--#endif -->	
 		</ul>
 		

@@ -25,12 +25,12 @@
 </head>
 
 <body>
-    <div id="logo"><a href="/index.html"><img src="/img-layout/logo856s.png" width="800" height="56" alt="mulgara semantic store" /></a></div>
+	<div id="logo"><a href="/index.html"><img src="/img-layout/spacer.gif" width="800" height="56" alt="mulgara semantic store (big logo)" /></a></div>
     <div id="backTop1"></div>
     <div id="backTop2"></div>
       
     <div id="siteNaviTopBack"></div>
-    <div id="siteNaviTop"><a href="/index.html">Home</a></div>
+    <div id="siteNaviTop"><a href="/index.html">Docs Home</a></div>
     <div id="leftCol">
     	<div id="siteNavi">	
 <!-- SITE NAVIGATION STARTS HERE -->

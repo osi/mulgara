@@ -22,7 +22,8 @@ var screenSwitcher = new bodySwitcher('sfx', ' SpecialFX ');
 
 //add a new class option ('classname', 'label')
 screenSwitcher.defineClass('default', 'off');		//fast and sturdy
-screenSwitcher.defineClass('cool', 'on');				//nice and convenient
+screenSwitcher.defineClass('cool', 'on');			//nice and convenient
+screenSwitcher.defineClass('n3', '#3');				//light, less images
 
 
 /*****************************************************************************
