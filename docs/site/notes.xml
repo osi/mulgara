@@ -1,0 +1,339 @@
+<ssi bausteine>
+	http://http-server.carleton.ca/~dmcfet/html/ssi.html#echo
+	DOCUMENT_URI This variable is the local path of the current document referenced to the base directory of the webspace.
+	
+http://httpd.apache.org/docs/2.0/howto/ssi.html#advanced
+	 <!--#set var="modified" value="$LAST_MODIFIED" -->
+	
+http://bignosebird.com/sdocs/extend.shtml
+	<!--#if expr="${HTTP_USER_AGENT} = /MSIE/" -->
+	  <!--#include file="file1.txt" -->
+	 <!--#else -->
+	  <!--#include file="file2.txt" -->
+	<!--#endif -->
+</ssi>
+	
+	
+<svn update samstag 13h>
+cruyff:~/desktop/mulgaraSite thomas$ svn update
+Restored 'toc12493.htm'
+Restored 'toc122417.htm'
+Restored 'toc124918.htm'
+Restored 'toc10163.htm'
+Restored 'toc27314.htm'
+Restored 'toc10963.htm'
+Restored 'toc31819.htm'
+Restored 'toc124722.htm'
+Restored 'toc27999.htm'
+Restored 'toc246532.htm'
+Restored 'toc11623.htm'
+Restored 'toc10373.htm'
+Restored 'toc27323.htm'
+Restored 'toc57043.htm'
+Restored 'toc24654.htm'
+Restored 'toc318113.htm'
+Restored 'toc5705.htm'
+Restored 'toc5709.htm'
+Restored 'toc11354.htm'
+Restored 'toc.htm'
+Restored 'toc25515.htm'
+Restored 'toc279939.htm'
+Restored 'toc318126.htm'
+Restored 'toc246519.htm'
+Restored 'toc12374.htm'
+Restored 'toc12494.htm'
+Restored 'toc12498.htm'
+Restored 'toc124718.htm'
+Restored 'toc246524.htm'
+Restored 'toc31816.htm'
+Restored 'toc279918.htm'
+Restored 'toc124727.htm'
+Restored 'toc12473.htm'
+Restored 'toc27243.htm'
+Restored 'toc279927.htm'
+Restored 'toc57044.htm'
+Restored 'toc27247.htm'
+Restored 'toc57048.htm'
+Restored 'toc318114.htm'
+Restored 'toc26403.htm'
+Restored 'toc279932.htm'
+Restored 'toc28913.htm'
+Restored 'toc28917.htm'
+Restored 'toc246521.htm'
+Restored 'toc246525.htm'
+Restored 'toc246529.htm'
+Restored 'toc31813.htm'
+Restored 'toc57032.htm'
+Restored 'toc31817.htm'
+Restored 'toc10965.htm'
+Restored 'toc27993.htm'
+Restored 'toc124720.htm'
+Restored 'toc124921.htm'
+Restored 'toc27244.htm'
+Restored 'toc279928.htm'
+Restored 'toc24656.htm'
+Restored 'toc318111.htm'
+Restored 'toc5703.htm'
+Restored 'toc123722.htm'
+Restored 'toc12243.htm'
+Restored 'toc26404.htm'
+Restored 'toc31912.htm'
+Restored 'toc26408.htm'
+Restored 'toc318120.htm'
+Restored 'toc318124.htm'
+Restored 'toc124913.htm'
+Restored 'toc10803.htm'
+Restored 'toc103710.htm'
+Restored 'toc27994.htm'
+Restored 'toc123718.htm'
+Restored 'toc12513.htm'
+Restored 'toc11383.htm'
+Restored 'toc10693.htm'
+Restored 'toc57046.htm'
+Restored 'toc27249.htm'
+Restored 'toc11353.htm'
+Restored 'toc279930.htm'
+Restored 'toc12248.htm'
+Restored 'toc25514.htm'
+Restored 'toc57016.htm'
+Restored 'toc26409.htm'
+Restored 'toc113811.htm'
+Restored 'toc26213.htm'
+Restored 'toc57021.htm'
+Restored 'toc12373.htm'
+C    187.htm
+A    krule.htm
+Updated to revision 139.
+</svn>
+
+
+<changelog>
+	meta DC.Modified -> 2006-10-01 		// weil zu diesem zeitpunkt die mulgara doc initialisiert wurde
+	<meta name="location" content="Global" />					// deleted
+	<meta name="document-distribution" content="Global" />		// deleted
+	<meta http-equiv="dialect" content="AU" />					// deleted
+	<meta http-equiv="language" content="English" />			// deleted
+	<meta http-equiv="window-target" content="_top" />			// deleted
+	<meta name="DC.Creator.Address" content="http://www.adams.id.au/tom/index.php" /> 	//del (doesn't work anymore)
+	<!--<meta name="DC.Contributor" content="Andrew Newman" />-->  
+		// decomment and change content to Paul Gearon
+	<meta name="DC.Subject" content="Mulgara Project Home" />
+		// changed to "mulgara semantic store"
+	<meta name="DC.Description" content="Mulgara Project Home" />
+		// changed to "mulgara semantic store is a scalable RDF database written entirely in Java. It is an Open Source fork of Kowari metastore."
+	<meta name="description" content="Mulgara Project Home" />
+		// dito
+	<meta name="Generator" content="AuthorIT"> 					// del
+	<meta name="DC.Type" content="Text.Homepage.Personal" />
+	 	// changed to
+		<meta name="DC.Type" scheme="http://memory.loc.gov/ammem/award99/icuhtml/dcguide.html" content="Text.Homepage.Organizational" />
+	<meta name="copyright" content="Copyright &copy; 2003, Kowari Project" />
+		// changed to 2006 Mulgara Project
+	<meta name="DC.Rights" scheme="URI" content="http://www.kowari.org/about/index.php#copyright" />
+		// that page doesn't even exist anymore ;-)
+		// changed to <meta name="DC.Rights" scheme="URI" content="http://opensource.org/licenses/osl-3.0.php" />
+
+omitted documentation.html
+
+</changelog>
+
+
+<questions>
+	what to do with the dc.creator tom adams?
+	what to do with the dc.contributor?
+	what about the copyright statement?
+	
+	overview/tools.html should be removed
+	overview/index contains also documentation.html
+	
+	licensing is a little bit broken
+		four places 
+			legal.html
+			legalinfo.html
+			license.html
+			semanticstore.html
+		some links points to osl 3.o
+		while the text says osl 1.1
+		another link points to mozilla license
+		
+	descriptorhw contains tucana screenshots. legally okay?
+		
+	overview/krule.html contains northrop grumman copyright statement
+	putting it into overview section - okay?
+		
+</questions>
+
+<rename>
+	indexpage.htm	backofbook.html
+	170		alias
+	171		backup
+	174		commit
+	176		create
+	178		delete
+	179		drop
+	180		execute
+	181		help
+	182		insert
+	183		load
+	184		quit
+	185		restore
+	186		rollback
+	187		select
+	195		set
+	223		comment
+	230		itqlbasics
+	254		itqloperations/index
+	255		views
+	257		fulltextmodels
+	262		datatypingmodels
+	271		itqlcommands/index
+	415		viewer
+	417		loadingrdf
+	419		convertingxml
+	485		jsptaglib
+	526		itqlshell
+	527		soap
+	528		itqlbean
+	530		driver
+	571		descriptors/index
+	572		nsdesc
+	573		querytag
+	574		descriptortag
+	575		reserved
+	576		descriptorsfaq
+	597		mistakes
+	618		descwhat
+	619		descadvantages
+	746		perl
+	752		links
+	779		descriptorex
+	795		descriptorhw
+	802		descriptorlist
+	920		descriptorvcard
+	947		jena
+	990		jsptutorial
+	1007	overview	
+	1012	index
+	1061	faq
+	1076	contact
+	1090	about
+	1091	aboutsite
+	1092	accessibility
+	1093	copyright
+	1094	htmlcss
+	1095	license
+	1128	legal
+	1129	legalinfo
+	1132	oscomponents
+	1133	suncomponents
+	1134	optcomponents
+	1139	install
+	1163	downloads
+	1225	tutorial
+	1226	sysreq
+	1227	starting
+	1232	itql
+	1236	itqlshellsession
+	1246	sysarch/index
+	1350	documentation
+	1452	news
+	1565	integration/index
+	1636	trademarks
+	2466	jrdf
+	2467	jrdfgraphs
+	2511	jrdfmemory
+	2512	jrdfconcol
+	2513	jrdfexamples
+	2526	jrdftks
+	2528	jrdfvisitor
+	2552	resolvers/index
+	2553	resolverdbclass
+	2622	sofa
+	2641	inferintro
+	2642	infersitu
+	2643	infersemweb
+	2649	infersummery
+	2686	resolverhttpmp3
+	2687	resolverpre
+	2689	resolverfactories
+	2693	resolverwrite
+	2697	resolverwrapper
+	2701	parsers
+	2707	contenthandlers
+	2714	compiling
+	2720	integrate
+	2725	infermulgara
+	2733	inferexample
+	2737	inferencing/index
+	2779	nodetyping
+	2800	owl
+	2801	entailment
+	2816	consistency
+	2827	ontomanage
+	2892	jrdftutorial
+	2893	jrdfprereq
+	2900	jrdfcreategraph
+	2904	jrdfcreatenodes
+	2905	jrdfaddtriples
+	2906	searchgraph
+	2911	jrdfreify
+	2912	jrdfremove
+	2951	statements
+	3002	jrdfapis
+	3074	convertrdbms
+	3183	resolveprot
+	3184	contenthandlersdev
+	3201	filesysmodel
+	
+</rename>
+
+<deprecated>
+		news			because that's already on www.mulgara.org
+</deprecated>
+
+
+<googlesearchapi>
+	key
+	ABQIAAAAf28gNFj3gSt2_wS1pmmduxTnPpRIlo-XqC304lMsN7XRmyFDWBTz5r438lpMbYgpvcGmgr7o2hBirQ
+	This key is good for all URLs in this directory: http://doc.mulgara.org/
+	Here is an example web page to get you started:
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	  <head>
+	    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	    <title>My Google AJAX Search API Application</title>
+	    <link href="http://www.google.com/uds/css/gsearch.css" type="text/css" rel="stylesheet"/>
+	    <script src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;key=ABQIAAAAf28gNFj3gSt2_wS1pmmduxTnPpRIlo-XqC304lMsN7XRmyFDWBTz5r438lpMbYgpvcGmgr7o2hBirQ" type="text/javascript"></script>
+	    <script language="Javascript" type="text/javascript">
+	    //<![CDATA[
+
+	    function OnLoad() {
+	      // Create a search control
+	      var searchControl = new GSearchControl();
+
+	      // Add in a full set of searchers
+	      var localSearch = new GlocalSearch();
+	      searchControl.addSearcher(localSearch);
+	      searchControl.addSearcher(new GwebSearch());
+	      searchControl.addSearcher(new GvideoSearch());
+	      searchControl.addSearcher(new GblogSearch());
+
+	      // Set the Local Search center point
+	      localSearch.setCenterPoint("New York, NY");
+
+	      // Tell the searcher to draw itself and tell it where to attach
+	      searchControl.draw(document.getElementById("searchcontrol"));
+
+	      // Execute an inital search
+	      searchControl.execute("Google");
+	    }
+
+	    //]]>
+	    </script>
+	  </head>
+	  <body onload="OnLoad()">
+	    <div id="searchcontrol"/>
+	  </body>
+	</html>
+	http://code.google.com/apis/ajaxsearch/documentation/
+</gapi>

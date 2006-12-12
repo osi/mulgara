@@ -22,9 +22,33 @@
     <style type="text/css">@import url(/style/styleIE6.css);</style> 
     <![endif]-->
 
+    <link href="http://www.google.com/uds/css/gsearch.css" type="text/css" rel="stylesheet"/>
+    <script src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;key=ABQIAAAAf28gNFj3gSt2_wS1pmmduxTvfiU5c4IjTaMXqoVGGsjkMUeD7BQi1H_nklFJQr84oqZDMjTstI9ivA" type="text/javascript"></script>
+    <script language="Javascript" type="text/javascript">
+    	//<![CDATA[
+		function OnLoad() {
+	      // Create a search control
+	      var searchControl = new GSearchControl();
+		  // Add in a full set of searchers
+	      var localSearch = new GlocalSearch();
+	      searchControl.addSearcher(localSearch);
+	      // searchControl.addSearcher(new GwebSearch());
+	      // searchControl.addSearcher(new GvideoSearch());
+	      // searchControl.addSearcher(new GblogSearch());
+    	  // Set the Local Search center point
+	      // localSearch.setCenterPoint("New York, NY");
+	      // Tell the searcher to draw itself and tell it where to attach
+	      searchControl.draw(document.getElementById("searchcontrol"));
+	      // Execute an inital search
+	      searchControl.execute("mulgara");
+	    }
+		//]]>
+    </script>
+
 </head>
 
-<body>
+ <body onload="OnLoad()">
+    <div id="searchcontrol"/>
 	<div id="logo"><a href="/index.html"><img src="/img-layout/spacer.gif" width="800" height="56" alt="mulgara semantic store (big logo)" /></a></div>
     <div id="backTop1"></div>
     <div id="backTop2"></div>

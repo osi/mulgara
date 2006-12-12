@@ -121,3 +121,6 @@
 			<li class="secindex2"><a href="/toc.html">Table of Contents</a></li>
 			<li class="secindex2"><a href="/backofbook.html">Index</a></li>
 		</ul>
+		<ul class="section">
+			<li><div id="searchcontrol"/></li>
+		</ul>

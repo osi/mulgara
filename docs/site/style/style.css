@@ -39,7 +39,6 @@
 			background-image: url(../img-layout/mbackTop.jpg);
 			}
 			
-			
 		#pageNaviBack	{
 			z-index: 70;
 			left: 22%;
@@ -89,9 +88,11 @@
 			margin-bottom: 100px;
 			}
 		#main		{		
-			padding: 30px 2% 4em 30px;
-			background-image: url(../img-layout/white-80.png);
+			padding: 30px 2% 3em 30px;
+			background-image: url(../img-layout/white-90.png);
+			position: relative;
 			z-index: 42;
+			margin-bottom: 20em;
 	/*		position: absolute;
 			left: 22%;
 			top: 83px;
@@ -119,26 +120,19 @@
 			margin-left: 20px;
 			}
 			
-		#siteNaviTopBack	{
-			z-index: 62;
-			left: 2%;
-			top: 60px;
-			height: 24px;
-			width: 180px;
-			padding: 0;
-			background-image: url(../img-layout/black-50.png);
-			}
 		#siteNaviTop		{
 			z-index: 63;
 			left: 2%;
-			top: 65px;
-			height: 17px;
+			top: 60px;
+			line-height: 2em;
+			min-height: 24px;
 			width: 170px;
 			padding: 0 0 0 10px;
 			font-weight: bold;
 			color: #ddd;
+			background-image: url(../img-layout/black-55.png);
 			}
-			
+
 		#siteNavi			{
 			z-index: 61;
 			padding: 12px 10px 16px 0px;
@@ -258,16 +252,17 @@
 			opacity: 0.7;
 			}
 		
+		
 		#footer	{
 			margin-top: 60px;
-			padding: 30px 2% 4em 30px;
+			padding: 30px 2% 0 30px;
 			font-size: xx-small;
-		/*	z-index: 1;
+			z-index: 1;
 			position: fixed;
 			bottom: 20px;
 			left: 22%;
 			right: 3%;
-		*/	background-color: #888;
+	/*	*/	background-color: #888;
 			opacity: 0.8;
 			-moz-opacity: 0.8; /* opacity legacy */
 		}	
@@ -290,7 +285,6 @@
 		#backTop2					{ position: absolute; }
 		#pageNaviBack				{ position: absolute; }
 		#pageNavi 					{ position: absolute; }
-		#siteNaviTopBack 			{ position: absolute; }
 		#siteNaviTop 				{ position: absolute; }
 		#leftCol					{ position: absolute; }
 		#creator					{ position: absolute; }
@@ -304,7 +298,6 @@
 		body.cool #backTop2			{ position: fixed; }
 		body.cool #pageNaviBack		{ position: fixed; }
 		body.cool #pageNavi 		{ position: fixed; }
-		body.cool #siteNaviTopBack 	{ position: fixed; }
 		body.cool #siteNaviTop 		{ position: fixed; }
 		body.cool #leftCol			{ position: fixed; }
 		body.cool #creator			{ position: fixed; }
@@ -318,7 +311,6 @@
 		body.n3 #backTop2			{ position: fixed; }
 		body.n3 #pageNaviBack		{ position: fixed; }
 		body.n3 #pageNavi 			{ position: fixed; }
-		body.n3 #siteNaviTopBack 	{ position: fixed; }
 		body.n3 #siteNaviTop 		{ position: fixed; }
 		body.n3 #leftCol			{ position: fixed; }
 		body.n3 #creator			{ position: fixed; }
@@ -326,33 +318,30 @@
 		body.n3 .anchor				{ top: -80px; }
 		body.n3 #sponsors			{ height: 2000px; }
 		
-		
 		body.n3 #backTop1			{ display: none; }
 		body.n3 #backTop2			{ display: none; }
 		body.n3 #logo				{ position: fixed; background-image: url(/img-layout/logo856gray.png) ; }
 	/*	*/	
-		body.n3 #pageNaviBack		{ top: 66px; }
 		body.n3 #pageNavi			{ top: 66px;}
 		body.n3 #leftCol			{ top: 86px; }
-		body.n3 #siteNaviTop		{ top: 72px; }
+		body.n3 #siteNaviTop		{ top: 66px; }
 		body.n3 , body.n3 #footer	{ background-color: #fff; }
 		body.n3 #main				{ padding: 40px 2% 4em 30px; border-left: 1px solid #ccc; }
 		
-		body.n3 #siteNavi			{ background-image: none; }
-		body.n3 #siteNaviTopBack	{ display: none; }
+		body.n3 #siteNavi, body.n3 #siteNaviTop	
+									{ background-image: none; }
 		body.n3 #mainBack			{ top: 60px;  background-image: url(/img-layout/white-40.png); }
 		body.n3 #pageNavi			{ background-image: url(/img-layout/white-80.png);
 			 						border-top: 1px solid #ccc;
-									border-bottom: 1px solid #ccc;}
+									border-bottom: 1px solid #ccc;
+									border-left: 1px solid #fff; }
+		body.n3 #sfx				{ color: #555; }
+				
+		body.n3 #pageNavi a, body.n3 #siteNaviTop a, body.n3 #siteNavi a		{
+									color: blue; }
+		body.n3 #pageNavi a:visited, body.n3 #siteNaviTop a:visited, body.n3 #siteNavi a:visited	{
+									color: darkblue; }
 		
-		
-	body.n3 #pageNavi a, body.n3 #siteNaviTop a, body.n3 #siteNavi a		{
-		color: blue;
-		}
-	body.n3 #pageNavi a:visited, body.n3 #siteNaviTop a:visited, body.n3 #siteNavi a:visited	{
-		color: darkblue;
-		}
-	
 		
 		
 		

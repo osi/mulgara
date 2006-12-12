@@ -48,7 +48,7 @@
 
 <p>Nodetyping models are used to constrain results to be literals or URI references. These types have the URIs of <code>http://www.w3.org/2000/01/rdf-schema#Literal</code> and <code>http://mulgara.org/mulgara#uriReference</code>. Generally, the standard set of aliases should be in place, and these URIs and can be referred to in the aliased forms: <code>rdfs:Literal</code> and <code>mulgara:uriReference</code>.</p>
 
-<p>The standard set of aliases is defined by the <code><a id="h1334" class="documentlinktemplate" title="alias" href="170.htm">alias</a></code> command:</p>
+<p>The standard set of aliases is defined by the <code><a id="h1334" class="documentlinktemplate" title="alias" href="/itqloperations/alias.html">alias</a></code> command:</p>
 
 <p class="commandtext">alias &lt;http://mulgara.org/mulgara#&gt; as mulgara;<br />
 alias &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; as rdf;<br />
@@ -65,7 +65,7 @@ alias &lt;http://www.w3.org/2000/01/rdf-schema#&gt; as rdfs;</p>
 <div class="anchor"><a name="o2780">&nbsp;</a></div>
 <h3>Creating Nodetyping Models</h3>
 
-<p>Use the <code><a id="h1523" class="documentlinktemplate" title="create" href="176.htm">create</a></code> command with the optional type argument of <code>http://mulgara.org/mulgara#TypeModel</code> in addition to the model name. There should never be a need to create more than one nodetyping model per server.</p>
+<p>Use the <code><a id="h1523" class="documentlinktemplate" title="create" href="/itqloperations/create.html">create</a></code> command with the optional type argument of <code>http://mulgara.org/mulgara#TypeModel</code> in addition to the model name. There should never be a need to create more than one nodetyping model per server.</p>
 
 <p>For example, to create the nodetyping model <code>#type</code>:</p>
 
@@ -79,7 +79,7 @@ alias &lt;http://www.w3.org/2000/01/rdf-schema#&gt; as rdfs;</p>
 
 <p>Querying nodetyping models is much the same as for normal Mulgara models. Nodetyping models contain type statements for all URI reference and literal nodes on the server (not just for a single model).</p>
 
-<p>To use a nodetyping model in a query, make sure you have a node type model available. See the <a id="h2782" class="documentlinktemplate" title="Creating Nodetyping Models" href="/itqloperations/nodetyping.html#o2780">Creating Nodetyping Models section</a> for more information. Then compose a constraint with the <code>&lt;rdf:type&gt;</code> property, and direct it at the node type model with an <code><a id="h2783" class="" title="in Specifier" href="187.htm#o1530">in</a></code> specifier.</p>
+<p>To use a nodetyping model in a query, make sure you have a node type model available. See the <a id="h2782" class="documentlinktemplate" title="Creating Nodetyping Models" href="/itqloperations/nodetyping.html#o2780">Creating Nodetyping Models section</a> for more information. Then compose a constraint with the <code>&lt;rdf:type&gt;</code> property, and direct it at the node type model with an <code><a id="h2783" class="" title="in Specifier" href="/itqloperations/select.html#o1530">in</a></code> specifier.</p>
 
 <p>The example queries shown assume that the standard aliases are in place, as follows:</p>
 
