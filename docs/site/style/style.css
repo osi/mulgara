@@ -1,5 +1,206 @@
 @media screen
 {
+	
+		/*	STYLES FROM THE OLD SITE */		
+
+
+			a:hover {
+			color: red;
+			}
+
+			body
+			{font-family: "Verdana", verdana, arial, helvetica, sans-serif;
+			font-size: 10pt;
+			}
+			.relatedheading 
+			{
+			font-weight: bold;	
+			margin: 2em 0 0.7em 0;
+			}
+			.relateditem 
+			{
+					font-weight: bold; 
+					margin: 0.4em 0 0 0;
+					padding: 0 0 0 1em;
+			}
+			.backtotop 
+			{
+			font-size: x-small;
+			}
+			.listcontinue 
+			{display: block;
+			margin: 6pt 0 6pt 0;
+			padding: 0 0 0 0;
+			}
+			.specialbold 
+			{
+			font-weight: bold;
+			color: #800040;
+			}
+
+			.commandtext 
+			{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
+			line-height: 0.95em;
+			font-size: small;
+			color: #000000;
+			background-color: #EFEFEF;
+			margin: 12pt 0 12pt 0;
+			padding: 5pt 5pt 5pt 5pt;
+			border-color: #7F7F7F;
+			border-style: solid;
+			border-width: thin;
+			white-space: pre;
+			}
+			.superscript 
+			{display: inline;
+			font-size: 6pt;
+			vertical-align: super;
+			padding: 0 0 0 0;
+			}
+			ol
+			{list-style-type: Decimal;
+			list-style-position: outside;
+			margin: 6pt 0 0 0;
+			}
+			.listcontinuecommandtext 
+			{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
+			line-height: 0.95em;
+			font-size: small;
+			background-color: #EFEFEF;
+			margin: 6pt 0 6pt 0;
+			padding: 5px 5px 5px 5px;
+			border-color: #7F7F7F;
+			border-style: solid;
+			border-width: thin;
+			white-space: pre;
+			}
+			.listcontinue 
+			{display: block;
+			margin: 6pt 6pt 6pt 0;
+			padding: 0 0 0 0;
+			}
+			.note 
+			{
+			margin: 16pt 0 16pt 0;
+			padding: 4pt 4pt 4pt 4pt;
+			border-color: #004080;
+			border-top-style: solid;
+			border-top-width: 0.3mm;
+			border-bottom-style: solid;
+			border-bottom-width: 0.3mm;
+			}
+			.listnote 
+			{display: block;
+			margin: 6pt 6pt 6pt 0;
+			padding: 4pt 4pt 4pt 4pt;
+			border-color: #004080;
+			border-top-style: solid;
+			border-top-width: 0.3mm;
+			border-bottom-style: solid;
+			border-bottom-width: 0.3mm;
+			width: 90%;
+			height: auto;
+			}
+			.tableheading 
+			{
+			font-weight: bold;
+			font-size: 11pt;
+			color: #0F0F0F;
+			background-color: #DFDFDF;
+			margin-top: 0 -2pt 2pt  -2pt;
+			padding: 6pt 6pt 6pt 6pt;
+			border-color: #FFFFFF;
+			border-right-style: solid;
+			border-right-width: 1px;
+			}
+			.tablebodytext 
+			{
+			margin: 3pt 0 3pt 0;
+			padding: 0 0 0 0;
+			}
+			h1
+			{
+			font-size: 20pt;
+			color: #0F0F0F;
+			margin: 6pt 0 3pt 0;
+			padding: 0 0 0 0;
+			float: none;
+			}
+			h2
+			{
+			font-size: 18pt;
+			color: #0F0F0F;
+			margin: 12pt 0 3pt 0;
+			padding: 0 0 0 0;
+			}
+			h3
+			{
+			font-size: 16pt;
+			color: #0F0F0F;
+			margin: 12pt 0 3pt 0;
+			padding: 0 0 0 0;
+			}
+			h4
+			{
+			font-size: 14pt;
+			color: #0F0F0F;
+			margin: 12pt 0 3pt 0;
+			padding: 0 0 0 0;
+			}
+			h5
+			{
+			font-size: 12pt;
+			margin: 12pt 0 3pt 0;
+			padding: 0 0 0 0;
+			}
+			h6
+			{
+			font-size: 10pt;
+			margin: 12pt 0 3pt 0;
+			padding: 0 0 0 0;
+			}
+			.indexatoz 
+			{
+			font-weight: bold;
+			font-size: 10pt;
+			color: #0F0F0F;
+			background-color: #CFCFCF;
+			margin: 12pt 0 0 0;
+			padding: 6pt 6pt 6pt 6pt;
+			}
+
+			.indent 
+			{
+			margin: 12pt 0 3pt 1.1cm;
+			padding: 0 0 0 0;
+			text-indent: 4em;
+			}
+			.indentcommandtext 
+			{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
+			line-height: 0.95em;
+			font-size: small;
+			background-color: #EFEFEF;
+			margin: 12pt 0 12pt 1.1cm;
+			padding: 5pt 5pt 5pt 5pt;
+			border-color: #7F7F7F;
+			border-style: solid;
+			border-width: thin;
+			text-indent: 4em;
+			white-space: pre;
+			}
+			.indexanchor
+			{
+				margin-top: 12px;
+			}
+			.indexlist
+			{
+				margin-top: 4px;
+			}
+		
+		
+	/* NEW STYLES (REMAKE DECEMERE 2006) */
+		
+		
 		body		{
 			padding: 0;
 			margin: 0; 
@@ -262,21 +463,18 @@
 			bottom: 20px;
 			left: 22%;
 			right: 3%;
-	/*	*/	background-color: #888;
+			background-color: #888;
 			opacity: 0.8;
 			-moz-opacity: 0.8; /* opacity legacy */
 		}	
 			
-			
-			
-		
 		div.navtocseperator	{
 			padding: 4px;
 		}
 		
+
 	
-	
-	
+/*	STYLESWITCHER SPECIFIC STYLINGS */
 	
 		/* orthodox version */
 		 
@@ -320,7 +518,7 @@
 		
 		body.n3 #backTop1			{ display: none; }
 		body.n3 #backTop2			{ display: none; }
-		body.n3 #logo				{ position: fixed; background-image: url(/img-layout/logo856gray.png) ; }
+		body.n3 #logo				{ position: fixed; top: 12px; background-image: url(/img-layout/logo856deserted.png) ; }
 	/*	*/	
 		body.n3 #pageNavi			{ top: 66px;}
 		body.n3 #leftCol			{ top: 86px; }
@@ -343,8 +541,21 @@
 									color: darkblue; }
 		
 		
-		
-		
-		
-		
+}
+
+
+@media print
+{
+		#logo, #backTop1, #backTop2, #siteNaviTopBack, #siteNaviTop, #leftCol, #pageNaviBack, #pageNavi, #sfx	{
+			display: none;
+		}
+
+		#footer	{
+			margin-top: 100px;
+			font-size: smaller;
+		}
+			
+
+
+
 }

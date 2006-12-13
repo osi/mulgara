@@ -13,7 +13,7 @@
 				<p>Modification Authors:  Paul Gearon, David Wood.  Principle Authors: Tom Adams, Grant Noble.  The publisher of this version is <a href="http://mulgara.org">The Mulgara Project</a>. <a href="/overview/history.html">Document history</a>.</p>
 			</div>
 			<div id="lastmodified">
-				 This file was last modified on 
+				 This file, <!--#echo var="DOCUMENT_URI" -->, was last modified on 
 				<!--#config timefmt="%A, %B %e. %Y - %T %Z" -->
 				<!--#echo var="LAST_MODIFIED" -->.
 			</div>
