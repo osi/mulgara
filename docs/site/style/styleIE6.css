@@ -1,4 +1,25 @@
 
+#logo, #backTop1, #sfx    {
+		display: none;    
+		}
+ #backTop2        {
+		background-image: url(../img-layout/ieBack-3.jpg);
+		background-repeat:no-repeat;
+		left: -10px;
+		top: 0;
+		height: 80px;
+		}	
+	#mainBack		{
+		top: 80px;
+		}
+		
+	li	{
+		line-height: 1.2em;
+		padding: 0;
+		margin: 0;
+		}
+
+/*
         #logo, #backTop1, #sfx    {
             display: none;    
             }
@@ -50,3 +71,5 @@
         #leftCol, #siteNaviTopBack, #siteNaviTop	{
         	left: 10px;
         	}
+
+*/

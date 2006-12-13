@@ -343,11 +343,7 @@
 			}
 		 ul		{
 			list-style-type: circle;
-		/*	list-style-image: url(/img-layout/dash.gif);
-			background-color: yellow; */
-			}
-		li	{
-		/*	background-color: blue;	*/
+		/*	list-style-image: url(/img-layout/dash.gif); */
 			}
 		#siteNavi ul {
 			position: relative;

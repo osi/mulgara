@@ -17,10 +17,7 @@
     
     <script type="text/javascript" src="/script/bodyswitcher.js"></script>
     <style type="text/css">@import url(/style/style.css);</style>
-    <!--[if IE]>
-    <style type="text/css">@import url(/style/styleIE6.css);</style> 
-    <![endif]-->
-
+    <!--[if IE]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
 
 </head>
 
