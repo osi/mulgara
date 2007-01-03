@@ -347,4 +347,6 @@ public class LuceneResolver implements Resolver {
   private FullTextStringIndex openFullTextStringIndex(long model) throws FullTextStringIndexException {
     return new FullTextStringIndex(new File(directory, Long.toString(model)).toString(), "gn"+model );
   }
+
+  public void abort() {}
 }

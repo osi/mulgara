@@ -76,7 +76,7 @@ public class SubqueryAnswer extends GlobalizedAnswer {
   private Variable[] variables;
 
   /** The current database session for this query. */
-  protected AnswerDatabaseSession databaseSession;
+  protected OperationContext operationContext;
 
   /**
    * Assignment property.
@@ -115,12 +115,11 @@ public class SubqueryAnswer extends GlobalizedAnswer {
    * @throws TuplesException if it fails to get the row cardinality of the
    *   given tuples.
    */
-  SubqueryAnswer(AnswerDatabaseSession session, ResolverSession resolverSession,
+  SubqueryAnswer(OperationContext operationContext, ResolverSession resolverSession,
       Tuples tuples, List variableList) throws TuplesException {
     super(tuples, resolverSession);
 
-    this.databaseSession = session;
-    this.databaseSession.registerAnswer(this);
+    this.operationContext = operationContext;
     assignVariables(tuples, variableList);
   }
 
@@ -185,7 +184,6 @@ public class SubqueryAnswer extends GlobalizedAnswer {
     cloned.variables = new Variable[this.variables.length];
     System.arraycopy(this.variables, 0, cloned.variables, 0,
         this.variables.length);
-    databaseSession.registerAnswer(cloned);
     return cloned;
   }
 
@@ -193,16 +191,6 @@ public class SubqueryAnswer extends GlobalizedAnswer {
   // Methods overriding GlobalizedAnswer's implementation of Answer
   //
 
-
-  public void close() throws TuplesException {
-    super.close();
-    try {
-      databaseSession.deregisterAnswer(this);
-    }
-    catch (QueryException eq) {
-      logger.info("Failed to deregister answer from session", eq);
-    }
-  }
 
   public int getColumnIndex(Variable variable) throws TuplesException {
     if (variable == null) {
@@ -313,7 +301,7 @@ public class SubqueryAnswer extends GlobalizedAnswer {
         logger.debug("Generated subquery: " + query);
       }
 
-      return databaseSession.innerQuery(query);
+      return operationContext.doQuery(query);
     }
     catch (Exception e) {
       throw new QueryException("Failed to resolve subquery", e);

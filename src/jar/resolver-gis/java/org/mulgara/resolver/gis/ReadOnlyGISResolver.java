@@ -222,4 +222,9 @@ public class ReadOnlyGISResolver implements Resolver {
      */
     return resolver.resolve(constraint);
   }
+
+  public void abort() {
+    resolver.abort();
+  }
+
 }

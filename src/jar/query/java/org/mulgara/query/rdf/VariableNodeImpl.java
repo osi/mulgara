@@ -75,11 +75,6 @@ public class VariableNodeImpl
   private final String variableName;
 
   /**
-   * The unique blank node mapping.
-   */
-  private BlankNodeImpl blankNode = null;
-
-  /**
    * Create a new variableNode.
    *
    * @param newVariableName the variable name to set.
@@ -97,26 +92,6 @@ public class VariableNodeImpl
   public String getVariableName() {
 
     return variableName;
-  }
-
-  /**
-   * Sets the blank node for variable.
-   *
-   * @param newBlankNode the blank node for the variable.
-   */
-  public void setBlankNode(final BlankNodeImpl newBlankNode) {
-
-    blankNode = newBlankNode;
-  }
-
-  /**
-   * Returns the current blank node.
-   *
-   * @return the current blank node.
-   */
-  public BlankNodeImpl getBlankNode() {
-
-    return blankNode;
   }
 
   /**
@@ -180,6 +155,6 @@ public class VariableNodeImpl
    */
   public String toString() {
 
-    return "_variable " + variableName + " :_node" + blankNode;
+    return "_variable " + variableName;
   }
 }

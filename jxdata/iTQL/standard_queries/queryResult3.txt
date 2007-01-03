@@ -1,5 +1,5 @@
-ItqlInterpreter error - org.mulgara.query.QueryException: Error ending previous query
-Caused by: (QueryException) Error ending previous query
-Caused by: (QueryException) javax.transaction.RollbackException: null
+ItqlInterpreter error - org.mulgara.query.QueryException: Query failed
+Caused by: (QueryException) Query failed
+Caused by: (QueryException) org.mulgara.resolver.MulgaraTransactionException: Failed transaction finalised. (ROLLBACK)
 Caused by: (QueryException) Error resolving [$pmid http://mulgara.org/mulgara/Document#subject "Birds" $_from] from @server@#badmodel
 Caused by: (QueryException) @server@#badmodel is not a Model

@@ -49,6 +49,6 @@ import org.mulgara.server.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface LocalJRDFSession extends LocalSession, JRDFSession {
+public interface LocalJRDFSession extends JRDFSession {
 
 }

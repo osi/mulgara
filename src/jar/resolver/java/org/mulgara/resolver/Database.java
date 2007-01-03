@@ -253,10 +253,12 @@ public class Database implements SessionFactory
   private final TransactionManagerFactory transactionManagerFactory;
 
   /**
-   * JTS transaction manager used to distribute transactions over multiple
-   * resolvers.
+   * The internal transaction manager.
+   *
+   * This class is a singleton with respect to a database instance.
+   * Passed to new DatabaseSession's.
    */
-  private final TransactionManager transactionManager;
+  private final MulgaraTransactionManager transactionManager;
 
   /** The unique {@link URI} naming this database.  */
   private final URI uri;
@@ -510,17 +512,9 @@ public class Database implements SessionFactory
     assert this.contentHandlers != null;
 
     // FIXME: Migrate this code inside StringPoolSession.  Pass config to StringPoolSession.
-    this.transactionManager = transactionManagerFactory.newTransactionManager();
+    this.transactionManager = new MulgaraTransactionManager(transactionManagerFactory);
 
-    // Set the transaction timeout to an hour
-    try {
-      transactionManager.setTransactionTimeout(transactionTimeout);
-    }
-    catch (SystemException e) {
-      logger.warn(
-        "Unable to set transaction timeout to " + transactionTimeout + "s", e
-      );
-    }
+    transactionManager.setTransactionTimeout(transactionTimeout);
 
     // Enable resolver initialization
     if (logger.isDebugEnabled()) {
@@ -675,6 +669,7 @@ public class Database implements SessionFactory
     if (logger.isDebugEnabled()) {
       logger.debug("Added system resolver " + systemResolverFactoryClassName);
     }
+
 
     URI systemModelURI = new URI(uri.getScheme(), uri.getSchemeSpecificPart(), "");
     metadata =

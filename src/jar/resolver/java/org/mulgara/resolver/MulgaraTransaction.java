@@ -27,10 +27,11 @@ import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.resolver.spi.DatabaseMetadata;
-import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.EnlistableResource;
 import org.mulgara.resolver.spi.ResolverSessionFactory;
 
 import org.mulgara.query.TuplesException;
+import org.mulgara.query.QueryException;
 
 /**
  * Responsible for the javax.transaction.Transaction object.
@@ -52,11 +53,11 @@ import org.mulgara.query.TuplesException;
  *
  * @maintenanceAuthor $Author: $
  *
- * @company <A href="mailto:mail@netymon.com">Netymon Pty Ltd</A>
+ * @company <a href="mailto:mail@netymon.com">Netymon Pty Ltd</a>
  *
  * @copyright &copy;2006 <a href="http://www.netymon.com/">Netymon Pty Ltd</a>
  *
- * @licence Open Software License v3.0</a>
+ * @licence Open Software License v3.0
  */
 public class MulgaraTransaction {
   /** Logger.  */
@@ -64,7 +65,7 @@ public class MulgaraTransaction {
     Logger.getLogger(MulgaraTransaction.class.getName());
 
   private MulgaraTransactionManager manager;
-  private OperationContext context;
+  private DatabaseOperationContext context;
 
   private Transaction transaction;
   private Thread currentThread;
@@ -79,159 +80,303 @@ public class MulgaraTransaction {
   private int rollback;
   private Throwable rollbackCause;
 
-  public MulgaraTransaction(MulgaraTransactionManager manager, OperationContext context) {
-    this.manager = manager;
-    this.context = context;
-
-//    FIXME: MTMgr will be null until operational.
-//    this.transaction = manager.transactionStart(this);
-    inuse = 1; // Note: This implies implict activation as a part of construction.
-    using = 0;
-
-    rollback = NO_ROLLBACK;
-    rollbackCause = null;
-
-//    FIXME: need this added to context. Sets up and enlists the system-resolver.
-//    context.initiate();
-
-//    FIXME: need this added to context. Allows context to cleanup caches at end of transaction.
-//    this.transaction.enlistResource(context.getXAResource());
-  }
-
-  // FIXME: Not yet certain I have the error handling right here.
-  // Need to clarify semantics and ensure the error conditions are 
-  // properly handled.
-  private synchronized void activate() throws MulgaraTransactionException {
-    if (currentThread == null) {
-      currentThread = Thread.currentThread();
-    } else if (!currentThread.equals(Thread.currentThread())) {
-      throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
-    }
-
-    if (inuse == 0) {
-      try {
-        manager.transactionResumed(this);
-      } catch (Throwable th) {
-        logger.warn("Error resuming transaction: ", th);
-        failTransaction();
-        throw new MulgaraTransactionException("Error resuming transaction", th);
+  public MulgaraTransaction(MulgaraTransactionManager manager, DatabaseOperationContext context)
+      throws Exception {
+    report("Creating Transaction");
+    try {
+      if (manager == null) {
+        throw new IllegalArgumentException("Manager null in MulgaraTransaction");
+      } else if (context == null) {
+        throw new IllegalArgumentException("OperationContext null in MulgaraTransaction");
       }
-    }
+      this.manager = manager;
+      this.context = context;
 
-    inuse++;
+      inuse = 0;
+      using = 0;
+
+      rollback = NO_ROLLBACK;
+      rollbackCause = null;
+    } finally {
+      report("Created Transaction");
+    }
   }
 
 
-  // FIXME: Not yet certain I have the error handling right here.
-  // Need to clarify semantics and ensure the error conditions are 
-  // properly handled.
+  synchronized void activate() throws MulgaraTransactionException {
+    report("Activating Transaction");
+    try {
+      if (rollback != NO_ROLLBACK) {
+        throw new MulgaraTransactionException("Attempt to activate failed transaction");
+      }
+
+      if (currentThread == null) {
+        currentThread = Thread.currentThread();
+      } else if (!currentThread.equals(Thread.currentThread())) {
+        throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
+      }
+      
+      if (manager == null) {
+        errorReport("Attempt to activate terminated transaction");
+        throw new MulgaraTransactionException("Attempt to activate terminated transaction");
+      }
+
+      if (inuse == 0) {
+        if (transaction == null) {
+          startTransaction();
+        } else {
+          resumeTransaction();
+        }
+      }
+
+      inuse++;
+
+      checkActivated();
+    } finally {
+      report("Activated transaction");
+    }
+  }
+
   private synchronized void deactivate() throws MulgaraTransactionException {
+    report("Deactivating transaction");
+    try {
+      if (rollback == NO_ROLLBACK) {
+        checkActivated();
+      } // rollback'd transactions are cleaned up on the final deactivation.
 
-    inuse--;
+      inuse--;
 
-    if (inuse < 0) {
-      throw implicitRollback(
-          new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 0: " + inuse));
-    }
-
-    if (inuse == 0) {
-      if (using == 0) {
-        // END TRANSACTION HERE.  But commit might fail.
-        manager.transactionComplete(this);
-      } else {
-        // What happens if suspend fails?
-        // Rollback and terminate transaction.
-        // JTA isn't entirely unambiguous as to the long-term stability of the original
-        // transaction object - can suspend return a new object?
-        this.transaction = manager.transactionSuspended(this);
+      if (inuse == 0) {
+        if (using == 0) {
+          terminateTransaction();
+        } else {
+          suspendTransaction();
+        }
+        currentThread = null;
       }
-      currentThread = null;
+    } finally {
+      report("Deactivated Transaction");
     }
   }
 
-  // Do I want to check for currentThread here?  Do I want a seperate check() method to 
-  // cover precondition checks against currentThread?
-  void reference() {
-    using++;
+  // Note: The transaction is often not activated when these are called.
+  //       This occurs when setting autocommit, as this creates and
+  //       references a transaction object that won't be started/activated
+  //       until it is first used.
+  void reference() throws MulgaraTransactionException {
+    report("Referencing Transaction");
+    try {
+      using++;
+    } finally {
+      report("Referenced Transaction");
+    }
   }
 
   void dereference() throws MulgaraTransactionException {
-    using--;
-    if (using < 0) {
-      throw implicitRollback(new MulgaraTransactionException("ERROR: Transaction dereferenced more times than referenced!"));
+    report("Dereferencing Transaction");
+    try {
+      if (using < 1) {
+        throw implicitRollback(new MulgaraTransactionException(
+            "Reference Failure.  Dereferencing while using < 1: " + using));
+      }
+      using--;
+    } finally {
+      report("Dereferenced Transaction");
     }
   }
 
   void execute(Operation operation,
                ResolverSessionFactory resolverSessionFactory, // FIXME: We shouldn't need this. - only used for backup and restore operations.
                DatabaseMetadata metadata) throws MulgaraTransactionException {
-    activate();
+    report("Executing Operation");
     try {
-//      FIXME: Need to migrate systemResolver to context for this to work.
-//      operation.execute(context,
-//                        context.getSystemResolver(),
-//                        resolverSessionFactory,
-//                        metadata);
-    } catch (Throwable th) {
-      throw implicitRollback(th);
+      activate();
+      try {
+        operation.execute(context,
+                          context.getSystemResolver(),
+                          resolverSessionFactory,
+                          metadata);
+      } catch (Throwable th) {
+        throw implicitRollback(th);
+      } finally {
+        deactivate();
+      }
     } finally {
-      deactivate();
+      report("Executed Operation");
     }
   }
 
-  /** Should rename this 'wrap' */
   AnswerOperationResult execute(AnswerOperation ao) throws TuplesException {
-//    FIXME: activate/deactivate won't work until we have MTMgr operational.
-//    activate();
+    debugReport("Executing AnswerOperation");
     try {
-      ao.execute();
-      return ao.getResult();
-    } catch (Throwable th) {
-      throw new TuplesException("Error accessing Answer", th);
-//      throw implicitRollback(th);
+      activate();
+      try {
+        ao.execute();
+        return ao.getResult();
+      } catch (Throwable th) {
+        throw implicitRollback(th);
+      } finally {
+        deactivate();
+      }
+    } catch (MulgaraTransactionException em) {
+      throw new TuplesException("Transaction error", em);
     } finally {
-//      deactivate();
+      debugReport("Executed AnswerOperation");
     }
   }
 
 
-  private MulgaraTransactionException implicitRollback(Throwable cause) throws MulgaraTransactionException {
-    rollback = IMPLICIT_ROLLBACK;
-    rollbackCause = cause;
-    failTransaction();
-    return new MulgaraTransactionException("Transaction Rolledback", cause);
+  void execute(TransactionOperation to) throws MulgaraTransactionException {
+    report("Executing TransactionOperation");
+    try {
+      activate();
+      try {
+        to.execute();
+      } catch (Throwable th) {
+        throw implicitRollback(th);
+      } finally {
+        deactivate();
+      }
+    } finally {
+      report("Executed TransactionOperation");
+    }
+  }
+
+
+  MulgaraTransactionException implicitRollback(Throwable cause) throws MulgaraTransactionException {
+    report("Implicit Rollback triggered");
+
+    if (rollback == IMPLICIT_ROLLBACK) {
+      logger.warn("Cascading error, transaction already rolled back", cause);
+      logger.warn("Cascade error, expected initial cause", rollbackCause);
+
+      return new MulgaraTransactionException("Transaction already in rollback", cause);
+    }
+
+    try {
+      checkActivated();
+      rollback = IMPLICIT_ROLLBACK;
+      rollbackCause = cause;
+      failTransaction();
+      return new MulgaraTransactionException("Transaction in Rollback", cause);
+    } catch (Throwable th) {
+      abortTransaction("Failed to rollback normally", th);
+      throw new MulgaraTransactionException("Abort failed to throw exception", th);
+    }
   }
 
   /**
-   * Note: I think this is the only one that matters. 
+   * Rollback the transaction.
+   * We don't throw an exception here when transaction fails - this is expected,
+   * after all we requested it.
    */
-  protected void explicitRollback() throws MulgaraTransactionException {
-    rollback = EXPLICIT_ROLLBACK;
-    // We don't throw an exception here when transaction fails - this is expected,
-    // after all we requested it.
+  public void explicitRollback() throws MulgaraTransactionException {
+    try {
+      checkActivated();
+      failTransaction();
+      rollback = EXPLICIT_ROLLBACK;
+    } catch (Throwable th) {
+      abortTransaction("Explicit rollback failed", th);
+    }
+  }
+
+  private void startTransaction() throws MulgaraTransactionException {
+    report("Initiating transaction");
+    transaction = manager.transactionStart(this);
+    try {
+      context.initiate(this);
+    } catch (Throwable th) {
+      throw implicitRollback(th);
+    }
+  }
+
+  private void resumeTransaction() throws MulgaraTransactionException {
+    report("Resuming transaction");
+    try {
+      manager.transactionResumed(this, transaction);
+    } catch (Throwable th) {
+      abortTransaction("Failed to resume transaction", th);
+    }
+  }
+
+  private void suspendTransaction() throws MulgaraTransactionException {
+    report("Suspending Transaction");
+    try {
+      if (rollback == NO_ROLLBACK) {
+        this.transaction = manager.transactionSuspended(this);
+      } else {
+        terminateTransaction();
+      }
+    } catch (Throwable th) {
+      throw implicitRollback(th);
+    } finally {
+      report("Finished suspending transaction");
+    }
   }
 
   private void terminateTransaction() throws MulgaraTransactionException {
-  }
-
-  private void failTransaction() throws MulgaraTransactionException {
-    // We need to handle the whole fact this is an error, but the core operation is rollback.
+    report("Terminating Transaction: " + rollback);
+//    errorReport("Terminating Transaction: " + rollback);
     try {
-      transaction.rollback();
-    } catch (SystemException es) {
-      throw new MulgaraTransactionException("Failed to Rollback", es);
-    }
-  }
-
-  private void finalizeTransaction() throws MulgaraTransactionException {
-    // We need a whole load of error handling here, but the core operation is commit.
-    try {
-      transaction.commit();
-    } catch (Exception e) {
-      throw new MulgaraTransactionException("Error while trying to commit", e);
+      switch (rollback) {
+        case NO_ROLLBACK:
+          report("Completing Transaction");
+          try {
+            transaction.commit();
+            transaction = null;
+          } catch (Throwable th) {
+            implicitRollback(th);
+            terminateTransaction();
+          }
+          break;
+        case IMPLICIT_ROLLBACK:
+          report("Completing Implicitly Failed Transaction");
+          // Check that transaction is cleaned up.
+          throw new MulgaraTransactionException(
+              "Failed transaction finalised. (ROLLBACK)", rollbackCause);
+        case EXPLICIT_ROLLBACK:
+          report("Completing explicitly failed transaction (ROLLBACK)");
+          // Check that transaction is cleaned up.
+          break;
+      }
     } finally {
-      manager.transactionComplete(this);
+      try {
+        try {
+          context.clear();
+        } catch (QueryException eq) {
+          throw new MulgaraTransactionException("Error clearing context", eq);
+        }
+      } finally {
+        try {
+          manager.transactionComplete(this);
+        } finally {
+          manager = null;
+          inuse = 0;
+          using = 0;
+          report("Terminated transaction");
+        }
+      }
     }
+  }
+
+  private void failTransaction() throws Throwable {
+    transaction.rollback();
+    manager.transactionFailed(this);
+    context.clear();
+  }
+
+  void abortTransaction(String errorMessage, Throwable th) throws MulgaraTransactionException {
+    // We need to notify the manager here - this is serious, we
+    // can't rollback normally if we can't resume!  The call to
+    // context.abort() is an escape hatch we use to abort the 
+    // current phase behind the scenes.
+    logger.error(errorMessage + " - Aborting", th);
+    try {
+      manager.transactionAborted(this);
+    } finally {
+      context.abort();
+    }
+    throw new MulgaraTransactionException(errorMessage + " - Aborting", th);
   }
 
   //
@@ -239,19 +384,80 @@ public class MulgaraTransaction {
   // recreated for each operation - it also needs to provide an XAResource of it's own for
   // enlisting in the transaction to clean-up caches and the like.
   //
-  public void enlistResolver(Resolver resolver) throws MulgaraTransactionException {
+  public void enlist(EnlistableResource enlistable) throws MulgaraTransactionException {
     try {
-      XAResource resource = resolver.getXAResource();
-      transaction.enlistResource(resource);
+      transaction.enlistResource(enlistable.getXAResource());
     } catch (Exception e) {
       throw new MulgaraTransactionException("Error enlisting resolver", e);
     }
   }
 
+  //
+  // Should only be visible to MulgaraTransactionManager.
+  //
+
   /**
-   * Should only be visible to MulgaraTransactionManager.
+   * Force transaction to a conclusion.
+   * If we can't activate or commit, then rollback and terminate.
+   * This is called by the manager to indicate that it needs this transaction to
+   * be finished NOW, one way or another.
    */
-  protected Transaction getTransaction() {
-    return transaction;
+  void completeTransaction() throws MulgaraTransactionException {
+    try {
+      activate();
+    } catch (Throwable th) {
+      implicitRollback(th);  // let terminate throw this exception if required.
+    } finally {
+      terminateTransaction();
+    }
+    // We don't need to deactivate - this method is *only* for use by the
+    // MulgaraTransactionManager!
+  }
+
+  protected void finalize() {
+    report("GC-finalize");
+    if (inuse != 0 || using != 0) {
+      errorReport("Referernce counting error in transaction");
+    }
+    if (manager != null || transaction != null) {
+      errorReport("Transaction not terminated properly");
+    }
+  }
+
+  //
+  // Used internally
+  //
+
+  private void checkActivated() throws MulgaraTransactionException {
+    if (currentThread == null) {
+      throw new MulgaraTransactionException("Transaction failed activation check");
+    } else if (!currentThread.equals(Thread.currentThread())) {
+      throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
+    } else if (inuse < 1) {
+      throw implicitRollback(
+          new MulgaraTransactionException("Mismatched activate/deactivate.  inuse < 1: " + inuse));
+    } else if (using < 0) {
+      throw implicitRollback(
+          new MulgaraTransactionException("Reference Failure.  using < 0: " + using));
+    }
+  }
+
+  private void report(String desc) {
+    if (logger.isInfoEnabled()) {
+      logger.info(desc + ": " + System.identityHashCode(this) +
+          ", inuse=" + inuse + ", using=" + using);
+    }
+  }
+
+  private void debugReport(String desc) {
+    if (logger.isDebugEnabled()) {
+      logger.debug(desc + ": " + System.identityHashCode(this) +
+          ", inuse=" + inuse + ", using=" + using);
+    }
+  }
+
+  private void errorReport(String desc) {
+    logger.error(desc + ": " + System.identityHashCode(this) +
+        ", inuse=" + inuse + ", using=" + using, new Throwable());
   }
 }

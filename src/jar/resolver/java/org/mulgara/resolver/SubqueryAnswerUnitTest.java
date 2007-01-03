@@ -160,7 +160,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
    */
   public void testVariableMappings() throws Exception {
     ResolverSession testResolver = new TestResolverSession();
-    AnswerDatabaseSession testDbSession = new TestAnswerDatabaseSession();
+    OperationContext testContext = new TestOperationContext();
 
     Variable varX = new Variable("x");
     Variable varY = new Variable("y");
@@ -177,7 +177,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
     variableList.add(varY);
 
     // Create subquery.
-    SubqueryAnswer answer = new SubqueryAnswer(testDbSession, testResolver,
+    SubqueryAnswer answer = new SubqueryAnswer(testContext, testResolver,
         tuples, variableList);
 
     // Get column index of Z.
@@ -188,19 +188,23 @@ public class SubqueryAnswerUnitTest extends TestCase {
     assertEquals("Based on variable list Z should be", 1, columnIndexZ);
   }
 
-  private class TestAnswerDatabaseSession implements AnswerDatabaseSession {
+  private class TestOperationContext implements OperationContext {
+    public ResolverFactory findModelResolverFactory(long model)
+      throws QueryException { return null; }
 
-    public TestAnswerDatabaseSession() {
-    }
+    public ResolverFactory findModelTypeResolverFactory(URI modelTypeURI)
+      throws QueryException { return null; }
 
-    public Answer innerQuery(Query query) throws QueryException {
-      return null;
-    }
+    public List getSecurityAdapterList() { return null; }
 
-    public void registerAnswer(SubqueryAnswer answer) {
-    }
+    public Resolver obtainResolver(ResolverFactory resolverFactory)
+      throws QueryException { return null; }
 
-    public void deregisterAnswer(SubqueryAnswer answer) throws QueryException {
-    }
+    public long getCanonicalModel(long model) { return 0; }
+
+    public Answer doQuery(Query query)
+    throws Exception { return null; }
+
+    public SystemResolver getSystemResolver() { return null; } // FIXME: Scaffolding for transactions.
   }
 }

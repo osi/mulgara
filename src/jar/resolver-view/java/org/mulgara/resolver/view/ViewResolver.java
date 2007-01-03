@@ -395,4 +395,6 @@ public class ViewResolver implements Resolver, ViewMarker
       throw new ResolverException("Invalid URI", eu);
     }
   }
+
+  public void abort() {}
 }

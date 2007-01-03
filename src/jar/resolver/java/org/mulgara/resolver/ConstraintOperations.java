@@ -41,7 +41,6 @@ import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;

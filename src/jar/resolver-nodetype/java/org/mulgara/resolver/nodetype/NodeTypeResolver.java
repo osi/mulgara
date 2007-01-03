@@ -371,4 +371,5 @@ public class NodeTypeResolver implements Resolver
     // no-op
   }
 
+  public void abort() {}
 }

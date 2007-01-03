@@ -289,4 +289,8 @@ class InternalResolver implements Resolver, ViewMarker
         new SingletonStatements(model, rdfType, modelType),
         present);
   }
+
+  public void abort() {
+    resolver.abort();
+  }
 }

@@ -195,7 +195,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   * of the system model in the newly-created {@link Database}.
   */
   public void testQuery1() {
-    logger.debug("Testing testQuery1");
+    logger.info("TestQuery1");
     try {
       // Test querying the system model (#)
       Session session = database.newSession();
@@ -225,6 +225,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
             new UnconstrainedAnswer()           // GIVEN
           )));
 
+
         // Compose the expected result of the query
         Answer expectedAnswer = new ArrayAnswer(
             new Variable[] { subjectVariable, predicateVariable, objectVariable },
@@ -250,7 +251,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   */
   public void testSetModel() throws URISyntaxException
   {
-    logger.debug("Testing testSetModel");
+    logger.info("testSetModel");
     URI fileURI  = new File("data/dc.rdfs").toURI();
     URI modelURI = new URI("local:database#model");
 
@@ -278,7 +279,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   */
 
   public void testQuery2() throws URISyntaxException {
-    logger.debug("Testing testQuery2");
+    logger.info("Testing testQuery2");
     URI dcFileURI   = new File("data/dc.rdfs").toURI();
     URI rdfsFileURI = new File("data/rdfs.rdfs").toURI();
 

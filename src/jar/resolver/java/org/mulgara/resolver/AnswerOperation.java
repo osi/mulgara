@@ -21,12 +21,13 @@ import org.mulgara.query.TuplesException;
 
 public abstract class AnswerOperation {
   // Should use enum here.
+  public static final int VOID = 0;
   public static final int OBJECT = 1;
   public static final int INT = 2;
   public static final int LONG = 3;
   public static final int BOOLEAN = 3;
 
-  protected int returnType;
+  protected int returnType = VOID;
 
   protected Object object;
   protected int integer;

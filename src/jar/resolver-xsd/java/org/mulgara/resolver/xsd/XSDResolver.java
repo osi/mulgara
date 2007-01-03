@@ -452,4 +452,6 @@ public class XSDResolver implements Resolver {
       throw new Error("Unsupported constraint element: " + constraintElement);
     }
   }
+
+  public void abort() {}
 }

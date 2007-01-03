@@ -338,4 +338,9 @@ public class RelationalResolver implements Resolver {
       throw new ResolverException("Invalid URI", eu);
     }
   }
+
+  public void abort() {
+    // We need to clear the JDBC connections here, but we don't have a handle on
+    // the Resolutions.
+  }
 }

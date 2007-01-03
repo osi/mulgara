@@ -225,4 +225,6 @@ class CacheResolver implements Resolver {
 
     return temporaryResolver;
   }
+
+  public void abort() {}
 }

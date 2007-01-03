@@ -49,6 +49,7 @@ import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.XAResolverSession;
+import org.mulgara.store.xa.SimpleXAResourceException;
 
 /**
  * Resolves constraints in models stored on the Java heap.
@@ -379,5 +380,19 @@ public class MemoryResolver implements SystemResolver
     }
 
     return buffer.toString();
+  }
+
+  public void abort() {
+    if (xaResolverSession != null) {
+      try {
+        try {
+          xaResolverSession.rollback();
+        } finally {
+          xaResolverSession.release();
+        }
+      } catch (SimpleXAResourceException es) {
+        throw new IllegalStateException("Error aborting resolver session", es);
+      }
+    }
   }
 }

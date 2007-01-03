@@ -69,7 +69,7 @@ public class BlankNodeWrapperAnswer implements Answer {
   /**
    * The wrapped instance.
    */
-  protected final Answer answer;
+  protected Answer answer;
 
   /**
    * The blank node map.
@@ -93,6 +93,7 @@ public class BlankNodeWrapperAnswer implements Answer {
   public Object clone() {
     try {
       BlankNodeWrapperAnswer cloned = (BlankNodeWrapperAnswer) super.clone();
+      cloned.answer = (Answer)this.answer.clone();
       return cloned;
     }
     catch (CloneNotSupportedException e) {

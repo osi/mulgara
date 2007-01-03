@@ -62,10 +62,8 @@ DTD.  An example <category/> element is as follows:
   <category name="org.mulgara.content.rdfxml.Parser">
     <priority value="INFO"/>
   </category>
-  -->
-  <!--
   <category name="org.mulgara.resolver.DatabaseSession">
-    <priority value="debug"/>
+    <priority value="info"/>
   </category>
   -->
 

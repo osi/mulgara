@@ -212,8 +212,7 @@ class CreateModelOperation implements Operation
     // PREVIOUSLY WITHIN TRANSACTION
 
     // Obtain an appropriate resolver bound to this session
-    Resolver resolver =
-      operationContext.obtainResolver(resolverFactory, systemResolver);
+    Resolver resolver = operationContext.obtainResolver(resolverFactory);
     assert resolver != null;
 
     // Find the local node identifying the model

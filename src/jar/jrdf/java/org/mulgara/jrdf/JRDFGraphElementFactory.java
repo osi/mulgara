@@ -63,11 +63,10 @@ import org.mulgara.server.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class JRDFGraphElementFactory implements GraphElementFactory {
-
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger logger =
+  private static final Logger logger =
       Logger.getLogger(JRDFGraphElementFactory.class.getName());
 
   /**
@@ -88,65 +87,19 @@ public class JRDFGraphElementFactory implements GraphElementFactory {
    * Returns a new BlankNode.
    *
    * @return BlankNode
-   * @throws GraphElementFactoryException
    */
-  public BlankNode createResource() throws GraphElementFactoryException {
-    try {
-
-      // Check to see if we're in a transaction.  If not create a new
-      // transaction and perform the operation.
-      try {
-        jrdfSession.resumeTransactionalBlock();
-      }
-      catch (IllegalStateException ise) {
-        jrdfSession.startTransactionalOperation(true);
-
-        try {
-          return createBlankNode();
-        }
-        catch (Throwable e) {
-          jrdfSession.rollbackTransactionalBlock(e);
-        }
-        finally {
-          jrdfSession.finishTransactionalOperation("Could not commit insert");
-        }
-      }
-
-      // If no exception was thrown then we have resumed the transaction.
-      try {
-        return createBlankNode();
-      }
-      catch (Throwable e) {
-        jrdfSession.rollbackTransactionalBlock(e);
-      }
-      finally {
-        try {
-          jrdfSession.suspendTransactionalBlock();
-        }
-        catch (Throwable e) {
-          jrdfSession.rollbackTransactionalBlock(e);
-        }
-      }
-    }
-    catch (QueryException e) {
-      throw new GraphElementFactoryException(e);
-    }
-    // This should never happen
-    throw new GraphElementFactoryException("Failed to create blank node");
+  public BlankNode createResource() {
+    return createBlankNode();
   }
 
   /**
-   * Create a new blank node - assume current transaction and valid
-   * ResolverSession.
+   * Create a new blank node .
    *
    * @return a newly minted blank node.
-   * @throws LocalizeException if there was a failure in localizing the blank
-   *   node.
    */
-  public BlankNode createBlankNode() throws LocalizeException {
-    BlankNode tmpBlankNode = new BlankNodeImpl();
-    jrdfSession.getResolverSession().localizePersistent(tmpBlankNode);
-    return tmpBlankNode;
+  public BlankNode createBlankNode() {
+    BlankNode node = new BlankNodeImpl();
+    return node;
   }
 
   /**

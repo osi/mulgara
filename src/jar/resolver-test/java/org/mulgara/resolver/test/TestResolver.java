@@ -137,4 +137,6 @@ public class TestResolver implements Resolver {
       throw new QueryException("Failed to resolve constraint", et);
     }
   }
+
+  public void abort() {}
 }

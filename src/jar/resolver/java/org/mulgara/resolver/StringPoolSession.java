@@ -491,6 +491,7 @@ public class StringPoolSession implements XAResolverSession
         } else {
           nodeId = persistentNodePool.newNode();
         }
+
         return nodeId;
       }
       // If it's a read phase and not the local BlankNode then throw an

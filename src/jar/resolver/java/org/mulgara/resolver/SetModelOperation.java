@@ -152,9 +152,7 @@ class SetModelOperation implements Operation
 
     // Obtain a resolver for the destination model type
     Resolver destinationResolver = operationContext.obtainResolver(
-      operationContext.findModelResolverFactory(destinationModel),
-      systemResolver
-    );
+      operationContext.findModelResolverFactory(destinationModel));
     assert destinationResolver != null;
 
     ContentHandler contentHandler = contentHandlers.getContentHandler(content);

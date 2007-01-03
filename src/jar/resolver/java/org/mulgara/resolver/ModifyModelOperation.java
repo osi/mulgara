@@ -199,7 +199,7 @@ class ModifyModelOperation implements Operation
     else {
       assert query != null;
 
-      Answer answer = operationContext.doQuery(systemResolver, query);
+      Answer answer = operationContext.doQuery(query);
       Variable[] vars = answer.getVariables();
       assert vars.length == 3;
       statements = new TuplesWrapperStatements(
@@ -210,6 +210,7 @@ class ModifyModelOperation implements Operation
 
     doModify(operationContext, systemResolver, modelURI, statements, insert);
   }
+
 
   protected void doModify(OperationContext operationContext,
                           SystemResolver   systemResolver,
@@ -239,9 +240,7 @@ class ModifyModelOperation implements Operation
 
     // Obtain a resolver for the destination model type
     Resolver resolver = operationContext.obtainResolver(
-                          operationContext.findModelResolverFactory(model),
-                          systemResolver
-                        );
+                          operationContext.findModelResolverFactory(model));
     assert resolver != null;
 
     if (logger.isDebugEnabled()) {

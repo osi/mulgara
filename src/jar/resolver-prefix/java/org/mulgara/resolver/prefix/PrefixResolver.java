@@ -336,4 +336,5 @@ public class PrefixResolver implements Resolver
     // no-op
   }
 
+  public void abort() {}
 }

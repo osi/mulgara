@@ -30,7 +30,6 @@ package org.mulgara.resolver;
 // Java 2 enterprise packages
 import javax.transaction.Status;
 import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
 /**
  * Generate a presentation form for a transaction {@link Status}.
@@ -89,7 +88,8 @@ abstract class StatusFormat
    *
    * @param transactionManager  the transaction manager
    */
-  public static String formatStatus(TransactionManager transactionManager)
+   /*
+  public static String formatStatus(MulgaraTransactionManager transactionManager)
   {
     try {
       return formatStatus(transactionManager.getStatus());
@@ -98,4 +98,5 @@ abstract class StatusFormat
       return e.getMessage();
     }
   }
+  */
 }

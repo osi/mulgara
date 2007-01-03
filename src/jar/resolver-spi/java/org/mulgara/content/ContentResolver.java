@@ -305,6 +305,11 @@ public abstract class ContentResolver implements Resolver {
     throw new QueryException("Unable to parse " + content.getURI());
   }
 
+  public void abort() {
+    // I don't believe there is anything to do here.  It is possible that we may
+    // need to close file handles or clear caches.
+  }
+
   //
   // SPI methods
   //

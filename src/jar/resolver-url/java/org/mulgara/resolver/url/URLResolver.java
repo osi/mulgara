@@ -363,4 +363,6 @@ public class URLResolver implements Resolver {
       throw new QueryException("Couldn't read URL " + modelURIReference, e);
     }
   }
+
+  public void abort() {}
 }

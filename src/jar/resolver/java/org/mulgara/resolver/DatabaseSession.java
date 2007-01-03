@@ -39,9 +39,6 @@ import java.util.*;
 // Java 2 enterprise packages
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -78,25 +75,13 @@ import org.mulgara.store.tuples.TuplesOperations;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseSession implements Session, LocalSession {
+class DatabaseSession implements Session {
   public static final boolean ASSERT_STATEMENTS = true;
   public static final boolean DENY_STATEMENTS = false;
 
   /** Logger.  */
   private static final Logger logger =
     Logger.getLogger(DatabaseSession.class.getName());
-
-  private static DatabaseSession writeSession = null;
-  private boolean writing;
-
-  /**
-   * The models from external resolvers which have been cached as temporary
-   * models.
-   *
-   * Every model in this set can be manipulated by resolvers from the
-   * {@link #temporaryResolverFactory}.
-   */
-  private final Set cachedModelSet = new HashSet();
 
   /**
    * Resolver factories that should be have access to their models cached.
@@ -105,18 +90,7 @@ class DatabaseSession implements Session, LocalSession {
    */
   private final Set cachedResolverFactorySet;
 
-  /**
-   * The models from external resolvers which have been cached as temporary
-   * models and modified.
-   *
-   * Every model in this set can be manipulated by resolvers from the
-   * {@link #temporaryResolverFactory}.
-   */
-  private final Set changedCachedModelSet = new HashSet();
-
-  /**
-   * The list of all registered {@link ResolverFactory} instances.
-   */
+  /** The list of all registered {@link ResolverFactory} instances.  */
   private final List resolverFactoryList;
 
   /**
@@ -133,8 +107,6 @@ class DatabaseSession implements Session, LocalSession {
 
   private final DatabaseMetadata metadata;
 
-  private final DatabaseOperationContext operationContext;
-
   /** Security adapters this instance should enforce. */
   private final List securityAdapterList;
 
@@ -147,17 +119,11 @@ class DatabaseSession implements Session, LocalSession {
   /** Factory used to obtain the SystemResolver */
   private final SystemResolverFactory systemResolverFactory;
 
-  /** Resolver used for accessing the system model (<code>#</code>).  */
-  protected SystemResolver systemResolver;
-
   /** Factory used to obtain the SystemResolver */
   private final ResolverFactory temporaryResolverFactory;
 
   /** Source of transactions.  */
-  private final TransactionManager transactionManager;
-
-  /** Session transaction */
-  private Transaction transaction;
+  private final MulgaraTransactionManager transactionManager;
 
   /** The name of the rule loader to use */
   private String ruleLoaderClassName;
@@ -165,48 +131,11 @@ class DatabaseSession implements Session, LocalSession {
   /** A fallback rule loader */
   private static final String DUMMY_RULE_LOADER = "org.mulgara.rules.DummyRuleLoader";
 
-  private int opState;
-  private static final int UNINIT = 0;
-  private static final int BEGIN = 1;
-  private static final int RESUME = 2;
-  private static final int FINISH = 3;
-  private static final String[] opStates = {
-      "UNINIT", "BEGIN", "RESUME", "FINISH", };
-
-  private final Map enlistedResolverMap;
-
-  private Set outstandingAnswers;
-
-  /**
-   * Whether each method call of the {@link Session} interface should
-   * implicitly have a transaction created for it and be performed within that
-   * transaction.
-   *
-   * This defaults to <code>true</code> until modified by the
-   * {@link #setAutoCommit} method.
-   */
-  boolean autoCommit = true;
-  private boolean inFailedTransaction = false;
-
-  /**
-   * If a transaction is marked for rollback by the
-   * {@link #rollbackTransactionalBlock} method, this field holds the exception
-   * that caused the rollback so that the {@link #endTransactionalBlock} method
-   * can add it as the cause of the {@link RollbackException} it will
-   * subsequently throw.
-   */
-  private Throwable rollbackCause = null;
-
-  private boolean explicitRollback = false;
-
-  /**
-   * The registered {@link ContentHandler} instances.
-   */
+  /** The registered {@link ContentHandler} instances.  */
   private ContentHandlerManager contentHandlers;
 
-  //
-  // Constructor
-  //
+  /** The temporary model type-URI. */
+  private final URI temporaryModelTypeURI;
 
   /**
    * Construct a database session.
@@ -241,7 +170,7 @@ class DatabaseSession implements Session, LocalSession {
    *   external models
    * @throws IllegalArgumentException if any argument is <code>null</code>
    */
-  DatabaseSession(TransactionManager transactionManager,
+  DatabaseSession(MulgaraTransactionManager transactionManager,
       List securityAdapterList,
       List symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
@@ -264,41 +193,33 @@ class DatabaseSession implements Session, LocalSession {
 
     // Validate parameters
     if (transactionManager == null) {
-      throw new IllegalArgumentException("Null \"transactionManager\" parameter");
+      throw new IllegalArgumentException("Null 'transactionManager' parameter");
     } else if (securityAdapterList == null) {
-      throw new IllegalArgumentException("Null \"securityAdapterList\" parameter");
+      throw new IllegalArgumentException("Null 'securityAdapterList' parameter");
     } else if (symbolicTransformationList == null) {
-      throw new IllegalArgumentException("Null \"symbolicTransformationList\" parameter");
+      throw new IllegalArgumentException("Null 'symbolicTransformationList' parameter");
     } else if (resolverSessionFactory == null) {
-      throw new IllegalArgumentException("Null \"resolverSessionFactory\" parameter");
+      throw new IllegalArgumentException("Null 'resolverSessionFactory' parameter");
     } else if (systemResolverFactory == null) {
-      throw new IllegalArgumentException("Null \"systemResolverFactory\" parameter");
+      throw new IllegalArgumentException("Null 'systemResolverFactory' parameter");
     } else if (temporaryResolverFactory == null) {
-      throw new IllegalArgumentException("Null \"temporaryResolverFactory\" parameter");
+      throw new IllegalArgumentException("Null 'temporaryResolverFactory' parameter");
     } else if (resolverFactoryList == null) {
-      throw new IllegalArgumentException("Null \"resolverFactoryList\" parameter");
+      throw new IllegalArgumentException("Null 'resolverFactoryList' parameter");
     } else if (externalResolverFactoryMap == null) {
-      throw new IllegalArgumentException("Null \"externalResolverFactoryMap\" parameter");
+      throw new IllegalArgumentException("Null 'externalResolverFactoryMap' parameter");
     } else if (internalResolverFactoryMap == null) {
-      throw new IllegalArgumentException("Null \"internalResolverFactoryMap\" parameter");
+      throw new IllegalArgumentException("Null 'internalResolverFactoryMap' parameter");
     } else if (contentHandlers == null) {
-      throw new IllegalArgumentException("Null \"contentHandlers\" parameter");
+      throw new IllegalArgumentException("Null 'contentHandlers' parameter");
     } else if (metadata == null) {
-      throw new IllegalArgumentException("Null \"metadata\" parameter");
+      throw new IllegalArgumentException("Null 'metadata' parameter");
+    } else if (cachedResolverFactorySet == null) {
+      throw new IllegalArgumentException("Null 'cachedResolverFactorySet' parameter");
+    } else if (temporaryModelTypeURI == null) {
+      throw new IllegalArgumentException("Null 'temporaryModelTypeURI' parameter");
     } else if (ruleLoaderClassName == null) {
       ruleLoaderClassName = DUMMY_RULE_LOADER;
-    }
-
-    if (cachedResolverFactorySet == null) {
-      throw new IllegalArgumentException(
-        "Null \"cachedResolverFactorySet\" parameter"
-      );
-    }
-
-    if (temporaryModelTypeURI == null) {
-      throw new IllegalArgumentException(
-        "Null \"temporaryModelTypeURI\" parameter"
-      );
     }
 
     // Initialize fields
@@ -314,46 +235,22 @@ class DatabaseSession implements Session, LocalSession {
     this.metadata                   = metadata;
     this.contentHandlers            = contentHandlers;
     this.cachedResolverFactorySet   = cachedResolverFactorySet;
+    this.temporaryModelTypeURI      = temporaryModelTypeURI;
     this.ruleLoaderClassName        = ruleLoaderClassName;
-
-    this.outstandingAnswers         = new HashSet();
-    this.transaction                = null;
-    this.enlistedResolverMap        = new HashMap();
-    this.opState                    = FINISH;
-    this.operationContext           = new DatabaseOperationContext(
-                                        cachedModelSet,
-                                        cachedResolverFactorySet,
-                                        changedCachedModelSet,
-                                        this,
-                                        enlistedResolverMap,
-                                        externalResolverFactoryMap,
-                                        internalResolverFactoryMap,
-                                        metadata,
-                                        securityAdapterList,
-                                        temporaryModelTypeURI,
-                                        temporaryResolverFactory,
-                                        transactionManager,
-                                        outstandingAnswers,
-                                        symbolicTransformationList
-                                      );
 
     if (logger.isDebugEnabled()) {
       logger.debug("Constructed DatabaseSession");
     }
 
     // Set the transaction timeout to an hour
-    try {
-      transactionManager.setTransactionTimeout(3600);
-    } catch (SystemException e) {
-      logger.warn("Unable to set transaction timeout to 3600s", e);
-    }
+    transactionManager.setTransactionTimeout(3600);
   }
 
 
   /**
    * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
    */
-  DatabaseSession(TransactionManager transactionManager,
+  DatabaseSession(MulgaraTransactionManager transactionManager,
       List securityAdapterList,
       List symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
@@ -379,68 +276,15 @@ class DatabaseSession implements Session, LocalSession {
   /**
    * Used by Database *only* to bootstrap the system model on DB startup.
    */
-  long bootstrapSystemModel(DatabaseMetadataImpl metadata) throws
-      QueryException {
+  long bootstrapSystemModel(DatabaseMetadataImpl metadata) throws QueryException {
     logger.info("Bootstrapping System Model");
-    // Validate parameters
-    if (metadata == null) {
-      throw new IllegalArgumentException("metadata null");
-    }
 
-    // Create the model
-    systemResolver = beginTransactionalBlock(true);
-    try {
-      // Find the local node identifying the model
-      long model = systemResolver.localizePersistent(
-          new URIReferenceImpl(metadata.getSystemModelURI()));
-      long rdfType = systemResolver.localizePersistent(
-          new URIReferenceImpl(metadata.getRdfTypeURI()));
-      long modelType = systemResolver.localizePersistent(
-          new URIReferenceImpl(metadata.getSystemModelTypeURI()));
+    BootstrapOperation operation = new BootstrapOperation(metadata);
+    execute(operation, "Failed to bootstrap system-model");
 
-      // Use the session to create the model
-      systemResolver.modifyModel(model, new SingletonStatements(model, rdfType,
-          modelType), true);
-      metadata.initializeSystemNodes(model, rdfType, modelType);
+    systemResolverFactory.setDatabaseMetadata(metadata);
 
-      long preSubject = systemResolver.localizePersistent(
-          new URIReferenceImpl(metadata.getPreallocationSubjectURI()));
-      long prePredicate = systemResolver.localizePersistent(
-          new URIReferenceImpl(metadata.getPreallocationPredicateURI()));
-      long preModel = systemResolver.localizePersistent(
-          new URIReferenceImpl(metadata.getPreallocationModelURI()));
-
-      // Every node cached by DatabaseMetadata must be preallocated
-      systemResolver.modifyModel(preModel,
-          new SingletonStatements(preSubject, prePredicate, model),
-          true);
-      systemResolver.modifyModel(preModel,
-          new SingletonStatements(preSubject, prePredicate, rdfType),
-          true);
-      systemResolver.modifyModel(preModel,
-          new SingletonStatements(preSubject, prePredicate, modelType),
-          true);
-      systemResolver.modifyModel(preModel,
-          new SingletonStatements(preSubject, prePredicate, preSubject),
-          true);
-      systemResolver.modifyModel(preModel,
-          new SingletonStatements(preSubject, prePredicate, prePredicate),
-          true);
-      systemResolver.modifyModel(preModel,
-          new SingletonStatements(preSubject, prePredicate, preModel),
-          true);
-
-      metadata.initializePreallocationNodes(preSubject, prePredicate, preModel);
-
-      systemResolverFactory.setDatabaseMetadata(metadata);
-
-      return model;
-    } catch (Throwable e) {
-      rollbackTransactionalBlock(e);
-      return -1; // Should be discarded by exception in endTransactionalBlock.
-    } finally {
-      endTransactionalBlock("Could not commit system model bootstrap");
-    }
+    return operation.getResult();
   }
 
   /**
@@ -540,14 +384,12 @@ class DatabaseSession implements Session, LocalSession {
       logger.info("QUERY: " + query);
     }
 
-    // Evaluate the query
     QueryOperation queryOperation = new QueryOperation(query, this);
-    executeQuery(queryOperation);
+    execute(queryOperation, "Query failed");
     return queryOperation.getAnswer();
   }
 
   public List query(List queryList) throws QueryException {
-
     if (logger.isInfoEnabled()) {
       StringBuffer log = new StringBuffer("QUERYING LIST: ");
       for (int i = 0; i < queryList.size(); i++) {
@@ -557,7 +399,7 @@ class DatabaseSession implements Session, LocalSession {
     }
 
     QueryOperation queryOperation = new QueryOperation(queryList, this);
-    executeQuery(queryOperation);
+    execute(queryOperation, "Failed list query");
     return queryOperation.getAnswerList();
   }
 
@@ -576,9 +418,8 @@ class DatabaseSession implements Session, LocalSession {
     if (logger.isInfoEnabled()) {
       logger.info("REMOVE MODEL: " + modelURI);
     }
-    // Validate "modelURI" parameter
     if (modelURI == null) {
-      throw new IllegalArgumentException("Null \"modelURI\" parameter");
+      throw new IllegalArgumentException("Null 'modelURI' parameter");
     }
 
     execute(new RemoveModelOperation(modelURI), "Unable to remove " + modelURI);
@@ -624,8 +465,7 @@ class DatabaseSession implements Session, LocalSession {
     // Validate parameters
     if (destinationModelURI == null) {
       throw new IllegalArgumentException("Null 'destinationModelURI' parameter");
-    }
-    if (modelExpression == null) {
+    } else if (modelExpression == null) {
       throw new IllegalArgumentException("Null 'modelExpression' parameter");
     }
 
@@ -680,99 +520,39 @@ class DatabaseSession implements Session, LocalSession {
 
   public void setAutoCommit(boolean autoCommit) throws QueryException {
     if (logger.isInfoEnabled()) {
-      logger.info("setAutoCommit(" + autoCommit + ") called with autoCommit = " + this.autoCommit);
+      logger.info("setAutoCommit(" + autoCommit + ") called.");
     }
-
-    if (!this.autoCommit && autoCommit) { // Turning autoCommit on
-      try {
-        resumeTransactionalBlock();
-      } finally {
-        this.autoCommit = true;
-        this.inFailedTransaction = false;
-        endTransactionalBlock("Extended transaction failed");
-      }
-    } else if (this.autoCommit && !autoCommit) { // Turning autoCommit off
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-      systemResolver = beginTransactionalBlock(true);
-      try {
-        suspendTransactionalBlock();
-      } catch (Throwable th) {
-        logger.error("Failed to suspend transaction", th);
-        rollbackTransactionalBlock(th);
-        endTransactionalBlock("Could set auto Commit off");
-      }
-      this.autoCommit = false;
-    } else if (this.inFailedTransaction) { // Reset after failed autoCommit off based transaction.
-      this.inFailedTransaction = false;
-    } else { // Leaving autoCommit the same
-      if (logger.isInfoEnabled()) {
-        logger.info("Invalid call to setAutoCommit(" + autoCommit + ") called with autoCommit = " + this.autoCommit);
-      }
+    try {
+      transactionManager.setAutoCommit(this, autoCommit);
+    } catch (MulgaraTransactionException em) {
+      throw new QueryException("Error setting autocommit", em);
     }
   }
 
   public void commit() throws QueryException {
     logger.info("Committing transaction");
-    if (!autoCommit) {
-      synchronized (DatabaseSession.class) {
-        setAutoCommit(true);
-        setAutoCommit(false);
-      }
+    try {
+      transactionManager.commit(this);
+    } catch (MulgaraTransactionException em) {
+      throw new QueryException("Error performing commit", em);
     }
   }
 
   public void rollback() throws QueryException {
     logger.info("Rollback transaction");
-    if (autoCommit) {
-      throw new QueryException(
-          "Attempt to rollback transaction outside transaction");
-    }
-    resumeTransactionalBlock();
     try {
-      explicitRollback = true;
-      rollbackTransactionalBlock(new QueryException(
-          "Explicit rollback requested on session"));
-    } catch (Throwable th) {
-      logger.error("Failed to rollback transaction", th);
-      throw new QueryException("Rollback failed", th);
-    } finally {
-      synchronized (DatabaseSession.class) {
-        try {
-          endTransactionalBlock("Rollback failed, ending transaction");
-        } catch (Throwable th) {
-          throw new QueryException("Rollback failed", th);
-        }
-        setAutoCommit(false);
-      }
+      transactionManager.rollback(this);
+    } catch (MulgaraTransactionException em) {
+      throw new QueryException("Error performing rollback", em);
     }
   }
 
   public void close() throws QueryException {
     logger.info("Closing session");
-    if (!autoCommit) {
-      logger.warn("Closing session while holding write-lock");
-
-      try {
-        resumeTransactionalBlock();
-      } catch (Throwable th) {
-        releaseWriteLock();
-        throw new QueryException("Error while resuming transaction in close", th);
-      }
-
-      try {
-        rollbackTransactionalBlock(
-            new QueryException("Attempt to close session whilst in transaction"));
-      } finally {
-        endTransactionalBlock("Failed to release write-lock in close");
-      }
-    } else {
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
+    try {
+      transactionManager.terminateCurrentTransactions(this);
+    } catch (MulgaraTransactionException em) {
+      throw new QueryException("Error closing session. Forced close required", em);
     }
   }
 
@@ -785,10 +565,6 @@ class DatabaseSession implements Session, LocalSession {
       logger.debug("Login of " + user + " to " + securityDomain);
     }
 
-    /*
-    execute(new LoginOperation(securityDomain, user, password),
-            "Unable to login " + user + " to " + securityDomain);
-    */
     if (securityDomain.equals(metadata.getSecurityDomainURI())) {
       // Propagate the login event to the security adapters
       for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
@@ -796,481 +572,6 @@ class DatabaseSession implements Session, LocalSession {
       }
     }
   }
-
-  //
-  // Transaction control methods.  Implements LocalSession.
-  //
-
-  /**
-   * Start's or resumes a transaction for an operation.
-   *
-   * Using start/finish TransactionalOperation ensures properly matched pairs of
-   * begin/end and suspend/resume.
-   */
-  public void startTransactionalOperation(boolean needsWrite) throws
-      QueryException {
-    logger.info("Starting Transactional Operation");
-    if (opState != FINISH) {
-      throw new IllegalArgumentException(
-          "Attempt to start transactional operation during: " +
-          opStates[opState]);
-    }
-    if (autoCommit) {
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-      beginTransactionalBlock(needsWrite);
-      logger.info("BEGIN new transaction.");
-      opState = BEGIN;
-    } else {
-      resumeTransactionalBlock();
-      logger.info("RESUME old transaction.");
-      opState = RESUME;
-    }
-  }
-
-  /**
-   * Mark the current transaction for rollback due to an exception.
-   *
-   * This records the exception which caused the rollback in the
-   * {@link #rollbackCause} field.
-   */
-  public void rollbackTransactionalBlock(Throwable throwable) throws
-      QueryException {
-    logger.info("Rollback Transactional Block");
-    assert throwable != null;
-
-    try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Marking transaction for rollback", throwable);
-      }
-      transactionManager.setRollbackOnly();
-    } catch (Throwable e) {
-      logger.error("Needed to mark transaction for rollback", throwable);
-      logger.error("Unable to mark transaction for rollback", e);
-      throw new QueryException("Unable to mark transaction for rollback", e);
-    }
-
-    rollbackCause = throwable;
-  }
-
-  /**
-   * Ends's or suspends a transaction for an operation.
-   *
-   * Using start/finish TransactionalOperation ensures properly matched pairs of
-   * begin/end and suspend/resume.
-   */
-  public void finishTransactionalOperation(String errorString) throws
-      QueryException {
-    logger.info("Finishing Transactional Operation");
-    if (logger.isDebugEnabled()) {
-      logger.debug("opState = " + opStates[opState]);
-      logger.debug("autoCommit = " + autoCommit);
-    }
-    if (opState == FINISH) {
-      throw new IllegalArgumentException(
-          "Attempt to finish transactional operation during: " + opStates[opState]);
-    }
-    if (autoCommit) {
-      try {
-        endTransactionalBlock(errorString);
-      } finally {
-        logger.info("FINISH(end) implicit transaction.");
-        opState = FINISH;
-      }
-    } else {
-      try {
-        suspendTransactionalBlock();
-      } catch (Throwable th) {
-        logger.error("Failed to suspend transaction", th);
-        try {
-          rollbackTransactionalBlock(new QueryException("Failed to suspend transaction"));
-        } finally {
-          endTransactionalBlock("Failed to suspend transaction at end of operation");
-        }
-      } finally {
-        logger.info("FINISH(suspend) explicit transaction.");
-        opState = FINISH;
-      }
-    }
-  }
-
-  /**
-   * Resumes the previously suspended transaction from the current session.
-   *
-   * @throws QueryException Must be called outside the try/catch(Throwable) block
-   * protecting the transaction.
-   */
-  public void resumeTransactionalBlock() throws QueryException {
-    logger.info("Resume Transactional Block");
-    if (transaction == null) {
-      throw new IllegalStateException("Attempt to resume unsuspended transaction");
-    } else if (inFailedTransaction == true) {
-      throw new IllegalStateException("Transaction already failed, set autocommit true to reset");
-    }
-
-    try {
-      transactionManager.resume(this.transaction);
-      this.transaction = null;
-    } catch (Exception e) {
-      logger.error("Resume failed", e);
-      throw new QueryException("Failed to resume transaction", e);
-    }
-  }
-
-  /**
-   * Suspends current transaction, storing it in session for latter resumption.
-   *
-   * @throws Throwable Must be called inside the try/catch(Throwable) block
-   * protecting the transaction.
-   */
-  public void suspendTransactionalBlock() throws Throwable {
-    logger.info("Suspend Transactional Block");
-    if (transaction != null) {
-      throw new IllegalStateException(
-          "Attempt to suspend unresumed transaction.");
-    }
-    if (logger.isInfoEnabled()) {
-      logger.info(
-         "Suspend Transactional Block autocommit=" + autoCommit +
-         " transaction status=" + StatusFormat.formatStatus(transactionManager)
-      );
-    }
-
-    int status = transactionManager.getStatus();
-    if (!autoCommit &&
-        (status == Status.STATUS_MARKED_ROLLBACK ||
-         status == Status.STATUS_ROLLEDBACK ||
-         status == Status.STATUS_ROLLING_BACK)) {
-      inFailedTransaction = true;
-      throw new QueryException("Transaction marked for rollback");
-    }
-
-    this.transaction = transactionManager.suspend();
-  }
-
-  public ResolverSession getResolverSession() {
-    return systemResolver;
-  }
-
-  //
-  // Internal Transactional Methods.  Not exposed via the interface.
-  //
-
-  /**
-   * Mark the beginning of a transactional block.
-   *
-   * This begins a transaction if {@link #autoCommit} is <code>true</code>.
-   *
-   * @throws QueryException if a transaction needed to be begun and couldn't be
-   */
-  private SystemResolver beginTransactionalBlock(boolean allowWrites) throws
-      QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("Beginning transactional block: autocommit = " + autoCommit);
-    }
-
-    // Start the transaction
-    if (inFailedTransaction == true) {
-      throw new IllegalStateException("Transaction already failed, set autocommit true to reset");
-    } else if (!enlistedResolverMap.isEmpty()) {
-      throw new QueryException("Stale resolvers found in enlistedResolverMap");
-    }
-
-
-    if (allowWrites) {
-      try {
-        obtainWriteLock();
-      } catch (InterruptedException ei) {
-        throw new QueryException("Unable to obtain write lock", ei);
-      }
-    }
-
-    try {
-      transactionManager.begin();
-      if (systemResolver != null) {
-        throw new QueryException("beginning nested transaction");
-      }
-      systemResolver = systemResolverFactory.newResolver(allowWrites);
-      return (SystemResolver) operationContext.enlistResolver(systemResolver);
-    } catch (Exception e) {
-      throw new QueryException("Unable to begin transaction", e);
-    }
-  }
-
-  /**
-   * Mark the end of a transactional block.
-   *
-   * This commits the current transaction if {@link #autoCommit} is
-   * <code>true</code>.
-   *
-   * @throws QueryException if a transaction needed to be committed and
-   *   couldn't be
-   */
-  void endTransactionalBlock(String failureMessage) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info(
-        "End Transactional Block autocommit=" + autoCommit +
-        " transaction status=" + StatusFormat.formatStatus(transactionManager)
-      );
-    }
-
-    try {
-      // Commit the transaction
-      if (rollbackCause == null) {
-        transactionManager.commit();
-      } else {
-        try {
-          transactionManager.commit();
-        } catch (RollbackException e) {
-          // Sneakily reinsert the exception recorded earlier by the
-          // rollbackTransactionalBlock method.  Without this feature, it's
-          // very difficult to determine why a rollback occurred.
-          e.initCause(rollbackCause);
-          throw e;
-        } finally {
-          rollbackCause = null;
-        }
-      }
-    } catch (Exception e) {
-      if (!explicitRollback) {
-        throw new QueryException(failureMessage, e);
-      }
-    } finally {
-      releaseWriteLock();
-      enlistedResolverMap.clear();
-      outstandingAnswers.clear();
-      clearCache();
-      operationContext.clearSystemModelCache();
-
-      systemResolver = null;
-      explicitRollback = false;
-      autoCommit = true;
-    }
-  }
-
-  void endPreviousQueryTransaction() throws QueryException {
-    logger.debug("Clearing previous transaction");
-
-    // Save the exception.
-    Throwable tmpThrowable = rollbackCause;
-
-    Set answers = new HashSet(outstandingAnswers);
-    Iterator i = answers.iterator();
-    while (i.hasNext()) {
-      try {
-        SubqueryAnswer s = (SubqueryAnswer) i.next();
-        operationContext.deregisterAnswer(s);
-        //Do not close tuples - for Jena and JRDF.
-        //s.close();
-      } catch (Throwable th) {
-        logger.debug("Failed to close preexisting answer", th);
-      }
-    }
-
-    // If by closing the answer we have called endTransactionalBlock then
-    // throw the saved exception.
-    if ((rollbackCause == null) && (tmpThrowable != null) &&
-        (systemResolver == null)) {
-      throw new QueryException("Failure ending previous query", tmpThrowable);
-    }
-
-    try {
-      if (!outstandingAnswers.isEmpty()) {
-        throw new QueryException("Failed to clear preexisting transaction");
-      }
-      if (this.transaction != null) {
-        throw new QueryException("Failed to void suspended transaction");
-      }
-      if (transactionManager.getTransaction() != null) {
-        throw new QueryException("Failed to end transaction");
-      }
-    } catch (QueryException eq) {
-      endTransactionalBlock("Error ending previous query");
-      throw eq;
-    } catch (Throwable th) {
-      endTransactionalBlock("Error ending previous query");
-      throw new QueryException("Failure ending previous query", th);
-    }
-  }
-
-  private void obtainWriteLock() throws InterruptedException {
-    logger.info("Trying to obtain write lock. ");
-    synchronized (DatabaseSession.class) {
-      if (DatabaseSession.writeSession == this) {
-        return;
-      }
-      while (DatabaseSession.writeSession != null) {
-        DatabaseSession.class.wait();
-      }
-      DatabaseSession.writeSession = this;
-      this.writing = true;
-      logger.info("Obtained write lock. ");
-    }
-  }
-
-  private void releaseWriteLock() {
-    synchronized (DatabaseSession.class) {
-      if (DatabaseSession.writeSession == this) {
-        logger.info("Releasing write lock");
-        DatabaseSession.writeSession = null;
-        this.writing = false;
-        DatabaseSession.class.notifyAll();
-      }
-    }
-  }
-
-  //
-  // Internal support methods.
-  //
-
-  /**
-   * Clear the cache of temporary models.
-   */
-  private void clearCache()
-  {
-    // Clear the temporary models
-    if (!cachedModelSet.isEmpty()) {
-      try {
-        Resolver temporaryResolver =
-          temporaryResolverFactory.newResolver(true,
-                                               systemResolver,
-                                               systemResolver);
-        for (Iterator i = cachedModelSet.iterator(); i.hasNext();) {
-          LocalNode modelLocalNode = (LocalNode) i.next();
-          long model = modelLocalNode.getValue();
-
-          if (changedCachedModelSet.contains(modelLocalNode)) {
-            // Write back the modifications to the original model
-            try {
-              Resolver resolver =
-                findResolverFactory(model).newResolver(true,
-                                                       systemResolver,
-                                                       systemResolver);
-              Variable s = new Variable("s"),
-                       p = new Variable("p"),
-                       o = new Variable("o");
-              resolver.modifyModel(
-                model,
-                new TuplesWrapperStatements(
-                  temporaryResolver.resolve(
-                    new ConstraintImpl(s, p, o, modelLocalNode)
-                  ),
-                  s, p, o
-                ),
-                true  // insert the content
-              );
-            }
-            catch (Exception e) {
-              logger.error("Failed to write back cached model " + model +
-                           " after transaction", e);
-            }
-            changedCachedModelSet.remove(modelLocalNode);
-          }
-
-          // Remove the cached model
-          try {
-            temporaryResolver.removeModel(model);
-          }
-          catch (Exception e) {
-            logger.error(
-              "Failed to clear cached model " + model + " after transaction",
-               e
-            );
-          }
-          i.remove();
-        }
-      }
-      catch (Exception e) {
-        logger.error("Failed to clear cached models after transaction", e);
-      }
-    }
-  }
-
-  /**
-   * Find a cached resolver factory for write back.
-   *
-   * @return a completely unwrapped resolver factory
-   */
-  // TODO: Common code with DatabaseOperationContent.findModelResolverFactory
-  //       should be consolidated.
-  private ResolverFactory findResolverFactory(long model) throws QueryException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Finding raw resolver factory for model " + model);
-    }
-
-    try {
-      // get the model URI
-      Node modelNode = systemResolver.globalize(model);
-      if (!(modelNode instanceof URIReference)) {
-        throw new QueryException(modelNode.toString() + " is not a valid Model");
-      }
-      URI modelURI = ((URIReference)modelNode).getURI();
-
-      // test the model URI against the current server
-      try {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Comparing " + metadata.getURI().toString() + " to " + (new URI(modelURI.getScheme(),
-                  modelURI.getSchemeSpecificPart(), null)).toString());
-        }
-        if (metadata.getURI().equals(new URI(modelURI.getScheme(), modelURI.getSchemeSpecificPart(), null))) {
-          // should be on the current server, but was not found here
-          throw new QueryException(modelNode.toString() + " is not a Model");
-        }
-      }
-      catch (URISyntaxException use) {
-        throw new QueryException("Internal error.  Model URI cannot be manipulated.");
-      }
-
-      // This is not a local model, get the protocol
-      String modelProtocol = operationContext.findProtocol(model);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Model " + model + " protocol is " + modelProtocol);
-      }
-
-      // find the factory for this protocol
-      ResolverFactory resolverFactory =
-          (ResolverFactory) externalResolverFactoryMap.get(modelProtocol);
-      if (resolverFactory == null) {
-        throw new QueryException(
-            "Unsupported protocol for destination model (" +
-            modelProtocol + ", " + model + " : '" + modelProtocol + "')");
-      }
-
-      return resolverFactory;
-    }
-    catch (GlobalizeException eg) {
-      throw new QueryException("Unable to globalize modeltype", eg);
-    }
-  }
-
-  //
-  // Private accessors intended only for DatabaseOperationContext
-  //
-
-  SystemResolver getSystemResolver() {
-    return systemResolver;
-  }
-
-  Transaction getTransaction() {
-    return transaction;
-  }
-
-  boolean isWriting() {
-    return writing;
-  }
-
-  boolean ensureTransactionResumed() throws QueryException {
-    if (this.transaction != null) {
-      resumeTransactionalBlock();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
 
   /**
    * Backup all the data on the specified server to a URI or an output stream.
@@ -1283,13 +584,11 @@ class DatabaseSession implements Session, LocalSession {
    * @param destinationURI Option URI of the file to backup into.
    * @throws QueryException if the backup cannot be completed.
    */
-  private synchronized void backup(OutputStream outputStream,
-      URI serverURI,
-      URI destinationURI) throws QueryException {
+  private synchronized void backup(OutputStream outputStream, URI serverURI, URI destinationURI)
+      throws QueryException {
     execute(
         new BackupOperation(outputStream, serverURI, destinationURI),
-        "Unable to backup to " + destinationURI
-        );
+        "Unable to backup to " + destinationURI);
   }
 
   //
@@ -1322,75 +621,31 @@ class DatabaseSession implements Session, LocalSession {
    * Execute an {@link Operation}.
    *
    * @param operation  the {@link Operation} to execute
-   * @param failureMessage  text to appear as the exception message if the
-   *   <var>operation</var> fails
    * @throws QueryException if the <var>operation</var> fails
    */
-  private void execute(Operation operation, String failureMessage)
-    throws QueryException
+  private void execute(Operation operation, String errorString) throws QueryException
   {
-    assert operation != null;
-
-    startTransactionalOperation(operation.isWriteOperation());
-
-    assert systemResolver != null;
     try {
-      operation.execute(operationContext, systemResolver, resolverSessionFactory, metadata);
-    } catch (Throwable e) {
-      rollbackTransactionalBlock(e);
-    } finally {
-      finishTransactionalOperation(failureMessage);
+      MulgaraTransaction transaction =
+          transactionManager.getTransaction(this, operation.isWriteOperation());
+      transaction.execute(operation, resolverSessionFactory, metadata);
+    } catch (MulgaraTransactionException em) {
+      logger.info("Error executing operation: " + errorString, em);
+      throw new QueryException(errorString, em);
     }
   }
 
-  /**
-   * Execute an {@link Operation}.
-   *
-   * @param operation  the {@link Operation} to execute
-   * @throws QueryException if the <var>operation</var> fails
-   */
-  private void executeQuery(Operation operation) throws QueryException
-  {
-    /*
-     * Transaction semantics:
-     * AC && Suspended  -> R clr E B . S
-     * AC && !Suspended -> B . S
-     * !AC              -> R clr . S
-     */
-    if (autoCommit) {
-      if (this.transaction != null) {
-        resumeTransactionalBlock();
-        endPreviousQueryTransaction();
-      }
-      beginTransactionalBlock(operation.isWriteOperation());
-    }
-    else {
-      resumeTransactionalBlock();
-    }
-
-    try {
-      operation.execute(operationContext,
-                        systemResolver,
-                        resolverSessionFactory,
-                        metadata);
-    }
-    catch (Throwable th) {
-      try {
-        logger.warn("Query failed", th);
-        rollbackTransactionalBlock(th);
-      } finally {
-        endPreviousQueryTransaction();
-        throw new QueryException("Failed to rollback failed transaction", th);
-      }
-    }
-
-    try {
-      suspendTransactionalBlock();
-    } catch (Throwable th) {
-      endPreviousQueryTransaction();
-      logger.error("Query should have thrown exception", th);
-      throw new IllegalStateException("Query should have thrown exception");
-    }
+  public DatabaseOperationContext newOperationContext(boolean writing) throws QueryException {
+    return new DatabaseOperationContext(
+        cachedResolverFactorySet,
+        externalResolverFactoryMap,
+        internalResolverFactoryMap,
+        metadata,
+        securityAdapterList,
+        temporaryModelTypeURI,
+        temporaryResolverFactory,
+        symbolicTransformationList,
+        systemResolverFactory,
+        writing);
   }
-
 }

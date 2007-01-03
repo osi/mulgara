@@ -52,7 +52,7 @@ import org.mulgara.store.tuples.Tuples;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface Resolver
+public interface Resolver extends EnlistableResource
 {
   /**
    * Create a model of a specified type.
@@ -74,18 +74,6 @@ public interface Resolver
    */
   public void createModel(long model, URI modelType) throws ResolverException, LocalizeException;
                                                                                 
-  /**
-   * Expose a callback object for enlistment by a transaction manager.
-   *
-   * Note: Only the primary store can currently be transactional, so this method
-   *       is best ignored for now.  return a new DummyXAResource instead.
-   *
-   * @return an {@link XAResource} that can be used by a transaction manager to
-   *   coordinate this resolver's participation in a distributed transaction
-   * @see javax.resource.spi.ManagedConnection#getXAResource
-   */
-  public XAResource getXAResource();
-
   /**
    * Insert or delete RDF statements in an existing model.
    *

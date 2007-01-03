@@ -56,6 +56,7 @@ import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.store.xa.SimpleXAResource;
+import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAStatementStore;
 
@@ -523,6 +524,27 @@ public class StatementStoreResolver implements SystemResolver
       throw new QueryException("Unsupported constraint element: " +
                                constraintElement + " (" +
                                constraintElement.getClass() + ")");
+    }
+  }
+
+
+  public void abort() {
+    try {
+      try {
+        statementStore.rollback();
+      } finally {
+        try {
+          xaResolverSession.rollback();
+        } finally {
+          try {
+            statementStore.release();
+          } finally {
+            xaResolverSession.release();
+          }
+        }
+      }
+    } catch (SimpleXAResourceException es) {
+      throw new IllegalStateException("Failed to Abort store", es);
     }
   }
 }

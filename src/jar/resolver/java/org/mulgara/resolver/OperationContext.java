@@ -103,8 +103,7 @@ interface OperationContext
    * @throws QueryException if the {@link Resolver} couldn't be obtained, bound
    *   and enlisted
    */
-  public Resolver obtainResolver(ResolverFactory resolverFactory,
-                                 SystemResolver  systemResolver)
+  public Resolver obtainResolver(ResolverFactory resolverFactory)
     throws QueryException;
 
 
@@ -121,5 +120,7 @@ interface OperationContext
    * Oct 2006 - if it's still here after Dec 2006 let someone know it's been
    * forgotten.
    */
-  public Answer doQuery(SystemResolver systemResolver, Query query) throws Exception;
+  public Answer doQuery(Query query) throws Exception;
+
+  public SystemResolver getSystemResolver(); // FIXME: Scaffolding for transactions.
 }

@@ -155,8 +155,7 @@ class RemoveModelOperation implements Operation
     }
 
     // Obtain an appropriate resolver bound to this session
-    Resolver resolver =
-      operationContext.obtainResolver(resolverFactory, systemResolver);
+    Resolver resolver = operationContext.obtainResolver(resolverFactory);
     assert resolver != null;
 
     // Use the resolver to remove the model

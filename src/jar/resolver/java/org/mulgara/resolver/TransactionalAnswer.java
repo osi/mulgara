@@ -17,6 +17,10 @@
 
 package org.mulgara.resolver;
 
+// Third party packages
+import org.apache.log4j.Logger;
+
+// Local packages
 import org.mulgara.query.Answer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
@@ -45,18 +49,39 @@ import org.mulgara.query.Variable;
  */
 
 public class TransactionalAnswer implements Answer {
+  /** Logger.  */
+  private static final Logger logger =
+    Logger.getLogger(TransactionalAnswer.class.getName());
 
   private Answer answer;
 
   private MulgaraTransaction transaction;
 
-  public TransactionalAnswer(MulgaraTransaction transaction, Answer answer) {
-    this.answer = answer;
-    this.transaction = transaction;
-    transaction.reference();
+  private boolean closing;
+
+  public TransactionalAnswer(MulgaraTransaction transaction, Answer answer) throws TuplesException {
+    try {
+      report("Creating Answer");
+
+      if (transaction == null) {
+        throw new IllegalArgumentException("Transaction null in TransactionalAnswer");
+      } else if (answer == null) {
+        throw new IllegalArgumentException("Answer null in TransactionalAnswer");
+      }
+
+      this.answer = answer;
+      this.closing = false;
+      this.transaction = transaction;
+      transaction.reference();
+
+      report("Created Answer");
+    } catch (MulgaraTransactionException em) {
+      throw new TuplesException("Failed to associate with transaction", em);
+    }
   }
 
   public Object getObject(final int column) throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnObject(answer.getObject(column));
@@ -65,6 +90,7 @@ public class TransactionalAnswer implements Answer {
   }
 
   public Object getObject(final String columnName) throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnObject(answer.getObject(columnName));
@@ -73,6 +99,7 @@ public class TransactionalAnswer implements Answer {
   }
 
   public void beforeFirst() throws TuplesException {
+    notClosed();
     transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           answer.beforeFirst();
@@ -81,19 +108,35 @@ public class TransactionalAnswer implements Answer {
   }
 
   public void close() throws TuplesException {
-    transaction.execute(new AnswerOperation() {
-        public void execute() throws TuplesException {
-          answer.close();
-          try {
-            transaction.dereference();
-          } catch (MulgaraTransactionException em) {
-            throw new TuplesException("Error dereferencing transaction", em);
+    report("Closing Answer");
+    if (closing) {
+      report("Deferring close to enclosing call");
+      return;
+    }
+    try {
+      notClosed();
+      closing = true;
+      transaction.execute(new AnswerOperation() {
+          public void execute() throws TuplesException {
+            answer.close();
+            try {
+              transaction.dereference();
+            } catch (MulgaraTransactionException em) {
+              throw new TuplesException("Error dereferencing transaction", em);
+            }
           }
-        }
-      });
+        });
+    } finally {
+      // !!FIXME: Note - We will need to add checks for null to all operations.
+      closing = false;
+      transaction = null;
+      answer = null;    // Note this permits the gc of the answer.
+      report("Closed Answer");
+    }
   }
 
   public int getColumnIndex(final Variable column) throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnInt(answer.getColumnIndex(column));
@@ -103,29 +146,32 @@ public class TransactionalAnswer implements Answer {
 
   public int getNumberOfVariables() {
     try {
+      notClosed();
       return transaction.execute(new AnswerOperation() {
           public void execute() {
             returnInt(answer.getNumberOfVariables());
           }
         }).getInt();
     } catch (TuplesException et) {
-      throw new IllegalStateException("Doesn't throw TuplesException", et);
+      throw new IllegalStateException(et.getMessage(), et);
     }
   }
 
   public Variable[] getVariables() {
     try {
+      notClosed();
       return (Variable[])(transaction.execute(new AnswerOperation() {
           public void execute() {
             returnObject(answer.getVariables());
           }
         }).getObject());
     } catch (TuplesException et) {
-      throw new IllegalStateException("Doesn't throw TuplesException", et);
+      throw new IllegalStateException(et.getMessage(), et);
     }
   }
 
   public boolean isUnconstrained() throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnBoolean(answer.isUnconstrained());
@@ -134,6 +180,7 @@ public class TransactionalAnswer implements Answer {
   }
 
   public long getRowCount() throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnLong(answer.getRowCount());
@@ -142,6 +189,7 @@ public class TransactionalAnswer implements Answer {
   }
 
   public long getRowUpperBound() throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnLong(answer.getRowUpperBound());
@@ -150,6 +198,7 @@ public class TransactionalAnswer implements Answer {
   }
 
   public int getRowCardinality() throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnInt(answer.getRowCardinality());
@@ -158,6 +207,7 @@ public class TransactionalAnswer implements Answer {
   }
 
   public boolean next() throws TuplesException {
+    notClosed();
     return transaction.execute(new AnswerOperation() {
         public void execute() throws TuplesException {
           returnBoolean(answer.next());
@@ -174,6 +224,41 @@ public class TransactionalAnswer implements Answer {
       return c;
     } catch (CloneNotSupportedException ec) {
       throw new IllegalStateException("Clone failed on Cloneable");
+    } catch (MulgaraTransactionException em) {
+      throw new IllegalStateException("Failed to associate with transaction", em);
+    }
+  }
+
+  private void report(String desc) {
+    if (logger.isInfoEnabled()) {
+      logger.info(desc + ": " + System.identityHashCode(this) + ", xa=" + System.identityHashCode(transaction));
+    }
+  }
+
+  private void warnReport(String desc) {
+    logger.warn(desc + ": " + System.identityHashCode(this) + ", xa=" + System.identityHashCode(transaction));
+  }
+
+  public void finalize() {
+    report("GC-finalizing");
+    if (transaction != null) {
+      logger.warn("TransactionalAnswer not closed");
+    }
+  }
+
+
+  void sessionClose() throws TuplesException {
+    if (answer != null) {
+      report("Session forced close");
+      close();
+    }
+  }
+
+  private void notClosed() throws TuplesException {
+    if (transaction == null) {
+      throw new TuplesException("TransactionalAnswer closed");
+    } else if (answer == null) {
+      throw new TuplesException("TransactionAnswer not closed, but Answer null");
     }
   }
 }

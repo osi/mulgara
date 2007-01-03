@@ -34,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +68,8 @@ import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.SymbolicTransformation;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SystemResolver;
+import org.mulgara.resolver.spi.SystemResolverFactory;
+import org.mulgara.resolver.spi.TuplesWrapperStatements;
 import org.mulgara.resolver.view.ViewMarker;
 import org.mulgara.resolver.view.SessionView;
 import org.mulgara.store.nodepool.NodePool;
@@ -86,8 +89,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseOperationContext implements OperationContext, SessionView,
-AnswerDatabaseSession, SymbolicTransformationContext
+class DatabaseOperationContext implements OperationContext, SessionView, SymbolicTransformationContext
 {
   /**
    * Logger.
@@ -124,13 +126,19 @@ AnswerDatabaseSession, SymbolicTransformationContext
    * localized type of the model.
    *
    * This is populated by {@link #findModelTypeURI} and cleared by
-   * {@link #clearSystemModelCache}.
+   * clear()
    */
   private final Map systemModelCacheMap = new WeakHashMap();
 
+  /** Resolver used for accessing the system model (<code>#</code>).  */
+  protected SystemResolverFactory systemResolverFactory;
+  protected SystemResolver systemResolver;
+
+  /** The transaction associated with these operations */
+  private MulgaraTransaction transaction;
+
   // Immutable properties of the containing DatabaseSession
   private final Set                cachedResolverFactorySet;
-  private final DatabaseSession    databaseSession;
   private final Map                enlistedResolverMap;
   private final Map                externalResolverFactoryMap;
   private final Map                internalResolverFactoryMap;
@@ -138,63 +146,48 @@ AnswerDatabaseSession, SymbolicTransformationContext
   private final List               securityAdapterList;
   private final URI                temporaryModelTypeURI;
   private final ResolverFactory    temporaryResolverFactory;
-  private final TransactionManager transactionManager;
-  private final Set                outstandingAnswers;
   /** Symbolic transformations this instance should apply. */
-  private final List symbolicTransformationList;
+  private final List               symbolicTransformationList;
+  private final boolean            isWriting;
 
-  //
-  // Constructor
-  //
+  private WeakHashMap answers;  // Used as a set, all values are null.  Java doesn't provide a WeakHashSet.
 
-  /**
-   * Sole constructor.
-   */
-  DatabaseOperationContext(Set                cachedModelSet,
-                           Set                cachedResolverFactorySet,
-                           Set                changedCachedModelSet,
-                           DatabaseSession    databaseSession,
-                           Map                enlistedResolverMap,
-                           Map                externalResolverFactoryMap,
-                           Map                internalResolverFactoryMap,
-                           DatabaseMetadata   metadata,
-                           List               securityAdapterList,
-                           URI                temporaryModelTypeURI,
-                           ResolverFactory    temporaryResolverFactory,
-                           TransactionManager transactionManager,
-                           Set                outstandingAnswers,
-                           List               symbolicTransformationList)
+  DatabaseOperationContext(Set                   cachedResolverFactorySet,
+                           Map                   externalResolverFactoryMap,
+                           Map                   internalResolverFactoryMap,
+                           DatabaseMetadata      metadata,
+                           List                  securityAdapterList,
+                           URI                   temporaryModelTypeURI,
+                           ResolverFactory       temporaryResolverFactory,
+                           List                  symbolicTransformationList,
+                           SystemResolverFactory systemResolverFactory,
+                           boolean               isWriting)
   {
-    assert cachedModelSet             != null;
     assert cachedResolverFactorySet   != null;
-    assert changedCachedModelSet      != null;
-    assert databaseSession            != null;
-    assert enlistedResolverMap        != null;
     assert externalResolverFactoryMap != null;
     assert internalResolverFactoryMap != null;
     assert metadata                   != null;
     assert securityAdapterList        != null;
     assert temporaryModelTypeURI      != null;
     assert temporaryResolverFactory   != null;
-    assert transactionManager         != null;
+    assert symbolicTransformationList != null;
+    assert systemResolverFactory      != null;
 
-    // Initialize fields
-    this.cachedModelSet             = cachedModelSet;
     this.cachedResolverFactorySet   = cachedResolverFactorySet;
-    this.changedCachedModelSet      = changedCachedModelSet;
-    this.databaseSession            = databaseSession;
-    this.enlistedResolverMap        = enlistedResolverMap;
     this.externalResolverFactoryMap = externalResolverFactoryMap;
     this.internalResolverFactoryMap = internalResolverFactoryMap;
     this.metadata                   = metadata;
     this.securityAdapterList        = securityAdapterList;
     this.temporaryModelTypeURI      = temporaryModelTypeURI;
     this.temporaryResolverFactory   = temporaryResolverFactory;
-    this.transactionManager         = transactionManager;
-    // Note this is only temporary - we will be eliminating outstandingAnswers
-    // before the end of the transaction fix.
-    this.outstandingAnswers         = outstandingAnswers;
     this.symbolicTransformationList = symbolicTransformationList;
+    this.isWriting                  = isWriting;
+    this.systemResolverFactory      = systemResolverFactory;
+
+    this.cachedModelSet             = new HashSet();
+    this.changedCachedModelSet      = new HashSet();
+    this.enlistedResolverMap        = new HashMap();
+    this.answers                    = new WeakHashMap();
   }
 
   //
@@ -223,11 +216,10 @@ AnswerDatabaseSession, SymbolicTransformationContext
           throw new QueryException("Unsupported model type for model " + model);        }
 
         return internalResolverFactory;
-      }
-      else {
+      } else {
         // This might be an external model or an aliased internal model.
         // get the model URI
-        Node modelNode = databaseSession.getSystemResolver().globalize(model);
+        Node modelNode = systemResolver.globalize(model);
         if (!(modelNode instanceof URIReference)) {
           throw new QueryException(modelNode.toString() + " is not a valid Model");
         }
@@ -236,7 +228,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
         // check if this is really a reference to a local model, using a different server name
         Node aliasedNode = getCanonicalAlias(modelURI);
         if (aliasedNode != null) {
-          long aliasedModel = databaseSession.getSystemResolver().localize(aliasedNode);
+          long aliasedModel = systemResolver.localize(aliasedNode);
           return findModelResolverFactory(aliasedModel);
         }
 
@@ -271,8 +263,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
               throw new QueryException(modelNode.toString() + " is not a Model");
             }
           }
-        }
-        catch (URISyntaxException use) {
+        } catch (URISyntaxException use) {
           throw new QueryException("Internal error.  Model URI cannot be manipulated.");
         }
 
@@ -300,17 +291,70 @@ AnswerDatabaseSession, SymbolicTransformationContext
                                           temporaryModelTypeURI,
                                           cachedModelSet,
                                           changedCachedModelSet);
-        }
-        else {
+        } else {
           return resolverFactory;
         }
       }
-    }
-    catch (GlobalizeException eg) {
+    } catch (GlobalizeException eg) {
       throw new QueryException("Unable to globalize modeltype", eg);
-    }
-    catch (LocalizeException el) {
+    } catch (LocalizeException el) {
       throw new QueryException("Unable to localize model", el);
+    }
+  }
+
+  /**
+   * Find a cached resolver factory for write back.
+   *
+   * @return a completely unwrapped resolver factory
+   */
+  // TODO: Common code with findModelResolverFactory should be consolidated.
+  private ResolverFactory findResolverFactory(long model) throws QueryException
+  {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Finding raw resolver factory for model " + model);
+    }
+
+    try {
+      // get the model URI
+      Node modelNode = systemResolver.globalize(model);
+      if (!(modelNode instanceof URIReference)) {
+        throw new QueryException(modelNode.toString() + " is not a valid Model");
+      }
+      URI modelURI = ((URIReference)modelNode).getURI();
+
+      // test the model URI against the current server
+      try {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Comparing " + metadata.getURI().toString() + " to "
+              + (new URI(modelURI.getScheme(), modelURI.getSchemeSpecificPart(), null)).toString());
+        }
+        if (metadata.getURI().equals(
+            new URI(modelURI.getScheme(), modelURI.getSchemeSpecificPart(), null))) {
+          // should be on the current server, but was not found here
+          throw new QueryException(modelNode.toString() + " is not a Model");
+        }
+      } catch (URISyntaxException use) {
+        throw new QueryException("Internal error.  Model URI cannot be manipulated.");
+      }
+
+      // This is not a local model, get the protocol
+      String modelProtocol = findProtocol(model);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Model " + model + " protocol is " + modelProtocol);
+      }
+
+      // find the factory for this protocol
+      ResolverFactory resolverFactory =
+          (ResolverFactory) externalResolverFactoryMap.get(modelProtocol);
+      if (resolverFactory == null) {
+        throw new QueryException(
+            "Unsupported protocol for destination model (" +
+            modelProtocol + ", " + model + " : '" + modelProtocol + "')");
+      }
+
+      return resolverFactory;
+    } catch (GlobalizeException eg) {
+      throw new QueryException("Unable to globalize modeltype", eg);
     }
   }
 
@@ -325,8 +369,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     return securityAdapterList;
   }
 
-  public Resolver obtainResolver(ResolverFactory resolverFactory,
-                                 SystemResolver  systemResolver)
+  public Resolver obtainResolver(ResolverFactory resolverFactory)
     throws QueryException
   {
     ResolverSession session;
@@ -338,9 +381,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     }
 
     try {
-      resolver = resolverFactory.newResolver(databaseSession.isWriting(),
-                                             systemResolver,
-                                             systemResolver);
+      resolver = resolverFactory.newResolver(isWriting, systemResolver, systemResolver);
 
       // FIXME: This is a kludge.  This should be done using a query rewriting
       //        hook in the ResolverFactory interface.  This hook is also
@@ -350,15 +391,23 @@ AnswerDatabaseSession, SymbolicTransformationContext
       if (resolver instanceof ViewMarker) {
         ((ViewMarker) resolver).setSession(this);
       }
-    }
-    catch (ResolverFactoryException e) {
+    } catch (ResolverFactoryException e) {
       throw new QueryException("Unable to obtain resolver", e);
     }
+
     assert resolver != null;
+
+    try {
+      transaction.enlist(resolver);
+    } catch (Exception e) {
+      logger.warn("Failed to enlist resolver, aborting resolver");
+      resolver.abort();
+      throw new QueryException("Unable to enlist " + resolver + " into transaction", e);
+    }
 
     enlistedResolverMap.put(resolverFactory, resolver);
 
-    return enlistResolver(resolver);
+    return resolver;
   }
 
 
@@ -371,7 +420,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
   public long getCanonicalModel(long model) {
     // globalize to a URI
     try {
-      Node modelNode = databaseSession.getSystemResolver().globalize(model);
+      Node modelNode = systemResolver.globalize(model);
       if (!(modelNode instanceof URIReference)) {
         logger.warn(modelNode.toString() + " is not a valid Model");
         return model;
@@ -381,7 +430,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
       // check if this is really a reference to a local model, using a different server name
       Node aliasedNode = getCanonicalAlias(modelURI);
       if (aliasedNode != null) {
-        return databaseSession.getSystemResolver().localize(aliasedNode);
+        return systemResolver.localize(aliasedNode);
       }
     } catch (Exception e) {
       // unable to get a canonical form, so leave this model alone
@@ -399,7 +448,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
       if (logger.isDebugEnabled()) {
         logger.debug("Finding modelTypeURI for " + modelURI);
       }
-      long rawModel = databaseSession.getSystemResolver().localize(new URIReferenceImpl(modelURI));
+      long rawModel = systemResolver.localize(new URIReferenceImpl(modelURI));
       long canModel = getCanonicalModel(rawModel);
 
       URI modelTypeURI = findModelTypeURI(canModel);
@@ -417,64 +466,8 @@ AnswerDatabaseSession, SymbolicTransformationContext
   }
 
   //
-  // Methods used only by DatabaseSession
-  //
-
-  /**
-   * Remove all the cached entries resulting from calls to
-   * {@link #findModelTypeURI}.
-   *
-   * This needs to be called at the end of transactions by
-   * {@link DatabaseSession} because the system model may change thereafter.
-   */
-  void clearSystemModelCache()
-  {
-    systemModelCacheMap.clear();
-  }
-
-  //
   // Internal methods
   //
-
-  /**
-   * @param resolver  a resolver to enlist into the current transaction
-   * @throws QueryException  if the <var>resolver</var> can't be enlisted
-   */
-  Resolver enlistResolver(Resolver resolver) throws QueryException
-  {
-    // Obtain the transaction over the current thread
-    Transaction transaction;
-    try {
-      transaction = transactionManager.getTransaction();
-    }
-    catch (Exception e) {
-      throw new QueryException("Unable to obtain transaction", e);
-    }
-    if (transaction == null) {
-      if (databaseSession.getTransaction() != null) {
-        logger.error("Transaction suspended and not resumed when enlisting resolver");
-      }
-      else {
-        logger.error("Not in Transaction when enlisting resolver");
-      }
-      throw new QueryException("Failed to find transaction when enlisting resolver");
-    }
-
-    // Enlist the resolver into the transaction
-    XAResource xaResource = resolver.getXAResource();
-    if (logger.isDebugEnabled()) {
-      logger.debug("Enlisting " + resolver);
-    }
-
-    try {
-      transaction.enlistResource(xaResource);
-    }
-    catch (Exception e) {
-      throw new QueryException("Unable to enlist " + resolver + " into transaction", e);
-    }
-
-    return resolver;
-  }
 
   /**
    * Find the type of a model.
@@ -507,7 +500,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
                          new LocalNode(metadata.getRdfTypeNode()),
                          modelTypeVariable,
                          new LocalNode(metadata.getSystemModelNode()));
-    Resolution resolution = databaseSession.getSystemResolver().resolve(modelConstraint);
+    Resolution resolution = systemResolver.resolve(modelConstraint);
     assert resolution != null;
 
     // Check the solution and extract the model type (if any) from it
@@ -521,25 +514,22 @@ AnswerDatabaseSession, SymbolicTransformationContext
           throw new QueryException("Model " + model +
               " has more than one type!");
         }
-        Node modelNode = databaseSession.getSystemResolver().globalize(modelType);
+        Node modelNode = systemResolver.globalize(modelType);
         assert modelNode instanceof URIReferenceImpl;
         modelTypeURI = ((URIReferenceImpl) modelNode).getURI();
         systemModelCacheMap.put(modelLocalNode, modelTypeURI);
+
         return modelTypeURI;
-      }
-      else {
+      } else {
         return null;
       }
-    }
-    catch (TuplesException e) {
+    } catch (TuplesException e) {
       throw new QueryException("Unable to determine model type of " + model, e);
-    }
-    finally {
+    } finally {
       if ( resolution != null ) {
         try {
           resolution.close();
-        }
-        catch (TuplesException e) {
+        } catch (TuplesException e) {
           logger.warn("Unable to close find model type resolution to model " + model, e);
         }
       }
@@ -552,11 +542,11 @@ AnswerDatabaseSession, SymbolicTransformationContext
    * @throws QueryException if the <var>node</var> can't be globalized or
    *   isn't a URI reference
    */
-  /*private*/ String findProtocol(long n) throws QueryException
+  private String findProtocol(long n) throws QueryException
   {
     try {
       // Globalize the node
-      Node node = (Node) databaseSession.getSystemResolver().globalize(n);
+      Node node = (Node) systemResolver.globalize(n);
       if (!(node instanceof URIReference)) {
         throw new QueryException(node + " is not a URI reference");
       }
@@ -565,8 +555,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
       }
       // Return the protocol
       return ((URIReference) node).getURI().getScheme();
-    }
-    catch (GlobalizeException e) {
+    } catch (GlobalizeException e) {
       throw new QueryException("Unable to globalize node " + n, e);
     }
   }
@@ -602,11 +591,9 @@ AnswerDatabaseSession, SymbolicTransformationContext
       return null;
     }
     // check the various names against known aliases
-    if (
-        metadata.getHostnameAliases().contains(addr.getHostName()) ||
+    if (metadata.getHostnameAliases().contains(addr.getHostName()) ||
         metadata.getHostnameAliases().contains(addr.getCanonicalHostName()) ||
-        metadata.getHostnameAliases().contains(addr.getHostAddress())
-    ) {
+        metadata.getHostnameAliases().contains(addr.getHostAddress())) {
       // change the host name to one that is recognised
       return getLocalURI(modelURI);
     }
@@ -630,6 +617,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     try {
       URI newModelURI = new URI(uri.getScheme(), newHost, uri.getPath(), uri.getFragment());
       logger.debug("Changing model URI from " + uri + " to " + newModelURI);
+
       return new URIReferenceImpl(newModelURI);
     } catch (URISyntaxException e) {
       throw new QueryException("Internal error.  Model URI cannot be manipulated.");
@@ -660,8 +648,6 @@ AnswerDatabaseSession, SymbolicTransformationContext
     if (constraint == null) {
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
-
-    SystemResolver systemResolver = databaseSession.getSystemResolver();
 
     ConstraintElement modelElem = constraint.getModel();
     if (modelElem instanceof Variable) {
@@ -701,8 +687,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
       }
 
       // Evaluate the constraint
-      Tuples result = obtainResolver(
-          findModelResolverFactory(realModel), systemResolver).resolve(constraint);
+      Tuples result = obtainResolver(findModelResolverFactory(realModel)).resolve(constraint);
       assert result != null;
 
       return result;
@@ -731,8 +716,6 @@ AnswerDatabaseSession, SymbolicTransformationContext
     assert constraint != null;
     assert constraint.getElement(3) instanceof Variable;
 
-    SystemResolver systemResolver = databaseSession.getSystemResolver();
-
     Tuples tuples = TuplesOperations.empty();
 
     // This is the alternate code we'd use if we were to consult external
@@ -747,7 +730,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
       assert resolverFactory != null;
 
       // Resolve the constraint
-      Resolver resolver = obtainResolver(resolverFactory, systemResolver);
+      Resolver resolver = obtainResolver(resolverFactory);
       if (logger.isDebugEnabled()) {
         logger.debug("Resolving " + constraint + " against " + resolver);
       }
@@ -786,74 +769,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     return tuples;
   }
 
-  public Answer innerQuery(Query query) throws QueryException {
-    // Validate "query" parameter
-    if (query == null) {
-      throw new IllegalArgumentException("Null \"query\" parameter");
-    }
-
-    if (logger.isInfoEnabled()) {
-      logger.info("Query: " + query);
-    }
-
-    boolean resumed = databaseSession.ensureTransactionResumed();
-    SystemResolver systemResolver = databaseSession.getSystemResolver();
-
-    Answer result = null;
-    try {
-      result = doQuery(systemResolver, query);
-    } catch (Throwable th) {
-      try {
-        logger.warn("Inner Query failed", th);
-        databaseSession.rollbackTransactionalBlock(th);
-      } finally {
-        databaseSession.endPreviousQueryTransaction();
-        logger.error("Inner Query should have thrown exception", th);
-        throw new IllegalStateException(
-            "Inner Query should have thrown exception");
-      }
-    }
-
-    try {
-      if (resumed) {
-        databaseSession.suspendTransactionalBlock();
-      }
-
-      return result;
-    } catch (Throwable th) {
-      databaseSession.endPreviousQueryTransaction();
-      logger.error("Failed to suspend Transaction", th);
-      throw new QueryException("Failed to suspend Transaction");
-    }
-  }
-
-  public void registerAnswer(SubqueryAnswer answer) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("registering Answer: " + System.identityHashCode(answer));
-    }
-    outstandingAnswers.add(answer);
-  }
-
-  public void deregisterAnswer(SubqueryAnswer answer) throws QueryException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("deregistering Answer: " + System.identityHashCode(answer));
-    }
-
-    if (!outstandingAnswers.contains(answer)) {
-      logger.info("Stale answer being closed");
-    } else {
-      outstandingAnswers.remove(answer);
-      if (databaseSession.autoCommit && outstandingAnswers.isEmpty()) {
-        if (databaseSession.getTransaction() != null) {
-          databaseSession.resumeTransactionalBlock();
-        }
-        databaseSession.endTransactionalBlock("Could not commit query");
-      }
-    }
-  }
-
   Tuples innerCount(LocalQuery localQuery) throws QueryException {
-    // Validate "query" parameter
     if (localQuery == null) {
       throw new IllegalArgumentException("Null \"query\" parameter");
     }
@@ -861,43 +777,21 @@ AnswerDatabaseSession, SymbolicTransformationContext
     if (logger.isInfoEnabled()) {
       logger.info("Inner Count: " + localQuery);
     }
-
-    boolean resumed = databaseSession.ensureTransactionResumed();
-    SystemResolver systemResolver = databaseSession.getSystemResolver();
-
-    Tuples result = null;
     try {
       LocalQuery lq = (LocalQuery)localQuery.clone();
       transform(lq);
-      result = lq.resolve();
+      Tuples result = lq.resolve();
       lq.close();
-    } catch (Throwable th) {
-      try {
-        logger.warn("Inner Query failed", th);
-        databaseSession.rollbackTransactionalBlock(th);
-      } finally {
-        databaseSession.endPreviousQueryTransaction();
-        logger.error("Inner Query should have thrown exception", th);
-        throw new IllegalStateException(
-            "Inner Query should have thrown exception");
-      }
-    }
-
-    try {
-      if (resumed) {
-        databaseSession.suspendTransactionalBlock();
-      }
 
       return result;
-    } catch (Throwable th) {
-      databaseSession.endPreviousQueryTransaction();
-      logger.error("Failed to suspend Transaction", th);
-      throw new QueryException("Failed to suspend Transaction");
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Failed to evaluate count", e);
     }
   }
 
-  protected void doModify(SystemResolver systemResolver, URI modelURI,
-      Statements statements, boolean insert) throws Throwable {
+  protected void doModify(URI modelURI, Statements statements, boolean insert) throws Throwable {
     long model = systemResolver.localize(new URIReferenceImpl(modelURI));
     model = getCanonicalModel(model);
 
@@ -917,7 +811,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     }
 
     // Obtain a resolver for the destination model type
-    Resolver resolver = obtainResolver(findModelResolverFactory(model), systemResolver);
+    Resolver resolver = obtainResolver(findModelResolverFactory(model));
     assert resolver != null;
 
     if (logger.isDebugEnabled()) {
@@ -931,7 +825,7 @@ AnswerDatabaseSession, SymbolicTransformationContext
     }
   }
 
-  public Answer doQuery(SystemResolver systemResolver, Query query) throws Exception
+  public Answer doQuery(Query query) throws Exception
   {
     Answer result;
 
@@ -941,13 +835,11 @@ AnswerDatabaseSession, SymbolicTransformationContext
 
     // Complete the numerical phase of resolution
     Tuples tuples = localQuery.resolve();
-    result = new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList());
+    result = new TransactionalAnswer(transaction, new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList()));
+    answers.put(result, null);
     tuples.close();
     localQuery.close();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Answer rows = " + result.getRowCount());
-    }
     return result;
   }
 
@@ -984,4 +876,95 @@ AnswerDatabaseSession, SymbolicTransformationContext
     mutableLocalQueryImpl.close();
   }
 
+  void clear() throws QueryException {
+    try {
+      Iterator i = answers.keySet().iterator();
+      while (i.hasNext()) {
+        ((TransactionalAnswer)i.next()).sessionClose();
+      }
+      answers.clear();
+    } catch (TuplesException et) {
+      throw new QueryException("Error force-closing answers", et);
+    }
+
+    clearCache();
+    systemResolver = null;
+    systemModelCacheMap.clear();
+    enlistedResolverMap.clear();
+  }
+
+  public SystemResolver getSystemResolver() {
+    return systemResolver;
+  }
+
+
+  /**
+   * Clear the cache of temporary models.
+   */
+  private void clearCache() {
+    // Clear the temporary models
+    if (!cachedModelSet.isEmpty()) {
+      try {
+        Resolver temporaryResolver =
+          temporaryResolverFactory.newResolver(true, systemResolver, systemResolver);
+        for (Iterator i = cachedModelSet.iterator(); i.hasNext();) {
+          LocalNode modelLocalNode = (LocalNode) i.next();
+          long model = modelLocalNode.getValue();
+
+          if (changedCachedModelSet.contains(modelLocalNode)) {
+            // Write back the modifications to the original model
+            try {
+              Resolver resolver =
+                findResolverFactory(model).newResolver(true, systemResolver, systemResolver);
+              Variable s = new Variable("s");
+              Variable p = new Variable("p");
+              Variable o = new Variable("o");
+              resolver.modifyModel(model,
+                new TuplesWrapperStatements(temporaryResolver.resolve(
+                    new ConstraintImpl(s, p, o, modelLocalNode)), s, p, o),
+                true  // insert the content
+              );
+            } catch (Exception e) {
+              logger.error("Failed to write back cached model " + model +
+                           " after transaction", e);
+            }
+            changedCachedModelSet.remove(modelLocalNode);
+          }
+
+          // Remove the cached model
+          try {
+            temporaryResolver.removeModel(model);
+          } catch (Exception e) {
+            logger.error("Failed to clear cached model " + model + " after transaction", e);
+          }
+          i.remove();
+        }
+      } catch (Exception e) {
+        logger.error("Failed to clear cached models after transaction", e);
+      }
+    }
+  }
+
+  public void abort() {
+    Iterator i = enlistedResolverMap.values().iterator();
+    while (i.hasNext()) {
+      ((Resolver)i.next()).abort();
+    }
+    try {
+      this.clear();
+    } catch (QueryException eq) {
+      throw new IllegalStateException("Error aborting OperationContext", eq);
+    }
+  }
+
+  public void initiate(MulgaraTransaction transaction) throws QueryException {
+    try {
+      this.transaction = transaction;
+      this.systemResolver = systemResolverFactory.newResolver(isWriting);
+      transaction.enlist(systemResolver);
+    } catch (Exception e) {
+      throw new QueryException("Unable to enlist systemResolver:" + 
+          systemResolver + " into transaction", e);
+    }
+  }
 }

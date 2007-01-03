@@ -56,55 +56,5 @@ import org.mulgara.server.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public interface LocalSession extends Session {
-
-  /**
-   * Start's or resumes a transaction for an operation.
-   *
-   * Using start/finish TransactionalOperation ensures properly matched pairs of
-   * begin/end and suspend/resume.
-   *
-   */
-  public void startTransactionalOperation(boolean needsWrite)
-      throws QueryException;
-
-  /**
-   * Mark the current transaction for rollback due to an exception.
-   *
-   * @param throwable  the exception which caused the rollback
-   */
-  public void rollbackTransactionalBlock(Throwable throwable)
-      throws QueryException;
-
-  /**
-   * Ends's or suspends a transaction for an operation.
-   *
-   * Using start/finish TransactionalOperation ensures properly matched pairs of
-   * begin/end and suspend/resume.
-   *
-   */
-  public void finishTransactionalOperation(String errorString)
-      throws QueryException;
-
-  /**
-   * Resumes the previously suspended transaction from the current session.
-   *
-   * @throws QueryException Must be called outside the try/catch(Throwable) block
-   * protecting the transaction.
-   */
-  public void resumeTransactionalBlock() throws QueryException;
-
-  /**
-   * Suspends current transaction, storing it in session for latter resumption.
-   *
-   * @throws Throwable Must be called inside the try/catch(Throwable) block
-   * protecting the transaction.
-   */
-  public void suspendTransactionalBlock() throws Throwable;
-
-  /**
-   * Returns the current Resolver Session.
-   *
-   * @return the current resolver session.
-   */
   public ResolverSession getResolverSession();
 }

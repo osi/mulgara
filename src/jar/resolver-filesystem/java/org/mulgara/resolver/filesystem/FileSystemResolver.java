@@ -474,4 +474,6 @@ public class FileSystemResolver implements Resolver {
       throw new ResolverException("Invalid URI", eu);
     }
   }
+
+  public void abort() {}
 }
