@@ -81,6 +81,7 @@
   <!--                              Imports                                -->
   <!-- =================================================================== -->
   <import file="common.xml"/>
+  <import file="webdocs.xml"/>
 
   <import file="${jar.src.dir}/ant-task/build.xml"/>
   <import file="${jar.src.dir}/client-drools/build.xml"/>
@@ -215,6 +216,7 @@
     <delete dir="${tmp.dir}"/>
     <delete dir="${javadoc.dir}"/>
     <delete dir="${jxtest.dir}"/>
+    <delete dir="${src.docs.dir}"/>
     <delete>
       <fileset dir="${basedir}" includes="*.log"/>
     </delete>
@@ -345,7 +347,7 @@
   <!-- =================================================================== -->
   <!-- Creates the distribution of documentation files                     -->
   <!-- =================================================================== -->
-  <target name="dist-website" depends="javadoc-dist"
+  <target name="dist-website" depends="javadoc-dist, webpage-includes"
     description="Creates the distribution of documentation files">
 
     <mkdir dir="${dist.docs.dir}"/>
@@ -516,7 +518,7 @@
                    content-mbox-dist, content-mp3-dist, content-n3-dist,
                    content-rdfxml-dist, content-rio-dist,
                    lite-create-manifest, javadoc-dist,
-                   lite-dist-uptodate"
+                   lite-dist-uptodate, webpage-includes"
           unless="dist.lite.uptodate"
           description="Creates the executable JAR for the Embedded Mulgara Lite
                        server">
@@ -601,7 +603,7 @@
      <srcfiles dir="${conf.dir}" includes="**/*"/>
      <srcfiles dir="${lib.dir}" includes="**/*"/>
      <srcfiles dir="${data.dir}" includes="**/*"/>
-     <srcfiles dir="${src.docs.dir}" includes="**/*"/>
+     <srcfiles dir="${template.src.docs.dir}" includes="**/*"/>
     </uptodate>
   </target>
 
@@ -652,7 +654,7 @@
   <!-- =================================================================== -->
   <!-- Translate XHTML+MathML into printable XHTML                         -->
   <!-- =================================================================== -->
-  <target name="docs" depends="javadoc-dist" description="Generate documentation">
+  <target name="docs" depends="javadoc-dist,webpage-includes" description="Generate documentation">
 
     <style basedir="${src.docs.dir}"
            destdir="${src.docs.dir}"
@@ -948,8 +950,8 @@
 
   <target name="model.html">
 
-    <style basedir="${src.docs.dir}"
-           destdir="${src.docs.dir}"
+    <style basedir="${template.src.docs.dir}"
+           destdir="${template.src.docs.dir}"
            style="mathml.xsl"
            includes="model.xml"/>
   </target>
@@ -1716,7 +1718,7 @@
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar,
-             webservices-war, webui-war, -embedded-dist-uptodate"
+             webservices-war, webui-war, -embedded-dist-uptodate, webpage-includes"
           description="Creates the executable JAR for the Embedded Mulgara server"
                 unless="embedded.dist.uptodate">
 
@@ -1996,4 +1998,5 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
     </jar>
   </target>
 
+  
 </project>
