@@ -100,8 +100,7 @@ class GlobalizedAnswer implements Answer, Cloneable {
     if (logger.isDebugEnabled()) {
       try {
         logger.debug("Globalizing " + tuples.getRowCount() + " rows");
-      }
-      catch (TuplesException e) {
+      } catch (TuplesException e) {
         logger.debug("Globalizing indeterminate number of rows");
       }
     }
@@ -115,8 +114,7 @@ class GlobalizedAnswer implements Answer, Cloneable {
     // so make sure our tuples are initialized
     try {
       this.tuples.beforeFirst();
-    }
-    catch (TuplesException e) {
+    } catch (TuplesException e) {
       logger.warn("Unable to reset tuples", e);
     }
   }
@@ -184,8 +182,7 @@ class GlobalizedAnswer implements Answer, Cloneable {
     try {
       long l = tuples.getColumnValue(column);
       return (l == Tuples.UNBOUND) ? null : resolverSession.globalize(l);
-    }
-    catch (GlobalizeException e) {
+    } catch (GlobalizeException e) {
       throw new TuplesException("Couldn't globalize column " + column, e);
     }
   }
@@ -199,8 +196,7 @@ class GlobalizedAnswer implements Answer, Cloneable {
     GlobalizedAnswer cloned;
     try {
       cloned = (GlobalizedAnswer)super.clone();
-    }
-    catch (CloneNotSupportedException e) {
+    } catch (CloneNotSupportedException e) {
       throw new Error(getClass() + " must support cloning", e);
     }
     assert cloned != null;
