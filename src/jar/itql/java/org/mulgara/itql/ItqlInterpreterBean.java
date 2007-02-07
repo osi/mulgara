@@ -126,12 +126,10 @@ public class ItqlInterpreterBean {
 
     try {
       interpreter.setSession(session, securityDomain);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
 
       interpreter.setLastError(e);
-      interpreter.setLastMessage("Couldn't set interpreter session: " +
-          e.getMessage());
+      interpreter.setLastMessage("Couldn't set interpreter session: " + e.getMessage());
     }
   }
 
@@ -184,8 +182,7 @@ public class ItqlInterpreterBean {
 
                 INSIDE_TEXT = false;
               }
-            }
-            else {
+            } else {
 
               INSIDE_TEXT = true;
             }
@@ -252,8 +249,7 @@ public class ItqlInterpreterBean {
 
     try {
       return this.interpreter.getSession();
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
       return null;
     }
   }
@@ -268,8 +264,7 @@ public class ItqlInterpreterBean {
 
     try {
       return this.interpreter.getSession(serverURI);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
       return null;
     }
   }
@@ -641,8 +636,7 @@ public class ItqlInterpreterBean {
     try {
 
       interpreter.executeCommand(itql);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
 
       throw new ItqlInterpreterException(e);
     }
@@ -719,8 +713,7 @@ public class ItqlInterpreterBean {
 
     try {
       interpreter.executeCommand(itql);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new ItqlInterpreterException(e);
     }
 
@@ -767,19 +760,14 @@ public class ItqlInterpreterBean {
     }
     try {
       inputStream = sourceFile.toURL().openStream();
-      NumberOfStatements =
-          interpreter.load(inputStream, sourceFile.toURI(), destinationURI);
-    }
-    catch ( IOException ex ) {
-      throw new QueryException("Unable to read the contents of "+sourceFile,
-                              ex );
-    }
-    finally {
-      if ( inputStream != null ) {
+      NumberOfStatements = interpreter.load(inputStream, sourceFile.toURI(), destinationURI);
+    } catch (IOException ex) {
+      throw new QueryException("Unable to read the contents of "+sourceFile, ex );
+    } finally {
+      if (inputStream != null) {
         try {
           inputStream.close();
-        }
-        catch (IOException ex) {}
+        } catch (IOException ex) {}
       }
     }
     return NumberOfStatements;
@@ -794,8 +782,7 @@ public class ItqlInterpreterBean {
    * receive the backup contents.
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, File destinationFile )
-    throws QueryException {
+  public void backup(URI sourceURI, File destinationFile ) throws QueryException {
 
     interpreter.backup(sourceURI, destinationFile);
   }
@@ -808,8 +795,7 @@ public class ItqlInterpreterBean {
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, OutputStream outputStream)
-    throws QueryException {
+  public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
 
     interpreter.backup(sourceURI, outputStream);
   }
@@ -826,8 +812,7 @@ public class ItqlInterpreterBean {
    * @param destinationURI destination model for the source data
    * @return number of rows inserted into the destination model
    */
-  public long load(InputStream inputStream, URI destinationURI)
-                throws QueryException {
+  public long load(InputStream inputStream, URI destinationURI) throws QueryException {
 
     return interpreter.load(inputStream, destinationURI);
 
@@ -937,8 +922,7 @@ public class ItqlInterpreterBean {
 
               tmpAnswer = (Answer) object;
               appendSolution(tmpAnswer, variable);
-            }
-            finally {
+            } finally {
 
               if (tmpAnswer == null) {
 
@@ -947,31 +931,23 @@ public class ItqlInterpreterBean {
             }
 
             continue;
-          }
-          else if (object instanceof LiteralImpl) {
+          } else if (object instanceof LiteralImpl) {
 
-            variable.appendChild(doc.createTextNode(
-                ( (LiteralImpl) object).getLexicalForm()));
-          }
-          else if (object instanceof URIReference) {
+            variable.appendChild(doc.createTextNode(((LiteralImpl)object).getLexicalForm()));
+          } else if (object instanceof URIReference) {
 
-            variable.setAttribute("resource",
-                ((URIReference) object).getURI().toString());
-          }
-          else if (object instanceof BlankNode) {
+            variable.setAttribute("resource", ((URIReference)object).getURI().toString());
+          } else if (object instanceof BlankNode) {
 
             variable.setAttribute("blank-node", object.toString());
-          }
-          else {
-            throw new AssertionError("Unknown RDFNode type: " +
-                object.getClass());
+          } else {
+            throw new AssertionError("Unknown RDFNode type: " + object.getClass());
           }
         }
 
         parent.appendChild(solution);
       }
-    }
-    catch (TuplesException e) {
+    } catch (TuplesException e) {
       throw new QueryException("Couldn't build query", e);
     }
   } // appendSolutions
@@ -1014,8 +990,7 @@ public class ItqlInterpreterBean {
 
         // set this as the answer
         result = answer;
-      }
-      else {
+      } else {
 
         // get the error in an appropriate form
         if (this.interpreter.getLastError() != null) {
@@ -1032,19 +1007,16 @@ public class ItqlInterpreterBean {
           if (keepExceptions) {
 
             result = this.interpreter.getLastError();
-          }
-          else {
+          } else {
 
             result = this.interpreter.getLastError().getMessage();
           }
-        }
-        else {
+        } else {
 
           // log that we're adding the response message
           if (log.isDebugEnabled()) {
 
-            log.debug("Adding response message to map - " +
-                interpreter.getLastMessage());
+            log.debug("Adding response message to map - " + interpreter.getLastMessage());
           }
 
           // end if
@@ -1056,14 +1028,12 @@ public class ItqlInterpreterBean {
       }
 
       // end if
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
 
       if (keepExceptions) {
 
         result = e;
-      }
-      else {
+      } else {
 
         // get root cause exception
         Throwable cause = e.getCause();
