@@ -31,7 +31,7 @@
 	<classpathentry kind="src" path="src/jar/resolver-memory/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-nodetype/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-prefix/java"/>
-	<classpathentry kind="src" path="src/jar/resolver-relational/java"/>	
+	<classpathentry kind="src" path="src/jar/resolver-relational/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-spi/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-store/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-test/java"/>
@@ -134,6 +134,6 @@
 	<classpathentry kind="lib" path="lib/ant-junit-1.6.5.jar"/>
 	<classpathentry kind="lib" path="lib/ant-apache-bsf-1.6.5.jar"/>
 	<classpathentry kind="lib" path="lib/ant-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/DateUtils1.jar"/>
 	<classpathentry kind="output" path="obj/jar"/>
 </classpath>
