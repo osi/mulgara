@@ -619,6 +619,7 @@ public final class XAStringPoolImpl implements XAStringPool {
       for (int i = 0; i < NR_BLOCK_FILES; ++i) {
         blockFiles[i].force();
       }
+      gNodeToDataFile.force();
 
       // Write the metaroot.
       int newPhaseIndex = 1 - phaseIndex;
