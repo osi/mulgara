@@ -70,13 +70,22 @@
 
 <p>In the previous example, the <code><a id="h206" class="documentlinktemplate" title="where Clause" href="/itqlcommands/select.html#o197">where</a></code> clause of the <code>select</code> command lists a fully qualified predicate and object. You can simplify your queries by using the <code><a id="h1223" class="documentlinktemplate" title="alias" href="/itqlcommands/alias.html">alias</a></code> command. The <code>alias</code> command allows you to define aliases to frequently accessed resources. For example:</p>
 
-<p class="commandtext">alias &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; as rdfns;<br />
-alias &lt;http://mulgara.org/mulgara#&gt; as mulgarans;</p>
+<p class="commandtext">alias &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; as rdf;<br />
+alias &lt;http://mulgara.org/mulgara#&gt; as mulgara;</p>
 
 <p>You could then write the <code>select</code> command as follows:</p>
 
 <p class="commandtext">select $model from &lt;rmi://mysite.com/server1#&gt; <br />
-  where $model &lt;rdfns:type&gt; &lt;mulgarans:Model&gt;;</p>
+  where $model &lt;rdf:type&gt; &lt;mulgara:Model&gt;;</p>
+
+  <p class="note"><strong>Note -</strong> The Mulgara shell automatically defines several <code><a id="h1334" class="documentlinktemplate" title="alias" href="/itqlcommands/alias.html">alias</a>es</code> by default.  These are:<br />
+<br />
+<code>alias &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; as rdf;<br />
+alias &lt;http://www.w3.org/2000/01/rdf-schema#&gt; as rdfs;<br />
+alias &lt;http://www.w3.org/2002/07/owl#&gt; as owl;<br />
+alias &lt;http://mulgara.org/mulgara#&gt; as mulgara;<br />
+alias &lt;http://mulgara.org/owl/krule/#&gt; as krule;</code></p>
+
 <div class="anchor"><a name="o231">&nbsp;</a></div>
 <h3>Creating New Models</h3>
 
@@ -89,16 +98,12 @@ alias &lt;http://mulgara.org/mulgara#&gt; as mulgarans;</p>
 <p>Using the <code><a id="h207_2" class="documentlinktemplate" title="select" href="/itqlcommands/select.html">select</a></code> command again to list all models, now displays two models.</p>
 
 <p class="commandtext">select $model from &lt;rmi://mysite.com/server1#&gt; <br />
-  where $model &lt;rdfsns#type&gt; &lt;mulgarans#Model&gt;;<br />
+  where $model &lt;rdf:type&gt; &lt;mulgara:Model&gt;;<br />
 1 columns: model (2)<br />
  <br />
   model=rmi://mysite.com/server1#<br />
   model=rmi://mysite.com/server1#model1</p>
 
-<p class="note"><strong>Note -</strong> The above example assumes prior execution of the following <code><a id="h1334" class="documentlinktemplate" title="alias" href="/itqlcommands/alias.html">alias</a></code> commands:<br />
-<br />
-<code>alias &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; as rdfns;<br />
-alias &lt;http://mulgara.org/mulgara#&gt; as mulgarans;</code></p>
 <div class="anchor"><a name="o232">&nbsp;</a></div>
 <h3>Inserting and Deleting Statements</h3>
 
@@ -106,7 +111,7 @@ alias &lt;http://mulgara.org/mulgara#&gt; as mulgarans;</code></p>
 
 <p>For example, to insert into a model that John Smith is the creator of the Web page <code>http://www.domain.net/~jsmith/home.html</code>:</p>
 
-<p class="commandtext">insert &lt;http://www.domain.net/~jsmith/home.html&gt; &lt;dcns:creator&gt; 'John Smith'<br />
+<p class="commandtext">insert &lt;http://www.domain.net/~jsmith/home.html&gt; &lt;dc:creator&gt; 'John Smith'<br />
   into &lt;rmi://mysite.com/server1#model1&gt;;</p>
 
 <p class="note"><strong>Note -</strong> The semantics of creator are defined by the <a class="internetlinktemplate" title="Dublin Core" href="http://www.dublincore.org/documents/2001/09/20/dcmes-xml/">Dublin Core</a>.</p>
@@ -120,11 +125,11 @@ alias &lt;http://mulgara.org/mulgara#&gt; as mulgarans;</code></p>
   predicate=http://purl.org/dc/elements/1.1/creator<br />
   object=&quot;John Smith&quot;</p>
 
-<p class="note"><strong>Note -</strong> The predicate, <code>dcns:creator</code>, expands out to the longer URL of the Dublin Core creator element. The URI scheme <code>dcns:</code> is automatically aliased to the URI prefix <code>http://purl.org/dc/elements/1.1/</code><em> </em>when the iTQL shell starts. For more information, see the <code><a id="h245" class="documentlinktemplate" title="alias" href="/itqlcommands/alias.html">alias</a></code> command in the <a id="h664" class="documentlinktemplate" title="iTQL Commands" href="/itqlcommands/index.html">iTQL Command section</a>.</p>
+<p class="note"><strong>Note -</strong> The predicate, <code>dc:creator</code>, expands out to the longer URL of the Dublin Core creator element. The URI scheme <code>dc:</code> is automatically aliased to the URI prefix <code>http://purl.org/dc/elements/1.1/</code><em> </em>when the iTQL shell starts. For more information, see the <code><a id="h245" class="documentlinktemplate" title="alias" href="/itqlcommands/alias.html">alias</a></code> command in the <a id="h664" class="documentlinktemplate" title="iTQL Commands" href="/itqlcommands/index.html">iTQL Command section</a>.</p>
 
 <p>Statements are deleted from a model using the <code><a id="h214" class="documentlinktemplate" title="delete" href="/itqlcommands/delete.html">delete</a></code> command. For example, to delete the statement just inserted:</p>
 
-<p class="commandtext">delete &lt;http://www.domain.net/~jsmith/home.html&gt; &lt;dcns:creator&gt; 'John Smith'<br />
+<p class="commandtext">delete &lt;http://www.domain.net/~jsmith/home.html&gt; &lt;dc:creator&gt; 'John Smith'<br />
   from &lt;rmi://mysite.com/server1#model1&gt;;</p>
 
 <p class="note"><strong>Note -</strong> Inserting new statements to a model never deletes or changes any existing statements. In the example above, to change the author of the Web page from John Smith to Mary Jones requires that the original statement be deleted and a new statement inserted.</p>
