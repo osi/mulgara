@@ -906,7 +906,6 @@ public class ItqlInterpreterBean {
 
           // If the node is null, don't add a tag at all
           if (object == null) {
-
             continue;
           }
 
@@ -924,7 +923,6 @@ public class ItqlInterpreterBean {
               tmpAnswer.close();
             }
 
-            continue;
           } else if (object instanceof LiteralImpl) {
 
             variable.appendChild(doc.createTextNode(((LiteralImpl)object).getLexicalForm()));
