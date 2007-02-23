@@ -110,9 +110,7 @@ public class MulgaraTransaction {
         throw new MulgaraTransactionException("Attempt to activate failed transaction");
       }
 
-      if (currentThread == null) {
-        currentThread = Thread.currentThread();
-      } else if (!currentThread.equals(Thread.currentThread())) {
+      if (currentThread != null && !currentThread.equals(Thread.currentThread())) {
         throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
       }
       
@@ -127,6 +125,10 @@ public class MulgaraTransaction {
         } else {
           resumeTransaction();
         }
+      }
+
+      if (currentThread == null) {
+        currentThread = Thread.currentThread();
       }
 
       inuse++;
@@ -147,12 +149,15 @@ public class MulgaraTransaction {
       inuse--;
 
       if (inuse == 0) {
-        if (using == 0) {
-          terminateTransaction();
-        } else {
-          suspendTransaction();
+        try {
+          if (using == 0) {
+            terminateTransaction();
+          } else {
+            suspendTransaction();
+          }
+        } finally {
+          currentThread = null;
         }
-        currentThread = null;
       }
     } finally {
       report("Deactivated Transaction");
