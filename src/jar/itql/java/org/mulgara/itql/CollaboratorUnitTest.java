@@ -167,9 +167,9 @@ public class CollaboratorUnitTest extends TestCase {
 
       this.assertTrue("Failed to create collaborator model",
           collaborator.createModel());
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Model tests failed " + ex.getMessage(), false);
     }
   }
@@ -183,9 +183,9 @@ public class CollaboratorUnitTest extends TestCase {
 
       this.assertTrue("Register user",
           collaborator.register("xyz@company.com", "Joe Brown"));
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Registration test failed " + ex.getMessage(), false);
     }
 
@@ -193,8 +193,7 @@ public class CollaboratorUnitTest extends TestCase {
 
       collaborator.register("xyz@company.com", "Alex Mole");
       this.assertTrue("Failed to detect duplicate registered user", false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       this.assertTrue("Failed to get the expected message (Your Email address has already been registered)",
           ex.getMessage().equals(
@@ -205,8 +204,7 @@ public class CollaboratorUnitTest extends TestCase {
 
       collaborator.register("", "Alex Mole");
       this.assertTrue("Failed to detect empty email address", false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       this.assertTrue("Failed to get the expected message (Email address and nick name must be supplied)",
           ex.getMessage().equals("Email address and nick name must be supplied"));
@@ -228,9 +226,9 @@ public class CollaboratorUnitTest extends TestCase {
           " email address : guest@pisoftware.com",
           collaborator.checkAccessKey(collaborator.lastAccessKeyCreated,
           "guest@pisoftware.com"));
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Not expecting exception on checking access key " +
           ex.getMessage(), false);
     }
@@ -239,8 +237,7 @@ public class CollaboratorUnitTest extends TestCase {
 
       collaborator.checkAccessKey("12345", "guest@pisoftware.com");
       this.assertTrue("Failed to detect invalid access key", false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       this.assertTrue("Failed to get the expected message (Invaild access key)",
           ex.getMessage().indexOf("Invaild access key") >= 0);
@@ -266,9 +263,9 @@ public class CollaboratorUnitTest extends TestCase {
 
       this.assertTrue("Unable to add annotation",
           (annotationId != null) && (annotationId.length() > 0));
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Failed to add annotation", false);
     }
 
@@ -281,8 +278,7 @@ public class CollaboratorUnitTest extends TestCase {
           "11", "100", "101", "50", "50");
 
       this.assertTrue("Expected bad access key error", false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       this.assertTrue("Failed to get the expected message (Invaild access key)",
           ex.getMessage().indexOf("Invaild access key") >= 0);
@@ -298,8 +294,7 @@ public class CollaboratorUnitTest extends TestCase {
           "50", "50");
 
       this.assertTrue("Expected bad parameters supplied", false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       this.assertTrue("Failed to get the expected message (Invalid paramaters supplied for annotation)",
           ex.getMessage().indexOf("Invalid paramaters supplied for annotation") >=
@@ -332,9 +327,9 @@ public class CollaboratorUnitTest extends TestCase {
       this.assertTrue("Unable to remove annotation",
           collaborator.removeAnnotation("guest3@pisoftware.com",
           collaborator.lastAccessKeyCreated, "1234567890", annotationId));
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Failed to add/remove annotation", false);
     }
 
@@ -346,8 +341,7 @@ public class CollaboratorUnitTest extends TestCase {
           collaborator.lastAccessKeyCreated, "1234567890", annotationId));
 
       this.assertTrue("Expected not to be a successful removal", false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       this.assertTrue(
           "Failed to get the expected message (Unable to locate annotation for removal)",
@@ -385,9 +379,9 @@ public class CollaboratorUnitTest extends TestCase {
           "10", "100", "110", "1000", "1010", "500", "500");
 
       this.assertTrue("Unable to edit annotation", annotationId != null);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Failed to add/edit annotation", false);
     }
   }
@@ -437,9 +431,9 @@ public class CollaboratorUnitTest extends TestCase {
       this.assertTrue("Expect document not to be updated for retrieval",
           collaborator.checkAnnotationUpdates("guest5@pisoftware.com",
           collaborator.lastAccessKeyCreated, "newdocumentId") == false);
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
+      ex.printStackTrace();
       this.assertTrue("Failed to add/retrieve annotation", false);
     } finally {
 

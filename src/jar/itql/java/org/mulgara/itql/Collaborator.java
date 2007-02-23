@@ -106,8 +106,7 @@ public class Collaborator {
 
       SERVER = "rmi://" + java.net.InetAddress.getLocalHost().getCanonicalHostName() +
           "/" + SERVER_NAME + "#";
-    }
-    catch (java.net.UnknownHostException ex) {
+    } catch (java.net.UnknownHostException ex) {
 
       System.err.print("Unable to determine local host name :" + ex.toString());
     }
@@ -342,8 +341,7 @@ public class Collaborator {
       try {
 
         this.initializeModel();
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
 
         log.fatal("Unable to initialize collaboration model", ex);
       }
@@ -412,16 +410,13 @@ public class Collaborator {
 
       // Send newMessage
       Transport.send(message);
-    }
-    catch (NoSuchProviderException nex) {
+    } catch (NoSuchProviderException nex) {
 
       log.error("Cannot send email", nex);
-    }
-    catch (AddressException ex) {
+    } catch (AddressException ex) {
 
       log.error("Cannot send email", ex);
-    }
-    catch (MessagingException mex) {
+    } catch (MessagingException mex) {
 
       log.error("Cannot send email", mex);
     }
@@ -513,8 +508,7 @@ public class Collaborator {
                        "Welcome to Mulgara Collaborator. Your access key is " +
                        key);
       }
-    }
-    else {
+    } else {
 
       log.warn("Existing registration already exists for " + emailAddress);
 
@@ -569,8 +563,7 @@ public class Collaborator {
       }
 
       accessOk = true;
-    }
-    else {
+    } else {
 
       log.warn("Invaild access key :" + key + " for email address :" +
                emailAddress);
@@ -733,8 +726,7 @@ public class Collaborator {
         //Check the result
         added = (annotationId.length() > 0);
       }
-    }
-    catch (SOAPException ex) {
+    } catch (SOAPException ex) {
 
       //Rollback the transaction
       this.rollback("editAnnotation");
@@ -757,8 +749,7 @@ public class Collaborator {
                             "Unable to edit annotation");
 
       throw se;
-    }
-    else {
+    } else {
 
       // Commit the changes
       this.commit("editAnnotation");
@@ -792,7 +783,7 @@ public class Collaborator {
     this.checkAccessKey(key, emailAddress);
 
     //Check parameters
-    if ( (documentId == null) || (documentId.length() == 0)) {
+    if ((documentId == null) || (documentId.length() == 0)) {
 
       log.warn("Invalid paramaters supplied for retrieving annotations");
 
@@ -818,15 +809,12 @@ public class Collaborator {
     try {
 
       results = this.decode(itqlBean.executeQueryToString(query));
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
 
-      log.error("Unable to retrieve annotations for documentId :" + documentId,
-                ex);
+      log.error("Unable to retrieve annotations for documentId :" + documentId, ex);
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Unable to retrieve annotations");
+      SOAPException se = new SOAPException(Constants.FAULT_CODE_SERVER,
+                            "Unable to retrieve annotations: " + ex.getMessage(), ex);
 
       throw se;
     }
@@ -888,8 +876,7 @@ public class Collaborator {
     try {
 
       String ans = itqlBean.executeQueryToString(CHECK_MODEL);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
 
       ex.printStackTrace();
     }
@@ -933,19 +920,16 @@ Variable("model")))).getURI().toString();
               initialized = (model.substring(pos + 1).equals(MODEL));
             }
           }
-        }
-        catch (TuplesException e) {
+        } catch (TuplesException e) {
           throw new QueryException("Couldn't initialize model", e);
         }
-      }
-      else {
+      } else {
 
         if (obj instanceof String) {
 
           log.error("Unable to check collaboration model for existance :" +
                     ( (String) obj).toString() + " Using query :" + CHECK_MODEL);
-        }
-        else {
+        } else {
 
           log.error("Unable to check collaboration model for existance " +
                     " Using query :" + CHECK_MODEL);
@@ -957,8 +941,7 @@ Variable("model")))).getURI().toString();
 
       //Model has not been initialized
       initialized = this.createModel();
-    }
-    else {
+    } else {
 
       log.debug("Collaborator model already initialized at " + SERVER + MODEL);
     }
@@ -1075,8 +1058,7 @@ Variable("model")))).getURI().toString();
                 "'" +
                 this.encode(((LiteralImpl) annotation.getObject(objectIndex)).getLexicalForm()) +
                 "'";
-          }
-          else if (annotation.getObject(objectIndex) instanceof URIReference) {
+          } else if (annotation.getObject(objectIndex) instanceof URIReference) {
 
             object =
                 "<" +
@@ -1103,8 +1085,7 @@ Variable("model")))).getURI().toString();
                 new SOAPException(Constants.FAULT_CODE_SERVER,
                                   "Unable to remove annotation");
             throw se;
-          }
-          else {
+          } else {
 
             // the flag the update document
             this.documentHasUpdated(documentId);
@@ -1116,8 +1097,7 @@ Variable("model")))).getURI().toString();
 
           this.commit("removeAnnotation");
         }
-      }
-      catch (TuplesException ex) {
+      } catch (TuplesException ex) {
 
         //Rollback the transaction
         if (trans) {
@@ -1133,8 +1113,7 @@ Variable("model")))).getURI().toString();
                               "Unable to locate annotation for removal");
         throw se;
       }
-    }
-    else {
+    } else {
 
       log.warn("Unable to locate annotation for removal documentId :" +
                documentId + " annotationId :" + annotationId);
@@ -1270,8 +1249,7 @@ Variable("model")))).getURI().toString();
 
         this.rollback("addAnnotation");
       }
-    }
-    else {
+    } else {
 
       // Commit the inserts
       if (trans) {
@@ -1391,8 +1369,7 @@ Variable("model")))).getURI().toString();
 
             break;
           }
-        }
-        catch (TuplesException ex) {
+        } catch (TuplesException ex) {
 
           log.error("Error executing command :" + command, ex);
 
@@ -1484,8 +1461,7 @@ Variable("model")))).getURI().toString();
 
             answer = (Answer) obj;
           }
-        }
-        catch (TuplesException ex) {
+        } catch (TuplesException ex) {
 
           log.error("Error executing query :" + query, ex);
         }
@@ -1553,8 +1529,7 @@ Variable("model")))).getURI().toString();
 
       // has been updated
       lastUpdatedTime = ( (Long) documentUpdates.get(documentId)).longValue();
-    }
-    else {
+    } else {
 
       // No modification has occur for this document.
       // ie. server has been started without any updates
@@ -1591,8 +1566,7 @@ Variable("model")))).getURI().toString();
     try {
 
       itqlBean.beginTransaction(name);
-    }
-    catch (QueryException ex) {
+    } catch (QueryException ex) {
 
       log.error("Unable to obtain a transaction for the Mulgara Collaborator <" +
                 name + ">", ex);
@@ -1621,8 +1595,7 @@ Variable("model")))).getURI().toString();
     try {
 
       itqlBean.commit(name);
-    }
-    catch (QueryException ex) {
+    } catch (QueryException ex) {
 
       log.error("Unable to obtain a transaction for the Mulgara Collaborator <" +
                 name + ">", ex);
@@ -1652,8 +1625,7 @@ Variable("model")))).getURI().toString();
     try {
 
       itqlBean.rollback(name);
-    }
-    catch (QueryException ex) {
+    } catch (QueryException ex) {
 
       log.error(
           "Unable to rollback a transaction for the Mulgara Collaborator <" +
