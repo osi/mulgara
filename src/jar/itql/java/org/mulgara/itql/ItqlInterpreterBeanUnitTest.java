@@ -293,6 +293,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     //get Answer (everything)
     query = "select $s $p $o from <" + model + "> where $s $p $o;";
     Answer result = bean.executeQuery(query);
+    result.close();
 
     //iterate and re-iterate - ensuring rowCount is preserved
     try {
@@ -317,8 +318,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         result.beforeFirst();
         statementCount = 0;
       }
-    }
-    finally {
+    } finally {
       try {
         result.close();
       } finally {
