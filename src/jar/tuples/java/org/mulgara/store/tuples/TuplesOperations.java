@@ -292,7 +292,13 @@ public abstract class TuplesOperations {
 
 
   /**
-   * This is approximately a subtraction.
+   * This is approximately a subtraction.  The subtrahend is matched against the minuend in the same
+   * way as a conjunction, and the matching lines removed from the minuend.  The remaining lines in
+   * the minuend are the result.
+   * @param minuend The tuples to subtract from.
+   * @param subtrahend The tuples to match against the minuend for removal.
+   * @return The contents from the minuend, excluding those rows which match against the subtrahend.
+   * @throws TuplesException If there are no matching variables between the minuend and subtrahend.
    */
   public static Tuples subtract(Tuples minuend, Tuples subtrahend) throws TuplesException {
     try {
@@ -308,6 +314,11 @@ public abstract class TuplesOperations {
           return (Tuples)minuend.clone();
         }
         throw new TuplesException("Unable to subtract: no common variables.");
+      }
+      // double check that the variables are not equal
+      if (subtrahend.getRowCardinality() == Cursor.ZERO || minuend.getRowCardinality() == Cursor.ZERO) {
+        logger.warn("Found an empty Tuples with bound variables");
+        return (Tuples)minuend.clone();
       }
       // reorder the subtrahend as necessary
       Tuples sortedSubtrahend;
