@@ -163,8 +163,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
     try {
 
       in = new PipedInputStream((PipedOutputStream) outPipe);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
 
       log.error("Error creating input stream", e);
     }
@@ -174,8 +173,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
     try {
 
       inPipe = new PipedInputStream(pout);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
 
       log.error("Error creating input pipe", e);
     }
@@ -419,8 +417,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
     if (eventOccurred.equals("Copy")) {
 
       text.copy();
-    }
-    else if (eventOccurred.equals("Paste")) {
+    } else if (eventOccurred.equals("Paste")) {
 
       text.paste();
     }
@@ -475,8 +472,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
       // Create a new thread and start it.
       ExecutionThread execThread = new ExecutionThread("execThread", command);
       execThread.start();
-    }
-    else {
+    } else {
 
       // We've just hit enter so print the prompt.
       printPrompt();
@@ -505,8 +501,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
     try {
 
       command = text.getText(cursorPosition, textLength() - cursorPosition);
-    }
-    catch (BadLocationException e) {
+    } catch (BadLocationException e) {
 
       log.error("Failed to get text command at position: " + cursorPosition,
           e);
@@ -635,8 +630,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
           cursorPosition = textLength();
           text.setCaretPosition(cursorPosition);
           text.setCharacterAttributes(oldStyle, true);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
           log.error("Error when printing: " + message, e);
         }
@@ -662,8 +656,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
       if (font.isBold()) {
 
         StyleConstants.setBold(attr, true);
-      }
-      else {
+      } else {
 
         StyleConstants.setBold(attr, false);
       }
@@ -700,8 +693,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
 
         print(new String(buffer, 0, read));
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
 
       log.error("Error reading input", e);
     }
@@ -717,13 +709,11 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
       try {
 
         SwingUtilities.invokeAndWait(runnable);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
 
         log.error("Error while executing invoke and wait", e);
       }
-    }
-    else {
+    } else {
 
       runnable.run();
     }
@@ -822,14 +812,12 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
             if (answer.isUnconstrained()) {
               println("[ true ]");
               rowCount = 1;
-            }
-            else {
+            } else {
               if (!answer.next()) {
                 print("No results returned.",
                     new Font("Monospaced", Font.BOLD, 12), Color.BLACK);
                 hasAnswers = false;
-              }
-              else {
+              } else {
                 do {
                   rowCount++;
                   print("[ ");
@@ -858,8 +846,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
 
             answer.close();
           }
-        }
-        catch (Exception te) {
+        } catch (Exception te) {
 
           // Failed to iterate over or retrieve the answer.
           log.fatal("Failed to retrieve or iterate over answer", te);
