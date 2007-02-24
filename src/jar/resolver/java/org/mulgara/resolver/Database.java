@@ -499,7 +499,7 @@ public class Database implements SessionFactory
       ContentHandler defaultContentHandler = null;
       if (defaultContentHandlerClassName != null) {
         defaultContentHandler = (ContentHandler)
-          Beans.instantiate(null, defaultContentHandlerClassName);
+          Beans.instantiate(this.getClass().getClassLoader(), defaultContentHandlerClassName);
       }
       this.contentHandlers =
         new ContentHandlerManagerImpl(defaultContentHandler);
