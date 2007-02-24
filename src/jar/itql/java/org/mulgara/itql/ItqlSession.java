@@ -279,8 +279,7 @@ public class ItqlSession {
 
           log.debug("Executed post-loading script");
         }
-      }
-      else {
+      } else {
 
         // execute the post-loading script
         itqlSession.executeLoadingScript(itqlSession.getPostLoadingScriptURL());
@@ -289,8 +288,7 @@ public class ItqlSession {
         itqlSession.close();
         System.exit(0);
       }
-    }
-    catch (ItqlOptionParser.UnknownOptionException uoe) {
+    } catch (ItqlOptionParser.UnknownOptionException uoe) {
 
       // log that the option we received was invalid
       log.warn("Invalid command line option specified: " + uoe.getOptionName());
@@ -300,8 +298,7 @@ public class ItqlSession {
 
       // print the usage instructions
       itqlSession.printUsage();
-    }
-    catch (ItqlOptionParser.IllegalOptionValueException iove) {
+    } catch (ItqlOptionParser.IllegalOptionValueException iove) {
 
       // format the incorrect option string
       String optionMsg =
@@ -397,26 +394,22 @@ public class ItqlSession {
 
           log.debug("Completed execution of commmand \"" + command + "\"");
         }
-      }
-      catch (UnsupportedOperationException uoe) {
+      } catch (UnsupportedOperationException uoe) {
 
         // Known exception get the last message.
         message = itqlBean.getLastMessage();
         log.warn("Couldn't execute command", uoe);
-      }
-      catch (ItqlInterpreterException iee) {
+      } catch (ItqlInterpreterException iee) {
 
         // Known exception get the last message.
         message = itqlBean.getLastMessage();
         log.warn("Couldn't execute command", iee);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
 
         // Unknown exception get the exception's message.
         message = e.getMessage();
         log.error("Couldn't execute command", e);
-      }
-      catch (Error e) {
+      } catch (Error e) {
 
         // Unknown exception get the exception's message.
         message = e.getMessage();
@@ -563,8 +556,7 @@ public class ItqlSession {
       try {
 
         scriptURL = loadingScript.toURL();
-      }
-      catch (MalformedURLException mue) {
+      } catch (MalformedURLException mue) {
 
         // log the error
         log.warn("Unable to convert loading script filename to URL - " +
@@ -574,8 +566,7 @@ public class ItqlSession {
       }
 
       // try-catch
-    }
-    else {
+    } else {
 
       // log that we're now looking in the classpath
       log.debug("Looking for loading script " + scriptPath + " in classpath");
@@ -647,8 +638,7 @@ public class ItqlSession {
 
         // don't start the interpreter
         startInterpreter = false;
-      }
-      else {
+      } else {
 
         // dump the interpreter configuration
         Object dumpConfig = parser.getOptionValue(ItqlOptionParser.DUMP_CONFIG);
@@ -702,8 +692,7 @@ public class ItqlSession {
           }
 
           // end if
-        }
-        else {
+        } else {
 
           // log that we've turned off pre- and post-loading scripts
           log.debug("Pre- and post-loading scripts disabled");
@@ -723,8 +712,7 @@ public class ItqlSession {
         } // end if
 
       } // end if
-    }
-    catch (IOException ioe) {
+    } catch (IOException ioe) {
 
       // log the error
       log.warn("Invalid URL on command line - " + ioe.getMessage());
@@ -735,8 +723,7 @@ public class ItqlSession {
 
       // don't start the interpreter
       startInterpreter = false;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
 
       // log the error
       log.warn("Could not start interpreter - " + e.getMessage());
@@ -886,8 +873,7 @@ public class ItqlSession {
 
             if (answer.isUnconstrained()) {
               System.out.println("[ true ]");
-            }
-            else {
+            } else {
               while (answer.next()) {
                 System.out.print("[ ");
                 for (int index = 0; index < answer.getNumberOfVariables();
@@ -919,22 +905,19 @@ public class ItqlSession {
         command = scriptIn.readLine();
 
       } // end if
-    }
-    catch (ItqlInterpreterException pe) {
+    } catch (ItqlInterpreterException pe) {
 
       // let the user know the problem
       System.err.println("Syntax error (line " + line + "): " +
           pe.getMessage());
       log.warn("Unable to execute script - " + scriptURL + " - " + pe);
-    }
-    catch (TuplesException te) {
+    } catch (TuplesException te) {
 
       // let the user know the problem
       System.err.println("Syntax error (line " + line + "): " +
           te.getMessage());
       log.warn("Unable to execute script - " + scriptURL + " - " + te);
-    }
-    catch (IOException ioe) {
+    } catch (IOException ioe) {
 
       // let the user know the problem
       System.err.println("Could not execute script - " + ioe);
@@ -976,16 +959,14 @@ public class ItqlSession {
       System.err.println("Unable to find logging configuration file in JAR " +
           "with " + LOG4J_CONFIG_PATH + ", reverting to default configuration.");
       BasicConfigurator.configure();
-    }
-    else {
+    } else {
 
       try {
 
         // configure the logging service
         DOMConfigurator.configure(log4jConfigURL);
         log.info("Using logging configuration from " + log4jConfigURL);
-      }
-      catch (FactoryConfigurationError e) {
+      } catch (FactoryConfigurationError e) {
 
         System.err.println("Unable to configure logging service");
       }
