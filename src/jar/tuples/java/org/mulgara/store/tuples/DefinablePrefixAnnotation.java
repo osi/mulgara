@@ -71,7 +71,7 @@ public interface DefinablePrefixAnnotation extends Annotation {
    * Select the most efficient access method by which the specified prefix
    * partitioning can be achieved.
    * 
-   * @param bound variables available to be bound in beforeFirst.
+   * @param boundVars  variables available to be bound in beforeFirst.
    */
   public void definePrefix(Set boundVars) throws TuplesException;
 }
