@@ -102,8 +102,8 @@ public class SubqueryAnswer extends GlobalizedAnswer {
   /**
    * Construct a wrapper around the <var>tuples</var> parameter.
    *
-   * @param session  the session from which to globalize the local nodes
-   *                 within the <var>tuples</var> parameter
+   * @param operationContext  the session from which to globalize the local
+   *                          nodes within the <var>tuples</var> parameter
    * @param resolverSession  the session used to globalize the <var>tuples</var>
    * @param tuples  the resolved answer to the <code>WHERE<code> clause,
    *                providing variable bindings for the variables that aren't
