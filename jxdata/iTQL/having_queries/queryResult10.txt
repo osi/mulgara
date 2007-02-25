@@ -1,5 +1,5 @@
 ItqlInterpreter error - org.mulgara.query.QueryException: Query failed
 Caused by: (QueryException) Query failed
-Caused by: (QueryException) org.mulgara.resolver.MulgaraTransactionException: Failed transaction finalised. (ROLLBACK)
+Caused by: (QueryException) org.mulgara.query.MulgaraTransactionException: Failed transaction finalised. (ROLLBACK)
 Caused by: (QueryException) Failed to resolve query
 Caused by: (QueryException) org.mulgara.query.TuplesException: No such variable $v in tuples [$s, $k0] (class org.mulgara.resolver.AppendAggregateTuples)

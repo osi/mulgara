@@ -14,7 +14,7 @@
  * by Netymon Pty Ltd are Copyright (c) 2006 Netymon Pty Ltd.
  * All Rights Reserved.
  */
-package org.mulgara.resolver;
+package org.mulgara.query;
 
 /**
  * Exception to indicate a failure within the transaction handling.

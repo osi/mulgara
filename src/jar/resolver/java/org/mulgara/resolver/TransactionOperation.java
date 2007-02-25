@@ -17,7 +17,7 @@
 
 package org.mulgara.resolver;
 
-import org.mulgara.query.TuplesException;
+import org.mulgara.query.MulgaraTransactionException;
 
 interface TransactionOperation {
   public void execute() throws MulgaraTransactionException;

@@ -30,6 +30,7 @@ import org.mulgara.resolver.spi.DatabaseMetadata;
 import org.mulgara.resolver.spi.EnlistableResource;
 import org.mulgara.resolver.spi.ResolverSessionFactory;
 
+import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.QueryException;
 

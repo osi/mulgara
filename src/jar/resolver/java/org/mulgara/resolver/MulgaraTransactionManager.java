@@ -32,6 +32,7 @@ import javax.transaction.xa.XAResource;
 import org.apache.log4j.Logger;
 
 // Local packages
+import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.server.Session;
 import org.mulgara.transaction.TransactionManagerFactory;
 

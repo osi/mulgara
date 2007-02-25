@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.Answer;
+import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 

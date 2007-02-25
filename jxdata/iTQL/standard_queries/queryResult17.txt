@@ -1,4 +1,4 @@
 ItqlInterpreter error - org.mulgara.query.QueryException: Could not commit insert
 Caused by: (QueryException) Could not commit insert
-Caused by: (QueryException) org.mulgara.resolver.MulgaraTransactionException: Failed transaction finalised. (ROLLBACK)
+Caused by: (QueryException) org.mulgara.query.MulgaraTransactionException: Failed transaction finalised. (ROLLBACK)
 Caused by: (QueryException) rmi://localhost/server1#nomodelexistswiththisname is not a Model
