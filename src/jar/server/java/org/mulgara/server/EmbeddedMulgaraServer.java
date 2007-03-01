@@ -1555,8 +1555,6 @@ public class EmbeddedMulgaraServer extends Thread {
    *      files
    * @throws NamingException if the Mulgara server cannot communicate with the
    *      RMI registry
-   * @throws TripleStoreException if an error ocurrs while initialising the
-   *      Mulgara server node pool
    * @throws MultiException if an error ocurrs while starting up the SOAP server
    * @throws SimpleXAResourceException EXCEPTION TO DO
    * @throws Exception EXCEPTION TO DO
