@@ -55,21 +55,21 @@
     <mkdir dir="${query.obj.dir}/java"/>
   </target>
 
-  <target name="-unjar-config"
-          depends="-unjar-config-uptodate"
-          unless="unjar.config.uptodate">
+  <target name="-query-unjar-config"
+          depends="-query-unjar-config-uptodate"
+          unless="query.unjar.config.uptodate">
 
     <unjar src="${bin.dir}/${config.jar}" dest="${query.obj.dir}/classes"/>
   </target>
 
-  <target name="-unjar-config-uptodate">
+  <target name="-query-unjar-config-uptodate">
 
-    <available file="${query.obj.dir}/classes/org/mulgara/config/TucanaConfig.class"
-               property="unjar.config.uptodate"/>
+    <available file="${query.obj.dir}/classes/org/mulgara/config/MulgaraConfig.class"
+               property="query.unjar.config.uptodate"/>
   </target>
 
   <target name="query-compile"
-          depends="-query-prepare, util-jar, rules-jar, config-jar, -unjar-config"
+          depends="-query-prepare, util-jar, rules-jar, config-jar, -query-unjar-config"
           description="Compiles all query related files included generated
                        source code"
           unless="query.classes.uptodate">

@@ -52,21 +52,21 @@
     <mkdir dir="${rules.obj.dir}/java"/>
   </target>
 
-  <target name="-unjar-config"
-          depends="-unjar-config-uptodate"
-          unless="unjar.config.uptodate">
+  <target name="-rules-unjar-config"
+          depends="-rules-unjar-config-uptodate"
+          unless="rules.unjar.config.uptodate">
 
     <unjar src="${bin.dir}/${config.jar}" dest="${rules.obj.dir}/classes"/>
   </target>
 
-  <target name="-unjar-config-uptodate">
+  <target name="-rules-unjar-config-uptodate">
 
-    <available file="${rules.obj.dir}/classes/org/mulgara/config/TucanaConfig.class"
-               property="unjar.config.uptodate"/>
+    <available file="${rules.obj.dir}/classes/org/mulgara/config/MulgaraConfig.class"
+               property="rules.unjar.config.uptodate"/>
   </target>
 
   <target name="rules-compile"
-          depends="-rules-prepare, util-jar, config-jar, -unjar-config"
+          depends="-rules-prepare, util-jar, config-jar, -rules-unjar-config"
           description="Compiles all rules related files included generated
                        source code"
           unless="rules.classes.uptodate">
@@ -80,8 +80,8 @@
     </javac>
 
     <rmic classname="org.mulgara.rules.RulesRefImpl"
-              base="${obj.dir}/jar/rules/classes">
-                  
+          base="${rules.obj.dir}/classes">
+
       <classpath refid="rules-classpath"/>
     </rmic>
 
