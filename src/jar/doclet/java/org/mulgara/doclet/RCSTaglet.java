@@ -195,7 +195,7 @@ public abstract class RCSTaglet implements Taglet
         catch (ParseException e) {}  // if we can't parse, return unchanged
       }
 
-      matcher.appendReplacement(buffer, string);
+      matcher.appendReplacement(buffer, string.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\$", "\\\\\\$"));
     }
     matcher.appendTail(buffer);
     return buffer.toString();
