@@ -201,7 +201,9 @@ class UnorderedProjection extends AbstractTuples {
 
     if (columnMapping[column] == ABSENT_COLUMN) {
 
-      logger.info(getVariables()[column] + " is never bound", new Throwable());
+      if (logger.isInfoEnabled()) {
+        logger.info(getVariables()[column] + " is never bound", new Throwable());
+      }
 
       return true;
     }

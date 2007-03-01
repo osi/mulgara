@@ -1809,7 +1809,7 @@ public final class TripleAVLFile {
     private final class TuplesImpl implements StoreTuples {
 
       // keep a stack trace of the instantiation of this object
-      private Throwable stack = new Throwable();
+      private Throwable stack = logger.isDebugEnabled() ? new Throwable() : null;
       private List objectIds = new ArrayList();
 
       private long[] startTriple;
@@ -2272,7 +2272,7 @@ public final class TripleAVLFile {
 
           copy.variables = getVariables();
 
-          copy.stack = new Throwable();
+          copy.stack = logger.isDebugEnabled() ? new Throwable() : null;
           copy.objectIds = new ArrayList(objectIds);
           copy.objectIds.add(new Integer(System.identityHashCode(this)));
 
