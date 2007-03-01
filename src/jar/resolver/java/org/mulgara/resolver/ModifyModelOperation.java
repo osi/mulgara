@@ -195,20 +195,27 @@ class ModifyModelOperation implements Operation
       statements = new TripleSetWrapperStatements(
         tripleSet, systemResolver, TripleSetWrapperStatements.PERSIST
       );
-    }
-    else {
+    } else {
       assert query != null;
 
       Answer answer = operationContext.doQuery(query);
-      Variable[] vars = answer.getVariables();
-      assert vars.length == 3;
-      statements = new TuplesWrapperStatements(
-          new LocalizedTuples(systemResolver, answer),
-          vars[0], vars[1], vars[2]);
+      try {
+        Variable[] vars = answer.getVariables();
+        assert vars.length == 3;
+        statements = new TuplesWrapperStatements(
+            new LocalizedTuples(systemResolver, answer),
+            vars[0], vars[1], vars[2]);
+      } finally {
+        answer.close();
+      }
     }
     assert statements != null;
 
-    doModify(operationContext, systemResolver, modelURI, statements, insert);
+    try {
+      doModify(operationContext, systemResolver, modelURI, statements, insert);
+    } finally {
+      statements.close();
+    }
   }
 
 

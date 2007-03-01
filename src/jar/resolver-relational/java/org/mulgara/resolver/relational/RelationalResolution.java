@@ -425,15 +425,26 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
     Answer answer;
     answer = new RelationalAnswer(query, conn);
 
-    Tuples lt;
-    lt = new LocalizedTuples(resolverSession, answer, false);
-    Tuples st = TuplesOperations.sort(lt);
-    // lt.close() !!!! remember this.
+    Tuples lt, st;
+    try {
+      lt = new LocalizedTuples(resolverSession, answer, false);
+    } finally {
+      answer.close();
+    }
+    try {
+      st = TuplesOperations.sort(lt);
+    } finally {
+      lt.close();
+    }
     
     // Combine result with additional properties via join.
     additionalProperties.add(st);
-    Tuples jt = TuplesOperations.join(additionalProperties);
-    st.close();
+    Tuples jt;
+    try {
+      jt = TuplesOperations.join(additionalProperties);
+    } finally {
+      st.close();
+    }
 
     return jt;
   }
