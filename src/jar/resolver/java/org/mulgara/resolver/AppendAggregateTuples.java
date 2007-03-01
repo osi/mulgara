@@ -230,9 +230,7 @@ class AppendAggregateTuples extends AbstractTuples {
 
   public void close() throws TuplesException {
     if (logger.isDebugEnabled()) {
-      Throwable th = new Throwable();
-      th.fillInStackTrace();
-      logger.debug("closing AppendAggregateTuples " + hashCode(), th);
+      logger.debug("closing AppendAggregateTuples " + hashCode(), new Throwable());
     }
     for (Iterator i = localQueryList.iterator(); i.hasNext(); ) {
       LocalQuery lc = ((LocalQuery) i.next());
