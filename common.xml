@@ -86,7 +86,7 @@
       <classpath>
 
         <pathelement location="${java.home}/../lib/tools.jar"/>
-        <pathelement location="${lib.dir}/ant-1.6.5.jar"/>
+        <pathelement location="${lib.dir}/ant-1.7.0.jar"/>
         <pathelement location="${lib.dir}/${jasper.runtime.jar}"/>
         <pathelement location="${lib.dir}/${jasper.compiler.jar}"/>
         <pathelement location="${lib.dir}/${servlet.jar}"/>

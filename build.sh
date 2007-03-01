@@ -64,11 +64,11 @@ fi
 
 
 # Add the ant libraries to the classpath
-CLASSPATH=${CLASSPATH}:lib/ant-1.6.5.jar:lib/bsf-2.3.0.jar
-CLASSPATH=${CLASSPATH}:lib/ant-launcher-1.6.5.jar:lib/junit-3.8.1.jar
-CLASSPATH=${CLASSPATH}:lib/ant-junit-1.6.5.jar:lib/ant-apache-bsf-1.6.5.jar
-CLASSPATH=${CLASSPATH}:lib/ant-trax-1.6.5.jar
-CLASSPATH=${CLASSPATH}:lib/js-1.5r3.jar:lib/ant-nodeps-1.6.5.jar
+CLASSPATH=${CLASSPATH}:lib/ant-1.7.0.jar:lib/bsf-2.3.0.jar
+CLASSPATH=${CLASSPATH}:lib/ant-launcher-1.7.0.jar:lib/junit-3.8.1.jar
+CLASSPATH=${CLASSPATH}:lib/ant-junit-1.7.0.jar:lib/ant-apache-bsf-1.7.0.jar
+CLASSPATH=${CLASSPATH}:lib/ant-trax-1.7.0.jar
+CLASSPATH=${CLASSPATH}:lib/js-1.5r3.jar:lib/ant-nodeps-1.7.0.jar
 CLASSPATH=${CLASSPATH}:lib/javacc-3.2.jar
 
 # Add known external dependencies

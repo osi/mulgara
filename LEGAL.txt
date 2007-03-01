@@ -350,12 +350,12 @@ III. Supporting Optional Packages
     distribution will require the other packages listed here:
 
     Ant
-    JARs:     ant-1.6.5.jar
-              ant-apache-bsf-1.6.5.jar
-              ant-junit-1.6.5.jar
-              ant-launcher-1.6.5.jar
-              ant-nodeps-1.6.5.jar
-              ant-trax-1.6.5.jar
+    JARs:     ant-1.7.0.jar
+              ant-apache-bsf-1.7.0.jar
+              ant-junit-1.7.0.jar
+              ant-launcher-1.7.0.jar
+              ant-nodeps-1.7.0.jar
+              ant-trax-1.7.0.jar
     URL:      http://jakarta.apache.org/ant
     License:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0

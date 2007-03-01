@@ -56,16 +56,15 @@ goto buildpath
 REM for %%l IN (%LIBDIR%\*.jar) DO call setlocalpath %%l
 REM for %%l IN (%BUILDDIR%\*.jar) DO call setlocalpath %%l
 REM for %%l IN (%JAR_DEPENDENCIES%) DO call setlocalpath %%l
-set LOCALPATH=%LIBDIR%\ant-1.6.5.jar
+set LOCALPATH=%LIBDIR%\ant-1.7.0.jar
 set LOCALPATH=%LOCALPATH%;%LIBDIR%\bsf-2.3.0.jar
-set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-launcher-1.6.5.jar
+set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-launcher-1.7.0.jar
 set LOCALPATH=%LOCALPATH%;%LIBDIR%\junit-3.8.1.jar
-set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-junit-1.6.5.jar
-set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-xslp-1.6.5.jar
-set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-apache-bsf-1.6.5.jar
-set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-trax-1.6.5.jar
+set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-junit-1.7.0.jar
+set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-apache-bsf-1.7.0.jar
+set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-trax-1.7.0.jar
 set LOCALPATH=%LOCALPATH%;%LIBDIR%\js-1.5r3.jar
-set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-nodeps-1.6.5.jar
+set LOCALPATH=%LOCALPATH%;%LIBDIR%\ant-nodeps-1.7.0.jar
 set LOCALPATH=%LOCALPATH%;%LIBDIR%\javacc-3.2.jar
 
 :testjavahome
