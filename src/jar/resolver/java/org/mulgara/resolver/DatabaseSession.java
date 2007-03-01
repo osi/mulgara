@@ -610,7 +610,7 @@ class DatabaseSession implements Session {
   private void modify(URI modelURI, Query query, boolean insert) throws QueryException
   {
     if (logger.isInfoEnabled()) {
-      logger.info("INSERT QUERY: " + query + " into " + modelURI);
+      logger.info((insert ? "INSERT" : "DELETE") + " QUERY: " + query + " into " + modelURI);
     }
 
     execute(new ModifyModelOperation(modelURI, query, insert, this),
