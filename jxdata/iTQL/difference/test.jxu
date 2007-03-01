@@ -64,4 +64,67 @@
     <fail>Output failed.  Check badQuery3Result.xml for output.</fail>
   </ifEqual>
 
+  <!-- prepare test for bug MGR-40 -->
+  <set name="query"
+  value="insert 
+           &lt;urn:test:1&gt; &lt;urn:test:hasParent&gt; &lt;urn:test:fish&gt;
+           into &lt;@server@#diff&gt; ;
+         delete
+           &lt;urn:test:1&gt; &lt;urn:test:hasParent&gt; &lt;urn:test:fish&gt;
+           from &lt;@server@#diff&gt; ;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult4.txt" name="queryResult">
+    <save name="queryResult" file="badQuery4Result.xml"/>
+    <fail>Output failed.  Check badQuery4Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- test empty subtrahend -->
+  <set name="query"
+  value="select 
+         $person $parent
+         from &lt;@server@#diff&gt;
+         where $person &lt;urn:test:hasParent&gt; $parent and
+           $person &lt;urn:test:hasParent&gt; $x
+           minus $person &lt;urn:test:hasParent&gt; &lt;urn:test:fish&gt;
+           order by $person $parent ;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult5.txt" name="queryResult">
+    <save name="queryResult" file="badQuery5Result.xml"/>
+    <fail>Output failed.  Check badQuery5Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- test empty minuend -->
+  <set name="query"
+  value="select 
+         $person $parent
+         from &lt;@server@#diff&gt;
+         where $person &lt;urn:test:hasParent&gt; $parent and
+           $person &lt;urn:test:hasParent&gt; &lt;urn:test:fish&gt;
+           minus $person &lt;urn:test:hasParent&gt; $x
+           order by $person $parent ;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult6.txt" name="queryResult">
+    <save name="queryResult" file="badQuery6Result.xml"/>
+    <fail>Output failed.  Check badQuery6Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- test empty minuend and subtrahend -->
+  <set name="query"
+  value="select 
+         $person $parent
+         from &lt;@server@#diff&gt;
+         where $person &lt;urn:test:hasParent&gt; $parent and
+           $person &lt;urn:test:hasParent&gt; &lt;urn:test:fish&gt;
+           minus $person &lt;urn:test:hasParent&gt; &lt;urn:test:bird&gt;
+           order by $person $parent ;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
+    <save name="queryResult" file="badQuery7Result.xml"/>
+    <fail>Output failed.  Check badQuery7Result.xml for output.</fail>
+  </ifEqual>
+
 </jxu>
