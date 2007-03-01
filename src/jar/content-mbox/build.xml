@@ -94,7 +94,7 @@
   </target>
 
   <target name="content-mbox-jar"
-          depends="-content-mbox-jar-uptodate, content-mbox-compile"
+          depends="content-mbox-compile, -content-mbox-jar-uptodate"
           unless="content-mbox.jar.uptodate"
           description="Creates the content-mbox's jar/s">
 

@@ -69,7 +69,7 @@
   </target>
 
   <target name="resolver-url-jar"
-          depends="-resolver-url-jar-uptodate, resolver-url-compile"
+          depends="resolver-url-compile, -resolver-url-jar-uptodate"
           unless="resolver-url.jar.uptodate"
           description="Builds the URL Resolver JAR">
 

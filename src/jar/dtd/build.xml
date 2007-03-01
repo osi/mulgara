@@ -65,7 +65,7 @@
   </target>
 
   <target name="dtd-jar"
-          depends="-dtd-jar-uptodate, dtd-compile"
+          depends="dtd-compile, -dtd-jar-uptodate"
           unless="dtd.jar.uptodate"
           description="Creates the dtd's jar/s">
 

@@ -72,7 +72,7 @@
   </target>
 
   <target name="store-stringpool-xa-jar"
-          depends="-store-stringpool-xa-jar-uptodate, store-stringpool-xa-compile"
+          depends="store-stringpool-xa-compile, -store-stringpool-xa-jar-uptodate"
           unless="store-stringpool-xa.jar.uptodate"
           description="Builds the memory-backed node pool JAR">
 

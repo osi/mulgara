@@ -75,7 +75,7 @@
   </target>
 
   <target name="store-nodepool-xa-jar"
-    depends="-store-nodepool-xa-jar-uptodate, store-nodepool-xa-compile"
+    depends="store-nodepool-xa-compile, -store-nodepool-xa-jar-uptodate"
     unless="store-nodepool-xa.jar.uptodate"
     description="Builds the memory-backed node pool JAR">
 

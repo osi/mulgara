@@ -92,7 +92,7 @@
     </manifest>
   </target>
 
-  <target name="itql-jar" depends="itql-compile, -itql-jar-uptodate, -itql-create-manifest" unless="itql.jar.uptodate" description="Creates the itql's jar/s">
+  <target name="itql-jar" depends="itql-compile, -itql-create-manifest, -itql-jar-uptodate" unless="itql.jar.uptodate" description="Creates the itql's jar/s">
     <jar jarfile="${itql.dist.dir}/${itql.jar}"
          manifest="${obj.dir}/META-INF/MANIFEST_ITQL_BASE.MF">
       <fileset dir="${itql.obj.dir}/classes" excludes="**/*.java"/>

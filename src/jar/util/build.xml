@@ -74,7 +74,7 @@
   </target>
 
   <target name="util-jar"
-          depends="-util-jar-uptodate, util-compile"
+          depends="util-compile, -util-jar-uptodate"
           unless="util.jar.uptodate"
           description="Creates the util's jar/s">
 

@@ -87,7 +87,7 @@
   </target>
 
   <target name="resolver-test-jar"
-          depends="-resolver-test-jar-uptodate, resolver-test-compile"
+          depends="resolver-test-compile, -resolver-test-jar-uptodate"
           unless="resolver-test.jar.uptodate"
           description="Creates the resolver-test's jar/s">
 

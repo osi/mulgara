@@ -79,7 +79,7 @@
   </target>
 
   <target name="sofa-jar"
-          depends="-sofa-jar-uptodate, sofa-compile"
+          depends="sofa-compile, -sofa-jar-uptodate"
           unless="sofa.jar.uptodate"
           description="Creates the sofa's jar/s">
 

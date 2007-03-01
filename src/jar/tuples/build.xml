@@ -79,7 +79,7 @@
        method, whose functionality should migrate into the Resolution
        implementations. -->
   <target name="tuples-jar"
-          depends="-tuples-jar-uptodate, tuples-compile"
+          depends="tuples-compile, -tuples-jar-uptodate"
           unless="tuples.jar.uptodate"
           description="Creates the tuples' jar/s">
 

@@ -83,7 +83,7 @@
   </target>
 
   <target name="content-rio-jar"
-    depends="-content-rio-jar-uptodate, content-rio-compile"
+    depends="content-rio-compile, -content-rio-jar-uptodate"
     unless="content-rio.jar.uptodate"
     description="Builds the RDF/XML content handler JAR">
 

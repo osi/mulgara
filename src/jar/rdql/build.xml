@@ -116,7 +116,7 @@
   </target>
 
   <target name="rdql-jar"
-          depends="-rdql-jar-uptodate, rdql-compile"
+          depends="rdql-compile, -rdql-jar-uptodate"
           unless="rdql.jar.uptodate"
           description="Creates the rdql's jar/s">
 

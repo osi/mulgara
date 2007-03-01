@@ -74,7 +74,7 @@
   </target>
 
   <target name="store-stringpool-memory-jar"
-          depends="store-stringpool-memory-jar-uptodate, store-stringpool-memory-compile"
+          depends="store-stringpool-memory-compile, store-stringpool-memory-jar-uptodate"
           unless="store-stringpool-memory.jar.uptodate"
           description="Builds the memory-backed node pool JAR">
 

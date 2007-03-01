@@ -70,7 +70,7 @@
   </target>
 
   <target name="connector-jar"
-          depends="-connector-jar-uptodate, connector-compile"
+          depends="connector-compile, -connector-jar-uptodate"
           unless="connector.jar.uptodate"
           description="Creates the connector's jar/s">
 

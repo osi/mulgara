@@ -70,7 +70,7 @@
   </target>
 
   <target name="resolver-spi-jar"
-    depends="-resolver-spi-jar-uptodate, resolver-spi-compile"
+    depends="resolver-spi-compile, -resolver-spi-jar-uptodate"
     unless="resolver-spi.jar.uptodate"
     description="Builds the Resolver SPI JAR">
 

@@ -72,7 +72,7 @@
   </target>
 
   <target name="resolver-lucene-jar"
-          depends="-resolver-lucene-jar-uptodate, resolver-lucene-compile"
+          depends="resolver-lucene-compile, -resolver-lucene-jar-uptodate"
           unless="resolver-lucene.jar.uptodate"
           description="Builds the Lucene Resolver JAR">
 

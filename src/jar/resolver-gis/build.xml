@@ -64,7 +64,7 @@
   </target>
 
   <target name="resolver-gis-jar"
-          depends="-resolver-gis-jar-uptodate, resolver-gis-compile"
+          depends="resolver-gis-compile, -resolver-gis-jar-uptodate"
           unless="resolver-gis.jar.uptodate"
           description="Creates the resolver-gis's jar/s">
     <jar jarfile="${resolver-gis.dist.dir}/${resolver-gis.jar}">

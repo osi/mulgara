@@ -75,7 +75,7 @@
   </target>
 
   <target name="server-beep-jar"
-          depends="-server-beep-jar-uptodate, server-beep-compile"
+          depends="server-beep-compile, -server-beep-jar-uptodate"
           unless="server-beep.jar.uptodate"
           description="Creates the server-beep's jar/s">
 

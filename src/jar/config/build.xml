@@ -57,7 +57,7 @@
     </javac>
   </target>
 
-  <target name="config-jar" depends="config-jar-uptodate, config-compile"
+  <target name="config-jar" depends="config-compile, config-jar-uptodate"
       description="Builds the base Mulgara configuration JAR"
       unless="config.jar-uptodate">
 

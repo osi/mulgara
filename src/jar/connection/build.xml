@@ -49,7 +49,7 @@
     </javac>
   </target>
 
-  <target name="connection-jar" depends="-connection-jar-uptodate, connection-compile" unless="connection.jar.uptodate"
+  <target name="connection-jar" depends="connection-compile, -connection-jar-uptodate" unless="connection.jar.uptodate"
           description="Creates the connection.jar">
     <jar jarfile="${connection.dist.dir}/${connection.base.jar}">
       <fileset dir="${connection.obj.dir}/classes"/>

@@ -79,7 +79,7 @@
   </target>
 
   <target name="client-drools-jar"
-          depends="-client-drools-jar-uptodate, client-drools-compile"
+          depends="client-drools-compile, -client-drools-jar-uptodate"
           unless="client-drools.jar.uptodate"
           description="Creates the client-drools's jar/s">
 

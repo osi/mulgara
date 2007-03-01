@@ -68,7 +68,7 @@
   </target>
 
   <target name="tag-jar"
-          depends="-tag-jar-uptodate, tag-compile"
+          depends="tag-compile, -tag-jar-uptodate"
           unless="tag.jar.uptodate"
           description="Creates the tag's jar/s">
 

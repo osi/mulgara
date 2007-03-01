@@ -129,7 +129,7 @@
   </target>
 
   <target name="descriptor-jar"
-          depends="-descriptor-jar-uptodate, descriptor-compile"
+          depends="descriptor-compile, -descriptor-jar-uptodate"
           unless="descriptor.jar.uptodate"
           description="Creates the descriptor's jar/s">
 

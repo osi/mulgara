@@ -67,7 +67,7 @@
   </target>
 
   <target name="ant-task-jar"
-          depends="-ant-task-jar-uptodate, ant-task-compile"
+          depends="ant-task-compile, -ant-task-jar-uptodate"
           unless="ant-task.jar.uptodate"
           description="Creates the ant-task's jar/s">
 

@@ -94,7 +94,7 @@
   </target>
 
   <target name="content-mp3-jar"
-          depends="-content-mp3-jar-uptodate, content-mp3-compile"
+          depends="content-mp3-compile, -content-mp3-jar-uptodate"
           unless="content-mp3.jar.uptodate"
           description="Creates the content-mp3's jar/s">
 

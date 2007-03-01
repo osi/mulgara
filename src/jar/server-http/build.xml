@@ -73,7 +73,7 @@
   </target>
 
   <target name="server-http-jar"
-          depends="-server-http-jar-uptodate, server-http-compile"
+          depends="server-http-compile, -server-http-jar-uptodate"
           unless="server-http.jar.uptodate"
           description="Creates the server-http's jar/s">
 

@@ -83,7 +83,7 @@
   </target>
 
   <target name="content-rdfxml-jar"
-    depends="-content-rdfxml-jar-uptodate, content-rdfxml-compile"
+    depends="content-rdfxml-compile, -content-rdfxml-jar-uptodate"
     unless="content-rdfxml.jar.uptodate"
     description="Builds the RDF/XML content handler JAR">
 

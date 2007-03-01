@@ -67,7 +67,7 @@
   </target>
 
   <target name="util-xa-jar"
-          depends="-util-xa-jar-uptodate, util-xa-compile"
+          depends="util-xa-compile, -util-xa-jar-uptodate"
           unless="util-xa.jar.uptodate"
           description="Builds the metaphasic utility JAR">
 

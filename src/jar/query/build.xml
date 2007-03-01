@@ -84,7 +84,7 @@
   </target>
 
   <target name="query-jar"
-          depends="-query-jar-uptodate, query-compile, config-database"
+          depends="query-compile, config-database, -query-jar-uptodate"
           unless="query.jar.uptodate"
           description="Creates the query's jar/s">
 

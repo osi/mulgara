@@ -75,7 +75,7 @@
   </target>
 
   <target name="driver-jar"
-          depends="-driver-jar-uptodate, driver-compile"
+          depends="driver-compile, -driver-jar-uptodate"
           unless="driver.jar.uptodate"
           description="Creates the driver's jar/s">
 

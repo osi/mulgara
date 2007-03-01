@@ -70,7 +70,7 @@
   </target>
 
   <target name="resolver-http-jar"
-    depends="-resolver-http-jar-uptodate, resolver-http-compile"
+    depends="resolver-http-compile, -resolver-http-jar-uptodate"
     unless="resolver-http.jar.uptodate"
     description="Builds the File Resolver JAR">
 

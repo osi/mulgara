@@ -69,7 +69,7 @@
   </target>
 
   <target name="resolver-memory-jar"
-    depends="-resolver-memory-jar-uptodate, resolver-memory-compile"
+    depends="resolver-memory-compile, -resolver-memory-jar-uptodate"
     unless="resolver-memory.jar.uptodate"
     description="Builds the URL Resolver JAR">
 

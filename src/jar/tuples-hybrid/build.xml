@@ -70,7 +70,7 @@
   </target>
 
    <target name="tuples-hybrid-jar"
-           depends="-tuples-hybrid-jar-uptodate, tuples-hybrid-compile"
+           depends="tuples-hybrid-compile, -tuples-hybrid-jar-uptodate"
            unless="tuples-hybrid.jar.uptodate"
            description="Builds the hybrid tuples JAR">
 

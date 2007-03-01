@@ -59,7 +59,7 @@
   </target>
 
   <target name="demo-mp3-jar"
-          depends="-demo-mp3-jar-uptodate, demo-mp3-compile"
+          depends="demo-mp3-compile, -demo-mp3-jar-uptodate"
           unless="demo-mp3.jar.uptodate"
           description="Creates the demo-mp3's jar/s">
     <jar jarfile="${demo-mp3.dist.dir}/${demo-mp3.jar}">

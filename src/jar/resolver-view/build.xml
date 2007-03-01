@@ -83,7 +83,7 @@
   </target>
 
   <target name="resolver-view-jar"
-    depends="-resolver-view-jar-uptodate, resolver-view-compile"
+    depends="resolver-view-compile, -resolver-view-jar-uptodate"
     unless="resolver-view.jar.uptodate"
     description="Builds the View Resolver JAR">
 

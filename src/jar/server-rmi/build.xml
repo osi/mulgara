@@ -124,7 +124,7 @@
   </target>
 
   <target name="server-rmi-jar"
-          depends="-server-rmi-jar-uptodate, server-rmi-compile"
+          depends="server-rmi-compile, -server-rmi-jar-uptodate"
           unless="server-rmi.jar.uptodate"
           description="Creates the server-rmi's jar/s">
 

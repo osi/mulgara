@@ -71,7 +71,7 @@
   </target>
 
   <target name="resolver-store-jar"
-    depends="-resolver-store-jar-uptodate, resolver-store-compile"
+    depends="resolver-store-compile, -resolver-store-jar-uptodate"
     unless="resolver-store.jar.uptodate"
     description="Builds the statement store resolver JAR">
 

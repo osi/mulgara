@@ -75,7 +75,7 @@
   </target>
 
   <target name="jrdf-jar"
-          depends="-jrdf-jar-uptodate, jrdf-compile"
+          depends="jrdf-compile, -jrdf-jar-uptodate"
           description="Creates the jrdf's jar/s"
           unless="jrdf.jar.uptodate">
 

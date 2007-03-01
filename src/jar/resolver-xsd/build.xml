@@ -72,7 +72,7 @@
   </target>
 
   <target name="resolver-xsd-jar"
-          depends="-resolver-xsd-jar-uptodate, resolver-xsd-compile"
+          depends="resolver-xsd-compile, -resolver-xsd-jar-uptodate"
           unless="resolver-xsd.jar.uptodate"
           description="Creates the resolver-xsd's jar/s">
 

@@ -73,7 +73,7 @@
   </target>
 
   <target name="store-nodepool-memory-jar"
-    depends="-store-nodepool-memory-jar-uptodate, store-nodepool-memory-compile"
+    depends="store-nodepool-memory-compile, -store-nodepool-memory-jar-uptodate"
     unless="store-nodepool-memory.jar.uptodate"
     description="Builds the memory-backed node pool JAR">
 

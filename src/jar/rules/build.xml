@@ -88,7 +88,7 @@
   </target>
 
   <target name="rules-jar"
-          depends="-rules-jar-uptodate, rules-compile, config-database"
+          depends="rules-compile, config-database, -rules-jar-uptodate"
           unless="rules.jar.uptodate"
           description="Creates the rules's jar/s">
 

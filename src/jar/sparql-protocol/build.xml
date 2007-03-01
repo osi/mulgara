@@ -72,7 +72,7 @@
   </target>
 
   <target name="sparql-protocol-jar"
-          depends="-sparql-protocol-jar-uptodate, sparql-protocol-compile"
+          depends="sparql-protocol-compile, -sparql-protocol-jar-uptodate"
           unless="sparql-protocol.jar.uptodate"
           description="Creates the sparql-protocol's jar/s">
 

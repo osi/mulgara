@@ -79,7 +79,7 @@
   </target>
 
   <target name="content-n3-jar"
-    depends="-content-n3-jar-uptodate, content-n3-compile"
+    depends="content-n3-compile, -content-n3-jar-uptodate"
     unless="content-n3.jar.uptodate"
     description="Builds the RDF/XML content handler JAR">
 

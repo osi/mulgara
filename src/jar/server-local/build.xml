@@ -73,7 +73,7 @@
   </target>
 
   <target name="server-local-jar"
-          depends="-server-local-jar-uptodate, server-local-compile"
+          depends="server-local-compile, -server-local-jar-uptodate"
           unless="server-local.jar.uptodate"
           description="Creates the server-local's jar/s">
 
