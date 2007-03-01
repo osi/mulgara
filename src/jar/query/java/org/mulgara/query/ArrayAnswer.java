@@ -300,8 +300,7 @@ public class ArrayAnswer implements Answer, Cloneable, Serializable {
    */
   public void close() throws TuplesException {
     if (variables == null) {
-      throw new TuplesException("Attempt to close already closed ArrayAnswer.",
-          new Throwable());
+      throw new TuplesException("Attempt to close already closed ArrayAnswer.");
     }
     variables = null;
     values = null;
