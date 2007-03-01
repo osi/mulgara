@@ -221,6 +221,7 @@ public class TransactionalAnswer implements Answer {
       TransactionalAnswer c = (TransactionalAnswer)super.clone();
       c.answer = (Answer)this.answer.clone();
       c.transaction.reference();
+      report("Cloned Answer, clone=" + System.identityHashCode(c));
 
       return c;
     } catch (CloneNotSupportedException ec) {
