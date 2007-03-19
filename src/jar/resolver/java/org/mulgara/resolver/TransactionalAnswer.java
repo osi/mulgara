@@ -245,14 +245,70 @@ public class TransactionalAnswer implements Answer {
     report("GC-finalizing");
     if (transaction != null) {
       logger.warn("TransactionalAnswer not closed");
+      /*
+      try {
+        transaction.execute(new AnswerOperation() {
+            public void execute() throws TuplesException {
+              try {
+                answer.close();
+              } finally {
+                try {
+                  transaction.dereference();
+                } catch (MulgaraTransactionException em) {
+                  throw new TuplesException("Error dereferencing transaction", em);
+                }
+              }
+            }
+        });
+      } catch (TuplesException et) {
+        report("Error dereferencing transaction from finalize");
+      } finally {
+        transaction = null;
+        answer = null;
+      }
+*/
+//      try {
+//        sessionClose();
+//      } catch (TuplesException et) {
+//        logger.warn("Error force-closing TransactionAnswer", et);
+//      }
     }
   }
 
 
   void sessionClose() throws TuplesException {
+    if (closing) {
+      report("Session close on closing answer");
+      return;
+    }
+
     if (answer != null) {
       report("Session forced close");
-      close();
+      Throwable error = null;
+      closing = true;
+      try {
+        answer.close();
+      } catch (Throwable th) {
+        error = th;
+      } finally {
+        try {
+          transaction.dereference();
+        } catch (MulgaraTransactionException em) {
+          throw new TuplesException("Error dereferencing transaction", em);
+        } finally {
+          closing = false;
+          answer = null;
+          transaction = null;
+        }
+        if (error != null) {
+          if (error instanceof TuplesException) {
+            throw (TuplesException)error;
+          } else {
+            throw new TuplesException("Error closing answer", error);
+          }
+        }
+      }
+//      close();
     }
   }
 

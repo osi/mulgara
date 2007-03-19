@@ -550,7 +550,7 @@ class DatabaseSession implements Session {
   public void close() throws QueryException {
     logger.info("Closing session");
     try {
-      transactionManager.terminateCurrentTransactions(this);
+      transactionManager.rollbackCurrentTransactions(this);
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error closing session. Forced close required", em);
     }

@@ -122,7 +122,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
    *   external models
    * @throws IllegalArgumentException if any argument is <code>null</code>
    */
-  LocalJRDFDatabaseSession(MulgaraTransactionManager transactionManager,
+  LocalJRDFDatabaseSession(MulgaraTransactionManager transactionManager, 
       List securityAdapterList, List symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
       SystemResolverFactory systemResolverFactory,

@@ -18,7 +18,6 @@
 package org.mulgara.resolver;
 
 import org.mulgara.query.TuplesException;
-import org.mulgara.query.MulgaraTransactionException;
 
 public abstract class AnswerOperation {
   // Should use enum here.

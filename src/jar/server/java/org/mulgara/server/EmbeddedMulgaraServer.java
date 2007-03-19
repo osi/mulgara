@@ -564,7 +564,7 @@ public class EmbeddedMulgaraServer extends Thread {
     catch (Exception e) {
 
       // log the error
-      log.error(e);
+      log.error("Exception in main", e);
       e.printStackTrace();
 
       System.exit(5);
@@ -1484,7 +1484,7 @@ public class EmbeddedMulgaraServer extends Thread {
     catch (IOException ioe) {
 
       // log the error
-      log.error(ioe.getMessage());
+      log.error(ioe.getMessage(), ioe);
 
       // print the usage
       //System.err.println("Invalid URL - " + ioe.getMessage());

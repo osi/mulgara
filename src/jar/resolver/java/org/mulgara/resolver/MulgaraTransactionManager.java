@@ -75,23 +75,23 @@ public class MulgaraTransactionManager {
   private MulgaraTransaction userTransaction;
 
   /** Set of sessions whose transactions have been rolledback.*/
-  private Set failedSessions;
+  private Set<Session> failedSessions;
 
   /**
    * Map from transaction to initiating session.
    * FIXME: This is only required for checking while we wait for 1-N.
    *        Remove once 1-N is implemented.
    */
-  private Map sessions;
+  private Map<MulgaraTransaction, Session> sessions;
 
   /**
    * Map from initiating session to set of transactions.
    * Used to clean-up transactions upon session close.
    */
-  private Map transactions;
+  private Map<Session, Set<MulgaraTransaction>> transactions;
 
   /** Map of threads to active transactions. */
-  private Map activeTransactions;
+  private Map<Thread, MulgaraTransaction> activeTransactions;
 
   private TransactionManager transactionManager;
 
@@ -99,10 +99,10 @@ public class MulgaraTransactionManager {
     this.currentWritingSession = null;
     this.userTransaction = null;
 
-    this.failedSessions = new HashSet();
-    this.sessions = new HashMap();
-    this.transactions = new HashMap();
-    this.activeTransactions = new HashMap();
+    this.failedSessions = new HashSet<Session>();
+    this.sessions = new HashMap<MulgaraTransaction, Session>();
+    this.transactions = new HashMap<Session, Set<MulgaraTransaction>>();
+    this.activeTransactions = new HashMap<Thread, MulgaraTransaction>();
 
     this.transactionManager = transactionManagerFactory.newTransactionManager();
   }
@@ -127,7 +127,13 @@ public class MulgaraTransactionManager {
       MulgaraTransaction transaction = write ?
           obtainWriteLock(session) :
           new MulgaraTransaction(this, session.newOperationContext(false));
+
       sessions.put(transaction, session);
+
+      if (!transactions.containsKey(session)) {
+        transactions.put(session, new HashSet<MulgaraTransaction>());
+      }
+      transactions.get(session).add(transaction);
 
       return transaction;
     } catch (MulgaraTransactionException em) {
@@ -152,9 +158,6 @@ public class MulgaraTransactionManager {
       currentWritingSession = session;
       userTransaction = new MulgaraTransaction(this, session.newOperationContext(true));
       return userTransaction;
-    } catch (MulgaraTransactionException em) {
-      releaseWriteLock();
-      throw em;
     } catch (Throwable th) {
       releaseWriteLock();
       throw new MulgaraTransactionException("Error while obtaining write-lock", th);
@@ -199,7 +202,8 @@ public class MulgaraTransactionManager {
         });
         if (userTransaction != null) {
           // transaction referenced by something - need to explicitly end it.
-          userTransaction.completeTransaction();
+          userTransaction.abortTransaction("Rollback failed",
+              new MulgaraTransactionException("Rollback failed to terminate write transaction"));
         }
       } finally {
         failedSessions.add(currentWritingSession);
@@ -228,13 +232,17 @@ public class MulgaraTransactionManager {
         if (session == currentWritingSession) {
           // Within active transaction - commit and finalise.
           try {
-            userTransaction.dereference();
-            userTransaction.completeTransaction();
+            userTransaction.execute(new TransactionOperation() {
+              public void execute() throws MulgaraTransactionException {
+                userTransaction.dereference();
+                userTransaction.commitTransaction();
+              }
+            });
           } finally {
             releaseWriteLock();
           }
         } else if (failedSessions.contains(session)) {
-          // Within failed transaction - cleanup and finalise.
+          // Within failed transaction - cleanup.
           failedSessions.remove(session);
         }
       } else {
@@ -253,49 +261,90 @@ public class MulgaraTransactionManager {
     }
   }
 
-  public synchronized void terminateCurrentTransactions(Session session)
+  public synchronized void rollbackCurrentTransactions(Session session)
       throws MulgaraTransactionException {
-    if (failedSessions.contains(session)) {
-      failedSessions.remove(session);
-      return;
-    }
-
-    Throwable error = null;
     try {
-      if (session == currentWritingSession) {
-        logger.error("Terminating session while holding writelock:" + session +
-            ":" + currentWritingSession + ": " + userTransaction);
-        userTransaction.execute(new TransactionOperation() {
-            public void execute() throws MulgaraTransactionException {
-              userTransaction.implicitRollback(
-                new MulgaraTransactionException("Terminating session while holding writelock"));
-            }
-        });
+      if (failedSessions.contains(session)) {
+        failedSessions.remove(session);
+        return;
       }
-    } catch (Throwable th) {
-      error = th;
-    }
 
-    Set trans = (Set)transactions.get(session);
-    if (trans != null) {
-      Iterator i = trans.iterator();
-      while (i.hasNext()) {
-        MulgaraTransaction transaction = (MulgaraTransaction)i.next();
-        logger.error("Active transaction during session termination");
-        Throwable th = transaction.implicitRollback(
-            new MulgaraTransactionException("Terminating session during active transaction"));
-        if (error ==  null) {
-          error = th;
+      Throwable error = null;
+
+      try {
+        if (session == currentWritingSession) {
+          logger.warn("Terminating session while holding writelock:" + session +
+              ":" + currentWritingSession + ": " + userTransaction);
+          userTransaction.execute(new TransactionOperation() {
+              public void execute() throws MulgaraTransactionException {
+                throw new MulgaraTransactionException("Terminating session while holding writelock");
+              }
+          });
         }
-        transaction.completeTransaction();
+      } catch (Throwable th) {
+        error = th;
+      }
+
+      final Throwable trigger = new MulgaraTransactionException("trigger rollback");
+
+      if (transactions.containsKey(session)) {
+        for (MulgaraTransaction transaction : transactions.get(session)) {
+          try {
+            transaction.execute(new TransactionOperation() {
+              public void execute() throws MulgaraTransactionException {
+                throw new MulgaraTransactionException("Rolling back transactions due to session close");
+              }
+            });
+          } catch (MulgaraTransactionException em) {
+            // ignore.
+          } catch (Throwable th) {
+            if (error == null) {
+              error = th;
+            }
+          }
+        }
+      }
+
+      if (error != null) {
+        if (error instanceof MulgaraTransactionException) {
+          throw (MulgaraTransactionException)error;
+        } else {
+          throw new MulgaraTransactionException("Error in rollback on session close", error);
+        }
+      }
+    } finally {
+      if (transactions.containsKey(session)) {
+        logger.error("Error in transaction rollback due to session close - aborting");
+        abortCurrentTransactions(session);
       }
     }
+  }
 
-    if (error != null) {
-      if (error instanceof MulgaraTransactionException) {
-        throw (MulgaraTransactionException)error;
-      } else {
-        throw new MulgaraTransactionException("Aborting session on close", error);
+  private void abortCurrentTransactions(Session session) throws MulgaraTransactionException {
+    try {
+      Throwable error = null;
+      for (MulgaraTransaction transaction : transactions.get(session)) {
+        try {
+          transaction.abortTransaction("Transaction still valid on session close", new Throwable());
+        } catch (Throwable th) {
+          try {
+            if (error == null) {
+              error = th;
+            }
+          } catch (Throwable throw_away) {}
+        }
+      }
+
+      if (error != null) {
+        if (error instanceof MulgaraTransactionException) {
+          throw (MulgaraTransactionException)error;
+        } else {
+          throw new MulgaraTransactionException("Error in rollback on session close", error);
+        }
+      }
+    } finally {
+      if (session == currentWritingSession) {
+        logger.error("Failed to abort write-transaction on session close - Server restart required");
       }
     }
   }
@@ -348,25 +397,24 @@ public class MulgaraTransactionManager {
     try {
       if (transaction != activeTransactions.get(Thread.currentThread())) {
         throw new MulgaraTransactionException(
-            "Attempt to commit transaction from outside thread");
+            "Attempt to suspend transaction from outside thread");
       }
 
       return transactionManager.suspend();
-    } catch (Exception e) {
-      logger.error("Attempt to suspend failed", e);
+    } catch (Throwable th) {
+      logger.error("Attempt to suspend failed", th);
       try {
         transactionManager.setRollbackOnly();
-      } catch (Throwable th) {
-        logger.error("Attempt to setRollbackOnly() failed", th);
+      } catch (Throwable t) {
+        logger.error("Attempt to setRollbackOnly() failed", t);
       }
-      throw new MulgaraTransactionException("Suspend failed", e);
+      throw new MulgaraTransactionException("Suspend failed", th);
     } finally {
       activeTransactions.remove(Thread.currentThread());
     }
   }
 
-  public synchronized void transactionComplete(MulgaraTransaction transaction) 
-      throws MulgaraTransactionException {
+  public synchronized void transactionComplete(MulgaraTransaction transaction) {
     if (holdsWriteLock(transaction)) {
       releaseWriteLock();
     }
@@ -375,10 +423,6 @@ public class MulgaraTransactionManager {
     Session session = (Session)sessions.get(transaction);
     sessions.remove(transaction);
     transactions.remove(session);
-  }
-
-  public synchronized void transactionFailed(MulgaraTransaction transaction) {
-    // No specific behaviour required here.
   }
 
   public synchronized void transactionAborted(MulgaraTransaction transaction) {

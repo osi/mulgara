@@ -150,7 +150,8 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   private final List               symbolicTransformationList;
   private final boolean            isWriting;
 
-  private WeakHashMap answers;  // Used as a set, all values are null.  Java doesn't provide a WeakHashSet.
+  // Used as a set, all values are null.  Java doesn't provide a WeakHashSet.
+  private WeakHashMap<TransactionalAnswer,Object> answers;
 
   DatabaseOperationContext(Set                   cachedResolverFactorySet,
                            Map                   externalResolverFactoryMap,
@@ -187,7 +188,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     this.cachedModelSet             = new HashSet();
     this.changedCachedModelSet      = new HashSet();
     this.enlistedResolverMap        = new HashMap();
-    this.answers                    = new WeakHashMap();
+    this.answers                    = new WeakHashMap<TransactionalAnswer,Object>();
   }
 
   //
@@ -827,7 +828,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
 
   public Answer doQuery(Query query) throws Exception
   {
-    Answer result;
+    TransactionalAnswer result;
 
     LocalQuery localQuery = new LocalQuery(query, systemResolver, this);
 
@@ -877,20 +878,30 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   }
 
   void clear() throws QueryException {
+    Throwable error = null;
     try {
-      Iterator i = answers.keySet().iterator();
-      while (i.hasNext()) {
-        ((TransactionalAnswer)i.next()).sessionClose();
+      for (TransactionalAnswer answer : answers.keySet()) {
+        try {
+          answer.sessionClose();
+        } catch (Throwable th) {
+          if (error == null) {
+            error = th;
+          }
+        }
       }
       answers.clear();
-    } catch (TuplesException et) {
-      throw new QueryException("Error force-closing answers", et);
+    } finally {
+      try {
+        clearCache();
+      } finally {
+        systemResolver = null;
+        systemModelCacheMap.clear();
+        enlistedResolverMap.clear();
+        if (error != null) {
+          throw new QueryException("Error force-closing answers", error);
+        }
+      }
     }
-
-    clearCache();
-    systemResolver = null;
-    systemModelCacheMap.clear();
-    enlistedResolverMap.clear();
   }
 
   public SystemResolver getSystemResolver() {
@@ -942,18 +953,6 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
       } catch (Exception e) {
         logger.error("Failed to clear cached models after transaction", e);
       }
-    }
-  }
-
-  public void abort() {
-    Iterator i = enlistedResolverMap.values().iterator();
-    while (i.hasNext()) {
-      ((Resolver)i.next()).abort();
-    }
-    try {
-      this.clear();
-    } catch (QueryException eq) {
-      throw new IllegalStateException("Error aborting OperationContext", eq);
     }
   }
 

@@ -78,25 +78,4 @@ abstract class StatusFormat
         return "NOT_A_STATUS_" + status;
     }
   }
-
-  /**
-   * Generate a presentation form for the status of a transaction manager.
-   *
-   * This method will return the message of the exception if an exception
-   * results from querying the transaction manager's status, rather than
-   * throwing the exception.
-   *
-   * @param transactionManager  the transaction manager
-   */
-   /*
-  public static String formatStatus(MulgaraTransactionManager transactionManager)
-  {
-    try {
-      return formatStatus(transactionManager.getStatus());
-    }
-    catch (SystemException e) {
-      return e.getMessage();
-    }
-  }
-  */
 }

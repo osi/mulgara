@@ -255,7 +255,7 @@ public class RuleStructure implements Rules, Serializable {
       }
       throw new RulesException("Error getting data within rule: " + currentRule, te);
     } catch (QueryException qe) {
-      logger.error("Error executing rule: " + currentRule);
+      logger.error("Error executing rule: " + currentRule, qe);
       try {
         session.rollback();
       } catch (QueryException e) {
