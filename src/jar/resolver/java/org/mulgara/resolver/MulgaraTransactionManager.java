@@ -73,6 +73,7 @@ public class MulgaraTransactionManager {
   // Write lock is associated with a session.
   private Session currentWritingSession;
   private MulgaraTransaction userTransaction;
+  private boolean autoCommit;
 
   /** Set of sessions whose transactions have been rolledback.*/
   private Set<Session> failedSessions;
@@ -98,6 +99,7 @@ public class MulgaraTransactionManager {
   public MulgaraTransactionManager(TransactionManagerFactory transactionManagerFactory) {
     this.currentWritingSession = null;
     this.userTransaction = null;
+    this.autoCommit = true;
 
     this.failedSessions = new HashSet<Session>();
     this.sessions = new HashMap<MulgaraTransaction, Session>();
@@ -240,6 +242,7 @@ public class MulgaraTransactionManager {
             });
           } finally {
             releaseWriteLock();
+            this.autoCommit = true;
           }
         } else if (failedSessions.contains(session)) {
           // Within failed transaction - cleanup.
@@ -257,6 +260,7 @@ public class MulgaraTransactionManager {
         // AutoCommit on -> off == Start new transaction.
         userTransaction = getTransaction(session, true);
         userTransaction.reference();
+        this.autoCommit = false;
       }
     }
   }
@@ -400,7 +404,18 @@ public class MulgaraTransactionManager {
             "Attempt to suspend transaction from outside thread");
       }
 
-      return transactionManager.suspend();
+      if (autoCommit && transaction == userTransaction) {
+        logger.error("Attempt to suspend write transaction without setting AutoCommit Off");
+        throw new MulgaraTransactionException(
+            "Attempt to suspend write transaction without setting AutoCommit Off");
+      } else {
+        logger.error("Suspended transaction: ac=" + autoCommit + " t=" + transaction + "ut=" + userTransaction);
+      }
+
+      Transaction xa = transactionManager.suspend();
+      activeTransactions.remove(Thread.currentThread());
+
+      return xa;
     } catch (Throwable th) {
       logger.error("Attempt to suspend failed", th);
       try {
@@ -409,8 +424,6 @@ public class MulgaraTransactionManager {
         logger.error("Attempt to setRollbackOnly() failed", t);
       }
       throw new MulgaraTransactionException("Suspend failed", th);
-    } finally {
-      activeTransactions.remove(Thread.currentThread());
     }
   }
 

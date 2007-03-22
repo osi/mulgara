@@ -78,6 +78,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   private static final URI modelURI;
   private static final URI model2URI;
   private static final URI model3URI;
+  private static final URI model4URI;
 
   static {
     try {
@@ -86,6 +87,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
       modelURI       = new URI("local:database#model");
       model2URI      = new URI("local:database#model2");
       model3URI      = new URI("local:database#model3");
+      model4URI      = new URI("local:database#model4");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }
@@ -111,6 +113,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitRollbackIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitCommitIsolationQuery"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testImplicitCommitQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testDatabaseDelete"));
 
     return suite;
@@ -759,7 +762,6 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     }
   }
 
-
   public void testExplicitRollbackIsolationQuery() throws URISyntaxException
   {
     logger.info("testExplicitRollbackIsolationQuery");
@@ -1001,6 +1003,109 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           answer.beforeFirst();
           assertFalse(answer.next());
           answer.close();
+        } finally {
+          session2.close();
+        }
+      } finally {
+        session1.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+
+  public void testImplicitCommitQuery() throws URISyntaxException
+  {
+    logger.info("testImplicitCommitQuery");
+    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+
+    try {
+      Session session1 = database.newSession();
+      try {
+        Session session2 = database.newSession();
+        try {
+          session1.createModel(model4URI, null);
+          session1.setModel(model4URI, new ModelResource(fileURI));
+
+          Variable subjectVariable   = new Variable("subject");
+          Variable predicateVariable = new Variable("predicate");
+          Variable objectVariable    = new Variable("object");
+
+          List selectList = new ArrayList(3);
+          selectList.add(subjectVariable);
+          selectList.add(predicateVariable);
+          selectList.add(objectVariable);
+
+          // Check data loaded
+          Answer answer = session1.query(new Query(
+            selectList,                                       // SELECT
+            new ModelResource(model4URI),                      // FROM
+            new ConstraintImpl(subjectVariable,               // WHERE
+                           predicateVariable,
+                           objectVariable),
+            null,                                             // HAVING
+            Arrays.asList(new Order[] {                       // ORDER BY
+              new Order(subjectVariable, true),
+              new Order(predicateVariable, true),
+              new Order(objectVariable, true)
+            }),
+            null,                                             // LIMIT
+            0,                                                // OFFSET
+            new UnconstrainedAnswer()                         // GIVEN
+          ));
+
+          String[][] results = {
+            { "test:s01", "test:p01", "test:o01" },
+            { "test:s01", "test:p02", "test:o01" },
+            { "test:s01", "test:p02", "test:o02" },
+            { "test:s01", "test:p03", "test:o02" },
+            { "test:s02", "test:p03", "test:o02" },
+            { "test:s02", "test:p04", "test:o02" },
+            { "test:s02", "test:p04", "test:o03" },
+            { "test:s02", "test:p05", "test:o03" },
+            { "test:s03", "test:p01", "test:o01" },
+            { "test:s03", "test:p05", "test:o03" },
+            { "test:s03", "test:p06", "test:o01" },
+            { "test:s03", "test:p06", "test:o03" },
+          };
+          compareResults(results, answer);
+          answer.close();
+
+          // Delete all the data from the model
+          session2.delete(model4URI, new Query(
+            selectList,                                       // SELECT
+            new ModelResource(model4URI),                     // FROM
+            new ConstraintImpl(subjectVariable,               // WHERE
+                           predicateVariable,
+                           objectVariable),
+            null,                                             // HAVING
+            new ArrayList(),                                  // ORDER BY
+            null,                                             // LIMIT
+            0,                                                // OFFSET
+            new UnconstrainedAnswer()                         // GIVEN
+          ));
+
+          // Check all data removed from the model
+          // This also checks that the delete successfully
+          // performed the implicit commit.
+          answer = session1.query(new Query(
+            selectList,                                       // SELECT
+            new ModelResource(model4URI),                      // FROM
+            new ConstraintImpl(subjectVariable,               // WHERE
+                           predicateVariable,
+                           objectVariable),
+            null,                                             // HAVING
+            new ArrayList(),                                  // ORDER BY
+            null,                                             // LIMIT
+            0,                                                // OFFSET
+            new UnconstrainedAnswer()                         // GIVEN
+          ));
+          answer.beforeFirst();
+          assertFalse(answer.next());
+          answer.close();
+
+          session1.removeModel(model3URI);
         } finally {
           session2.close();
         }
