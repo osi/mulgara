@@ -2313,6 +2313,8 @@ public final class TripleAVLFile {
       }
 
 
+      /* Don't enable this in production unless you want a significant increase in heap usage,
+       * out-of-heap errors, and 60% slow-down of the queries.
       public void finalize() {
         if (logger.isDebugEnabled()) {
           if (stack != null) {
@@ -2321,6 +2323,7 @@ public final class TripleAVLFile {
           }
         }
       }
+      */
 
 
       public boolean equals(Object o) {
