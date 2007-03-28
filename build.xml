@@ -218,7 +218,7 @@
     <delete dir="${jxtest.dir}"/>
     <delete dir="${src.docs.dir}"/>
     <delete>
-      <fileset dir="${basedir}" includes="*.log"/>
+      <fileset dir="${basedir}" includes="*.log*"/>
     </delete>
   </target>
 
