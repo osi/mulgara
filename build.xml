@@ -49,6 +49,7 @@
   <property file="${jar.src.dir}/resolver-nodetype/resolver-nodetype-build.properties"/>
   <property file="${jar.src.dir}/resolver-prefix/resolver-prefix-build.properties"/>
   <property file="${jar.src.dir}/resolver-relational/resolver-relational-build.properties"/>
+  <property file="${jar.src.dir}/resolver-distributed/resolver-distributed-build.properties"/>
   <property file="${jar.src.dir}/server/server-build.properties"/>
   <property file="${jar.src.dir}/server-beep/server-beep-build.properties"/>
   <property file="${jar.src.dir}/server-http/server-http-build.properties"/>
@@ -114,6 +115,7 @@
   <import file="${jar.src.dir}/resolver-nodetype/build.xml"/>
   <import file="${jar.src.dir}/resolver-prefix/build.xml"/>
   <import file="${jar.src.dir}/resolver-relational/build.xml"/>
+  <import file="${jar.src.dir}/resolver-distributed/build.xml"/>
   <import file="${jar.src.dir}/resolver-spi/build.xml"/>
   <import file="${jar.src.dir}/resolver-store/build.xml"/>
   <import file="${jar.src.dir}/resolver-url/build.xml"/>
@@ -320,7 +322,7 @@
                    resolver-dist, resolver-file-dist, resolver-filesystem-dist,
                    resolver-http-dist, resolver-nodetype-dist, resolver-prefix-dist,
                    resolver-lucene-dist, resolver-memory-dist, resolver-relational-dist,
-                   resolver-spi-dist, resolver-store-dist,
+                   resolver-spi-dist, resolver-store-dist, resolver-distributed-dist,
                    resolver-url-dist, resolver-view-dist, resolver-xsd-dist,
                    resolver-jar-dist, resolver-test-dist,
                    server-dist, server-beep-dist, server-http-dist, server-local-dist,
@@ -486,6 +488,7 @@
           lib/${content-n3.jar}, lib/${content-mbox.jar}, lib/${content-rdfxml.jar},
           lib/${content-rio.jar}, lib/${resolver-nodetype.jar}, lib/${resolver-prefix.jar},
           lib/${resolver-relational.jar}, lib/${resolver-xsd.jar}, lib/${resolver-test.jar},
+          lib/${resolver-distributed.jar},
           lib/${resolver-jar.jar}, lib/${dtd.jar}, lib/${jrdf.base.jar}
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
           lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.8.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
@@ -510,7 +513,7 @@
                    store-stringpool-dist,
                    store-stringpool-xa-dist,
                    store-stringpool-memory-dist, tuples-dist, tuples-hybrid-dist,
-                   resolver-file-dist, resolver-filesystem-dist,
+                   resolver-file-dist, resolver-filesystem-dist, resolver-distributed-dist,
                    resolver-http-dist, resolver-lucene-dist, resolver-relational-dist,
                    resolver-memory-dist, resolver-nodetype-dist, resolver-prefix-dist,
                    resolver-store-dist, resolver-url-dist, resolver-jar-dist,
@@ -568,6 +571,7 @@
           ${content-n3.jar}, ${content-mbox.jar}, ${content-rdfxml.jar},
           ${content-rio.jar}, ${resolver-nodetype.jar}, ${resolver-prefix.jar},
           ${resolver-xsd.jar}, ${resolver-test.jar}, ${resolver-relational.jar},
+          ${resolver-distributed.jar},
           ${resolver-jar.jar}, ${dtd.jar}, ${jrdf.base.jar}"/>
 
       <!-- Schemas -->
@@ -895,7 +899,7 @@
                    resolver-filesystem-javadoc,
                    resolver-file-javadoc, resolver-http-javadoc,
                    resolver-lucene-javadoc, resolver-memory-javadoc,
-                   resolver-spi-javadoc,
+                   resolver-spi-javadoc, resolver-distributed-javadoc,
                    resolver-store-javadoc, resolver-url-javadoc, resolver-view-javadoc,
                    resolver-nodetype-javadoc, resolver-prefix-javadoc, resolver-xsd-javadoc,
                    resolver-test-javadoc, resolver-javadoc, resolver-relational-javadoc,
@@ -1712,7 +1716,8 @@
              query-jar, resolver-jar, resolver-file-jar, resolver-filesystem-jar,
              resolver-http-jar, resolver-memory-jar, resolver-spi-jar,
              resolver-store-jar, resolver-url-jar, resolver-lucene-jar,
-             resolver-view-jar, resolver-nodetype-jar, resolver-prefix-jar, resolver-jar-jar, resolver-relational-jar,
+             resolver-view-jar, resolver-nodetype-jar, resolver-prefix-jar, resolver-jar-jar,
+             resolver-relational-jar, resolver-distributed-jar,
              resolver-xsd-jar, resolver-test-jar, rmi-jar,
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
@@ -1818,6 +1823,7 @@
       <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-distributed.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-xsd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-test.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
@@ -1945,7 +1951,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
              resolver-nodetype-test, resolver-prefix-test, resolver-memory-test,
              resolver-spi-test, resolver-store-test, resolver-relational-test,
              resolver-url-test, resolver-view-test, resolver-xsd-test,
-             resolver-test-test,
+             resolver-distributed-test, resolver-test-test,
              store-stringpool-test"
     description="Runs resolver API/SPI tests">
   </target>
