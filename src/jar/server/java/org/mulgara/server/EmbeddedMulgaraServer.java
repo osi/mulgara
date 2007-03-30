@@ -39,6 +39,7 @@ import java.util.*;
 
 import javax.naming.*;
 import javax.xml.parsers.*;
+import org.xml.sax.SAXException;
 
 // log4j packages
 import org.apache.log4j.*;
@@ -49,6 +50,12 @@ import org.mulgara.config.ExternalConfigPaths;
 import org.mulgara.config.Jetty;
 import org.mulgara.config.MulgaraConfig;
 import org.mulgara.config.Listener;
+import org.mulgara.server.SessionFactory;
+import org.mulgara.store.StoreException;
+import org.mulgara.store.xa.SimpleXAResourceException;
+import org.mulgara.util.TempDir;
+
+// jetty packages
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.HashUserRealm;
 import org.mortbay.http.HttpListener;
@@ -66,11 +73,6 @@ import org.mortbay.util.InetAddrPort;
 import org.mortbay.util.MultiException;
 import org.mortbay.util.Resource;
 import org.mortbay.xml.XmlConfiguration;
-import org.mulgara.server.SessionFactory;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.xa.SimpleXAResourceException;
-import org.mulgara.util.TempDir;
-import org.xml.sax.SAXException;
 
 /**
  * Canonical embedded production Mulgara server. <p>
