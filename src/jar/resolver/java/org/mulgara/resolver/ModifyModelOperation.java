@@ -203,7 +203,7 @@ class ModifyModelOperation implements Operation
         Variable[] vars = answer.getVariables();
         assert vars.length == 3;
         statements = new TuplesWrapperStatements(
-            new LocalizedTuples(systemResolver, answer),
+            new LocalizedTuples(systemResolver, answer, true),
             vars[0], vars[1], vars[2]);
       } finally {
         answer.close();
