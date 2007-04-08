@@ -20,11 +20,11 @@
     <replace dir="${src.docs.dir}" token="@@includeTop@@">
       <include name="**/*.html"/>
       <replacevalue><![CDATA[<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
     <meta http-equiv="language" content="en" /> 
 	<link rel="icon" type="text/png" href="/img-layout/siteicon.png" />
@@ -49,26 +49,46 @@
     <meta name="DC.Identifier" scheme="URI" content="http://mulgara.org/" />
     <meta name="DC.Rights" scheme="URI" content="http://opensource.org/licenses/osl-3.0.php" />
     
-    <script type="text/javascript" src="/script/bodyswitcher.js"></script>
-    <style type="text/css">@import url(/style/style.css);</style>
-    <!--[if IE]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
-
+	<script type="text/javascript" src="/script/styleswitcher.js"></script>
+	<script type="text/javascript" src="/script/rollover.js"></script>
+	<link rel="stylesheet" type="text/css" href="/style/style.css"/>
+	<!--[if IE]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
+	<link rel="stylesheet" type="text/css" href="/style/navIn.css" title="navIn" />
+	<link rel="alternate stylesheet" type="text/css" href="/style/navOut.css" title="navOut" />
 </head>
 
  <body>
-	<div id="logo"><a href="/index.html"><img src="/img-layout/spacer.gif" width="800" height="56" alt="mulgara semantic store (big logo)" /></a></div>
-    <div id="backTop1"></div>
-    <div id="backTop2"></div>
-      
-    <div id="siteNaviTopBack"></div>
-    <div id="siteNaviTop"><a href="/index.html">Docs Home</a></div>
-    <div id="leftCol">
-    	<div id="siteNavi">	
-<!-- SITE NAVIGATION STARTS HERE -->
+	<div id="top"><a name="top"></a></div>
+	<div id="logo"></div>
+	<div id="logomulgara"></div> 
+<!-- PROJECT NAVIGATION STARTS HERE -->
+	<div id="navProject"><!--
+	--><a href="http://mulgara.org/index.html" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('home','','/img-layout/home2.png',1)"><img src="/img-layout/home1.png" alt="WebSite Home" width="50" height="50" name="home" /><br />	
+		<a href="http://docs.mulgara.org/" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('docs','','/img-layout/docs2.png',1)"><img src="/img-layout/docs3.png" alt="Documentation" width="50" height="50" name="docs" /></a><br />
+		<a href="http://mulgara.org/confluence" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('wiki','','/img-layout/wiki2.png',1)"><img src="/img-layout/wiki1.png" alt="Development Wiki" width="50" height="50" name="wiki" /></a><br />
+		<a href="http://mulgara.org/jira" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('bugs','','/img-layout/bugs2.png',1)"><img src="/img-layout/bugs1.png" alt="Issue Tracker" width="50" height="50" name="bugs" /></a>
+	</div>  
+<!-- PROJECT NAVIGATION ENDS HERE -->      
+
+<!-- SITE NAVIGATION STARTS HERE -->   
+<div id="navMain">
+	<div id="navSite">
   @@includeTOC@@
-<!-- SITE NAVIGATION ENDS HERE -->      
-		</div>
-    </div>]]></replacevalue>
+	</div>
+</div>
+<!-- SITE NAVIGATION ENDS HERE -->
+
+<!-- IN-OUT SWITCH STARTS HERE -->
+<div id="navGimmicks">
+	<div id="verticalLine"></div>	
+	<div id="arrowLeft">
+		<a href="#" onclick="setActiveStyleSheet('navOut'); return false"><img src="/img-layout/arrowLeft.png" alt="Hide Navigation" width="20" height="39" /></a>
+	</div>
+	<div id="arrowRight">
+		<a href="#" onclick="setActiveStyleSheet('navIn'); return false"><img src="/img-layout/arrowRight.png" alt="Show Navigation" width="20" height="39" /></a>
+	</div>
+</div>
+<!-- IN-OUT SWITCH ENDS HERE -->]]></replacevalue>
     </replace>
 
     <replace dir="${src.docs.dir}" token="@@includeTOC@@">
@@ -163,25 +183,23 @@
 
     <replace dir="${src.docs.dir}" token="@@includeBottom@@">
       <include name="**/*.html"/>
-      <replacevalue><![CDATA[</div>
-		<!-- end of main content -->
+      <replacevalue><![CDATA[
 
-
-		<div id="footer">
-			<div id="copyright">
-				<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative"><img style="border:0;width:55px;height:48px;" src="/img-layout/opensource-55x48.png" alt="Open Source logo" /></a>
-				<p>&copy; 2001-2004 Tucana Technologies, Inc. Some rights reserved.</p>    
-				<p>&copy; 2006 The Mulgara Project. Some rights reserved.<br />
-					Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the license is included in the section entitled &quot;<a href="/legal/fdl.txt">GNU Free Documentation License</a>&quot;.
-				</p>
-				<p>Modification Authors:  Paul Gearon, David Wood.  Principle Authors: Tom Adams, Grant Noble.  The publisher of this version is <a href="http://mulgara.org">The Mulgara Project</a>. <a href="/overview/history.html">Document history</a>.</p>
-			</div>
+	<div id="footer">
+		<div id="copyright">
+			<a href="http://www.opensource.org/docs/definition.php" title="Open Source Initiative"><img style="border:0;width:55px;height:48px;" src="/img-layout/opensource-55x48.png" alt="Open Source logo" /></a>
+			<p>&copy; 2001-2004 Tucana Technologies, Inc. Some rights reserved.</p>    
+			<p>&copy; 2006 The Mulgara Project. Some rights reserved.<br />
+				Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the license is included in the section entitled &quot;<a href="/legal/fdl.txt">GNU Free Documentation License</a>&quot;.
+			</p>
+			<p>Modification Authors:  Paul Gearon, David Wood.  Principle Authors: Tom Adams, Grant Noble.  The publisher of this version is <a href="http://mulgara.org">The Mulgara Project</a>. <a href="/overview/history.html">Document history</a>.</p>
+		</div>
+		<div id="valid">
+	           <a href="http://validator.w3.org/check?uri=referer"><img src="/img-layout/w3xhtml10.gif" alt="Valid XHTML 1.0 Transitional" height="21" width="66" /></a>
+	           &nbsp; 
+	           <a class="right" href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fmulgara.org%2Fstyle%2Fstyle.css&warning=1&profile=css3&usermedium=all"><img src="/img-layout/w3css30.gif" alt="Valid CSS 3.0!" height="21" width="66" /></a>
 		</div>
 	</div>
-	<!-- end of right column -->
-	
-	<div id="sfx" title="Switch specialFX ON unless you have slow hardware. It provides a fixed header while you scroll, leaving the navigation always in reach."></div>
-	
 </body>
 </html>]]></replacevalue>
     </replace>
