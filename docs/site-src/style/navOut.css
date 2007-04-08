@@ -1,0 +1,7 @@
+#arrowLeft, #navMain 
+				{ display:none }
+#verticalLine 	{ left: 60px;}
+#navPage		{ left: 60px;}
+#arrowRight 	{ display:block; }
+#content 		{ margin: 110px 20px 300px 53px; padding: 0px 0px 20px 0px; }
+#footer 		{ left: 70px; }
