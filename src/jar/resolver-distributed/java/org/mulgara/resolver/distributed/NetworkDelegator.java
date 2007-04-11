@@ -176,7 +176,10 @@ public class NetworkDelegator implements Delegator {
     }
     String host = modelUri.getHost();
     if (ServerInfo.getHostnameAliases().contains(host)) {
-      throw new QueryException("Attempt to resolve a local model through the distributed resolver.");
+      // on the same machine.  Check if the server is different.
+      if (ServerInfo.getServerURI().getPath().equals(modelUri.getPath())) {
+        throw new QueryException("Attempt to resolve a local model through the distributed resolver.");
+      }
     }
   }
 
@@ -190,7 +193,7 @@ public class NetworkDelegator implements Delegator {
   protected Session getModelSession(URI modelUri) throws QueryException {
     try {
       // use the URI without the model fragment
-      return getServerSession(new URI(modelUri.getScheme(), modelUri.getSchemeSpecificPart(), ""));
+      return getServerSession(new URI(modelUri.getScheme(), modelUri.getSchemeSpecificPart(), null));
     } catch (URISyntaxException use) {
       throw new AssertionError(use);
     }
