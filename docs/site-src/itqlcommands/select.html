@@ -114,6 +114,7 @@
 <h4>in Specifier</h4>
 
 <p>Constraints may optionally contain an <code>in</code> specifier to resolve the constraint against the statements in a specified model, rather than the one specified in the <code><a id="h1303" class="documentlinktemplate" title="from Clause" href="/itqlcommands/select.html#o189">from</a></code> clause.</p>
+<p>The <code>in</code> specifier may be used to specify views as well as models.</p>
 
 <p>The following example constrains the result by titles in the <code>#books</code> model rather than the one specified in the <code>from</code> clause.</p>
 
@@ -283,200 +284,96 @@ where trans($subject &lt;rdfs:subClassOf&gt; &lt;<code>vertebrates</code>&gt;)</
   (&lt;elephants&gt;, &lt;rdfs:subClassOf&gt;, &lt;<code>vertebrates</code>&gt;) ]</p>
 
 <p>Likewise, you can also make the subject in the <code>trans</code> constraint a constant and the object a variable.</p>
+<div class="anchor"><a name="oxxminusxx">&nbsp;</a></div>
+<h4>Graph Difference (minus) Function</h4>
+<p>The <code>minus</code> function allows you to find the statements which differ between two graphs.</p>
+
+<p>For example, to find the statements which are different between the model &lt;rmi://localhost/server1#input&gt; and &lt;rmi://localhost/server1#output&gt;, we could issue a query like this:</p>
+
+<p class="commandtext">select $subject $predicate $object<br />
+from &lt;rmi://localhost/server1#output&gt;<br />
+where<br />
+  $subject $predicate $object in &lt;rmi://localhost/server1#output&gt;<br />
+  minus<br />
+  $subject $predicate $object in &lt;rmi://localhost/server1#input&gt; ;</p>
+
+<p>The use of the <code>in</code> specifier is not strictly necessary for the model named in <code>from</code> clause, but it makes the query a bit more readable by providing symmetry.</p>
+
+<p>To count the number of statements that differ between the two models, we could do something like
+the following.  Note variables do not carry over into a <code>count</code> function's namespace, so the outer query could be anything.</p>
+
+<p class="commandtext">select count (<br />
+    select $subject $predicate $object<br />
+    from &lt;rmi://localhost/server1#output&gt;<br />
+    where<br />
+      $subject $predicate $object in &lt;rmi://localhost/server1#output&gt;<br />
+      minus<br />
+      $subject $predicate $object in &lt;rmi://localhost/server1#input&gt;<br />
+)<br />
+from &lt;rmi://localhost/server1#&gt;<br />
+where<br />
+  $s $p $o ;</p>
+
 <div class="anchor"><a name="o2768">&nbsp;</a></div>
 <h4>exclude Function</h4>
 
-<p>The <code>exclude</code> function allows you to select all statements whose properties are the inverse of a given constraint. Normal constraints match against the graph with the constraints you provide. Constraints enclosed in an <code>exclude</code> function return the values in the graph that are not the constraints provided. This allows you to build queries to ask questions such as: &quot;find me all the known plants stored, with leaves that are not green&quot; or &quot;find me all the American states stored that are not Alabama&quot;.</p>
+<p>The <code>exclude</code> function allows you to select all statements which do not match a given constraint. Normal constraints match against the graph with the constraints you provide. Constraints enclosed in an <code>exclude</code> function return the values in the graph that are not the constraints provided.</p>
 
-<p>Using the following statements as an example:</p>
+<p>This function is almost never useful.  Consider using the <a id="hxxminusxx" class="documentlinktemplate" title="Graph Difference (minus) Function" href="/itqlcommands/select.html#oxxminusxx">minus</a> operator instead.</p>
+
+<p>Using the following statements as an example for "finding all plants with leaves that are not green":</p>
 
 <p class="commandtext">[ (&lt;maple&gt;, &lt;leaves&gt;, 'green')<br />
   (&lt;redMaple&gt;, &lt;leaves&gt;, 'red')<br />
   (&lt;oak&gt;, &lt;leaves&gt;, 'green')<br />
   (&lt;cactus&gt;, &lt;prickles&gt;, 'yellow') ]</p>
 
-<p>You wish to find all plants that do not have leaves. The following query:</p>
-
-<p class="commandtext">select $s $p $o<br />
-...<br />
-where exclude($s &lt;leaves&gt; $o) <br />
-and ($s $p $o);</p>
-
-<p>Returns:</p>
-
-<p class="commandtext">[ (&lt;cactus&gt;, &lt;prickles&gt;, 'yellow') ]</p>
-
-<p>Unless your model is very small, the <code>exclude</code> function by itself is rarely useful. For example, the following query:</p>
-
-<p class="commandtext">select $s $p $o<br />
-...<br />
-where exclude($s &lt;leaves&gt; 'green')<br />
-and $s $p $o;</p>
-
-<p>Returns:</p>
-
-<p class="commandtext">[ (&lt;cactus&gt;, &lt;prickles&gt;, 'yellow')<br />
-  (&lt;redMaple), &lt;leaves&gt;, 'red' ]</p>
-
-<p>As this returns all statements that do not have the predicate <code>&lt;leaves&gt;</code> and the object value 'green', if a statement exists where <em>either</em> of these columns do not match, it is returned. If you want to find all the things that have leaves that are not green you need to perform the following query:</p>
+<p>With a small model it is possible to query for all plants that do not have leaves. The following query:</p>
 
 <p class="commandtext">select $s<br />
-...<br />
-where $s &lt;urn:leaves&gt; $o <br />
-and exclude($s $p 'green');</p>
+from ...<br />
+where exclude($s &lt;leaves&gt; $o) ;</p>
+
+<p>Returns:</p>
+
+<p class="commandtext">[ ( &lt;cactus&gt; ) ]</p>
+
+<p>However, more statements in the data mean that the results will need to be constrained more carefully.  Unfortunately this may cause the <code>exclude</code> operator to miss some required statements.  For instance, if the following statements were also included:</p>
+
+<p class="commandtext">[ ( &lt;maple&gt; &lt;rdf:type&gt; &lt;plant&gt; )<br/>
+( &lt;redMaple&gt; &lt;rdf:type&gt; &lt;plant&gt; )<br/>
+( &lt;oak&gt; &lt;rdf:type&gt; &lt;plant&gt; )<br/>
+( &lt;cactus&gt; &lt;rdf:type&gt; &lt;plant&gt; ) ]</p>
+
+<p>The following query would appear appropriate:</p>
+
+<p class="commandtext">select $s<br />
+from ...<br />
+where $s &lt;rdf:type&gt; &lt;plant&gt; <br/>
+and exclude($s &lt;leaves&gt; $o);</p>
+
+<p class="bodytext">However, this returns:</p>
+
+<p class="commandtext">[( &lt;maple&gt; )<br/>
+( &lt;redMaple&gt; )<br/>
+( &lt;oak&gt; )<br/>
+( &lt;cactus&gt; ) ]</p>
 
 <p>To understand what this query is doing, examine each constraint individually:</p>
-<ol><li><code>$s &lt;urn:leaves&gt; $o</code> returns all statements with the predicate <code>&lt;leaves&gt;</code>:
-<p class="listcontinuecommandtext">$s          $o<br />
-&lt;maple&gt;     'green'<br />
-&lt;redMaple&gt;  'red'<br />
-&lt;oak&gt;       'green'</p>
-</li><li><code>exclude($s $p 'green')</code> returns all statements that do not have the object value 'green':
-<p class="listcontinuecommandtext">$s          $p<br />
-&lt;redMaple&gt;  &lt;leaves&gt;<br />
-&lt;cactus&gt;    &lt;prickles&gt;</p>
-</li></ol>
-<p>Combining these two results (using <code>and</code>), only one statement satisfies all constraints and the query returns the variable (<code>$s</code>) in the <code><a id="h217_2" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188">select</a></code> clause:</p>
+<ol>
+  <li><code>$s &lt;rdf:type&gt; &lt;plant&gt;</code> returns all statements referring to a type of plant:<p class="listcontinuecommandtext">$s          $p <br/>&lt;maple&gt;     &lt;plant&gt; <br/>&lt;redMaple&gt;  &lt;plant&gt; <br/>&lt;oak&gt;       &lt;plant&gt; <br/>&lt;cactus&gt;    &lt;plant&gt;</p>
+  </li>
+  <li><code>$s &lt;urn:leaves&gt; $o</code> (before the <code>exclude</code> operator is applied) returns all statements which match the predicate <code>&lt;leaves&gt;</code>:<p class="listcontinuecommandtext">$s          $o<br />&lt;maple&gt;     'green'<br />&lt;redMaple&gt;  'red'<br />&lt;oak&gt;       'green'</p>
+  </li>
+  <li><code>exclude($s &lt;urn:leaves&gt; $o)</code> returns all statements which do not match the predicate <code>&lt;leaves&gt;</code>:<p class="listcontinuecommandtext">$s          $o <br/>&lt;maple&gt;     &lt;plant&gt; <br/>&lt;redMaple&gt;  &lt;plant&gt; <br/>&lt;oak&gt;       &lt;plant&gt; <br/>&lt;cactus&gt;    &lt;plant&gt; <br/>&lt;cactus&gt;    'yellow' </p>
+  </li>
+</ol>
+<p>Combining the two results (using <code>and</code>), leads to all the subjects satisfying both constraints.  This is incorrect.  The required solution can be found if the <code>minus</code> operator is used instead:</p>
 
-<p class="commandtext">[ (&lt;redMaple&gt;) ]</p>
+<p class="commandtext">select $s<br />from ...<br />where $s &lt;rdf:type&gt; &lt;plant&gt; <br/>minus $s &lt;leaves&gt; $o ;</p>
 
-<p>Rarely do graphs contain just one easily defined set of statement. Extending the base set of statements with overlapping predicates for our example:</p>
+<p>In this case the <code>minus</code> operator will remove all statements matching the specified constraint, rather than joining to all statements which do not match the specified constraint (which is the operation of <code>and exclude</code>). </p>
 
-<p class="commandtext">[ (&lt;maple&gt;, &lt;type&gt;, &lt;plant&gt;)<br />
-  (&lt;redMaple&gt;, &lt;type&gt;, &lt;plant&gt;)<br />
-  (&lt;oak&gt;, &lt;type&gt;, &lt;plant&gt;)<br />
-  (&lt;cactus&gt;, &lt;type&gt;, &lt;plant&gt;)<br />
-  (&lt;maple&gt;, &lt;leaves&gt;, 'green')<br />
-  (&lt;redMaple&gt;, &lt;leaves&gt;, 'red')<br />
-  (&lt;oak&gt;, &lt;leaves&gt;, 'green')<br />
-  (&lt;cactus&gt;, &lt;prickles&gt;, 'yellow') <br />
-  (&lt;binderRefill&gt;, &lt;leaves&gt;, '50') ]</p>
-
-<p>Using the previous query:</p>
-
-<p class="commandtext">select $s<br />
-...<br />
-where $s &lt;urn:leaves&gt; $o <br />
-and exclude($s $p 'green');</p>
-
-<p>Returns:</p>
-
-<p class="commandtext">[ (&lt;maple&gt;)<br />
-  (&lt;redMaple&gt;)<br />
-  (&lt;oak&gt;)<br />
-  (&lt;binderRefill&gt;) ]</p>
-
-<p>Examining each constraint individually again:</p>
-<ol><li><code>$s &lt;urn:leaves&gt; $o</code> returns all statements with the predicate <code>&lt;leaves&gt;</code>:
-<p class="listcontinuecommandtext">$s             $o<br />
-&lt;maple&gt;        'green'<br />
-&lt;redMaple&gt;     'red'<br />
-&lt;oak&gt;          'green'<br />
-&lt;binderRefill&gt; '50'</p>
-</li><li><code>exclude($s $p 'green')</code> returns all statements that do not have the object value 'green':
-<p class="listcontinuecommandtext">$s              $p<br />
-&lt;maple&gt;         &lt;type&gt;<br />
-&lt;redMaple&gt;      &lt;type&gt;<br />
-&lt;oak&gt;           &lt;type&gt;<br />
-&lt;cactus&gt;        &lt;type&gt;<br />
-&lt;redMaple&gt;      &lt;leaves&gt;<br />
-&lt;cactus&gt;        &lt;prickles&gt;<br />
-&lt;binderRefill&gt;  &lt;leaves&gt;</p>
-</li></ol>
-<p>Combining the <code>$s</code> column from each result of the constraints, leads to the result.</p>
-
-<p>You usually need to restrict the <code>exclude</code> constraint. In the previous examples, you only want to query things that are plants and not the entire graph. It is also preferable that the results from these constraints exist as real statements in a graph. To restrict the constraints so they only return things in the graph, the variables must be bound to the relevant positions.</p>
-
-<p>For example, the following query:</p>
-
-<p class="commandtext"><code>select $s $p $o<br />
-...<br />
-where $s &lt;urn:leaves&gt; $o <br />
-and exclude($s $p 'green') <br />
-and $s $p $o;</code></p>
-
-<p>Returns:</p>
-
-<p class="commandtext"><code>[ (&lt;redMaple&gt;, &lt;leaves&gt;, 'red')<br />
-  (&lt;binderRefill&gt;, &lt;leaves&gt;, '50') ]</code></p>
-
-<p>Note that the query still has not restricted the type of the object. To only query plants, the following query:</p>
-
-<p class="commandtext"><code>select $s $p $o<br />
-...<br />
-where $s &lt;urn:leaves&gt; $o <br />
-and exclude($s $p 'green') <br />
-and $s $p $o<br />
-and $s &lt;type&gt; &lt;plant&gt; ;</code></p>
-
-<p>Returns:</p>
-
-<p class="commandtext"><code>[ (&lt;redMaple&gt;, &lt;leaves&gt;, 'red') ]</code></p>
-<div class="anchor"><a name="o2769">&nbsp;</a></div>
-<h5>Standard Queries</h5>
-
-<p>The variable names used in the <code>exclude</code> function are not bound by other constraints, including the <code><a id="h2772" class="documentlinktemplate" title="Assigning a Value to a Variable (mulgara:is)" href="/itqlcommands/select.html#o1531">&lt;mulgara:is&gt;</a></code> operation. All other operations match statements in the graph. So it is not the same thing as replacing positively matching values from the graph and assigning these values to the <code>exclude</code> function. The variable names used in the <code>exclude</code> function and other operations are only used to join the column values from the results of each constraint.</p>
-
-<p>For example, the query:</p>
-
-<p class="commandtext"><code>select $s $p $o<br />
-...<br />
-where exclude($s $p 'green')<br />
-and $p &lt;mulgara:is&gt; &lt;leaves&gt;<br />
-and $s $p $o;</code></p>
-
-<p>Results in all the statements that do not have the object value 'green', combined with all the statements with the predicate <code>&lt;leaves&gt;</code>:</p>
-
-<p class="commandtext"><code>[ (&lt;redMaple&gt;, &lt;leaves&gt;, 'red')<br />
-  (&lt;binderRefill&gt;, &lt;leaves&gt;, '50') ]</code></p>
-
-<p>Note that this is not the same as:</p>
-
-<p class="commandtext"><code>select $s $p $o<br />
-...<br />
-where exclude ($s &lt;urn:leaves&gt; 'green')<br />
-and $p &lt;mulgara:is&gt; &lt;leaves&gt;<br />
-and $s $p $o;</code></p>
-
-<p>Which returns:</p>
-
-<p class="commandtext"><code>[ (&lt;maple&gt;, &lt;leaves&gt;, 'green')<br />
-  (&lt;oak&gt;, &lt;leaves&gt;, 'green') ]</code></p>
-<div class="anchor"><a name="o2770">&nbsp;</a></div>
-<h5>exclude($s $p $o)</h5>
-
-<p><code>exclude</code> functions that only contain variables usually return no result. If joined to other constraints with <code>and</code>, it will return no result. As stated above, this cannot be changed by using <code><a id="h2772_2" class="documentlinktemplate" title="Assigning a Value to a Variable (mulgara:is)" href="/itqlcommands/select.html#o1531">&lt;mulgara:is&gt;</a></code> or other constraints. The only exception to this is when the <code>exclude</code> function is used in a subquery or aggregate function. See the next section on subqueries for more details.</p>
-
-<p>For example, the following query returns no result.</p>
-
-<p class="commandtext"><code>select $s $p $o<br />
-...<br />
-where exclude ($s $p $o)<br />
-and $o &lt;mulgara:is&gt; 'green'<br />
-and $s $p $o;</code></p>
-<div class="anchor"><a name="o2771">&nbsp;</a></div>
-<h5>Subqueries</h5>
-
-<p>Subqueries allow the results from one query to be used in another. That is, the values of the outer queries bind to the variables with the same name in the inner query. So a constraint such as <code>exclude($s $p $o)</code>, which normally returns no result, could return results if used in a <code><a id="h211" class="documentlinktemplate" title="subquery Function" href="/itqlcommands/select.html#o193">subquery</a></code> or <code><a id="h733" class="documentlinktemplate" title="count Function" href="/itqlcommands/select.html#o194">count</a></code> function when any of the variables <code>$s</code>, <code>$p</code> or <code>$o</code> are bound by the outer query.</p>
-
-<p>For example, the following query binds the <code>$s</code> and <code>$o</code> values of the internal query:</p>
-
-<p class="commandtext"><code>select $s $o subquery(<br />
-  select $s2 $p2 $o2 <br />
-  ...<br />
-  where exclude($s $p2 $o) <br />
-  and $s $p2 $o2 <br />
-  and $s2 $p2 $o)<br />
-...<br />
-where $s &lt;urn:type&gt; $o ;</code></p>
-
-<p>The first result passes values to the internal <code>subquery</code> where <code>$s</code> is <code>&lt;maple&gt;</code> and <code>$o</code> is <code>&lt;plant&gt;</code>. This causes the inner query to look like:</p>
-
-<p class="commandtext"><code>select $s2 $p2 $o2 <br />
-...<br />
-where exclude(&lt;maple&gt; $p2 &lt;plant&gt;)<br />
-and &lt;maple&gt; $p2 $o2 <br />
-and $s2 $p2 &lt;plant&gt;</code></p>
 <div class="anchor"><a name="o190">&nbsp;</a></div>
 <h3>order by Clause</h3>
 

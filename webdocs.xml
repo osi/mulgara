@@ -571,12 +571,8 @@
 										<li><a href="/itqlcommands/select.html#o1531">Assigning a Value to a Variable (mulgara:is)</a></li>
 										<li><a href="/itqlcommands/select.html#o1532">Traversing a Graph (walk Function)</a></li>
 										<li><a href="/itqlcommands/select.html#o1535">Transitive Closure (trans Function)</a></li>
+										<li><a href="/itqlcommands/select.html#oxxminusxx">Graph Difference (minus) Function</a></li>
 										<li><a href="/itqlcommands/select.html#o2768">exclude Function</a></li>
-										<ul class="toc">
-												<li><a href="/itqlcommands/select.html#o2769">Standard Queries</a></li>
-												<li><a href="/itqlcommands/select.html#o2770">exclude($s $p $o)</a></li>
-												<li><a href="/itqlcommands/select.html#o2771">Subqueries</a></li>
-										</ul>
 								</ul>
 								<li><a href="/itqlcommands/select.html#o190">order by Clause</a></li>
 								<li><a href="/itqlcommands/select.html#o191">limit Clause</a></li>
