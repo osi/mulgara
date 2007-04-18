@@ -204,7 +204,7 @@ public class StatementStoreXAResource implements XAResource
       }
       try {
         if (onePhase) {
-          // Check return value is XA_OK.
+          // Currently prepare only returns XA_OK, and throws an exception on failure.
           prepare(xid);
         }
       } catch (Throwable th) {
@@ -223,13 +223,7 @@ public class StatementStoreXAResource implements XAResource
         throw new XAException(XAException.XAER_RMERR);
       }
     } finally {
-      synchronized(preparing) {
-        if (preparing.contains(session)) {
-          preparing.remove(session);
-        } else {
-          logger.debug("Already committed in this transaction");
-        }
-      }
+      cleanup("commit");
     }
 
   }
@@ -247,12 +241,13 @@ public class StatementStoreXAResource implements XAResource
       logger.debug("Forget xid=" + System.identityHashCode(xid));
     }
     try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Releasing session " + session);
+      synchronized(preparing) {
+        if (preparing.contains(session)) {
+          rollback(xid);
+        }
       }
-      session.release();
-    } catch (SimpleXAResourceException es) {
-      logger.debug("Attempt to release store failed", es);
+    } finally {
+      cleanup("forget");
     }
   }
 
@@ -301,6 +296,8 @@ public class StatementStoreXAResource implements XAResource
       // Make sure the exception is logged.
       logger.fatal("Failed to rollback resource in transaction " + xid, th);
       fatalError = true;
+    } finally {
+      cleanup("rollback");
     }
 
     if (fatalError) {
@@ -365,5 +362,28 @@ public class StatementStoreXAResource implements XAResource
     }
 
     return buffer.toString();
+  }
+
+
+  private void cleanup(String operation) {
+    try {
+      synchronized(preparing) {
+        if (preparing.contains(session)) {
+          preparing.remove(session);
+        } else {
+          logger.debug("Already committed/rolledback in this transaction");
+        }
+      }
+    } finally {
+      try {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Releasing session after " + operation + " " + session);
+        }
+        session.release();
+        session = null;
+      } catch (SimpleXAResourceException es) {
+        logger.error("Attempt to release store failed", es);
+      }
+    }
   }
 }

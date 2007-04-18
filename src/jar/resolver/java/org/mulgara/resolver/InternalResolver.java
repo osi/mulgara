@@ -226,17 +226,21 @@ class InternalResolver implements Resolver, ViewMarker
       assert resolution != null;
 
       // Check the solution and extract the model type (if any) from it
-      resolution.beforeFirst();
-      if (resolution.next()) {
-        long modelType = resolution.getColumnValue(
-                           resolution.getColumnIndex(modelTypeVariable));
-        if (resolution.next()) {           throw new ResolverException("Model " + model + " has more than one type!");
-        }
+      try {
+        resolution.beforeFirst();
+        if (resolution.next()) {
+          long modelType = resolution.getColumnValue(
+                             resolution.getColumnIndex(modelTypeVariable));
+          if (resolution.next()) {           throw new ResolverException("Model " + model + " has more than one type!");
+          }
 
-        return modelType;
-      }
-      else {
-        return NodePool.NONE;
+          return modelType;
+        }
+        else {
+          return NodePool.NONE;
+        }
+      } finally {
+        resolution.close();
       }
     }
     catch (QueryException e) {

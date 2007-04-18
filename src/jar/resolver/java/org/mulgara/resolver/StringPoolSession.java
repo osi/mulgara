@@ -283,7 +283,9 @@ public class StringPoolSession implements XAResolverSession
 
   public void rollback() throws SimpleXAResourceException
   {
-    logger.debug("Rollback phase on StringPoolSession " + System.identityHashCode(this));
+    if (logger.isDebugEnabled()) {
+      logger.debug("Rollback phase on StringPoolSession " + System.identityHashCode(this));
+    }
     if (state == RELEASE) {
       throw new SimpleXAResourceException("Attempting to rollback phase outside transaction");
     }
@@ -298,7 +300,9 @@ public class StringPoolSession implements XAResolverSession
 
   public void release() throws SimpleXAResourceException
   {
-    logger.debug("Release phase on StringPoolSession " + System.identityHashCode(this));
+    if (logger.isDebugEnabled()) {
+      logger.debug("Release phase on StringPoolSession " + System.identityHashCode(this));
+    }
     if (state == RELEASE) {
       return;
     } else if (state != COMMIT && state != ROLLBACK) {
