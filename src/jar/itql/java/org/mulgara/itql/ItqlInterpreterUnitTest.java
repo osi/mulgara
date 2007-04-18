@@ -304,7 +304,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testHelp() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting help test");
+    log.info("Starting help test");
 
     // create the statement
     String statement = "help ;";
@@ -351,7 +351,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected.toString(), results);
 
     // log that we've completed the test
-    log.debug("Completed help test");
+    log.info("Completed help test");
   }
 
   /**
@@ -365,7 +365,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testInsert1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting insert test 1");
+    log.info("Starting insert test 1");
 
     String statement;
 
@@ -391,7 +391,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed insert test 1");
+    log.info("Completed insert test 1");
   }
 
   /**
@@ -406,7 +406,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testInsert2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting insert test 1");
+    log.info("Starting insert test 1");
 
     String statement;
 
@@ -435,7 +435,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     interpreter.executeCommand(statement);
 
     // log that we've completed the test
-    log.debug("Completed insert test 2");
+    log.info("Completed insert test 2");
   }
 
   // testHelp()
@@ -453,7 +453,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testQuit() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting quit test");
+    log.info("Starting quit test");
 
     // create the statement
     String statement = "quit ;";
@@ -476,7 +476,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected, results);
 
     // log that we've completed the test
-    log.debug("Completed quit test");
+    log.info("Completed quit test");
   }
 
   // testQuit()
@@ -494,7 +494,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSu1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting su test 1");
+    log.info("Starting su test 1");
 
     // create the statement
     String statement = "su <ldap://bar.org> fred Fo0Bar ;";
@@ -519,7 +519,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected, results);
 
     // log that we've completed the test
-    log.debug("Completed su test 1");
+    log.info("Completed su test 1");
   }
 
   // testSu1()
@@ -537,7 +537,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testAlias1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting alias test 1");
+    log.info("Starting alias test 1");
 
     // create the statement
     String statement = "alias <http://purl.org/dc/elements/1.1> as dc ;";
@@ -560,7 +560,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected, results);
 
     // log that we've completed the test
-    log.debug("Completed alias test 1");
+    log.info("Completed alias test 1");
   }
 
   // testAlias1()
@@ -579,7 +579,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 1");
+    log.info("Starting select test 1");
 
     // create the statement
     String statement =
@@ -614,7 +614,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 1");
+    log.info("Completed select test 1");
   }
 
   // testSelect1()
@@ -633,7 +633,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 2");
+    log.info("Starting select test 2");
 
     // create the statement
     String statement =
@@ -666,7 +666,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 2");
+    log.info("Completed select test 2");
   }
 
   // testSelect2()
@@ -685,7 +685,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect3() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 3");
+    log.info("Starting select test 3");
 
     // create the statement
     String statement =
@@ -721,7 +721,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 3");
+    log.info("Completed select test 3");
   }
 
   // testSelect3()
@@ -741,7 +741,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect4() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 4");
+    log.info("Starting select test 4");
 
     // create the statement
     String statement =
@@ -777,7 +777,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 4");
+    log.info("Completed select test 4");
   }
 
   // testSelect4()
@@ -797,7 +797,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect5() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 5");
+    log.info("Starting select test 5");
 
     // create the statement
     String statement =
@@ -838,7 +838,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 5");
+    log.info("Completed select test 5");
   }
 
   // testSelect5()
@@ -859,7 +859,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect6() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 6");
+    log.info("Starting select test 6");
 
     // create the statement
     String statement =
@@ -898,7 +898,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 6");
+    log.info("Completed select test 6");
   }
 
   // testSelect6()
@@ -919,7 +919,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect7() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 7");
+    log.info("Starting select test 7");
 
     // create the statement
     String statement =
@@ -980,7 +980,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 7");
+    log.info("Completed select test 7");
   }
 
   // testSelect7()
@@ -1004,7 +1004,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSelect8() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting select test 8");
+    log.info("Starting select test 8");
 
     // create the statement
     String statement =
@@ -1047,7 +1047,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     expected.close();
 
     // log that we've completed the test
-    log.debug("Completed select test 7");
+    log.info("Completed select test 7");
   }
 
   // testSelect8()
@@ -1063,7 +1063,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testDelete1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting delete test 1");
+    log.info("Starting delete test 1");
 
     String statement;
 
@@ -1089,7 +1089,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed drop test 1");
+    log.info("Completed drop test 1");
   }
 
   /**
@@ -1103,7 +1103,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testDelete2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting delete test 2");
+    log.info("Starting delete test 2");
 
     String statement;
 
@@ -1129,7 +1129,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed drop test 2");
+    log.info("Completed drop test 2");
   }
 
   /**
@@ -1143,7 +1143,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testDirectory1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting directory DB test 1");
+    log.info("Starting directory DB test 1");
 
     // create the statement
     String statement = "directory <beep://rns.site1.net:7000/models> ;";
@@ -1161,7 +1161,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed directory test 1");
+    log.info("Completed directory test 1");
   }
 
   // testDirectory1()
@@ -1177,7 +1177,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testCreate1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting create test 1");
+    log.info("Starting create test 1");
 
     // create the statement
     String statement = "create <mulgara://localhost/database> ;";
@@ -1195,7 +1195,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed create test 1");
+    log.info("Completed create test 1");
   }
 
   // testCreate1()
@@ -1211,7 +1211,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testCreate2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting create test 2");
+    log.info("Starting create test 2");
 
     // create the statement
     String statement = "create <mulgara://localhost/database#model> ;";
@@ -1229,7 +1229,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed create test 2");
+    log.info("Completed create test 2");
   }
 
   // testCreate2()
@@ -1245,7 +1245,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testDrop1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting drop test 1");
+    log.info("Starting drop test 1");
 
     // create the statement
     String statement = "drop <mulgara://localhost/database> ;";
@@ -1263,7 +1263,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed drop test 1");
+    log.info("Completed drop test 1");
   }
 
   // testDrop1()
@@ -1279,7 +1279,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testDrop2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting drop test 2");
+    log.info("Starting drop test 2");
 
     // create the statement
     String statement = "drop <mulgara://localhost/database#model> ;";
@@ -1297,7 +1297,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed drop test 2");
+    log.info("Completed drop test 2");
   }
 
   // testDrop2()
@@ -1371,7 +1371,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 1");
+    log.info("Starting load test 1");
 
     // create the statement
     String statement =
@@ -1390,7 +1390,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 1");
+    log.info("Completed load test 1");
   }
 
   // testLoad1()
@@ -1407,7 +1407,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 2");
+    log.info("Starting load test 2");
 
     // create the statement
     String statement =
@@ -1426,7 +1426,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 2");
+    log.info("Completed load test 2");
   }
 
   // testLoad2()
@@ -1443,7 +1443,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad3() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 3");
+    log.info("Starting load test 3");
 
     // create the statement
     String statement = "load <" + dcSchemaURI + "> into <" + testModel + "> ;";
@@ -1461,7 +1461,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 3");
+    log.info("Completed load test 3");
   }
 
   // testLoad3()
@@ -1478,7 +1478,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad4() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 4");
+    log.info("Starting load test 4");
 
     // create the statement
     String statement =
@@ -1497,7 +1497,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 4");
+    log.info("Completed load test 4");
   }
 
   // testLoad4()
@@ -1514,7 +1514,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad5() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 5");
+    log.info("Starting load test 5");
 
     // create the statement
     String statement =
@@ -1533,7 +1533,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 5");
+    log.info("Completed load test 5");
   }
 
   // testLoad5()
@@ -1550,7 +1550,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad6() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 6");
+    log.info("Starting load test 6");
 
     // create the statement
     String statement =
@@ -1569,7 +1569,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 6");
+    log.info("Completed load test 6");
   }
 
   // testLoad6()
@@ -1586,7 +1586,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad7() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 7");
+    log.info("Starting load test 7");
 
     // create the statement
     String statement =
@@ -1606,7 +1606,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 7");
+    log.info("Completed load test 7");
   }
 
   // testLoad7()
@@ -1623,7 +1623,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad8() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 8");
+    log.info("Starting load test 8");
 
     // create the statement
     String statement =
@@ -1642,7 +1642,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 8");
+    log.info("Completed load test 8");
   }
 
   // testLoad8()
@@ -1659,7 +1659,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoad9() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load test 9");
+    log.info("Starting load test 9");
 
     // create the statement
     String statement =
@@ -1678,7 +1678,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed load test 9");
+    log.info("Completed load test 9");
   }
 
   // testLoad9()
@@ -1723,7 +1723,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSet1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting set test 1");
+    log.info("Starting set test 1");
 
     // create the statement
     String statement = "set time on ;";
@@ -1747,7 +1747,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(true, results.startsWith(expected));
 
     // log that we've completed the test
-    log.debug("Completed set test 1");
+    log.info("Completed set test 1");
   }
 
   // testSet1()
@@ -1765,7 +1765,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testSet2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting set test 2");
+    log.info("Starting set test 2");
 
     // create the statement
     String statement = "set time off ;";
@@ -1788,7 +1788,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected, results);
 
     // log that we've completed the test
-    log.debug("Completed set test 2");
+    log.info("Completed set test 2");
   }
 
   // testSet2()
@@ -1806,7 +1806,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testBackup1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting backup test 1");
+    log.info("Starting backup test 1");
 
     // create the statement
     File backupFile = new File(tmpDirectory, "server1backup.gz");
@@ -1822,7 +1822,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     results = interpreter.getLastMessage();
 
     // log that we've completed the test
-    log.debug("Completed backup test 1");
+    log.info("Completed backup test 1");
   }
 
   // testBackup1()
@@ -1840,7 +1840,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testRestore1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting restore test 1");
+    log.info("Starting restore test 1");
 
     // create the statement
     File backupFile = new File(tmpDirectory, "server1backup.gz");
@@ -1856,7 +1856,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     results = interpreter.getLastMessage();
 
     // log that we've completed the test
-    log.debug("Completed restore test 1");
+    log.info("Completed restore test 1");
   }
 
   // testRestore1()
@@ -1870,7 +1870,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testBackupRestore1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting combined backup-restore test 1");
+    log.info("Starting combined backup-restore test 1");
 
     // TODO - perform the backup
     // create the statement
@@ -1887,7 +1887,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     results = interpreter.getLastMessage();
 
     // log that we've completed the test
-    log.debug("Completed combined backup-restore test 1");
+    log.info("Completed combined backup-restore test 1");
   }
 
   // testBackupRestore1()
@@ -1901,7 +1901,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testBackupRestore2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting combined backup-restore test 2");
+    log.info("Starting combined backup-restore test 2");
 
     // TODO - perform the backup
     // create the statement
@@ -1918,7 +1918,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     results = interpreter.getLastMessage();
 
     // log that we've completed the test
-    log.debug("Completed combined backup-restore test 2");
+    log.info("Completed combined backup-restore test 2");
   }
 
   /**
@@ -1930,7 +1930,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testBackupRestore3() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting combined backup-restore test 3");
+    log.info("Starting combined backup-restore test 3");
 
     // TODO - perform the backup
     // create the statement
@@ -1947,7 +1947,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     results = interpreter.getLastMessage();
 
     // log that we've completed the test
-    log.debug("Completed combined backup-restore test 3");
+    log.info("Completed combined backup-restore test 3");
   }
 
 
@@ -1958,6 +1958,8 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * @throws Exception EXCEPTION TO DO
    */
   public void test1ParseQuery() throws Exception {
+
+    log.info("Starting parse query 1");
 
     // Compose the expected result
     Query expected = new Query(
@@ -1977,6 +1979,8 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected,
                  interpreter.parseQuery(
         "select $x from <x:m> where $x <x:p> 'o';"));
+
+    log.info("Completed parse query 1");
   }
 
   /**
@@ -1986,6 +1990,8 @@ public class ItqlInterpreterUnitTest extends TestCase {
    * @throws Exception EXCEPTION TO DO
    */
   public void test2ParseQuery() throws Exception {
+
+    log.info("Starting parse query 2");
 
     try {
 
@@ -1997,6 +2003,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
 
       // this is the correct response
     }
+    log.info("Completed parse query 2");
   }
 
   /**
@@ -2007,6 +2014,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    */
   public void test3ParseQuery() throws Exception {
 
+    log.info("Starting parse query 3");
     // Compose the expected result
     Query expected = new Query(
         Arrays.asList(new Variable[] {
@@ -2025,6 +2033,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     assertEquals(expected,
                  interpreter.parseQuery(
         "select $x from <x:m> where $x <x:p> 'o' limit 10 offset 2;"));
+    log.info("Completed parse query 3");
   }
 
   /**
@@ -2035,6 +2044,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    */
   public void test4ParseQuery() throws Exception {
 
+    log.info("Starting parse query 4");
     // Compose the expected result
 
     List varList = Arrays.asList(new Variable[] { new Variable("x") });
@@ -2061,6 +2071,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
         "where $x <x:p> 'o' " +
         "having $x <http://mulgara.org/mulgara#occurs> " +
         "'2.0'^^<http://www.w3.org/2001/XMLSchema#double> limit 10 offset 2;"));
+    log.info("Completed parse query 4");
   }
 
   // ItqlInterpreterUnitTest()
@@ -2123,7 +2134,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testCreate3() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting create test 3");
+    log.info("Starting create test 3");
 
     // create the statement
     String statement = "create <"+ testModel +"> ;";
@@ -2141,7 +2152,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     log.debug("Received results : " + results);
 
     // log that we've completed the test
-    log.debug("Completed create test 3");
+    log.info("Completed create test 3");
   }
 
   // testCreate1()
@@ -2155,7 +2166,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoadApi1() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load API test 1");
+    log.info("Starting load API test 1");
 
     URI sourceURI = new URI("http://purl.org/dc/elements/1.1");
     URI modelURI = new URI(testModel);
@@ -2164,6 +2175,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
     long statements = interpreter.load(null, sourceURI, modelURI);
 
     this.assertEquals("Incorrect number of statements inserted", 146, statements);
+    log.info("Completed test load api 1");
   }
 
   // testLoadApi1()
@@ -2176,7 +2188,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoadApi2() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load API test 2");
+    log.info("Starting load API test 2");
 
     URI sourceURI = new URI("http://purl.org/dc/elements/1.1");
     URI modelURI = new URI(testModel);
@@ -2198,6 +2210,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
 
     inputStream.close();
 
+    log.info("Completed test load api 2");
   }
 
   // testLoadApi2()
@@ -2210,7 +2223,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoadApi3() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load API test 3");
+    log.info("Starting load API test 3");
 
     URI sourceURI = new URI("http://purl.org/dc/elements/1.1");
     URI dummyURI = new URI("http://mydummysite.com/rssfeed.rdf");
@@ -2223,6 +2236,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
 
     this.assertEquals("Incorrect number of statements inserted", 146, statements);
 
+    log.info("Completed test load api 3");
   }
 
   /**
@@ -2233,7 +2247,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
   public void testLoadApi4() throws Exception {
 
     // log that we're executing the test
-    log.debug("Starting load API test 4");
+    log.info("Starting load API test 4");
 
     URI sourceURI = new URI("http://purl.org/dc/elements/1.1");
     URI modelURI = new URI(testModel);
@@ -2244,6 +2258,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
 
     this.assertEquals("Incorrect number of statements inserted", 146, statements);
 
+    log.info("Completed test load api 4");
   }
 
   /**
@@ -2254,7 +2269,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testBackupApi1() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting backup API test 1");
+     log.info("Starting backup API test 1");
 
      File file = new File(tmpDirectory, "backup1.rdf");
      file.delete();
@@ -2277,7 +2292,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testBackupApi2() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting backup API test 2");
+     log.info("Starting backup API test 2");
 
      File file = new File(tmpDirectory, "backup2.rdf");
      file.delete();
@@ -2301,7 +2316,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testBackupApi3() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting backup API test 3");
+     log.info("Starting backup API test 3");
 
      File file = new File(tmpDirectory, "backup1.gz");
      file.delete();
@@ -2323,7 +2338,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testBackupApi4() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting backup API test 3");
+     log.info("Starting backup API test 3");
 
      File file = new File(tmpDirectory, "backup2.gz");
      file.delete();
@@ -2345,7 +2360,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testLoadBackupApi1() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting load a backup API test 1");
+     log.info("Starting load a backup API test 1");
 
      File file = new File(tmpDirectory, "backup1.rdf");
 
@@ -2367,7 +2382,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testRestoreApi1() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting Restore API test 1");
+     log.info("Starting Restore API test 1");
 
      File file = new File(tmpDirectory, "backup1.gz");
 
@@ -2386,7 +2401,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testRestoreApi2() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting Restore API test 2");
+     log.info("Starting Restore API test 2");
 
      File file = new File(tmpDirectory, "backup1.gz");
 
@@ -2405,7 +2420,7 @@ public class ItqlInterpreterUnitTest extends TestCase {
    public void testRestoreApi3() throws Exception {
 
      // log that we're executing the test
-     log.debug("Starting Restore API test 3");
+     log.info("Starting Restore API test 3");
 
      File file = new File(tmpDirectory, "backup2.gz");
 
