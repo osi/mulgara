@@ -579,7 +579,7 @@
           includes="mulgara.rdfs"/>
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
-          includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
+          includes="**/*.html, **/*.htm, **/*.gif, **/*.png, **/*.jpg, **/*.css, **/images/*, **/images/icons/*"/>
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
@@ -1849,7 +1849,7 @@
       <zipfileset dir="${basedir}/docs" prefix="docs"
           includes="**/*.html, **/*.css, **/images/*, **/images/icons/*, LEGAL.txt"/>
       <zipfileset dir="${src.docs.dir}" prefix="docs"
-          includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
+          includes="**/*.html, **/*.htm, **/*.gif, **/*.png, **/*.jpg, **/*.css, **/images/*, **/images/icons/*"/>
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>      <!-- fileset dir="${obj.dir}/jar/dtd/classes"/ -->
@@ -1998,7 +1998,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
       <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs,**/*.rss,**/*.n3"/>
 
       <zipfileset dir="${basedir}/docs" prefix="docs" includes="**/*.html, **/*.css, **/images/*, **/images/icons/*, LEGAL.txt"/>
-      <zipfileset dir="${src.docs.dir}" prefix="docs" includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
+      <zipfileset dir="${src.docs.dir}" prefix="docs" includes="**/*.html, **/*.htm, **/*.gif, **/*.png, **/*.jpg, **/*.css, **/images/*, **/images/icons/*"/>
 
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>     
 
