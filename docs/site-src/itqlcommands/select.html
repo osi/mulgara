@@ -75,7 +75,7 @@
 
 <p class="commandtext">select $title $author $date ...</p>
 
-<p>Constant resource or literal values may be part of a <code>select</code> clause. In these cases, dummy variable names (<code>$k0</code>, <code>$k1</code>, <code>$k2</code>, … <code>$kn</code>) are created for the constant values.</p>
+<p>Constant resource or literal values may be part of a <code>select</code> clause. In these cases, dummy variable names (<code>$k0</code>, <code>$k1</code>, <code>$k2</code>, &hellip; <code>$kn</code>) are created for the constant values.</p>
 
 <p>The following example returns three columns: <code>$k0</code>, <code>$x</code> and <code>$k1</code> where the values of <code>$k0</code> and <code>$k1</code> for every solution are the literal value <code>foo</code> and the resource value <code>http://www.site.domain.net</code> respectively.</p>
 
@@ -485,7 +485,7 @@ vcard=http://qqq.com/staff/superman     fn=&quot;Superman&quot;         k0=&quot
 <div class="anchor"><a name="o2776">&nbsp;</a></div>
 <h3>having Clause</h3>
 
-<p>The <code>having</code> clause applies a constraint to a dummy variable that results from a <code><a id="h1323" class="documentlinktemplate" title="subquery Function" href="/itqlcommands/select.html#o193">subquery</a></code> in a <code><a id="h1320_3" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188">select</a></code><a id="h1320_4" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188"> clause</a> of a query. These variables are of the form <code>$k0</code>, <code>$k1</code>, <code>$k2</code>, … <code>$kn</code> and only hold numerical values. See the <code><a id="h1320_5" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188">select</a></code><a id="h1320_6" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188"> clause section</a> for a description of dummy variables.</p>
+<p>The <code>having</code> clause applies a constraint to a dummy variable that results from a <code><a id="h1323" class="documentlinktemplate" title="subquery Function" href="/itqlcommands/select.html#o193">subquery</a></code> in a <code><a id="h1320_3" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188">select</a></code><a id="h1320_4" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188"> clause</a> of a query. These variables are of the form <code>$k0</code>, <code>$k1</code>, <code>$k2</code>, &hellip; <code>$kn</code> and only hold numerical values. See the <code><a id="h1320_5" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188">select</a></code><a id="h1320_6" class="documentlinktemplate" title="select Clause" href="/itqlcommands/select.html#o188"> clause section</a> for a description of dummy variables.</p>
 
 <p>There are four special predicates that can be used to perform arithmetic comparisons in the <code>having</code> clause, as outlined in the following table.</p>
 <table width="450" cellpadding="2" cellspacing="0" border="0" style="border-collapse:collapse">
