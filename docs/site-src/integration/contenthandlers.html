@@ -66,7 +66,7 @@
 
 <p>Once the usage and structure for the handler is set, the interface can be implemented. The MP3 content handler performs its parsing as part of the statements container so not much implementing is required. The implementation looks something like the following (extracted from <code>MP3ContentHandler.java</code>):</p>
 
-<p class="commandtext">package org.kowari.content.mp3;<br />
+<p class="commandtext">package org.mulgara.content.mp3;<br />
 <br />
 // Java 2 standard packages<br />
 import java.io.InputStream;<br />
@@ -81,12 +81,12 @@ import javax.activation.MimeTypeParseException;<br />
 import org.apache.log4j.Logger; // Apache Log4J<br />
 <br />
 // Local packages<br />
-import org.kowari.content.Content;<br />
-import org.kowari.content.ContentHandler;<br />
-import org.kowari.content.ContentHandlerException;<br />
-import org.kowari.resolver.spi.ResolverSession;<br />
-import org.kowari.resolver.spi.Statements;<br />
-import org.kowari.query.TuplesException;<br />
+import org.mulgara.content.Content;<br />
+import org.mulgara.content.ContentHandler;<br />
+import org.mulgara.content.ContentHandlerException;<br />
+import org.mulgara.resolver.spi.ResolverSession;<br />
+import org.mulgara.resolver.spi.Statements;<br />
+import org.mulgara.query.TuplesException;<br />
 <br />
 public class MP3ContentHandler implements ContentHandler {<br />
 <br />
@@ -170,7 +170,7 @@ public class MP3ContentHandler implements ContentHandler {<br />
 
 <p>An analysis of the class is as follows:</p>
 
-<p class="indentcommandtext">package org.kowari.content.mp3;<br />
+<p class="indentcommandtext">package org.mulgara.content.mp3;<br />
 <br />
 // Java 2 standard packages<br />
 import java.io.InputStream;<br />
@@ -185,15 +185,15 @@ import javax.activation.MimeTypeParseException;<br />
 import org.apache.log4j.Logger; // Apache Log4J<br />
 <br />
 // Local packages<br />
-import org.kowari.content.Content;<br />
-import org.kowari.content.ContentHandler;<br />
-import org.kowari.content.ContentHandlerException;<br />
-import org.kowari.resolver.spi.ResolverSession;<br />
-import org.kowari.resolver.spi.Statements;<br />
-import org.kowari.query.TuplesException;</p>
+import org.mulgara.content.Content;<br />
+import org.mulgara.content.ContentHandler;<br />
+import org.mulgara.content.ContentHandlerException;<br />
+import org.mulgara.resolver.spi.ResolverSession;<br />
+import org.mulgara.resolver.spi.Statements;<br />
+import org.mulgara.query.TuplesException;</p>
 
 <p class="indent">There are no specific requirements for the packaging of the implementation but it is recommended that related classes be kept in the same package for easier implementing. For the interface, you also need to import:</p>
-<ul><li><code>org.kowari.content.Content</code></li><li><code>org.kowari.content.ContentHandler</code></li><li><code>org.kowari.content.ContentHandlerException</code></li><li><code>org.kowari.resolver.spi.ResolverSession</code></li><li><code>org.kowari.resolver.spi.Statements</code></li></ul>
+<ul><li><code>org.mulgara.content.Content</code></li><li><code>org.mulgara.content.ContentHandler</code></li><li><code>org.mulgara.content.ContentHandlerException</code></li><li><code>org.mulgara.resolver.spi.ResolverSession</code></li><li><code>org.mulgara.resolver.spi.Statements</code></li></ul>
 <p class="indent">In most cases the <code>javax.activation.MimeType</code> class also needs to be imported to do proper mime type handling. Any supporting classes for the implementation should also be imported.</p>
 
 <p class="indentcommandtext">public class MP3ContentHandler implements ContentHandler {</p>

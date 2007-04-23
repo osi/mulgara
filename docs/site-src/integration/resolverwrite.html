@@ -51,7 +51,7 @@
 
 <p>The following source is how the http protocol resolver is written (extracted from <code>HttpResolver.java</code>):</p>
 
-<p class="commandtext">package org.kowari.resolver.http;<br />
+<p class="commandtext">package org.mulgara.resolver.http;<br />
 <br />
 // Java 2 standard packages<br />
 import java.net.*;<br />
@@ -63,12 +63,12 @@ import org.jrdf.graph.Node;<br />
 import org.jrdf.graph.URIReference;<br />
 <br />
 // Locally written packages<br />
-import org.kowari.content.Content;<br />
-import org.kowari.content.ContentHandler;<br />
-import org.kowari.content.ContentHandlerManager;<br />
-import org.kowari.content.ContentHandlerException;<br />
-import org.kowari.content.ContentResolver;<br />
-import org.kowari.resolver.spi.*;<br />
+import org.mulgara.content.Content;<br />
+import org.mulgara.content.ContentHandler;<br />
+import org.mulgara.content.ContentHandlerManager;<br />
+import org.mulgara.content.ContentHandlerException;<br />
+import org.mulgara.content.ContentResolver;<br />
+import org.mulgara.resolver.spi.*;<br />
 <br />
 public class HttpResolver extends ContentResolver {<br />
   /**<br />
@@ -165,7 +165,7 @@ public class HttpResolver extends ContentResolver {<br />
 
 <p>An analysis of the class is as follows:</p>
 
-<p class="indentcommandtext">package org.kowari.resolver.http;<br />
+<p class="indentcommandtext">package org.mulgara.resolver.http;<br />
 <br />
 // Java 2 standard packages<br />
 import java.net.*;<br />
@@ -177,12 +177,12 @@ import org.jrdf.graph.Node;<br />
 import org.jrdf.graph.URIReference;<br />
 <br />
 // Locally written packages<br />
-import org.kowari.content.Content;<br />
-import org.kowari.content.ContentHandler;<br />
-import org.kowari.content.ContentHandlerManager;<br />
-import org.kowari.content.ContentHandlerException;<br />
-import org.kowari.content.ContentResolver;<br />
-import org.kowari.resolver.spi.*;</p>
+import org.mulgara.content.Content;<br />
+import org.mulgara.content.ContentHandler;<br />
+import org.mulgara.content.ContentHandlerManager;<br />
+import org.mulgara.content.ContentHandlerException;<br />
+import org.mulgara.content.ContentResolver;<br />
+import org.mulgara.resolver.spi.*;</p>
 
 <p class="indent">Due to the way resolvers are constructed, the packaging should be set up so that they are always in the same package as their factory. Resolvers also require access to the <code>Resolver</code> SPI and tuples packages. Extra imports depend on your specific implementation.</p>
 

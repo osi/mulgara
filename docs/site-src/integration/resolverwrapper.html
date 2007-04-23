@@ -48,13 +48,13 @@
 
 <p><code>Content</code> implementations are compulsory for any protocol resolver. Without one the resolver has no way of allowing a handler access to the data that needs converting to <code>Statements</code>. Normally you can use the connection methods on the URL class to obtain an input stream from the source content, but you are also managing the https protocol, which is more advanced. To overcome this, the <code>HttpConnection</code> class of the apache commons <code>httpclient</code> is used to instantiate and maintain a connection to the content source. The implementation looks something like the following (extracted from <code>HttpContent.java</code>):</p>
 
-<p class="commandtext">package org.kowari.resolver.http;<br />
+<p class="commandtext">package org.mulgara.resolver.http;<br />
 
 <br />
 
 //Local packages<br />
 
-import org.kowari.content.Content;<br />
+import org.mulgara.content.Content;<br />
 
 <br />
 
@@ -574,7 +574,7 @@ public class HttpContent implements Content {<br />
 
   /*<br />
 
-   * @see org.kowari.content.Content#getContentType()<br />
+   * @see org.mulgara.content.Content#getContentType()<br />
 
    */<br />
 
@@ -744,13 +744,13 @@ public class HttpContent implements Content {<br />
 
 <p>An analysis of the class is as follows:</p>
 
-<p class="indentcommandtext">package org.kowari.resolver.http;<br />
+<p class="indentcommandtext">package org.mulgara.resolver.http;<br />
 
 <br />
 
 //Local packages<br />
 
-import org.kowari.content.Content;<br />
+import org.mulgara.content.Content;<br />
 
 <br />
 
@@ -796,7 +796,7 @@ import javax.activation.MimeTypeParseException;<br />
 
 import org.apache.log4j.Logger;</p>
 
-<p class="indent">The packaging for the content implementation is not required to be of any particular format. However, for the sake of neatness and ease of coding, it is recommended that the implementation be in the same package as your resolver implementation. The <code>org.kowari.content.Content</code> package requires importing to provide access to the <code>Content</code> interface, along with the packages <code>java.io.InputStream</code>, <code>java.io.IOException</code>, <code>java.util.Map</code>, <code>javax.activation.MimeType</code> and <code>java.net.URI</code>, which are used in the interface. Any other imports depend on your implementation of the interface.</p>
+<p class="indent">The packaging for the content implementation is not required to be of any particular format. However, for the sake of neatness and ease of coding, it is recommended that the implementation be in the same package as your resolver implementation. The <code>org.mulgara.content.Content</code> package requires importing to provide access to the <code>Content</code> interface, along with the packages <code>java.io.InputStream</code>, <code>java.io.IOException</code>, <code>java.util.Map</code>, <code>javax.activation.MimeType</code> and <code>java.net.URI</code>, which are used in the interface. Any other imports depend on your implementation of the interface.</p>
 
 <p class="indentcommandtext">          public class HttpContent implements Content {</p>
 
@@ -879,7 +879,7 @@ import org.apache.log4j.Logger;</p>
 
 <p class="indentcommandtext">/*<br />
 
-   * @see org.kowari.content.Content#getContentType()<br />
+   * @see org.mulgara.content.Content#getContentType()<br />
 
    */<br />
 

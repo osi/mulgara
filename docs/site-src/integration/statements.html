@@ -51,7 +51,7 @@
 
 <p>After deciding on the best method of navigating the generated statements, it is relatively straightforward to implement the interface. The following code is the MP3 implementation using a JRDF <code>Graph</code> (see <code>MP3Statements.java</code>):</p>
 
-<p class="commandtext">package org.kowari.content.mp3;<br />
+<p class="commandtext">package org.mulgara.content.mp3;<br />
 <br />
 // Java 2 standard packages<br />
 import java.io.*;<br />
@@ -73,21 +73,21 @@ import org.farng.mp3.MP3File;<br />
 import org.farng.mp3.TagException;<br />
 <br />
 // Locally written packages<br />
-import org.kowari.query.Constraint;<br />
-import org.kowari.query.QueryException;<br />
-import org.kowari.query.TuplesException;<br />
-import org.kowari.query.Variable;<br />
-import org.kowari.query.rdf.*;<br />
-import org.kowari.resolver.spi.LocalizeException;<br />
-import org.kowari.resolver.spi.Statements;<br />
-import org.kowari.resolver.spi.ResolverSession;<br />
-import org.kowari.store.StoreException;<br />
-import org.kowari.store.tuples.AbstractTuples;<br />
-import org.kowari.store.tuples.Tuples;<br />
-import org.kowari.content.Content;<br />
-import org.kowari.content.mp3.parser.*;<br />
-import org.kowari.content.mp3.parser.exception.*;<br />
-import org.kowari.content.mp3.parser.api.*;<br />
+import org.mulgara.query.Constraint;<br />
+import org.mulgara.query.QueryException;<br />
+import org.mulgara.query.TuplesException;<br />
+import org.mulgara.query.Variable;<br />
+import org.mulgara.query.rdf.*;<br />
+import org.mulgara.resolver.spi.LocalizeException;<br />
+import org.mulgara.resolver.spi.Statements;<br />
+import org.mulgara.resolver.spi.ResolverSession;<br />
+import org.mulgara.store.StoreException;<br />
+import org.mulgara.store.tuples.AbstractTuples;<br />
+import org.mulgara.store.tuples.Tuples;<br />
+import org.mulgara.content.Content;<br />
+import org.mulgara.content.mp3.parser.*;<br />
+import org.mulgara.content.mp3.parser.exception.*;<br />
+import org.mulgara.content.mp3.parser.api.*;<br />
 <br />
 public class MP3Statements extends AbstractTuples implements Statements {<br />
 <br />
@@ -649,7 +649,7 @@ public class MP3Statements extends AbstractTuples implements Statements {<br />
 
 <p>An analysis of the class is as follows:</p>
 
-<p class="indentcommandtext">package org.kowari.content.mp3;<br />
+<p class="indentcommandtext">package org.mulgara.content.mp3;<br />
 <br />
 // Java 2 standard packages<br />
 import java.io.*;<br />
@@ -671,24 +671,24 @@ import org.farng.mp3.MP3File;<br />
 import org.farng.mp3.TagException;<br />
 <br />
 // Locally written packages<br />
-import org.kowari.query.Constraint;<br />
-import org.kowari.query.QueryException;<br />
-import org.kowari.query.TuplesException;<br />
-import org.kowari.query.Variable;<br />
-import org.kowari.query.rdf.*;<br />
-import org.kowari.resolver.spi.LocalizeException;<br />
-import org.kowari.resolver.spi.Statements;<br />
-import org.kowari.resolver.spi.ResolverSession;<br />
-import org.kowari.store.StoreException;<br />
-import org.kowari.store.tuples.AbstractTuples;<br />
-import org.kowari.store.tuples.Tuples;<br />
-import org.kowari.content.Content;<br />
-import org.kowari.content.mp3.parser.*;<br />
-import org.kowari.content.mp3.parser.exception.*;<br />
-import org.kowari.content.mp3.parser.api.*;</p>
+import org.mulgara.query.Constraint;<br />
+import org.mulgara.query.QueryException;<br />
+import org.mulgara.query.TuplesException;<br />
+import org.mulgara.query.Variable;<br />
+import org.mulgara.query.rdf.*;<br />
+import org.mulgara.resolver.spi.LocalizeException;<br />
+import org.mulgara.resolver.spi.Statements;<br />
+import org.mulgara.resolver.spi.ResolverSession;<br />
+import org.mulgara.store.StoreException;<br />
+import org.mulgara.store.tuples.AbstractTuples;<br />
+import org.mulgara.store.tuples.Tuples;<br />
+import org.mulgara.content.Content;<br />
+import org.mulgara.content.mp3.parser.*;<br />
+import org.mulgara.content.mp3.parser.exception.*;<br />
+import org.mulgara.content.mp3.parser.api.*;</p>
 
 <p class="indent">There are no specific requirements for the packaging of the <code>Statements</code> implementation but it is recommended that you keep it in the same package as your <code>ContentHandler</code> implementation. You must import the following classes:</p>
-<ul><li><code>org.kowari.store.tuples.AbstractTuples</code></li><li><code>org.kowari.resolver.spi.Statements</code></li><li><code>org.kowari.query.TuplesException</code></li><li><code>org.kowari.query.Variable</code></li></ul>
+<ul><li><code>org.mulgara.store.tuples.AbstractTuples</code></li><li><code>org.mulgara.resolver.spi.Statements</code></li><li><code>org.mulgara.query.TuplesException</code></li><li><code>org.mulgara.query.Variable</code></li></ul>
 <p class="indent">Any supporting classes can also be imported.</p>
 
 <p class="indentcommandtext">public class MP3Statements extends AbstractTuples implements Statements {</p>

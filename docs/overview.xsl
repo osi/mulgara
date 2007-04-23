@@ -25,14 +25,14 @@
 <xsl:template match="/">
 <html>
 <head>
-<title>Kowari Metadata Store Project</title>
+<title>Mulgara Metadata Store Project</title>
 </head>
 <body>
 <abstract>
-The Kowari Metadata Store project.
+The Mulgara Metadata Store project.
 </abstract>
 <p>
-The Kowari Metadata Store project is an implementation of a
+The Mulgara Metadata Store project is an implementation of a
 distributed secure RDF store. More generally it supports the storage
 of arbitrary data as triples.
 </p>
