@@ -79,6 +79,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   private static final URI model2URI;
   private static final URI model3URI;
   private static final URI model4URI;
+  private static final URI model5URI;
 
   static {
     try {
@@ -88,6 +89,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
       model2URI      = new URI("local:database#model2");
       model3URI      = new URI("local:database#model3");
       model4URI      = new URI("local:database#model4");
+      model5URI      = new URI("local:database#model5");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }
@@ -114,6 +116,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitRollbackIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitCommitIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testImplicitCommitQuery"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testPrefixingWithUnbound"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testDatabaseDelete"));
 
     return suite;
@@ -1105,12 +1108,92 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           assertFalse(answer.next());
           answer.close();
 
-          session1.removeModel(model3URI);
+          session1.removeModel(model4URI);
         } finally {
           session2.close();
         }
       } finally {
         session1.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+
+  public void testPrefixingWithUnbound() throws URISyntaxException
+  {
+    logger.warn("testPrefixingWithUnbound");
+    URI fileURI  = new File("data/prefix-unbound.rdf").toURI();
+
+    try {
+      Session session = database.newSession();
+      try {
+        session.createModel(model5URI, null);
+        session.setModel(model5URI, new ModelResource(fileURI));
+
+        Variable varA   = new Variable("a");
+        Variable varB   = new Variable("b");
+        Variable varT = new Variable("t");
+
+        List selectList = new ArrayList(2);
+        selectList.add(varA);
+        selectList.add(varT);
+
+        // Check data loaded
+        Answer answer = session.query(new Query(
+          selectList,                                       // SELECT
+          new ModelResource(model5URI),                      // FROM
+          new ConstraintConjunction(Arrays.asList(
+              new ConstraintExpression[] {
+                  new ConstraintImpl(varB,
+                      new URIReferenceImpl(new URI("test:p01")),
+                      new URIReferenceImpl(new URI("test:o01"))),
+                  new ConstraintImpl(varB,
+                      new URIReferenceImpl(new URI("test:p02")),
+                      varA),
+                  new ConstraintDisjunction(
+                      new ConstraintConjunction(
+                          new ConstraintImpl(varB,
+                              new URIReferenceImpl(new URI("test:p03")),
+                              new URIReferenceImpl(new URI("test:o03"))),
+                          new ConstraintIs(varT,
+                              new URIReferenceImpl(new URI("result:0")))),
+                      new ConstraintIs(varT,
+                              new URIReferenceImpl(new URI("result:1")))),
+              })),                                          // WHERE
+          null,                                             // HAVING
+          Arrays.asList(new Order[] {                       // ORDER BY
+            new Order(varA, true),
+            new Order(varT, true),
+          }),
+          null,                                             // LIMIT
+          0,                                                // OFFSET
+          new UnconstrainedAnswer()                         // GIVEN
+        ));
+
+        String[][] results = {
+          { "test:o02", "result:0" },
+          { "test:o02", "result:1" },
+          { "test:o04", "result:0" },
+          { "test:o04", "result:1" },
+        };
+        answer.beforeFirst();
+        String s = "comparing results:\n" + answer.getVariables();
+        while (answer.next()) {
+          s += "\n[";
+          for (int i = 0; i < answer.getNumberOfVariables(); i++) {
+            s += " " + answer.getObject(i);
+          }
+          s += " ]";
+        }
+
+        compareResults(results, answer);
+        answer.close();
+
+        session.removeModel(model5URI);
+      } finally {
+        session.close();
       }
     } catch (Exception e) {
       fail(e);
@@ -1128,17 +1211,22 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   //
 
   private void compareResults(String[][] expected, Answer answer) throws Exception {
-    answer.beforeFirst();
-    for (int i = 0; i < expected.length; i++) {
-      assertTrue("Answer short at row " + i, answer.next());
-      assertEquals(expected[i].length, answer.getNumberOfVariables());
-      for (int j = 0; j < expected[i].length; j++) {
-        URIReferenceImpl uri = new URIReferenceImpl(
-            new URI(expected[i][j]));
-        assertEquals(uri, answer.getObject(j));
+    try {
+      answer.beforeFirst();
+      for (int i = 0; i < expected.length; i++) {
+        assertTrue("Answer short at row " + i, answer.next());
+        assertEquals(expected[i].length, answer.getNumberOfVariables());
+        for (int j = 0; j < expected[i].length; j++) {
+          URIReferenceImpl uri = new URIReferenceImpl(new URI(expected[i][j]));
+          assertEquals(uri, answer.getObject(j));
+        }
       }
+      assertFalse(answer.next());
+    } catch (Exception e) {
+      logger.error("Failed test - " + answer);
+      answer.close();
+      throw e;
     }
-    assertFalse(answer.next());
   }
 
   private void compareResults(Answer answer1, Answer answer2) throws Exception {

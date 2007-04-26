@@ -74,12 +74,23 @@ public class LiteralTuples extends AbstractTuples {
   private int currentTuple;
   private boolean[] columnContainsUnbound;
   private long[] prefix;
+  private boolean sorted;
+
+  public LiteralTuples(String[] variableNames, boolean sorted) {
+    List vars = new ArrayList();
+    for (int i = 0; i < variableNames.length; i++) {
+      Variable v = new Variable(variableNames[i]);
+      assert!vars.contains(v);
+      vars.add(v);
+    }
+    init((Variable[]) vars.toArray(new Variable[0]), sorted);
+  }
 
   /**
    * Creates a literal tuples with specified variables.
    */
   public LiteralTuples(Variable[] variables) {
-    init(variables);
+    init(variables, false);
   }
 
   /**
@@ -87,22 +98,17 @@ public class LiteralTuples extends AbstractTuples {
    * Variables created to match variableNames[].
    */
   public LiteralTuples(String[] variableNames) {
-    List vars = new ArrayList();
-    for (int i = 0; i < variableNames.length; i++) {
-      Variable v = new Variable(variableNames[i]);
-      assert!vars.contains(v);
-      vars.add(v);
-    }
-    init((Variable[]) vars.toArray(new Variable[0]));
+    this(variableNames, false);
   }
 
-  private void init(Variable[] variables) {
+  private void init(Variable[] variables, boolean sorted) {
     tuples = new ArrayList();
     currentTuple = 0;
     tupleIterator = null;
     setVariables(Arrays.asList(variables));
     columnContainsUnbound = new boolean[variables.length];
     Arrays.fill(columnContainsUnbound, false);
+    this.sorted = sorted;
   }
 
   /**
@@ -170,7 +176,11 @@ public class LiteralTuples extends AbstractTuples {
   }
 
   public RowComparator getComparator() {
-    return null;
+    if (sorted) {
+      return DefaultRowComparator.getInstance();
+    } else {
+      return null;
+    }
   }
 
   //
@@ -223,7 +233,7 @@ public class LiteralTuples extends AbstractTuples {
   }
 
   public boolean hasNoDuplicates() throws TuplesException {
-    return isUnconstrained();
+    return sorted || isUnconstrained();
   }
 
   public Object clone() {

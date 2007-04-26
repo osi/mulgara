@@ -256,6 +256,11 @@ class UnorderedProjection extends AbstractTuples {
       throw new TuplesException("Suffix truncation not supported");
     }
 
+    if (prefix.length > 0) {
+      throw new TuplesException("Prefix not supported in UnorderedProjection" +
+          "- use TuplesOperations.sort() to provide prefix support");
+    }
+
     operand.beforeFirst(prefix, 0);
   }
 

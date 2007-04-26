@@ -33,6 +33,9 @@ import junit.framework.*; // JUnit
 // Log4J
 import org.apache.log4j.Logger;
 
+// Mulgara
+import org.mulgara.query.Variable;
+
 /**
  * Test case for {@link TuplesOperationsUnitTest}.
  *
@@ -76,8 +79,11 @@ public class TuplesOperationsUnitTest extends TestCase {
    * @return The test suite
    */
   public static Test suite() {
+    TestSuite suite = new TestSuite();
 
-    return new TestSuite(TuplesOperationsUnitTest.class);
+    suite.addTest(new TuplesOperationsUnitTest("testReorderedAppend"));
+
+    return suite;
   }
 
   /**
@@ -99,8 +105,42 @@ public class TuplesOperationsUnitTest extends TestCase {
    *
    * @throws Exception if query fails when it should have succeeded
    */
-  public void testFoo() throws Exception {
+  public void testReorderedAppend() throws Exception {
+    LiteralTuples lhs = new LiteralTuples(new String[] {"x"}, true);
+    LiteralTuples rhs1 = new LiteralTuples(new String[] {"x", "y"}, true);
+    LiteralTuples rhs2 = new LiteralTuples(new String[] {"y", "x"}, true);
 
-    // not yet implemented
+    lhs.appendTuple(new long[] { 1 });
+    lhs.appendTuple(new long[] { 6 });
+
+    rhs1.appendTuple(new long[] { 1, 2 });
+    rhs1.appendTuple(new long[] { 1, 3 });
+    rhs1.appendTuple(new long[] { 4, 1 });
+
+    rhs2.appendTuple(new long[] { 5, 1 });
+    rhs2.appendTuple(new long[] { 6, 1 });
+    rhs2.appendTuple(new long[] { 1, 7 });
+
+    Tuples append = TuplesOperations.append(rhs1, rhs2);
+    Tuples join = TuplesOperations.join(lhs, append);
+    append.close();
+
+    logger.warn("join - " + TuplesOperations.formatTuplesTree(join));
+
+    Variable[] vars = join.getVariables();
+    assertEquals(2, vars.length);
+    assertEquals(new Variable("x"), vars[0]);
+    assertEquals(new Variable("y"), vars[1]);
+
+    join.beforeFirst();
+
+    TuplesTestingUtil.testTuplesRow(join, new long[] { 1, 2 });
+    TuplesTestingUtil.testTuplesRow(join, new long[] { 1, 3 });
+    TuplesTestingUtil.testTuplesRow(join, new long[] { 1, 5 });
+    TuplesTestingUtil.testTuplesRow(join, new long[] { 1, 6 });
+
+    assertFalse(join.next());
+
+    TuplesTestingUtil.closeTuples(new Tuples[] { join });
   }
 }

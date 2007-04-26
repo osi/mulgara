@@ -204,7 +204,9 @@ public abstract class TuplesOperations {
       while (i.hasNext()) {
         Tuples operand = (Tuples)i.next();
         Tuples proj = project(operand, variables);
-        projected.add(proj);
+        Tuples sorted = sort(proj);
+        projected.add(sorted);
+        proj.close();
         operand.close();
       }
 
@@ -215,21 +217,6 @@ public abstract class TuplesOperations {
       closeOperands(projected);
       return result;
     }
-  }
-
-
-  private static String printArgs(String header, List args) {
-    StringBuffer buff = new StringBuffer(header + "[");
-    Iterator i = args.iterator();
-    if (i.hasNext()) {
-      buff.append(tuplesSummary((Tuples)i.next()));
-    }
-
-    while (i.hasNext()) {
-      buff.append(", " + tuplesSummary((Tuples)i.next()));
-    }
-    buff.append("]");
-    return buff.toString();
   }
 
 
@@ -559,8 +546,11 @@ public abstract class TuplesOperations {
       }
 
       // Add all variables that don't contain UNBOUND to boundVars set.
-      // Note that the inefficiency this introduces for distributed results
+      // Note: the inefficiency this introduces for distributed results
       // can only be eliminated by propagating isColumnEverUnbound through Answer.
+      // Note: this is required to ensure that a subsequent operand will not
+      // rely on this variable when selecting an index as if it is UNBOUND in a
+      // left-operand it becomes unprefixed.
       Variable[] vars = bestTuples.getVariables();
       for (int i = 0; i < vars.length; i++) {
         if (!bestTuples.isColumnEverUnbound(i)) {
@@ -983,6 +973,21 @@ public abstract class TuplesOperations {
       }
     }
     return false;
+  }
+
+
+  private static String printArgs(String header, List args) {
+    StringBuffer buff = new StringBuffer(header + "[");
+    Iterator i = args.iterator();
+    if (i.hasNext()) {
+      buff.append(tuplesSummary((Tuples)i.next()));
+    }
+
+    while (i.hasNext()) {
+      buff.append(", " + tuplesSummary((Tuples)i.next()));
+    }
+    buff.append("]");
+    return buff.toString();
   }
 
 

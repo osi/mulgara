@@ -408,8 +408,6 @@ public class MulgaraTransactionManager {
         logger.error("Attempt to suspend write transaction without setting AutoCommit Off");
         throw new MulgaraTransactionException(
             "Attempt to suspend write transaction without setting AutoCommit Off");
-      } else {
-//        logger.error("Suspended transaction: ac=" + autoCommit + " t=" + transaction + "ut=" + userTransaction);
       }
 
       Transaction xa = transactionManager.suspend();

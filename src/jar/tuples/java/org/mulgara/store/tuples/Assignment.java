@@ -283,6 +283,10 @@ class Assignment extends AbstractTuples {
     return new ArrayList(0);
   }
 
+  public RowComparator getRowComparator() {
+    return DefaultRowComparator.getInstance();
+  }
+
   /**
    * METHOD TO DO
    *

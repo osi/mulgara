@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *  Various bug fixes copyright Netymon Pty Ltd <info@netymon.com> under
+ *  contract to The Topaz Foundation <info@topazproject.org>
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -32,7 +34,7 @@ import java.util.*;
 import java.math.BigInteger;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -59,8 +61,6 @@ import org.mulgara.store.tuples.AbstractTuples;
  *
  * @modified $Date: 2005/03/07 19:42:40 $
  *
- * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
  * @copyright &copy; 2003 <A href="http://www.PIsoftware.com/">Plugged In
@@ -68,11 +68,98 @@ import org.mulgara.store.tuples.AbstractTuples;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class UnboundJoin extends JoinTuples {
+public class UnboundJoin extends AbstractTuples {
 
-  static {
-    logger = Category.getInstance(UnboundJoin.class.getName());
-  }
+  /** Logger.  */
+  private static final Logger logger =
+    Logger.getLogger(UnboundJoin.class.getName());
+
+  /**
+   * Version of {@link #operandBinding}} including only columns to the left of
+   * the first unbound column.
+   */
+  protected long[][] operandBindingPrefix;
+
+  /**
+   * For each column of the joined result, which operand contains the first
+   * occurrence of that variable.
+   */
+  protected int[] mapOperand;
+
+  /**
+   * For each column of the joined result, which column of the operand
+   * determined by {@link #mapOperand} contains the first occurrence of that
+   * variable.
+   */
+  protected int[] mapColumn;
+
+  /**
+   * Magic value within the {@link #fooOperand} array, indicating that a column
+   * is bound to one of the columns of the <var>prefix</var> parameter to
+   * {@link #next}.
+   */
+  protected static final int PREFIX = -1;
+
+  /**
+   * For each column of each operand, which operand contains the first
+   * occurrence of that variable, or {@link #PREFIX} if the prefix specified
+   * to {@link #next} contains the occurrence.
+   */
+  protected int[][] fooOperand;
+
+  /**
+   * For each column of each operand, which column of the operand determined by
+   * {@link #fooOperand} contains the first occurrence of that variable, or if
+   * the corresponding value of {@link #fooOperand} is {@link #PREFIX}, which
+   * column of the prefix specified to {@link #next} contains the occurrence.
+   */
+  protected int[][] fooColumn;
+
+  /**
+   * Whether each column of this instance might contain {@link #UNBOUND} rows.
+   */
+  protected boolean[] columnEverUnbound;
+
+  /**
+   * The propositions to conjoin.
+   */
+  protected Tuples[] operands;
+
+  /**
+   * The required values of the columns of each operand. A value of {@link
+   * Tuples#UNBOUND} indicates that the column is free to vary.
+   */
+  protected long[][] operandBinding;
+
+  /**
+   * For each operand, for each variable, which output column contains the same variable.
+   */
+  protected int[][] operandOutputMap;
+
+  /**
+   * Do any of the operands with variables matching this output variable contain UNBOUND?
+   */
+  protected boolean[][] columnOperandEverUnbound;
+
+  /**
+   * Flag indicating that the cursor is before the first row.
+   */
+  protected boolean isBeforeFirst = true;
+
+  /**
+   * Flag indicating that the cursor is after the last row.
+   */
+  protected boolean isAfterLast = false;
+
+  /**
+   * Do any of the operands contain duplicates.  Used to shortcircuit hasNoDuplicates.
+   */
+  protected boolean operandsContainDuplicates;
+
+  /**
+   * The prefix of the index.
+   */
+  protected long[] prefix = null;
 
   /**
    * Conjoin a list of propositions.
@@ -84,7 +171,140 @@ public class UnboundJoin extends JoinTuples {
    * @throws TuplesException EXCEPTION TO DO
    */
   UnboundJoin(Tuples[] operands) throws TuplesException {
-    init(operands);
+    // Validate "operands" parameter
+    if (operands == null) {
+        throw new IllegalArgumentException("Null \"operands\" parameter");
+    }
+
+    // Initialize fields
+    this.operands = clone(operands);
+    operandBinding = new long[operands.length][];
+    operandBindingPrefix = new long[operands.length][];
+    this.operandsContainDuplicates = false;
+    for (int i = 0; i < operands.length; i++) {
+      // Debug
+      if (logger.isDebugEnabled()) {
+        logger.debug("Operands " + i + " : " + operands[i]);
+        logger.debug("Operands variables " + i + " : " + Arrays.asList(operands[i].getVariables()));
+        logger.debug("Ooperands types " + i + " : " + operands[i].getClass());
+      }
+      operandBinding[i] = new long[operands[i].getVariables().length];
+      if (!operands[i].hasNoDuplicates()) {
+        this.operandsContainDuplicates = true;
+      }
+    }
+
+    fooOperand = new int[operands.length][];
+    fooColumn = new int[operands.length][];
+    operandOutputMap = new int[operands.length][];
+
+    // Calculate the variables present and their mappings from operand
+    // columns to result columns
+    List variableList = new ArrayList();
+    List mapOperandList = new ArrayList();
+    List mapColumnList = new ArrayList();
+    List fooOperandList = new ArrayList();
+    List fooColumnList = new ArrayList();
+
+    for (int i = 0; i < operands.length; i++) {
+      fooOperandList.clear();
+      fooColumnList.clear();
+
+      Variable[] operandVariables = operands[i].getVariables();
+
+      operandOutputMap[i] = new int[operandVariables.length];
+
+      for (int j = 0; j < operandVariables.length; j++) {
+        int k = variableList.indexOf(operandVariables[j]);
+
+        if (k == -1) {
+          mapOperandList.add(new Integer(i));
+          mapColumnList.add(new Integer(j));
+          fooOperandList.add(new Integer(PREFIX));
+          fooColumnList.add(new Integer(variableList.size()));
+          variableList.add(operandVariables[j]);
+          operandOutputMap[i][j] = j;
+        } else {
+          fooOperandList.add(mapOperandList.get(k));
+          fooColumnList.add(mapColumnList.get(k));
+          operandOutputMap[i][j] = k;
+        }
+      }
+
+      // Convert per-operand lists into arrays
+      assert fooOperandList.size() == fooColumnList.size();
+      fooOperand[i] = new int[fooOperandList.size()];
+      fooColumn[i] = new int[fooColumnList.size()];
+
+      for (int j = 0; j < fooOperand[i].length; j++) {
+        fooOperand[i][j] = ((Integer) fooOperandList.get(j)).intValue();
+        fooColumn[i][j] = ((Integer) fooColumnList.get(j)).intValue();
+      }
+    }
+
+    // Convert column mappings from lists to arrays
+    setVariables(variableList);
+
+    mapOperand = new int[mapOperandList.size()];
+    mapColumn = new int[mapColumnList.size()];
+
+    for (int i = 0; i < mapOperand.length; i++) {
+      mapOperand[i] = ((Integer) mapOperandList.get(i)).intValue();
+      mapColumn[i] = ((Integer) mapColumnList.get(i)).intValue();
+    }
+
+    // Determine which columns are ever unbound
+    columnEverUnbound = new boolean[variableList.size()];
+    columnOperandEverUnbound = new boolean[operands.length][variableList.size()];
+    Arrays.fill(columnEverUnbound, true);
+
+    for (int i = 0; i < operands.length; i++) {
+      Arrays.fill(columnOperandEverUnbound[i], false);
+      Variable[] variables = operands[i].getVariables();
+      for (int j = 0; j < variables.length; j++) {
+        if (!operands[i].isColumnEverUnbound(j)) {
+          columnEverUnbound[getColumnIndex(variables[j])] = false;
+        } else {
+          columnOperandEverUnbound[i][getColumnIndex(variables[j])] = true;
+        }
+      }
+    }
+  }
+
+  /**
+   * @return {@inheritDoc}  This occurs if and only if every one of the
+   *   {@link #operands} is unconstrained.
+   * @throws TuplesException {@inheritDoc}
+   */
+  public boolean isUnconstrained() throws TuplesException {
+    for (int i = 0; i < operands.length; i++) {
+      if (!operands[i].isUnconstrained()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public List getOperands() {
+    return Arrays.asList(operands);
+  }
+
+  public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
+    if (prefix == null) {
+      throw new IllegalArgumentException("Null \"prefix\" parameter");
+    }
+
+    if (suffixTruncation != 0) {
+      throw new TuplesException("Suffix truncation not implemented");
+    }
+
+    assert operands != null;
+    assert operandBinding != null;
+
+    isBeforeFirst = true;
+    isAfterLast = false;
+    this.prefix = prefix;
   }
 
   //
@@ -140,9 +360,7 @@ public class UnboundJoin extends JoinTuples {
     BigInteger rowCount = BigInteger.valueOf(operands[0].getRowUpperBound());
 
     for (int i = 1; i < operands.length; i++) {
-      rowCount = rowCount.multiply(BigInteger.valueOf(
-          operands[i].getRowUpperBound()
-          ));
+      rowCount = rowCount.multiply(BigInteger.valueOf(operands[i].getRowUpperBound()));
       if (rowCount.bitLength() > 63)
         return Long.MAX_VALUE;
     }
@@ -150,16 +368,10 @@ public class UnboundJoin extends JoinTuples {
     return rowCount.longValue();
   }
 
-  /**
-   * This method is not yet implemented, and always returns <code>true</code>.
-   *
-   * @return <code>true</code>
-   */
   public boolean isColumnEverUnbound(int column) throws TuplesException {
     try {
       return columnEverUnbound[column];
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
+    } catch (ArrayIndexOutOfBoundsException e) {
       throw new TuplesException("No such column " + column, e);
     }
   }
@@ -195,8 +407,7 @@ public class UnboundJoin extends JoinTuples {
       }
 
       return true;
-    }
-    else {
+    } else {
       // We know at this point that we're on a row satisfying the current
       // prefix.  Advance the rightmost operand and let rollover do any
       // right-to-left advancement required
@@ -263,13 +474,10 @@ public class UnboundJoin extends JoinTuples {
     for (int j = 0; j < operandBinding[i].length; j++) {
       if (fooOperand[i][j] == PREFIX) {
         // Variable first bound to a next method parameter prefix column passed to beforeFirst.
-        operandBinding[i][j] = (j < prefix.length) ? prefix[fooColumn[i][j]] :
-            Tuples.UNBOUND;
-      }
-      else {
+        operandBinding[i][j] = (j < prefix.length) ? prefix[fooColumn[i][j]] : Tuples.UNBOUND;
+      } else {
         // Variable first bound to a leftward operand column
-        operandBinding[i][j] = operands[fooOperand[i][j]].getColumnValue(
-            fooColumn[i][j]);
+        operandBinding[i][j] = operands[fooOperand[i][j]].getColumnValue(fooColumn[i][j]);
       }
     }
 
@@ -277,25 +485,21 @@ public class UnboundJoin extends JoinTuples {
     int prefixLength = 0;
     while ((prefixLength < operandBinding[i].length) &&
         (operandBinding[i][prefixLength] != Tuples.UNBOUND) &&
-        (columnOperandEverUnbound[operandOutputMap[i][prefixLength]] == false)) {
+        (columnOperandEverUnbound[i][operandOutputMap[i][prefixLength]] == false)) {
       prefixLength++;
     }
 
     assert prefixLength >= 0;
     assert prefixLength <= operandBinding[i].length;
-//    assert (prefixLength == operandBinding[i].length) ||
-//           (operandBinding[i][prefixLength] == Tuples.UNBOUND);
 
     // Generate the advancement prefix
     assert operandBindingPrefix != null;
 
-    if ((operandBindingPrefix[i] == null) ||
-        (operandBindingPrefix[i].length != prefixLength)) {
+    if ((operandBindingPrefix[i] == null) || (operandBindingPrefix[i].length != prefixLength)) {
       operandBindingPrefix[i] = new long[prefixLength];
     }
 
-    System.arraycopy(operandBinding[i], 0, operandBindingPrefix[i], 0,
-        prefixLength);
+    System.arraycopy(operandBinding[i], 0, operandBindingPrefix[i], 0, prefixLength);
   }
 
   /**
@@ -317,8 +521,7 @@ public class UnboundJoin extends JoinTuples {
           isAfterLast = true;
           prefix = null;
           return false;
-        }
-        else {
+        } else {
           // roll the leftward row
           if (!advance(i - 1)) {
             return false;
@@ -333,8 +536,7 @@ public class UnboundJoin extends JoinTuples {
       }
 
       // Check that any suffix conditions are satisfied
-      for (int j = operandBindingPrefix[i].length;
-          j < operandBinding[i].length; j++) {
+      for (int j = operandBindingPrefix[i].length; j < operandBinding[i].length; j++) {
         if ((operandBinding[i][j] != Tuples.UNBOUND) &&
             (operandBinding[i][j] != operands[i].getColumnValue(j)) &&
             (operands[i].getColumnValue(j) != Tuples.UNBOUND)) {

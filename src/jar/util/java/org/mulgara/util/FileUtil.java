@@ -51,6 +51,9 @@ import org.apache.log4j.*;
  */
 public abstract class FileUtil {
 
+  /** Logger.  */
+  private static Logger logger = Logger.getLogger(FileUtil.class.getName());
+
   /**
    * Recursively delete a file or directory.
    *
@@ -61,18 +64,14 @@ public abstract class FileUtil {
    * @return whether the directory was successfully deleted
    */
   public static boolean deleteDirectory(File directory) {
-
     File[] files = directory.listFiles();
     if (files != null) {
-
       for (int i = 0; i < files.length; ++i) {
-
         if (files[i].isFile()) {
-
-          files[i].delete();
-        }
-        else {
-
+          if (!files[i].delete()) {
+            logger.warn("Failed to delete " + files[i]);
+          }
+        } else {
           deleteDirectory(files[i]);
         }
       }

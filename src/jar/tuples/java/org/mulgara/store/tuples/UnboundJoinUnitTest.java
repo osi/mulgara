@@ -121,6 +121,7 @@ public class UnboundJoinUnitTest extends TestCase {
     testSuite.addTest(new UnboundJoinUnitTest("testNullPrefixBoundInSuffix"));
     testSuite.addTest(new UnboundJoinUnitTest("testNullPropagation"));
     testSuite.addTest(new UnboundJoinUnitTest("testLeadingPrefixNull"));
+    testSuite.addTest(new UnboundJoinUnitTest("testPartialMGR36"));
 
     return testSuite;
 
@@ -572,6 +573,49 @@ public class UnboundJoinUnitTest extends TestCase {
 
     TuplesTestingUtil.testTuplesRow(actual, new long[] { 1, 3} );
     TuplesTestingUtil.testTuplesRow(actual, new long[] { 4, 2} );
+
+    assertTrue(!actual.next());
+
+    TuplesTestingUtil.closeTuples(new Tuples[] { actual, lhs, rhs });
+  }
+
+  /**
+   * Test {@link UnboundJoin}.n the expected final join of MGR-36 case 2.
+   * <pre>
+   *   s          s p o x       s p o x
+   * | 1 | join | 1 2 3 * | = | 1 2 3 * |
+   *            | 2 4 5 * |   | 1 5 3 2 |
+   *            | 2 4 6 * |   | 1 6 3 2 |
+   *            | 1 5 3 2 |
+   *            | 1 6 3 2 |
+   * </pre>
+   */
+  public void testPartialMGR36() throws Exception {
+    String[] lvars = new String[] { "s" };
+    final long[][] lhsValues = new long[][] {
+        new long[] { 1 } };
+
+    String[] rvars = new String[] { "s", "p", "o", "x" };
+    final long[][] rhsValues = new long[][] {
+        new long[] { 1, 2, 3, Tuples.UNBOUND },
+        new long[] { 1, 5, 3, 2 },
+        new long[] { 1, 6, 3, 2 },
+        new long[] { 2, 4, 5, Tuples.UNBOUND },
+        new long[] { 2, 4, 6, Tuples.UNBOUND } };
+
+
+    LiteralTuples lhs = LiteralTuples.create(lvars, lhsValues);
+    LiteralTuples rhs = LiteralTuples.create(rvars, rhsValues);
+
+    Tuples actual = TuplesOperations.sort(new UnboundJoin(new Tuples[] {lhs, rhs}));
+
+    logger.warn("testPartialMGR36 result = " + actual);
+
+    actual.beforeFirst();
+
+    TuplesTestingUtil.testTuplesRow(actual, new long[] { 1, 2, 3, Tuples.UNBOUND } );
+    TuplesTestingUtil.testTuplesRow(actual, new long[] { 1, 5, 3, 2 } );
+    TuplesTestingUtil.testTuplesRow(actual, new long[] { 1, 6, 3, 2 } );
 
     assertTrue(!actual.next());
 
