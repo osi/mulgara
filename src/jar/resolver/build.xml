@@ -39,6 +39,7 @@
     <path refid="resolver-classpath"/>
 
     <fileset file="${resolver-url.dist.dir}/${resolver-url.jar}"/>
+    <fileset file="${resolver-xsd.dist.dir}/${resolver-xsd.jar}"/>
     <fileset file="${resolver-store.dist.dir}/${resolver-store.jar}"/>
     <fileset file="${resolver-memory.dist.dir}/${resolver-memory.jar}"/>
     <fileset file="${store-nodepool-memory.dist.dir}/${store-nodepool-memory.jar}"/>
@@ -80,7 +81,7 @@
           depends="-resolver-prepare, resolver-spi-jar, rules-jar,
                    resolver-http-jar, resolver-file-jar, resolver-url-jar,
                    resolver-jar-jar, content-rdfxml-jar, content-rdfxml-jar,
-                   client-jrdf-jar, jrdf-jar"
+                   client-jrdf-jar, jrdf-jar, resolver-xsd-jar"
           description="Compiles all resolver related files included generated
                        source code">
 
@@ -124,7 +125,7 @@
 
   <target name="resolver-test"
           depends="jrdf-jar, store-nodepool-memory-jar, 
-                   resolver-jar, resolver-memory-jar,
+                   resolver-jar, resolver-memory-jar, resolver-xsd-jar,
                    store-nodepool-xa-jar, store-stringpool-xa-jar, resolver-store-jar,
                    resolver-url-jar, store-stringpool-memory-jar, tuples-hybrid-jar,
                    util-jar, util-xa-jar">

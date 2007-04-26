@@ -151,10 +151,8 @@ class CreateModelOperation implements Operation
     URI databaseURI = metadata.getURI();
     String scheme = modelURI.getScheme();
     String fragment = modelURI.getFragment();
-    if (
-        scheme != null && scheme.equals(databaseURI.getScheme()) &&
-        fragment != null
-    ) {
+    if (scheme != null && scheme.equals(databaseURI.getScheme()) &&
+        fragment != null) {
       if (databaseURI.isOpaque()) {
         // databaseURI is opaque.
         if (modelURI.isOpaque()) {
@@ -219,6 +217,33 @@ class CreateModelOperation implements Operation
     long model = systemResolver.localizePersistent(new URIReferenceImpl(
         modelURI));
     assert model != NodePool.NONE;
+
+    // Check model does not already exist with a different model type.
+    // TODO: there's a node leak here, if the model has already been created.
+    Resolution resolution = systemResolver.resolve(new ConstraintImpl(
+        new LocalNode(model),
+        new LocalNode(metadata.getRdfTypeNode()),
+        new Variable("x"),
+        new LocalNode(metadata.getSystemModelNode())));
+
+    try {
+      resolution.beforeFirst();
+      if (resolution.next()) {
+        Node eNode = systemResolver.globalize(resolution.getColumnValue(0));
+        try {
+          URIReferenceImpl existing = (URIReferenceImpl)eNode;
+          if (!new URIReferenceImpl(modelTypeURI).equals(existing)) {
+            throw new QueryException(modelURI + " already exists with model type " + existing +
+                " in attempt to create it with type " + modelTypeURI);
+          }
+        } catch (ClassCastException ec) {
+          throw new QueryException("Invalid model type entry in system model: " + modelURI + " <rdf:type> " + eNode);
+        }
+      }
+    } finally {
+      resolution.close();
+    }
+
 
     // TODO: there's a node leak here, because the model node was created
     //       persistently, but may never end up linked into the graph if the

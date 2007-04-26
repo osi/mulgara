@@ -81,6 +81,8 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   private static final URI model4URI;
   private static final URI model5URI;
 
+  private static final URI xsdModelTypeURI;
+
   static {
     try {
       databaseURI    = new URI("local:database");
@@ -90,6 +92,8 @@ public class AdvDatabaseSessionUnitTest extends TestCase
       model3URI      = new URI("local:database#model3");
       model4URI      = new URI("local:database#model4");
       model5URI      = new URI("local:database#model5");
+
+      xsdModelTypeURI = new URI(Mulgara.NAMESPACE + "XMLSchemaModel");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }
@@ -118,6 +122,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     suite.addTest(new AdvDatabaseSessionUnitTest("testImplicitCommitQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testPrefixingWithUnbound"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testDatabaseDelete"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testCreateModel"));
 
     return suite;
   }
@@ -190,6 +195,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                    "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
       database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
+      database.addResolverFactory("org.mulgara.resolver.xsd.XSDResolverFactory", null);
     }
   }
 
@@ -1241,6 +1247,31 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     }
     assertFalse(answer2.next());
   }
+
+  public void testCreateModel() throws URISyntaxException
+  {
+    logger.info("testCreateModel");
+
+    try {
+      // Load some test data
+      Session session = database.newSession();
+      try {
+        session.createModel(modelURI, null);
+        try {
+          session.createModel(modelURI, xsdModelTypeURI);
+          assertFalse("createModel should have thrown QueryException", true);
+        } catch (QueryException eq) {
+          // We expect this to be thrown.
+        }
+        session.createModel(modelURI, null);
+      } finally {
+        session.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
 
   /**
    * Fail with an unexpected exception
