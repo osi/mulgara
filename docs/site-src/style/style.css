@@ -28,7 +28,7 @@
 			.specialbold 
 			{
 			font-weight: bold;
-			color: #800040;
+			/* color: #800040; */
 			}
 
 			.commandtext 
@@ -106,11 +106,7 @@
 			border-right-style: solid;
 			border-right-width: 1px;
 			}
-			.tablebodytext 
-			{
-			margin: 3pt 0 3pt 0;
-			padding: 0 0 0 0;
-			}
+			
 			h1
 			{
 			font-size: 20pt;
@@ -161,7 +157,6 @@
 			margin: 12pt 0 0 0;
 			padding: 6pt 6pt 6pt 6pt;
 			}
-
 			.indent 
 			{
 			margin: 12pt 0 3pt 1.1cm;
@@ -180,10 +175,6 @@
 			border-width: thin;
 			text-indent: 4em;
 			white-space: pre;
-			}
-			.indexanchor
-			{
-				margin-top: 12px;
 			}
 			.indexlist
 			{
@@ -223,16 +214,26 @@
 			}
 		#navSite ul {
 			position: relative;
-			left: 10px;
+			left: 0px;
 			margin: 0 10px 0 0;
 			padding: 0;
-			}
+/*			border-left: 1px solid black;
+*/			}
+		#navSite ul .toc {
+			position: relative;
+			left: 4px;
+			margin: 0 10px 0 0;
+			padding: 0;
+/*			border-left: 1px solid transparent;
+*/			}
 		#navSite li	{
 			position: relative;
-			left: 2px;
+			left: 0px;
 			margin: 0 -4px 0 0;
 			padding: 0;
 			list-style-image: url(/img-layout/dash.gif);
+			list-style-image: none;
+			list-style-type: none;
 		/*	list-style-position:inside;	*/
 			font-weight: normal;
 			}
@@ -248,10 +249,36 @@
 			
 		#navSite li.secindex a, .ABC	{
 			font-weight: bold;
+			border-left: 0;
 			}
 			
+		#navSite  {
+			line-height: 140%;
+		}
+			
+		#navSite  li li {
+			border-left: 4px solid #D4C2B6;
+			margin-left: 0px;
+			margin: 3px 0;
+			padding: 0 0 0 3px;
+			line-height: 90%;
+			font-size: small;
+		}	
+	
+		#navSite li.secindex	{
+			border-left: 0;
+			margin-left: 0px;
+			margin: 2px 0;
+			line-height: 110%;
+			font-size: small;
+			}
+		
 		li.secindex a	{
 			font-weight: bold;
+			list-style-type: none;
+			list-style-image: none;
+			}
+		li.ulcontainer	{
 			list-style-type: none;
 			list-style-image: none;
 			}
@@ -304,7 +331,7 @@
 	/* positioning */		
 	/* 	#logoback, #logo, #footer, #navPage, #navSite, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight	
 							{ position: absolute; }	for old browsers */
-	#logoback, #logo, #logomulgara, #footer, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
+	#logoback, #logo, #logomulgara, #footer, #valid, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
 							{ position: fixed; }
 	#content 				{ position: relative; }	/* interestingly "absolute" in firefox 
 										               causes problems with background and margins */
@@ -312,11 +339,11 @@
 	/* colors */
 	#verticalLine			{ border-left: 1px solid #FF5E00; }
 	#navSite				{ border-top: 1px solid #FF5E00;
-							  border-right: 11px solid #FFC77C; 
-							  background-color: #FCC8B3; }
+							  border-right: 11px solid #fdcca1; /*  fccfa7 FFC77C */
+							  background-color: #f5cfc0; }
 	#navPage				{ border-bottom: 1px solid #FF5E00;
-							  border-left: 11px solid #FFC77C; /* fa5 */
-							  background-color: #FCC8B3; } /* faafbf FFE2DF F5D1BC*/
+							  border-left: 11px solid #fdcca1; /* fa5 */
+							  background-color: #f5cfc0; } /* FCC8B3 faafbf FFE2DF F5D1BC*/
 	#content				{ border: 1px solid #D4C2B6;
 							  border-left: 10px solid #D4C2B6; /* FF5E00 */
 							  background-color: #eee;
@@ -328,17 +355,18 @@
 
 	/* depth */
 	#footer					{ z-index: 1; }
-	#logo					{ z-index: 2; }
-	#content				{ z-index: 3; }
-	#logomulgara			{ z-index: 4; }
-	#navProject				{ z-index: 5; }
-	#navSite				{ z-index: 6; }
-	#navPage				{ z-index: 7; }
-	#navGimmicks			{ z-index: 8; }
+	#valid					{ z-index: 2; }
+	#logo					{ z-index: 3; }
+	#content				{ z-index: 4; }
+	#logomulgara			{ z-index: 5; }
+	#navProject				{ z-index: 6; }
+	#navSite				{ z-index: 7; }
+	#navPage				{ z-index: 8; }
+	#navGimmicks			{ z-index: 9; }
 
 	/* generalities*/
 	a						{ text-decoration: none; }
-	a:visited 				{ color: #8E0047 ; }
+	a:visited 				{ color: #000077 ; }
 	a:hover, a:visited:hover { color: #D32D2E ; }
 	img 					{ border: 0; }
 
@@ -362,14 +390,14 @@
 
 	/* navigation */
 	#navProject  {
-		margin: 30px 0 0 0;
+		margin: -0px 0 0 0;
 		}
 	#navProject img {
 		padding: 0;
 		}
 	#navMain 	{
 		width: 141px;
-		margin: 38px 0 0 59px;
+		margin: 1px 0 0 59px;
 		padding: 0px 0px 0px 2px;
 		overflow: hidden;
 		}
@@ -383,7 +411,7 @@
 	#navMore a 	{
 		padding-left: 0;
 	}
-	#navPage {
+	#navPage 	{
 		left: 160px;
 		top: 8px;
 		height: 1em;
@@ -398,21 +426,24 @@
 	#verticalLine {
 		left: 160px;
 		top: 8px;
-		bottom: 32px;
+		bottom: 42px;
 		}
-	#arrowLeft {
+	#arrowLeft 	{
 		left: 190px;
-		bottom: 33px;
+		bottom: 43px;
 		width: 20px;
 		height: 39px;
 		}
 	#arrowRight {
 		left: 61px;
-		bottom: 33px;
+		bottom: 43px;
 		width: 20px;
 		height: 39px;
 		}
-
+	.ABC		{
+		margin-top: 22px;
+		}
+		
 	/* main column */
 	#content {
 		min-width: 300px;
@@ -420,16 +451,18 @@
 		padding: 0px 3px 20px 0px;
 	*/	}
 	#footer {
-		bottom: 30px;
-		min-width: 300px;
-		max-width: 500px;
-		padding: 0px 2px;
-		margin: 0 15% 0 0;
+		bottom: 4px;
+		/* min-width: 300px;
+		max-width: 500px; */
+		padding: 0;
+		margin: 0;
 		font-size: 80%;
 		opacity: 0.4;
 		}
 	#valid	{
-		margin: 14px 0 0px;
+		bottom: 0;
+		left: 72px;
+		opacity: 0.3;
 	}
 
 	#sponsors {	
@@ -456,6 +489,9 @@
 	#top { 
 		position: absolute; top: 0px;
 		}
+	#textonlymode {
+		display: none;
+	}
 }
 
 

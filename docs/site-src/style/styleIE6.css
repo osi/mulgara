@@ -3,7 +3,7 @@ body {
 	background-color: #fff; 
 	background-attachment: scroll;
 	}
-#logoback, #logo, #logomulgara, #footer, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
+#logoback, #logo, #logomulgara, #footer, #valid, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
 	{ position: absolute; }
 
 /* logo */
@@ -35,7 +35,7 @@ body {
 	border-bottom: 0;
 	left: 212px;
 	}
-#footer {
+#footer, #valid {
 	bottom: auto;
 	width: 300px;
 	}
