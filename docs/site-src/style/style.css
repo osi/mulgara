@@ -1,337 +1,19 @@
 @media screen
 {
-	
-		/*	STYLES FROM THE OLD SITE */		
-
-
-		
-			.relatedheading 
-			{
-			font-weight: bold;	
-			margin: 2em 0 0.7em 0;
-			}
-			.relateditem 
-			{
-					font-weight: bold; 
-					margin: 0.4em 0 0 0;
-					padding: 0 0 0 1em;
-			}
-			.backtotop 
-			{
-			font-size: x-small;
-			}
-			.listcontinue 
-			{display: block;
-			margin: 6pt 0 6pt 0;
-			padding: 0 0 0 0;
-			}
-			.specialbold 
-			{
-			font-weight: bold;
-			/* color: #800040; */
-			}
-
-			.commandtext 
-			{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
-			line-height: 0.95em;
-			font-size: small;
-			color: #000000;
-			background-color: #EFEFEF;
-			margin: 12pt 0 12pt 0;
-			padding: 5pt 5pt 5pt 5pt;
-			border-color: #7F7F7F;
-			border-style: solid;
-			border-width: thin;
-			white-space: pre;
-			}
-			.superscript 
-			{display: inline;
-			font-size: 6pt;
-			vertical-align: super;
-			padding: 0 0 0 0;
-			}
-			ol
-			{list-style-type: Decimal;
-			list-style-position: outside;
-			margin: 6pt 0 0 0;
-			}
-			.listcontinuecommandtext 
-			{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
-			line-height: 0.95em;
-			font-size: small;
-			background-color: #EFEFEF;
-			margin: 6pt 0 6pt 0;
-			padding: 5px 5px 5px 5px;
-			border-color: #7F7F7F;
-			border-style: solid;
-			border-width: thin;
-			white-space: pre;
-			}
-			.listcontinue 
-			{display: block;
-			margin: 6pt 6pt 6pt 0;
-			padding: 0 0 0 0;
-			}
-			.note 
-			{
-			margin: 16pt 0 16pt 0;
-			padding: 4pt 4pt 4pt 4pt;
-			border-color: #004080;
-			border-top-style: solid;
-			border-top-width: 0.3mm;
-			border-bottom-style: solid;
-			border-bottom-width: 0.3mm;
-			}
-			.listnote 
-			{display: block;
-			margin: 6pt 6pt 6pt 0;
-			padding: 4pt 4pt 4pt 4pt;
-			border-color: #004080;
-			border-top-style: solid;
-			border-top-width: 0.3mm;
-			border-bottom-style: solid;
-			border-bottom-width: 0.3mm;
-			width: 90%;
-			height: auto;
-			}
-			.tableheading 
-			{
-			font-weight: bold;
-			font-size: 11pt;
-			color: #0F0F0F;
-			background-color: #DFDFDF;
-			margin-top: 0 -2pt 2pt  -2pt;
-			padding: 6pt 6pt 6pt 6pt;
-			border-color: #FFFFFF;
-			border-right-style: solid;
-			border-right-width: 1px;
-			}
-			
-			h1
-			{
-			font-size: 20pt;
-			color: #0F0F0F;
-			margin: 6pt 0 3pt 0;
-			padding: 0 0 0 0;
-			float: none;
-			}
-			h2
-			{
-			font-size: 18pt;
-			color: #0F0F0F;
-			margin: 12pt 0 3pt 0;
-			padding: 0 0 0 0;
-			}
-			h3
-			{
-			font-size: 16pt;
-			color: #0F0F0F;
-			margin: 12pt 0 3pt 0;
-			padding: 0 0 0 0;
-			}
-			h4
-			{
-			font-size: 14pt;
-			color: #0F0F0F;
-			margin: 12pt 0 3pt 0;
-			padding: 0 0 0 0;
-			}
-			h5
-			{
-			font-size: 12pt;
-			margin: 12pt 0 3pt 0;
-			padding: 0 0 0 0;
-			}
-			h6
-			{
-			font-size: 10pt;
-			margin: 12pt 0 3pt 0;
-			padding: 0 0 0 0;
-			}
-			.indexatoz 
-			{
-			font-weight: bold;
-			font-size: 10pt;
-			color: #0F0F0F;
-			background-color: #CFCFCF;
-			margin: 12pt 0 0 0;
-			padding: 6pt 6pt 6pt 6pt;
-			}
-			.indent 
-			{
-			margin: 12pt 0 3pt 1.1cm;
-			padding: 0 0 0 0;
-			text-indent: 4em;
-			}
-			.indentcommandtext 
-			{font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
-			line-height: 0.95em;
-			font-size: small;
-			background-color: #EFEFEF;
-			margin: 12pt 0 12pt 1.1cm;
-			padding: 5pt 5pt 5pt 5pt;
-			border-color: #7F7F7F;
-			border-style: solid;
-			border-width: thin;
-			text-indent: 4em;
-			white-space: pre;
-			}
-			.indexlist
-			{
-				margin-top: 4px;
-			}
-		
-		
-	/* NEW STYLES (REMAKE DECEMBER 2006) */
-
-		h3			{ margin-bottom: -2px;}
-		h4			{ margin-bottom: -5px;}			
-		#navSite a	{
-			display:block;
-			}			
-		#mulgara	{
-			font-weight: bold;
-			font-size: medium;
-			color: #333;
-			padding: 0;
-			}
-		#history	{
-			padding-top: 2em;
-			font-size: xx-small;
-			font-style: italic;
-			}		
-		.anchor		{ 
-			position: relative;
-			}
-		.how		{
-			position: relative;
-			font-size: x-small;
-			margin-left: 20px;
-			}
-	 	ul			{
-			list-style-type: circle;
-		/*	list-style-image: url(/img-layout/dash.gif); */
-			}
-		#navSite ul {
-			position: relative;
-			left: 0px;
-			margin: 0 10px 0 0;
-			padding: 0;
-/*			border-left: 1px solid black;
-*/			}
-		#navSite ul .toc {
-			position: relative;
-			left: 4px;
-			margin: 0 10px 0 0;
-			padding: 0;
-/*			border-left: 1px solid transparent;
-*/			}
-		#navSite li	{
-			position: relative;
-			left: 0px;
-			margin: 0 -4px 0 0;
-			padding: 0;
-			list-style-image: url(/img-layout/dash.gif);
-			list-style-image: none;
-			list-style-type: none;
-		/*	list-style-position:inside;	*/
-			font-weight: normal;
-			}
-		#navSite a	{
-			font-weight: normal;
-			}
-		#navSite li.secindex, #navSite li.secindex2 {
-			list-style-type: none;
-			list-style-image: none;
-			position: relative;
-			left: 0px;
-			}	
-			
-		#navSite li.secindex a, .ABC	{
-			font-weight: bold;
-			border-left: 0;
-			}
-			
-		#navSite  {
-			line-height: 140%;
-		}
-			
-		#navSite  li li {
-			border-left: 4px solid #D4C2B6;
-			margin-left: 0px;
-			margin: 3px 0;
-			padding: 0 0 0 3px;
-			line-height: 90%;
-			font-size: small;
-		}	
-	
-		#navSite li.secindex	{
-			border-left: 0;
-			margin-left: 0px;
-			margin: 2px 0;
-			line-height: 110%;
-			font-size: small;
-			}
-		
-		li.secindex a	{
-			font-weight: bold;
-			list-style-type: none;
-			list-style-image: none;
-			}
-		li.ulcontainer	{
-			list-style-type: none;
-			list-style-image: none;
-			}
-
-		#content li.secindex	{
-			margin:  2em 0 0.4em 0;
-			list-style-type: none;
-			list-style-image: none;
-			font-size: large;
-			}
-		#content li.secindex2	{
-			margin:  0.6em 0 0.4em 0;
-			list-style-type: none;
-			list-style-image: none;
-			font-size: large;
-			}
-			
-		#navSite .toc 		{
-			display: none;
-			}
-		div.navtocseperator	{
-			padding: 4px;
-		}
-
-		form  {
-			margin-bottom : 100px;
-			}
-		fieldset {
-			padding : 0;
-			border : 1px solid transparent;
-			background-color: transparent;
-			color: #000;
-			font-weight: bold;
-			opacity: 0.7;
-			}
-			
-		
-
-
-/* ******************************* */
-/*	EVEN NEWER STYLES - APRIL 2007 */
-/* ******************************* */
-
 
 	body {
 		font-size: small;
 		font-family: Verdana, Geneva, "MS Trebuchet", sans-serif;
 		}
+	h1	{ font-size: 24px; margin-top: 4px; padding-top: 0;}
+	h2	{ font-size: 20px; margin-top: 4px; padding-top: 0;}
+	h3	{ font-size: 16px; margin-top: 4px; padding-top: 0;margin-bottom: -2px; }
+	h4	{ font-size: 14px; margin-top: 4px; padding-top: 0;margin-bottom: -5px; }
+	h5	{ font-size: 12px; margin-top: 4px; padding-top: 0;}
+	h6	{ font-size: 10px; margin-top: 4px; padding-top: 0;}
 
 	/* positioning */		
-	/* 	#logoback, #logo, #footer, #navPage, #navSite, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight	
-							{ position: absolute; }	for old browsers */
-	#logoback, #logo, #logomulgara, #footer, #valid, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
+	#logoback, #logo, #logomulgara, #footer, #validator, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
 							{ position: fixed; }
 	#content 				{ position: relative; }	/* interestingly "absolute" in firefox 
 										               causes problems with background and margins */
@@ -354,13 +36,13 @@
 							  background-attachment: fixed;}
 
 	/* depth */
-	#footer					{ z-index: 1; }
-	#valid					{ z-index: 2; }
+	#validator				{ z-index: 1; }
+	#footer					{ z-index: 2; }
 	#logo					{ z-index: 3; }
 	#content				{ z-index: 4; }
 	#logomulgara			{ z-index: 5; }
 	#navProject				{ z-index: 6; }
-	#navSite				{ z-index: 7; }
+	#navMain				{ z-index: 7; }
 	#navPage				{ z-index: 8; }
 	#navGimmicks			{ z-index: 9; }
 
@@ -388,7 +70,7 @@
 		background-repeat: no-repeat;
 		}
 
-	/* navigation */
+	/* navigation positioning and boxes */
 	#navProject  {
 		margin: -0px 0 0 0;
 		}
@@ -410,7 +92,7 @@
 		}
 	#navMore a 	{
 		padding-left: 0;
-	}
+		}
 	#navPage 	{
 		left: 160px;
 		top: 8px;
@@ -418,6 +100,66 @@
 		padding: 0 12px 3px 1px;
 		overflow: hidden;
 		}	
+	
+	/*  navSite list issues */
+	#navSite a	{
+		display:block;
+		}	
+	#navSite ul {
+		left: 0px;
+		margin: 0 10px 0 0;
+		padding: 0;
+		}
+	#navSite li	{
+		left: 0;
+		margin: 0 -4px 0 0;
+		padding: 0;
+		list-style-image: none;
+		list-style-type: none;
+		font-weight: normal;
+		}
+	#navSite li.secindex a, .ABC	{
+		font-weight: bold;
+		border-left: 0;
+		}			
+	#navSite  li li {
+		border-left: 4px solid #aaa;
+		margin: 1px 0;
+		padding: 0 0 0 3px;
+		line-height: 90%;
+		font-size: small;
+		}
+	#navSite li.secindex	{
+		border-left: 0;
+		margin-left: 0px;
+		margin: 2px 0;
+		line-height: 110%;
+		font-size: small;
+		}
+	#navSite .toc 		{
+		display: none;
+		}
+	li.secindex a	{
+		font-weight: bold;
+		list-style-type: none;
+		list-style-image: none;
+		}
+	li.ulcontainer	{
+		list-style-type: none;
+		list-style-image: none;
+		}
+	#content li.secindex	{
+		margin:  2em 0 0.4em 0;
+		list-style-type: none;
+		font-size: large;
+		}
+	#content li.secindex2	{
+		margin:  0.6em 0 0.4em 0;
+		list-style-type: none;
+		font-size: large;
+		}
+		
+	/* nav in out arrows */
 	#navGimmicks {
 		left: 0;
 		top: 0;
@@ -440,58 +182,143 @@
 		width: 20px;
 		height: 39px;
 		}
-	.ABC		{
-		margin-top: 22px;
-		}
 		
-	/* main column */
-	#content {
-		min-width: 300px;
-		/*	margin: 110px 10% 300px 153px;
-		padding: 0px 3px 20px 0px;
-	*/	}
-	#footer {
-		bottom: 4px;
-		/* min-width: 300px;
-		max-width: 500px; */
-		padding: 0;
-		margin: 0;
-		font-size: 80%;
-		opacity: 0.4;
-		}
-	#valid	{
-		bottom: 0;
-		left: 72px;
-		opacity: 0.3;
-	}
-
-	#sponsors {	
-		position: relative;
-		float: right;
-		width: 160px;
-		margin: 5px 0 20px 18px;
-		padding: 2px 10px 2px 12px;
-		border-left: 1px solid #999;
-		}	
-	#sponsors a img 	{
-		margin-bottom: 20px;
-		display: block;
-		}
-	#sponsors a img#kadomo 	{
-		margin: -8px 0 14px 0;
-		}
-
-	p#mulgara {
-		margin-top: 2px;
-		font-size: medium;
-		font-weight: bold;
-		}
+	/* innerpage navigation */
 	#top { 
 		position: absolute; top: 0px;
 		}
 	#textonlymode {
 		display: none;
-	}
+		}
+	.anchor		{ 
+		position: relative;
+		height: 30px;
+		}
+		
+	/* main column */
+	#content {
+		min-width: 300px;
+		margin-top: 0;
+		padding-top: 0;
+		}
+	#footer {
+		bottom: 4px;
+		padding: 0;
+		margin: 0;
+		min-width: 300px;
+		font-size: x-small;
+		opacity: 0.4;
+		}
+	#validator	{
+		bottom: 0;
+		left: 72px;
+		opacity: 0.3;
+		}
+
+		
+	/* specialties */
+	.ABC		{ 				/* backofbook.html */
+		margin-top: 6px;
+		}
+		
+		
+	/*	STYLES FROM THE OLD SITE */		
+	.relatedheading {
+		font-weight: bold;	
+		margin: 2em 0 0.7em 0;
+		}
+	.relateditem {
+		font-weight: bold; 
+		margin: 0.4em 0 0 0;
+		padding: 0 0 0 1em;
+		}
+	.backtotop {
+		font-size: x-small;
+		}
+	.specialbold  {
+		font-weight: bold;	/* color: #800040; */
+		}
+	.commandtext, .listcontinuecommandtext , .indentcommandtext  {
+		font-family: "Courier New", courier, verdana, arial, helvetica, sans-serif;
+		line-height: 0.95em;
+		font-size: small;
+		color: #000000;
+		background-color: #EFEFEF;
+		margin: 12px 0;
+		padding: 5px;
+		border-color: #7F7F7F;
+		border-style: solid;
+		border-width: thin;
+		white-space: pre;
+		}
+	.listcontinuecommandtext {
+		margin: 6px 0;
+		}
+	.indentcommandtext {
+		text-indent: 4em;
+		}
+	.listcontinue  {
+		display: block;
+		margin: 6px 0;
+		padding: 0;
+		}
+	.superscript	{
+		display: inline;
+		font-size: 6px;
+		vertical-align: super;
+		padding: 0 ;
+		}
+	ol	{
+		list-style-type: Decimal;
+		list-style-position: outside;
+		margin: 6px 0 0 0;
+		}
+	.note {
+		margin: 16px 0;
+		padding: 4px;
+		border-color: #004080;
+		border-style: solid none;
+		border-width: 1px 0;
+		}
+	.listnote {
+		display: block;
+		margin: 6pt 6pt 6pt 0;
+		padding: 4px;
+		border-color: #004080;
+		border-style: solid none;
+		border-width: 1px 0;
+		width: 90%;
+		height: auto;
+		}
+	.tableheading {
+		font-weight: bold;
+		color: #0F0F0F;
+		background-color: #DFDFDF;
+		margin-top: 0;
+		padding: 6px;
+		border-color: #FFFFFF;
+		border-right-style: solid;
+		border-right-width: 1px;
+		}	
+	.indexatoz 	{
+		font-weight: bold;
+		color: #0F0F0F;
+		background-color: #CFCFCF;
+		margin: 12px 0 0 0;
+		padding: 6px;
+		}
+	.indent 	{
+		margin: 12px 0px 3px 20px;
+		padding: 0;
+		text-indent: 4em;
+		}
+	.indexlist	{
+		margin-top: 4px;
+		}
+
+
+
+
 }
 
 

@@ -5,7 +5,9 @@ body {
 	}
 #logoback, #logo, #logomulgara, #footer, #valid, #navPage, #navMain, #navProject, #navGimmicks, #verticalLine, #arrowLeft, #arrowRight
 	{ position: absolute; }
-
+#valid	{ 
+	display: none;
+	}
 /* logo */
 #logo	{
 	left: 0px;
@@ -21,11 +23,11 @@ body {
 
 #navProject	{
 	left: 10px;
-	top: 87px;
+	top: 109px;
 }	
 #navMain	{
 	left: 10px;
-	top: 87px;
+	top: 109px;
 	border-top: 0;
 	}
 #navSite	{
@@ -35,16 +37,38 @@ body {
 	border-bottom: 0;
 	left: 212px;
 	}
-#footer, #valid {
+#footer{
 	bottom: auto;
 	width: 300px;
 	}
 #verticalLine {
-	margin-left: 12px;
+	margin-left: 0px;
 	top: 8px;
 	height: 400px;
 	}
 
 
-#sponsors {
+#navSite  {
+	line-height: inherit;
+}
+	
+#navSite  li li {
+	margin: 0px 0;
+	padding: 0 0 0 3px;
+	line-height: 70%;
+}	
+
+#navSite li.secindex	{
+	border-left: 0;
+	margin-left: 0px;
+	margin: 0px 0;
+	line-height: 70%;
+	font-size: small;
+	}
+#navSite li.secindex2	{
+	border-left: 0;
+	margin-left: 0px;
+	margin: 0px 0;
+	line-height: 70%;
+	font-size: small;
 	}
