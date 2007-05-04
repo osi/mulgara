@@ -158,6 +158,9 @@
 		list-style-type: none;
 		font-size: large;
 		}
+	.navtocseperator	{
+		height: 6px;
+		}
 		
 	/* nav in out arrows */
 	#navGimmicks {
@@ -210,7 +213,7 @@
 		opacity: 0.4;
 		}
 	#validator	{
-		bottom: 0;
+		bottom: 4px;
 		left: 72px;
 		opacity: 0.3;
 		}
