@@ -477,7 +477,7 @@ omitted documentation.html
 	Failure,/itqloperations/170.htm,/itqloperations/nodetyping.html,225
 	Failure,/itqloperations/176.htm,/itqloperations/nodetyping.html,242
 	Failure,/itqloperations/187.htm,/itqloperations/nodetyping.html,256
-	Failure,/integration/api/jrdf/index.html,/integration/jrdftutorial.html,299
+	Failure,/integration/api/jrdf/index.html,/jrdftutorial.html,299
 	Failure,/system/api/org/kowari/itql/ItqlInterpreterBean.html,/system/itqlbean.html,253
 	Failure,/overview/OSL-3.0.txt,/overview/legalinfo.html,266
 	Timeout,https://sofa.dev.java.net/,/inferencing/inferexample.html,300
@@ -486,7 +486,7 @@ omitted documentation.html
 	Timeout,http://java.sun.com/j2se/1.4.2/install.html,/inferencing/sofa.html,324
 	Failure,http://jakarta.apache.org/lucene/docs/systemproperties.html,/itqloperations/fulltextmodels.html,229
 	Timeout,http://jakarta.apache.org/lucene/docs/queryparsersyntax.html,/itqloperations/fulltextmodels.html,281
-	Timeout,http://java.sun.com/j2se/1.4.2/install.html,/integration/jrdf/jrdfprereq.html,280
+	Timeout,http://java.sun.com/j2se/1.4.2/install.html,/jrdf/jrdfprereq.html,280
 	Failure,http://localhost/jspdemo/index.jsp,/integration/jsptutorial.html,432
 	Robot Exclusion,http://inline.perl.org/inline/home.html,/integration/perl.html,267
 	Robot Exclusion,http://inline.perl.org/java/home.html,/integration/perl.html,267

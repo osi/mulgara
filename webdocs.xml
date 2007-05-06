@@ -512,39 +512,39 @@
 								<li><a href="/integration/jsptutorial.html#o995">Deploy the JSPs</a></li>
 								<li><a href="/integration/jsptutorial.html#o996">Open the Application</a></li>
 						</ul></li>
-						<li><a href="/integration/jrdftutorial.html">JRDF Tutorial</a></li>
+						<li><a href="/jrdf/jrdftutorial.html">JRDF Tutorial</a></li>
 								@@jrdfTOC@@
 				</ul></li>]]></replacevalue>
     </replace>
 
 
 
-    <replace dir="${src.docs.dir}/integration" token="@@jrdfTOC@@" value="">
-      <exclude name="integration/jrdf/*.html"/>
+    <replace dir="${src.docs.dir}" token="@@jrdfTOC@@" value="">
+      <exclude name="jrdf/*.html"/>
       <exclude name="toc.html"/>
     </replace>
 
-    <replace dir="${src.docs.dir}/integration" token="@@jrdfTOC@@">
-      <include name="integration/jrdf/*.html"/>
+    <replace dir="${src.docs.dir}" token="@@jrdfTOC@@">
+      <include name="jrdf/*.html"/>
       <include name="toc.html"/>
       <replacevalue><![CDATA[	<li class="ulcontainer"><ul>
-				<li><a href="/integration/jrdf/jrdfprereq.html">Prerequisites</a></li>
+				<li><a href="/jrdf/jrdfprereq.html">Prerequisites</a></li>
 				<li class="ulcontainer toc"><ul class="toc">
-						<li><a href="/integration/jrdf/jrdfprereq.html#o2898">Obtaining a Session from a Mulgara Server</a></li>
-						<li><a href="/integration/jrdf/jrdfprereq.html#o2899">Comparison of JRDF Graph Implementations</a></li>
+						<li><a href="/jrdf/jrdfprereq.html#o2898">Obtaining a Session from a Mulgara Server</a></li>
+						<li><a href="/jrdf/jrdfprereq.html#o2899">Comparison of JRDF Graph Implementations</a></li>
 				</ul></li>
-				<li><a href="/integration/jrdf/jrdfcreategraph.html">Creating the Graph</a></li>
+				<li><a href="/jrdf/jrdfcreategraph.html">Creating the Graph</a></li>
 				<li class="ulcontainer toc"><ul class="toc">
-						<li><a href="/integration/jrdf/jrdfcreategraph.html#o2901">JRDF Graph (Memory Graph)</a></li>
-						<li><a href="/integration/jrdf/jrdfcreategraph.html#o3189">Server-side JRDF Graph (Server Graph)</a></li>
-						<li><a href="/integration/jrdf/jrdfcreategraph.html#o2902">Server Backed JRDF Graph (Client Graph)</a></li>
-						<li><a href="/integration/jrdf/jrdfcreategraph.html#o2903">Read Only iTQL Result JRDF Graph (iTQL Graph)</a></li>
+						<li><a href="/jrdf/jrdfcreategraph.html#o2901">JRDF Graph (Memory Graph)</a></li>
+						<li><a href="/jrdf/jrdfcreategraph.html#o3189">Server-side JRDF Graph (Server Graph)</a></li>
+						<li><a href="/jrdf/jrdfcreategraph.html#o2902">Server Backed JRDF Graph (Client Graph)</a></li>
+						<li><a href="/jrdf/jrdfcreategraph.html#o2903">Read Only iTQL Result JRDF Graph (iTQL Graph)</a></li>
 				</ul></li>
-				<li><a href="/integration/jrdf/jrdfcreatenodes.html">Creating Nodes and Triples</a></li>
-				<li><a href="/integration/jrdf/jrdfaddtriples.html">Adding Triples<span class="toc"> to the Graph</span></a></li>
-				<li><a href="/integration/jrdf/searchgraph.html">Searching the Graph</a></li>
-				<li><a href="/integration/jrdf/jrdfreify.html">Reify Triples</a></li>
-				<li><a href="/integration/jrdf/jrdfremove.html">Removing Triples<span class="toc"> from the Graph</span></a></li>
+				<li><a href="/jrdf/jrdfcreatenodes.html">Creating Nodes and Triples</a></li>
+				<li><a href="/jrdf/jrdfaddtriples.html">Adding Triples<span class="toc"> to the Graph</span></a></li>
+				<li><a href="/jrdf/searchgraph.html">Searching the Graph</a></li>
+				<li><a href="/jrdf/jrdfreify.html">Reify Triples</a></li>
+				<li><a href="/jrdf/jrdfremove.html">Removing Triples<span class="toc"> from the Graph</span></a></li>
 		</ul></li>]]></replacevalue>
     </replace>
 
