@@ -52,7 +52,8 @@
 	<script type="text/javascript" src="/script/styleswitcher.js"></script>
 	<script type="text/javascript" src="/script/rollover.js"></script>
 	<link rel="stylesheet" type="text/css" href="/style/style.css"/>
-	<!--[if IE]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
+	<!--[if lt IE 7]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
+	<!--[if gte IE 7]><style type="text/css">@import url(/style/styleIE7.css);</style><![endif]-->
 	<link rel="stylesheet" type="text/css" href="/style/navIn.css" title="navIn" />
 	<link rel="alternate stylesheet" type="text/css" href="/style/navOut.css" title="navOut" />
 </head>
@@ -190,7 +191,7 @@
       <replacevalue><![CDATA[
 
 	<div id="footer">
-		Copyright 2006-2007 The Mulgara Project. Some rights reserved. <a href="/overview/legal.html">MORE &gt;</a>
+		Copyright 2006-2007 The Mulgara Project. Some rights reserved. <a href="/overview/legal.html">MORE&nbsp;&gt;</a>
 	</div>
 	<div id="validator">
 		<a href="http://validator.w3.org/check?uri=referer"><img src="/img-layout/w3xhtml10.gif" alt="Valid XHTML 1.0 Transitional" height="21" width="66" /></a>
