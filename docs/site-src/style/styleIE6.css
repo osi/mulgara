@@ -45,30 +45,45 @@ body {
 #verticalLine {
 	margin-left: 0px;
 	top: 8px;
-	height: 447px;
+	height: 421px;
 	}
 
-
-#navSite  {
-	line-height: inherit;
+#navSite  li li, #navSite  ul, li.secindex	{
+	margin: 0;
+	border: 0;
+	height: 0;
+	padding: 0;
 }
+
+
+/*	
 	
 #navSite  li li {
 	margin: 0px 0;
 	padding: 0 0 0 3px;
-	line-height: 70%;
-}	
+	
+	border-left: 4px solid #aaa;
+	width: 129px;
+	margin: 1px 0 2px 0;
+	padding: 0 0 0 3px;
+	font-size: x-small;
+	}
 
 #navSite li.secindex	{
 	border-left: 0;
 	margin: 0;
-	line-height: 80%;
 	font-size: small;
 	}
 #navSite li.secindex2	{
 	border-left: 0;
-	margin-left: 0px;
-	margin: 0px 0;
+	margin: 0;
 	line-height: 70%;
 	font-size: small;
 	}
+#navSite  ul.section, #navSite  ul.section li {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	line-height: 1.2em;
+	}
+	*/
