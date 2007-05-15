@@ -14,8 +14,6 @@
 package org.mulgara.resolver.distributed;
 
 // Java 2 standard packages
-import java.io.*;
-import java.net.*;
 import java.util.*;
 
 // Third party packages
@@ -81,6 +79,7 @@ public class DistributedResolverFactory implements ResolverFactory
    * {@inheritDoc ResolverFactory}
    */
   public void close() {
+    logger.debug("Closing distributed resolvers");
     for (DistributedResolver r: openResolvers) r.close();
   }
 
@@ -100,6 +99,7 @@ public class DistributedResolverFactory implements ResolverFactory
    * @throws InitializerException if the XML Schema resources can't be found or created
    */
   public static ResolverFactory newInstance(ResolverFactoryInitializer initializer) throws InitializerException {
+    logger.debug("Creating new distributed resolver factory");
     return new DistributedResolverFactory(initializer);
   }
 
@@ -118,7 +118,8 @@ public class DistributedResolverFactory implements ResolverFactory
   ) throws ResolverFactoryException {
 
     if (resolverSession == null) throw new IllegalArgumentException("No session provided for the resolver!");
-    if (canWrite) throw new IllegalArgumentException("Cannot write to a remote model!");
+    logger.debug("Creating new distributed resolver");
+    if (canWrite) logger.debug("Expecting to write to distributed resolver.");
     DistributedResolver r = new DistributedResolver(resolverSession);
     openResolvers.add(r);
     return r;

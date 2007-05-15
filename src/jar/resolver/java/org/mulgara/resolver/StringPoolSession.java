@@ -129,6 +129,9 @@ public class StringPoolSession implements XAResolverSession
 
   /** Where to store literals which won't outlive this session.  */
   private final StringPool temporaryStringPool;
+  
+  /** Maps blank nodes into remembered IDs. */
+  Map<BlankNode,Long> blankNodeCache = new HashMap<BlankNode,Long>();
 
   private int state;
 
@@ -226,6 +229,7 @@ public class StringPoolSession implements XAResolverSession
     synchronized (this.globalLock) {
       this.persistentStringPool.refresh();
       this.persistentNodePool.refresh();
+      blankNodeCache.clear();
       // !!Review: Call rollback on temporary? NB. Can't rollback non XA-SP/NP.
       //this.temporaryStringPool.refresh();
       //this.temporaryNodePool.refresh();
@@ -274,6 +278,7 @@ public class StringPoolSession implements XAResolverSession
     synchronized (globalLock) {
       persistentStringPool.commit();
       persistentNodePool.commit();
+      blankNodeCache.clear();
       for (int i = 0; i < resources.length; i++) {
         resources[i].commit();
       }
@@ -292,6 +297,7 @@ public class StringPoolSession implements XAResolverSession
     state = ROLLBACK;
     persistentStringPool.rollback();
     persistentNodePool.rollback();
+    blankNodeCache.clear();
     for (int i = 0; i < resources.length; i++) {
       resources[i].rollback();
     }
@@ -313,6 +319,8 @@ public class StringPoolSession implements XAResolverSession
 
     persistentStringPool.release();
     persistentNodePool.release();
+    blankNodeCache.clear();
+
     // TODO determine if release() should be called for the temp components.
     //temporaryStringPool.release();
     //temporaryNodePool.release();
@@ -470,8 +478,7 @@ public class StringPoolSession implements XAResolverSession
           // persisting.
           if ((bi.getNodeId() < 0) && ((flags & STORE_MASK) == PERSIST)) {
             bi.setNodeId(persistentNodePool.newNode());
-          }
-          else if (bi.getNodeId() == 0) {
+          } else if (bi.getNodeId() == 0) {
             if ((flags & STORE_MASK) == TEMP) {
               bi.setNodeId(-temporaryNodePool.newNode());
             }
@@ -485,30 +492,41 @@ public class StringPoolSession implements XAResolverSession
         // id is negative.
         throw new LocalizeException(node, "Attempt to persist a local blank " +
            "node in a read phase");
-      }
+      } else if ((flags & WRITE_MASK) == WRITE) {
       // Some other implementation of BlankNode, so we can't access internal
       // node ID and we can only create one - we must be in the WRITE phase.
-      else if ((flags & WRITE_MASK) == WRITE) {
-        long nodeId;
-        if ((flags & STORE_MASK) == TEMP) {
-          nodeId = -temporaryNodePool.newNode();
-        } else {
-          nodeId = persistentNodePool.newNode();
-        }
+        return getAllocatedNodeId(node, flags);
 
-        return nodeId;
-      }
-      // If it's a read phase and not the local BlankNode then throw an
-      // exception.
-      else {
+      } else {
+        // If it's a read phase and not the local BlankNode then throw an
+        // exception.
         throw new LocalizeException(node, "Attempt to read BlankNode from stringpool");
       }
-    }
-    catch (NodePoolException e) {
+    } catch (NodePoolException e) {
       throw new LocalizeException(node, "Couldn't create blank node", e);
     }
   }
 
+  /**
+   * Allocates new node IDs for unknown nodes.  Stores node IDs for later lookups.
+   * @param bn The blank node to get the ID for.
+   * @param flags Indicates the type of storage for the node ids.
+   * @return The node ID for this given blank node.
+   * @throws NodePoolException An error while allocating a new node.
+   */
+  protected long getAllocatedNodeId(BlankNode bn, int flags) throws NodePoolException {
+    assert !(bn instanceof BlankNodeImpl);
+    if (blankNodeCache.containsKey(bn)) return blankNodeCache.get(bn);
+
+    long nodeId;
+    if ((flags & STORE_MASK) == TEMP) {
+      nodeId = -temporaryNodePool.newNode();
+    } else {
+      nodeId = persistentNodePool.newNode();
+    }
+    blankNodeCache.put(bn, nodeId);
+    return nodeId;
+  }
 
   protected Node globalizeBlankNode(long localNode, SPObject spObject) throws
       GlobalizeException {

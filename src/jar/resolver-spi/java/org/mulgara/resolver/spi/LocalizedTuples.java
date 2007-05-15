@@ -68,7 +68,7 @@ public class LocalizedTuples extends AbstractTuples {
       Logger.getLogger(LocalizedTuples.class.getName());
 
   /** The session to localize into. */
-  private final ResolverSession session;
+  protected final ResolverSession session;
 
   /**
    * The wrapped {@link Answer} instance.

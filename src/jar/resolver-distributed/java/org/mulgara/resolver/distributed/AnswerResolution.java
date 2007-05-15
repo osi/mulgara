@@ -14,26 +14,24 @@ package org.mulgara.resolver.distributed;
 
 import org.apache.log4j.Logger;  // Apache Log4J
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.Answer;
 import org.mulgara.query.Constraint;
-import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.rdf.BlankNodeImpl;
 
-import org.mulgara.resolver.spi.GlobalizeException;
+import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.LocalizedTuples;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Resolution;
 
-import org.mulgara.store.tuples.Annotation;
-import org.mulgara.store.tuples.RowComparator;
-import org.mulgara.store.tuples.Tuples;
+import java.net.URI;
 
 /**
  * A {@link Resolution} which extends a LocalizedTuples, which in turn wraps an Answer.
  *
  * @created 2007-03-23
  * @author Paul Gearon
- * @version $Revision: $
- * @modified $Date: $ @maintenanceAuthor $Author: $
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
@@ -44,6 +42,9 @@ class AnswerResolution extends LocalizedTuples implements Resolution {
 
   /** The constraint. */
   private final Constraint constraint;
+  
+  /** The server URI being accessed. */
+  private final URI serverUri;
 
 
   /**
@@ -53,10 +54,13 @@ class AnswerResolution extends LocalizedTuples implements Resolution {
    * @param constraint the constraint.
    * @throws IllegalArgumentException if <var>constraint<var> is <code>null</code>
    */
-  AnswerResolution(ResolverSession session, Answer answer, Constraint constraint) {
+  AnswerResolution(URI serverUri, ResolverSession session, Answer answer, Constraint constraint) {
     super(session, answer);
+    logger.debug("Constructed AnswerResolution for distributed resolver");
     if (constraint == null) throw new IllegalArgumentException("Null constraint parameter");
     this.constraint = constraint;
+    this.serverUri = serverUri;
+    logger.debug("Created resolution on server: " + serverUri + " for: " + constraint);
   }
 
 
@@ -76,4 +80,22 @@ class AnswerResolution extends LocalizedTuples implements Resolution {
     return true;
   }
 
+  /**
+   * Get the bound value for the column, converting Blank Nodes to a
+   * remote representation when needed.
+   * @param column The column of the bound value.
+   * @return the Localized long integer for the bound value.
+   * @throws TuplesException Indicates an error getting the value from the string pool.
+   */
+  public long getColumnValue(int column) throws TuplesException {
+    try {
+      Object obj = answer.getObject(column);
+      assert obj instanceof Node;
+
+      Node node = obj instanceof BlankNodeImpl ? new ForeignBlankNode(serverUri, (BlankNodeImpl)obj) : (Node)obj;
+      return session.localize(node);
+    } catch (LocalizeException e) {
+      throw new TuplesException("Couldn't localize column " + column, e);
+    }
+  }
 }

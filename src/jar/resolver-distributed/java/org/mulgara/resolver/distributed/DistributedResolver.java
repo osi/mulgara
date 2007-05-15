@@ -13,7 +13,6 @@
 package org.mulgara.resolver.distributed;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.transaction.xa.XAResource;
@@ -41,15 +40,12 @@ import org.mulgara.server.SessionFactory;
  *
  * @created 2007-03-20
  * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
- * @version $Revision: $
- * @modified $Date: $
- * @maintenanceAuthor $Author: $
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class DistributedResolver implements Resolver
-{
-  /** Logger.  */
+public class DistributedResolver implements Resolver {
+
+  /** Logger. */
   private static Logger logger = Logger.getLogger(DistributedResolver.class.getName());
 
   /** The delegator that resolves the constraint on another server.  */
@@ -118,7 +114,13 @@ public class DistributedResolver implements Resolver
    * @throws ResolverException The server should not ask this resolver to modify data.
    */
   public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {
-    throw new ResolverException("Distributed models are read only");
+    if (logger.isDebugEnabled()) logger.debug(occurs ? "Adding" : "Removing" + " statements from model");
+    try {
+      if (occurs) delegator.add(model, statements);
+      else delegator.remove(model, statements);
+    } catch (QueryException qe) {
+      throw new ResolverException("Error modifying model", qe);
+    }
   }
 
 
@@ -146,7 +148,11 @@ public class DistributedResolver implements Resolver
     ConstraintElement modelElement = constraint.getElement(3);
     if (!(modelElement instanceof LocalNode)) throw new QueryException("Constraint not set to a distributed model.");
     
-    return delegator.resolve(constraint, (LocalNode)modelElement);
+    try {
+      return delegator.resolve(constraint, (LocalNode)modelElement);
+    } catch (ResolverException re) {
+      throw new QueryException(re.getMessage(), re);
+    }
   }
 
 

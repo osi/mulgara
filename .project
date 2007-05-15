@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Mulgara-1.2</name>
+	<name>Mulgara-1.0</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>descriptor-client</name>
+			<type>2</type>
+			<location>obj/jar/descriptor-client</location>
+		</link>
+	</linkedResources>
 </projectDescription>

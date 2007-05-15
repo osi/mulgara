@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/jar/ant-task/java"/>
+	<classpathentry kind="src" path="src/jar/resolver-distributed/java"/>
 	<classpathentry kind="src" path="src/jar/connector/java"/>
 	<classpathentry kind="src" path="src/war/webui/java"/>
 	<classpathentry kind="src" path="src/jar/doclet/java"/>
@@ -128,12 +129,12 @@
 	<classpathentry kind="lib" path="lib/xalan-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/jrdf-0.3.4.3.jar"/>
-	<classpathentry kind="lib" path="lib/ant-trax-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/ant-nodeps-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/ant-launcher-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/ant-junit-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/ant-apache-bsf-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/ant-1.6.5.jar"/>
+	<classpathentry kind="lib" path="lib/ant-trax-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/ant-nodeps-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/ant-launcher-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/ant-junit-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/ant-apache-bsf-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/ant-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/DateUtils1.jar"/>
 	<classpathentry kind="output" path="obj/jar"/>
 </classpath>

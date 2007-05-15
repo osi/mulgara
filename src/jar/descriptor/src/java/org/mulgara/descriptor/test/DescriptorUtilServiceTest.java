@@ -65,7 +65,8 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
     */
 
     public void test1DescriptorServiceInvokeToString() throws Exception {
-        org.mulgara.descriptor.DescriptorServiceSoapBindingStub binding;
+        org.mulgara.descriptor.DescriptorServiceSoapBindingStub binding = null;
+        /*
         try {
             binding = (org.mulgara.descriptor.DescriptorServiceSoapBindingStub)
                           new org.mulgara.descriptor.DescriptorUtilServiceLocator().getDescriptorService();
@@ -75,6 +76,7 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
                 jre.getLinkedCause().printStackTrace();
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
+        */
         assertNotNull("binding is null", binding);
 
         // Time out after a minute
