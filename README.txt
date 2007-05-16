@@ -8,6 +8,7 @@ I. Introduction
     ii. Release Notes
 II. Installing Java
 III. Building Mulgara
+    i. Building Mulgara in Eclipse
 IV. Running a Mulgara Server
 V. Mulgara Server Options
 VI. License
@@ -131,6 +132,24 @@ $ ./build.sh dist
 
 To build the distribution in Windows:
 C:\Mulgara\> build dist
+
+ii. Building Mulgara in Eclipse
+-------------------------------
+
+The Mulgara sources include the .project and .classpath files required for
+Eclipse.  However for an error free environment Eclipse also requires access
+to files which are only generated during a build.  To overcome this there is
+an extra ANT target which builds a library containing the required classes
+for the Eclipse IDE.
+
+To build this library from a Unix command line:
+$ ./build.sh ideSupport
+
+To build the library in Windows:
+C:\Mulgara\> build ideSupport
+
+After building the library, do a Refresh (F5) in Eclipse to make the library
+available to the project.
 
 
 IV. Running a Mulgara Server
