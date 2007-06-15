@@ -48,6 +48,7 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.statement.StatementStoreException;
 import org.mulgara.store.stringpool.SPObject;
@@ -459,6 +460,9 @@ public class StatementStoreResolver implements SystemResolver
     return resolverSession.localizePersistent(node);
   }
 
+  public long newBlankNode() throws NodePoolException {
+    return resolverSession.newBlankNode();
+  }
 
   public Tuples findStringPoolRange(
       SPObject lowValue, boolean inclLowValue,

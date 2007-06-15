@@ -36,6 +36,7 @@ import org.jrdf.graph.Node;
 // Local packages
 import org.mulgara.store.StoreException;
 import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
@@ -132,6 +133,15 @@ public interface ResolverSession
    */
   public long localizePersistent(Node node) throws LocalizeException;
 
+  /**
+   * Allocates a new blank node in a session.  Unlike localization, blank nodes
+   * do not need to be inserted into the string pool.
+   * 
+   * @return A new local node number for this session.
+   * @throws NodePoolException 
+   */
+  public long newBlankNode() throws NodePoolException;
+  
   /**
    * Get a range of nodes from the string pools used in the current session.
    *

@@ -202,9 +202,8 @@ public class N3Statements extends AbstractTuples implements Statements
 
     // Create the parser and start the parsing thread
     try {
-      parser = new Parser(content);
-    }
-    catch (NotModifiedException e) {
+      parser = new Parser(content, resolverSession);
+    } catch (NotModifiedException e) {
       throw new NotModifiedTuplesException(e);
     }
     parser.start();
@@ -287,9 +286,8 @@ public class N3Statements extends AbstractTuples implements Statements
       } else {
         // Create a new parser.
         try {
-          p = new Parser(content);
-        }
-        catch (NotModifiedException e) {
+          p = new Parser(content, resolverSession);
+        } catch (NotModifiedException e) {
           throw new NotModifiedTuplesException(e);
         }
         newParser = true;
@@ -340,9 +338,8 @@ public class N3Statements extends AbstractTuples implements Statements
         // Create a new parser.
         Parser p;
         try {
-          p = new Parser(content);
-        }
-        catch (NotModifiedException e) {
+          p = new Parser(content, resolverSession);
+        } catch (NotModifiedException e) {
           throw new NotModifiedTuplesException(e);
         }
 

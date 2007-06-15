@@ -36,6 +36,7 @@ import java.net.URI;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.stringpool.StringPoolException;
@@ -101,6 +102,13 @@ public class PersistentResolverSession implements ResolverSession
    */
   public long localizePersistent(Node node) throws LocalizeException {
     return resolverSession.localizePersistent(node);
+  }
+
+  /*
+   * @see org.mulgara.resolver.spi.ResolverSession#newBlankNode()
+   */
+  public long newBlankNode() throws NodePoolException {
+    return resolverSession.newBlankNode();
   }
 
   /**

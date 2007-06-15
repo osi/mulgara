@@ -156,7 +156,7 @@ public class JRDFResolverSession extends StringPoolSession {
       if (node == null) {
 
         //create a new mapping
-        node = newBlankNode();
+        node = newJrdfBlankNode();
         blankNodeMap.put( (BlankNodeImpl) node, localNode);
       }
     } catch (GraphException graphException) {
@@ -249,7 +249,7 @@ public class JRDFResolverSession extends StringPoolSession {
    * @throws GraphException
    * @return BlankNodeImpl
    */
-  private BlankNodeImpl newBlankNode() throws GraphException {
+  private BlankNodeImpl newJrdfBlankNode() throws GraphException {
 
     String uid = null;
 

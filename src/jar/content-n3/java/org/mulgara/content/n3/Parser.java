@@ -58,6 +58,8 @@ import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.StatementsWrapperResolution;
+import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.util.IntFile;
@@ -99,6 +101,10 @@ class Parser extends Thread implements N3ParserEventHandler
 
   /** Mapping between blank node rdf:nodeIDs and local node numbers. */
   private StringToLongMap blankNodeNameMap;
+  
+  /** The resolverSession to create new internal identifiers for blank nodes. */
+  private ResolverSession resolverSession;
+  
 
   private InputStream inputStream;
 
@@ -160,25 +166,22 @@ class Parser extends Thread implements N3ParserEventHandler
   /**
    * Sole constructor.
    */
-  Parser(Content content) throws NotModifiedException, TuplesException
-  {
-    // Validate "content" parameter
-    if (content == null) {
-      throw new IllegalArgumentException("Null \"content\" parameter");
-    }
+  Parser(Content content, ResolverSession resolverSession) throws NotModifiedException, TuplesException {
+    // Validate parameters
+    if (content == null) throw new IllegalArgumentException("Null \"content\" parameter");
+    if (resolverSession == null) throw new IllegalArgumentException("Null \"resolverSession\" parameter");
 
     // Initialize fields
-    this.baseURI          = content.getURI();
+    this.resolverSession = resolverSession;
+    this.baseURI = content.getURI();
     try {
-      this.blankNodeIdMap   = IntFile.open(
+      this.blankNodeIdMap = IntFile.open(
         TempDir.createTempFile("n3idmap", null), true
       );
       this.blankNodeNameMap = new StringToLongMap();
-      this.inputStream  = content.newInputStream();
-    }
-    catch (IOException e) {
-      throw new TuplesException("Unable to obtain input stream from " + baseURI,
-                                e);
+      this.inputStream = content.newInputStream();
+    } catch (IOException e) {
+      throw new TuplesException("Unable to obtain input stream from " + baseURI, e);
     }
   }
 
@@ -413,8 +416,7 @@ class Parser extends Thread implements N3ParserEventHandler
         String s = ast.toString();
         if (isAnonymous(ast)) {
           return getBlankNode(ast);
-        }
-        else {
+        } else {
           int colonIndex = s.indexOf(':');
           assert colonIndex != -1;
           String qnamePrefix = s.substring(0, colonIndex + 1);
@@ -479,8 +481,9 @@ class Parser extends Thread implements N3ParserEventHandler
       BlankNodeImpl blankNode;
       if (resourceNodeId == 0) {
         // need a new anonymous node for this ID
-        blankNode = //BlankNodeFactory.createBlankNode(nodePool);
-                    new BlankNodeImpl();
+        blankNode = createBlankNode();
+        // this was using a new BlankNodeImpl, but we need new internal IDs for every new node
+        
         // need to put this node into a map
         if (anonId >= 0) {
           blankNodeIdMap.putLong(anonId, blankNode.getNodeId());
@@ -490,8 +493,7 @@ class Parser extends Thread implements N3ParserEventHandler
         }
       } else {
         // Found the ID, so need to recreate the anonymous resource for it
-        blankNode = //BlankNodeFactory.createBlankNode(resourceNodeId);
-                    new BlankNodeImpl(resourceNodeId);
+        blankNode = new BlankNodeImpl(resourceNodeId);
       }
 
       return blankNode;
@@ -506,6 +508,18 @@ class Parser extends Thread implements N3ParserEventHandler
     }
     */
   }
+  
+  /**
+   * Creates an entirely new blank node.
+   * @return A new blank node with a new internal identifier.
+   */
+  private BlankNodeImpl createBlankNode() {
+    try {
+      return new BlankNodeImpl(resolverSession.newBlankNode());
+    } catch (NodePoolException npe) {
+      throw new RuntimeException("Unable to create blank node", npe);
+    }
+  }
 
   /**
    * Parse out the node ID used by a blank node.
@@ -514,6 +528,7 @@ class Parser extends Thread implements N3ParserEventHandler
    * @return The number part of the node.
    */
   private long parseAnonId(AST node) {
+    // TODO: This is wrong.  There may be more text after the _:
     try {
       return Long.parseLong(node.toString().substring(ANON_TAG.length()));
     } catch (NumberFormatException nfe) {

@@ -220,6 +220,10 @@ public class StringPoolSession implements XAResolverSession
     return localize(node, WRITE | PERSIST);
   }
 
+  public long newBlankNode() throws NodePoolException {
+    return persistentNodePool.newNode();
+  }
+
   public void refresh(SimpleXAResource[] resources) throws SimpleXAResourceException {
     if (logger.isDebugEnabled()) {
       logger.debug("Obtaining phase on StringPoolSession " + System.identityHashCode(this));

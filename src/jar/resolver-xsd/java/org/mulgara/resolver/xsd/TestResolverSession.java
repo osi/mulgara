@@ -153,6 +153,10 @@ class TestResolverSession implements ResolverSession
     return localize(node);
   }
 
+  public long newBlankNode() {
+    throw new UnsupportedOperationException("Not implemented");
+  }
+
   public Tuples findStringPoolRange(
       SPObject lowValue, boolean inclLowValue,
       SPObject highValue, boolean inclHighValue

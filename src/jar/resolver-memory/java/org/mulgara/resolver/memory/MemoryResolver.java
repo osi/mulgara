@@ -42,6 +42,7 @@ import org.jrdf.graph.Node;
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.statement.StatementStoreException;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
@@ -63,8 +64,8 @@ import org.mulgara.store.xa.SimpleXAResourceException;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class MemoryResolver implements SystemResolver
-{
+public class MemoryResolver implements SystemResolver {
+
   /**
    * Logger.
    */
@@ -112,8 +113,8 @@ public class MemoryResolver implements SystemResolver
                  long            systemModel,
                  URI             modelTypeURI,
                  Set             statingSet)
-    throws ResolverFactoryException
-  {
+      throws ResolverFactoryException {
+
     // Validate "modelType" parameter
     if (modelTypeURI == null) {
       throw new IllegalArgumentException("Model type can't be null");
@@ -133,8 +134,8 @@ public class MemoryResolver implements SystemResolver
                  URI               modelTypeURI,
                  Set               statingSet,
                  XAResolverSession resolverSession)
-    throws ResolverFactoryException
-  {
+      throws ResolverFactoryException {
+    
     // Validate "modelType" parameter
     if (modelTypeURI == null) {
       throw new IllegalArgumentException("Model type can't be null");
@@ -153,8 +154,7 @@ public class MemoryResolver implements SystemResolver
   // Methods implementing Resolver
   //
 
-  public XAResource getXAResource()
-  {
+  public XAResource getXAResource() {
     if (xaResolverSession != null) {
       return new MemoryXAResource(10, xaResolverSession);
     } else {
@@ -172,8 +172,7 @@ public class MemoryResolver implements SystemResolver
    * @param modelTypeURI  {@inheritDoc}.  The type must match the value of
    *   {@link #memoryModelTypeURI}.
    */
-  public void createModel(long model, URI modelTypeURI) throws ResolverException, LocalizeException
-  {
+  public void createModel(long model, URI modelTypeURI) throws ResolverException, LocalizeException {
     if (logger.isDebugEnabled()) {
       logger.debug("Create memory model " + model + " of type " + modelTypeURI);
     }
@@ -188,8 +187,7 @@ public class MemoryResolver implements SystemResolver
   }
 
   public void createSystemModel(long model, long modelType)
-      throws ResolverException, LocalizeException
-  {
+      throws ResolverException, LocalizeException {
     modifyModel(model,
         new SingletonStatements(model, rdfType, modelType),
         true);
@@ -202,16 +200,14 @@ public class MemoryResolver implements SystemResolver
   /**
    * @throws ResolverException always -- not yet implemented
    */
-  public void writeStringPool(Writer w) throws IOException, ResolverException
-  {
+  public void writeStringPool(Writer w) throws IOException, ResolverException {
     throw new ResolverException("Backup of string pool not implemented");
   }
 
   /**
    * Remove the cached model containing the contents of a URL.
    */
-  public void removeModel(long model) throws ResolverException
-  {
+  public void removeModel(long model) throws ResolverException {
     if (logger.isDebugEnabled()) {
       logger.debug("Remove memory model " + model);
     }
@@ -228,9 +224,7 @@ public class MemoryResolver implements SystemResolver
   /**
    * Insert or delete RDF statements in a model at a URL.
    */
-  public void modifyModel(long model, Statements statements, boolean occurs)
-    throws ResolverException
-  {
+  public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {
     if (logger.isDebugEnabled()) {
       if (occurs) {
         logger.debug("Asserting " + statements + " in " + model);
@@ -283,8 +277,7 @@ public class MemoryResolver implements SystemResolver
   /**
    * Resolve a constraint against a model on the Java heap.
    */
-  public Resolution resolve(Constraint constraint) throws QueryException
-  {
+  public Resolution resolve(Constraint constraint) throws QueryException {
     if (logger.isDebugEnabled()) {
       logger.debug("Resolve " + constraint + " against " + statingSet);
     }
@@ -298,31 +291,31 @@ public class MemoryResolver implements SystemResolver
   //
 
 
-  public Node globalize(long node) throws GlobalizeException
-  {
+  public Node globalize(long node) throws GlobalizeException {
     return resolverSession.globalize(node);
   }
 
 
-  public long lookup(Node node) throws LocalizeException
-  {
+  public long lookup(Node node) throws LocalizeException {
     return resolverSession.lookup(node);
   }
 
-  public long lookupPersistent(Node node) throws LocalizeException
-  {
+  public long lookupPersistent(Node node) throws LocalizeException {
     return resolverSession.lookupPersistent(node);
   }
 
-  public long localize(Node node) throws LocalizeException
-  {
+  public long localize(Node node) throws LocalizeException {
     return resolverSession.localize(node);
   }
 
-  public long localizePersistent(Node node) throws LocalizeException
-  {
+  public long localizePersistent(Node node) throws LocalizeException {
     return resolverSession.localizePersistent(node);
   }
+  
+  public long newBlankNode() throws NodePoolException {
+    return resolverSession.newBlankNode();
+  }
+
 
   public Tuples findStringPoolRange(
       SPObject lowValue, boolean inclLowValue,
