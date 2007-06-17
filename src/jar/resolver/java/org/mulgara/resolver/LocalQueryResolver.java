@@ -26,10 +26,10 @@
  *   per clause 4.1.3 of the above contract.
  *
  *   Various modifications to this file copyright:
- *     2005-2006 Netymon Pty Ltd <mail@netymon.com>
+ *     2005-2006 Netymon Pty Ltd: mail@netymon.com
  *
  *   Various modifications to this file copyright:
- *     2005-2006 Andrae Muys <andrae@muys.id.au>
+ *     2005-2006 Andrae Muys: andrae@muys.id.au
  *
  *   getModel() contributed by Netymon Pty Ltd on behalf of
  *   The Australian Commonwealth Government under contract 4500507038.
