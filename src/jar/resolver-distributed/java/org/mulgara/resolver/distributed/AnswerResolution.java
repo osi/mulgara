@@ -54,7 +54,7 @@ class AnswerResolution extends LocalizedTuples implements Resolution {
    * @param constraint the constraint.
    * @throws IllegalArgumentException if <var>constraint<var> is <code>null</code>
    */
-  AnswerResolution(URI serverUri, ResolverSession session, Answer answer, Constraint constraint) {
+  AnswerResolution(URI serverUri, ResolverSession session, Answer answer, Constraint constraint) throws TuplesException {
     super(session, answer);
     logger.debug("Constructed AnswerResolution for distributed resolver");
     if (constraint == null) throw new IllegalArgumentException("Null constraint parameter");

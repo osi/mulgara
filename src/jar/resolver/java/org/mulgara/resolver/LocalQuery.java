@@ -115,7 +115,7 @@ class LocalQuery implements Cloneable
    * @throws LocalizeException if the <var>query</var> can't be localized
    */
   LocalQuery(Query query, ResolverSession resolverSession, DatabaseOperationContext context)
-    throws LocalizeException
+    throws LocalizeException, TuplesException
   {
     if (logger.isDebugEnabled()) {
       logger.debug("Constructing local query for " + query);

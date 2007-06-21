@@ -27,16 +27,23 @@
 
 package org.mulgara.resolver.spi;
 
+import java.io.IOException;
 import java.util.*;
 
 // Third party packages
 import org.apache.log4j.*;
+import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Node;
 
 // Locally written packages
 import org.mulgara.query.Answer;
 import org.mulgara.query.TuplesException;
+import org.mulgara.query.rdf.BlankNodeImpl;
+import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.tuples.AbstractTuples;
+import org.mulgara.util.IntFile;
+import org.mulgara.util.StringToLongMap;
+import org.mulgara.util.TempDir;
 
 /**
  * Wrapper around a globally valid {@link Answer} instance, converting into
@@ -76,6 +83,13 @@ public class LocalizedTuples extends AbstractTuples {
    */
   protected Answer answer;
 
+  /** Mapping between parsed blank node IDs and local node numbers. */
+  private IntFile blankNodeIdMap;
+
+
+  /** Mapping between blank node rdf:nodeIDs and local node numbers. */
+  private StringToLongMap blankNodeNameMap;
+
   /**
    * Does the localization need to be done in the persistent store.
    */
@@ -88,7 +102,7 @@ public class LocalizedTuples extends AbstractTuples {
    * @throws IllegalArgumentException  if <var>globalAnswer</var> is
    *                                   <code>null</code>
    */
-  public LocalizedTuples(ResolverSession session, Answer globalAnswer, boolean persist)
+  public LocalizedTuples(ResolverSession session, Answer globalAnswer, boolean persist) throws TuplesException
   {
     if (session == null) {
       throw new IllegalArgumentException("Null \"session\" parameter");
@@ -100,11 +114,18 @@ public class LocalizedTuples extends AbstractTuples {
     this.session = session;
     answer = (Answer) globalAnswer.clone();
     setVariables(answer.getVariables());
+    
+    try {
+      blankNodeIdMap = IntFile.open(TempDir.createTempFile("localIdMap", null), true);
+      blankNodeNameMap = new StringToLongMap();
+    } catch (IOException ioe) {
+      throw new TuplesException("Unable to localize tuples", ioe);
+    }
 
     this.persist = persist;
   }
 
-  public LocalizedTuples(ResolverSession session, Answer globalAnswer)
+  public LocalizedTuples(ResolverSession session, Answer globalAnswer) throws TuplesException
   {
     this(session, globalAnswer, false);
   }
@@ -136,6 +157,12 @@ public class LocalizedTuples extends AbstractTuples {
 
   public void close() throws TuplesException {
     answer.close();
+    blankNodeNameMap.delete();
+    try {
+      blankNodeIdMap.delete();
+    } catch (IOException ioe) {
+      throw new TuplesException("Unable to manage temporary files", ioe);
+    }
   }
 
 
@@ -143,15 +170,21 @@ public class LocalizedTuples extends AbstractTuples {
     try {
       Object node = answer.getObject(column);
       assert node instanceof Node;
+      if (node instanceof BlankNode) return localizeBlankNode((BlankNode)node);
 
       return persist
           ? session.localizePersistent((Node)node)
           : session.localize((Node)node);
-    } catch (LocalizeException e) {
+    } catch (NodePoolException e) {
+      throw new TuplesException("Couldn't create new node to localize column " + column, e);
+    } catch (Exception e) {
       throw new TuplesException("Couldn't localize column " + column, e);
     }
   }
 
+  private long newBlankNode() throws NodePoolException, LocalizeException {
+    return persist ? session.newBlankNode() : session.localize(new BlankNodeImpl());
+  }
 
   public long getRowCount() throws TuplesException {
     return answer.getRowCount();
@@ -189,4 +222,37 @@ public class LocalizedTuples extends AbstractTuples {
   public boolean next() throws TuplesException {
     return answer.next();
   }
+
+
+  /**
+   * Converts a blank node into a local gNode ID.
+   * @param node The blank node to localize.
+   * @return A gNode ID that is unique and reproducable for the blank node.
+   * @throws NodePoolException There was an error allocating a new gNode ID.
+   * @throws LocalizeException There was an error recalling an earlier conversion, or mixed local and remote nodes.
+   * @throws IOException There was an error communicating with files used for recalling conversions.
+   */
+  private long localizeBlankNode(BlankNode node) throws NodePoolException, LocalizeException, IOException {
+    long nodeId;
+    if (node instanceof BlankNodeImpl) {
+      nodeId = ((BlankNodeImpl)node).getNodeId();
+      if (nodeId < 0) {
+        long foreignId = -nodeId;
+        nodeId = blankNodeIdMap.getLong(foreignId);
+        if (nodeId == 0) {
+          nodeId = newBlankNode();
+          blankNodeIdMap.putLong(foreignId, nodeId);
+        }
+      }
+    } else {
+      String foreignIdStr = node.toString();
+      nodeId = blankNodeNameMap.get(foreignIdStr);
+      if (nodeId == 0) {
+        nodeId = newBlankNode();
+        blankNodeNameMap.put(foreignIdStr, nodeId);
+      }
+    }
+    return nodeId;
+  }
+
 }

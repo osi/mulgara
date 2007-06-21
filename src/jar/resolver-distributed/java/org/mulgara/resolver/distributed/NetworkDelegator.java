@@ -96,7 +96,11 @@ public class NetworkDelegator implements Delegator {
     logger.debug("Querying for: " + localConstraint + " in model: " + modelRef + " on server: " + serverUri);
 
     Answer ans = getServerSession(serverUri).query(globalizedQuery(localConstraint, modelRef));
-    return new AnswerResolution(serverUri, session, ans, localConstraint);
+    try {
+      return new AnswerResolution(serverUri, session, ans, localConstraint);
+    } catch (TuplesException te) {
+      throw new ResolverException("Localization failed", te);
+    }
   }
 
 
