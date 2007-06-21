@@ -232,8 +232,7 @@ public class StatementStoreResolver implements SystemResolver
     Tuples tuples;
     try {
       tuples = resolve(ALL_STATEMENTS);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
       throw new ResolverException("Unable to write backup", e);
     }
     assert tuples != null;
@@ -255,15 +254,12 @@ public class StatementStoreResolver implements SystemResolver
         w.write(Long.toString(tuples.getColumnValue(3)));
         w.write('\n');
       }
-    }
-    catch (TuplesException e) {
+    } catch (TuplesException e) {
       throw new ResolverException("Unable to write backup", e);
-    }
-    finally {
+    } finally {
       try {
         tuples.close();
-      }
-      catch (TuplesException e) {
+      } catch (TuplesException e) {
         logger.warn("Unable to close tuples after backup", e);
       }
     }
@@ -340,8 +336,7 @@ public class StatementStoreResolver implements SystemResolver
     try {
       return statementStore.existsTriples(model, rdfType, NodePool.NONE,
           systemModel);
-    }
-    catch (StatementStoreException se) {
+    } catch (StatementStoreException se) {
       throw new ResolverException("Failed to find model " + model, se);
     }
   }
@@ -356,22 +351,20 @@ public class StatementStoreResolver implements SystemResolver
     try {
       statements.beforeFirst();
       while (statements.next()) {
+        long subject = statements.getSubject();
+        long predicate = statements.getPredicate();
+        long object = statements.getObject();
+        
         if (occurs) {
           // statement is asserted to be true
-          logger.debug("Inserting statement: [" + statements.getSubject() + " "
-                                                + statements.getPredicate() + " "
-                                                + statements.getObject() + "] in " + model);
+          logger.debug("Inserting statement: [" + subject + " "
+                                                + predicate + " "
+                                                + object + "] in " + model);
 
-          statementStore.addTriple(statements.getSubject(),
-                                   statements.getPredicate(),
-                                   statements.getObject(),
-                                   model);
+          statementStore.addTriple(subject, predicate, object, model);
         } else {
           // statement is asserted to be false
-          statementStore.removeTriples(statements.getSubject(),
-                                       statements.getPredicate(),
-                                       statements.getObject(),
-                                       model);
+          statementStore.removeTriples(subject, predicate, object, model);
         }
       }
     } catch (StatementStoreException e) {
@@ -380,12 +373,10 @@ public class StatementStoreResolver implements SystemResolver
                                                + resolverSession.globalize(statements.getPredicate()) + " "
                                                + resolverSession.globalize(statements.getObject()) + " "
                                                + resolverSession.globalize(model) + "]", e);
-        logger.warn("Note: if any of the query nodes are negative this is a known bug [ 1089540 ] INSERT/SELECT regression in sourceforge");
       } catch (Exception eg) {
 	      throw new ResolverException("Failed to globalize in debug", eg);
       }
-      throw new ResolverException(
-        "Couldn't make statement " + occurs + " in " + model, e);
+      throw new ResolverException("Couldn't make statement " + occurs + " in " + model, e);
     } catch (TuplesException e) {
       throw new ResolverException("Unable to read input statements", e);
     }
