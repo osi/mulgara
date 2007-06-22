@@ -88,6 +88,8 @@ class Parser extends Thread implements N3ParserEventHandler
   private static final Logger logger = Logger.getLogger(Parser.class.getName());
 
   private static final String ANON_TAG = "_:";
+  
+  private static final String LOCAL_ANON_TAG = ANON_TAG + "node";
 
   /**
    * Maximum size that the {@link #triples} buffer can attain without the
@@ -528,9 +530,9 @@ class Parser extends Thread implements N3ParserEventHandler
    * @return The number part of the node.
    */
   private long parseAnonId(AST node) {
-    // TODO: This is wrong.  There may be more text after the _:
     try {
-      return Long.parseLong(node.toString().substring(ANON_TAG.length()));
+      int startPoint = node.toString().startsWith(LOCAL_ANON_TAG) ? LOCAL_ANON_TAG.length() : ANON_TAG.length();
+      return Long.parseLong(node.toString().substring(startPoint));
     } catch (NumberFormatException nfe) {
       return -1;
     }

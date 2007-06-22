@@ -89,6 +89,9 @@ public class LocalizedTuples extends AbstractTuples {
 
   /** Mapping between blank node rdf:nodeIDs and local node numbers. */
   private StringToLongMap blankNodeNameMap;
+  
+  /** Indicates that the maps have been initialized and are no longer null. */
+  private boolean mapsInitialized = false;
 
   /**
    * Does the localization need to be done in the persistent store.
@@ -102,7 +105,7 @@ public class LocalizedTuples extends AbstractTuples {
    * @throws IllegalArgumentException  if <var>globalAnswer</var> is
    *                                   <code>null</code>
    */
-  public LocalizedTuples(ResolverSession session, Answer globalAnswer, boolean persist) throws TuplesException
+  public LocalizedTuples(ResolverSession session, Answer globalAnswer, boolean persist)
   {
     if (session == null) {
       throw new IllegalArgumentException("Null \"session\" parameter");
@@ -115,13 +118,6 @@ public class LocalizedTuples extends AbstractTuples {
     answer = (Answer) globalAnswer.clone();
     setVariables(answer.getVariables());
     
-    try {
-      blankNodeIdMap = IntFile.open(TempDir.createTempFile("localIdMap", null), true);
-      blankNodeNameMap = new StringToLongMap();
-    } catch (IOException ioe) {
-      throw new TuplesException("Unable to localize tuples", ioe);
-    }
-
     this.persist = persist;
   }
 
@@ -157,11 +153,13 @@ public class LocalizedTuples extends AbstractTuples {
 
   public void close() throws TuplesException {
     answer.close();
-    blankNodeNameMap.delete();
-    try {
-      blankNodeIdMap.delete();
-    } catch (IOException ioe) {
-      throw new TuplesException("Unable to manage temporary files", ioe);
+    if (mapsInitialized) {
+      blankNodeNameMap.delete();
+      try {
+        blankNodeIdMap.delete();
+      } catch (IOException ioe) {
+        throw new TuplesException("Unable to manage temporary files", ioe);
+      }
     }
   }
 
@@ -230,15 +228,21 @@ public class LocalizedTuples extends AbstractTuples {
    * @return A gNode ID that is unique and reproducable for the blank node.
    * @throws NodePoolException There was an error allocating a new gNode ID.
    * @throws LocalizeException There was an error recalling an earlier conversion, or mixed local and remote nodes.
+   * @throws TuplesException There was an error creating the maps needed for this tuples.
    * @throws IOException There was an error communicating with files used for recalling conversions.
    */
-  private long localizeBlankNode(BlankNode node) throws NodePoolException, LocalizeException, IOException {
+  private long localizeBlankNode(BlankNode node) throws NodePoolException, LocalizeException, TuplesException, IOException {
     long nodeId;
     if (node instanceof BlankNodeImpl) {
       nodeId = ((BlankNodeImpl)node).getNodeId();
       if (nodeId < 0) {
         long foreignId = -nodeId;
-        nodeId = blankNodeIdMap.getLong(foreignId);
+        if (mapsInitialized) {
+          nodeId = blankNodeIdMap.getLong(foreignId);
+        } else {
+          initMaps();
+          nodeId = 0;
+        }
         if (nodeId == 0) {
           nodeId = newBlankNode();
           blankNodeIdMap.putLong(foreignId, nodeId);
@@ -246,13 +250,29 @@ public class LocalizedTuples extends AbstractTuples {
       }
     } else {
       String foreignIdStr = node.toString();
-      nodeId = blankNodeNameMap.get(foreignIdStr);
+      if (mapsInitialized) {
+        nodeId = blankNodeNameMap.get(foreignIdStr);
+      } else {
+        initMaps();
+        nodeId = 0;
+      }
       if (nodeId == 0) {
         nodeId = newBlankNode();
         blankNodeNameMap.put(foreignIdStr, nodeId);
       }
     }
     return nodeId;
+  }
+
+  
+  private void initMaps() throws TuplesException {
+    try {
+      blankNodeIdMap = IntFile.open(TempDir.createTempFile("localIdMap", null), true);
+      blankNodeNameMap = new StringToLongMap();
+    } catch (IOException ioe) {
+      throw new TuplesException("Unable to localize tuples", ioe);
+    }
+    mapsInitialized = true;
   }
 
 }
