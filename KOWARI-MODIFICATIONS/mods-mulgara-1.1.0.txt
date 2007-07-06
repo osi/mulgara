@@ -1,0 +1,3477 @@
+revision 289
+D   trunk/version
+D   trunk/version.solaris
+D   trunk/version.windows
+D   trunk/version.x86-64
+ronald
+2007-06-22 20:42:28 -0500 (Fri, 22 Jun 2007)
+139
+Removed obsolete version files; should've been part of rev 287. The version
+is now maintained in one place, in the common-properties file.
+
+
+revision 287
+U   trunk/common.properties
+U   trunk/common.xml
+U   trunk/version
+U   trunk/version.solaris
+U   trunk/version.windows
+U   trunk/version.x86-64
+pag
+2007-06-22 20:02:38 -0500 (Fri, 22 Jun 2007)
+43
+Added versioning, and moving to version 1.1
+
+revision 286
+U   trunk/src/jar/content-n3/java/org/mulgara/content/n3/Parser.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/LocalizedTuples.java
+pag
+2007-06-22 15:27:43 -0500 (Fri, 22 Jun 2007)
+141
+updated Localizing to only create temporary files when needed.  Plus let the N3 parser load _:node### blank nodes by number and not by string
+
+revision 285
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalQuery.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/AnswerResolution.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/NetworkDelegator.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/LocalizedTuples.java
+pag
+2007-06-21 15:53:02 -0500 (Thu, 21 Jun 2007)
+182
+Added file-backed mappings for blank nodes for consistent and correct insertions.  This can clean to IOExceptions that get wrapped in a more local exception type and need propagating
+
+revision 284
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolver.java
+pag
+2007-06-21 15:51:16 -0500 (Thu, 21 Jun 2007)
+68
+Reformatted to remove some redundant method calls, and ease debuggin
+
+revision 281
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/parser/MboxDefaultFolder.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalQueryResolver.java
+pag
+2007-06-16 22:15:45 -0500 (Sat, 16 Jun 2007)
+155
+Removed brackets from email addresses wrapped in <> characters, as some of these were triggering http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5082928
+
+revision 280
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/TestResolverSession.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/TestResolverSession.java
+U   trunk/src/jar/content-n3/java/org/mulgara/content/n3/N3Statements.java
+U   trunk/src/jar/content-n3/java/org/mulgara/content/n3/Parser.java
+U   trunk/src/jar/content-n3/java/org/mulgara/content/n3/TestResolverSession.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/TestResolverSession.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/TestResolverSession.java
+U   trunk/src/jar/content-rio/java/org/mulgara/content/rio/TestResolverSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/JRDFResolverSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/PersistentResolverSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TestResolverSession.java
+U   trunk/src/jar/resolver-filesystem/java/org/mulgara/resolver/filesystem/TestResolverSession.java
+U   trunk/src/jar/resolver-memory/java/org/mulgara/resolver/memory/MemoryResolver.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/ResolverSession.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolver.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/TestResolverSession.java
+pag
+2007-06-15 00:22:55 -0500 (Fri, 15 Jun 2007)
+87
+added a newBlankNode method to resolver sessions, and made use of this in the N3 parser
+
+revision 279
+U   trunk/README.txt
+pag
+2007-05-16 12:12:00 -0500 (Wed, 16 May 2007)
+37
+Comment on running Mulgara in Eclipse
+
+revision 278
+U   trunk/.classpath
+U   trunk/.project
+U   trunk/src/jar/descriptor/src/java/org/mulgara/descriptor/test/DescriptorUtilServiceTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/AnswerResolution.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/Delegator.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/DistributedResolver.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/DistributedResolverFactory.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/ForeignBlankNode.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/NetworkDelegator.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/Config.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/Config.java
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/RemotePager.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/RemotePager.java
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/RemotePagerImpl.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/RemotePagerImpl.java
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/SetProxy.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/SetProxy.java
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/ShortGlobalStatementSet.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/ShortGlobalStatementSet.java
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/StatementSetFactory.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/StatementSetFactory.java
+D   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/TripleSetAdaptor.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/TripleSetAdaptor.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/LocalizedTuples.java
+pag
+2007-05-15 16:04:14 -0500 (Tue, 15 May 2007)
+73
+Added distributed resolver.  Works, but insert/select suffers from MGR-54
+
+revision 269
+U   trunk/docs/site-src/style/style.css
+U   trunk/docs/site-src/style/styleIE6.css
+A   trunk/docs/site-src/style/styleIE7.css
+U   trunk/webdocs.xml
+thomas
+2007-05-11 11:02:32 -0500 (Fri, 11 May 2007)
+23
+added IE7 compatability
+
+revision 268
+U   trunk/docs/site-src/backofbook.html
+D   trunk/docs/site-src/integration/httpmp3/
+U   trunk/docs/site-src/integration/index.html
+U   trunk/docs/site-src/integration/jena.html
+D   trunk/docs/site-src/integration/jrdf/
+A   trunk/docs/site-src/integration/jrdfaddtriples.html
+A   trunk/docs/site-src/integration/jrdfcreategraph.html
+A   trunk/docs/site-src/integration/jrdfcreatenodes.html
+A   trunk/docs/site-src/integration/jrdfprereq.html
+A   trunk/docs/site-src/integration/jrdfreify.html
+A   trunk/docs/site-src/integration/jrdfremove.html
+A   trunk/docs/site-src/integration/jrdftutorial.html
+U   trunk/docs/site-src/integration/jsptutorial.html
+U   trunk/docs/site-src/integration/perl.html
+U   trunk/docs/site-src/integration/resolverhttpmp3.html
+A   trunk/docs/site-src/integration/searchgraph.html
+U   trunk/docs/site-src/itqlcommands/index.html
+U   trunk/docs/site-src/style/style.css
+U   trunk/docs/site-src/style/styleIE6.css
+U   trunk/webdocs.xml
+thomas
+2007-05-11 05:07:31 -0500 (Fri, 11 May 2007)
+142
+website navigation rewound. all known technical issues with the website redesign settled. now starting to look for a better background picture
+
+revision 267
+A   trunk/docs/site-src/integration/jrdf/
+D   trunk/docs/site-src/jrdf/
+thomas
+2007-05-10 16:11:30 -0500 (Thu, 10 May 2007)
+66
+tiny steps that finally cover worlds of hard terrain (gary snyder)
+
+revision 265
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+andrae
+2007-05-06 23:13:08 -0500 (Sun, 06 May 2007)
+175
+Merged branches/mgr-37 revision 251 into trunk.
+
+This provides mutex suspension over prepare() to avoid locking the transaction
+manager over a potentially blocking operation.
+
+
+revision 262
+U   trunk/docs/site-src/backofbook.html
+U   trunk/docs/site-src/integration/index.html
+U   trunk/docs/site-src/integration/jena.html
+D   trunk/docs/site-src/integration/jrdf/
+U   trunk/docs/site-src/integration/jsptutorial.html
+U   trunk/docs/site-src/integration/perl.html
+U   trunk/docs/site-src/integration/resolverhttpmp3.html
+U   trunk/docs/site-src/itqlcommands/index.html
+A   trunk/docs/site-src/jrdf/
+U   trunk/docs/site-src/jrdf/jrdfaddtriples.html
+U   trunk/docs/site-src/jrdf/jrdfcreategraph.html
+U   trunk/docs/site-src/jrdf/jrdfcreatenodes.html
+U   trunk/docs/site-src/jrdf/jrdfprereq.html
+U   trunk/docs/site-src/jrdf/jrdfreify.html
+U   trunk/docs/site-src/jrdf/jrdfremove.html
+U   trunk/docs/site-src/jrdf/jrdftutorial.html
+U   trunk/docs/site-src/jrdf/searchgraph.html
+U   trunk/docs/site-src/notes.xml
+U   trunk/webdocs.xml
+thomas
+2007-05-06 14:52:56 -0500 (Sun, 06 May 2007)
+37
+messing up the docs navigation part 2
+
+revision 261
+U   trunk/docs/site-src/backofbook.html
+A   trunk/docs/site-src/integration/httpmp3/
+A   trunk/docs/site-src/integration/jrdf/
+A   trunk/docs/site-src/integration/jrdf/jrdfaddtriples.html
+A   trunk/docs/site-src/integration/jrdf/jrdfcreategraph.html
+A   trunk/docs/site-src/integration/jrdf/jrdfcreatenodes.html
+A   trunk/docs/site-src/integration/jrdf/jrdfprereq.html
+A   trunk/docs/site-src/integration/jrdf/jrdfreify.html
+A   trunk/docs/site-src/integration/jrdf/jrdfremove.html
+A   trunk/docs/site-src/integration/jrdf/jrdftutorial.html
+A   trunk/docs/site-src/integration/jrdf/searchgraph.html
+D   trunk/docs/site-src/integration/jrdfaddtriples.html
+D   trunk/docs/site-src/integration/jrdfcreategraph.html
+D   trunk/docs/site-src/integration/jrdfcreatenodes.html
+D   trunk/docs/site-src/integration/jrdfprereq.html
+D   trunk/docs/site-src/integration/jrdfreify.html
+D   trunk/docs/site-src/integration/jrdfremove.html
+D   trunk/docs/site-src/integration/jrdftutorial.html
+D   trunk/docs/site-src/integration/searchgraph.html
+U   trunk/docs/site-src/itqlcommands/index.html
+U   trunk/docs/site-src/notes.xml
+U   trunk/docs/site-src/style/style.css
+U   trunk/docs/site-src/style/styleIE6.css
+U   trunk/webdocs.xml
+thomas
+2007-05-04 18:31:06 -0500 (Fri, 04 May 2007)
+30
+messing up the docs navigation
+
+revision 260
+U   trunk/docs/site-src/overview/index.html
+U   trunk/docs/site-src/style/navIn.css
+U   trunk/docs/site-src/style/navOut.css
+D   trunk/docs/site-src/style/oldStyle.css
+D   trunk/docs/site-src/style/old_mulgara_stylesheet.css
+U   trunk/docs/site-src/style/style.css
+U   trunk/docs/site-src/style/styleIE6.css
+U   trunk/webdocs.xml
+thomas
+2007-05-03 11:21:41 -0500 (Thu, 03 May 2007)
+28
+house keeping the stylesheet
+
+revision 259
+U   trunk/docs/site-src/backofbook.html
+U   trunk/docs/site-src/descriptors/descadvantages.html
+U   trunk/docs/site-src/descriptors/descriptorex.html
+U   trunk/docs/site-src/descriptors/descriptorhw.html
+U   trunk/docs/site-src/descriptors/descriptorlist.html
+U   trunk/docs/site-src/descriptors/descriptorsfaq.html
+U   trunk/docs/site-src/descriptors/descriptortag.html
+U   trunk/docs/site-src/descriptors/descriptorvcard.html
+U   trunk/docs/site-src/descriptors/descwhat.html
+U   trunk/docs/site-src/descriptors/index.html
+U   trunk/docs/site-src/descriptors/mistakes.html
+U   trunk/docs/site-src/descriptors/nsdesc.html
+U   trunk/docs/site-src/descriptors/querytag.html
+U   trunk/docs/site-src/descriptors/reserved.html
+A   trunk/docs/site-src/img-layout/opensource-110x95.gif
+A   trunk/docs/site-src/img-layout/opensource-110x95.png
+U   trunk/docs/site-src/index.html
+U   trunk/docs/site-src/inferencing/consistency.html
+U   trunk/docs/site-src/inferencing/entailment.html
+U   trunk/docs/site-src/inferencing/index.html
+U   trunk/docs/site-src/inferencing/inferexample.html
+U   trunk/docs/site-src/inferencing/inferintro.html
+U   trunk/docs/site-src/inferencing/infermulgara.html
+U   trunk/docs/site-src/inferencing/infersemweb.html
+U   trunk/docs/site-src/inferencing/infersitu.html
+U   trunk/docs/site-src/inferencing/infersummary.html
+U   trunk/docs/site-src/inferencing/ontomanage.html
+U   trunk/docs/site-src/inferencing/owl.html
+U   trunk/docs/site-src/inferencing/sofa.html
+U   trunk/docs/site-src/integration/compiling.html
+U   trunk/docs/site-src/integration/contenthandlers.html
+U   trunk/docs/site-src/integration/contenthandlersdev.html
+U   trunk/docs/site-src/integration/index.html
+U   trunk/docs/site-src/integration/integrate.html
+U   trunk/docs/site-src/integration/jena.html
+U   trunk/docs/site-src/integration/jrdfaddtriples.html
+U   trunk/docs/site-src/integration/jrdfcreategraph.html
+U   trunk/docs/site-src/integration/jrdfcreatenodes.html
+U   trunk/docs/site-src/integration/jrdfprereq.html
+U   trunk/docs/site-src/integration/jrdfreify.html
+U   trunk/docs/site-src/integration/jrdfremove.html
+U   trunk/docs/site-src/integration/jrdftutorial.html
+U   trunk/docs/site-src/integration/jsptutorial.html
+U   trunk/docs/site-src/integration/parsers.html
+U   trunk/docs/site-src/integration/perl.html
+U   trunk/docs/site-src/integration/resolveprot.html
+U   trunk/docs/site-src/integration/resolverfactories.html
+U   trunk/docs/site-src/integration/resolverhttpmp3.html
+U   trunk/docs/site-src/integration/resolverpre.html
+U   trunk/docs/site-src/integration/resolverwrapper.html
+U   trunk/docs/site-src/integration/resolverwrite.html
+U   trunk/docs/site-src/integration/searchgraph.html
+U   trunk/docs/site-src/integration/statements.html
+U   trunk/docs/site-src/itqlcommands/alias.html
+U   trunk/docs/site-src/itqlcommands/backup.html
+U   trunk/docs/site-src/itqlcommands/comment.html
+U   trunk/docs/site-src/itqlcommands/commit.html
+U   trunk/docs/site-src/itqlcommands/create.html
+U   trunk/docs/site-src/itqlcommands/delete.html
+U   trunk/docs/site-src/itqlcommands/drop.html
+U   trunk/docs/site-src/itqlcommands/execute.html
+U   trunk/docs/site-src/itqlcommands/help.html
+U   trunk/docs/site-src/itqlcommands/index.html
+U   trunk/docs/site-src/itqlcommands/insert.html
+U   trunk/docs/site-src/itqlcommands/load.html
+U   trunk/docs/site-src/itqlcommands/quit.html
+U   trunk/docs/site-src/itqlcommands/restore.html
+U   trunk/docs/site-src/itqlcommands/rollback.html
+U   trunk/docs/site-src/itqlcommands/select.html
+U   trunk/docs/site-src/itqlcommands/set.html
+U   trunk/docs/site-src/itqloperations/datatypingmodels.html
+U   trunk/docs/site-src/itqloperations/filesysmodel.html
+U   trunk/docs/site-src/itqloperations/fulltextmodels.html
+U   trunk/docs/site-src/itqloperations/index.html
+U   trunk/docs/site-src/itqloperations/nodetyping.html
+U   trunk/docs/site-src/itqloperations/views.html
+U   trunk/docs/site-src/legal.htm
+U   trunk/docs/site-src/overview/about.html
+U   trunk/docs/site-src/overview/aboutsite.html
+U   trunk/docs/site-src/overview/contact.html
+U   trunk/docs/site-src/overview/downloads.html
+U   trunk/docs/site-src/overview/faq.html
+U   trunk/docs/site-src/overview/history.html
+U   trunk/docs/site-src/overview/index.html
+U   trunk/docs/site-src/overview/install.html
+U   trunk/docs/site-src/overview/legal.html
+U   trunk/docs/site-src/overview/legalinfo.html
+U   trunk/docs/site-src/overview/license.html
+U   trunk/docs/site-src/overview/links.html
+U   trunk/docs/site-src/overview/optcomponents.html
+U   trunk/docs/site-src/overview/oscomponents.html
+U   trunk/docs/site-src/overview/suncomponents.html
+U   trunk/docs/site-src/overview/tools.html
+U   trunk/docs/site-src/overview/trademarks.html
+U   trunk/docs/site-src/resolvers/index.html
+U   trunk/docs/site-src/resolvers/resolverdbclass.html
+U   trunk/docs/site-src/style/style.css
+U   trunk/docs/site-src/style/styleIE6.css
+U   trunk/docs/site-src/system/driver.html
+U   trunk/docs/site-src/system/index.html
+U   trunk/docs/site-src/system/itqlbean.html
+U   trunk/docs/site-src/system/itqlshell.html
+U   trunk/docs/site-src/system/jrdf.html
+U   trunk/docs/site-src/system/jrdfapis.html
+U   trunk/docs/site-src/system/jrdfconcol.html
+U   trunk/docs/site-src/system/jrdfexamples.html
+U   trunk/docs/site-src/system/jrdfgraphs.html
+U   trunk/docs/site-src/system/jrdfmemory.html
+D   trunk/docs/site-src/system/jrdftks.html
+U   trunk/docs/site-src/system/jrdfvisitor.html
+U   trunk/docs/site-src/system/jsptaglib.html
+U   trunk/docs/site-src/system/soap.html
+U   trunk/docs/site-src/template.html
+U   trunk/docs/site-src/toc.html
+U   trunk/docs/site-src/tutorial/convertingxml.html
+U   trunk/docs/site-src/tutorial/convertrdbms.html
+U   trunk/docs/site-src/tutorial/index.html
+U   trunk/docs/site-src/tutorial/itql.html
+U   trunk/docs/site-src/tutorial/itqlbasics.html
+U   trunk/docs/site-src/tutorial/itqlshellsession.html
+U   trunk/docs/site-src/tutorial/krule.html
+U   trunk/docs/site-src/tutorial/loadingrdf.html
+U   trunk/docs/site-src/tutorial/starting.html
+U   trunk/docs/site-src/tutorial/sysreq.html
+U   trunk/docs/site-src/tutorial/viewer.html
+U   trunk/webdocs.xml
+thomas
+2007-05-02 13:29:24 -0500 (Wed, 02 May 2007)
+129
+worked on the navigation, transparencies, footer, lynx-compatability, stuff - and deleted jrdftks.html, which referred to the tks
+
+revision 258
+U   trunk/src/jar/resolver/build.xml
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AdvDatabaseSessionUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/CreateModelOperation.java
+andrae
+2007-04-26 06:49:02 -0500 (Thu, 26 Apr 2007)
+159
+Fixes MGR-33, http://mulgara.org/jira/browse/MGR-33.
+
+Merged from branches/mgr-33 with:
+
+svn merge -r 255:257 https://mulgara.org/svn/mulgara/branches/mgr-33
+
+
+
+revision 254
+A   trunk/data/prefix-unbound.rdf
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AdvDatabaseSessionUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/Assignment.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/LiteralTuples.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesOperations.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesOperationsUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnboundJoin.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnboundJoinUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnorderedProjection.java
+U   trunk/src/jar/util/java/org/mulgara/util/FileUtil.java
+andrae
+2007-04-26 01:06:17 -0500 (Thu, 26 Apr 2007)
+164
+Fix for MGR-34 http://mulgara.org/jira/browse/MGR-34 merged from
+branches/nuc-disj into trunk/
+
+merge -r 209:253 https://mulgara.org/svn/mulgara/branches/nuc-disj
+
+
+
+revision 250
+U   trunk/build.xml
+ronald
+2007-04-22 20:48:45 -0500 (Sun, 22 Apr 2007)
+50
+include png and jpg images from docs in jars too.
+
+
+revision 249
+U   trunk/docs/site-src/itqlcommands/select.html
+ronald
+2007-04-22 19:57:57 -0500 (Sun, 22 Apr 2007)
+74
+Replace marginally support \u0085 character with more standard &hellip; .
+
+
+revision 248
+U   trunk/docs/overview.xsl
+U   trunk/docs/site-src/integration/contenthandlers.html
+U   trunk/docs/site-src/integration/contenthandlersdev.html
+U   trunk/docs/site-src/integration/resolverwrapper.html
+U   trunk/docs/site-src/integration/resolverwrite.html
+U   trunk/docs/site-src/integration/statements.html
+U   trunk/docs/site-src/overview/aboutsite.html
+U   trunk/docs/site-src/overview/contact.html
+U   trunk/docs/site-src/system/driver.html
+U   trunk/docs/site-src/system/itqlbean.html
+ronald
+2007-04-22 19:56:22 -0500 (Sun, 22 Apr 2007)
+98
+Updated old references to kowari packages, server, mailing-list, etc to refer
+to mulgara instead.
+
+
+revision 233
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/InternalResolver.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreXAResource.java
+andrae
+2007-04-18 00:06:40 -0500 (Wed, 18 Apr 2007)
+137
+Merge from revision 211:220 of branches/lostphasetokens.
+
+This is the fix for Lost phase tokens, http://mulgara.org/jira/browse/MGR-46.
+
+
+
+revision 232
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterUnitTest.java
+andrae
+2007-04-18 00:02:30 -0500 (Wed, 18 Apr 2007)
+25
+Updated debugging info.
+
+
+
+revision 229
+U   trunk/docs/site-src/backofbook.html
+U   trunk/docs/site-src/itqlcommands/select.html
+U   trunk/webdocs.xml
+ronald
+2007-04-14 18:43:00 -0500 (Sat, 14 Apr 2007)
+97
+Merge rev 136 back in: adding doc for 'minus' operator and trimming exclude doc.
+Closes MGR-35 .
+
+
+revision 228
+U   trunk/docs/site-src/legal.htm
+ronald
+2007-04-14 18:37:16 -0500 (Sat, 14 Apr 2007)
+55
+Convert from html to xhtml to align with rest of docs.
+
+
+revision 227
+U   trunk/docs/site-src/overview/history.html
+U   trunk/webdocs.xml
+ronald
+2007-04-14 18:32:33 -0500 (Sat, 14 Apr 2007)
+70
+(X)html fixes: make sure tags are properly closed and '&' is escaped.
+
+
+revision 226
+U   trunk/docs/site-src/descriptors/descriptorlist.html
+U   trunk/docs/site-src/descriptors/descriptortag.html
+U   trunk/docs/site-src/descriptors/querytag.html
+ronald
+2007-04-14 18:23:35 -0500 (Sat, 14 Apr 2007)
+35
+Escape < and > for proper (x)html.
+
+
+revision 225
+U   trunk/docs/site-src/integration/resolverwrapper.html
+ronald
+2007-04-14 18:21:47 -0500 (Sat, 14 Apr 2007)
+61
+Remove spurious tr and td tags so document is valid (x)html.
+
+
+revision 224
+U   trunk/conf/mulgara-config.xml
+pag
+2007-04-11 16:36:35 -0500 (Wed, 11 Apr 2007)
+28
+Loading distributed resolver
+
+revision 223
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/NetworkDelegator.java
+pag
+2007-04-11 16:36:14 -0500 (Wed, 11 Apr 2007)
+24
+Fixed bug in server URIs
+
+revision 222
+U   trunk/src/jar/resolver-nodetype/java/org/mulgara/resolver/nodetype/NodeTypeResolverFactory.java
+pag
+2007-04-11 16:35:16 -0500 (Wed, 11 Apr 2007)
+12
+Fixed author
+
+revision 221
+U   trunk/src/jar/resolver-prefix/java/org/mulgara/resolver/prefix/PrefixResolver.java
+U   trunk/src/jar/resolver-prefix/java/org/mulgara/resolver/prefix/PrefixResolverFactory.java
+U   trunk/src/jar/resolver-prefix/java/org/mulgara/resolver/prefix/TuplesWrapperResolution.java
+pag
+2007-04-11 16:34:26 -0500 (Wed, 11 Apr 2007)
+48
+Updated the license on code I have copyright for
+
+revision 219
+U   trunk/webdocs.xml
+thomas
+2007-04-08 07:46:40 -0500 (Sun, 08 Apr 2007)
+41
+a whole new layout - also for webdocs.xml
+
+revision 218
+U   trunk/docs/site-src/backofbook.html
+U   trunk/docs/site-src/descriptors/descadvantages.html
+U   trunk/docs/site-src/descriptors/descriptorex.html
+U   trunk/docs/site-src/descriptors/descriptorhw.html
+U   trunk/docs/site-src/descriptors/descriptorlist.html
+U   trunk/docs/site-src/descriptors/descriptorsfaq.html
+U   trunk/docs/site-src/descriptors/descriptortag.html
+U   trunk/docs/site-src/descriptors/descriptorvcard.html
+U   trunk/docs/site-src/descriptors/descwhat.html
+U   trunk/docs/site-src/descriptors/index.html
+U   trunk/docs/site-src/descriptors/mistakes.html
+U   trunk/docs/site-src/descriptors/nsdesc.html
+U   trunk/docs/site-src/descriptors/querytag.html
+U   trunk/docs/site-src/descriptors/reserved.html
+A   trunk/docs/site-src/img-layout/arrowLeft.png
+A   trunk/docs/site-src/img-layout/arrowRight.png
+A   trunk/docs/site-src/img-layout/backstone.jpg
+A   trunk/docs/site-src/img-layout/bugs1.png
+A   trunk/docs/site-src/img-layout/bugs2.png
+A   trunk/docs/site-src/img-layout/bugs3.png
+A   trunk/docs/site-src/img-layout/docs1.png
+A   trunk/docs/site-src/img-layout/docs2.png
+A   trunk/docs/site-src/img-layout/docs3.png
+A   trunk/docs/site-src/img-layout/home1.png
+A   trunk/docs/site-src/img-layout/home2.png
+A   trunk/docs/site-src/img-layout/home3.png
+A   trunk/docs/site-src/img-layout/logoback.png
+A   trunk/docs/site-src/img-layout/logomulgara.png
+A   trunk/docs/site-src/img-layout/logostone.png
+A   trunk/docs/site-src/img-layout/logostoneIE.jpg
+A   trunk/docs/site-src/img-layout/logotypo.png
+U   trunk/docs/site-src/img-layout/opensource-55x48.png
+U   trunk/docs/site-src/img-layout/w3css30.gif
+U   trunk/docs/site-src/img-layout/w3xhtml10.gif
+A   trunk/docs/site-src/img-layout/wiki1.png
+A   trunk/docs/site-src/img-layout/wiki2.png
+A   trunk/docs/site-src/img-layout/wiki3.png
+U   trunk/docs/site-src/index.html
+U   trunk/docs/site-src/inferencing/consistency.html
+U   trunk/docs/site-src/inferencing/entailment.html
+U   trunk/docs/site-src/inferencing/index.html
+U   trunk/docs/site-src/inferencing/inferexample.html
+U   trunk/docs/site-src/inferencing/inferintro.html
+U   trunk/docs/site-src/inferencing/infermulgara.html
+U   trunk/docs/site-src/inferencing/infersemweb.html
+U   trunk/docs/site-src/inferencing/infersitu.html
+U   trunk/docs/site-src/inferencing/infersummary.html
+U   trunk/docs/site-src/inferencing/ontomanage.html
+U   trunk/docs/site-src/inferencing/owl.html
+U   trunk/docs/site-src/inferencing/sofa.html
+U   trunk/docs/site-src/integration/compiling.html
+U   trunk/docs/site-src/integration/contenthandlers.html
+U   trunk/docs/site-src/integration/contenthandlersdev.html
+U   trunk/docs/site-src/integration/index.html
+U   trunk/docs/site-src/integration/integrate.html
+U   trunk/docs/site-src/integration/jena.html
+U   trunk/docs/site-src/integration/jrdfaddtriples.html
+U   trunk/docs/site-src/integration/jrdfcreategraph.html
+U   trunk/docs/site-src/integration/jrdfcreatenodes.html
+U   trunk/docs/site-src/integration/jrdfprereq.html
+U   trunk/docs/site-src/integration/jrdfreify.html
+U   trunk/docs/site-src/integration/jrdfremove.html
+U   trunk/docs/site-src/integration/jrdftutorial.html
+U   trunk/docs/site-src/integration/jsptutorial.html
+U   trunk/docs/site-src/integration/parsers.html
+U   trunk/docs/site-src/integration/perl.html
+U   trunk/docs/site-src/integration/resolveprot.html
+U   trunk/docs/site-src/integration/resolverfactories.html
+U   trunk/docs/site-src/integration/resolverhttpmp3.html
+U   trunk/docs/site-src/integration/resolverpre.html
+U   trunk/docs/site-src/integration/resolverwrapper.html
+U   trunk/docs/site-src/integration/resolverwrite.html
+U   trunk/docs/site-src/integration/searchgraph.html
+U   trunk/docs/site-src/integration/statements.html
+U   trunk/docs/site-src/itqlcommands/alias.html
+U   trunk/docs/site-src/itqlcommands/backup.html
+U   trunk/docs/site-src/itqlcommands/comment.html
+U   trunk/docs/site-src/itqlcommands/commit.html
+U   trunk/docs/site-src/itqlcommands/create.html
+U   trunk/docs/site-src/itqlcommands/delete.html
+U   trunk/docs/site-src/itqlcommands/drop.html
+U   trunk/docs/site-src/itqlcommands/execute.html
+U   trunk/docs/site-src/itqlcommands/help.html
+U   trunk/docs/site-src/itqlcommands/index.html
+U   trunk/docs/site-src/itqlcommands/insert.html
+U   trunk/docs/site-src/itqlcommands/load.html
+U   trunk/docs/site-src/itqlcommands/quit.html
+U   trunk/docs/site-src/itqlcommands/restore.html
+U   trunk/docs/site-src/itqlcommands/rollback.html
+U   trunk/docs/site-src/itqlcommands/select.html
+U   trunk/docs/site-src/itqlcommands/set.html
+U   trunk/docs/site-src/itqloperations/datatypingmodels.html
+U   trunk/docs/site-src/itqloperations/filesysmodel.html
+U   trunk/docs/site-src/itqloperations/fulltextmodels.html
+U   trunk/docs/site-src/itqloperations/index.html
+U   trunk/docs/site-src/itqloperations/nodetyping.html
+U   trunk/docs/site-src/itqloperations/views.html
+U   trunk/docs/site-src/overview/about.html
+U   trunk/docs/site-src/overview/aboutsite.html
+U   trunk/docs/site-src/overview/contact.html
+U   trunk/docs/site-src/overview/downloads.html
+U   trunk/docs/site-src/overview/faq.html
+U   trunk/docs/site-src/overview/history.html
+U   trunk/docs/site-src/overview/index.html
+U   trunk/docs/site-src/overview/install.html
+U   trunk/docs/site-src/overview/legal.html
+U   trunk/docs/site-src/overview/legalinfo.html
+U   trunk/docs/site-src/overview/license.html
+U   trunk/docs/site-src/overview/links.html
+U   trunk/docs/site-src/overview/optcomponents.html
+U   trunk/docs/site-src/overview/oscomponents.html
+U   trunk/docs/site-src/overview/suncomponents.html
+U   trunk/docs/site-src/overview/tools.html
+U   trunk/docs/site-src/overview/trademarks.html
+U   trunk/docs/site-src/resolvers/index.html
+U   trunk/docs/site-src/resolvers/resolverdbclass.html
+D   trunk/docs/site-src/script/bodyswitcher.js
+A   trunk/docs/site-src/script/rollover.js
+A   trunk/docs/site-src/script/styleswitcher.js
+A   trunk/docs/site-src/style/navIn.css
+A   trunk/docs/site-src/style/navOut.css
+U   trunk/docs/site-src/style/style.css
+U   trunk/docs/site-src/style/styleIE6.css
+U   trunk/docs/site-src/system/driver.html
+U   trunk/docs/site-src/system/index.html
+U   trunk/docs/site-src/system/itqlbean.html
+U   trunk/docs/site-src/system/itqlshell.html
+U   trunk/docs/site-src/system/jrdf.html
+U   trunk/docs/site-src/system/jrdfapis.html
+U   trunk/docs/site-src/system/jrdfconcol.html
+U   trunk/docs/site-src/system/jrdfexamples.html
+U   trunk/docs/site-src/system/jrdfgraphs.html
+U   trunk/docs/site-src/system/jrdfmemory.html
+U   trunk/docs/site-src/system/jrdftks.html
+U   trunk/docs/site-src/system/jrdfvisitor.html
+U   trunk/docs/site-src/system/jsptaglib.html
+U   trunk/docs/site-src/system/soap.html
+U   trunk/docs/site-src/template.html
+U   trunk/docs/site-src/toc.html
+U   trunk/docs/site-src/tutorial/convertingxml.html
+U   trunk/docs/site-src/tutorial/convertrdbms.html
+U   trunk/docs/site-src/tutorial/index.html
+U   trunk/docs/site-src/tutorial/itql.html
+U   trunk/docs/site-src/tutorial/itqlbasics.html
+U   trunk/docs/site-src/tutorial/itqlshellsession.html
+U   trunk/docs/site-src/tutorial/krule.html
+U   trunk/docs/site-src/tutorial/loadingrdf.html
+U   trunk/docs/site-src/tutorial/starting.html
+U   trunk/docs/site-src/tutorial/sysreq.html
+U   trunk/docs/site-src/tutorial/viewer.html
+thomas
+2007-04-08 07:39:43 -0500 (Sun, 08 Apr 2007)
+18
+a whole new layout
+
+revision 217
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ModifyModelOperation.java
+pag
+2007-04-03 21:34:14 -0500 (Tue, 03 Apr 2007)
+161
+uses a writable string pool when performing an insert/select, so that unknown values will successfully be inserted.  Fix fo MGR-43.  Further testing still needed
+
+revision 216
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+andrae
+2007-03-30 18:49:17 -0600 (Fri, 30 Mar 2007)
+107
+Overlooked a debug line in the transaction logic that outputs worrying debug
+messages - commented it out.
+
+
+
+revision 215
+U   trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraServer.java
+pag
+2007-03-30 09:11:01 -0600 (Fri, 30 Mar 2007)
+27
+updated some of the imports
+
+revision 214
+U   trunk/build.xml
+pag
+2007-03-30 09:10:20 -0600 (Fri, 30 Mar 2007)
+71
+added distributed resolver to the build process.  No tests included yet
+
+revision 213
+A   trunk/src/jar/resolver-distributed/
+A   trunk/src/jar/resolver-distributed/build.xml
+A   trunk/src/jar/resolver-distributed/java/
+A   trunk/src/jar/resolver-distributed/java/org/
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/AnswerResolution.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/Delegator.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/DistributedResolver.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/DistributedResolverFactory.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/NetworkDelegator.java
+A   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/package.html
+A   trunk/src/jar/resolver-distributed/resolver-distributed-build.properties
+pag
+2007-03-30 06:48:50 -0600 (Fri, 30 Mar 2007)
+125
+Initial commit.  Compiling, but not tested.  More needs to be done for keeping blank nodes distinct between different servers
+
+revision 212
+U   trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/TripleAVLFile.java
+ronald
+2007-03-28 02:52:38 -0600 (Wed, 28 Mar 2007)
+159
+Disable the finalizer, as it slows things down noticeably and can lead to
+out-of-heap errors under load due to the finalizer thread not being able to
+keep up.
+
+
+revision 210
+U   trunk/build.xml
+andrae
+2007-03-27 22:59:18 -0600 (Tue, 27 Mar 2007)
+83
+Fixes the clean target to remove mulgara.log.* files being generated by the
+tests.
+
+
+revision 208
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AdvDatabaseSessionUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+andrae
+2007-03-22 02:18:32 -0600 (Thu, 22 Mar 2007)
+1773
+Adds a test fo AdvDatabaseSessionUnitTest that checks that delete/select implicitly commits.
+This is a repeatable test for MGR-48 (http://mulgara.org/jira/browse/MGR-48) "update results
+incorrect when autocommit on and multiple sessions are used".
+
+We retain the patch provided by Ronald, as this bug was triggered by the delete operation
+retaining a reference to the write-transaction until the garbarge-collector collected the
+result of the inner select.  The result was a failure to commit, and therefore incorrect
+results with concurrent sessions.  By closing the temporary answer, the reference count
+was corrected and the transaction properly committed and terminated.
+
+To ensure that this cannot happen again, several alternatives were considered that would have
+provided an explicit call to 'commit' at the end of the delete.  These were rejected as this
+would have required DatabaseSession to either track or query the auto-commit status to determine
+if the transaction should be committed.  This would also bypass the reference counting 
+maintained by the transaction object itself, and reintroduce transaction-handling logic into
+DatabaseSession after this had been delegated to the 3 transaction management classes.
+
+The ultimate solution chosen was to track the autocommit status explicitly within the manager, 
+and to check this status when a transaction attempts to suspend.  The error we need to detect
+is a write-transaction outliving an operation that is supposed to be atomic.  The only way a
+transaction can outlive _any_ operation is to be suspended, so checking for validity on suspend
+will guarantee this type of error can never occur.  The result will now be a failed atomic write
+operation, something that will be highly visible and easily fixed.
+
+
+
+revision 207
+U   trunk/jxdata/iTQL/data_types/queryResult34.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult10.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult15.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult17.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult18.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult3.txt
+U   trunk/jxdata/iTQL/transitive/result13.txt
+U   trunk/jxdata/iTQL/transitive/result14.txt
+U   trunk/jxdata/iTQL/walk/queryResult7.txt
+U   trunk/src/jar/krule/java/org/mulgara/krule/RuleStructure.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalJRDFDatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StatusFormat.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+U   trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraServer.java
+andrae
+2007-03-19 01:01:14 -0600 (Mon, 19 Mar 2007)
+621
+This fixes MGR-44 - Error during transaction.commit() causes infinite recursion and looping
+
+The transaction code is still beta, and indeed there are reference counting issues that need resolving in the presence of transaction failures.  There are still warnings being printed by the finalize() method reflecting a failure to dereference adequately from TransactionalAnswer.sessionClose().  This however is a seperate issue to MGR-44, and this fix (moving from a DFA based transaction model to a DPA transaction model) resolves the infinite recursion and makes a fix of the dereferencing issues in sessionClose possible.
+
+
+revision 206
+U   trunk/version
+pag
+2007-03-01 10:41:41 -0600 (Thu, 01 Mar 2007)
+25
+New revision to match svn
+
+revision 205
+U   trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/TripleAVLFile.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnorderedProjection.java
+ronald
+2007-03-01 01:47:55 -0600 (Thu, 01 Mar 2007)
+196
+Avoid creating Throwable instances unless they will get used. Creating these
+is expensive because of the stack-trace. This fix results in a 30% - 40%
+decrease of query times. This closes MGR-47 .
+
+
+revision 204
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AppendAggregateTuples.java
+ronald
+2007-03-01 01:35:36 -0600 (Thu, 01 Mar 2007)
+95
+Removed duplicate fillInStackTrace() call (the constructor already does that).
+Part of MGR-47.
+
+
+revision 203
+U   trunk/src/jar/query/java/org/mulgara/query/ArrayAnswer.java
+ronald
+2007-03-01 01:33:23 -0600 (Thu, 01 Mar 2007)
+59
+Removed pointless Throwable instantiation. Part of MGR-47.
+
+
+revision 201
+A   trunk/jxdata/iTQL/difference/queryResult4.txt
+A   trunk/jxdata/iTQL/difference/queryResult5.txt
+A   trunk/jxdata/iTQL/difference/queryResult6.txt
+A   trunk/jxdata/iTQL/difference/queryResult7.txt
+U   trunk/jxdata/iTQL/difference/test.jxu
+ronald
+2007-03-01 01:12:17 -0600 (Thu, 01 Mar 2007)
+116
+Added test case for bug MGR-40 . This tests empty minuend, empty subtrahend,
+and both minuend and subtrahend empty.
+
+
+revision 200
+U   trunk/LEGAL.txt
+U   trunk/build.bat
+U   trunk/build.sh
+U   trunk/common.xml
+D   trunk/lib/ant-1.6.5.jar
+A   trunk/lib/ant-1.7.0.jar
+D   trunk/lib/ant-apache-bsf-1.6.5.jar
+A   trunk/lib/ant-apache-bsf-1.7.0.jar
+D   trunk/lib/ant-junit-1.6.5.jar
+A   trunk/lib/ant-junit-1.7.0.jar
+D   trunk/lib/ant-launcher-1.6.5.jar
+A   trunk/lib/ant-launcher-1.7.0.jar
+D   trunk/lib/ant-nodeps-1.6.5.jar
+A   trunk/lib/ant-nodeps-1.7.0.jar
+D   trunk/lib/ant-trax-1.6.5.jar
+A   trunk/lib/ant-trax-1.7.0.jar
+ronald
+2007-03-01 01:08:41 -0600 (Thu, 01 Mar 2007)
+247
+Upgraded ant from 1.6.5 to 1.7.0 to fix rmic dependency bug under jdk 1.5 (ant
+bug 33862: http://issues.apache.org/bugzilla/show_bug.cgi?id=33862 ). This was
+causing the rmi stubs to be generated every time, and the dist jars to built
+every time.
+
+
+revision 199
+U   trunk/src/jar/query/build.xml
+U   trunk/src/jar/rules/build.xml
+ronald
+2007-03-01 01:01:36 -0600 (Thu, 01 Mar 2007)
+107
+ - fix unconverted dependency check leftover from Kowari.
+ - fix duplicate target and property definitions
+
+
+revision 198
+U   trunk/src/jar/ant-task/build.xml
+U   trunk/src/jar/client-drools/build.xml
+U   trunk/src/jar/client-jrdf/build.xml
+U   trunk/src/jar/config/build.xml
+U   trunk/src/jar/connection/build.xml
+U   trunk/src/jar/connector/build.xml
+U   trunk/src/jar/content-mbox/build.xml
+U   trunk/src/jar/content-mp3/build.xml
+U   trunk/src/jar/content-n3/build.xml
+U   trunk/src/jar/content-rdfxml/build.xml
+U   trunk/src/jar/content-rio/build.xml
+U   trunk/src/jar/demo-mp3/build.xml
+U   trunk/src/jar/descriptor/build.xml
+U   trunk/src/jar/driver/build.xml
+U   trunk/src/jar/dtd/build.xml
+U   trunk/src/jar/itql/build.xml
+U   trunk/src/jar/jrdf/build.xml
+U   trunk/src/jar/query/build.xml
+U   trunk/src/jar/rdql/build.xml
+U   trunk/src/jar/resolver-file/build.xml
+U   trunk/src/jar/resolver-gis/build.xml
+U   trunk/src/jar/resolver-http/build.xml
+U   trunk/src/jar/resolver-jar/build.xml
+U   trunk/src/jar/resolver-lucene/build.xml
+U   trunk/src/jar/resolver-memory/build.xml
+U   trunk/src/jar/resolver-spi/build.xml
+U   trunk/src/jar/resolver-store/build.xml
+U   trunk/src/jar/resolver-test/build.xml
+U   trunk/src/jar/resolver-url/build.xml
+U   trunk/src/jar/resolver-view/build.xml
+U   trunk/src/jar/resolver-xsd/build.xml
+U   trunk/src/jar/rules/build.xml
+U   trunk/src/jar/server-beep/build.xml
+U   trunk/src/jar/server-http/build.xml
+U   trunk/src/jar/server-local/build.xml
+U   trunk/src/jar/server-rmi/build.xml
+U   trunk/src/jar/sofa/build.xml
+U   trunk/src/jar/sparql-protocol/build.xml
+U   trunk/src/jar/store-nodepool-memory/build.xml
+U   trunk/src/jar/store-nodepool-xa/build.xml
+U   trunk/src/jar/store-stringpool-memory/build.xml
+U   trunk/src/jar/store-stringpool-xa/build.xml
+U   trunk/src/jar/tag/build.xml
+U   trunk/src/jar/tuples/build.xml
+U   trunk/src/jar/tuples-hybrid/build.xml
+U   trunk/src/jar/util/build.xml
+U   trunk/src/jar/util-xa/build.xml
+ronald
+2007-03-01 00:57:27 -0600 (Thu, 01 Mar 2007)
+275
+Fix jar dependency calculation by moving <foo>-jar-uptodate to end of
+dependency list. The entries for the jar must be built first before the
+jar dependency check is performed as otherwise that check is against
+files which may get rebuilt by the next dependency in the list.
+
+
+revision 197
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+ronald
+2007-02-28 21:10:09 -0600 (Wed, 28 Feb 2007)
+34
+Minor improvement to log message.
+
+
+revision 196
+U   trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraServer.java
+pag
+2007-02-28 21:04:41 -0600 (Wed, 28 Feb 2007)
+50
+Removed unreferenced exception from method javadoc
+
+revision 195
+U   trunk/src/jar/doclet/java/org/mulgara/doclet/RCSTaglet.java
+pag
+2007-02-28 21:03:34 -0600 (Wed, 28 Feb 2007)
+43
+Fixed a taglet matching issue as per MGR-45
+
+revision 194
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+pag
+2007-02-28 21:00:19 -0600 (Wed, 28 Feb 2007)
+60
+Extra logging done on cloned answer during buggy transaction
+
+revision 193
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ModifyModelOperation.java
+U   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolution.java
+pag
+2007-02-28 20:58:53 -0600 (Wed, 28 Feb 2007)
+31
+Closing abandoned Answer/Tuples
+
+revision 192
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/SubqueryAnswer.java
+raboczi
+2007-02-25 08:46:42 -0600 (Sun, 25 Feb 2007)
+36
+Fixed doc comment for changed @param
+
+revision 191
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/DefinablePrefixAnnotation.java
+raboczi
+2007-02-25 08:45:41 -0600 (Sun, 25 Feb 2007)
+36
+Fixed doc comment for changed @param
+
+revision 190
+U   trunk/jxdata/iTQL/data_types/queryResult34.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult10.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult15.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult17.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult18.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult3.txt
+U   trunk/jxdata/iTQL/transitive/result13.txt
+U   trunk/jxdata/iTQL/transitive/result14.txt
+U   trunk/jxdata/iTQL/walk/queryResult7.txt
+A   trunk/src/jar/query/java/org/mulgara/query/MulgaraTransactionException.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+D   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionException.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+andrae
+2007-02-25 07:32:57 -0600 (Sun, 25 Feb 2007)
+201
+Moved MulgaraTransactionException into org.mulgara.query.  This makes it
+accessable to the client allowing RMI transparency of exceptions - this is very
+important to ensuring we get good bug reports.
+
+
+
+revision 189
+A   trunk/src/jar/descriptor/src/java/org/mulgara/descriptor/DescriptorUtil.java
+brian
+2007-02-24 17:44:05 -0600 (Sat, 24 Feb 2007)
+0
+
+
+revision 188
+U   trunk/jxdata/iTQL/data_types/queryResult37.txt
+pag
+2007-02-24 15:41:43 -0600 (Sat, 24 Feb 2007)
+60
+fixed reference to specific IP instead of @server@ reference
+
+revision 187
+U   trunk/build.xml
+brian
+2007-02-24 15:30:41 -0600 (Sat, 24 Feb 2007)
+50
+Pick up the Descriptor WebService client bindings.
+
+revision 186
+D   trunk/src/jar/descriptor/src/java/org/mulgara/descriptor/DescriptorUtil.java
+brian
+2007-02-24 15:27:56 -0600 (Sat, 24 Feb 2007)
+23
+Renamed DescriptorUtil.
+
+revision 185
+A   trunk/src/jar/descriptor/src/java/org/mulgara/descriptor/DescriptorUtility.java
+brian
+2007-02-24 15:27:31 -0600 (Sat, 24 Feb 2007)
+62
+Renamed to avoid a conflict with the DescriptorUtil interface.
+
+revision 184
+U   trunk/jxdata/iTQL/advance_queries/queryResult1.txt
+U   trunk/jxdata/iTQL/advance_queries/queryResult2.txt
+U   trunk/jxdata/iTQL/data_types/binary/base64Binary/queryResult1.txt
+U   trunk/jxdata/iTQL/data_types/binary/hexBinary/queryResult1.txt
+U   trunk/jxdata/iTQL/data_types/boolean/queryResult1.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult17.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult18.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult20.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult21.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult1.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult11-1.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult11-2.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult16.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult21-1.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult21-2.txt
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult6.txt
+U   trunk/jxdata/iTQL/data_types/queryResult1.txt
+U   trunk/jxdata/iTQL/data_types/queryResult14.txt
+U   trunk/jxdata/iTQL/data_types/queryResult32.txt
+U   trunk/jxdata/iTQL/data_types/queryResult34.txt
+U   trunk/jxdata/iTQL/data_types/queryResult36.txt
+U   trunk/jxdata/iTQL/data_types/queryResult37.txt
+U   trunk/jxdata/iTQL/exclude_queries/queryResult1.txt
+U   trunk/jxdata/iTQL/exclude_queries/queryResult2.txt
+U   trunk/jxdata/iTQL/exclude_queries/queryResult3.txt
+U   trunk/jxdata/iTQL/exclude_queries/queryResult5.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult1.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult11.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult12.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult13.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult14.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult2.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult3.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult4.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult5.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult6.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult7.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult8.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult9.txt
+U   trunk/jxdata/iTQL/node_types/queryResult2.txt
+U   trunk/jxdata/iTQL/node_types/queryResult3.txt
+U   trunk/jxdata/iTQL/performance/query6.txt
+U   trunk/jxdata/iTQL/performance/query7.txt
+U   trunk/jxdata/iTQL/subqueries/queryResult4.txt
+U   trunk/jxdata/iTQL/subqueries/queryResult7.txt
+U   trunk/jxdata/iTQL/subqueries/queryResult8.txt
+U   trunk/jxdata/iTQL/walk/queryResult5.txt
+U   trunk/jxdata/iTQL/walk/queryResult6.txt
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBean.java
+pag
+2007-02-24 13:33:03 -0600 (Sat, 24 Feb 2007)
+69
+Added datatype and/or language to literal output in XML, when present
+
+revision 183
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesOperations.java
+pag
+2007-02-24 13:26:41 -0600 (Sat, 24 Feb 2007)
+101
+Extra test in subtraction to prevent the operation from proceeding on an empty minuend or subtrahend.
+
+revision 182
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBeanUnitTest.java
+pag
+2007-02-24 13:25:01 -0600 (Sat, 24 Feb 2007)
+53
+Closed an abandoned Answer.  Standardized formatting.
+
+revision 181
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlSession.java
+pag
+2007-02-24 13:23:54 -0600 (Sat, 24 Feb 2007)
+23
+Standardized formatting
+
+revision 180
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlSessionUI.java
+pag
+2007-02-24 13:23:18 -0600 (Sat, 24 Feb 2007)
+23
+Standardized formatting
+
+revision 179
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/Database.java
+pag
+2007-02-24 13:22:20 -0600 (Sat, 24 Feb 2007)
+92
+Set to use the current class loader rather than the system class loader for content handlers
+
+revision 178
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPXMLLiteralImpl.java
+pag
+2007-02-24 13:21:03 -0600 (Sat, 24 Feb 2007)
+73
+Chained an underlying exception when throwing an IllegalArgumentException
+
+revision 177
+U   trunk/src/jar/dtd/META-INF/services/javax.xml.parsers.DocumentBuilderFactory
+pag
+2007-02-23 20:11:42 -0600 (Fri, 23 Feb 2007)
+22
+Applied fix for MGR-32
+
+revision 176
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBean.java
+pag
+2007-02-23 16:20:54 -0600 (Fri, 23 Feb 2007)
+40
+Removed a redundant 'continue' statement
+
+revision 175
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+pag
+2007-02-23 16:20:03 -0600 (Fri, 23 Feb 2007)
+99
+Fixed some cases where the current thread can be left in an invalid state after an exception occurs
+
+revision 174
+U   trunk/src/jar/itql/java/org/mulgara/itql/Collaborator.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/CollaboratorUnitTest.java
+pag
+2007-02-23 16:19:04 -0600 (Fri, 23 Feb 2007)
+82
+Standardized formatting.  Also added a stacktrace to the log on a failed SOAP test
+
+revision 173
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteAnswerWrapperAnswer.java
+pag
+2007-02-23 16:17:06 -0600 (Fri, 23 Feb 2007)
+101
+Fixed possible overlaps of thread operations on RMI when Answer pages are retrieved in the background
+
+revision 172
+U   trunk/src/jar/resolver-http/java/org/mulgara/resolver/http/HttpContentUnitTest.java
+pag
+2007-02-23 16:15:54 -0600 (Fri, 23 Feb 2007)
+58
+Update for change of the Dublin Core document from the web
+
+revision 171
+U   trunk/docs/site-src/tutorial/itqlbasics.html
+pag
+2007-02-23 11:15:16 -0600 (Fri, 23 Feb 2007)
+23
+Minor update to aliases
+
+revision 170
+U   trunk/src/jar/store-stringpool-xa/java/org/mulgara/store/stringpool/xa/XAStringPoolImpl.java
+andrae
+2007-02-22 06:48:33 -0600 (Thu, 22 Feb 2007)
+322
+Single line fix to force the writing of the gNode IntFile in the prepare() on the string-pool.
+
+The result of not doing this is to allow any buffered data to be lost if the jvm dies before
+the jvm flushes it to disk.  This therefore can only trigger a bug if the server crashes or
+is killed while under heavy write-load.
+
+
+
+revision 169
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBean.java
+pag
+2007-02-13 00:10:14 -0600 (Tue, 13 Feb 2007)
+57
+Ronald's patch for closing answers during execute(String)
+
+revision 168
+U   trunk/.classpath
+brian
+2007-02-11 13:19:20 -0600 (Sun, 11 Feb 2007)
+54
+Replaced the DateUtils dependency after Paul fixed it.
+
+revision 167
+U   trunk/.classpath
+U   trunk/.project
+brian
+2007-02-11 09:52:02 -0600 (Sun, 11 Feb 2007)
+28
+Added relational resolver.
+
+
+
+revision 166
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBean.java
+pag
+2007-02-07 12:30:47 -0600 (Wed, 07 Feb 2007)
+22
+Updated bad formatting
+
+revision 165
+U   trunk/src/jar/resolver-relational/build.xml
+pag
+2007-02-07 12:29:04 -0600 (Wed, 07 Feb 2007)
+47
+changed to compiling for Java 1.5, not Java 1.4
+
+revision 164
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/GlobalizedAnswer.java
+pag
+2007-02-07 10:34:18 -0600 (Wed, 07 Feb 2007)
+16
+fixed formatting
+
+revision 163
+U   trunk/build.xml
+U   trunk/common.properties
+A   trunk/webdocs.xml
+pag
+2007-01-23 16:40:11 -0600 (Tue, 23 Jan 2007)
+40
+new doc generation for web page includes
+
+revision 162
+D   trunk/docs/site/
+A   trunk/docs/site-src/
+pag
+2007-01-23 16:34:39 -0600 (Tue, 23 Jan 2007)
+68
+moved site to a source directory, with none of the includes done yet
+
+revision 161
+U   trunk/docs/site/backofbook.html
+U   trunk/docs/site/descriptors/descadvantages.html
+U   trunk/docs/site/descriptors/descriptorex.html
+U   trunk/docs/site/descriptors/descriptorhw.html
+U   trunk/docs/site/descriptors/descriptorlist.html
+U   trunk/docs/site/descriptors/descriptorsfaq.html
+U   trunk/docs/site/descriptors/descriptortag.html
+U   trunk/docs/site/descriptors/descriptorvcard.html
+U   trunk/docs/site/descriptors/descwhat.html
+U   trunk/docs/site/descriptors/index.html
+U   trunk/docs/site/descriptors/mistakes.html
+U   trunk/docs/site/descriptors/nsdesc.html
+U   trunk/docs/site/descriptors/querytag.html
+U   trunk/docs/site/descriptors/reserved.html
+U   trunk/docs/site/index.html
+U   trunk/docs/site/inferencing/consistency.html
+U   trunk/docs/site/inferencing/entailment.html
+U   trunk/docs/site/inferencing/index.html
+U   trunk/docs/site/inferencing/inferexample.html
+U   trunk/docs/site/inferencing/inferintro.html
+U   trunk/docs/site/inferencing/infermulgara.html
+U   trunk/docs/site/inferencing/infersemweb.html
+U   trunk/docs/site/inferencing/infersitu.html
+U   trunk/docs/site/inferencing/infersummary.html
+U   trunk/docs/site/inferencing/ontomanage.html
+U   trunk/docs/site/inferencing/owl.html
+U   trunk/docs/site/inferencing/sofa.html
+U   trunk/docs/site/integration/compiling.html
+U   trunk/docs/site/integration/contenthandlers.html
+U   trunk/docs/site/integration/contenthandlersdev.html
+U   trunk/docs/site/integration/index.html
+U   trunk/docs/site/integration/integrate.html
+U   trunk/docs/site/integration/jena.html
+U   trunk/docs/site/integration/jrdfaddtriples.html
+U   trunk/docs/site/integration/jrdfcreategraph.html
+U   trunk/docs/site/integration/jrdfcreatenodes.html
+U   trunk/docs/site/integration/jrdfprereq.html
+U   trunk/docs/site/integration/jrdfreify.html
+U   trunk/docs/site/integration/jrdfremove.html
+U   trunk/docs/site/integration/jrdftutorial.html
+U   trunk/docs/site/integration/jsptutorial.html
+U   trunk/docs/site/integration/parsers.html
+U   trunk/docs/site/integration/perl.html
+U   trunk/docs/site/integration/resolveprot.html
+U   trunk/docs/site/integration/resolverfactories.html
+U   trunk/docs/site/integration/resolverhttpmp3.html
+U   trunk/docs/site/integration/resolverpre.html
+U   trunk/docs/site/integration/resolverwrapper.html
+U   trunk/docs/site/integration/resolverwrite.html
+U   trunk/docs/site/integration/searchgraph.html
+U   trunk/docs/site/integration/statements.html
+U   trunk/docs/site/itqlcommands/alias.html
+U   trunk/docs/site/itqlcommands/backup.html
+U   trunk/docs/site/itqlcommands/comment.html
+U   trunk/docs/site/itqlcommands/commit.html
+U   trunk/docs/site/itqlcommands/create.html
+U   trunk/docs/site/itqlcommands/delete.html
+U   trunk/docs/site/itqlcommands/drop.html
+U   trunk/docs/site/itqlcommands/execute.html
+U   trunk/docs/site/itqlcommands/help.html
+U   trunk/docs/site/itqlcommands/index.html
+U   trunk/docs/site/itqlcommands/insert.html
+U   trunk/docs/site/itqlcommands/load.html
+U   trunk/docs/site/itqlcommands/quit.html
+U   trunk/docs/site/itqlcommands/restore.html
+U   trunk/docs/site/itqlcommands/rollback.html
+U   trunk/docs/site/itqlcommands/select.html
+U   trunk/docs/site/itqlcommands/set.html
+U   trunk/docs/site/itqloperations/datatypingmodels.html
+U   trunk/docs/site/itqloperations/filesysmodel.html
+U   trunk/docs/site/itqloperations/fulltextmodels.html
+U   trunk/docs/site/itqloperations/index.html
+U   trunk/docs/site/itqloperations/nodetyping.html
+U   trunk/docs/site/itqloperations/views.html
+U   trunk/docs/site/overview/about.html
+U   trunk/docs/site/overview/aboutsite.html
+U   trunk/docs/site/overview/contact.html
+U   trunk/docs/site/overview/downloads.html
+U   trunk/docs/site/overview/faq.html
+U   trunk/docs/site/overview/history.html
+U   trunk/docs/site/overview/index.html
+U   trunk/docs/site/overview/install.html
+U   trunk/docs/site/overview/legal.html
+U   trunk/docs/site/overview/legalinfo.html
+U   trunk/docs/site/overview/license.html
+U   trunk/docs/site/overview/links.html
+U   trunk/docs/site/overview/optcomponents.html
+U   trunk/docs/site/overview/oscomponents.html
+U   trunk/docs/site/overview/suncomponents.html
+U   trunk/docs/site/overview/tools.html
+U   trunk/docs/site/overview/trademarks.html
+U   trunk/docs/site/resolvers/index.html
+U   trunk/docs/site/resolvers/resolverdbclass.html
+U   trunk/docs/site/system/driver.html
+U   trunk/docs/site/system/index.html
+U   trunk/docs/site/system/itqlbean.html
+U   trunk/docs/site/system/itqlshell.html
+U   trunk/docs/site/system/jrdf.html
+U   trunk/docs/site/system/jrdfapis.html
+U   trunk/docs/site/system/jrdfconcol.html
+U   trunk/docs/site/system/jrdfexamples.html
+U   trunk/docs/site/system/jrdfgraphs.html
+U   trunk/docs/site/system/jrdfmemory.html
+U   trunk/docs/site/system/jrdftks.html
+U   trunk/docs/site/system/jrdfvisitor.html
+U   trunk/docs/site/system/jsptaglib.html
+U   trunk/docs/site/system/soap.html
+U   trunk/docs/site/template.html
+U   trunk/docs/site/toc.html
+U   trunk/docs/site/tutorial/convertingxml.html
+U   trunk/docs/site/tutorial/convertrdbms.html
+U   trunk/docs/site/tutorial/index.html
+U   trunk/docs/site/tutorial/itql.html
+U   trunk/docs/site/tutorial/itqlbasics.html
+U   trunk/docs/site/tutorial/itqlshellsession.html
+U   trunk/docs/site/tutorial/krule.html
+U   trunk/docs/site/tutorial/loadingrdf.html
+U   trunk/docs/site/tutorial/starting.html
+U   trunk/docs/site/tutorial/sysreq.html
+U   trunk/docs/site/tutorial/viewer.html
+pag
+2007-01-23 15:48:05 -0600 (Tue, 23 Jan 2007)
+68
+Server side includes change to a replacement tag for static building
+
+revision 160
+D   trunk/docs/site/descriptors/includeTOC.inc
+D   trunk/docs/site/includeBottom.inc
+D   trunk/docs/site/includeMiddle.inc
+D   trunk/docs/site/includeTOC.inc
+D   trunk/docs/site/includeTop.inc
+D   trunk/docs/site/inferencing/includeTOC.inc
+D   trunk/docs/site/integration/includeTOC.inc
+D   trunk/docs/site/itqlcommands/includeTOC.inc
+D   trunk/docs/site/itqloperations/includeTOC.inc
+D   trunk/docs/site/overview/includeTOC.inc
+D   trunk/docs/site/resolvers/includeTOC.inc
+D   trunk/docs/site/system/includeTOC.inc
+D   trunk/docs/site/tutorial/includeTOC.inc
+pag
+2007-01-23 15:45:42 -0600 (Tue, 23 Jan 2007)
+29
+Removing server side includes
+
+revision 158
+D   trunk/docs/design/
+A   trunk/docs/site/design/
+A   trunk/docs/site/legal.htm
+A   trunk/docs/site/style/old_mulgara_stylesheet.css
+pag
+2007-01-19 12:07:39 -0600 (Fri, 19 Jan 2007)
+54
+moved all accessible documents into the site directory
+
+revision 157
+U   trunk/conf/log4j-mulgara.xml
+A   trunk/data/xatest-model1.rdf
+U   trunk/jxdata/iTQL/data_types/queryResult34.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult10.txt
+U   trunk/jxdata/iTQL/having_queries/queryResult15.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult17.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult18.txt
+U   trunk/jxdata/iTQL/standard_queries/queryResult3.txt
+U   trunk/jxdata/iTQL/transitive/result13.txt
+U   trunk/jxdata/iTQL/transitive/result14.txt
+U   trunk/jxdata/iTQL/walk/queryResult7.txt
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/JRDFGraphElementFactory.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/LocalJRDFSession.java
+U   trunk/src/jar/query/java/org/mulgara/query/rdf/VariableNodeImpl.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/AdvDatabaseSessionUnitTest.java
+D   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerDatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/BasicDatabaseSessionUnitTest.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/BootstrapOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/CacheResolver.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ConstraintOperations.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/CreateModelOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/Database.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/InternalResolver.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalJRDFDatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ModifyModelOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/OperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/QueryOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/RemoveModelOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/SetModelOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StatusFormat.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/SubqueryAnswer.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/SubqueryAnswerUnitTest.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+U   trunk/src/jar/resolver-filesystem/java/org/mulgara/resolver/filesystem/FileSystemResolver.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/ReadOnlyGISResolver.java
+U   trunk/src/jar/resolver-lucene/java/org/mulgara/resolver/lucene/LuceneResolver.java
+U   trunk/src/jar/resolver-memory/java/org/mulgara/resolver/memory/MemoryResolver.java
+U   trunk/src/jar/resolver-nodetype/java/org/mulgara/resolver/nodetype/NodeTypeResolver.java
+U   trunk/src/jar/resolver-prefix/java/org/mulgara/resolver/prefix/PrefixResolver.java
+U   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolver.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/content/ContentResolver.java
+A   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/EnlistableResource.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/LocalSession.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/Resolver.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolver.java
+U   trunk/src/jar/resolver-test/java/org/mulgara/resolver/test/TestResolver.java
+U   trunk/src/jar/resolver-url/java/org/mulgara/resolver/url/URLResolver.java
+U   trunk/src/jar/resolver-view/java/org/mulgara/resolver/view/ViewResolver.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/XSDResolver.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/BlankNodeWrapperAnswer.java
+andrae
+2007-01-03 15:32:43 -0600 (Wed, 03 Jan 2007)
+211
+merge -r 114:139 ../braches/xafix-impl
+
+Merges versions 114 through 139 of xafix-impl into trunk.
+
+This reflects the new transaction architecture work committed into HEAD.
+
+The xafix-impl branch is now closed.
+
+
+
+revision 156
+U   trunk/docs/site/includeMiddle.inc
+U   trunk/docs/site/style/style.css
+U   trunk/docs/site/style/styleIE6.css
+thomas
+2006-12-13 06:29:00 -0600 (Wed, 13 Dec 2006)
+125
+docs-layout: practically finished from my side. accessability tested (somehow...), intenet explorer working (somehow, too...)
+
+revision 155
+A   trunk/docs/site/img-layout/logo856deserted.png
+U   trunk/docs/site/includeBottom.inc
+U   trunk/docs/site/includeMiddle.inc
+U   trunk/docs/site/includeTOC.inc
+U   trunk/docs/site/notes.xml
+U   trunk/docs/site/style/style.css
+thomas
+2006-12-13 05:18:52 -0600 (Wed, 13 Dec 2006)
+114
+docs-layout: finishing touches on new style, added print style, 'this document last mofified' now working properly
+
+revision 154
+U   trunk/docs/site/backofbook.html
+U   trunk/docs/site/includeMiddle.inc
+U   trunk/docs/site/includeTOC.inc
+U   trunk/docs/site/itqloperations/nodetyping.html
+A   trunk/docs/site/legal/OSL-3.0.txt
+A   trunk/docs/site/notes.xml
+U   trunk/docs/site/overview/legalinfo.html
+U   trunk/docs/site/style/style.css
+thomas
+2006-12-12 12:13:44 -0600 (Tue, 12 Dec 2006)
+66
+docs-layout: fixed links, style, adding google search (first step)
+
+revision 153
+A   trunk/docs/site/img-layout/spacer.gif
+thomas
+2006-12-12 06:31:19 -0600 (Tue, 12 Dec 2006)
+30
+docs-layout: adding spacer.gif
+
+revision 152
+U   trunk/docs/site/backofbook.html
+U   trunk/docs/site/descriptors/descadvantages.html
+U   trunk/docs/site/descriptors/descriptorex.html
+U   trunk/docs/site/descriptors/descriptorhw.html
+U   trunk/docs/site/descriptors/descriptorlist.html
+U   trunk/docs/site/descriptors/descriptorsfaq.html
+U   trunk/docs/site/descriptors/descriptortag.html
+U   trunk/docs/site/descriptors/descriptorvcard.html
+U   trunk/docs/site/descriptors/descwhat.html
+U   trunk/docs/site/descriptors/index.html
+U   trunk/docs/site/descriptors/mistakes.html
+U   trunk/docs/site/descriptors/nsdesc.html
+U   trunk/docs/site/descriptors/querytag.html
+U   trunk/docs/site/descriptors/reserved.html
+A   trunk/docs/site/img-layout/logo856gray.png
+U   trunk/docs/site/includeBottom.inc
+U   trunk/docs/site/includeMiddle.inc
+U   trunk/docs/site/includeTOC.inc
+U   trunk/docs/site/index.html
+U   trunk/docs/site/inferencing/consistency.html
+U   trunk/docs/site/inferencing/entailment.html
+U   trunk/docs/site/inferencing/index.html
+U   trunk/docs/site/inferencing/inferexample.html
+U   trunk/docs/site/inferencing/inferintro.html
+U   trunk/docs/site/inferencing/infermulgara.html
+U   trunk/docs/site/inferencing/infersemweb.html
+U   trunk/docs/site/inferencing/infersitu.html
+U   trunk/docs/site/inferencing/infersummary.html
+U   trunk/docs/site/inferencing/ontomanage.html
+U   trunk/docs/site/inferencing/owl.html
+U   trunk/docs/site/inferencing/sofa.html
+U   trunk/docs/site/integration/compiling.html
+U   trunk/docs/site/integration/contenthandlers.html
+U   trunk/docs/site/integration/contenthandlersdev.html
+U   trunk/docs/site/integration/index.html
+U   trunk/docs/site/integration/integrate.html
+U   trunk/docs/site/integration/jena.html
+U   trunk/docs/site/integration/jrdfaddtriples.html
+U   trunk/docs/site/integration/jrdfcreategraph.html
+U   trunk/docs/site/integration/jrdfcreatenodes.html
+U   trunk/docs/site/integration/jrdfprereq.html
+U   trunk/docs/site/integration/jrdfreify.html
+U   trunk/docs/site/integration/jrdfremove.html
+U   trunk/docs/site/integration/jrdftutorial.html
+U   trunk/docs/site/integration/jsptutorial.html
+U   trunk/docs/site/integration/parsers.html
+U   trunk/docs/site/integration/perl.html
+U   trunk/docs/site/integration/resolveprot.html
+U   trunk/docs/site/integration/resolverfactories.html
+U   trunk/docs/site/integration/resolverhttpmp3.html
+U   trunk/docs/site/integration/resolverpre.html
+U   trunk/docs/site/integration/resolverwrapper.html
+U   trunk/docs/site/integration/resolverwrite.html
+U   trunk/docs/site/integration/searchgraph.html
+U   trunk/docs/site/integration/statements.html
+U   trunk/docs/site/itqlcommands/alias.html
+U   trunk/docs/site/itqlcommands/backup.html
+U   trunk/docs/site/itqlcommands/comment.html
+U   trunk/docs/site/itqlcommands/commit.html
+U   trunk/docs/site/itqlcommands/create.html
+U   trunk/docs/site/itqlcommands/delete.html
+U   trunk/docs/site/itqlcommands/drop.html
+U   trunk/docs/site/itqlcommands/execute.html
+U   trunk/docs/site/itqlcommands/help.html
+U   trunk/docs/site/itqlcommands/index.html
+U   trunk/docs/site/itqlcommands/insert.html
+U   trunk/docs/site/itqlcommands/load.html
+U   trunk/docs/site/itqlcommands/quit.html
+U   trunk/docs/site/itqlcommands/restore.html
+U   trunk/docs/site/itqlcommands/rollback.html
+U   trunk/docs/site/itqlcommands/select.html
+U   trunk/docs/site/itqlcommands/set.html
+U   trunk/docs/site/itqloperations/datatypingmodels.html
+U   trunk/docs/site/itqloperations/filesysmodel.html
+U   trunk/docs/site/itqloperations/fulltextmodels.html
+U   trunk/docs/site/itqloperations/index.html
+U   trunk/docs/site/itqloperations/nodetyping.html
+U   trunk/docs/site/itqloperations/views.html
+U   trunk/docs/site/overview/about.html
+U   trunk/docs/site/overview/aboutsite.html
+U   trunk/docs/site/overview/contact.html
+D   trunk/docs/site/overview/convertingxml.html
+D   trunk/docs/site/overview/convertrdbms.html
+U   trunk/docs/site/overview/downloads.html
+U   trunk/docs/site/overview/faq.html
+U   trunk/docs/site/overview/history.html
+U   trunk/docs/site/overview/includeTOC.inc
+U   trunk/docs/site/overview/index.html
+U   trunk/docs/site/overview/install.html
+D   trunk/docs/site/overview/itql.html
+D   trunk/docs/site/overview/itqlbasics.html
+D   trunk/docs/site/overview/itqlshellsession.html
+D   trunk/docs/site/overview/krule.html
+U   trunk/docs/site/overview/legal.html
+U   trunk/docs/site/overview/legalinfo.html
+U   trunk/docs/site/overview/license.html
+U   trunk/docs/site/overview/links.html
+D   trunk/docs/site/overview/loadingrdf.html
+U   trunk/docs/site/overview/optcomponents.html
+U   trunk/docs/site/overview/oscomponents.html
+D   trunk/docs/site/overview/starting.html
+U   trunk/docs/site/overview/suncomponents.html
+D   trunk/docs/site/overview/sysreq.html
+U   trunk/docs/site/overview/tools.html
+U   trunk/docs/site/overview/trademarks.html
+D   trunk/docs/site/overview/tutorial.html
+D   trunk/docs/site/overview/viewer.html
+U   trunk/docs/site/resolvers/index.html
+U   trunk/docs/site/resolvers/resolverdbclass.html
+U   trunk/docs/site/script/bodyswitcher.js
+U   trunk/docs/site/style/oldStyle.css
+U   trunk/docs/site/style/style.css
+U   trunk/docs/site/system/driver.html
+U   trunk/docs/site/system/index.html
+U   trunk/docs/site/system/itqlbean.html
+U   trunk/docs/site/system/itqlshell.html
+U   trunk/docs/site/system/jrdf.html
+U   trunk/docs/site/system/jrdfapis.html
+U   trunk/docs/site/system/jrdfconcol.html
+U   trunk/docs/site/system/jrdfexamples.html
+U   trunk/docs/site/system/jrdfgraphs.html
+U   trunk/docs/site/system/jrdfmemory.html
+U   trunk/docs/site/system/jrdftks.html
+U   trunk/docs/site/system/jrdfvisitor.html
+U   trunk/docs/site/system/jsptaglib.html
+U   trunk/docs/site/system/soap.html
+U   trunk/docs/site/template.html
+U   trunk/docs/site/toc.html
+A   trunk/docs/site/tutorial/
+A   trunk/docs/site/tutorial/convertingxml.html
+A   trunk/docs/site/tutorial/convertrdbms.html
+A   trunk/docs/site/tutorial/includeTOC.inc
+A   trunk/docs/site/tutorial/index.html
+A   trunk/docs/site/tutorial/itql.html
+A   trunk/docs/site/tutorial/itqlbasics.html
+A   trunk/docs/site/tutorial/itqlshellsession.html
+A   trunk/docs/site/tutorial/krule.html
+A   trunk/docs/site/tutorial/loadingrdf.html
+A   trunk/docs/site/tutorial/starting.html
+A   trunk/docs/site/tutorial/sysreq.html
+A   trunk/docs/site/tutorial/viewer.html
+thomas
+2006-12-12 05:36:12 -0600 (Tue, 12 Dec 2006)
+31
+glitches, flaws and a new style
+
+revision 151
+U   trunk/docs/site/backofbook.html
+U   trunk/docs/site/descriptors/descriptorex.html
+U   trunk/docs/site/descriptors/descriptorhw.html
+A   trunk/docs/site/descriptors/vcard/
+A   trunk/docs/site/descriptors/vcard/vcard.xsl
+A   trunk/docs/site/descriptors/vcard/vcardhtml.xsl
+A   trunk/docs/site/descriptors/vcard/vcardinsert.xsl
+A   trunk/docs/site/descriptors/vcard/vcardinserthtml.xsl
+A   trunk/docs/site/descriptors/vcard/vcardlist.xsl
+A   trunk/docs/site/descriptors/vcard/vcardlisthtml.xsl
+A   trunk/docs/site/descriptors/vcard/vcardxml.xsl
+D   trunk/docs/site/descriptors/vcard.xsl
+D   trunk/docs/site/descriptors/vcardhtml.xsl
+D   trunk/docs/site/descriptors/vcardinsert.xsl
+D   trunk/docs/site/descriptors/vcardinserthtml.xsl
+D   trunk/docs/site/descriptors/vcardlist.xsl
+D   trunk/docs/site/descriptors/vcardlisthtml.xsl
+D   trunk/docs/site/descriptors/vcardxml.xsl
+U   trunk/docs/site/includeTOC.inc
+U   trunk/docs/site/overview/krule.html
+U   trunk/docs/site/style/oldStyle.css
+U   trunk/docs/site/style/style.css
+U   trunk/docs/site/system/jrdfapis.html
+U   trunk/docs/site/toc.html
+thomas
+2006-12-08 19:13:26 -0600 (Fri, 08 Dec 2006)
+21
+some stylesheet works
+
+revision 150
+A   trunk/docs/site/descriptors/vcard.xsl
+A   trunk/docs/site/descriptors/vcardhtml.xsl
+A   trunk/docs/site/descriptors/vcardinsert.xsl
+A   trunk/docs/site/descriptors/vcardinserthtml.xsl
+A   trunk/docs/site/descriptors/vcardlist.xsl
+A   trunk/docs/site/descriptors/vcardlisthtml.xsl
+A   trunk/docs/site/descriptors/vcardxml.xsl
+thomas
+2006-12-08 13:49:57 -0600 (Fri, 08 Dec 2006)
+46
+import vcard stylesheets in /descriptors/vcard
+
+revision 149
+U   trunk/docs/site/img-layout/siteicon.png
+thomas
+2006-12-08 10:22:17 -0600 (Fri, 08 Dec 2006)
+21
+siteicon transparency
+
+revision 148
+U   trunk/docs/site/template.html
+thomas
+2006-12-07 19:01:41 -0600 (Thu, 07 Dec 2006)
+22
+finished template.html
+
+revision 147
+A   trunk/docs/oldSite/187.htm.mine
+A   trunk/docs/oldSite/187.htm.r139
+A   trunk/docs/oldSite/187.htm.r91
+thomas
+2006-12-07 18:08:59 -0600 (Thu, 07 Dec 2006)
+57
+added some accidently deleted stuff to the oldSite backup
+
+revision 146
+D   trunk/docs/site/oldsite/
+thomas
+2006-12-07 18:07:07 -0600 (Thu, 07 Dec 2006)
+25
+removed superfluous stuff
+
+revision 145
+A   trunk/docs/site/backofbook.html
+A   trunk/docs/site/descriptors/
+A   trunk/docs/site/descriptors/descadvantages.html
+A   trunk/docs/site/descriptors/descriptorex.html
+A   trunk/docs/site/descriptors/descriptorhw.html
+A   trunk/docs/site/descriptors/descriptorlist.html
+A   trunk/docs/site/descriptors/descriptorsfaq.html
+A   trunk/docs/site/descriptors/descriptortag.html
+A   trunk/docs/site/descriptors/descriptorvcard.html
+A   trunk/docs/site/descriptors/descwhat.html
+A   trunk/docs/site/descriptors/includeTOC.inc
+A   trunk/docs/site/descriptors/index.html
+A   trunk/docs/site/descriptors/mistakes.html
+A   trunk/docs/site/descriptors/nsdesc.html
+A   trunk/docs/site/descriptors/querytag.html
+A   trunk/docs/site/descriptors/reserved.html
+A   trunk/docs/site/img/
+A   trunk/docs/site/img/descriptorhw791.gif
+A   trunk/docs/site/img/descriptorhw792.gif
+A   trunk/docs/site/img/descriptorhw793.gif
+A   trunk/docs/site/img/descriptorhw794.gif
+A   trunk/docs/site/img/descriptorlist799.gif
+A   trunk/docs/site/img/descriptorlist800.gif
+A   trunk/docs/site/img/descriptorlist801.gif
+A   trunk/docs/site/img/descriptorvcard918.gif
+A   trunk/docs/site/img/descriptorvcard919.png
+A   trunk/docs/site/img/jrdfgraphs2490.gif
+A   trunk/docs/site/img/loadexistingrdf.gif
+A   trunk/docs/site/img/select1536.gif
+A   trunk/docs/site/img/viewerscreen.gif
+A   trunk/docs/site/img/viewerstep1.gif
+A   trunk/docs/site/img/viewerstep1result.gif
+A   trunk/docs/site/img/viewerstep2.gif
+A   trunk/docs/site/img/viewerstep3.gif
+A   trunk/docs/site/img/viewerstep4.gif
+A   trunk/docs/site/img-layout/
+A   trunk/docs/site/img-layout/atlassian-160.png
+A   trunk/docs/site/img-layout/backLeft.jpg
+A   trunk/docs/site/img-layout/backTop.jpg
+A   trunk/docs/site/img-layout/black-20.png
+A   trunk/docs/site/img-layout/black-30.png
+A   trunk/docs/site/img-layout/black-40.png
+A   trunk/docs/site/img-layout/black-50.png
+A   trunk/docs/site/img-layout/black-55.png
+A   trunk/docs/site/img-layout/black-60.png
+A   trunk/docs/site/img-layout/black-70.png
+A   trunk/docs/site/img-layout/black-80.png
+A   trunk/docs/site/img-layout/black-90.png
+A   trunk/docs/site/img-layout/bosatsu-160.gif
+A   trunk/docs/site/img-layout/bosatsu-160.png
+A   trunk/docs/site/img-layout/dash.gif
+A   trunk/docs/site/img-layout/herzum-160.png
+A   trunk/docs/site/img-layout/herzum.gif
+A   trunk/docs/site/img-layout/herzum.png
+A   trunk/docs/site/img-layout/ieBack-2.jpg
+A   trunk/docs/site/img-layout/ieBack-3.jpg
+A   trunk/docs/site/img-layout/ieBack.jpg
+A   trunk/docs/site/img-layout/logo856s.png
+A   trunk/docs/site/img-layout/mbackLeft.jpg
+A   trunk/docs/site/img-layout/mbackTop.jpg
+A   trunk/docs/site/img-layout/mulgara-logo.png
+A   trunk/docs/site/img-layout/netymon-160-l.gif
+A   trunk/docs/site/img-layout/netymon-160-l.png
+A   trunk/docs/site/img-layout/opensource-55x48.png
+A   trunk/docs/site/img-layout/siteicon.png
+A   trunk/docs/site/img-layout/sm-160.jpg
+A   trunk/docs/site/img-layout/w3css30.gif
+A   trunk/docs/site/img-layout/w3css30.png
+A   trunk/docs/site/img-layout/w3xhtml10.gif
+A   trunk/docs/site/img-layout/w3xhtml10.png
+A   trunk/docs/site/img-layout/white-30.png
+A   trunk/docs/site/img-layout/white-40.png
+A   trunk/docs/site/img-layout/white-50.png
+A   trunk/docs/site/img-layout/white-60.png
+A   trunk/docs/site/img-layout/white-70.png
+A   trunk/docs/site/img-layout/white-80.png
+A   trunk/docs/site/img-layout/white-85.png
+A   trunk/docs/site/img-layout/white-90.png
+A   trunk/docs/site/img-layout/white-95.png
+A   trunk/docs/site/includeBottom.inc
+A   trunk/docs/site/includeMiddle.inc
+A   trunk/docs/site/includeTOC.inc
+A   trunk/docs/site/includeTop.inc
+A   trunk/docs/site/index.html
+A   trunk/docs/site/inferencing/
+A   trunk/docs/site/inferencing/consistency.html
+A   trunk/docs/site/inferencing/entailment.html
+A   trunk/docs/site/inferencing/includeTOC.inc
+A   trunk/docs/site/inferencing/index.html
+A   trunk/docs/site/inferencing/inferexample.html
+A   trunk/docs/site/inferencing/inferintro.html
+A   trunk/docs/site/inferencing/infermulgara.html
+A   trunk/docs/site/inferencing/infersemweb.html
+A   trunk/docs/site/inferencing/infersitu.html
+A   trunk/docs/site/inferencing/infersummary.html
+A   trunk/docs/site/inferencing/ontomanage.html
+A   trunk/docs/site/inferencing/owl.html
+A   trunk/docs/site/inferencing/sofa.html
+A   trunk/docs/site/integration/
+A   trunk/docs/site/integration/compiling.html
+A   trunk/docs/site/integration/contenthandlers.html
+A   trunk/docs/site/integration/contenthandlersdev.html
+A   trunk/docs/site/integration/includeTOC.inc
+A   trunk/docs/site/integration/index.html
+A   trunk/docs/site/integration/integrate.html
+A   trunk/docs/site/integration/jena.html
+A   trunk/docs/site/integration/jrdfaddtriples.html
+A   trunk/docs/site/integration/jrdfcreategraph.html
+A   trunk/docs/site/integration/jrdfcreatenodes.html
+A   trunk/docs/site/integration/jrdfprereq.html
+A   trunk/docs/site/integration/jrdfreify.html
+A   trunk/docs/site/integration/jrdfremove.html
+A   trunk/docs/site/integration/jrdftutorial.html
+A   trunk/docs/site/integration/jsptutorial.html
+A   trunk/docs/site/integration/parsers.html
+A   trunk/docs/site/integration/perl.html
+A   trunk/docs/site/integration/resolveprot.html
+A   trunk/docs/site/integration/resolverfactories.html
+A   trunk/docs/site/integration/resolverhttpmp3.html
+A   trunk/docs/site/integration/resolverpre.html
+A   trunk/docs/site/integration/resolverwrapper.html
+A   trunk/docs/site/integration/resolverwrite.html
+A   trunk/docs/site/integration/searchgraph.html
+A   trunk/docs/site/integration/statements.html
+A   trunk/docs/site/itqlcommands/
+A   trunk/docs/site/itqlcommands/alias.html
+A   trunk/docs/site/itqlcommands/backup.html
+A   trunk/docs/site/itqlcommands/comment.html
+A   trunk/docs/site/itqlcommands/commit.html
+A   trunk/docs/site/itqlcommands/create.html
+A   trunk/docs/site/itqlcommands/delete.html
+A   trunk/docs/site/itqlcommands/drop.html
+A   trunk/docs/site/itqlcommands/execute.html
+A   trunk/docs/site/itqlcommands/help.html
+A   trunk/docs/site/itqlcommands/includeTOC.inc
+A   trunk/docs/site/itqlcommands/index.html
+A   trunk/docs/site/itqlcommands/insert.html
+A   trunk/docs/site/itqlcommands/load.html
+A   trunk/docs/site/itqlcommands/quit.html
+A   trunk/docs/site/itqlcommands/restore.html
+A   trunk/docs/site/itqlcommands/rollback.html
+A   trunk/docs/site/itqlcommands/select.html
+A   trunk/docs/site/itqlcommands/set.html
+A   trunk/docs/site/itqloperations/
+A   trunk/docs/site/itqloperations/datatypingmodels.html
+A   trunk/docs/site/itqloperations/filesysmodel.html
+A   trunk/docs/site/itqloperations/fulltextmodels.html
+A   trunk/docs/site/itqloperations/includeTOC.inc
+A   trunk/docs/site/itqloperations/index.html
+A   trunk/docs/site/itqloperations/nodetyping.html
+A   trunk/docs/site/itqloperations/views.html
+A   trunk/docs/site/legal/
+A   trunk/docs/site/legal/fdl.txt
+A   trunk/docs/site/oldsite/
+A   trunk/docs/site/oldsite/images/
+A   trunk/docs/site/oldsite/images/cbook.gif
+A   trunk/docs/site/oldsite/images/collapse.gif
+A   trunk/docs/site/oldsite/images/collapseall.gif
+A   trunk/docs/site/oldsite/images/contents1.gif
+A   trunk/docs/site/oldsite/images/contents2.gif
+A   trunk/docs/site/oldsite/images/expand.gif
+A   trunk/docs/site/oldsite/images/expandall.gif
+A   trunk/docs/site/oldsite/images/images/
+A   trunk/docs/site/oldsite/images/images/Picasa.ini
+A   trunk/docs/site/oldsite/images/images/icons/
+A   trunk/docs/site/oldsite/images/images/icons/siteicon.png
+A   trunk/docs/site/oldsite/images/images/mulgara.jpg
+A   trunk/docs/site/oldsite/images/images/mulgara_banner.png
+A   trunk/docs/site/oldsite/images/images/siteicon.png
+A   trunk/docs/site/oldsite/images/images/tksv.png
+A   trunk/docs/site/oldsite/images/images/tksv2.png
+A   trunk/docs/site/oldsite/images/images/top.gif
+A   trunk/docs/site/oldsite/images/index1.gif
+A   trunk/docs/site/oldsite/images/index2.gif
+A   trunk/docs/site/oldsite/images/minus.gif
+A   trunk/docs/site/oldsite/images/mulgara_banner.gif
+A   trunk/docs/site/oldsite/images/next.gif
+A   trunk/docs/site/oldsite/images/obook.gif
+A   trunk/docs/site/oldsite/images/plus.gif
+A   trunk/docs/site/oldsite/images/previous.gif
+A   trunk/docs/site/oldsite/images/space.gif
+A   trunk/docs/site/oldsite/images/tail.gif
+A   trunk/docs/site/oldsite/images/tucana logo.gif
+A   trunk/docs/site/oldsite/images/whitespace.gif
+A   trunk/docs/site/oldsite/news.html
+A   trunk/docs/site/oldsite/styles/
+A   trunk/docs/site/oldsite/styles/mulgara_stylesheet.css
+A   trunk/docs/site/oldsite/svn187/
+A   trunk/docs/site/oldsite/svn187/187.htm.mine
+A   trunk/docs/site/oldsite/svn187/187.htm.r139
+A   trunk/docs/site/oldsite/svn187/187.htm.r91
+A   trunk/docs/site/overview/
+A   trunk/docs/site/overview/about.html
+A   trunk/docs/site/overview/aboutsite.html
+A   trunk/docs/site/overview/contact.html
+A   trunk/docs/site/overview/convertingxml.html
+A   trunk/docs/site/overview/convertrdbms.html
+A   trunk/docs/site/overview/downloads.html
+A   trunk/docs/site/overview/faq.html
+A   trunk/docs/site/overview/history.html
+A   trunk/docs/site/overview/includeTOC.inc
+A   trunk/docs/site/overview/index.html
+A   trunk/docs/site/overview/install.html
+A   trunk/docs/site/overview/itql.html
+A   trunk/docs/site/overview/itqlbasics.html
+A   trunk/docs/site/overview/itqlshellsession.html
+A   trunk/docs/site/overview/krule.html
+A   trunk/docs/site/overview/legal.html
+A   trunk/docs/site/overview/legalinfo.html
+A   trunk/docs/site/overview/license.html
+A   trunk/docs/site/overview/links.html
+A   trunk/docs/site/overview/loadingrdf.html
+A   trunk/docs/site/overview/optcomponents.html
+A   trunk/docs/site/overview/oscomponents.html
+A   trunk/docs/site/overview/starting.html
+A   trunk/docs/site/overview/suncomponents.html
+A   trunk/docs/site/overview/sysreq.html
+A   trunk/docs/site/overview/tools.html
+A   trunk/docs/site/overview/trademarks.html
+A   trunk/docs/site/overview/tutorial.html
+A   trunk/docs/site/overview/viewer.html
+A   trunk/docs/site/resolvers/
+A   trunk/docs/site/resolvers/includeTOC.inc
+A   trunk/docs/site/resolvers/index.html
+A   trunk/docs/site/resolvers/resolverdbclass.html
+A   trunk/docs/site/script/
+A   trunk/docs/site/script/bodyswitcher.js
+A   trunk/docs/site/style/
+A   trunk/docs/site/style/oldStyle.css
+A   trunk/docs/site/style/style.css
+A   trunk/docs/site/style/styleIE6.css
+A   trunk/docs/site/system/
+A   trunk/docs/site/system/driver.html
+A   trunk/docs/site/system/includeTOC.inc
+A   trunk/docs/site/system/index.html
+A   trunk/docs/site/system/itqlbean.html
+A   trunk/docs/site/system/itqlshell.html
+A   trunk/docs/site/system/jrdf.html
+A   trunk/docs/site/system/jrdfapis.html
+A   trunk/docs/site/system/jrdfconcol.html
+A   trunk/docs/site/system/jrdfexamples.html
+A   trunk/docs/site/system/jrdfgraphs.html
+A   trunk/docs/site/system/jrdfmemory.html
+A   trunk/docs/site/system/jrdftks.html
+A   trunk/docs/site/system/jrdfvisitor.html
+A   trunk/docs/site/system/jsptaglib.html
+A   trunk/docs/site/system/soap.html
+A   trunk/docs/site/template.html
+A   trunk/docs/site/toc.html
+thomas
+2006-12-07 18:02:42 -0600 (Thu, 07 Dec 2006)
+36
+importing the revamped documentation
+
+revision 144
+A   trunk/docs/site/
+thomas
+2006-12-07 17:53:20 -0600 (Thu, 07 Dec 2006)
+25
+adding new folder "site"
+
+
+revision 143
+A   trunk/docs/oldSite/
+D   trunk/docs/oldSite/1007.htm
+A   trunk/docs/oldSite/1007.htm
+D   trunk/docs/oldSite/1012.htm
+A   trunk/docs/oldSite/1012.htm
+D   trunk/docs/oldSite/1061.htm
+A   trunk/docs/oldSite/1061.htm
+D   trunk/docs/oldSite/1075.htm
+A   trunk/docs/oldSite/1075.htm
+D   trunk/docs/oldSite/1076.htm
+A   trunk/docs/oldSite/1076.htm
+D   trunk/docs/oldSite/1077.htm
+A   trunk/docs/oldSite/1077.htm
+D   trunk/docs/oldSite/1078.htm
+A   trunk/docs/oldSite/1078.htm
+D   trunk/docs/oldSite/1079.htm
+A   trunk/docs/oldSite/1079.htm
+D   trunk/docs/oldSite/1081.htm
+A   trunk/docs/oldSite/1081.htm
+D   trunk/docs/oldSite/1090.htm
+A   trunk/docs/oldSite/1090.htm
+D   trunk/docs/oldSite/1091.htm
+A   trunk/docs/oldSite/1091.htm
+D   trunk/docs/oldSite/1092.htm
+A   trunk/docs/oldSite/1092.htm
+D   trunk/docs/oldSite/1093.htm
+A   trunk/docs/oldSite/1093.htm
+D   trunk/docs/oldSite/1094.htm
+A   trunk/docs/oldSite/1094.htm
+D   trunk/docs/oldSite/1095.htm
+A   trunk/docs/oldSite/1095.htm
+D   trunk/docs/oldSite/1128.htm
+A   trunk/docs/oldSite/1128.htm
+D   trunk/docs/oldSite/1129.htm
+A   trunk/docs/oldSite/1129.htm
+D   trunk/docs/oldSite/1132.htm
+A   trunk/docs/oldSite/1132.htm
+D   trunk/docs/oldSite/1133.htm
+A   trunk/docs/oldSite/1133.htm
+D   trunk/docs/oldSite/1134.htm
+A   trunk/docs/oldSite/1134.htm
+D   trunk/docs/oldSite/1139.htm
+A   trunk/docs/oldSite/1139.htm
+D   trunk/docs/oldSite/1163.htm
+A   trunk/docs/oldSite/1163.htm
+D   trunk/docs/oldSite/1225.htm
+A   trunk/docs/oldSite/1225.htm
+D   trunk/docs/oldSite/1226.htm
+A   trunk/docs/oldSite/1226.htm
+D   trunk/docs/oldSite/1227.htm
+A   trunk/docs/oldSite/1227.htm
+D   trunk/docs/oldSite/1232.htm
+A   trunk/docs/oldSite/1232.htm
+D   trunk/docs/oldSite/1236.htm
+A   trunk/docs/oldSite/1236.htm
+D   trunk/docs/oldSite/1246.htm
+A   trunk/docs/oldSite/1246.htm
+D   trunk/docs/oldSite/1350.htm
+A   trunk/docs/oldSite/1350.htm
+D   trunk/docs/oldSite/1452.htm
+A   trunk/docs/oldSite/1452.htm
+D   trunk/docs/oldSite/1536.gif
+A   trunk/docs/oldSite/1536.gif
+D   trunk/docs/oldSite/1565.htm
+A   trunk/docs/oldSite/1565.htm
+D   trunk/docs/oldSite/1636.htm
+A   trunk/docs/oldSite/1636.htm
+D   trunk/docs/oldSite/170.htm
+A   trunk/docs/oldSite/170.htm
+D   trunk/docs/oldSite/171.htm
+A   trunk/docs/oldSite/171.htm
+D   trunk/docs/oldSite/174.htm
+A   trunk/docs/oldSite/174.htm
+D   trunk/docs/oldSite/176.htm
+A   trunk/docs/oldSite/176.htm
+D   trunk/docs/oldSite/178.htm
+A   trunk/docs/oldSite/178.htm
+A   trunk/docs/oldSite/179.htm
+A   trunk/docs/oldSite/180.htm
+D   trunk/docs/oldSite/181.htm
+A   trunk/docs/oldSite/181.htm
+D   trunk/docs/oldSite/182.htm
+A   trunk/docs/oldSite/182.htm
+D   trunk/docs/oldSite/183.htm
+A   trunk/docs/oldSite/183.htm
+D   trunk/docs/oldSite/184.htm
+A   trunk/docs/oldSite/184.htm
+D   trunk/docs/oldSite/185.htm
+A   trunk/docs/oldSite/185.htm
+D   trunk/docs/oldSite/186.htm
+A   trunk/docs/oldSite/186.htm
+D   trunk/docs/oldSite/187.htm
+A   trunk/docs/oldSite/187.htm
+D   trunk/docs/oldSite/195.htm
+A   trunk/docs/oldSite/195.htm
+D   trunk/docs/oldSite/223.htm
+A   trunk/docs/oldSite/223.htm
+D   trunk/docs/oldSite/230.htm
+A   trunk/docs/oldSite/230.htm
+D   trunk/docs/oldSite/2466.htm
+A   trunk/docs/oldSite/2466.htm
+D   trunk/docs/oldSite/2467.htm
+A   trunk/docs/oldSite/2467.htm
+D   trunk/docs/oldSite/2490.gif
+A   trunk/docs/oldSite/2490.gif
+D   trunk/docs/oldSite/2511.htm
+A   trunk/docs/oldSite/2511.htm
+D   trunk/docs/oldSite/2512.htm
+A   trunk/docs/oldSite/2512.htm
+D   trunk/docs/oldSite/2513.htm
+A   trunk/docs/oldSite/2513.htm
+D   trunk/docs/oldSite/2526.htm
+A   trunk/docs/oldSite/2526.htm
+D   trunk/docs/oldSite/2528.htm
+A   trunk/docs/oldSite/2528.htm
+D   trunk/docs/oldSite/254.htm
+A   trunk/docs/oldSite/254.htm
+D   trunk/docs/oldSite/255.htm
+A   trunk/docs/oldSite/255.htm
+D   trunk/docs/oldSite/2552.htm
+A   trunk/docs/oldSite/2552.htm
+D   trunk/docs/oldSite/2553.htm
+A   trunk/docs/oldSite/2553.htm
+D   trunk/docs/oldSite/257.htm
+A   trunk/docs/oldSite/257.htm
+D   trunk/docs/oldSite/262.htm
+A   trunk/docs/oldSite/262.htm
+D   trunk/docs/oldSite/2622.htm
+A   trunk/docs/oldSite/2622.htm
+D   trunk/docs/oldSite/2641.htm
+A   trunk/docs/oldSite/2641.htm
+D   trunk/docs/oldSite/2642.htm
+A   trunk/docs/oldSite/2642.htm
+D   trunk/docs/oldSite/2643.htm
+A   trunk/docs/oldSite/2643.htm
+D   trunk/docs/oldSite/2649.htm
+A   trunk/docs/oldSite/2649.htm
+D   trunk/docs/oldSite/2686.htm
+A   trunk/docs/oldSite/2686.htm
+D   trunk/docs/oldSite/2687.htm
+A   trunk/docs/oldSite/2687.htm
+D   trunk/docs/oldSite/2689.htm
+A   trunk/docs/oldSite/2689.htm
+D   trunk/docs/oldSite/2693.htm
+A   trunk/docs/oldSite/2693.htm
+D   trunk/docs/oldSite/2697.htm
+A   trunk/docs/oldSite/2697.htm
+D   trunk/docs/oldSite/2701.htm
+A   trunk/docs/oldSite/2701.htm
+D   trunk/docs/oldSite/2707.htm
+A   trunk/docs/oldSite/2707.htm
+D   trunk/docs/oldSite/271.htm
+A   trunk/docs/oldSite/271.htm
+D   trunk/docs/oldSite/2714.htm
+A   trunk/docs/oldSite/2714.htm
+D   trunk/docs/oldSite/2720.htm
+A   trunk/docs/oldSite/2720.htm
+D   trunk/docs/oldSite/2725.htm
+A   trunk/docs/oldSite/2725.htm
+D   trunk/docs/oldSite/2733.htm
+A   trunk/docs/oldSite/2733.htm
+D   trunk/docs/oldSite/2737.htm
+A   trunk/docs/oldSite/2737.htm
+D   trunk/docs/oldSite/2779.htm
+A   trunk/docs/oldSite/2779.htm
+D   trunk/docs/oldSite/2800.htm
+A   trunk/docs/oldSite/2800.htm
+D   trunk/docs/oldSite/2801.htm
+A   trunk/docs/oldSite/2801.htm
+D   trunk/docs/oldSite/2816.htm
+A   trunk/docs/oldSite/2816.htm
+D   trunk/docs/oldSite/2827.htm
+A   trunk/docs/oldSite/2827.htm
+D   trunk/docs/oldSite/2892.htm
+A   trunk/docs/oldSite/2892.htm
+D   trunk/docs/oldSite/2893.htm
+A   trunk/docs/oldSite/2893.htm
+D   trunk/docs/oldSite/2900.htm
+A   trunk/docs/oldSite/2900.htm
+D   trunk/docs/oldSite/2904.htm
+A   trunk/docs/oldSite/2904.htm
+D   trunk/docs/oldSite/2905.htm
+A   trunk/docs/oldSite/2905.htm
+D   trunk/docs/oldSite/2906.htm
+A   trunk/docs/oldSite/2906.htm
+D   trunk/docs/oldSite/2911.htm
+A   trunk/docs/oldSite/2911.htm
+D   trunk/docs/oldSite/2912.htm
+A   trunk/docs/oldSite/2912.htm
+D   trunk/docs/oldSite/2951.htm
+A   trunk/docs/oldSite/2951.htm
+D   trunk/docs/oldSite/3002.htm
+A   trunk/docs/oldSite/3002.htm
+D   trunk/docs/oldSite/3074.htm
+A   trunk/docs/oldSite/3074.htm
+D   trunk/docs/oldSite/3183.htm
+A   trunk/docs/oldSite/3183.htm
+D   trunk/docs/oldSite/3184.htm
+A   trunk/docs/oldSite/3184.htm
+D   trunk/docs/oldSite/3201.htm
+A   trunk/docs/oldSite/3201.htm
+D   trunk/docs/oldSite/415.htm
+A   trunk/docs/oldSite/415.htm
+D   trunk/docs/oldSite/417.htm
+A   trunk/docs/oldSite/417.htm
+D   trunk/docs/oldSite/419.htm
+A   trunk/docs/oldSite/419.htm
+D   trunk/docs/oldSite/485.htm
+A   trunk/docs/oldSite/485.htm
+D   trunk/docs/oldSite/526.htm
+A   trunk/docs/oldSite/526.htm
+D   trunk/docs/oldSite/527.htm
+A   trunk/docs/oldSite/527.htm
+D   trunk/docs/oldSite/528.htm
+A   trunk/docs/oldSite/528.htm
+D   trunk/docs/oldSite/530.htm
+A   trunk/docs/oldSite/530.htm
+D   trunk/docs/oldSite/571.htm
+A   trunk/docs/oldSite/571.htm
+D   trunk/docs/oldSite/572.htm
+A   trunk/docs/oldSite/572.htm
+D   trunk/docs/oldSite/573.htm
+A   trunk/docs/oldSite/573.htm
+D   trunk/docs/oldSite/574.htm
+A   trunk/docs/oldSite/574.htm
+D   trunk/docs/oldSite/575.htm
+A   trunk/docs/oldSite/575.htm
+D   trunk/docs/oldSite/576.htm
+A   trunk/docs/oldSite/576.htm
+D   trunk/docs/oldSite/597.htm
+A   trunk/docs/oldSite/597.htm
+D   trunk/docs/oldSite/618.htm
+A   trunk/docs/oldSite/618.htm
+D   trunk/docs/oldSite/619.htm
+A   trunk/docs/oldSite/619.htm
+D   trunk/docs/oldSite/746.htm
+A   trunk/docs/oldSite/746.htm
+D   trunk/docs/oldSite/752.htm
+A   trunk/docs/oldSite/752.htm
+D   trunk/docs/oldSite/779.htm
+A   trunk/docs/oldSite/779.htm
+D   trunk/docs/oldSite/791.gif
+A   trunk/docs/oldSite/791.gif
+D   trunk/docs/oldSite/792.gif
+A   trunk/docs/oldSite/792.gif
+D   trunk/docs/oldSite/793.gif
+A   trunk/docs/oldSite/793.gif
+D   trunk/docs/oldSite/794.gif
+A   trunk/docs/oldSite/794.gif
+D   trunk/docs/oldSite/795.htm
+A   trunk/docs/oldSite/795.htm
+D   trunk/docs/oldSite/799.gif
+A   trunk/docs/oldSite/799.gif
+D   trunk/docs/oldSite/800.gif
+A   trunk/docs/oldSite/800.gif
+D   trunk/docs/oldSite/801.gif
+A   trunk/docs/oldSite/801.gif
+D   trunk/docs/oldSite/802.htm
+A   trunk/docs/oldSite/802.htm
+D   trunk/docs/oldSite/918.gif
+A   trunk/docs/oldSite/918.gif
+D   trunk/docs/oldSite/919.png
+A   trunk/docs/oldSite/919.png
+D   trunk/docs/oldSite/920.htm
+A   trunk/docs/oldSite/920.htm
+D   trunk/docs/oldSite/947.htm
+A   trunk/docs/oldSite/947.htm
+D   trunk/docs/oldSite/990.htm
+A   trunk/docs/oldSite/990.htm
+D   trunk/docs/oldSite/OSL-3.0.txt
+A   trunk/docs/oldSite/OSL-3.0.txt
+D   trunk/docs/oldSite/all.css
+A   trunk/docs/oldSite/all.css
+D   trunk/docs/oldSite/burnt.css
+A   trunk/docs/oldSite/burnt.css
+D   trunk/docs/oldSite/cbook.gif
+A   trunk/docs/oldSite/cbook.gif
+D   trunk/docs/oldSite/collapse.gif
+A   trunk/docs/oldSite/collapse.gif
+D   trunk/docs/oldSite/collapseall.gif
+A   trunk/docs/oldSite/collapseall.gif
+D   trunk/docs/oldSite/contents1.gif
+A   trunk/docs/oldSite/contents1.gif
+D   trunk/docs/oldSite/contents2.gif
+A   trunk/docs/oldSite/contents2.gif
+D   trunk/docs/oldSite/default.css
+A   trunk/docs/oldSite/default.css
+D   trunk/docs/oldSite/expand.gif
+A   trunk/docs/oldSite/expand.gif
+D   trunk/docs/oldSite/expandall.gif
+A   trunk/docs/oldSite/expandall.gif
+D   trunk/docs/oldSite/fdl.txt
+A   trunk/docs/oldSite/fdl.txt
+D   trunk/docs/oldSite/firstviewerscreen.gif
+A   trunk/docs/oldSite/firstviewerscreen.gif
+D   trunk/docs/oldSite/history.htm
+A   trunk/docs/oldSite/history.htm
+D   trunk/docs/oldSite/images/
+A   trunk/docs/oldSite/images/
+D   trunk/docs/oldSite/index.htm
+A   trunk/docs/oldSite/index.htm
+D   trunk/docs/oldSite/index1.gif
+A   trunk/docs/oldSite/index1.gif
+D   trunk/docs/oldSite/index2.gif
+A   trunk/docs/oldSite/index2.gif
+D   trunk/docs/oldSite/indexpage.htm
+A   trunk/docs/oldSite/indexpage.htm
+D   trunk/docs/oldSite/krule.htm
+A   trunk/docs/oldSite/krule.htm
+D   trunk/docs/oldSite/loadexistingrdf.gif
+A   trunk/docs/oldSite/loadexistingrdf.gif
+D   trunk/docs/oldSite/minus.gif
+A   trunk/docs/oldSite/minus.gif
+D   trunk/docs/oldSite/mulgara_banner.gif
+A   trunk/docs/oldSite/mulgara_banner.gif
+D   trunk/docs/oldSite/mulgara_logo.htm
+A   trunk/docs/oldSite/mulgara_logo.htm
+D   trunk/docs/oldSite/mulgara_stylesheet.css
+A   trunk/docs/oldSite/mulgara_stylesheet.css
+D   trunk/docs/oldSite/next.gif
+A   trunk/docs/oldSite/next.gif
+D   trunk/docs/oldSite/obook.gif
+A   trunk/docs/oldSite/obook.gif
+D   trunk/docs/oldSite/oldDocs/
+D   trunk/docs/oldSite/plus.gif
+A   trunk/docs/oldSite/plus.gif
+D   trunk/docs/oldSite/previous.gif
+A   trunk/docs/oldSite/previous.gif
+D   trunk/docs/oldSite/print.css
+A   trunk/docs/oldSite/print.css
+D   trunk/docs/oldSite/space.gif
+A   trunk/docs/oldSite/space.gif
+D   trunk/docs/oldSite/stylesheet.css
+A   trunk/docs/oldSite/stylesheet.css
+D   trunk/docs/oldSite/tab_index.htm
+A   trunk/docs/oldSite/tab_index.htm
+D   trunk/docs/oldSite/tab_toc.htm
+A   trunk/docs/oldSite/tab_toc.htm
+D   trunk/docs/oldSite/tail.gif
+A   trunk/docs/oldSite/tail.gif
+D   trunk/docs/oldSite/tks_stylesheet.css
+A   trunk/docs/oldSite/tks_stylesheet.css
+D   trunk/docs/oldSite/toc.htm
+A   trunk/docs/oldSite/toc.htm
+D   trunk/docs/oldSite/toc10163.htm
+A   trunk/docs/oldSite/toc10163.htm
+D   trunk/docs/oldSite/toc103710.htm
+A   trunk/docs/oldSite/toc103710.htm
+D   trunk/docs/oldSite/toc10373.htm
+A   trunk/docs/oldSite/toc10373.htm
+D   trunk/docs/oldSite/toc10693.htm
+A   trunk/docs/oldSite/toc10693.htm
+D   trunk/docs/oldSite/toc10803.htm
+A   trunk/docs/oldSite/toc10803.htm
+D   trunk/docs/oldSite/toc10963.htm
+A   trunk/docs/oldSite/toc10963.htm
+D   trunk/docs/oldSite/toc10965.htm
+A   trunk/docs/oldSite/toc10965.htm
+D   trunk/docs/oldSite/toc11353.htm
+A   trunk/docs/oldSite/toc11353.htm
+D   trunk/docs/oldSite/toc11354.htm
+A   trunk/docs/oldSite/toc11354.htm
+D   trunk/docs/oldSite/toc113811.htm
+A   trunk/docs/oldSite/toc113811.htm
+D   trunk/docs/oldSite/toc11383.htm
+A   trunk/docs/oldSite/toc11383.htm
+D   trunk/docs/oldSite/toc11623.htm
+A   trunk/docs/oldSite/toc11623.htm
+D   trunk/docs/oldSite/toc122417.htm
+A   trunk/docs/oldSite/toc122417.htm
+D   trunk/docs/oldSite/toc12243.htm
+A   trunk/docs/oldSite/toc12243.htm
+D   trunk/docs/oldSite/toc12248.htm
+A   trunk/docs/oldSite/toc12248.htm
+D   trunk/docs/oldSite/toc123718.htm
+A   trunk/docs/oldSite/toc123718.htm
+D   trunk/docs/oldSite/toc123722.htm
+A   trunk/docs/oldSite/toc123722.htm
+D   trunk/docs/oldSite/toc12373.htm
+A   trunk/docs/oldSite/toc12373.htm
+D   trunk/docs/oldSite/toc12374.htm
+A   trunk/docs/oldSite/toc12374.htm
+D   trunk/docs/oldSite/toc124718.htm
+A   trunk/docs/oldSite/toc124718.htm
+D   trunk/docs/oldSite/toc124720.htm
+A   trunk/docs/oldSite/toc124720.htm
+D   trunk/docs/oldSite/toc124722.htm
+A   trunk/docs/oldSite/toc124722.htm
+D   trunk/docs/oldSite/toc124727.htm
+A   trunk/docs/oldSite/toc124727.htm
+D   trunk/docs/oldSite/toc12473.htm
+A   trunk/docs/oldSite/toc12473.htm
+D   trunk/docs/oldSite/toc124913.htm
+A   trunk/docs/oldSite/toc124913.htm
+D   trunk/docs/oldSite/toc124918.htm
+A   trunk/docs/oldSite/toc124918.htm
+D   trunk/docs/oldSite/toc124921.htm
+A   trunk/docs/oldSite/toc124921.htm
+D   trunk/docs/oldSite/toc12493.htm
+A   trunk/docs/oldSite/toc12493.htm
+D   trunk/docs/oldSite/toc12494.htm
+A   trunk/docs/oldSite/toc12494.htm
+D   trunk/docs/oldSite/toc12498.htm
+A   trunk/docs/oldSite/toc12498.htm
+D   trunk/docs/oldSite/toc12513.htm
+A   trunk/docs/oldSite/toc12513.htm
+D   trunk/docs/oldSite/toc246519.htm
+A   trunk/docs/oldSite/toc246519.htm
+D   trunk/docs/oldSite/toc246521.htm
+A   trunk/docs/oldSite/toc246521.htm
+D   trunk/docs/oldSite/toc246524.htm
+A   trunk/docs/oldSite/toc246524.htm
+D   trunk/docs/oldSite/toc246525.htm
+A   trunk/docs/oldSite/toc246525.htm
+D   trunk/docs/oldSite/toc246529.htm
+A   trunk/docs/oldSite/toc246529.htm
+D   trunk/docs/oldSite/toc246532.htm
+A   trunk/docs/oldSite/toc246532.htm
+D   trunk/docs/oldSite/toc24654.htm
+A   trunk/docs/oldSite/toc24654.htm
+D   trunk/docs/oldSite/toc24656.htm
+A   trunk/docs/oldSite/toc24656.htm
+D   trunk/docs/oldSite/toc25514.htm
+A   trunk/docs/oldSite/toc25514.htm
+D   trunk/docs/oldSite/toc25515.htm
+A   trunk/docs/oldSite/toc25515.htm
+D   trunk/docs/oldSite/toc26213.htm
+A   trunk/docs/oldSite/toc26213.htm
+D   trunk/docs/oldSite/toc26403.htm
+A   trunk/docs/oldSite/toc26403.htm
+D   trunk/docs/oldSite/toc26404.htm
+A   trunk/docs/oldSite/toc26404.htm
+D   trunk/docs/oldSite/toc26408.htm
+A   trunk/docs/oldSite/toc26408.htm
+D   trunk/docs/oldSite/toc26409.htm
+A   trunk/docs/oldSite/toc26409.htm
+D   trunk/docs/oldSite/toc27243.htm
+A   trunk/docs/oldSite/toc27243.htm
+D   trunk/docs/oldSite/toc27244.htm
+A   trunk/docs/oldSite/toc27244.htm
+D   trunk/docs/oldSite/toc27247.htm
+A   trunk/docs/oldSite/toc27247.htm
+D   trunk/docs/oldSite/toc27249.htm
+A   trunk/docs/oldSite/toc27249.htm
+D   trunk/docs/oldSite/toc27314.htm
+A   trunk/docs/oldSite/toc27314.htm
+D   trunk/docs/oldSite/toc27323.htm
+A   trunk/docs/oldSite/toc27323.htm
+D   trunk/docs/oldSite/toc279918.htm
+A   trunk/docs/oldSite/toc279918.htm
+D   trunk/docs/oldSite/toc279927.htm
+A   trunk/docs/oldSite/toc279927.htm
+D   trunk/docs/oldSite/toc279928.htm
+A   trunk/docs/oldSite/toc279928.htm
+D   trunk/docs/oldSite/toc27993.htm
+A   trunk/docs/oldSite/toc27993.htm
+D   trunk/docs/oldSite/toc279930.htm
+A   trunk/docs/oldSite/toc279930.htm
+D   trunk/docs/oldSite/toc279932.htm
+A   trunk/docs/oldSite/toc279932.htm
+D   trunk/docs/oldSite/toc279939.htm
+A   trunk/docs/oldSite/toc279939.htm
+D   trunk/docs/oldSite/toc27994.htm
+A   trunk/docs/oldSite/toc27994.htm
+D   trunk/docs/oldSite/toc27999.htm
+A   trunk/docs/oldSite/toc27999.htm
+D   trunk/docs/oldSite/toc28913.htm
+A   trunk/docs/oldSite/toc28913.htm
+D   trunk/docs/oldSite/toc28917.htm
+A   trunk/docs/oldSite/toc28917.htm
+D   trunk/docs/oldSite/toc318111.htm
+A   trunk/docs/oldSite/toc318111.htm
+D   trunk/docs/oldSite/toc318113.htm
+A   trunk/docs/oldSite/toc318113.htm
+D   trunk/docs/oldSite/toc318114.htm
+A   trunk/docs/oldSite/toc318114.htm
+D   trunk/docs/oldSite/toc318120.htm
+A   trunk/docs/oldSite/toc318120.htm
+D   trunk/docs/oldSite/toc318124.htm
+A   trunk/docs/oldSite/toc318124.htm
+D   trunk/docs/oldSite/toc318126.htm
+A   trunk/docs/oldSite/toc318126.htm
+D   trunk/docs/oldSite/toc31813.htm
+A   trunk/docs/oldSite/toc31813.htm
+D   trunk/docs/oldSite/toc31816.htm
+A   trunk/docs/oldSite/toc31816.htm
+D   trunk/docs/oldSite/toc31817.htm
+A   trunk/docs/oldSite/toc31817.htm
+D   trunk/docs/oldSite/toc31819.htm
+A   trunk/docs/oldSite/toc31819.htm
+D   trunk/docs/oldSite/toc31912.htm
+A   trunk/docs/oldSite/toc31912.htm
+D   trunk/docs/oldSite/toc57016.htm
+A   trunk/docs/oldSite/toc57016.htm
+D   trunk/docs/oldSite/toc57021.htm
+A   trunk/docs/oldSite/toc57021.htm
+D   trunk/docs/oldSite/toc5703.htm
+A   trunk/docs/oldSite/toc5703.htm
+D   trunk/docs/oldSite/toc57032.htm
+A   trunk/docs/oldSite/toc57032.htm
+D   trunk/docs/oldSite/toc57043.htm
+A   trunk/docs/oldSite/toc57043.htm
+D   trunk/docs/oldSite/toc57044.htm
+A   trunk/docs/oldSite/toc57044.htm
+D   trunk/docs/oldSite/toc57046.htm
+A   trunk/docs/oldSite/toc57046.htm
+D   trunk/docs/oldSite/toc57048.htm
+A   trunk/docs/oldSite/toc57048.htm
+D   trunk/docs/oldSite/toc5705.htm
+A   trunk/docs/oldSite/toc5705.htm
+D   trunk/docs/oldSite/toc5709.htm
+A   trunk/docs/oldSite/toc5709.htm
+D   trunk/docs/oldSite/topic.gif
+A   trunk/docs/oldSite/topic.gif
+D   trunk/docs/oldSite/tucana logo.gif
+A   trunk/docs/oldSite/tucana logo.gif
+D   trunk/docs/oldSite/version
+A   trunk/docs/oldSite/version
+D   trunk/docs/oldSite/viewerstep1.gif
+A   trunk/docs/oldSite/viewerstep1.gif
+D   trunk/docs/oldSite/viewerstep1result.gif
+A   trunk/docs/oldSite/viewerstep1result.gif
+D   trunk/docs/oldSite/viewerstep2.gif
+A   trunk/docs/oldSite/viewerstep2.gif
+D   trunk/docs/oldSite/viewerstep3.gif
+A   trunk/docs/oldSite/viewerstep3.gif
+D   trunk/docs/oldSite/viewerstep4.gif
+A   trunk/docs/oldSite/viewerstep4.gif
+D   trunk/docs/oldSite/whitespace.gif
+A   trunk/docs/oldSite/whitespace.gif
+D   trunk/docs/site/
+thomas
+2006-12-07 17:46:50 -0600 (Thu, 07 Dec 2006)
+36
+renaming site to oldSite (hopefully)
+
+revision 142
+A   trunk/docs/site/179.htm
+A   trunk/docs/site/180.htm
+D   trunk/docs/site/oldDocs/
+thomas
+2006-12-07 17:31:39 -0600 (Thu, 07 Dec 2006)
+29
+still messin around with subv
+
+revision 141
+D   trunk/docs/site/179.htm
+A   trunk/docs/site/oldDocs/179.htm
+D   trunk/docs/site/oldSite
+thomas
+2006-12-07 17:05:47 -0600 (Thu, 07 Dec 2006)
+0
+
+
+revision 140
+D   trunk/docs/site/180.htm
+A   trunk/docs/site/oldDocs/
+A   trunk/docs/site/oldSite
+thomas
+2006-12-07 17:00:47 -0600 (Thu, 07 Dec 2006)
+25
+trying to move something
+
+
+revision 137
+A   trunk/docs/site/krule.htm
+pag
+2006-11-21 14:20:50 -0600 (Tue, 21 Nov 2006)
+41
+Initial commit of the krule documentation
+
+revision 136
+U   trunk/docs/site/187.htm
+pag
+2006-11-21 14:20:04 -0600 (Tue, 21 Nov 2006)
+45
+Update the documentation on minus and exclude
+
+revision 125
+U   trunk/CONTRIBUTORS.txt
+dwood
+2006-11-03 22:12:18 -0600 (Fri, 03 Nov 2006)
+15
+Kowari->Mulgara
+
+revision 119
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/FreeList.java
+pag
+2006-10-29 15:41:34 -0600 (Sun, 29 Oct 2006)
+36
+Once line memory leak fix for MGR-29
+
+revision 118
+U   trunk/log4j-conf.xml
+pag
+2006-10-29 15:40:21 -0600 (Sun, 29 Oct 2006)
+80
+Winding back revision 115 due to an incorrect branch being merged into the trunk
+
+revision 117
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+pag
+2006-10-29 15:39:53 -0600 (Sun, 29 Oct 2006)
+80
+Winding back revision 115 due to an incorrect branch being merged into the trunk
+
+revision 116
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/FreeList.java
+pag
+2006-10-28 17:24:04 -0500 (Sat, 28 Oct 2006)
+70
+rolling back to revision 114 due to a checkin from an incorrect branch
+
+revision 115
+U   trunk/log4j-conf.xml
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+andrae
+2006-10-27 02:16:36 -0500 (Fri, 27 Oct 2006)
+488
+Wraps TransactionalAnswer around SubqueryAnswer as per final plan.  This
+introduces MulgaraTransaction into execution path of Answers.  In light of this
+there is new sanity checking code in MulgaraTransaction and TransactionalAnswer
+ensuring that everything is always cleaned up properly.
+
+One unconsidered gotcha uncovered thus far is the need to force have Answers to
+be closed when their enclosing session is closed.  Failure to do this is
+detected via finalize methods on TA and MT.
+
+
+
+revision 113
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerOperation.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalQuery.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ModifyModelOperation.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransaction.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionException.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionManager.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/OperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/QueryOperation.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/LocalSession.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/view/SessionView.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/view/ViewMarker.java
+andrae
+2006-10-26 08:56:44 -0500 (Thu, 26 Oct 2006)
+671
+The only methods left on DatabaseSession that are not directly involved in
+implementing the Session interface are
+
+1) Transaction Methods - which will be replaced by the new MulgaraTransaction*
+classes.
+
+2) clearcache and fineResolverFactory - The former will be migrated to
+OperationContextXAResource; the latter will be merged into
+DatabaseOperationContext.
+
+This commit also imports the MulgaraTransaction* classes and support.  This code
+has been fixed from the xafix-design to the extent required to allow it to
+compile.  It has also had various lines commented out to isolate it from the
+existing code - permitting the existing code to continue to run unaffected.
+
+
+
+revision 112
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/AppendAggregateTuples.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalQuery.java
+andrae
+2006-10-25 17:35:58 -0500 (Wed, 25 Oct 2006)
+514
+Piece by piece moving all the non-session related code out of DatabaseSession.
+Being careful this time to provide sufficient scaffolding that it continues to
+compile, run, and pass the tests.
+
+The ultimate goal is visible in the xafix branch - DatabaseSession should be
+involved strictly in handling the Session interface.
+
+Also as operations will be independent, we need OperationContext to become more
+independent of DatabaseSession so that multiple contexts can safely co-exist.
+Again see xafix for specifics.
+
+
+
+revision 111
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerOperation.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/AnswerOperationResult.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/ModelExistsOperation.java
+andrae
+2006-10-25 03:19:20 -0500 (Wed, 25 Oct 2006)
+163
+Migrates the implementation of modelExists into an Operation object.  Also
+introduces two new classes required for the eventual migration to
+TransactionalAnswer.
+
+
+
+revision 110
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/PreallocateOperation.java
+U   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolverFactory.java
+andrae
+2006-10-24 02:47:11 -0500 (Tue, 24 Oct 2006)
+177
+Migrated DatabaseSession::preallocate to an Operation object.  This is essential
+if we are to encapsulate transactions as this was the last method not using the
+execute method.
+
+
+revision 109
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreter.java
+U   trunk/src/jar/itql/sablecc/itql.grammar
+U   trunk/src/jar/query/java/org/mulgara/query/Query.java
+D   trunk/src/jar/query/java/org/mulgara/query/RelatedExpression.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/BasicDatabaseSessionUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/Database.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseFactory.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSessionListQueryUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSessionUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalJRDFDatabaseSession.java
+D   trunk/src/jar/resolver/java/org/mulgara/resolver/RelatedQueryHandler.java
+D   trunk/src/jar/resolver/java/org/mulgara/resolver/RelatedQueryHandlerImpl.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/XADatabaseSessionUnitTest.java
+U   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolverUnitTest.java
+U   trunk/src/jar/resolver-test/java/org/mulgara/resolver/test/TestResolverUnitTest.java
+U   trunk/src/jar/resolver-view/java/org/mulgara/resolver/view/ViewResolverUnitTest.java
+andrae
+2006-10-23 05:47:07 -0500 (Mon, 23 Oct 2006)
+425
+The full test for my previous commit returned 100% so this is the removal
+of the relatedTo stubs and harness functionality.
+
+This is code that exists solely to support proprietary features that
+existed in Tucana's proprietary product built on top of Kowari.  They are
+therefore deadcode, and both clutter and complicate the structure of the
+code.  Therefore this commit removes this and cleans up those affected
+components.
+
+
+
+revision 108
+U   trunk/log4j-conf.xml
+andrae
+2006-10-23 01:13:44 -0500 (Mon, 23 Oct 2006)
+28
+Forgot to remove debugging.
+
+
+revision 107
+U   trunk/build.xml
+D   trunk/src/jar/client-jena/
+D   trunk/src/jar/jena/
+U   trunk/src/jar/query/java/org/mulgara/server/SessionFactory.java
+U   trunk/src/jar/resolver/build.xml
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/Database.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/JRDFFactoryImpl.java
+D   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalJenaDatabaseSession.java
+U   trunk/src/jar/server-local/java/org/mulgara/server/local/LocalSessionFactory.java
+U   trunk/src/jar/server-rmi/build.xml
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionFactory.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionFactoryImpl.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RmiSessionFactory.java
+andrae
+2006-10-23 01:07:11 -0500 (Mon, 23 Oct 2006)
+228
+This commit removes the jena interface from Mulgara.
+
+Note: This passes jxunit-test and resolver-test.  Currently running full
+tests to ensure everything passes.  Committing now to permit me to proceed
+onto removing relatedTo.
+
+
+
+revision 106
+U   trunk/log4j-conf.xml
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/Database.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/InternalResolverFactory.java
+A   trunk/src/jar/resolver/java/org/mulgara/resolver/InternalSystemResolverFactory.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolver.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolverFactory.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreXAResource.java
+andrae
+2006-10-22 07:00:10 -0500 (Sun, 22 Oct 2006)
+865
+http://mulgara.org/jira/browse/MGR-2
+"Multiple writers not supported" transactioning error occurs if reading and writing concurrently
+
+This revision should fix MGR-2.
+
+I believe the bug was the result of a race condition in StringPoolSession.  It
+is possible for multiple transactions to enter prepare at the same time -
+specifically a read-only transaction can enter prepare while a write transaction
+is still flushing data to disk.  StringPoolSession was designed to detect
+concurrent prepares and abort the latter attempts to enter the prepare state.
+
+It is not sufficient to simply stop attempting to detect concurrent prepares,
+as the store layer only permits a single call to prepare prior to a commit.
+Removing the test leads to multiple possible prepares within a single
+transaction, and so there is a need to add extra code to ensure this doesn't
+happen.
+
+
+
+revision 94
+U   trunk/LEGAL.txt
+U   trunk/build.xml
+U   trunk/conf/mulgara-config.xml
+A   trunk/data/ISWC-d2rq.n3
+A   trunk/data/ISWC-d2rq.rdf
+A   trunk/lib/derby.jar
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ConstraintOperations.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseResolverFactoryInitializer.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalQuery.java
+A   trunk/src/jar/resolver-relational/
+A   trunk/src/jar/resolver-relational/build.xml
+A   trunk/src/jar/resolver-relational/java/
+A   trunk/src/jar/resolver-relational/java/org/
+A   trunk/src/jar/resolver-relational/java/org/mulgara/
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/BNodeDesc.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/ColumnDesc.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/LiteralDesc.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/PatternDesc.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RedirectDesc.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalAnswer.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalConstraint.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalConstraintDescriptor.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalQuery.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolution.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolver.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolverFactory.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalResolverUnitTest.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/RelationalTransformer.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/UnionCase.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/VariableDesc.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/AdditionalPropertyElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/ClassMapElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/Constants.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/D2RQDefn.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/DatabaseElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/DatatypePropertyBridgeElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/Definition.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/ObjectPropertyBridgeElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/PropertyBridgeElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/d2rq/TranslationTableElem.java
+A   trunk/src/jar/resolver-relational/java/org/mulgara/resolver/relational/package.html
+A   trunk/src/jar/resolver-relational/resolver-relational-build.properties
+A   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/ConjunctiveTransformer.java
+A   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/ConjunctiveTransformerUnitTest.java
+D   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/DefinableResolution.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/LocalizedTuples.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolution.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/IntervalTransformation.java
+A   trunk/src/jar/tuples/java/org/mulgara/store/tuples/DefinablePrefixAnnotation.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/OrderedAppend.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesOperations.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnorderedProjection.java
+andrae
+2006-10-05 05:12:01 -0500 (Thu, 05 Oct 2006)
+147
+A RelationalResolver that provides access to sql databases via a D2RQ mapping.
+Funded by the Australian Department of Defense.
+andrae@netymon.com
+
+
+
+revision 93
+A   trunk/docs/design/
+A   trunk/docs/design/ITql Syntax Extension.odt
+A   trunk/docs/design/ITql Syntax Extension.pdf
+A   trunk/docs/design/Symbolic Transformation Fix Stage1.odt
+A   trunk/docs/design/Symbolic Transformation Fix Stage1.pdf
+A   trunk/docs/design/SymbolicTransformationFix.odt
+A   trunk/docs/design/SymbolicTransformationFix.pdf
+A   trunk/jxdata/iTQL/transformpreserve/
+A   trunk/jxdata/iTQL/transformpreserve/queryResult1.txt
+A   trunk/jxdata/iTQL/transformpreserve/queryResult2.txt
+A   trunk/jxdata/iTQL/transformpreserve/queryResult3.txt
+A   trunk/jxdata/iTQL/transformpreserve/result1.txt
+A   trunk/jxdata/iTQL/transformpreserve/test.jxu
+U   trunk/src/jar/query/java/org/mulgara/query/Constraint.java
+U   trunk/src/jar/query/java/org/mulgara/query/ConstraintHaving.java
+U   trunk/src/jar/query/java/org/mulgara/query/ConstraintImpl.java
+U   trunk/src/jar/query/java/org/mulgara/query/ConstraintIs.java
+U   trunk/src/jar/query/java/org/mulgara/query/ConstraintNegation.java
+U   trunk/src/jar/query/java/org/mulgara/query/SingleTransitiveConstraint.java
+U   trunk/src/jar/query/java/org/mulgara/query/TransitiveConstraint.java
+U   trunk/src/jar/query/java/org/mulgara/query/WalkConstraint.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/CacheResolver.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ConstraintOperations.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseOperationContext.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DirectTransitiveFunction.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/LocalQueryResolver.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/WalkFunction.java
+U   trunk/src/jar/resolver-filesystem/java/org/mulgara/resolver/filesystem/FileSystemResolver.java
+U   trunk/src/jar/resolver-lucene/java/org/mulgara/resolver/lucene/LuceneResolver.java
+U   trunk/src/jar/resolver-nodetype/java/org/mulgara/resolver/nodetype/NodeTypeResolver.java
+U   trunk/src/jar/resolver-prefix/java/org/mulgara/resolver/prefix/PrefixResolver.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/content/ContentResolver.java
+A   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/ConstraintLocalization.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/MutableLocalQuery.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/SymbolicTransformation.java
+A   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/SymbolicTransformationContext.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreDuplicateResolution.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreInverseResolution.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolution.java
+U   trunk/src/jar/resolver-test/java/org/mulgara/resolver/test/TestConstraint.java
+U   trunk/src/jar/resolver-url/java/org/mulgara/resolver/url/URLResolver.java
+U   trunk/src/jar/resolver-view/java/org/mulgara/resolver/view/ViewResolver.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/IntervalConstraint.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/IntervalConstraintUnitTest.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/IntervalTransformation.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/IntervalTransformationUnitTest.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/XSDResolver.java
+U   trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/XSDResolverFactory.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/ConstrainedNegationTuples.java
+andrae
+2006-10-03 20:56:18 -0500 (Tue, 03 Oct 2006)
+635
+Refactors SymbolicTransformation to add a context that permits access to the
+Model->ModelType mapping via a new interface SymbolicTransformationContext.
+
+To allow transformers to make use of this it has also been necessary to add
+explicit access to the model through the Constraint interface.  Every
+Constraint, and any resolver that was using getElement(3) has been updated to 
+make a call to getModel() instead.
+
+The explicit localization code in LocalQueryResolver has been factored into
+ConstraintOperations.  This allows the LocalQueryResolver to correctly localize
+and dispatch custom constraints to their appropriate resolver.
+
+
+
+revision 92
+A   trunk/data/arith.rdf
+A   trunk/data/gen-arith-rdfxml.py
+A   trunk/data/test-compound.rdf
+A   trunk/jxdata/iTQL/compound_queries/
+A   trunk/jxdata/iTQL/compound_queries/queryResult1.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult10.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult2.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult3.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult4.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult5.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult6.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult7.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult8.txt
+A   trunk/jxdata/iTQL/compound_queries/queryResult9.txt
+A   trunk/jxdata/iTQL/compound_queries/result1.txt
+A   trunk/jxdata/iTQL/compound_queries/result2.txt
+A   trunk/jxdata/iTQL/compound_queries/test.jxu
+A   trunk/src/jar/itql/java/org/mulgara/itql/CompoundPredListBuilder.java
+A   trunk/src/jar/itql/java/org/mulgara/itql/CompoundPredicate.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ConstraintExpressionBuilder.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreter.java
+A   trunk/src/jar/itql/java/org/mulgara/itql/ObjectListBuilder.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/package.html
+U   trunk/src/jar/itql/sablecc/itql.grammar
+andrae
+2006-10-02 10:00:14 -0500 (Mon, 02 Oct 2006)
+538
+Add's syntactic sugar to itql for compound queries.
+
+{ s1 p1 o1,o2 : p2 o1 } => and(s1 p1 o1, s1 p1 o2, s1 p2 o1)
+[ p1 o1,o2 : p2 o1 ] => and($_ p1 o1, $_ p1 o2, $_ p2 o1) where $_ is an anonymous variable.
+
+Also supports use of in clauses within compound constraints:
+
+{ a b c,d in e} => a b c in e and a b d in e
+[ b c,d in e ] => _1 b c in e and _1 b d in e
+
+Includes a set of jxunit tests that provide regression coverage for the new features.  Note that arith.rdf can be generated from a simple python script that is also included.
+
+
+
+revision 91
+A   trunk/src/jar/util/java/org/mulgara/util/AbstractMulgaraResultSet.java
+A   trunk/src/jar/util/java/org/mulgara/util/ResultSetMetaDataImpl.java
+A   trunk/src/jar/util/java/org/mulgara/util/TestResultSet.java
+pag
+2006-09-29 15:14:55 -0500 (Fri, 29 Sep 2006)
+52
+re-added these files. They were erroneously removed.
+
+revision 90
+D   trunk/src/jar/query/java/org/mulgara/query/AnswerWrapperResultSet.java
+D   trunk/src/jar/util/java/org/mulgara/util/AbstractMulgaraResultSet.java
+D   trunk/src/jar/util/java/org/mulgara/util/AbstractResultSet.java
+D   trunk/src/jar/util/java/org/mulgara/util/ResultSetMetaDataImpl.java
+D   trunk/src/jar/util/java/org/mulgara/util/TestResultSet.java
+pag
+2006-09-20 15:52:42 -0500 (Wed, 20 Sep 2006)
+53
+Removed unused classes related to java.sql.ResultsSet
+
+revision 89
+U   trunk/jxdata/iTQL/data_types/gDates/queryResult21-1.txt
+andrae
+2006-09-04 21:31:15 -0500 (Mon, 04 Sep 2006)
+52
+Test result required a terminating newline to pass.
+
+
+revision 88
+U   trunk/src/jar/tag/java/org/mulgara/extractor/tag/AlldocsTag.java
+U   trunk/src/jar/tag/java/org/mulgara/extractor/tag/MetadataTag.java
+U   trunk/src/jar/tag/java/org/mulgara/tag/StatementTag.java
+D   trunk/src/jar/tag/java/org/mulgara/util/SoapClient.java
+A   trunk/src/jar/tag/java/org/mulgara/util/TagSoapClient.java
+brian
+2006-09-03 16:22:47 -0500 (Sun, 03 Sep 2006)
+112
+Renamed SoapClient to avoid issue in Eclipse. This may have external consequences but so far I haven't seen any.
+
+revision 87
+U   trunk/build.xml
+brian
+2006-09-03 16:04:01 -0500 (Sun, 03 Sep 2006)
+43
+Fixed the build process for ideSupport.jar.
+
+revision 86
+U   trunk/.classpath
+U   trunk/.project
+brian
+2006-09-03 16:03:34 -0500 (Sun, 03 Sep 2006)
+35
+Modified to fix some build issues.
+
+
+revision 85
+U   trunk/src/war/webui/java/org/mulgara/webui/viewer/ViewerScreen.java
+brian
+2006-09-03 15:50:09 -0500 (Sun, 03 Sep 2006)
+43
+Fixed the build process for ideSupport.jar.
+
+revision 84
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreter.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBean.java
+pag
+2006-09-01 09:24:22 -0500 (Fri, 01 Sep 2006)
+62
+Re-introduced default aliases, which were accidentally dropped
+
+revision 83
+U   trunk/src/jar/resolver-http/java/org/mulgara/resolver/http/HttpContentUnitTest.java
+pag
+2006-08-28 22:28:52 -0500 (Mon, 28 Aug 2006)
+101
+Removing an HTTP test to an uncontrolled website.  Will re-implement when we have our own HTTP server
+
+revision 82
+U   trunk/build.xml
+U   trunk/common.properties
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/AbstractJenaFactory.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/exception/JenaClientException.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/kmodel/JRDFElementFactory.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/kmodel/KGraph.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/model/ClientGraph.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/model/NullFilter.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/test/ClientJenaModelUnitTest.java
+U   trunk/src/jar/client-jena/java/org/mulgara/client/jena/test/KModelUnitTest.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/AbstractGraphFactory.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/ClientClosableIterator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/ClientGraph.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/ClientTripleFactory.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/GraphElementBuilder.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/RemoteGraphProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/VirtualClosableIteratorProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/answer/ClosableAnswerIteratorProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/answer/RemoteAnswerGraphProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/exception/JRDFClientException.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/itql/ItqlGraphProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/itql/SessionGraphProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/test/ClientGraphUnitTest.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/test/ItqlGraphUnitTest.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/test/RemoteAnswerCloneUnitTest.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/test/SessionGraphUnitTest.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/ClientGraphUtil.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/ClosableArrayIteratorProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/DefaultClosableIteratorProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/ItqlQueryUtil.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/NodeComparator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/ObjectNodeComparator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/OrderedClosableIteratorProxy.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/PredicateNodeComparator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/SPOComparator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/SubjectNodeComparator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/util/UniqueSubjectIterator.java
+U   trunk/src/jar/client-jrdf/java/org/mulgara/client/jrdf/writer/MemoryXMLWriter.java
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/parser/Attachment.java
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/parser/MboxFolder.java
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/parser/MimeMessageToPart.java
+U   trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/parser/MimeMessageToPartBean.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/ID3ParserImpl.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/ID3v1ParserImpl.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/ID3v2ParserImpl.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/IdentifierProcessor.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/api/ID3Parser.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/api/ID3v1Parser.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/api/ID3v2Parser.java
+U   trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/parser/api/MP3Conversion.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/AbstractWritableStatement.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/BlankNodeWritableStatement.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/LiteralWritableStatement.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/NamespaceMap.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/RDFXMLWriter.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/RDFXMLWriterUnitTest.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/TestStatementsComparator.java
+U   trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/URIReferenceWritableStatement.java
+U   trunk/src/jar/content-rio/java/org/mulgara/content/rio/GraphElementFactoryImpl.java
+U   trunk/src/jar/content-rio/java/org/mulgara/content/rio/ParserBlankNodeFactoryImpl.java
+U   trunk/src/jar/content-rio/java/org/mulgara/content/rio/ParserBlankNodeImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/AbstractModel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/AnswerClosableIteratorImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/FileSystemModel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/FileSystemModelImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Model.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/ModelContext.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/ModelContextImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3Config.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3ConfigFile.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3ConfigImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3Context.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3ContextImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3Controller.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3ControllerImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3File.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3FileImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3Iterator.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3IteratorImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3Model.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3ModelImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3ModelListener.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/Mp3UnitTest.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/SchemaModel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/SchemaModelImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/id3/AbstractId3Tag.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/id3/Id3Tag.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/id3/Id3v1Tag.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/id3/Id3v2Tag.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/BlockableInputStream.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/Mp3Player.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/PlaybackThread.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/PlaybackThreadImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/PlaybackThreadListener.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/PlaylistThread.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/playback/PlaylistThreadImpl.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/ApplicationMenu.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/ExceptionHandler.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/IconLoader.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/Mp3Application.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/StatusPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/actions/AbstractConstraintAction.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/actions/AbstractMp3Action.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/actions/ClearMp3ModelAction.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/actions/LoadMp3sAction.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/actions/Mp3SelectedAction.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/actions/SearchMp3sAction.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/id3/Id3Panel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/id3/TagPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/results/Mp3List.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/results/Mp3PlayerPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/results/ResultPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/results/list/Mp3FileListRenderer.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/BrowserPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/SearchPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/BrowserConstraintPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/BrowserModel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/ConstraintController.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/ConstraintList.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/ConstraintListener.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/PropertyComboBox.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/search/constraints/ValueList.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/widgets/FileChooser.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/widgets/HeadingPanel.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/widgets/IconButton.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/widgets/NodeListRenderer.java
+U   trunk/src/jar/demo-mp3/java/org/mulgara/demo/mp3/swing/widgets/PropertiesTable.java
+A   trunk/src/jar/doclet/java/org/mulgara/doclet/MaintenanceAuthorTaglet.java
+A   trunk/src/jar/doclet/java/org/mulgara/doclet/ModifiedTaglet.java
+D   trunk/src/jar/doclet/java/org/mulgara/doclet/MulgaraDoclet.java
+A   trunk/src/jar/doclet/java/org/mulgara/doclet/RCSTaglet.java
+D   trunk/src/jar/doclet/java/org/mulgara/doclet/RcsClassWriter.java
+A   trunk/src/jar/doclet/java/org/mulgara/doclet/VersionTaglet.java
+U   trunk/src/jar/driver/java/org/mulgara/server/driver/JRDFGraphFactory.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ConstraintExpressionBuilder.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreter.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlSession.java
+U   trunk/src/jar/itql/java/org/mulgara/itql/ModelExpressionBuilder.java
+U   trunk/src/jar/jena/java/org/mulgara/jena/AnswerClosableIteratorImpl.java
+U   trunk/src/jar/jena/java/org/mulgara/jena/ModelMulgara.java
+U   trunk/src/jar/jena/java/org/mulgara/jena/NullFilter.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/AnswerClosableIteratorImpl.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/JRDFGraph.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/JRDFGraphElementFactory.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/JRDFGraphUnitTest.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/JRDFLocalGraphUnitTest.java
+U   trunk/src/jar/jrdf/java/org/mulgara/jrdf/JRDFTripleFactory.java
+U   trunk/src/jar/krule/java/org/mulgara/krule/KruleLoader.java
+U   trunk/src/jar/krule/java/org/mulgara/krule/QueryStruct.java
+U   trunk/src/jar/krule/java/org/mulgara/krule/Rule.java
+U   trunk/src/jar/krule/java/org/mulgara/krule/RuleStructure.java
+U   trunk/src/jar/query/java/org/mulgara/query/LocalNode.java
+U   trunk/src/jar/query/java/org/mulgara/server/Session.java
+U   trunk/src/jar/query/java/org/mulgara/server/SessionFactoryConfiguration.java
+U   trunk/src/jar/query/java/org/mulgara/server/SessionFactoryFactory.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ConfigurationException.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/ContentHandlerManagerImpl.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseFactory.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/JRDFResolverSession.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/JRDFResolverSessionFactory.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/WalkFunctionUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/AbstractBlankNodeMapUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/BlankNodeMap.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/BlankNodeMapFactory.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/DiskBlankNodeMap.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/DiskBlankNodeMapUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/MemoryBlankNodeMap.java
+U   trunk/src/jar/resolver/java/org/mulgara/resolver/jrdf/MemoryBlankNodeMapUnitTest.java
+U   trunk/src/jar/resolver/java/org/mulgara/store/exporter/ModelN3Writer.java
+U   trunk/src/jar/resolver/java/org/mulgara/store/exporter/ModelWriter.java
+U   trunk/src/jar/resolver/java/org/mulgara/store/exporter/ModelXMLWriter.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/GISDistanceStatements.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/LocalGISCoordinate.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/LocalGISDistance.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/ReadOnlyGISResolver.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/WritableGISResolver.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/AbstractAngle.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/Angle.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/DistanceCalculator.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/DistanceCalculatorFactory.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/GEO.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/GISCoordinate.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/Latitude.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/LatitudeImpl.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/Longitude.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/LongitudeImpl.java
+U   trunk/src/jar/resolver-gis/java/org/mulgara/resolver/gis/tools/SphericalDistanceEstimator.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/content/ContentLoader.java
+U   trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/StatementsWrapperTuples.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreDuplicateResolutionUnitTest.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/TripleAVLFile.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/TripleAVLFileUnitTest.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/XAStatementStoreImpl.java
+U   trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/XAStatementStoreImplUnitTest.java
+U   trunk/src/jar/rules/java/org/mulgara/rules/RuleLoader.java
+U   trunk/src/jar/server-beep/java/org/mulgara/server/beep/BEEPSession.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSession.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionFactory.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionFactoryImpl.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionWrapperSession.java
+U   trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/SessionWrapperRemoteSession.java
+U   trunk/src/jar/store-nodepool/java/org/mulgara/store/nodepool/NewNodeListener.java
+U   trunk/src/jar/store-nodepool/java/org/mulgara/store/nodepool/ReleaseNodeListener.java
+U   trunk/src/jar/store-nodepool-xa/java/org/mulgara/store/nodepool/xa/XANodePoolImplTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBase64BinaryFactory.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBase64BinaryImpl.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBase64BinaryUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBooleanFactory.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBooleanImpl.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBooleanUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPCaseInsensitiveStringComparatorUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDateTimeUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGDayUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGMonthDayUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGMonthUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGYearMonthUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGYearUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPHexBinaryFactory.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPHexBinaryImpl.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPHexBinaryUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPXMLLiteralFactory.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPXMLLiteralImpl.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPXMLLiteralUnitTest.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/UnknownSPTypedLiteralFactory.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/UnknownSPTypedLiteralImpl.java
+U   trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/UnknownSPTypedLiteralUnitTest.java
+U   trunk/src/jar/store-stringpool-xa/java/org/mulgara/store/stringpool/xa/XAStringPoolImpl.java
+U   trunk/src/jar/store-xa/java/org/mulgara/store/xa/SimpleXARecoveryHandler.java
+U   trunk/src/jar/store-xa/java/org/mulgara/store/xa/SimpleXAResource.java
+U   trunk/src/jar/store-xa/java/org/mulgara/store/xa/SimpleXAResourceException.java
+U   trunk/src/jar/store-xa/java/org/mulgara/store/xa/XANodePool.java
+U   trunk/src/jar/store-xa/java/org/mulgara/store/xa/XAStatementStore.java
+U   trunk/src/jar/store-xa/java/org/mulgara/store/xa/XAStringPool.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/ConstrainedNegationTuplesUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/EmptyTuples.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/LiteralTuplesUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/StoreTuples.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TestTuples.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TestTuplesFactory.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TestTuplesUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/Tuples.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesFactory.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesOperations.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/TuplesOperationsUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnconstrainedTuplesUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnorderedAppend.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnorderedAppendUnitTest.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/UnorderedProjection.java
+U   trunk/src/jar/tuples/java/org/mulgara/store/tuples/WrappedTuples.java
+U   trunk/src/jar/tuples-hybrid/java/org/mulgara/store/xa/BlockCacheLine.java
+U   trunk/src/jar/tuples-hybrid/java/org/mulgara/store/xa/CacheLine.java
+U   trunk/src/jar/tuples-hybrid/java/org/mulgara/store/xa/HybridTuples.java
+U   trunk/src/jar/tuples-hybrid/java/org/mulgara/store/xa/HybridTuplesFactory.java
+U   trunk/src/jar/tuples-hybrid/java/org/mulgara/store/xa/HybridTuplesTest.java
+U   trunk/src/jar/tuples-hybrid/java/org/mulgara/store/xa/MemoryCacheLine.java
+U   trunk/src/jar/util/java/org/mulgara/util/Constants.java
+U   trunk/src/jar/util/java/org/mulgara/util/IntFile.java
+U   trunk/src/jar/util/java/org/mulgara/util/IntFileTest.java
+U   trunk/src/jar/util/java/org/mulgara/util/LongToStringMap.java
+U   trunk/src/jar/util/java/org/mulgara/util/LongToStringMapUnitTest.java
+U   trunk/src/jar/util/java/org/mulgara/util/StringToLongMap.java
+U   trunk/src/jar/util/java/org/mulgara/util/StringToLongMapUnitTest.java
+U   trunk/src/jar/util/java/org/mulgara/util/TempDir.java
+U   trunk/src/jar/util/java/org/mulgara/util/UIDGenerator.java
+U   trunk/src/jar/util/java/org/mulgara/util/UIDGeneratorUnitTest.java
+U   trunk/src/jar/util/java/org/mulgara/util/WebBrowser.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/AVLComparator.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/AVLFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/AVLFileTest.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/AVLNode.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/AbstractBlockFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/Block.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/BlockFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/BlockFileTest.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/FreeList.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/FreeListTest.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/IOBlockFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/IOBlockFileTest.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/LockFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/ManagedBlockFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/ManagedBlockFileTest.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/MappedBlockFile.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/MappedBlockFileTest.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/ObjectPool.java
+U   trunk/src/jar/util-xa/java/org/mulgara/store/xa/PersistableMetaRoot.java
+U   trunk/src/war/webui/java/org/mulgara/webui/viewer/ViewerScreen.java
+raboczi
+2006-08-25 10:02:49 -0500 (Fri, 25 Aug 2006)
+184
+Rewrote doclet.jar component as a set of taglets, modified the javadoc target in build.xml to use <tag> and <taglet>, and corrected all doc-comment regressions throughout the codebase.
+
+revision 81
+U   trunk/jxdata/iTQL/backup_restore/backup1Result3.txt
+U   trunk/jxdata/iTQL/backup_restore/result3.txt
+U   trunk/jxdata/iTQL/data_types/binary/base64Binary/result1.txt
+U   trunk/jxdata/iTQL/data_types/binary/hexBinary/result1.txt
+U   trunk/jxdata/iTQL/data_types/boolean/result1.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult12.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult13.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult14.txt
+U   trunk/jxdata/iTQL/data_types/dateTime/queryResult15.txt
+U   trunk/jxdata/iTQL/data_types/gDates/result1.txt
+U   trunk/jxdata/iTQL/data_types/queryResult37.txt
+U   trunk/jxdata/iTQL/data_types/result1.txt
+U   trunk/jxdata/iTQL/filesystem/queryResult10.txt
+U   trunk/jxdata/iTQL/filesystem/queryResult11.txt
+U   trunk/jxdata/iTQL/filesystem/queryResult12.txt
+U   trunk/jxdata/iTQL/filesystem/queryResult8.txt
+U   trunk/jxdata/iTQL/filesystem/queryResult9.txt
+U   trunk/jxdata/iTQL/filesystem/result1.txt
+U   trunk/jxdata/iTQL/fulltext_queries/drop1.txt
+U   trunk/jxdata/iTQL/fulltext_queries/queryResult10.txt
+U   trunk/jxdata/iTQL/fulltext_queries/queryResult8.txt
+U   trunk/jxdata/iTQL/insert/queryResult1.txt
+U   trunk/jxdata/iTQL/node_types/result1.txt
+U   trunk/jxdata/iTQL/prefix/result1.txt
+U   trunk/jxdata/iTQL/rdfs/rdfs-container-membership-superProperty/configResult.txt
+U   trunk/jxdata/iTQL/rdfs/rdfs-domain-and-range/configResult.txt
+U   trunk/jxdata/iTQL/rdfs/rdfs-no-cycles-in-subClassOf/configResult.txt
+U   trunk/jxdata/iTQL/rdfs/rdfs-no-cycles-in-subPropertyOf/configResult.txt
+U   trunk/jxdata/iTQL/rdfs/rdfs-subPropertyOf-semantics/configResult.txt
+U   trunk/jxdata/iTQL/rdfs/statement-entailment/configResult.txt
+U   trunk/jxdata/iTQL/transactions/queryResult4.txt
+U   trunk/jxdata/iTQL/transactions/queryResult5.txt
+U   trunk/jxdata/iTQL/transactions/queryResult6.txt
+U   trunk/jxdata/iTQL/transactions/queryResult7.txt
+U   trunk/jxdata/iTQL/transactions/queryResult8.txt
+U   trunk/jxdata/iTQL/transactions/queryResult9.txt
+U   trunk/jxdata/iTQL/transactions/result1.txt
+U   trunk/jxdata/iTQL/transactions/result2.txt
+U   trunk/jxdata/iTQL/transactions/result3.txt
+U   trunk/jxdata/iTQL/walk/result2.txt
+U   trunk/src/jar/itql/java/org/mulgara/itql/ItqlInterpreterBean.java
+pag
+2006-08-24 00:42:06 -0500 (Thu, 24 Aug 2006)
+251
+Fixes bug MGR-1 http://mulgara.org/jira/browse/MGR-1 where ItqlInterpreterBean.execute() incorrectly merged results from multiple queries.
+Sourcecode patch submitted by ronald@innovation.ch
+Test modifications indicate the new correct mulitple answers
+
+
