@@ -1,3 +1,21 @@
+revision 293
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/Delegator.java
+U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/DistributedResolverFactory.java
+pag
+2007-07-06 15:24:01 -0500 (Fri, 06 Jul 2007)
+17
+email corrections
+
+revision 292
+A   trunk/KOWARI-MODIFICATIONS/
+A   trunk/KOWARI-MODIFICATIONS/mods-mulgara-1.0.0.txt
+A   trunk/KOWARI-MODIFICATIONS/mods-mulgara-1.1.0.txt
+D   trunk/KOWARI-MODIFICATIONS.txt
+pag
+2007-07-06 15:22:34 -0500 (Fri, 06 Jul 2007)
+99
+Creating some organization for Kowari modifications be keeping each revision in a separate log file
+
 revision 289
 D   trunk/version
 D   trunk/version.solaris
