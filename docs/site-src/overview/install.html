@@ -12,6 +12,7 @@
 		<a href="/overview/install.html#o1141">Installing</a> &#124;
 		<a href="/overview/install.html#o1142">Checkout</a> &#124;
 		<a href="/overview/install.html#o1143">Build Targets</a> &#124;
+		<a href="/overview/install.html#o1143-E">Eclipse Integration</a> &#124;
 		<a href="/overview/install.html#o1144">javadoc</a> &#124;
 		<a href="/overview/install.html#o1145">Generating Server and iTQL Shell</a> &#124;
 		<a href="/overview/install.html#o1146">Running</a> &#124;
@@ -46,25 +47,25 @@
 
 <h1>Installation Guide</h1>
 
-<p>Mulgara is shipped in two forms, Mulgara Lite is shipped as binary files only or the full version as a source code download. If you have downloaded the binary files <code>mulgara-1.0.0.jar</code> and <code>itql-1.0.0.jar</code> please proceed with <a id="h1262" class="" title="Installing Java" href="/overview/install.html#o1141">Installing Java</a> and then skip to <a id="h1263" class="" title="Running a Mulgara Server" href="/overview/install.html#o1146">Running a Mulgara server</a>. If you have obtained source code, you will need to build the binary files from a build environment by completing all sections in this document. All users should take note of the hints given in the latest set of Release Notes.</p>
+<p>Mulgara is shipped in two forms, Mulgara Lite is shipped as binary files only or the full version as a source code download. If you have downloaded the binary files <code>mulgara-1.1.0.jar</code> and <code>itql-1.1.0.jar</code> please proceed with <a id="h1262" class="" title="Installing Java" href="/overview/install.html#o1141">Installing Java</a> and then skip to <a id="h1263" class="" title="Running a Mulgara Server" href="/overview/install.html#o1146">Running a Mulgara server</a>. If you have obtained source code, you will need to build the binary files from a build environment by completing all sections in this document. All users should take note of the hints given in the latest set of Release Notes.</p>
 
 <p class="note"><strong>Note -</strong> Throughout this document, <code>$MULGARA_HOME</code> is used to refer to the directory containing either the server or iTQL<sup>TM</sup> shell binary JAR file, or the directory containing the source code. Where examples refer to <code>$MULGARA_HOME</code> below, you should substitute in this location.</p>
 <div class="anchor"><a name="o1141">&nbsp;</a></div>
 <h2>Installing Java</h2>
 
-<p>Download a J2SE<sup>TM</sup> 1.4.0 or above for your platform from <a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.4/">http://java.sun.com/j2se/</a>, and install it. Installation instructions for <a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.4/install-windows.html">Windows</a><sup><a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.4/install-windows.html">&reg;</a></sup> and <a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.4/install-linux.html">Linux</a><sup><a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.4/install-linux.html">&reg;</a></sup> operating systems are available. You should then check that the installation added the java commands to your path by typing: </p>
+<p>Download a J2SE<sup>TM</sup> 1.5.x for your platform from <a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.5.0/">http://java.sun.com/j2se/</a>, and install it (Java 6 support is not yet available). Installation instructions are available for 32 bit and 64 bit versions of <a class="jumptemplate" title="" href="http://java.sun.com/j2se/1.5.0/install.html">Windows<sup>&reg;</sup>, Linux<sup>&reg;</sup> and Solaris<sup>&reg;</sup></a>.  You should then check that the installation added the java commands to your path by typing: </p>
 
 <p class="commandtext"><code>$ java -version</code></p>
 
-<p>You should get the following: </p>
+<p>You should get something like the following: </p>
 
-<p class="commandtext"><code>java version &quot;1.4.2&quot;<br />
-Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.0-b28)<br />
-Java HotSpot(TM) Client VM (build 1.4.2-b28, mixed mode)</code></p>
+<p class="commandtext"><code>java version &quot;1.5.0_07&quot;<br />
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_07-164)<br />
+Java HotSpot(TM) Client VM (build 1.5.0_07-87, mixed mode, sharing)</code></p>
 
 <p>If your shell reports that it cannot find the command, add <code>&lt;JAVA_HOME&gt;/bin</code> (where <code>JAVA_HOME</code> is the location where you installed J2SE to) to your path in the appropriate way for your shell.</p>
 
-<p>Note. You <strong>must</strong> use J2SE 1.4.0 or higher for compiling and running Mulgara.</p>
+<p>Note. You <strong>must</strong> use a J2SE 1.5 for compiling and running Mulgara. Less than J2SE 1.5.0, or greater than J@SE 1.6.0 will not work</p>
 <div class="anchor"><a name="o1142">&nbsp;</a></div>
 <h2>Checkout Setup</h2>
 
@@ -72,7 +73,7 @@ Java HotSpot(TM) Client VM (build 1.4.2-b28, mixed mode)</code></p>
 
 <p>From a Windows command line:</p>
 
-<p class="commandtext"><code>$ set JAVA_HOME=C:\jdk1.4.2</code></p>
+<p class="commandtext"><code>$ set JAVA_HOME=C:\jdk1.5.0</code></p>
 
 <p>The installation program should have set this setting automatically.</p>
 
@@ -103,6 +104,20 @@ Java HotSpot(TM) Client VM (build 1.4.2-b28, mixed mode)</code></p>
 <p>Or, for systems running a Windows operating system: </p>
 
 <p class="commandtext">$ build.bat clean dist</p>
+<div class="anchor"><a name="o1143-E">&nbsp;</a></div>
+<h2>Eclipse Integration</h2>
+
+<p>Eclipse requires a number of generated files to be prosent before it can correctly perform dynamic compilation. The required classes are made available available by a target called <code>ideSupport</code>.  The Eclipse files present in the checkout already refer to these classes, so all that is required to build the target from the command line, and then refresh the Eclipse project.</p>
+
+<p>To create the required libraries use the following on a command line from the project's working directory:</p>
+<p class="commandtext">$ ./build.sh ideSupport</p>
+
+<p>Or, for systems running a Windows operating system: </p>
+
+<p class="commandtext">$ build.bat ideSupport</p>
+
+<p>Once the target is built, refresh the project by selecting "Refresh" from the Project menu, or by pressing F5 on the keyboard.</p>
+
 <div class="anchor"><a name="o1144">&nbsp;</a></div>
 <h2>Generating Mulgara javadoc</h2>
 
@@ -144,9 +159,9 @@ Java HotSpot(TM) Client VM (build 1.4.2-b28, mixed mode)</code></p>
 
 <p class="listcontinuecommandtext">$ build dist</p>
 
-<p class="listcontinue">This creates the two binary files called <code>itql-1.0.0.jar</code> and <code>mulgara-1.0.0.jar</code> in <code>$MULGARA_HOME/dist</code> directory.</p>
+<p class="listcontinue">This creates the two binary files called <code>itql-1.1.0.jar</code> and <code>mulgara-1.1.0.jar</code> in <code>$MULGARA_HOME/dist</code> directory.</p>
 </li><li>Run the executable (the version number for your installation may be different): 
-<p class="listcontinuecommandtext">$ java -jar dist/itql-<code>1.0.0</code>.jar</p>
+<p class="listcontinuecommandtext">$ java -jar dist/itql-<code>1.1.0</code>.jar</p>
 </li></ol>
 <p>If the iTQL Shell starts correctly, you get a prompt back. Enter the quit command at the prompt to exit the interpreter.</p>
 
@@ -158,11 +173,11 @@ Java HotSpot(TM) Client VM (build 1.4.2-b28, mixed mode)</code></p>
 <ol><li>Change to the directory (folder) into which you downloaded Mulgara: 
 <p class="listcontinuecommandtext">$ cd $MULGARA_HOME</p>
 </li><li>Start the executable JAR:
-<p class="listcontinuecommandtext">$ java -jar <code>mulgara-1.0.0.jar</code>.jar</p>
+<p class="listcontinuecommandtext">$ java -jar <code>mulgara-1.1.0.jar</code>.jar</p>
 
 <p class="listcontinue">You should see the following line when the server is starting, identifying the build number:</p>
 
-<p class="listcontinuecommandtext">1 [main] INFO EmbeddedMulgaraServer - Mulgara Semantic Store version 1.0 Build (v<code>1.0.0</code>)</p>
+<p class="listcontinuecommandtext">1 [main] INFO EmbeddedMulgaraServer - Mulgara Semantic Store version 1.0 Build (v<code>1.1.0</code>)</p>
 
 <p class="listcontinue">Once you see a line similar to the following display in the console the server is ready to be used.</p>
 
@@ -305,7 +320,7 @@ Mulgara Semantic Store configuration file.<br />
 <ul><li><code>-h</code> or <code>--help</code>
 <p class="listcontinue">Display a list of the command line options available.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --help</code>, displays the following:</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --help</code>, displays the following:</p>
 
 <p class="listcontinuecommandtext"> <br />
   -h, --help          display this help screen<br />
@@ -337,14 +352,14 @@ Mulgara Semantic Store configuration file.<br />
 <ul><li><code>-x</code> or <code>--shutdown</code>
 <p class="listcontinue">Shutdown the running Mulgara server.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --shutdown</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --shutdown</code>.</p>
 </li></ul>
 <div class="anchor"><a name="o3112">&nbsp;</a></div>
 
 <ul><li><code>-l</code> or <code>--logconfig</code>
 <p class="listcontinue">Specify a log4j configuration file to enable fine grain control on logging.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --logconfig file:&lt;installation directory&gt;/Resources/log4j-template.xml</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --logconfig file:&lt;installation directory&gt;/Resources/log4j-template.xml</code>.</p>
 
 <p class="listcontinue">See the Logging section for more information on the <code>--logconfig</code> option.</p>
 </li></ul>
@@ -353,7 +368,7 @@ Mulgara Semantic Store configuration file.<br />
 <ul><li><code>-c</code> or <code>--serverconfig</code>
 <p class="listcontinue">Specify an external configuration file to override the default configuration file.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --serverconfig file:&lt;installation directory&gt;/Resources/Mulgara-config.xml</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --serverconfig file:&lt;installation directory&gt;/Resources/Mulgara-config.xml</code>.</p>
 </li></ul>
 <div class="anchor"><a name="o3114">&nbsp;</a></div>
 
@@ -373,35 +388,35 @@ Mulgara Semantic Store configuration file.<br />
 
 <p class="listnote"><strong>Note -</strong> Machines with multiple host names can have problems with the RMI and HTTP servers binding to the wrong host name. If your machine has multiple host names, or fails to detect the correct host name during host name resolution, you can force binding to a specific host by using the --serverhost and --httphost options, either individually or together.<br />
 <br />
-For example, <code>java -jar mulgara-1.0.0.jar --serverhost localhost --httphost localhost</code>.</p>
+For example, <code>java -jar mulgara-1.1.0.jar --serverhost localhost --httphost localhost</code>.</p>
 </li></ul></li></ul>
 <div class="anchor"><a name="o3116">&nbsp;</a></div>
 
 <ul><li><code>-p</code> or <code>--port</code>
 <p class="listcontinue">Specify the port number for the embedded HTTP server. The default is 8080. A conflict occurs if this port is in use (by another application or another Mulgara server).</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --port 8081</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --port 8081</code>.</p>
 </li></ul>
 <div class="anchor"><a name="o3117">&nbsp;</a></div>
 
 <ul><li><code>-r</code> or <code>--rmiport</code>
 <p class="listcontinue">Specify the port number for the embedded RMI server. The default is 1099. A conflict occurs if this port is in use (by another application or another Mulgara server).</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --rmiport 1299</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --rmiport 1299</code>.</p>
 </li></ul>
 <div class="anchor"><a name="o3118">&nbsp;</a></div>
 
 <ul><li><code>-s</code> or <code>--servername</code>
 <p class="listcontinue">Specify the RMI server name. The default is server1 (that is, <code>rmi://mysite.com/server1</code>). If you are running multiple servers on the same host, you must specify a new server name.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --servername server2</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --servername server2</code>.</p>
 </li></ul>
 <div class="anchor"><a name="o3119">&nbsp;</a></div>
 
 <ul><li><code>-a</code> or <code>--path</code>
 <p class="listcontinue">Specify the location where Mulgara database files are stored. The default is the <code>server1</code> directory (or the name specified using the <code>--servername</code> option) of your Mulgara installation.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --path /usr/local/mulgara</code>. For systems running a Windows operating system, <code>java -jar mulgara-1.0.0.jar --path c:\mulgara</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --path /usr/local/mulgara</code>. For systems running a Windows operating system, <code>java -jar mulgara-1.1.0.jar --path c:\mulgara</code>.</p>
 
 <p class="listnote"><strong>Note -</strong> The directory you specify is the directory containing the <code>server1</code><em> </em>directory (or the name specified using the <code>--servername</code> option). <em>Do not</em> specify the <code>server1</code> portion of the directory name, as Mulgara appends this automatically to the directory you specify.</p>
 </li></ul>
@@ -410,7 +425,7 @@ For example, <code>java -jar mulgara-1.0.0.jar --serverhost localhost --httphost
 <ul><li><code>-m</code> or <code>--smtp</code>
 <p class="listcontinue">Specify an SMTP server to which e-mail notifications are sent.</p>
 
-<p class="listcontinue">For example, <code>java -jar mulgara-1.0.0.jar --smtp mail-mysite.com</code>.</p>
+<p class="listcontinue">For example, <code>java -jar mulgara-1.1.0.jar --smtp mail-mysite.com</code>.</p>
 </li></ul>
 <div class="anchor"><a name="o3121">&nbsp;</a></div>
 
@@ -433,13 +448,13 @@ For example, <code>java -jar mulgara-1.0.0.jar --serverhost localhost --httphost
 <ul><li><code>itql.command.log</code>
 <p class="listcontinue">Specifies the log file that iTQL<sup>TM</sup> commands are written to by the client application interacting with the ItqlInterpreterBean.</p>
 
-<p class="listcontinue">For example, <code>java -Ditql.command.log=/tmp/itql.log -jar mulgara-1.0.0.jar</code></p>
+<p class="listcontinue">For example, <code>java -Ditql.command.log=/tmp/itql.log -jar mulgara-1.1.0.jar</code></p>
 </li><li><code>shutdownhook.port</code>
 <p class="listcontinue">Specifies the port listening for a shutdown. If not specified, the default is 6789. Specifying this property is useful when running multiple Mulgara servers on the same machine and you don't want to risk shutting down the wrong one.</p>
 
-<p class="listcontinue">For example, <code>java -Dshutdownhook.port=6790 -jar mulgara-1.0.0.jar</code> starts Mulgara with a shutdown port of 6790.</p>
+<p class="listcontinue">For example, <code>java -Dshutdownhook.port=6790 -jar mulgara-1.1.0.jar</code> starts Mulgara with a shutdown port of 6790.</p>
 
-<p class="listcontinue">While <code>java -Dshutdownhook.port=6790 -jar mulgara-1.0.0.jar --shutdown</code> performs a shutdown of this Mulgara server.</p>
+<p class="listcontinue">While <code>java -Dshutdownhook.port=6790 -jar mulgara-1.1.0.jar --shutdown</code> performs a shutdown of this Mulgara server.</p>
 </li><li><code>mulgara.rmi.prefetchsize</code></li><li><code>mulgara.rmi.pagetimeout</code>
 <p class="listcontinue">The above properties control how the server returns query results to a client.</p>
 
@@ -463,7 +478,7 @@ For example, <code>java -jar mulgara-1.0.0.jar --serverhost localhost --httphost
 
 <p class="listcontinue">For example, the following sets the minimum memory allocated to 64 MB and the maximum to 128 MB.</p>
 
-<p class="listcontinuecommandtext">java -Xms64m -Xmx128m -jar mulgara-1.0.0.jar -d</p>
+<p class="listcontinuecommandtext">java -Xms64m -Xmx128m -jar mulgara-1.1.0.jar -d</p>
 
 <p class="listnote"><strong>Note -</strong> Do not over allocate memory to the JVM (using too high a value for <code>Xmx</code>). Mulgara uses memory mapped files that are managed by the operating system. Over allocating memory to the JVM reduces the available memory available for the operating system, thus reducing its ability to map files efficiently.</p>
 </li></ul>
