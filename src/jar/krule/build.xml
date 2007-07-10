@@ -47,8 +47,7 @@
   </target>
 
   <target name="-krule-prepare"
-          description="Creates all directories associated with the krule's
-                       compilation"
+          description="Creates all directories associated with the krule's compilation"
           depends="-prepare-build">
 
     <mkdir dir="${krule.obj.dir}"/>
@@ -59,8 +58,7 @@
 
   <target name="krule-compile"
           depends="-krule-prepare, driver-jar, itql-jar, rules-jar, tuples-jar"
-          description="Compiles all krule related files included generated
-                       source code">
+          description="Compiles all krule related files included generated source code">
 
     <javac destdir="${krule.obj.dir}/classes" debug="on"
            deprecation="on" source="1.5">
@@ -92,8 +90,7 @@
   <target name="krule-dist"
           depends="krule-jar"
           unless="krule.uptodate"
-          description="Performs all tasks related to finalising this krule
-                       and readying it for distribution">
+          description="Performs all tasks related to finalising this krule and readying it for distribution">
 
     <!-- All that's involved in the final version of the krule library
          is the jar so we don't need to do anything because the dependencies
