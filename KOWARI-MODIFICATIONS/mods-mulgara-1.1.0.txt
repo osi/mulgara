@@ -1,3 +1,31 @@
+revision 299
+U   trunk/src/jar/krule/build.xml
+pag
+2007-07-09 23:31:17 -0500 (Mon, 09 Jul 2007)
+85
+Removed newlines in target descriptions - this should be done for all build.xml files
+
+revision 298
+U   trunk/build.xml
+pag
+2007-07-09 23:30:44 -0500 (Mon, 09 Jul 2007)
+65
+Added dependency for dist-website, and description for ideSupport
+
+revision 297
+U   trunk/docs/site-src/overview/install.html
+pag
+2007-07-09 23:29:59 -0500 (Mon, 09 Jul 2007)
+98
+Updated mention of Java version needed for installation, and referred to Eclipse ideSupport target
+
+revision 294
+U   trunk/KOWARI-MODIFICATIONS/mods-mulgara-1.1.0.txt
+pag
+2007-07-06 15:29:30 -0500 (Fri, 06 Jul 2007)
+50
+Updated logs for recent administrative SVN commits
+
 revision 293
 U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/Delegator.java
 U   trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/DistributedResolverFactory.java
