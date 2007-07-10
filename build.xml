@@ -349,7 +349,7 @@
   <!-- =================================================================== -->
   <!-- Creates the distribution of documentation files                     -->
   <!-- =================================================================== -->
-  <target name="dist-website" depends="javadoc-dist, webpage-includes"
+  <target name="dist-website" depends="javadoc, javadoc-dist, webpage-includes"
     description="Creates the distribution of documentation files">
 
     <mkdir dir="${dist.docs.dir}"/>
@@ -1974,7 +1974,8 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
     description="Runs all jxunit based testing">
   </target>
 
-<target name="ideSupport" depends="dist,demo-mp3-jar,descriptor-wsdl-client.jar">
+  <target name="ideSupport" depends="dist,demo-mp3-jar,descriptor-wsdl-client.jar"
+    description="Builds necessary libraries for using the Eclipse IDE.">
 
      <jar jarfile="${dist.dir}/ideSupport.jar">
       <zipfileset dir="${obj.dir}/jar/itql/classes" includes="org/mulgara/itql/**"/>
