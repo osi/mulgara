@@ -42,10 +42,11 @@ I.  Open Source Components
     
     Apache Derby
     JARs:     derby.jar
-    URL:      Apache License, Version 2.0
+    URL:      http://db.apache.org/derby/
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
 
+// TODO: Version no longer available from Apache :(
     Apache SOAP
     JARs:     apache-soap-2.2.jar
     URL:      http://xml.apache.org/soap/index.html
@@ -97,7 +98,7 @@ I.  Open Source Components
     Castor
     JARs:     castor-0.9.3.9-xml.jar
     URL:      http://castor.org
-    LICENSE:  The Exolab License (BSD-style)
+    LICENSE:  The Intalio License (BSD-style)
               http://www.castor.org/license.html
     
     Commons Discovery
@@ -121,12 +122,16 @@ I.  Open Source Components
     Concurrent
     JARs:     concurrent-1.3.4.jar
     URL:      http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
-    LICENSE:  Public Domain
+    LICENSE:  Public Domain with the exception of two classes used by
+              consent of Sun under a BSD-style license:
               http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/sun-u.c.license.pdf
 
+// TODO - resolve
     Date Utils
     JARs:     DateUtils1.jar
     URL:      http://www.mousepushers.com/java.html
+              (temporarily removed as of this release check - they
+              promise to make their Java utils available again soon)
     LICENSE:  BSD Variant
               http://www.mousepushers.com/licence.txt
 
@@ -142,15 +147,15 @@ I.  Open Source Components
 
     GNU Regexp
     JARs:     gnu-regexp-1.1.4.jar
-    URL:      http://www.cacas.org/java/gnu/regexp/
+    URL:      http://savannah.gnu.org/projects/gnu-regexp/
     LICENSE:  LGPL
               http://www.gnu.org/copyleft/lesser.html
 
     ICU4J
     JARs:     icu4j.jar
     URL:      http://icu.sourceforge.net/
-    LICENSE:  ICU License
-              http://dev.icu-project.org/cgi-bin/viewcvs.cgi/*checkout*/icu/license.html
+    LICENSE:  BSD Variant
+              http://source.icu-project.org/repos/icu/icu/trunk/license.html
     
     Jakarta ORO
     JARs:     jakarta-oro-2.0.5.jar
@@ -193,8 +198,8 @@ I.  Open Source Components
     JARs:     org.mortbay.jetty-4.2.19.jar
               org.mortbay.jetty.plus-4.2.19.jar
     URL:      http://jetty.mortbay.org
-    LICENSE:  Jetty License
-              http://jetty.mortbay.org/jetty/LICENSE.html
+    LICENSE:  Apache Software License, v2.0
+              http://jetty.mortbay.org/LICENSE.TXT
     NOTE:     Source modifications made, for more information see:
               http://groups.yahoo.com/group/jetty-discuss/message/2686
 
@@ -211,7 +216,7 @@ I.  Open Source Components
               http://www.gnu.org/copyleft/lesser.html
     
     JOTM (Java Open Transaction Manager)
-    JARs:     jotm-1.5.3.jar
+    JARs:     jotm-1.5.3.jar (locally patched)
               jotm_carol-1.5.3.jar
               jotm_iiop_stubs-1.5.3.jar
               connector-1_5.jar (J2EE spec from Sun)
@@ -220,6 +225,7 @@ I.  Open Source Components
     LICENSE:  BSD-style
               http://jotm.objectweb.org/bsd_license.html
 
+// TODO: version not available on SF.
     JRDF
     JARs:     jrdf-0.3.4.3.jar
     URL:      http://jrdf.sourceforge.net/
@@ -246,8 +252,8 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
     
-    Lucene 1.3
-    JARs:     lucene-1.3.jar
+    Lucene 2.0
+    JARs:     lucene-2.0.0.jar
     URL:      http://jakarta.apache.org/lucene/docs/index.html
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
@@ -289,6 +295,12 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
     
+    Xalan
+    JARs:    xalan-2.7.0.jar
+    URL:     http://xml.apache.org/xalan-j/
+    LICENSE:  Apache Software License, v2.0
+              http://www.apache.org/licenses/LICENSE-2.0
+    
     XMLC
     JARs:     xmlc-all-runtime-2.2.jar
               xmlc-taskdef-2.2.jar
@@ -299,10 +311,9 @@ I.  Open Source Components
 
     EMORY UTILs
     JARs:     emory-util.jar
-    URL:      http://www.mathcs.emory.edu/dcl/
-    LICENSE:  MPL/LGPL/GPL tri-license
-              http://opensource.org/licenses/lgpl-license.php
-              LGPL has been selected
+    URL:      http://dcl.mathcs.emory.edu/util/
+    LICENSE:  Public domain
+              http://creativecommons.org/licenses/publicdomain
               
     XOM 1.0
     JARs:     xom-1.0d21.jar
@@ -310,40 +321,26 @@ I.  Open Source Components
     License   GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
 
-II.  Sun Microsystems Components
-
-     The Mulgara Semantic Store is written entirely in the Java(TM)
-     programming language and depends on several optional Java packages.
-     The Mulgara Semantic Store Open Source project DOES NOT DISTRIBUTE
-     these packages due to licensing constraints, but they are freely
-     available for download under their own licensing terms.  They are:
-
     JavaBeans Activation Framework 1.0.2
     JARs:     activation-1.0.2.jar
     URL:      http://java.sun.com/products/javabeans/glasgow/jaf.html
-    License:  Sun Binary Code License, with JAF v1.0.2 supplemental
-              license terms
-              See the above URL and attempt to download the software
-              to see the license terms.
+    License:  Common Development and Distribution License (CDDL) v1.0
+              https://glassfish.dev.java.net/public/CDDLv1.0.html
 
     Java Servlet API
     JARs:     javax.servlet-2.3.jar
     URL:      http://java.sun.com/products/servlet/download.html
-    License:  Sun Binary Code License Agreement with Servlet API
-              v2.3 supplemental license terms
-              See the above URL and attempt to download the software
-              to see the license terms.
+    License:  Common Development and Distribution License (CDDL) v1.0
+              https://glassfish.dev.java.net/public/CDDLv1.0.html
 
     JavaMail
     JARs:     mail-1.3.jar
     URL:      http://java.sun.com/products/javamail/
-    License:  Sun Binary Code License Agreement with JavaMail v1.3
-              supplemental license terms
-              See the above URL and attempt to download the software
-              to see the license terms.
+    License:  Common Development and Distribution License (CDDL) v1.0
+              https://glassfish.dev.java.net/public/CDDLv1.0.html
 
 
-III. Supporting Optional Packages
+II. Supporting Optional Packages
 
     Those wishing to build the Mulgara Semantic Store from source will
     require Ant.  Those wishing to run the unit tests included in the
@@ -360,6 +357,7 @@ III. Supporting Optional Packages
     License:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
 
+// Source for this version no longer available.
     JUnit
     JARs:     junit-3.8.1.jar
     URL:      http://www.junit.org,
@@ -375,12 +373,7 @@ III. Supporting Optional Packages
 
     JXQuick Runtime
     JARs:     Quick4rt.jar
-    URL:      http://jxquick.sourceforge.net/quick3/
-    License:  Modified BSD
-              http://jxquick.sourceforge.net/quick3/License.txt
-
-    JXQuick Utils
-    JARs:     Quick4util.jar
+              Quick4util.jar
     URL:      http://jxquick.sourceforge.net/quick3/
     License:  Modified BSD
               http://jxquick.sourceforge.net/quick3/License.txt
