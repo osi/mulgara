@@ -13,7 +13,6 @@
   <property file="build.properties"/>
 
   <property file="${jar.src.dir}/ant-task/ant-task-build.properties"/>
-  <property file="${jar.src.dir}/client-drools/client-drools-build.properties"/>
   <property file="${jar.src.dir}/client-jrdf/client-jrdf-build.properties"/>
   <property file="${jar.src.dir}/config/config-build.properties"/>
   <property file="${jar.src.dir}/demo/demo-build.properties"/>
@@ -85,7 +84,6 @@
   <import file="webdocs.xml"/>
 
   <import file="${jar.src.dir}/ant-task/build.xml"/>
-  <import file="${jar.src.dir}/client-drools/build.xml"/>
   <import file="${jar.src.dir}/client-jrdf/build.xml"/>
   <import file="${jar.src.dir}/demo/build.xml"/>
   <import file="${jar.src.dir}/demo-mp3/build.xml"/>
@@ -312,7 +310,7 @@
   </target>
 
   <target name="base-dist"
-          depends="ant-task-dist, client-drools-dist,
+          depends="ant-task-dist,
                    client-jrdf-dist, connector-dist, connection-dist, content-mbox-dist,
                    content-mp3-dist, content-rdfxml-dist, content-rio-dist,
                    descriptor-dist, driver-dist, dtd-dist, itql-dist, jrdf-dist,
@@ -886,7 +884,7 @@
        two steps -->
   <target name="create-javadoc"
           depends="javadoc-uptodate, javadoc-overview.html, doclet.jar,
-                   ant-task-javadoc, client-drools-javadoc,
+                   ant-task-javadoc,
                    client-jrdf-javadoc, connector-javadoc,
                    connection-javadoc, content-mbox-javadoc,
                    content-mp3-javadoc, content-n3-javadoc,
@@ -1929,7 +1927,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
   </target>
 
   <target name="client-test"
-          depends="client-drools-test, client-jrdf-test,
+          depends="client-jrdf-test,
                    demo-mp3-test, driver-test, itql-test, query-test,
                    connector-test, connection-test, descriptor-test"
           description="Runs client side tests">
