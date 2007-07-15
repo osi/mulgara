@@ -135,16 +135,6 @@ I.  Open Source Components
     LICENSE:  BSD Variant
               http://www.mousepushers.com/licence.txt
 
-    Drools Rule Engine
-    JARs:     drools-base-2.0-beta-15.jar
-              drools-core-2.0-beta-15.jar
-              drools-io-2.0-beta-15.jar
-              drools-java-2.0-beta-15.jar
-              drools-smf-2.0-beta-15.jar
-    URL:      http://docs.codehaus.org/display/DROOLS/Home
-    LICENSE:  Apache License v2.0
-              http://www.apache.org/licenses/LICENSE-2.0.html
-
     GNU Regexp
     JARs:     gnu-regexp-1.1.4.jar
     URL:      http://savannah.gnu.org/projects/gnu-regexp/
