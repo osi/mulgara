@@ -46,10 +46,9 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
 
-// TODO: Version no longer available from Apache :(
     Apache SOAP
     JARs:     apache-soap-2.2.jar
-    URL:      http://xml.apache.org/soap/index.html
+    URL:      http://archive.apache.org/dist/ws/soap/version-2.2/
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
     
@@ -215,10 +214,9 @@ I.  Open Source Components
     LICENSE:  BSD-style
               http://jotm.objectweb.org/bsd_license.html
 
-// TODO: version not available on SF.
     JRDF
     JARs:     jrdf-0.3.4.3.jar
-    URL:      http://jrdf.sourceforge.net/
+    URL:      http://mulgara.org/files/jrdf/
     LICENSE:  Dual license: Apache or GNU LGPL
               LGPL chosen
               http://opensource.org/licenses/lgpl-license.php
