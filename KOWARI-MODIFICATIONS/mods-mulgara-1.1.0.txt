@@ -1,3 +1,60 @@
+revision 307
+U   trunk/README.txt
+pag
+2007-07-16 13:05:12 -0500 (Mon, 16 Jul 2007)
+87
+Updated features and bugs.  Also updated Java version requirement and modification date
+
+revision 306
+U   trunk/LEGAL.txt
+pag
+2007-07-15 23:38:23 -0500 (Sun, 15 Jul 2007)
+55
+Updated links for DateUtils1 to the new internal mirror
+
+revision 305
+U   trunk/LEGAL.txt
+pag
+2007-07-15 21:19:19 -0500 (Sun, 15 Jul 2007)
+27
+Pointed JRDF to mulgara.org
+
+revision 304
+U   trunk/LEGAL.txt
+dwood
+2007-07-15 16:54:23 -0500 (Sun, 15 Jul 2007)
+22
+Removed Drools entry.
+
+
+revision 303
+U   trunk/LEGAL.txt
+dwood
+2007-07-15 09:51:18 -0500 (Sun, 15 Jul 2007)
+26
+Pre-release legal review.
+
+
+revision 302
+U   trunk/build.xml
+D   trunk/lib/drools-base-2.0-beta-15.jar
+D   trunk/lib/drools-core-2.0-beta-15.jar
+D   trunk/lib/drools-io-2.0-beta-15.jar
+D   trunk/lib/drools-java-2.0-beta-15.jar
+D   trunk/lib/drools-smf-2.0-beta-15.jar
+D   trunk/src/jar/client-drools/
+pag
+2007-07-14 23:00:05 -0500 (Sat, 14 Jul 2007)
+29
+Removed old Drools references
+
+revision 300
+U   trunk/KOWARI-MODIFICATIONS/mods-mulgara-1.1.0.txt
+pgearon
+2007-07-10 15:15:55 -0500 (Tue, 10 Jul 2007)
+24
+New log file for release
+
 revision 299
 U   trunk/src/jar/krule/build.xml
 pag
