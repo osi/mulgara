@@ -30,6 +30,7 @@ dist     Distributable product
 doc      Documentation, both sources and generated
 lib      Components external to this project (read only)
 obj      Generated files
+rules    Documentation for using rules, and RDFS rule data
 scripts  Scripts used by the build process
 src      Source code
 test     Test results (auto generated)
@@ -38,65 +39,55 @@ ii. Release Notes
 -----------------
 
 New Features:
-* Create best practises example. Demonstrates an RDF based music player using
-Mulgara. SF feature 1088763.
-* XML Literal support. SF feature 1077157.
-* Improved subquery speed.  SF feature 1081837.
-* Increased small query speed. SF feature 1081838.
-* Improved XSD Support.  SF feature 1081840.
-* Resolvers.  SF feature 945093.
-* Query statements based on type.  SF feature 1081836.
-* A list of currently distributed resolvers and content handlers.  SF
-feature 1081845.
+* TQL now supports SPARQL queries which do not have filters or OPTIONAL.
+* A RelationalResolver that provides access to sql databases via a D2RQ mapping.
+* A DistributedResolver allowing selections from multiple servers in one query,
+  and also permitting insert/select queries between multiple servers.
+* New Transaction framework fixing several Concurrent Modification bugs, and
+  ensuring ACID compliance.
+* Removal of debug code, resulting in significant speedup and lower memory usage.
+* Improved documentation.
+* Added datatypes to XML results.
+* Added support for inserting explicit URIs/Literals in an insert/select query.
+* Found and fixed several resource leaks.
+* Fixed Non-Union-Compatible OR queries (Disjunctions).
+* Fixed bug where on disk data can be momentarily inconsistent, destroying data
+  if the operating system crashes at the wrong moment.
+* Fixed inconsistent RMI access for streaming results over the network.
+* Fixed class loading bug when a non-system class loader has been loaded.
+* Fixed certain types of queries (like MINUS) failing when intermediate results
+  are empty.
+* Fixed imports of blank nodes in N3 documents.
+* Improved dependencies in build process.
+* Build now has meaningful build IDs.
+* Cleanup of a lot of redundant code.
+
 
 Known Bugs:
-* Database.delete does not remove write lock. SF bug 1057988.
-* File URI generation is incorrect. SF bug 1088190.
-* No Protocol Registry. SF bug 1086274.
-* Client side JRDF does not support blank nodes. SF bug 1081738.
-* Literals lose language and datatype attribute. SF bug 1081768.
-* Query has no type capable of globalized UNBOUND. SF bug 1081811.
-* Fix RemoveDuplicates with Unbound. SF bug 1081806.
-* Backup and restore don't handle resolvers. SF bug 1081776.
-* Does not compile under Java 1.5. SF bug 1081719.
-* Lucene exceptions are not serializable over RMI. SF bug 1081718.
-* IN clause subsitution is not working correctly. SF bug 1088254.
-* MBox resolver leaves behind index files. SF bug 1082540.
-* SessionFactoryFactory fails in Tomcat. SF bug 1081817.
-* Cannot insert into Lucene a statement with a bNode subject. SF bug
-1081773.
-* Result of a count should be xsd:nonNegativeInteger. SF bug 1081724.
-* Timezone support for dates and times. SF bug 1070718.
-* AbstractTuples shouldn't impl getRowCount(). SF bug 1081797.
-* Can't compile using JRockit JVM. SF bug 1081808.
-* Illegal characters in hostname. SF bug 1086138.
-* Exiting in OS X causes system instability. SF bug 1081814.
-* jxUnitTests don't exercise FileTuples.beforeFirst(prefix). SF bug
-1081813.
-* Zipped RDF limited to 2GB. SF bug 1081805.
-* HybridTuples memory use requires capping. SF bug 1081803.
-* Append and Join unification isolated. SF bug 1081801.
-* Answer.getObject(String columnName) is not implemented in
-UnconstrainedAnswer, SubqueryAnswer and StreamAnswer. SF bug 1081784.
-* UnorderedProjection is occurring on a ordered projection. SF bug
-1081777.
-* WebUI does not honor RMI server name. SF bug 1081771.
-* Resolver Exception not serializable in client. SF bug 1081019.
-* HybridTuples/BlockCacheLine prefixing requires unit testing. SF bug
-1059178.
-* Exception management. SF bug 1048970.
-* Move TuplesException to CursorException. SF bug 1081798.
-* OrderByRowComparator failing without projection. SF bug 1081786.
-* Make HybridTuples memory usage adaptive. SF bug 1081802.
-* TuplesOperations should consume input parameters. SF bug 1081800.
+* Not all bugs yet brought forward from Kowari. MGR-3
+* Models are currently tied to server names. MGR-58
+* AVLNodes may be released more than once.  Currently being hidden. MGR-63
+* Blank nodes from different servers need server IDs incorporated into them.
+  MGR-56
+* Cannot access WebUI while server is being queried and inserts and deletes
+  are being performed. MGR-11
+* Large temporary files being created with certain usage patterns. MGR-8
+* Unimplemented security layer being bypassed. This will be an issue when
+  Security is implemented for Mulgara. MGR-31
+* Transactions need to be properly cleaned up during exception failures, so
+  logging will be more useful. MGR-52
+* Intermittent OOM errors while running full test suite on OS X for PPC
+  architectures. MGR-67
+* Intermittent OOM errors in FileSystemResolver unit test. MGR-53
+* Poor performance due to non-optimal ordering after disjunctions.
 
-For a list of bugs fixed:
-http://sourceforge.net/tracker/index.php?atid=591704&group_id=89874&_group=369112&set=custom&_status=2&_assigned_to=0
+The list of bugs may be browsed (and updated) at:
+http://mulgara.org/jira/secure/Dashboard.jspa
 
 II. Installing Java
 ===================
 
-1. Download a J2SE 1.4.X for your platform from http://java.sun.com/j2se/,
+1. Download a J2SE 1.5.X for your platform from http://java.sun.com/j2se/,
 and install it. Installation instructions for Windows and Linux are
 available. You should then check that the installation added the java
 commands to your path by typing:
@@ -105,15 +96,16 @@ $ java -version
 
 You should get something like the following:
 
-java version "1.4.2_06"
-Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.2_06-b03)
-Java HotSpot(TM) Client VM (build 1.4.2_06-b03, mixed mode)
+java version "1.5.0_07"
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_07-164)
+Java HotSpot(TM) Client VM (build 1.5.0_07-87, mixed mode, sharing)
 
 If your shell reports that it cannot find the command, add <JAVA_HOME>/bin
 (where JAVA_HOME is the location where you installed J2SE to) to your path
 in the appropriate way for your shell.
 
-Note. You must use J2SE 1.4.2 or above for compiling and running Mulgara.
+Note. You must use a Java in the J2SE 1.5.x series for compiling and running
+Mulgara.  Java 1.6.0 and above is not yet supported.
 
 
 III. Building Mulgara
@@ -160,7 +152,7 @@ file under Windows. To start the server using this script, you'll need to do
 the following:
 
 Note. This assumes PATH has been set to the
-C:\Program Files\Java\j2re1.4.2\bin directory.
+C:\Program Files\Java\j2re1.5.0\bin directory.
 
 1. Change to the Mulgara directory:
 $ cd <mulgarahome>
@@ -241,7 +233,7 @@ LICENSE.txt.
 
 Copyright (c) 2001-2004 Tucana Technologies, Inc. All rights reserved.
 Copyright (c) 2005 Kowari Project. All rights reserved.
-Copyright (c) 2006 Mulgara Project. Some rights reserved.
+Copyright (c) 2006-2007 Mulgara Project. Some rights reserved.
 
-Last updated on 1 April 2005
+Last updated on 16 July 2007
 
