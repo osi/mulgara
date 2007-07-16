@@ -125,14 +125,11 @@ I.  Open Source Components
               consent of Sun under a BSD-style license:
               http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/sun-u.c.license.pdf
 
-// TODO - resolve
     Date Utils
     JARs:     DateUtils1.jar
-    URL:      http://www.mousepushers.com/java.html
-              (temporarily removed as of this release check - they
-              promise to make their Java utils available again soon)
+    URL:      http://mulgara.org/files/misc/DateUtils/
     LICENSE:  BSD Variant
-              http://www.mousepushers.com/licence.txt
+              http://mulgara.org/files/misc/DateUtils/licence.txt
 
     GNU Regexp
     JARs:     gnu-regexp-1.1.4.jar
