@@ -186,20 +186,30 @@
     <taskdef classpathref="project-classpath" resource="axis-tasks.properties"/>
   </target>
 
-  <target name="get-svnext">
-    <condition property="svnext" value="">
-      <os family="unix"/>
+  <target name="svnversion" depends="run-svnversion">
+    <condition property="svn-version" value="${svnversion-output}">
+      <and>
+        <isset property="svnversion-output"/>
+        <not><equals arg1="${svnversion-output}" arg2="exported" trim="true"/></not>
+      </and>
     </condition>
-    <condition property="svnext" value=".exe">
-      <os family="windows"/>
-    </condition>
-    <property name="svnext" value=""/>
+    <property name="svn-version" value="local"/>
   </target>
 
-  <target name="svnversion" depends="get-svnext">
-    <exec executable="svnversion${svnext}" outputproperty="svn-version">
+  <target name="run-svnversion" depends="find-svnversion-exe" if="svnversion-exe">
+    <exec executable="${svnversion-exe}" outputproperty="svnversion-output"
+        failifexecutionfails="false">
       <arg line="."/>
     </exec>
+  </target>
+
+  <target name="find-svnversion-exe">
+    <property environment="env"/>
+
+    <available file="svnversion" filepath="${env.PATH}"
+      property="svnversion-exe" value="svnversion"/>
+    <available file="svnversion.exe" filepath="${env.PATH}"
+      property="svnversion-exe" value="svnversion.exe"/>
   </target>
 
   <!-- =================================================================== -->
