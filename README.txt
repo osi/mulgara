@@ -39,12 +39,13 @@ ii. Release Notes
 -----------------
 
 New Features:
-* TQL now supports SPARQL queries which do not have filters or OPTIONAL.
+* New Transaction framework fixing several Concurrent Modification bugs, and
+  ensuring ACID compliance.
 * A RelationalResolver that provides access to sql databases via a D2RQ mapping.
 * A DistributedResolver allowing selections from multiple servers in one query,
   and also permitting insert/select queries between multiple servers.
-* New Transaction framework fixing several Concurrent Modification bugs, and
-  ensuring ACID compliance.
+* TQL now supports triple patterns with Predicate-Object lists and Object lists,
+  similarly to SPARQL..
 * Removal of debug code, resulting in significant speedup and lower memory usage.
 * Improved documentation.
 * Added datatypes to XML results.
