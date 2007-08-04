@@ -442,23 +442,14 @@ public class MulgaraTransaction {
       switch (state) {
         case ACTUNREF:
         case ACTREF:
-            try {
-              rollbackCause = cause;
-            } finally { try {
-              transaction.rollback();
-            } finally { try {
-              transaction = null;
-            } finally { try {
-              context.clear();
-            } finally { try {
-              enlisted.clear();
-            } finally { try {
-              state = State.FAILED;
-            } finally { try {
-              manager.transactionComplete(this);
-            } finally {
-              manager = null;
-            } } } } } } }
+            rollbackCause = cause;
+            transaction.rollback();
+            transaction = null;
+            context.clear();
+            enlisted.clear();
+            state = State.FAILED;
+            manager.transactionComplete(this);
+            manager = null;
             return new MulgaraTransactionException("Transaction rollback triggered", cause);
         case DEACTREF:
           throw new IllegalStateException("Attempt to rollback deactivated transaction");
