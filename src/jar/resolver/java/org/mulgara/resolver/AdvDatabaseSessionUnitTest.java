@@ -120,6 +120,8 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitRollbackIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitCommitIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testImplicitCommitQuery"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testConcurrentExplicitTxn"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testConcurrentImplicitTxn"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testPrefixingWithUnbound"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testDatabaseDelete"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testCreateModel"));
@@ -1118,6 +1120,289 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         } finally {
           session2.close();
         }
+      } finally {
+        session1.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+
+  /**
+   * Test two simultaneous, explicit transactions, in two threads. The second one should block
+   * until the first one sets auto-commit back to true.
+   */
+  public void testConcurrentExplicitTxn() throws URISyntaxException
+  {
+    logger.info("testConcurrentExplicitTxn");
+    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+
+    try {
+      Session session1 = database.newSession();
+      try {
+        session1.createModel(model3URI, null);
+        session1.setAutoCommit(false);
+        session1.setModel(model3URI, new ModelResource(fileURI));
+
+        final boolean[] tx2Started = new boolean[] { false };
+
+        Thread t2 = new Thread("tx2Test") {
+          public void run() {
+            try {
+              Session session2 = database.newSession();
+              try {
+                session2.setAutoCommit(false);
+
+                synchronized (tx2Started) {
+                  tx2Started[0] = true;
+                  tx2Started.notify();
+                }
+
+                Variable subjectVariable   = new Variable("subject");
+                Variable predicateVariable = new Variable("predicate");
+                Variable objectVariable    = new Variable("object");
+
+                List selectList = new ArrayList(3);
+                selectList.add(subjectVariable);
+                selectList.add(predicateVariable);
+                selectList.add(objectVariable);
+
+                // Evaluate the query
+                Answer answer = session2.query(new Query(
+                  selectList,                                       // SELECT
+                  new ModelResource(model3URI),                      // FROM
+                  new ConstraintImpl(subjectVariable,               // WHERE
+                                 predicateVariable,
+                                 objectVariable),
+                  null,                                             // HAVING
+                  Arrays.asList(new Order[] {                       // ORDER BY
+                    new Order(subjectVariable, true),
+                    new Order(predicateVariable, true),
+                    new Order(objectVariable, true)
+                  }),
+                  null,                                             // LIMIT
+                  0,                                                // OFFSET
+                  new UnconstrainedAnswer()                         // GIVEN
+                ));
+
+                String[][] results = {
+                  { "test:s01", "test:p01", "test:o01" },
+                  { "test:s01", "test:p02", "test:o01" },
+                  { "test:s01", "test:p02", "test:o02" },
+                  { "test:s01", "test:p03", "test:o02" },
+                  { "test:s02", "test:p03", "test:o02" },
+                  { "test:s02", "test:p04", "test:o02" },
+                  { "test:s02", "test:p04", "test:o03" },
+                  { "test:s02", "test:p05", "test:o03" },
+                  { "test:s03", "test:p01", "test:o01" },
+                  { "test:s03", "test:p05", "test:o03" },
+                  { "test:s03", "test:p06", "test:o01" },
+                  { "test:s03", "test:p06", "test:o03" },
+                };
+                compareResults(results, answer);
+                answer.close();
+
+                session2.commit();
+                session2.setAutoCommit(true);
+              } finally {
+                session2.close();
+              }
+            } catch (Exception e) {
+              fail(e);
+            }
+          }
+        };
+        t2.start();
+
+        synchronized (tx2Started) {
+          if (!tx2Started[0]) {
+            try {
+              tx2Started.wait(2000L);
+            } catch (InterruptedException ie) {
+              logger.error("wait for tx2-started interrupted", ie);
+              fail(ie);
+            }
+          }
+          assertFalse("second transaction should still be waiting for write lock", tx2Started[0]);
+        }
+
+        session1.commit();
+        session1.setAutoCommit(true);
+
+        synchronized (tx2Started) {
+          if (!tx2Started[0]) {
+            try {
+              tx2Started.wait(2000L);
+            } catch (InterruptedException ie) {
+              logger.error("wait for tx2-started interrupted", ie);
+              fail(ie);
+            }
+            assertTrue("second transaction should've started", tx2Started[0]);
+          }
+        }
+
+        try {
+          t2.join(2000L);
+        } catch (InterruptedException ie) {
+          logger.error("wait for tx2-terminated interrupted", ie);
+          fail(ie);
+        }
+        assertFalse("second transaction should've terminated", t2.isAlive());
+
+        session1.removeModel(model3URI);
+
+      } finally {
+        session1.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+
+  /**
+   * Test two simultaneous transactions, the first one explicit and the second one in auto-commit,
+   * in two threads. The second one should proceed but not see uncommitted data.
+   */
+  public void testConcurrentImplicitTxn() throws URISyntaxException
+  {
+    logger.info("testConcurrentImplicitTxn");
+    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+
+    try {
+      Session session1 = database.newSession();
+      try {
+        session1.createModel(model3URI, null);
+        session1.setAutoCommit(false);
+        session1.setModel(model3URI, new ModelResource(fileURI));
+
+        Thread t2 = new Thread("tx2Test") {
+          public void run() {
+            try {
+              Session session2 = database.newSession();
+              try {
+                Variable subjectVariable   = new Variable("subject");
+                Variable predicateVariable = new Variable("predicate");
+                Variable objectVariable    = new Variable("object");
+
+                List selectList = new ArrayList(3);
+                selectList.add(subjectVariable);
+                selectList.add(predicateVariable);
+                selectList.add(objectVariable);
+
+                // Evaluate the query
+                Answer answer = session2.query(new Query(
+                  selectList,                                       // SELECT
+                  new ModelResource(model3URI),                      // FROM
+                  new ConstraintImpl(subjectVariable,               // WHERE
+                                 predicateVariable,
+                                 objectVariable),
+                  null,                                             // HAVING
+                  Arrays.asList(new Order[] {                       // ORDER BY
+                    new Order(subjectVariable, true),
+                    new Order(predicateVariable, true),
+                    new Order(objectVariable, true)
+                  }),
+                  null,                                             // LIMIT
+                  0,                                                // OFFSET
+                  new UnconstrainedAnswer()                         // GIVEN
+                ));
+
+                answer.beforeFirst();
+                assertFalse(answer.next());
+                answer.close();
+
+              } finally {
+                session2.close();
+              }
+            } catch (Exception e) {
+              fail(e);
+            }
+          }
+        };
+        t2.start();
+
+        try {
+          t2.join(2000L);
+        } catch (InterruptedException ie) {
+          logger.error("wait for tx2-terminated interrupted", ie);
+          fail(ie);
+        }
+        assertFalse("second transaction should've terminated", t2.isAlive());
+
+        session1.commit();
+
+        t2 = new Thread("tx2Test") {
+          public void run() {
+            try {
+              Session session2 = database.newSession();
+              try {
+                Variable subjectVariable   = new Variable("subject");
+                Variable predicateVariable = new Variable("predicate");
+                Variable objectVariable    = new Variable("object");
+
+                List selectList = new ArrayList(3);
+                selectList.add(subjectVariable);
+                selectList.add(predicateVariable);
+                selectList.add(objectVariable);
+
+                // Evaluate the query
+                Answer answer = session2.query(new Query(
+                  selectList,                                       // SELECT
+                  new ModelResource(model3URI),                      // FROM
+                  new ConstraintImpl(subjectVariable,               // WHERE
+                                 predicateVariable,
+                                 objectVariable),
+                  null,                                             // HAVING
+                  Arrays.asList(new Order[] {                       // ORDER BY
+                    new Order(subjectVariable, true),
+                    new Order(predicateVariable, true),
+                    new Order(objectVariable, true)
+                  }),
+                  null,                                             // LIMIT
+                  0,                                                // OFFSET
+                  new UnconstrainedAnswer()                         // GIVEN
+                ));
+
+                String[][] results = {
+                  { "test:s01", "test:p01", "test:o01" },
+                  { "test:s01", "test:p02", "test:o01" },
+                  { "test:s01", "test:p02", "test:o02" },
+                  { "test:s01", "test:p03", "test:o02" },
+                  { "test:s02", "test:p03", "test:o02" },
+                  { "test:s02", "test:p04", "test:o02" },
+                  { "test:s02", "test:p04", "test:o03" },
+                  { "test:s02", "test:p05", "test:o03" },
+                  { "test:s03", "test:p01", "test:o01" },
+                  { "test:s03", "test:p05", "test:o03" },
+                  { "test:s03", "test:p06", "test:o01" },
+                  { "test:s03", "test:p06", "test:o03" },
+                };
+                compareResults(results, answer);
+                answer.close();
+
+              } finally {
+                session2.close();
+              }
+            } catch (Exception e) {
+              fail(e);
+            }
+          }
+        };
+        t2.start();
+
+        try {
+          t2.join(2000L);
+        } catch (InterruptedException ie) {
+          logger.error("wait for tx2-terminated interrupted", ie);
+          fail(ie);
+        }
+        assertFalse("second transaction should've terminated", t2.isAlive());
+
+        session1.setAutoCommit(true);
+        session1.removeModel(model3URI);
+
       } finally {
         session1.close();
       }

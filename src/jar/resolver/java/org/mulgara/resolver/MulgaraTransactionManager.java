@@ -167,7 +167,7 @@ public class MulgaraTransactionManager {
    */
   private MulgaraTransaction obtainWriteLock(DatabaseSession session)
       throws MulgaraTransactionException {
-    while (currentWritingSession != null && writeLockReserved()) {
+    while (currentWritingSession != null || writeLockReserved()) {
       try {
         writeLockCondition.await();
       } catch (InterruptedException ei) {
