@@ -150,8 +150,8 @@
                        axis-*.jar, saaj-*.jar, emory-*.jar, trove-*.jar,
                        jargs-*.jar, org.mortbay.jetty*.jar, jta-spec*.jar,
                        jotm*.jar, commons-logging-*.jar, Quick4rt.jar,
-                       commons-discovery-*.jar, ${httpclient.jar},
-                       connector-*.jar,
+                       commons-discovery-*.jar, commons-httpclient-*.jar,
+                       commons-codec-*.jar, connector-*.jar,
                        ${date-utils.jar}"
              excludes="jboss-j2ee.jar"/>
   </path>

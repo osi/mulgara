@@ -29,7 +29,6 @@ package org.mulgara.resolver.http;
 
 // Java 2 standard packages
 import java.net.*;
-import java.util.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -39,7 +38,6 @@ import org.jrdf.graph.URIReference;
 // Locally written packages
 import org.mulgara.content.Content;
 import org.mulgara.content.ContentHandler;
-import org.mulgara.content.ContentHandlerException;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.content.ContentResolver;
 import org.mulgara.resolver.spi.*;
@@ -66,6 +64,7 @@ public class HttpResolver extends ContentResolver {
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(HttpResolver.class.getName());
 
   /**
@@ -104,19 +103,15 @@ public class HttpResolver extends ContentResolver {
     Node globalModel = null;
 
     try {
-
       // Globalise the model
       globalModel = resolverSession.globalize(model);
     } catch (GlobalizeException e) {
-
       throw new ResolverException("Couldn't globalize http model", e);
     }
 
     if (!(globalModel instanceof URIReference)) {
-
       // Check that our node is a URIReference
-      throw new ResolverException(
-          "Model parameter " + globalModel + " isn't a URI reference");
+      throw new ResolverException("Model parameter " + globalModel + " isn't a URI reference");
     }
 
     // Get the URI from the globalised node
@@ -126,7 +121,6 @@ public class HttpResolver extends ContentResolver {
 
     // Validate the URI
     if (!modelURI.getScheme().toLowerCase().startsWith("http")) {
-
       throw new ResolverException(modelURI + " doesn't use the http(s): scheme");
     }
 
@@ -134,7 +128,6 @@ public class HttpResolver extends ContentResolver {
     URL modelURL = null;
 
     try {
-
       // Convert the URI to a URL
       modelURL = modelURI.toURL();
     } catch (MalformedURLException malformedURLException) {
@@ -146,11 +139,8 @@ public class HttpResolver extends ContentResolver {
 
     try {
       return new HttpContent(modelURL);
-    }
-    catch (URISyntaxException e) {
-      throw new ResolverException(
-        "Couldn't create HttpContent from " + modelURL, e
-      );
+    } catch (URISyntaxException e) {
+      throw new ResolverException("Couldn't create HttpContent from " + modelURL, e);
     }
   }
 }

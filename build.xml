@@ -493,7 +493,7 @@
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/castor-0.9.3.9-xml.jar, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.carol.jar}, lib/${jotm.iiop.jar},
-          lib/connector-1_5.jar, lib/${httpclient.jar}"/>
+          lib/connector-1_5.jar, lib/${httpclient.jar}, lib/${commons-codec.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
@@ -546,7 +546,8 @@
         ${jargs.jar}, ${jrdf.jar}, ${jetty.jar}, ${jetty.plus.jar},
         ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor.jar}, ${trove.jar},
-        ${date-utils.jar}, ${commons-logging.jar}, ${commons-httpclient.jar}, ${emory-util.jar},
+        ${date-utils.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
+        ${commons-codec.jar}, ${emory-util.jar},
         ${jotm.jar}, ${jotm.carol.jar}, ${jotm.iiop.jar}, ${jta.jar},
         ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
         ${axis.jar}, ${commons-discovery.jar}, ${jaxrpc.jar}, ${wsdl4j.jar},
@@ -1763,6 +1764,7 @@
       <zipfileset src="${lib.dir}/${date-utils.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-httpclient.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-codec.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.carol.jar}" excludes="META-INF/**"/>

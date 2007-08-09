@@ -38,6 +38,7 @@ import java.util.Map;
 
 import javax.activation.MimeType;
 
+import org.jrdf.graph.BlankNode;
 import org.mulgara.content.Content;
 
 /**
@@ -59,7 +60,7 @@ class StreamContent implements Content
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
    */
-  private final Map blankNodeMap = new HashMap();
+  private final Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
   /**
    * The wrapped uri to assist with InputStream content detection.
@@ -98,7 +99,7 @@ class StreamContent implements Content
   // Methods implementing Content
   //
 
-  public Map getBlankNodeMap()
+  public Map<Object,BlankNode> getBlankNodeMap()
   {
     return blankNodeMap;
   }

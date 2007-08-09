@@ -342,7 +342,8 @@
     where $s &lt;urn:test:foo&gt; $dateTime
     and $dateTime &lt;http://mulgara.org/mulgara#after&gt; 
       '2005-01-01T12:16:59'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in
-      &lt;@server@#xsdmodel&gt; ;
+      &lt;@server@#xsdmodel&gt;
+    order by $dateTime ;
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -358,7 +359,8 @@
     where $s &lt;urn:test:foo&gt; $dateTime
     and $dateTime &lt;http://mulgara.org/mulgara#before&gt;
 '2005-01-01T12:17:00.04'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in
-      &lt;@server@#xsdmodel&gt; ;
+      &lt;@server@#xsdmodel&gt;
+    order by $dateTime ;
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -374,7 +376,8 @@
     where $s &lt;urn:test:foo&gt; $dateTime
     and $dateTime &lt;http://mulgara.org/mulgara#after&gt;
 '2005-01-01T12:17:59.99'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in
-      &lt;@server@#xsdmodel&gt; ;
+      &lt;@server@#xsdmodel&gt;
+    order by $dateTime ;
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -393,7 +396,8 @@
       &lt;@server@#xsdmodel&gt; 
     and $dateTime &lt;http://mulgara.org/mulgara#before&gt;
 '2005-01-01T12:17:00.010'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in
-      &lt;@server@#xsdmodel&gt; ;
+      &lt;@server@#xsdmodel&gt;
+    order by $dateTime ;
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -412,7 +416,8 @@
       &lt;@server@#xsdmodel&gt;
     and $dateTime &lt;http://mulgara.org/mulgara#before&gt;
 '2005-01-01T12:17:00.06'^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; in
-      &lt;@server@#xsdmodel&gt; ;
+      &lt;@server@#xsdmodel&gt;
+    order by $dateTime ;
   "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />

@@ -27,9 +27,6 @@
 
 package org.mulgara.resolver.http;
 
-// Java 2 standard packages
-import java.util.List;
-
 // Third party packages
 import org.apache.log4j.Logger;
 
@@ -59,8 +56,8 @@ public class HttpResolverFactory implements ResolverFactory {
   /**
    * Logger.
    */
-  private static Logger logger =
-      Logger.getLogger(HttpResolverFactory.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(HttpResolverFactory.class.getName());
 
   private final ContentHandlerManager contentHandlers;
 
@@ -72,9 +69,7 @@ public class HttpResolverFactory implements ResolverFactory {
 
     // Validate "resolverFactoryInitializer" parameter
     if (resolverFactoryInitializer == null) {
-
-      throw new IllegalArgumentException(
-                "Null \"resolverFactoryInitializer\" parameter");
+      throw new IllegalArgumentException("Null \"resolverFactoryInitializer\" parameter");
     }
 
     // Obtain the content handler list

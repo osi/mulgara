@@ -30,7 +30,6 @@ package org.mulgara.util;
 // Java packages
 import java.io.Serializable;
 import java.sql.*;
-import java.util.*;
 
 import org.apache.log4j.Category;
 
@@ -386,5 +385,24 @@ public class ResultSetMetaDataImpl implements ResultSetMetaData, Serializable {
   public String getColumnClassName(int column) throws SQLException {
 
     return "java.lang.String";
+  }
+
+  /**
+   * This class does not wrap anything.
+   * @param iface The interface to check for - ignored.
+   * @return Always <code>false</code>.
+   */
+  public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    return false;
+  }
+
+  /**
+   * This class does not wrap anything, so can't return a value.
+   * @param iface The interface to check for - ignored.
+   * @return Never returns normally.
+   * @throws SQLException Always.
+   */
+  public <T> T unwrap(Class<T> iface) throws SQLException {
+    throw new SQLException("Interface not wrapped");
   }
 }

@@ -274,8 +274,10 @@
   "/>
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult15.txt" name="queryResult">
-    <save name="queryResult" file="badQuery15Result.xml"/>
-    <fail>Output failed.  Check badQuery15Result.xml for output.</fail>
+    <ifEqual converse="true" file="queryResult15-2.txt" name="queryResult">
+      <save name="queryResult" file="badQuery15Result.xml"/>
+      <fail>Output failed.  Check badQuery15Result.xml for output.</fail>
+    </ifEqual>
   </ifEqual>
 
 </jxu>

@@ -32,7 +32,6 @@ package org.mulgara.resolver.http;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
 
@@ -221,7 +220,6 @@ public class HttpContentUnitTest extends TestCase {
   public void testRedirect() throws Exception {
 
     HttpContent content = null;
-    MimeType mimeType = null;
     
     // obtain a valid content type via a redirect site
     // content = new HttpContent(new URL("http://purl.org/dc/elements/1.1"));

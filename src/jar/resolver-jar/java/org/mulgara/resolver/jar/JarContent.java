@@ -41,6 +41,7 @@ import java.util.Map;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
+import org.jrdf.graph.BlankNode;
 import org.mulgara.content.Content;
 
 /**
@@ -63,7 +64,7 @@ public class JarContent implements Content {
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
    */
-  private Map blankNodeMap = new HashMap();
+  private Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
   /**
    * The wrapped URL.
@@ -104,7 +105,7 @@ public class JarContent implements Content {
    *
    * @return The node map used to ensure that blank nodes are consistent
    */
-  public Map getBlankNodeMap() {
+  public Map<Object,BlankNode> getBlankNodeMap() {
 
     return blankNodeMap;
   }

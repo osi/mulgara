@@ -37,6 +37,8 @@ import java.util.Map;
 // Java 2 enterprise packages
 import javax.activation.MimeType;
 
+import org.jrdf.graph.BlankNode;
+
 /**
  * Content is a sequence of bytes, along with optional metadata describing
  * the stream.  This can include a URI indentifying its source; or a MimeType
@@ -61,7 +63,7 @@ public interface Content
    *
    * @return Map&lt;Object,BlankNode&gt;
    */
-  public Map getBlankNodeMap();
+  public Map<Object,BlankNode> getBlankNodeMap();
 
   /**
    * The MIME type of the content, if any.

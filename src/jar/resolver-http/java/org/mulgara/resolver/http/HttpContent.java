@@ -43,10 +43,12 @@ import javax.activation.MimeTypeParseException;
 //Third party packages
 import org.apache.commons.httpclient.*;  // Apache HTTP Client
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;          // Apache Log4J
 
 //Local packages
+import org.jrdf.graph.BlankNode;
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
 
@@ -68,8 +70,7 @@ import org.mulgara.content.NotModifiedException;
 public class HttpContent implements Content {
 
   /** Logger. */
-  private final static Logger logger =
-    Logger.getLogger(HttpContent.class.getName());
+  private final static Logger logger = Logger.getLogger(HttpContent.class.getName());
 
   /** The URI version of the URL */
   private URI httpUri;
@@ -78,7 +79,7 @@ public class HttpContent implements Content {
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
    */
-  private Map blankNodeMap = new HashMap();
+  private Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
   /**
    * Connection host <code>host</code>
@@ -104,6 +105,9 @@ public class HttpContent implements Content {
    * Http connection
    */
   private HttpConnection connection = null;
+
+  /** Http connection manager. For setting up and cleaning after connections. */
+  HttpConnectionManager connectionManager = new SimpleHttpConnectionManager();
 
   /**
    * To obtain the http headers only
@@ -135,7 +139,6 @@ public class HttpContent implements Content {
 
     // Validate "url" parameter
     if (url == null) {
-
       throw new IllegalArgumentException("Null \"url\" parameter");
     }
 
@@ -167,7 +170,7 @@ public class HttpContent implements Content {
    * 
    * @return The node map used to ensure that blank nodes are consistent
    */
-  public Map getBlankNodeMap() {
+  public Map<Object,BlankNode> getBlankNodeMap() {
 
     return blankNodeMap;
   }
@@ -182,13 +185,16 @@ public class HttpContent implements Content {
   private HttpMethod getConnectionMethod(int methodType) {
 
     if (methodType != GET && methodType != HEAD) {
-      throw new IllegalArgumentException(
-          "Invalid method base supplied for connection");
+      throw new IllegalArgumentException("Invalid method base supplied for connection");
     }
 
-    Protocol protocol = Protocol.getProtocol(schema);
-
-    connection = new HttpConnection(host, port, protocol);
+    HostConfiguration config = new HostConfiguration();
+    config.setHost(host, port, Protocol.getProtocol(schema));
+    try {
+      connection = connectionManager.getConnectionWithTimeout(config, 0L);
+    } catch (ConnectionPoolTimeoutException te) {
+      // NOOP: SimpleHttpConnectionManager does not use timeouts
+    }
 
     String proxyHost = System.getProperty("mulgara.httpcontent.proxyHost");
 
@@ -202,29 +208,31 @@ public class HttpContent implements Content {
     }
 
     // default timeout to 30 seconds
-    connection.setConnectionTimeout(Integer.parseInt(System.getProperty(
+    connection.getParams().setConnectionTimeout(Integer.parseInt(System.getProperty(
         "mulgara.httpcontent.timeout", "30000")));
 
-    String proxyUserName = System
-        .getProperty("mulgara.httpcontent.proxyUserName");
+    String proxyUserName = System.getProperty("mulgara.httpcontent.proxyUserName");
     if (proxyUserName != null) {
-      state.setCredentials(System.getProperty("mulgara.httpcontent.proxyRealm"),
-          System.getProperty("mulgara.httpcontent.proxyRealmHost"),
-          new UsernamePasswordCredentials(proxyUserName, System
-              .getProperty("mulgara.httpcontent.proxyPassword")));
+      state.setCredentials(
+          new AuthScope(
+              System.getProperty("mulgara.httpcontent.proxyRealmHost"), AuthScope.ANY_PORT,
+              System.getProperty("mulgara.httpcontent.proxyRealm"), AuthScope.ANY_SCHEME
+          ),
+          new UsernamePasswordCredentials(proxyUserName, System.getProperty("mulgara.httpcontent.proxyPassword"))
+      );
     }
 
     HttpMethod method = null;
     if (methodType == HEAD) {
       method = new HeadMethod(httpUri.toString());
-    }
-    else {
+    } else {
       method = new GetMethod(httpUri.toString());
     }
 
-    if (connection.isProxied() && connection.isSecure()) {
-      method = new ConnectMethod(method);
-    }
+    // No longer a useful operation
+//    if (connection.isProxied() && connection.isSecure()) {
+//      method = new ConnectMethod(method);
+//    }
 
     // manually follow redirects due to the
     // strictness of http client implementation
@@ -234,8 +242,6 @@ public class HttpContent implements Content {
     return method;
   }
 
-  private final Map lastModifiedMap = new WeakHashMap();
-  private final Map eTagMap = new WeakHashMap();
 
   /**
    * Obtain a valid connection and follow redirects if necessary.
@@ -276,26 +282,23 @@ public class HttpContent implements Content {
       if (logger.isDebugEnabled()) {
         logger.debug("Executing HTTP request");
       }
+      connection.open();
       method.execute(state, connection);
       if (logger.isDebugEnabled()) {
-        logger.debug("Executed HTTP request, response code " +
-                     method.getStatusCode());
+        logger.debug("Executed HTTP request, response code " + method.getStatusCode());
       }
 
       // Interpret the response header
       if (method.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
         // cache has been validated
         throw new NotModifiedException(httpUri);
-      }
-      else if (!isValidStatusCode(method.getStatusCode())) {
+      } else if (!isValidStatusCode(method.getStatusCode())) {
         throw new UnknownHostException("Unable to obtain connection to "
             + httpUri + ". Returned status code " + method.getStatusCode());
-      }
-      else {
+      } else {
         // has a redirection been issued
         int numberOfRedirection = 0;
-        while (isRedirected(method.getStatusCode())
-            && numberOfRedirection <= MAX_NO_REDIRECTS) {
+        while (isRedirected(method.getStatusCode()) && numberOfRedirection <= MAX_NO_REDIRECTS) {
           
           // release the existing connection
           method.releaseConnection();
@@ -314,6 +317,7 @@ public class HttpContent implements Content {
 
               // attempt a new connection to this location
               method = this.getConnectionMethod(methodType);
+              connection.open();
               method.execute(state, connection);
               if (!isValidStatusCode(method.getStatusCode())) {
                 throw new UnknownHostException(
@@ -321,20 +325,16 @@ public class HttpContent implements Content {
                         + httpUri + ". Returned status code "
                         + method.getStatusCode());
               }
-            }
-            catch (URISyntaxException ex) {
+            } catch (URISyntaxException ex) {
               throw new IOException("Unable to follow redirection to "
                   + header.getValue() + " Not a valid URI");
             }
-          }
-          else {
-            throw new IOException("Unable to obtain redirecting detaild from "
-                + httpUri);
+          } else {
+            throw new IOException("Unable to obtain redirecting detaild from " + httpUri);
           }
         }
       }
-    }
-    else {
+    } else {
       if (logger.isDebugEnabled()) {
         logger.debug("Establish connection returned a null method");
       }
@@ -344,20 +344,19 @@ public class HttpContent implements Content {
     Header lastModifiedHeader = method.getResponseHeader("Last-Modified");
     if (lastModifiedHeader != null) {
       logger.debug(lastModifiedHeader.toString());
-      assert lastModifiedHeader.getValues().length == 1;
-      assert lastModifiedHeader.getValues()[0].getName() != null;
-      assert lastModifiedHeader.getValues()[0].getName() instanceof String;
-      lastModifiedMap.put(httpUri, lastModifiedHeader.getValues()[0]
-                                                     .getName());
+      assert lastModifiedHeader.getElements().length >= 1;
+      assert lastModifiedHeader.getElements()[0].getName() != null;
+      assert lastModifiedHeader.getElements()[0].getName() instanceof String;
+      // previous code: added to cache
     }
 
     Header eTagHeader = method.getResponseHeader("Etag");
     if (eTagHeader != null) {
       logger.debug(eTagHeader.toString());
-      assert eTagHeader.getValues().length == 1;
-      assert eTagHeader.getValues()[0].getName() != null;
-      assert eTagHeader.getValues()[0].getName() instanceof String;
-      eTagMap.put(httpUri, eTagHeader.getValues()[0].getName());
+      assert eTagHeader.getElements().length >= 1;
+      assert eTagHeader.getElements()[0].getName() != null;
+      assert eTagHeader.getElements()[0].getName() instanceof String;
+      // previous code: added to cache
     }
 
     return method;
@@ -387,24 +386,16 @@ public class HttpContent implements Content {
           logger.info("Obtain content type " + mimeType + "  from " + httpUri);
         }
       }
-    }
-    catch (MimeTypeParseException e) {
+    } catch (MimeTypeParseException e) {
       logger.warn("Unable to parse " + contentType + " as a content type for "
           + httpUri);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.info("Unable to obtain content type for " + httpUri);
-    }
-    catch (java.lang.IllegalStateException e) {
+    } catch (java.lang.IllegalStateException e) {
       logger.info("Unable to obtain content type for " + httpUri);
-    }
-    finally {
-      if (method != null) {
-        method.releaseConnection();
-      }
-      if (connection != null) {
-        connection.close();
-      }
+    } finally {
+      if (method != null) method.releaseConnection();
+      if (connection != null) connection.close();
     }
     return mimeType;
   }
@@ -461,7 +452,8 @@ public class HttpContent implements Content {
   private boolean isRedirected(int status) {
     return (status == HttpStatus.SC_TEMPORARY_REDIRECT
         || status == HttpStatus.SC_MOVED_TEMPORARILY
-        || status == HttpStatus.SC_MOVED_PERMANENTLY || status == HttpStatus.SC_SEE_OTHER);
+        || status == HttpStatus.SC_MOVED_PERMANENTLY
+        || status == HttpStatus.SC_SEE_OTHER);
   }
 
 }

@@ -38,6 +38,7 @@ import java.util.zip.*;
 import javax.activation.MimeType;
 
 // Local packages
+import org.jrdf.graph.BlankNode;
 import org.mulgara.content.Content;
 
 /**
@@ -59,7 +60,7 @@ public class FileContent implements Content
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
    */
-  private final Map blankNodeMap = new HashMap();
+  private final Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
   /**
    * The wrapped file.
@@ -93,7 +94,7 @@ public class FileContent implements Content
   // Methods implementing Content
   //
 
-  public Map getBlankNodeMap()
+  public Map<Object,BlankNode> getBlankNodeMap()
   {
     return blankNodeMap;
   }
