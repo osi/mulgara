@@ -493,18 +493,24 @@ public class MulgaraTransaction {
       try {
         errorReport(errorMessage + " - Aborting", cause);
       } finally { try {
+        if (transaction != null) {
+          transaction.rollback();
+        }
+      } finally { try {
         manager.transactionAborted(this);
       } finally { try {
         abortEnlistedResources();
       } finally { try {
         context.clear();
       } finally { try {
+        enlisted.clear();
+      } finally { try {
         transaction = null;
       } finally { try {
         manager = null;
       } finally {
         state = State.FAILED;
-      } } } } } }
+      } } } } } } } }
       return new MulgaraTransactionException(errorMessage + " - Aborting", cause);
     } catch (Throwable th) {
       throw new MulgaraTransactionException(errorMessage + " - Failed to abort cleanly", th);

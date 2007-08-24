@@ -167,7 +167,7 @@ public class MulgaraTransactionManager {
    */
   private MulgaraTransaction obtainWriteLock(DatabaseSession session)
       throws MulgaraTransactionException {
-    while (currentWritingSession != null || writeLockReserved()) {
+    while (writeLockHeld() || writeLockReserved()) {
       try {
         writeLockCondition.await();
       } catch (InterruptedException ei) {
@@ -532,6 +532,9 @@ public class MulgaraTransactionManager {
     mutex.lock();
   }
 
+  /**
+   * Used to reserve the write lock during a commit or rollback.
+   */
   private void reserveWriteLock() throws MulgaraTransactionException {
     if (!mutex.isHeldByCurrentThread()) {
       throw new IllegalStateException("Attempt to set modify without holding mutex");
@@ -552,7 +555,12 @@ public class MulgaraTransactionManager {
   }
 
   private boolean writeLockReserved() {
+    // TRUE iff there is a reserving thread AND it is different thread to the current thread.
     return reservingThread != null && !Thread.currentThread().equals(reservingThread);
+  }
+
+  private boolean writeLockHeld() {
+    return currentWritingSession != null;
   }
 
   private void releaseMutex() {
