@@ -322,7 +322,13 @@ public abstract class TuplesOperations {
         sortedSubtrahend = (null == subtrahend.getComparator()) ? sort(subtrahend) : subtrahend;
       }
       // return the difference
-      return new Difference(minuend, sortedSubtrahend);
+      try {
+        return new Difference(minuend, sortedSubtrahend);
+      } finally {
+        if (sortedSubtrahend != subtrahend) {
+          sortedSubtrahend.close();
+        }
+      }
 
     } catch (RuntimeException re) {
       logger.warn("RuntimeException thrown in subtraction", re);

@@ -129,17 +129,31 @@ class LocalQueryResolver implements QueryEvaluationContext
         new NVPair(ModelUnion.class, new ModelResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
                                 Constraint constraint) throws Exception {
-            return TuplesOperations.append(
-                ConstraintOperations.resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint),
-                ConstraintOperations.resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint));
+            Tuples lhs = ConstraintOperations.
+                resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint);
+            Tuples rhs = ConstraintOperations.
+                resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint);
+            try {
+              return TuplesOperations.append(lhs, rhs);
+            } finally {
+              lhs.close();
+              rhs.close();
+            }
           }
         }),
         new NVPair(ModelIntersection.class, new ModelResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
                                 Constraint constraint) throws Exception {
-            return TuplesOperations.join(
-                ConstraintOperations.resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint),
-                ConstraintOperations.resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint));
+            Tuples lhs = ConstraintOperations.
+                resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint);
+            Tuples rhs = ConstraintOperations.
+                resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint);
+            try {
+              return TuplesOperations.join(lhs, rhs);
+            } finally {
+              lhs.close();
+              rhs.close();
+            }
           }
         }),
         new NVPair(ModelResource.class, new ModelResolutionHandler() {
@@ -157,21 +171,42 @@ class LocalQueryResolver implements QueryEvaluationContext
       {
         new NVPair(ConstraintConjunction.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            return TuplesOperations.join(
-              context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr));
+            List l =
+                context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
+            try {
+              return TuplesOperations.join(l);
+            } finally {
+              Iterator i = l.iterator();
+              while (i.hasNext()) {
+                ((Tuples)i.next()).close();
+              }
+            }
           }
         }),
         new NVPair(ConstraintDisjunction.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            return TuplesOperations.append(
-                context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr));
+            List l =
+                context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
+            try {
+              return TuplesOperations.append(l);
+            } finally {
+              Iterator i = l.iterator();
+              while (i.hasNext()) {
+                ((Tuples)i.next()).close();
+              }
+            }
           }
         }),
         new NVPair(ConstraintDifference.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             List args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
             assert args.size() == 2;
-            return TuplesOperations.subtract((Tuples)args.get(0), (Tuples)args.get(1));
+            try {
+              return TuplesOperations.subtract((Tuples)args.get(0), (Tuples)args.get(1));
+            } finally {
+              ((Tuples)args.get(0)).close();
+              ((Tuples)args.get(1)).close();
+            }
           }
         }),
         new NVPair(ConstraintIs.class, new ConstraintResolutionHandler() {
