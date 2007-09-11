@@ -27,9 +27,9 @@
 
 package org.mulgara.query;
 
-// used only in doc comments
 import java.net.*;
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * An expression whose leaves are the {@link URL}s of RDF models.
@@ -49,7 +49,7 @@ import java.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface ModelExpression extends Transformable, Cloneable {
+public interface ModelExpression extends Cloneable, Serializable {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -68,27 +68,6 @@ public interface ModelExpression extends Transformable, Cloneable {
    * @return a set containing the {@link URI}s of the databases
    */
   public Set getDatabaseURIs();
-
-  /**
-   * Generate the WHERE constraint equivalent to this FROM constraint. This
-   * method is really part of query resolution, and properly would belong in the
-   * resolver package.
-   *
-   * @param constraint the WHERE constraint which we want to further constraint
-   *      according to this FROM clause
-   * @param transformation localizing transformation
-   * @param modelProperty the local node representing the
-   *   <code>mulgara:model</code> property
-   * @param systemModel the local node representing the system model
-   *   (<code>#</code>)
-   * @param variableFactory a factory for anonymous link variables
-   * @return the expanded WHERE constraint, incorporating this FROM clause
-   * @throws TransformationException if <var>transformation</var> fails to
-   *      convert a model resource from the global (RDF) namespace
-   */
-  public ConstraintExpression toConstraintExpression(Constraint constraint,
-      Transformation transformation, Value modelProperty, Value systemModel,
-      VariableFactory variableFactory) throws TransformationException;
 
   /**
    * Clones sets of models in the rhs and lhs objects.

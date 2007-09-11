@@ -72,14 +72,14 @@ class AppendAggregateTuples extends AbstractTuples {
   /**
    * The aggregate functions extracted from the <code>SELECT</code> clause.
    */
-  private List localQueryList;
+  private List<Query> queryList;
 
   /**
    * Whether the corresponding index of this instance is an index into
-   * the {@link #localQueryList} (if <code>true</code>) or the wrapped
+   * the {@link #queryList} (if <code>true</code>) or the wrapped
    * {@link #tuples} (if <code>false</code>).
    */
-  private boolean[] columnIsLocalQuery;
+  private boolean[] columnIsAggregate;
 
   private int[] columnAggregateIndex;
 
@@ -95,6 +95,9 @@ class AppendAggregateTuples extends AbstractTuples {
   /** Whether the {@link #cache} is valid for the current row.  */
   private boolean[] isCacheValid;
 
+  /** Exists *only* so we can call resolveMap() */
+  private LocalQueryResolver context;
+
   /**
    * Wrap an {@link Answer} instance.
    *
@@ -109,7 +112,7 @@ class AppendAggregateTuples extends AbstractTuples {
    * @throws TuplesException  if there's trouble reading <var>tuples</var>
    */
   AppendAggregateTuples(ResolverSession session,
-      DatabaseOperationContext context, Tuples tuples,
+      LocalQueryResolver context, Tuples tuples,
       List variableList) throws TuplesException {
     if (logger.isDebugEnabled()) {
       logger.debug("Generating variable list for " + tuples + " and " +
@@ -124,7 +127,8 @@ class AppendAggregateTuples extends AbstractTuples {
     }
 
     // Initialize fields
-    this.columnIsLocalQuery = new boolean[variableList.size()];
+    this.context = context;
+    this.columnIsAggregate = new boolean[variableList.size()];
     this.columnAggregateIndex = new int[variableList.size()];
     this.session = session;
     this.tuples = (Tuples) tuples.clone();
@@ -141,7 +145,7 @@ class AppendAggregateTuples extends AbstractTuples {
       if (logger.isDebugEnabled()) {
         logger.debug("" + hashCode() + " columnAggregateIndex[" + i + "] = -1");
       }
-      columnIsLocalQuery[i] = false;
+      columnIsAggregate[i] = false;
     }
     if (logger.isDebugEnabled()) {
       logger.debug("" + hashCode() + " tupleVars.length = " + tupleVars.length);
@@ -149,7 +153,7 @@ class AppendAggregateTuples extends AbstractTuples {
 
     // Calculate the rest of the variable list
     int aggregateIndex = 0;
-    localQueryList = new ArrayList();
+    queryList = new ArrayList<Query>();
     for (int i = 0; i < variableList.size(); i++) {
       Object element = variableList.get(i);
       if (element instanceof Count) {
@@ -160,17 +164,11 @@ class AppendAggregateTuples extends AbstractTuples {
               tupleVars.length + aggregateIndex + "] = " + aggregateIndex);
         }
         newVariableList.add(((Count) element).getVariable());
-        columnIsLocalQuery[tupleVars.length + aggregateIndex] = true;
+        columnIsAggregate[tupleVars.length + aggregateIndex] = true;
         aggregateIndex++;
 
-        try {
-          Query query = ((Count) element).getQuery();
-          localQueryList.add(new LocalQuery(query, session, context));
-        }
-        catch (LocalizeException e) {
-          throw new TuplesException(
-              "Couldn't localize aggregate function query " + element, e);
-        }
+        Query query = ((Count)element).getQuery();
+        queryList.add((Query)query.clone());
       }
     }
 
@@ -184,8 +182,8 @@ class AppendAggregateTuples extends AbstractTuples {
       logger.debug("Set variable list " + Arrays.asList(getVariables()));
     }
 
-    // Initialize cache fields dependent on localQueryList
-    cache = new long[localQueryList.size()];
+    // Initialize cache fields dependent on queryList
+    cache = new long[queryList.size()];
     isCacheValid = new boolean[cache.length];
   }
 
@@ -212,18 +210,17 @@ class AppendAggregateTuples extends AbstractTuples {
     AppendAggregateTuples cloned = (AppendAggregateTuples)super.clone();
 
     cloned.session = session;
-    cloned.columnIsLocalQuery = cloned.columnIsLocalQuery;
+    cloned.columnIsAggregate = cloned.columnIsAggregate;
     cloned.tuples = (Tuples) tuples.clone();
     cloned.cache = (long[]) cache.clone();
     cloned.isCacheValid = (boolean[]) isCacheValid.clone();
-    cloned.localQueryList = new ArrayList();
-    for (Iterator i = localQueryList.iterator(); i.hasNext(); ) {
-      cloned.localQueryList.add(((LocalQuery) i.next()).clone());
+    cloned.queryList = new ArrayList<Query>();
+    for (Query query : queryList) {
+      cloned.queryList.add((Query)query.clone());
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("AppendAggregateTuples clone " + cloned.hashCode() +
-          " from " + hashCode());
+      logger.debug("AppendAggregateTuples clone " + cloned.hashCode() + " from " + hashCode());
     }
     return cloned;
   }
@@ -232,18 +229,11 @@ class AppendAggregateTuples extends AbstractTuples {
     if (logger.isDebugEnabled()) {
       logger.debug("closing AppendAggregateTuples " + hashCode(), new Throwable());
     }
-    for (Iterator i = localQueryList.iterator(); i.hasNext(); ) {
-      LocalQuery lc = ((LocalQuery) i.next());
+    for (Query query : queryList) {
       if (logger.isDebugEnabled()) {
-        logger.debug("AppendAggregateTuples " + hashCode() +
-            " closing LocalQuery " + lc.hashCode());
+        logger.debug("AppendAggregateTuples " + hashCode() + " closing Query " + query.hashCode());
       }
-      try {
-        lc.close();
-      }
-      catch (QueryException eq) {
-        throw new TuplesException("Error closing subquery", eq);
-      }
+      query.close();
     }
 
     tuples.close();
@@ -268,14 +258,14 @@ class AppendAggregateTuples extends AbstractTuples {
       try {
         // Add the values of the current row to the WHERE clause of the
         // aggregate function's query
-        LocalQuery localQuery = (LocalQuery) localQueryList.get(index);
+        Query query = queryList.get(index);
 
         if (logger.isDebugEnabled()) {
-          logger.debug("" + hashCode() + " Base aggregate query: " + localQuery);
+          logger.debug("" + hashCode() + " Base aggregate query: " + query);
         }
 
         // Evaluate the aggregate query
-        Tuples tuples = localQuery.resolve(createBindingMap(this.tuples));
+        Tuples tuples = context.resolveMap(query, createBindingMap(this.tuples));
 
         if (logger.isDebugEnabled()) {
           logger.debug("Resolved aggregate to " + tuples);
@@ -311,8 +301,8 @@ class AppendAggregateTuples extends AbstractTuples {
     Map bindings = new HashMap();
     Variable[] vars = tuples.getVariables();
 
-    for (int i = 0; i < columnIsLocalQuery.length; i++) {
-      if (!columnIsLocalQuery[i]) {
+    for (int i = 0; i < columnIsAggregate.length; i++) {
+      if (!columnIsAggregate[i]) {
         long columnValue = tuples.getColumnValue(i);
         if (columnValue != Tuples.UNBOUND) {
           bindings.put(vars[i], new LocalNode(columnValue));

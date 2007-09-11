@@ -207,6 +207,34 @@ public class Query implements Cloneable, Serializable {
     this.answer = answer;
   }
 
+ 
+  /**
+   * Construct a new query equivalent to substituing 'where' for the
+   * where-clause in the original query.
+   */
+  public Query(Query query, ConstraintExpression where) {
+    logger.warn("Creating new query from: " + System.identityHashCode(query), new Throwable());
+    this.mutableVariableList = query.mutableVariableList;
+    this.variableList = query.variableList;
+    this.modelExpression = query.modelExpression;
+    this.constraintExpression = where;
+    this.havingConstraint = query.havingConstraint;
+    this.orderList = query.orderList;
+    this.limit = query.limit;
+    this.offset = query.offset;
+    this.answer = (Answer)query.answer.clone();
+    /*
+      this(query.getVariableList(),
+          query.getModelExpression(),
+          where,
+          query.getHavingExpression(),
+          query.getOrderList(),
+          query.getLimit(),
+          query.getOffset(),
+          (Answer)query.getGiven().clone());
+    */
+  }
+
   /**
    * Cloning must always be supported.
    */
@@ -221,11 +249,26 @@ public class Query implements Cloneable, Serializable {
     }
 
     // Copy mutable fields by value
-    cloned.mutableVariableList =
-        (variableList == null) ? null : new ArrayList(variableList);
-    cloned.variableList =
-        (variableList == null) ? null
-        : Collections.unmodifiableList(cloned.mutableVariableList);
+    if (variableList == null) {
+      cloned.mutableVariableList = null;
+      cloned.variableList = null;
+    } else {
+      cloned.variableList = new ArrayList();
+      Iterator i = variableList.iterator();
+      while (i.hasNext()) {
+        Object o = i.next();
+        if (o instanceof Subquery) {
+          Subquery s = (Subquery)o;
+          cloned.variableList.add(new Subquery(s.getVariable(), (Query)s.getQuery().clone()));
+        } else if (o instanceof Count) {
+          Count a = (Count)o;
+          cloned.variableList.add(new Count(a.getVariable(), (Query)a.getQuery().clone()));
+        } else {
+          cloned.variableList.add(o);
+        }
+      }
+      cloned.mutableVariableList = Collections.unmodifiableList(cloned.variableList);
+    }
     cloned.modelExpression = modelExpression;  // FIXME: should be cloned
     cloned.answer = (Answer) answer.clone();
 
@@ -417,6 +460,7 @@ public class Query implements Cloneable, Serializable {
    * Close this {@link Query}, and the underlying {@link Answer} objects.
    */
   public void close() throws TuplesException {
+    logger.warn("Query: " + System.identityHashCode(this) + " closed", new Throwable());
     answer.close();
     answer = null;
 

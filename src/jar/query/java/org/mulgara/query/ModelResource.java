@@ -149,56 +149,6 @@ public class ModelResource implements Model {
     return uri;
   }
 
-  /**
-   * METHOD TO DO
-   *
-   * @param constraint PARAMETER TO DO
-   * @param transformation PARAMETER TO DO
-   * @param modelProperty PARAMETER TO DO
-   * @param systemModel PARAMETER TO DO
-   * @param variableFactory PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws TransformationException EXCEPTION TO DO
-   */
-  public ConstraintExpression toConstraintExpression(Constraint constraint,
-      // (s p o m)
-      Transformation transformation, Value modelProperty,
-      // mulgara:model
-      Value systemModel,
-      // #SYSTEM
-      VariableFactory variableFactory) throws TransformationException {
-
-    // Localize this model resource
-    Value model = transformation.transform(new URIReferenceImpl(uri));
-
-    // Generate the anonymous join variable $group
-    Variable group = variableFactory.newVariable();
-
-    // Return (s p o m) or ((s p o $group) and ($group mulgara:model m #SYSTEM))
-    return new ConstraintDisjunction(new ConstraintImpl(constraint.getElement(0),
-        constraint.getElement(1), constraint.getElement(2), model),
-        new ConstraintConjunction(new ConstraintImpl(constraint.getElement(0),
-        constraint.getElement(1), constraint.getElement(2), group),
-        new ConstraintImpl(group, modelProperty, model, systemModel)));
-  }
-
-  //
-  // Methods implementing Transformable
-  //
-
-  /**
-   * Transforms the constraints to/from global or local nodes.
-   *
-   * @param transformation The {@link Transformation} object to apply.
-   * @throws TransformationException If there was an error transforming.
-   */
-  public void transform(Transformation transformation)
-      throws TransformationException {
-
-    // because ModelResource currently wraps a URI rather than a Value,
-    // no transformation is required
-  }
-
   //
   // Methods extending Object
   //

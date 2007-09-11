@@ -770,19 +770,19 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     return tuples;
   }
 
-  Tuples innerCount(LocalQuery localQuery) throws QueryException {
-    if (localQuery == null) {
+  Tuples innerCount(Query query) throws QueryException {
+    if (query == null) {
       throw new IllegalArgumentException("Null \"query\" parameter");
     }
 
     if (logger.isInfoEnabled()) {
-      logger.info("Inner Count: " + localQuery);
+      logger.info("Inner Count: " + query);
     }
     try {
-      LocalQuery lq = (LocalQuery)localQuery.clone();
-      transform(lq);
-      Tuples result = lq.resolve();
-      lq.close();
+      query = transform(query);
+      LocalQuery lq = new LocalQuery(systemResolver, this);
+      Tuples result = lq.resolveE(query);
+      query.close();
 
       return result;
     } catch (QueryException eq) {
@@ -830,51 +830,55 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   {
     TransactionalAnswer result;
 
-    LocalQuery localQuery = new LocalQuery(query, systemResolver, this);
+    query = transform(query);
 
-    transform(localQuery);
+    LocalQuery localQuery = new LocalQuery(systemResolver, this);
 
     // Complete the numerical phase of resolution
-    Tuples tuples = localQuery.resolve();
+    Tuples tuples = localQuery.resolveE(query);
     result = new TransactionalAnswer(transaction, new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList()));
     answers.put(result, null);
     tuples.close();
-    localQuery.close();
 
     return result;
   }
 
   /**
-   *
-   * Perform in-place transformation of localQuery.
-   * Note: we really want to convert this to a functional form eventually.
+   * Apply the registered transformations to the query until we reach a
+   * fixed-point.
    */
-  void transform(LocalQuery localQuery) throws Exception {
+  Query transform(Query query) throws Exception {
     // Start with the symbolic phase of resolution
-    LocalQuery.MutableLocalQueryImpl mutableLocalQueryImpl =
-      localQuery.new MutableLocalQueryImpl();
     if (symbolicLogger.isDebugEnabled()) {
-      symbolicLogger.debug("Before transformation: " + mutableLocalQueryImpl);
+      symbolicLogger.debug("Before transformation: " + query);
     }
+
+    MutableLocalQueryImpl mutable = new MutableLocalQueryImpl(query);
     Iterator i = symbolicTransformationList.iterator();
     while (i.hasNext()) {
-      SymbolicTransformation symbolicTransformation =
-        (SymbolicTransformation) i.next();
+      SymbolicTransformation symbolicTransformation = (SymbolicTransformation)i.next();
       assert symbolicTransformation != null;
-      symbolicTransformation.transform(this, mutableLocalQueryImpl);
-      if (mutableLocalQueryImpl.isModified()) {
-        // When a transformation succeeds, we rewind and start from the
-        // beginning of the symbolicTransformationList again
+
+      symbolicTransformation.transform(this, mutable);
+
+      // When a transformation succeeds, we rewind and start from the
+      // beginning of the symbolicTransformationList again
+      if (mutable.isModified()) {
         if (symbolicLogger.isDebugEnabled()) {
-          symbolicLogger.debug("Symbolic transformation: " +
-                               mutableLocalQueryImpl);
+          symbolicLogger.debug("Symbolic transformation: " + mutable);
         }
-        mutableLocalQueryImpl.close();
-        mutableLocalQueryImpl = localQuery.new MutableLocalQueryImpl();
+
+        Query tmp = query;
+        query = new Query(query, mutable.getConstraintExpression());
+        tmp.close();
+
+        mutable = new MutableLocalQueryImpl(query);
+
         i = symbolicTransformationList.iterator();
       }
     }
-    mutableLocalQueryImpl.close();
+
+    return query;
   }
 
   void clear() throws QueryException {

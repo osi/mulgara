@@ -43,7 +43,6 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.LocalizedTuples;
-import org.mulgara.resolver.spi.MutableLocalQuery;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.SymbolicTransformation;
@@ -77,32 +76,7 @@ class LocalQuery implements Cloneable
   /** The current localisation/globalisation session.  */
   private final ResolverSession resolverSession;
 
-  /** The session this query is local to.  */
-  private final DatabaseOperationContext context;
-
-  /** The constraint expression. */
-  private ConstraintExpression constraintExpression;
-
-  /** The model expression. */
-  private ModelExpression modelExpression;
-
-  /** The having clause */
-  private ConstraintHaving having;
-
-  /** The various components of the select clause. */
-  private final List orderList;
-  private final int offset;
-  private final Integer limit;
-  private Tuples given;
-
-  /** Variable list from select clause */
-  private List select;
-
-  private Map cachedResults;
-
-  //
-  // Constructor
-  //
+  private LocalQueryResolver context;
 
   /**
    * Construct a database.
@@ -114,146 +88,54 @@ class LocalQuery implements Cloneable
    *   <var>resolverSession</var> are <code>null</code>
    * @throws LocalizeException if the <var>query</var> can't be localized
    */
-  LocalQuery(Query query, ResolverSession resolverSession, DatabaseOperationContext context)
+  LocalQuery(ResolverSession resolverSession, DatabaseOperationContext context)
     throws LocalizeException, TuplesException
   {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Constructing local query for " + query);
-    }
-
-    // Validate "query" parameter
-    if (query == null) {
-      throw new IllegalArgumentException("Null \"query\" parameter");
-    }
-
     // Validate "resolverSession" parameter
     if (resolverSession == null) {
       throw new IllegalArgumentException("Null \"resolverSession\" parameter");
     }
 
     // Initialize fields
-    this.constraintExpression = query.getConstraintExpression();
+    this.context = new LocalQueryResolver(context, resolverSession);
     this.resolverSession = resolverSession;
-    this.context = context;
-    this.modelExpression = (ModelExpression)query.getModelExpression().clone();
-    this.orderList = query.getOrderList();
-    this.offset = query.getOffset();
-    this.limit = query.getLimit();
-    this.given = new LocalizedTuples(resolverSession, query.getGiven());
-    this.having = query.getHavingExpression();
-    this.select = query.getVariableList();
-    this.cachedResults = new HashMap();
-
     if (logger.isDebugEnabled()) {
       logger.debug("Constructed local query");
     }
   }
 
-  LocalQuery(LocalQuery localQuery, ConstraintExpression constraintExpression) {
-    this.constraintExpression = constraintExpression;
-    this.resolverSession = localQuery.resolverSession;
-    this.context = localQuery.context;
-    this.modelExpression = localQuery.modelExpression;
-    this.orderList = localQuery.orderList;
-    this.offset = localQuery.offset;
-    this.limit = localQuery.limit;
-    this.given = (Tuples)localQuery.given.clone();
-    this.select = localQuery.select;
-    this.cachedResults = new HashMap();
-  }
-
-  //
-  // API methods
-  //
-
   /**
-   * Attempt to apply a symbolic query transformation.
-   *
-   * Symbolic transformations modify the values of query clauses without
-   * resolving any {@link Constraint} into {@link Tuples}.
-   *
-   * @param symbolicTransformation  the transformation to apply, never
-   *   <code>null</code>
-   * @return <code>true</code> if the application modified this instance
+   * @return the solution to this query
+   * @throws QueryException if resolution can't be obtained
    */
-  boolean apply(SymbolicTransformation symbolicTransformation)
-    throws QueryException
+  Tuples resolveE(Query query) throws QueryException
   {
-    /*
-    MutableLocalQuery mutableLocalQuery = this.new MutableLocalQueryImpl();
-    symbolicTransformation.apply(mutableLocalQuery);
-    return mutableLocalQuery.isModified();
-    */
-    return false;
-  }
-
-  Tuples resolve(Map outerBindings) throws QueryException
-  {
-    try {
-      return context.innerCount(new LocalQuery(this,
-          new ConstraintConjunction(ConstraintOperations.bindVariables(outerBindings, constraintExpression),
-                                    constrainBindings(outerBindings))));
-    } catch (LocalizeException el) {
-      throw new QueryException("Failed to resolve inner local query", el);
-    }
-  }
-
-
-  // FIXME: This method should be using a LiteralTuples.  Also I believe MULGARA_IS is now preallocated.
-  // Someone needs to try making the change and testing.
-  private ConstraintExpression constrainBindings(Map bindings) throws LocalizeException {
-    List args = new ArrayList();
-    Iterator i = bindings.entrySet().iterator();
-    logger.info("FIXME:localize should be lookup, need to preallocate MULGARA_IS");
-    while (i.hasNext()) {
-      Map.Entry entry = (Map.Entry)i.next();
-      args.add(ConstraintIs.newLocalConstraintIs(
-                  (Variable)entry.getKey(),
-                  new LocalNode(resolverSession.localize(ConstraintIs.MULGARA_IS)),
-                  (Value)entry.getValue(),
-                  null));
+    if (query == null) {
+      throw new IllegalArgumentException("Query null in LocalQuery::resolveE");
     }
 
-    return new ConstraintConjunction(args);
-  }
-
-
-  Tuples resolve(ConstraintExpression whereExtension) throws QueryException {
-    return resolve(constraintExpression, whereExtension);
-  }
-
-
-  Tuples resolve(Constraint constraint) throws QueryException {
-    return context.resolve(constraint);
-  }
-
-
-  Tuples resolve(ConstraintExpression baseExpression, ConstraintExpression whereExtension) throws QueryException
-  {
     try {
       if (logger.isDebugEnabled()) {
-        logger.debug("Resolving query " + modelExpression + " . " + constraintExpression);
+        logger.debug("Resolving query " + query);
       }
 
       if (logger.isDebugEnabled()) {
         logger.debug("Stacktrace: ", new Throwable());
       }
 
-      ConstraintExpression tmpConstraint = new ConstraintConjunction(
-          whereExtension, baseExpression);
-
-      Tuples result = resolve(modelExpression, tmpConstraint);
+      Tuples result = ConstraintOperations.resolveConstraintExpression(context,
+          query.getModelExpression(), query.getConstraintExpression());
 
       if (logger.isDebugEnabled()) {
         logger.debug("Tuples result = " + TuplesOperations.formatTuplesTree(result));
       }
 
-      result = projectSelectClause(result);
-      result = appendAggregates(result);
-      result = applyHaving(result);
-      result = orderResult(result);
-      result = offsetResult(result);
-      result = limitResult(result);
+      result = projectSelectClause(query, result);
+      result = appendAggregates(query, result);
+      result = applyHaving(query, result);
+      result = orderResult(query, result);
+      result = offsetResult(query, result);
+      result = limitResult(query, result);
 
       return result;
     } catch (TuplesException et) {
@@ -262,30 +144,12 @@ class LocalQuery implements Cloneable
   }
 
 
-  /**
-   * @return the solution to this query
-   * @throws QueryException if resolution can't be obtained
-   */
-  Tuples resolve() throws QueryException
-  {
-    try {
-      return resolve(new ConstraintConjunction(new ArrayList()));
-    } catch (QueryException eq) {
-      logger.warn("QueryException thrown in resolve: ", eq);
-      throw eq;
-    } catch (Exception e) {
-      logger.warn("Exception thrown in resolve: ", e);
-      throw new QueryException("Exception thrown in resolve", e);
-    }
-  }
-
-
-  private Tuples projectSelectClause(Tuples result) throws TuplesException
+  private Tuples projectSelectClause(Query query, Tuples result) throws TuplesException
   {
     if (result.getRowCardinality() > Cursor.ZERO) {
       Tuples tmp = result;
       try {
-        List variables = new ArrayList(select.size());
+        List variables = new ArrayList();
 
       /*
        * Note that this code need not concern itself with the order of the select-list,
@@ -295,7 +159,7 @@ class LocalQuery implements Cloneable
        */
         Variable[] vars = result.getVariables();
         for (int i = 0; i < vars.length; i++) {
-          if (select.contains(vars[i])) {
+          if (query.getVariableList().contains(vars[i])) {
             variables.add(vars[i]);
           }
         }
@@ -310,11 +174,12 @@ class LocalQuery implements Cloneable
   }
 
 
-  private Tuples appendAggregates(Tuples result) throws TuplesException
+  private Tuples appendAggregates(Query query, Tuples result) throws TuplesException
   {
     if (result.getRowCardinality() != Tuples.ZERO) {
       Tuples tmp = result;
-      result = new AppendAggregateTuples(resolverSession, context, result, filterSubqueries(select));
+      result = new AppendAggregateTuples(resolverSession, context, result,
+          filterSubqueries(query.getVariableList()));
       tmp.close();
     }
 
@@ -323,9 +188,7 @@ class LocalQuery implements Cloneable
 
   private List filterSubqueries(List select) {
     List result = new ArrayList();
-    Iterator i = select.iterator();
-    while (i.hasNext()) {
-      Object o = i.next();
+    for (Object o : select) {
       if (!(o instanceof Subquery)) {
         result.add(o);
       }
@@ -335,7 +198,8 @@ class LocalQuery implements Cloneable
   }
 
 
-  private Tuples applyHaving(Tuples result) throws TuplesException {
+  private Tuples applyHaving(Query query, Tuples result) throws TuplesException {
+    ConstraintHaving having = query.getHavingExpression();
     Tuples tmp = result;
     if (having != null) {
       result = TuplesOperations.restrict(
@@ -347,7 +211,8 @@ class LocalQuery implements Cloneable
   }
 
 
-  private Tuples orderResult(Tuples result) throws TuplesException, QueryException {
+  private Tuples orderResult(Query query, Tuples result) throws TuplesException, QueryException {
+    List orderList = query.getOrderList();
     if (orderList.size() > 0 && result.getRowCardinality() > Cursor.ONE) {
       Tuples tmp = result;
       result = TuplesOperations.sort(result,
@@ -358,8 +223,9 @@ class LocalQuery implements Cloneable
     return result;
   }
 
-  private Tuples offsetResult(Tuples result) throws TuplesException
+  private Tuples offsetResult(Query query, Tuples result) throws TuplesException
   {
+    int offset = query.getOffset();
     if (offset > 0) {
       Tuples tmp = result;
       result = TuplesOperations.offset(result, offset);
@@ -370,8 +236,9 @@ class LocalQuery implements Cloneable
   }
 
 
-  private Tuples limitResult(Tuples result)  throws TuplesException
+  private Tuples limitResult(Query query, Tuples result)  throws TuplesException
   {
+    Integer limit = query.getLimit();
     if (limit != null) {
       Tuples tmp = result;
       result = TuplesOperations.limit(result, limit.intValue());
@@ -379,121 +246,5 @@ class LocalQuery implements Cloneable
     }
 
     return result;
-  }
-
-  //
-  // Internal methods
-  //
-
-  /**
-   * Localize and resolve the <code>FROM</code> and <code>WHERE</code> clause
-   * product.
-   *
-   * @param modelExpression the <code>FROM<code> clause to resolve
-   * @param constraintExpression the <code>WHERE</code> clause to resolve
-   * @throws QueryException if resolution can't be obtained
-   */
-  Tuples resolve(ModelExpression      modelExpression,
-                 ConstraintExpression constraintExpression)
-    throws QueryException
-  {
-    QueryEvaluationContext context = new LocalQueryResolver(this, resolverSession);
-
-    return ConstraintOperations.resolveConstraintExpression(context, modelExpression, constraintExpression);
-  }
-
-
-  ResolverSession getResolverSession() {
-    return resolverSession;
-  }
-
-
-  public Object clone()
-  {
-    try {
-      LocalQuery query = (LocalQuery)super.clone();
-      query.modelExpression = (ModelExpression)modelExpression.clone();
-      query.given = (Tuples)given.clone();
-
-      return query;
-    } catch (CloneNotSupportedException ec) {
-      throw new Error("Object threw CloneNotSupportedException", ec);
-    }
-  }
-
-
-  public void close() throws QueryException
-  {
-    try {
-      given.close();
-    } catch (TuplesException et) {
-      throw new QueryException("Failed to close given clause", et);
-    }
-  }
-
-  public String toString()
-  {
-    return "where " + constraintExpression;
-  }
-
-  /**
-   * Mutator for {@link LocalQuery}.
-   */
-  class MutableLocalQueryImpl implements MutableLocalQuery
-  {
-    private boolean closed = false;
-    private boolean modified = false;
-
-    /**
-     * Once called, this instance can no longer be used for modifications.
-     */
-    void close()
-    {
-      closed = true;
-    }
-
-    /**
-     * @return whether this instance has been used to mutate the value of the
-     *   outer class
-     */
-    boolean isModified()
-    {
-      return modified;
-    }
-
-    //
-    // Methods implementing LocalQuery
-    //
-
-    public ConstraintExpression getConstraintExpression()
-    {
-      return constraintExpression;
-    }
-
-    public void setConstraintExpression(ConstraintExpression constraintExpression)
-    {
-      // Validate state
-      if (closed) {
-        throw new IllegalStateException();
-      }
-
-      // Validate "constraintExpression" parameter
-      if (constraintExpression == null) {
-        throw new IllegalArgumentException("Null \"constraintExpression\" parameter");
-      }
-
-      // Update fields
-      LocalQuery.this.constraintExpression = constraintExpression;
-      modified = true;
-    }
-
-    //
-    // Methods overriding Object
-    //
-
-    public String toString()
-    {
-      return LocalQuery.this.toString();
-    }
   }
 }

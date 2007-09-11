@@ -1242,7 +1242,7 @@ public class Database implements SessionFactory
       setter.invoke(null, new Object[] { names });
     } catch (Exception e) {
       /* Not much that can be done here */
-      logger.warn("Unable to set the host names for Server Info", e);
+      logger.info("Unable to set the host names for Server Info", e);
     }
   }
 }

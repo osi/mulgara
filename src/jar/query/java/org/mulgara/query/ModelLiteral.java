@@ -148,43 +148,6 @@ public class ModelLiteral implements Model {
     return in;
   }
 
-  /**
-   * @param constraint PARAMETER TO DO
-   * @param transformation PARAMETER TO DO
-   * @param modelProperty PARAMETER TO DO
-   * @param systemModel PARAMETER TO DO
-   * @param variableFactory PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws UnsupportedOperationException always
-   */
-  public ConstraintExpression toConstraintExpression(Constraint constraint,
-      // (s p o m)
-      Transformation transformation, Value modelProperty,
-      // mulgara:model
-      Value systemModel,
-      // #SYSTEM
-      VariableFactory variableFactory) {
-
-    throw new UnsupportedOperationException(
-        "Literal models can't be converted to WHERE clauses yet");
-  }
-
-  //
-  // Methods implementing Transformable
-  //
-
-  /**
-   * Transforms the constraints to/from global or local nodes.
-   *
-   * @param transformation The {@link Transformation} object to apply.
-   * @throws TransformationException If there was an error transforming.
-   */
-  public void transform(Transformation transformation) throws
-      TransformationException {
-
-    logger.warn("ModelLiteral.transform is not yet implemented");
-  }
-
   //
   // Methods of Object
   //

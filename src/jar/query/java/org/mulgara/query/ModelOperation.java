@@ -146,40 +146,6 @@ public abstract class ModelOperation implements ModelExpression {
   /**
    * METHOD TO DO
    *
-   * @param constraint PARAMETER TO DO
-   * @param transformation PARAMETER TO DO
-   * @param modelProperty PARAMETER TO DO
-   * @param systemModel PARAMETER TO DO
-   * @param variableFactory PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws TransformationException EXCEPTION TO DO
-   */
-  public abstract ConstraintExpression toConstraintExpression(
-      Constraint constraint,
-      // (s p o m)
-      Transformation transformation,
-      Value modelProperty,
-      // mulgara:model
-      Value systemModel,
-      // #SYSTEM
-      VariableFactory variableFactory) throws TransformationException;
-
-  /**
-   * Transform the left and right hand sides of this operation.
-   *
-   * @param transformation the {@link Transformation} to apply
-   * @throws TransformationException if the transformation fails
-   */
-  public void transform(Transformation transformation) throws
-      TransformationException {
-
-    lhs.transform(transformation);
-    rhs.transform(transformation);
-  }
-
-  /**
-   * METHOD TO DO
-   *
    * @param m PARAMETER TO DO
    * @return RETURNED VALUE TO DO
    */

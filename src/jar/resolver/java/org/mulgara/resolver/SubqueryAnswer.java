@@ -288,14 +288,7 @@ public class SubqueryAnswer extends GlobalizedAnswer {
           ConstraintOperations.bindVariables(bindings, query.getConstraintExpression()),
           constrainBindings(bindings));
 
-      query = new Query(query.getVariableList(),
-          query.getModelExpression(),
-          where,
-          null,
-          query.getOrderList(),
-          query.getLimit(),
-          query.getOffset(),
-          query.getGiven());
+      query = new Query(query, where);
 
       if (logger.isDebugEnabled()) {
         logger.debug("Generated subquery: " + query);

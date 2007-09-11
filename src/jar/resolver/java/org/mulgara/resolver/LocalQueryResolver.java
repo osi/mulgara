@@ -93,32 +93,20 @@ class LocalQueryResolver implements QueryEvaluationContext
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(LocalQueryResolver.class.getName());
 
-  private LocalQuery localQuery;
+  private DatabaseOperationContext operationContext;
 
   private ResolverSession resolverSession;
 
   //
   // Constructor
   //
-
-  /**
-   * Construct a database.
-   *
-   * @param localQuery  the query to localize
-   * @param resolverSession  the database session to localize the
-   *   <var>localQuery</var> against
-   * @throws IllegalArgumentException if <var>query</var> or
-   *   <var>resolverSession</var> are <code>null</code>
-   * @throws LocalizeException if the <var>query</var> can't be localized
-   */
-  LocalQueryResolver(LocalQuery localQuery, ResolverSession resolverSession) {
-    // Validate "query" parameter
-    if (localQuery == null) {
-      throw new IllegalArgumentException("Null 'localQuery' parameter");
+  LocalQueryResolver(DatabaseOperationContext operationContext, ResolverSession resolverSession) {
+    if (operationContext == null) {
+      throw new IllegalArgumentException("Null 'operationContext' parameter");
     }
 
     // Initialize fields
-    this.localQuery = localQuery;
+    this.operationContext = operationContext;
     this.resolverSession = resolverSession;
   }
 
@@ -462,7 +450,7 @@ class LocalQueryResolver implements QueryEvaluationContext
             localize(new URIReferenceImpl(modelResource.getURI())), localized);
       }
 
-      Tuples result = localQuery.resolve(localized);
+      Tuples result = operationContext.resolve(localized);
 
       return result;
     } catch (LocalizeException e) {
@@ -477,11 +465,51 @@ class LocalQueryResolver implements QueryEvaluationContext
 
 
   public Tuples resolve(ModelExpression modelExpression, ConstraintExpression constraintExpression) throws QueryException {
-    return localQuery.resolve(modelExpression, constraintExpression);
+    return ConstraintOperations.resolveConstraintExpression(this, modelExpression, constraintExpression);
   }
 
 
   public ResolverSession getResolverSession() {
     return resolverSession;
+  }
+
+  Tuples resolveMap(Query query, Map outerBindings) throws QueryException
+  {
+    try {
+      Query newQuery = new Query(
+          query.getVariableList(),
+          query.getModelExpression(),
+          new ConstraintConjunction(
+              ConstraintOperations.bindVariables(outerBindings, query.getConstraintExpression()),
+              constrainBindings(outerBindings)),
+          query.getHavingExpression(),
+          query.getOrderList(),
+          query.getLimit(),
+          query.getOffset(),
+          (Answer)query.getGiven().clone());
+          
+      return operationContext.innerCount(newQuery);
+    } catch (LocalizeException el) {
+      throw new QueryException("Failed to resolve inner local query", el);
+    }
+  }
+
+
+  // FIXME: This method should be using a LiteralTuples.  Also I believe MULGARA_IS is now preallocated.
+  // Someone needs to try making the change and testing.
+  private ConstraintExpression constrainBindings(Map bindings) throws LocalizeException {
+    List args = new ArrayList();
+    Iterator i = bindings.entrySet().iterator();
+    logger.info("FIXME:localize should be lookup, need to preallocate MULGARA_IS");
+    while (i.hasNext()) {
+      Map.Entry entry = (Map.Entry)i.next();
+      args.add(ConstraintIs.newLocalConstraintIs(
+                  (Variable)entry.getKey(),
+                  new LocalNode(resolverSession.localize(ConstraintIs.MULGARA_IS)),
+                  (Value)entry.getValue(),
+                  null));
+    }
+
+    return new ConstraintConjunction(args);
   }
 }

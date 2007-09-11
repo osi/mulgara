@@ -70,33 +70,6 @@ public class ModelIntersection extends ModelOperation {
   }
 
   /**
-   * METHOD TO DO
-   *
-   * @param constraint PARAMETER TO DO
-   * @param transformation PARAMETER TO DO
-   * @param modelProperty PARAMETER TO DO
-   * @param systemModel PARAMETER TO DO
-   * @param variableFactory PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws TransformationException EXCEPTION TO DO
-   */
-  public ConstraintExpression toConstraintExpression(Constraint constraint,
-
-  // (s p o m)
-  Transformation transformation, Value modelProperty,
-  // mulgara:model
-  Value systemModel,
-  // #SYSTEM
-  VariableFactory variableFactory) throws TransformationException {
-
-    return new ConstraintConjunction(getLHS().toConstraintExpression(constraint,
-        transformation, modelProperty, systemModel, variableFactory),
-      getRHS().toConstraintExpression(constraint, transformation,
-        modelProperty, systemModel, variableFactory));
-  }
-
-
-  /**
    * Legible representation
    *
    * @return RETURNED VALUE TO DO
