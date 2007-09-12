@@ -213,7 +213,6 @@ public class Query implements Cloneable, Serializable {
    * where-clause in the original query.
    */
   public Query(Query query, ConstraintExpression where) {
-    logger.warn("Creating new query from: " + System.identityHashCode(query), new Throwable());
     this.mutableVariableList = query.mutableVariableList;
     this.variableList = query.variableList;
     this.modelExpression = query.modelExpression;
@@ -460,7 +459,6 @@ public class Query implements Cloneable, Serializable {
    * Close this {@link Query}, and the underlying {@link Answer} objects.
    */
   public void close() throws TuplesException {
-    logger.warn("Query: " + System.identityHashCode(this) + " closed", new Throwable());
     answer.close();
     answer = null;
 
