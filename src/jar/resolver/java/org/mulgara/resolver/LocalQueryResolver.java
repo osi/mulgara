@@ -97,277 +97,18 @@ class LocalQueryResolver implements QueryEvaluationContext
 
   private ResolverSession resolverSession;
 
-  //
   // Constructor
-  //
   LocalQueryResolver(DatabaseOperationContext operationContext, ResolverSession resolverSession) {
     if (operationContext == null) {
       throw new IllegalArgumentException("Null 'operationContext' parameter");
+    } else if (resolverSession == null) {
+      throw new IllegalArgumentException("Null 'resolverSession' parameter");
     }
 
-    // Initialize fields
     this.operationContext = operationContext;
     this.resolverSession = resolverSession;
   }
 
-
-  static {
-    ConstraintOperations.addModelResolutionHandlers(new NVPair[]
-      {
-        new NVPair(ModelUnion.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
-                                Constraint constraint) throws Exception {
-            Tuples lhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint);
-            Tuples rhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint);
-            try {
-              return TuplesOperations.append(lhs, rhs);
-            } finally {
-              lhs.close();
-              rhs.close();
-            }
-          }
-        }),
-        new NVPair(ModelIntersection.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
-                                Constraint constraint) throws Exception {
-            Tuples lhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint);
-            Tuples rhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint);
-            try {
-              return TuplesOperations.join(lhs, rhs);
-            } finally {
-              lhs.close();
-              rhs.close();
-            }
-          }
-        }),
-        new NVPair(ModelResource.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
-                                Constraint constraint) throws Exception {
-            return context.resolve((ModelResource)modelExpr, (Constraint)constraint);
-          }
-        })
-      });
-  }
-
-
-  static {
-    ConstraintOperations.addConstraintResolutionHandlers(new NVPair[]
-      {
-        new NVPair(ConstraintConjunction.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            List l =
-                context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
-            try {
-              return TuplesOperations.join(l);
-            } finally {
-              Iterator i = l.iterator();
-              while (i.hasNext()) {
-                ((Tuples)i.next()).close();
-              }
-            }
-          }
-        }),
-        new NVPair(ConstraintDisjunction.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            List l =
-                context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
-            try {
-              return TuplesOperations.append(l);
-            } finally {
-              Iterator i = l.iterator();
-              while (i.hasNext()) {
-                ((Tuples)i.next()).close();
-              }
-            }
-          }
-        }),
-        new NVPair(ConstraintDifference.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            List args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
-            assert args.size() == 2;
-            try {
-              return TuplesOperations.subtract((Tuples)args.get(0), (Tuples)args.get(1));
-            } finally {
-              ((Tuples)args.get(0)).close();
-              ((Tuples)args.get(1)).close();
-            }
-          }
-        }),
-        new NVPair(ConstraintIs.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            ConstraintIs constraint = (ConstraintIs)constraintExpr;
-            return TuplesOperations.assign((Variable)context.localize(constraint.getVariable()),
-                                           ((LocalNode)context.localize(constraint.getValueNode())).getValue());
-          }
-        }),
-        new NVPair(ConstraintImpl.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            ConstraintElement constraintElem =
-              ((ConstraintImpl) constraintExpr).getModel();
-            assert constraintElem != null;
-            if (constraintElem.equals(Variable.FROM)) {
-              return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
-            }
-            else if (constraintElem instanceof URIReference) {
-              return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), (Constraint)constraintExpr);
-            }
-            else if (constraintElem instanceof LocalNode) {
-              return context.resolve(null, (ConstraintImpl)constraintExpr);
-            }
-            else if (constraintElem instanceof Variable) {
-              return context.resolve(null, (ConstraintImpl)constraintExpr);
-            }
-            else {
-              throw new QueryException("Specified model not a URIReference/Variable: " + constraintElem +" is a " + constraintElem.getClass().getName() );
-            }
-          }
-        }),
-        new NVPair(ConstraintNegation.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            if (((ConstraintNegation)constraintExpr).getModel().equals(Variable.FROM)) {
-              return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
-            } else {
-              ConstraintElement constraintElem = ((ConstraintNegation)constraintExpr).getElement(3);
-              if (constraintElem instanceof URIReference) {
-                return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), (Constraint)constraintExpr);
-              } else {
-                throw new QueryException("Specified model not a URIReference: " + constraintElem +" is a " + constraintElem.getClass().getName() );
-              }
-            }
-          }
-        }),
-        new NVPair(WalkConstraint.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            return WalkFunction.walk(context, (WalkConstraint)constraintExpr, modelExpr, context.getResolverSession());
-          }
-        }),
-        new NVPair(SingleTransitiveConstraint.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            SingleTransitiveConstraint constraint = (SingleTransitiveConstraint)constraintExpr;
-            if (constraint.isAnchored()) {
-              return DirectTransitiveFunction.infer(context, constraint, modelExpr, context.getResolverSession());
-            } else {
-              return ExhaustiveTransitiveFunction.infer(context, constraint, modelExpr, context.getResolverSession());
-            }
-          }
-        }),
-        new NVPair(TransitiveConstraint.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            return ExhaustiveTransitiveFunction.infer(context, (TransitiveConstraint)constraintExpr, modelExpr, context.getResolverSession());
-          }
-        }),
-      });
-  }
-
-  static {
-    ConstraintOperations.addConstraintBindingHandlers(new NVPair[]
-      {
-        new NVPair(ConstraintTrue.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return constraintExpr;
-          }
-        }),
-        new NVPair(ConstraintFalse.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return constraintExpr;
-          }
-        }),
-        new NVPair(ConstraintImpl.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return ConstraintOperations.replace(bindings, (Constraint)constraintExpr);
-          }
-        }),
-        new NVPair(ConstraintIs.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return ConstraintOperations.replace(bindings, (Constraint)constraintExpr);
-          }
-        }),
-        new NVPair(SingleTransitiveConstraint.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return new SingleTransitiveConstraint(ConstraintOperations.replace(bindings, (Constraint)constraintExpr));
-          }
-        }),
-        new NVPair(TransitiveConstraint.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            TransitiveConstraint tc = (TransitiveConstraint)constraintExpr;
-            return new TransitiveConstraint(ConstraintOperations.replace(bindings, tc.getAnchoredConstraint()),
-                                            ConstraintOperations.replace(bindings, tc.getUnanchoredConstraint()));
-          }
-        }),
-        new NVPair(WalkConstraint.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            WalkConstraint wc = (WalkConstraint)constraintExpr;
-            return new WalkConstraint(ConstraintOperations.replace(bindings, wc.getAnchoredConstraint()),
-                                      ConstraintOperations.replace(bindings, wc.getUnanchoredConstraint()));
-          }
-        }),
-        new NVPair(ConstraintNegation.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return new ConstraintNegation(ConstraintOperations.replace(bindings, (Constraint)constraintExpr));
-          }
-        }),
-        new NVPair(ConstraintConjunction.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return new ConstraintConjunction(ConstraintOperations.replaceOperationArgs(bindings, (ConstraintOperation)constraintExpr));
-          }
-        }),
-        new NVPair(ConstraintDisjunction.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return new ConstraintDisjunction(ConstraintOperations.replaceOperationArgs(bindings, (ConstraintOperation)constraintExpr));
-          }
-        }),
-        new NVPair(ConstraintDifference.class, new ConstraintBindingHandler() {
-          public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            List args = ConstraintOperations.replaceOperationArgs(bindings, (ConstraintOperation)constraintExpr);
-            return new ConstraintDifference((ConstraintExpression)args.get(0), (ConstraintExpression)args.get(1));
-          }
-        }),
-      });
-  }
-
-
-  static {
-    ConstraintOperations.addConstraintModelRewrites(new NVPair[]
-      {
-        new NVPair(ConstraintImpl.class, new ConstraintModelRewrite() {
-          public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
-            return new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel);
-          }
-        }),
-        new NVPair(ConstraintNegation.class, new ConstraintModelRewrite() {
-          public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
-            return new ConstraintNegation(new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel));
-          }
-        }),
-      });
-  }
-
-  static {
-    ConstraintOperations.addConstraintLocalizations(new NVPair[]
-      {
-        new NVPair(ConstraintImpl.class, new ConstraintLocalization() {
-          public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception {
-            return new ConstraintImpl(context.localize(constraint.getElement(0)),
-                context.localize(constraint.getElement(1)),
-                context.localize(constraint.getElement(2)),
-                context.localize(constraint.getElement(3)));
-          }
-        }),
-        new NVPair(ConstraintNegation.class, new ConstraintLocalization() {
-          public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception {
-            return new ConstraintNegation(new ConstraintImpl(
-                context.localize(constraint.getElement(0)),
-                context.localize(constraint.getElement(1)),
-                context.localize(constraint.getElement(2)),
-                context.localize(constraint.getElement(3))));
-          }
-        }),
-      });
-  }
 
   public List resolveConstraintOperation(ModelExpression modelExpr,
                                          ConstraintOperation constraintOper)
@@ -511,5 +252,149 @@ class LocalQueryResolver implements QueryEvaluationContext
     }
 
     return new ConstraintConjunction(args);
+  }
+
+  /**
+   * @return the solution to this query
+   * @throws QueryException if resolution can't be obtained
+   */
+  Tuples resolveE(Query query) throws QueryException
+  {
+    if (query == null) {
+      throw new IllegalArgumentException("Query null in LocalQuery::resolveE");
+    }
+
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resolving query " + query);
+      }
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Stacktrace: ", new Throwable());
+      }
+
+      Tuples result = ConstraintOperations.resolveConstraintExpression(this,
+          query.getModelExpression(), query.getConstraintExpression());
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Tuples result = " + TuplesOperations.formatTuplesTree(result));
+      }
+
+      result = projectSelectClause(query, result);
+      result = appendAggregates(query, result);
+      result = applyHaving(query, result);
+      result = orderResult(query, result);
+      result = offsetResult(query, result);
+      result = limitResult(query, result);
+
+      return result;
+    } catch (TuplesException et) {
+      throw new QueryException("Failed to resolve query", et);
+    }
+  }
+
+
+  private Tuples projectSelectClause(Query query, Tuples result) throws TuplesException
+  {
+    if (result.getRowCardinality() > Cursor.ZERO) {
+      Tuples tmp = result;
+      try {
+        List variables = new ArrayList();
+
+      /*
+       * Note that this code need not concern itself with the order of the select-list,
+       * only the contents.  The mapping is handled by the subsequent Answer object,
+       * and only becomes important if the row-order is important and is therefore
+       * deferred to order-by resolution.
+       */
+        Variable[] vars = result.getVariables();
+        for (int i = 0; i < vars.length; i++) {
+          if (query.getVariableList().contains(vars[i])) {
+            variables.add(vars[i]);
+          }
+        }
+
+        result = TuplesOperations.project(result, variables);
+      } finally {
+        tmp.close();
+      }
+    }
+
+    return result;
+  }
+
+
+  private Tuples appendAggregates(Query query, Tuples result) throws TuplesException
+  {
+    if (result.getRowCardinality() != Tuples.ZERO) {
+      Tuples tmp = result;
+      result = new AppendAggregateTuples(resolverSession, this, result,
+          filterSubqueries(query.getVariableList()));
+      tmp.close();
+    }
+
+    return result;
+  }
+
+  private List filterSubqueries(List select) {
+    List result = new ArrayList();
+    for (Object o : select) {
+      if (!(o instanceof Subquery)) {
+        result.add(o);
+      }
+    }
+
+    return result;
+  }
+
+
+  private Tuples applyHaving(Query query, Tuples result) throws TuplesException {
+    ConstraintHaving having = query.getHavingExpression();
+    Tuples tmp = result;
+    if (having != null) {
+      result = TuplesOperations.restrict(
+                  result, RestrictPredicateFactory.getPredicate(having, resolverSession));
+      tmp.close();
+    }
+
+    return result;
+  }
+
+
+  private Tuples orderResult(Query query, Tuples result) throws TuplesException, QueryException {
+    List orderList = query.getOrderList();
+    if (orderList.size() > 0 && result.getRowCardinality() > Cursor.ONE) {
+      Tuples tmp = result;
+      result = TuplesOperations.sort(result,
+                 new OrderByRowComparator(result, orderList, resolverSession));
+      tmp.close();
+    }
+
+    return result;
+  }
+
+  private Tuples offsetResult(Query query, Tuples result) throws TuplesException
+  {
+    int offset = query.getOffset();
+    if (offset > 0) {
+      Tuples tmp = result;
+      result = TuplesOperations.offset(result, offset);
+      tmp.close();
+    }
+
+    return result;
+  }
+
+
+  private Tuples limitResult(Query query, Tuples result)  throws TuplesException
+  {
+    Integer limit = query.getLimit();
+    if (limit != null) {
+      Tuples tmp = result;
+      result = TuplesOperations.limit(result, limit.intValue());
+      tmp.close();
+    }
+
+    return result;
   }
 }

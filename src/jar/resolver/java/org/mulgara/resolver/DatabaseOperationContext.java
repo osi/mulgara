@@ -780,7 +780,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     }
     try {
       query = transform(query);
-      LocalQuery lq = new LocalQuery(systemResolver, this);
+      LocalQueryResolver lq = new LocalQueryResolver(this, systemResolver);
       Tuples result = lq.resolveE(query);
       query.close();
 
@@ -832,7 +832,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
 
     query = transform(query);
 
-    LocalQuery localQuery = new LocalQuery(systemResolver, this);
+    LocalQueryResolver localQuery = new LocalQueryResolver(this, systemResolver);
 
     // Complete the numerical phase of resolution
     Tuples tuples = localQuery.resolveE(query);

@@ -80,6 +80,10 @@ public class ConstraintOperations
   static Map constraintLocalizations = new HashMap();
   static Map constraintModelRewrites = new HashMap();
 
+  static {
+    DefaultConstraintHandlers.initializeHandlers();
+  }
+
   static void addConstraintResolutionHandlers(NVPair[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, constraintResolutionHandlers,
              ConstraintExpression.class, ConstraintResolutionHandler.class);
