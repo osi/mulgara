@@ -246,7 +246,7 @@ public class TestStatementsComparator {
     Tuples materializedTuples = TuplesOperations.materialize(tuples);
     tuples.close();
 
-    Tuples sortedTuples = TuplesOperations.sort(tuples);
+    Tuples sortedTuples = TuplesOperations.sort(materializedTuples);
     materializedTuples.close();
 
     Tuples projectedTuples = TuplesOperations.project(sortedTuples,
