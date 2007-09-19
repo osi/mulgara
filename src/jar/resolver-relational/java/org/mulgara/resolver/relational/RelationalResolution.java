@@ -292,20 +292,23 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
       throw new TuplesException("RelationalResolution does not support suffix != 0");
     }
 
-    List result = new ArrayList();
     Iterator i = constraint.getRdfTypeConstraints().iterator();
     if (!i.hasNext()) {
       this.result = new EmptyResolution(constraint, true);
     } else {
-      while (i.hasNext()) {
-        Constraint head = (Constraint)i.next();
-        
-        result.add(resolveInstance(head, constraint, conn, defn));
+      List result = new ArrayList();
+      try {
+        while (i.hasNext()) {
+          Constraint head = (Constraint)i.next();
+          result.add(resolveInstance(head, constraint, conn, defn));
+        }
+
+        this.result = TuplesOperations.join(result);
+      } finally {
+        close((Tuples[]) result.toArray(new Tuples[result.size()]));
       }
     }
 
-    
-    this.result = TuplesOperations.join(result);
     // It is possible that the join may have no variables but only if the query returns empty.
     if (this.result.getRowCardinality() != Cursor.ZERO) {
       Variable[] local = this.getVariables();

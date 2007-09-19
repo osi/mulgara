@@ -129,9 +129,15 @@ public class Definition {
 
     LocalNode belongs = new LocalNode(session.localize(Constants.belongsToClassMap));
     LocalNode propBridge = new LocalNode(session.localize(Constants.TypeObjectPropertyBridge));
-    Tuples props = TuplesOperations.join(
-      resolver.resolve(new ConstraintImpl(subj, belongs, map, model)),
-      resolver.resolve(new ConstraintImpl(subj, type, propBridge, model)));
+    Tuples lhs = resolver.resolve(new ConstraintImpl(subj, belongs, map, model));
+    Tuples rhs = resolver.resolve(new ConstraintImpl(subj, type, propBridge, model));
+    Tuples props;
+    try {
+      props = TuplesOperations.join(lhs, rhs);
+    } finally {
+      lhs.close();
+      rhs.close();
+    }
     props.beforeFirst();
     while (props.next()) {
       long prop = props.getColumnValue(0);
@@ -152,9 +158,15 @@ public class Definition {
 
     LocalNode belongs = new LocalNode(session.localize(Constants.belongsToClassMap));
     LocalNode propBridge = new LocalNode(session.localize(Constants.TypeDatatypePropertyBridge));
-    Tuples props = TuplesOperations.join(
-      resolver.resolve(new ConstraintImpl(subj, belongs, map, model)),
-      resolver.resolve(new ConstraintImpl(subj, type, propBridge, model)));
+    Tuples lhs = resolver.resolve(new ConstraintImpl(subj, belongs, map, model));
+    Tuples rhs = resolver.resolve(new ConstraintImpl(subj, type, propBridge, model));
+    Tuples props;
+    try {
+      props = TuplesOperations.join(lhs, rhs);
+    } finally {
+      lhs.close();
+      rhs.close();
+    }
     props.beforeFirst();
     while (props.next()) {
       long prop = props.getColumnValue(0);
