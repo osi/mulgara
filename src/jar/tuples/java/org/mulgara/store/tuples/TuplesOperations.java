@@ -361,7 +361,6 @@ public abstract class TuplesOperations {
       while (i.hasNext()) {
         operands.add(((Tuples)i.next()).clone());
       }
-      operand.close();
     } else {
       operands.add(operand.clone());
     }
