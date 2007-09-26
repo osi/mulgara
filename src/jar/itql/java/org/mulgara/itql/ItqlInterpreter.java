@@ -2202,7 +2202,11 @@ public class ItqlInterpreter extends DepthFirstAdapter {
         // set the auto commit status
         if (session != null) {
           this.getSession().setAutoCommit(optionSet);
-          update();
+          // set the state of a transaction to clean, only if we have just finished a transaction
+          if (!autoCommit && optionSet) {
+            autoCommit = optionSet;
+            update();
+          }
         }
         autoCommit = optionSet;
 
