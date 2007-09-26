@@ -334,8 +334,8 @@ public final class HybridTuples implements Tuples {
     tuples = null;
     if (blockFile != null && --blockFileRefCount.refCount == 0) {
       try {
-        blockFile.delete();
-      } catch (Throwable ie) {
+        delete();
+      } catch (IOException ie) {
         logger.warn("Failed to delete blockFile", ie);
         throw new TuplesException("Failed to delete blockFile", ie);
       }
