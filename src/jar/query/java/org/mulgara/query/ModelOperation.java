@@ -150,18 +150,12 @@ public abstract class ModelOperation implements ModelExpression {
    * @return RETURNED VALUE TO DO
    */
   public boolean equals(Object m) {
+    if (m == null) return false;
+    if (m == this) return true;
 
-    if ( (m == null) || m.getClass().equals(getClass())) {
+    Class<?> type = m.getClass();
+    if (!type.equals(getClass())) return false;
 
-      return false;
-    }
-
-    if (m == this) {
-
-      return true;
-    }
-
-    Class type = m.getClass();
 
     Set otherExpressions = new HashSet();
     ( (ModelOperation) m).flattenExpression(otherExpressions, type);
