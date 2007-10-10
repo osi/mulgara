@@ -528,9 +528,17 @@ public class MulgaraTransactionManager {
     }
   }
 
+  /**
+   * Used to replace the built in monitor to allow it to be properly released
+   * during potentially blocking operations.  All potentially blocking
+   * operations involve writes, so in these cases the write-lock is reserved
+   * allowing the mutex to be safely released and then reobtained after the
+   * blocking operation concludes.
+   */
   private void acquireMutex() {
     mutex.lock();
   }
+
 
   /**
    * Used to reserve the write lock during a commit or rollback.
@@ -584,11 +592,12 @@ public class MulgaraTransactionManager {
     for (int i = 0; i < holdCount; i++) {
       mutex.unlock();
     }
-
-    proc.execute();
-
-    for (int i = 0; i < holdCount; i++) {
-      mutex.lock();
+    try {
+      proc.execute();
+    } finally {
+      for (int i = 0; i < holdCount; i++) {
+        mutex.lock();
+      }
     }
   }
 }
