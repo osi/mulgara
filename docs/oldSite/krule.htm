@@ -73,7 +73,7 @@
 
           <h1 class="heading1">Mulgara Rules Engine (Krule) Users
           Guide</h1>
-          <p class="bodytext">Mulgara 1.0 includes a custom rules
+          <p class="bodytext">Mulgara includes a custom rules
           engine known as Krule (pronounced "cruel" by its lead
           developer).</p>
 
@@ -111,7 +111,7 @@
           Krule setup, you may have to also change the URLs
           embedded in the Krule rules files (called krule.owl and
           rdfs-krule.rdf, both of which are located in the
-          .../mulgaa-1.0/rules/ directory) and in the commands
+          .../mulgaa/rules/ directory) and in the commands
           given below.</p>
 
           <p class="bodytext">First, set up some handy aliases:</p>
@@ -143,7 +143,7 @@ create &lt;rmi://localhost/server1#krule&gt;;
           <p class="bodytext">Load the Krule ontology into your
           krule model. This ontology is used regardless of which
           rules are used. You will need to replace "@basedir@" with
-          the path to your Mulgara v1.0 source code
+          the path to your Mulgara source code
           installation:</p>
           <p class="commandtext">
 # Load the ontology for how the rules data fits together.
@@ -154,7 +154,7 @@ load &lt;file:@basedir@/rules/krule.owl&gt;
           <p class="bodytext">Load your rules into your krule
           model. In this case, we are loading the RDF Schema
           entailment rules which are provided in the file
-          .../mulgara-1.0/rules/rdfs-krule.rdf.</p>
+          .../mulgara/rules/rdfs-krule.rdf.</p>
           <p class="commandtext">
 # Load the rules data.
 load &lt;file:@basedir@/rules/rdfs-krule.rdf&gt;
@@ -168,7 +168,7 @@ load &lt;file:@basedir@/rules/rdfs-krule.rdf&gt;
 
           <p class="bodytext">Please note that the instructions in
           this section follow the file
-          .../mulgara-1.0/rules/example.itql, originally written by
+          .../mulgara/rules/example.itql, originally written by
           Paul Gearon.</p><a name="okrule2" id="okrule2">
 
           <h2 class="heading2">Using Krule</h2>
@@ -213,7 +213,7 @@ apply &lt;rulesmodel&gt; to &lt;basemodel&gt; &lt;entailedmodel&gt;;
           <p class="commandtext">
 drop &lt;rmi://localhost/server1#input&gt;;
 create &lt;rmi://localhost/server1#input&gt;;
-load &lt;jar:file:/@basedir@/dist/mulgara-1.0.0.jar!/data/w3c-news.rss&gt;
+load &lt;jar:file:/@basedir@/dist/mulgara-<em>x.y.z</em>.jar!/data/w3c-news.rss&gt;
      into &lt;rmi://localhost/server1#input&gt;;
 </p>
 
@@ -302,13 +302,13 @@ where $subject $predicate $object;
 
           <p class="bodytext">Information for developers
           information may be found in the source under
-          .../mulgara-1.0/rules/RuleFormat.txt. That file includes a
+          .../mulgara/rules/RuleFormat.txt. That file includes a
           discussion on the format for rule definitions.</p>
 
           <p class="bodytext">A sample set of rules which implement
           RDF Schema (RDFS) entailments is provided in the source
           distribution in the file
-          .../mulgara-1.0/rules/rdfs-krule.rdf. You should review
+          .../mulgara/rules/rdfs-krule.rdf. You should review
           those rules to make sure you understand how they work
           before creating your own.</p>
 
