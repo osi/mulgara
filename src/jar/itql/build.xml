@@ -49,7 +49,7 @@
     <mkdir dir="${itql.obj.dir}/java"/>
   </target>
 
-  <target name="gen-itql-parser" depends="-prepare-build, itql-parser-uptodate, sablecc" unless="itql-parser-uptodate">
+  <target name="gen-itql-parser" depends="-itql-prepare, itql-parser-uptodate, sablecc" unless="itql-parser-uptodate">
     <sablecc src="${itql.src.dir}/sablecc" outputdirectory="${itql.obj.dir}/java">
       <include name="itql.grammar"/>
     </sablecc>
@@ -143,6 +143,7 @@
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
 

@@ -11,10 +11,14 @@
   <!-- =================================================================== -->
   <target name="config-generate-uptodate">
 
-    <uptodate property="config-generate-uptodate"
-       targetfile="${config.dist.dir}/${config.jar}">
-      <srcfiles dir="${conf.dir}" includes="mulgara-embedded.xsd"/>
-    </uptodate>
+    <condition property="config-generate-uptodate">
+      <and>
+        <uptodate targetfile="${config.dist.dir}/${config.jar}">
+          <srcfiles dir="${conf.dir}" includes="mulgara-embedded.xsd"/>
+        </uptodate>
+        <available file="${obj.dir}/jar/config/java" type="dir"/>
+      </and>
+    </condition>
   </target>
 
   <target name="config-generate" depends="config-generate-uptodate"
