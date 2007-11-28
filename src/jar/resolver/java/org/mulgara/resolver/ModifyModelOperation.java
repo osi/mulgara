@@ -28,7 +28,6 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.URI;
 import java.util.*;
 
@@ -86,7 +85,7 @@ class ModifyModelOperation implements Operation
    * If this field is not <code>null</code>, {@link #query} will be
    * <code>null</code>
    */
-  private final Set tripleSet;
+  private final Set<Triple> tripleSet;
 
   /**
    * The query generating the statements whose occurence is to be modified.
@@ -97,8 +96,6 @@ class ModifyModelOperation implements Operation
    * Whether to insert or delete statements from the model.
    */
   private final boolean insert;
-
-  private final DatabaseSession databaseSession;
 
   //
   // Constructor
@@ -115,7 +112,7 @@ class ModifyModelOperation implements Operation
    * @throws IllegalArgumentException if <var>modelURI</var> or
    *   <var>tripleSet</var> are <code>null</code>
    */
-  ModifyModelOperation(URI modelURI, Set tripleSet, boolean insert)
+  ModifyModelOperation(URI modelURI, Set<Triple> tripleSet, boolean insert)
   {
     // Validate "modelURI" parameter
     if (modelURI == null) {
@@ -132,7 +129,6 @@ class ModifyModelOperation implements Operation
     this.tripleSet = tripleSet;
     this.query     = null;
     this.insert    = insert;
-    this.databaseSession = null;
   }
 
   /**
@@ -176,7 +172,6 @@ class ModifyModelOperation implements Operation
     this.tripleSet = null;
     this.query     = query;
     this.insert    = insert;
-    this.databaseSession = databaseSession;
   }
 
   //
@@ -229,10 +224,7 @@ class ModifyModelOperation implements Operation
     model = operationContext.getCanonicalModel(model);
 
     // Make sure security adapters are satisfied
-    for (Iterator i = operationContext.getSecurityAdapterList().iterator();
-         i.hasNext(); )
-    {
-      SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+    for (SecurityAdapter securityAdapter: (List<SecurityAdapter>)operationContext.getSecurityAdapterList()) {
 
       // Lie to the user
       if (!securityAdapter.canSeeModel(model, systemResolver)) {

@@ -35,7 +35,6 @@ import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.URIReference;
 import org.jrdf.graph.Node;
 
 // Locally written packages
@@ -43,11 +42,9 @@ import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
-import org.mulgara.store.statement.StatementStoreException;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.stringpool.StringPoolException;
-import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.SimpleXAResourceException;
@@ -85,7 +82,7 @@ public class MemoryResolver implements SystemResolver {
    * The shared set of {@link Stating}s for the factory that produced this
    * instance.
    */
-  private final Set statingSet;
+  private final Set<Stating> statingSet;
 
   private XAResolverSession xaResolverSession;
 
@@ -112,7 +109,7 @@ public class MemoryResolver implements SystemResolver {
                  long            rdfType,
                  long            systemModel,
                  URI             modelTypeURI,
-                 Set             statingSet)
+                 Set<Stating>    statingSet)
       throws ResolverFactoryException {
 
     // Validate "modelType" parameter
@@ -132,7 +129,7 @@ public class MemoryResolver implements SystemResolver {
   MemoryResolver(long              rdfType,
                  long              systemModel,
                  URI               modelTypeURI,
-                 Set               statingSet,
+                 Set<Stating>      statingSet,
                  XAResolverSession resolverSession)
       throws ResolverFactoryException {
     
@@ -213,11 +210,8 @@ public class MemoryResolver implements SystemResolver {
     }
 
     // Remove all the statings belonging to the model
-    for (Iterator i = statingSet.iterator(); i.hasNext();) {
-      Stating stating = (Stating) i.next();
-      if (stating.get(3) == model) {
-        i.remove();
-      }
+    for (Iterator<Stating> i = statingSet.iterator(); i.hasNext();) {
+      if (i.next().get(3) == model) i.remove();
     }
   }
 
@@ -251,14 +245,10 @@ public class MemoryResolver implements SystemResolver {
 
           // Modify the occurrence of the stating
           if (occurs) {
-            if (logger.isDebugEnabled()) {
-              logger.debug("Adding " + stating);
-            }
+            if (logger.isDebugEnabled()) logger.debug("Adding " + stating);
             statingSet.add(stating);
           } else {
-            if (logger.isDebugEnabled()) {
-              logger.debug("Removing " + stating);
-            }
+            if (logger.isDebugEnabled()) logger.debug("Removing " + stating);
             statingSet.remove(stating);
           }
         }
@@ -268,8 +258,7 @@ public class MemoryResolver implements SystemResolver {
         logger.debug("Modified memory model " + model + ": " + statingSet);
       }
     } catch (TuplesException e) {
-      throw new ResolverException(
-        "Couldn't modify model, and may have corrupted the store", e);
+      throw new ResolverException("Couldn't modify model, and may have corrupted the store", e);
     }
   }
 
@@ -357,18 +346,13 @@ public class MemoryResolver implements SystemResolver {
    * @throws IllegalArgumentException if the <var>statingSet</var> contains any
    *   element which is not a stating (<code>long[4]</code>)
    */
-  private static String toString(Set statingSet)
-  {
-    if (statingSet == null) {
-      return "null";
-    }
+  @SuppressWarnings("unused")
+  private static String toString(Set<Stating> statingSet) {
+    if (statingSet == null) return "null";
 
     StringBuffer buffer = new StringBuffer("[");
-    for (Iterator i = statingSet.iterator(); i.hasNext();) {
-      Object object = i.next();
-      buffer.append((object instanceof long[])
-                    ? AbstractTuples.toString((long[]) object)
-                    : object.toString());
+    for (Iterator<Stating> i = statingSet.iterator(); i.hasNext();) {
+      buffer.append(i.next());
       buffer.append(i.hasNext() ? " " : "]");
     }
 

@@ -28,6 +28,7 @@
 package org.mulgara.query;
 
 // Java 2 standard packages
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -110,9 +111,9 @@ public abstract class ModelOperation implements ModelExpression {
    *
    * @return The DatabaseURIs value
    */
-  public Set getDatabaseURIs() {
+  public Set<URI> getDatabaseURIs() {
 
-    Set databaseURIs = new HashSet();
+    Set<URI> databaseURIs = new HashSet<URI>();
     databaseURIs.addAll(lhs.getDatabaseURIs());
     databaseURIs.addAll(rhs.getDatabaseURIs());
 
@@ -144,64 +145,61 @@ public abstract class ModelOperation implements ModelExpression {
   }
 
   /**
-   * METHOD TO DO
+   * Transform to an equivalent WHERE clause expression.
    *
-   * @param m PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param m The object to compare against.
+   * @return <code>true</code> if the objects are the same type,
+   *         and applied to the same operands 
    */
   public boolean equals(Object m) {
-    if (m == null) return false;
+    
+    if (!(m instanceof ModelOperation)) return false;
+    if ((m == null) || !m.getClass().equals(getClass())) return false;
     if (m == this) return true;
 
     Class<?> type = m.getClass();
-    if (!type.equals(getClass())) return false;
 
+    Set<ModelExpression> otherExpressions = new HashSet<ModelExpression>();
+    ((ModelOperation)m).flattenExpression(otherExpressions, type);
 
-    Set otherExpressions = new HashSet();
-    ( (ModelOperation) m).flattenExpression(otherExpressions, type);
-
-    Set myExpressions = new HashSet();
+    Set<ModelExpression> myExpressions = new HashSet<ModelExpression>();
     flattenExpression(myExpressions, type);
 
     return myExpressions.equals(otherExpressions);
   }
 
   /**
-   * METHOD TO DO
+   * Creates a hash code, based on the child expressions and the current operation type.
    *
-   * @return RETURNED VALUE TO DO
+   * @return The hash code for this object.
    */
   public int hashCode() {
 
-    Set myExpressions = new HashSet();
+    Set<ModelExpression> myExpressions = new HashSet<ModelExpression>();
     flattenExpression(myExpressions, getClass());
 
     return (getClass().hashCode() * 7) + myExpressions.hashCode();
   }
 
   /**
-   * METHOD TO DO
+   * Traverse down the binary tree of the current object, and merge any nodes
+   * of the current type into a flattened set.
    *
-   * @param expressions PARAMETER TO DO
-   * @param type PARAMETER TO DO
+   * @param expressions The set to be built up containing all nodes being
+   *        operated on in the same way.
+   * @param type The class representing the operation type.
    */
-  private void flattenExpression(Set expressions, Class type) {
+  private void flattenExpression(Set<ModelExpression> expressions, Class<?> type) {
 
     if (lhs.getClass().equals(type)) {
-
-      ( (ModelOperation) lhs).flattenExpression(expressions, type);
-    }
-    else {
-
+      ((ModelOperation)lhs).flattenExpression(expressions, type);
+    } else {
       expressions.add(lhs);
     }
 
     if (rhs.getClass().equals(type)) {
-
-      ( (ModelOperation) rhs).flattenExpression(expressions, type);
-    }
-    else {
-
+      ((ModelOperation)rhs).flattenExpression(expressions, type);
+    } else {
       expressions.add(rhs);
     }
   }
@@ -212,19 +210,15 @@ public abstract class ModelOperation implements ModelExpression {
   public Object clone() {
 
     try {
-
-      ModelOperation cloned = (ModelOperation) super.clone();
+      ModelOperation cloned = (ModelOperation)super.clone();
 
       // Copy database URIs.
-      cloned.lhs = (ModelExpression) lhs.clone();
-      cloned.rhs = (ModelExpression) rhs.clone();
+      cloned.lhs = (ModelExpression)lhs.clone();
+      cloned.rhs = (ModelExpression)rhs.clone();
 
       return cloned;
-    }
-    catch (CloneNotSupportedException e) {
-      throw new RuntimeException(
-          "ModelOperation subclass " + getClass() + " not cloneable"
-          );
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException("ModelOperation subclass " + getClass() + " not cloneable");
     }
   }
 

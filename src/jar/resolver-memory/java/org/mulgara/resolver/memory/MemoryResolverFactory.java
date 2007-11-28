@@ -28,7 +28,6 @@
 package org.mulgara.resolver.memory;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +40,6 @@ import org.jrdf.vocabulary.RDF;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAResolverSessionFactory;
@@ -72,20 +70,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
    */
   private long rdfType;
 
-  /**
-   * The preallocated local node representing models stored on the Java heap.
-   */
-  private long modelType;
-
-  private static final URI modelTypeURI;
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
-      assert modelTypeURI != null;
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded memory model URI", e);
-    }
-  }
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "MemoryModel");
 
 
   /**
@@ -97,7 +82,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
    * The {@link Stating}s which occur in all models created by resolvers
    * created by this factory.
    */
-  private final Set statingSet = new HashSet();
+  private final Set<Stating> statingSet = new HashSet<Stating>();
 
   private XAResolverSessionFactory sessionFactory;
 
@@ -113,14 +98,12 @@ public class MemoryResolverFactory implements SystemResolverFactory
   {
     // Validate parameters
     if (initializer == null) {
-      throw new IllegalArgumentException(
-        "Null 'resolverFactoryInitializer' parameter");
+      throw new IllegalArgumentException("Null 'resolverFactoryInitializer' parameter");
     }
 
     // Initialize fields
     rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
-
-    modelType = initializer.preallocate(new URIReferenceImpl(modelTypeURI));
+    initializer.preallocate(new URIReferenceImpl(modelTypeURI));
 
     systemModel = initializer.getSystemModel();
 
@@ -146,15 +129,13 @@ public class MemoryResolverFactory implements SystemResolverFactory
   // Methods implementing SystemResolverFactory (excluding newResolver)
   //
 
-  public URI getSystemModelTypeURI()
-  {
+  public URI getSystemModelTypeURI() {
     return modelTypeURI;
   }
 
 
   public void setDatabaseMetadata(DatabaseMetadata metadata) {
     rdfType = metadata.getRdfTypeNode();
-    modelType = metadata.getSystemModelTypeNode();
     systemModel = metadata.getSystemModelNode();
   }
 
@@ -169,8 +150,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
    * This is actually a non-operation, because there are no persistent
    * resources.
    */
-  public void close()
-  {
+  public void close() {
     // null implementation
   }
 
@@ -180,8 +160,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
    * This is actually a non-operation, because there are no persistent
    * resources.
    */
-  public void delete()
-  {
+  public void delete() {
     // null implementation
   }
 
@@ -195,39 +174,33 @@ public class MemoryResolverFactory implements SystemResolverFactory
    *   found or created
    */
   public static ResolverFactory newInstance(ResolverFactoryInitializer initializer)
-      throws InitializerException
-  {
+      throws InitializerException {
+    if (logger.isDebugEnabled()) logger.debug("Creating memory resolver factory");
     return new MemoryResolverFactory(initializer);
   }
 
 
-  public static ResolverFactory newInstance(FactoryInitializer initializer,
-                                            XAResolverSessionFactory sessionFactory)
-      throws InitializerException
-  {
+  public static ResolverFactory newInstance(
+      FactoryInitializer initializer, XAResolverSessionFactory sessionFactory
+  ) throws InitializerException {
+    if (logger.isDebugEnabled()) logger.debug("Creating memory resolver factory");
     return new MemoryResolverFactory(initializer, sessionFactory);
   }
 
 
-  public int[] recover() throws SimpleXAResourceException
-  {
+  public int[] recover() {
     return new int[] {};
   }
 
-  public void selectPhase(int phaseNumber) throws IOException,
-      SimpleXAResourceException
-  {
+  public void selectPhase(int phaseNumber) throws SimpleXAResourceException {
     throw new SimpleXAResourceException("Unable to selectPhase on MemoryResolver");
   }
 
-  public void clear() throws IOException, SimpleXAResourceException
-  {
+  public void clear() {
     return;
   }
 
-  public void clear(int phaseNumber) throws IOException,
-      SimpleXAResourceException
-  {
+  public void clear(int phaseNumber) {
     return;
   }
 
@@ -244,9 +217,10 @@ public class MemoryResolverFactory implements SystemResolverFactory
    *   <code>null</code>
    * @throws ResolverFactoryException {@inheritDoc}
    */
-  public Resolver newResolver(boolean canWrite,
-      ResolverSession resolverSession, Resolver systemResolver) throws ResolverFactoryException
-  {
+  public Resolver newResolver(
+      boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
+  ) throws ResolverFactoryException {
+    if (logger.isDebugEnabled()) logger.debug("Creating memory resolver");
     return new MemoryResolver(resolverSession,
                               systemResolver,
                               rdfType,
@@ -256,9 +230,9 @@ public class MemoryResolverFactory implements SystemResolverFactory
   }
 
 
-  public SystemResolver newResolver(boolean canWrite) throws ResolverFactoryException
-  {
+  public SystemResolver newResolver(boolean canWrite) throws ResolverFactoryException {
     assert sessionFactory != null;
+    if (logger.isDebugEnabled()) logger.debug("Creating memory resolver factory");
     try {
       return new MemoryResolver(rdfType, systemModel, modelTypeURI, statingSet,
                                 (XAResolverSession) sessionFactory.newWritableResolverSession());

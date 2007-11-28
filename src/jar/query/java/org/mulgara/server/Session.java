@@ -34,6 +34,7 @@ import java.util.*;
 import java.io.*;
 
 // Locally written packages
+import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
@@ -69,7 +70,7 @@ public interface Session {
    * This constant can be passed to {@link #createModel} to indicate that a
    * normal model backed by a triple store is required.
    */
-  public final URI MULGARA_MODEL_URI = ConstantFactory.getMulgaraModelURI();
+  public final URI MULGARA_GRAPH_URI = URI.create(Mulgara.NAMESPACE + "Model");
 
   /**
    * Insert statements into a model.
@@ -78,7 +79,7 @@ public interface Session {
    * @param statements The Set of statements to insert into the model.
    * @throws QueryException if the insert cannot be completed.
    */
-  public void insert(URI modelURI, Set statements) throws QueryException;
+  public void insert(URI modelURI, Set<Triple> statements) throws QueryException;
 
   /**
    * Insert statements from the results of a query into another model.
@@ -96,7 +97,7 @@ public interface Session {
    * @param statements The Set of statements to delete from the model.
    * @throws QueryException if the deletion cannot be completed.
    */
-  public void delete(URI modelURI, Set statements) throws QueryException;
+  public void delete(URI modelURI, Set<Triple> statements) throws QueryException;
 
   /**
    * Delete statements from a model using the results of query.
@@ -173,11 +174,11 @@ public interface Session {
    * @return a list of non-<code>null</code> answers to the <var>queries</var>
    * @throws QueryException if <var>query</var> can't be answered
    */
-  public List query(List queries) throws QueryException;
+  public List<Answer> query(List<Query> queries) throws QueryException;
 
   /**
    * Creates a new model of a given type.  The standard model type is
-   * {@link #MULGARA_MODEL_URI}.
+   * {@link #MULGARA_GRAPH_URI}.
    *
    * @param modelURI the {@link URI} of the new model
    * @param modelTypeURI the {@link URI} identifying the type of model to use
@@ -303,19 +304,4 @@ public interface Session {
    */
   public void login(URI securityDomain, String username, char[] password);
 
-  /**
-   * This class is just a devious way to get static initialization for the
-   * {@link Session} interface.
-   */
-  abstract class ConstantFactory {
-
-    static URI getMulgaraModelURI() {
-      try {
-        return new URI(Mulgara.NAMESPACE + "Model");
-      }
-       catch (URISyntaxException e) {
-        throw new Error("Bad hardcoded URI");
-      }
-    }
-  }
 }

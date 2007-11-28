@@ -182,7 +182,7 @@ public interface Tuples extends Cursor, Cloneable {
    * Be aware that the tuples returned from this method are not cloned, and should
    * be considered immutable.
    */
-  public List getOperands();
+  public List<Tuples> getOperands();
 
   /**
    * Move the cursor to before the first row, optionally with a specifies list
@@ -268,5 +268,5 @@ public interface Tuples extends Cursor, Cloneable {
    *
    * @return An annotation of the class requested, or null if none exists.
    */
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException;
+  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException;
 }

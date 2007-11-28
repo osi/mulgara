@@ -88,61 +88,41 @@ public class RmiSessionFactory implements SessionFactory {
    * @throws NamingException if a session factory can't be obtained from the RMI
    *      registry indicated by <var>serverURI</var>
    */
-  public RmiSessionFactory(URI serverURI) throws NamingException, NonRemoteSessionException,
-      RemoteException {
+  public RmiSessionFactory(URI serverURI) throws NamingException, NonRemoteSessionException, RemoteException {
 
     // Validate "serverURI" parameter
     if (serverURI == null) {
-
       throw new IllegalArgumentException("Null \"serverURI\" parameter");
     }
 
     if (!"rmi".equals(serverURI.getScheme())) {
-
-      throw new IllegalArgumentException(serverURI +
-          " doesn't use the rmi: protocol");
+      throw new IllegalArgumentException(serverURI + " doesn't use the rmi: protocol");
     }
 
     if ( (serverURI.getPath() == null) || !serverURI.getPath().startsWith("/")) {
-
-      throw new IllegalArgumentException(serverURI +
-          " isn't a valid RMI server URI");
+      throw new IllegalArgumentException(serverURI + " isn't a valid RMI server URI");
     }
 
     if (serverURI.getFragment() != null) {
-
-      throw new IllegalArgumentException(serverURI +
-          " is a model URI, not a server");
+      throw new IllegalArgumentException(serverURI + " is a model URI, not a server");
     }
 
     // Get the RMI registry as a JNDI naming context
-    Hashtable environment = new Hashtable();
-    environment.put("java.naming.factory.initial",
-        "com.sun.jndi.rmi.registry.RegistryContextFactory");
-    environment.put("java.naming.provider.url",
-        "rmi://" + serverURI.getRawAuthority());
+    Hashtable<String,String> environment = new Hashtable<String,String>();
+    environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.rmi.registry.RegistryContextFactory");
+    environment.put(Context.PROVIDER_URL, "rmi://" + serverURI.getRawAuthority());
 
     Context rmiRegistryContext = new InitialContext(environment);
 
     // Look up the session factory in the RMI registry
-    remoteSessionFactory =
-        (RemoteSessionFactory) rmiRegistryContext.lookup(serverURI.getPath()
-        .substring(1));
+    remoteSessionFactory = (RemoteSessionFactory) rmiRegistryContext.lookup(serverURI.getPath().substring(1));
 
     URI remoteURI = remoteSessionFactory.getDefaultServerURI();
     URI localURI = getLocalURI();
-    if (logger.isDebugEnabled()) {
-      logger.debug("remoteURI=" + remoteURI+" localURI="+localURI);
-    }
+    if (logger.isDebugEnabled()) logger.debug("remoteURI=" + remoteURI+" localURI="+localURI);
     if (remoteURI == null) {
-      logger.warn(
-          "host uri is not set, local = " + (localURI == null ? "<client>" : localURI.toString()) +
-          ", remote = " + remoteURI
-      );
-      throw new NamingException(
-          "host uri is not set, local = " + (localURI == null ? "<client>" : localURI.toString()) +
-          ", remote = " + remoteURI
-      );
+      logger.warn("host uri is not set, local = " + (localURI == null ? "<client>" : localURI.toString()) + ", remote = " + remoteURI);
+      throw new NamingException("host uri is not set, local = " + (localURI == null ? "<client>" : localURI.toString()) + ", remote = " + remoteURI);
     }
     if (remoteURI.equals(localURI) && !serverURI.equals(localURI)) {
       logger.warn("Using non-standard server name: " + serverURI + "  Should be: " + localURI);
@@ -177,8 +157,7 @@ public class RmiSessionFactory implements SessionFactory {
   public URI getSecurityDomain() throws QueryException {
     try {
       return remoteSessionFactory.getSecurityDomain();
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't contact server", e);
     }
   }
@@ -201,8 +180,7 @@ public class RmiSessionFactory implements SessionFactory {
   public Session newSession() throws QueryException {
     try {
       return remoteSessionFactory.newSession();
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't contact server", e);
     }
   }
@@ -210,8 +188,7 @@ public class RmiSessionFactory implements SessionFactory {
   public Session newJRDFSession() throws QueryException {
     try {
       return remoteSessionFactory.newJRDFSession();
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't contact server", e);
     }
   }
@@ -222,29 +199,28 @@ public class RmiSessionFactory implements SessionFactory {
   public void close() throws QueryException {
     try {
       remoteSessionFactory.close();
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't close remote session factory", e);
     }
   }
 
   /**
-   * METHOD TO DO
+   * Remove this factory and all associated resources.  No op.
    */
   public void delete() {
-
     // null implementation
   }
 
   /**
    * Method to ask the ServerInfo for the local server URI.
    * This will return null if ServerInfo is not available.
+   * @return the local server URI
    */
   private URI getLocalURI() {
     try {
-      Class rsf = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method getServerURI = rsf.getMethod("getServerURI", null);
-      Object uri = getServerURI.invoke(null, null);
+      Class<?> rsf = Class.forName("org.mulgara.server.ServerInfo");
+      java.lang.reflect.Method getServerURI = rsf.getMethod("getServerURI", (Class<?>[])null);
+      Object uri = getServerURI.invoke(null, (Object[])null);
       return (URI)uri;
     } catch (Exception e) {
       logger.info("Unable to find ServerInfo.  This may cause problems if this is a server");

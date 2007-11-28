@@ -31,14 +31,8 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.io.*;
-import java.lang.reflect.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-
-// Java 2 enterprise packages
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -48,14 +42,10 @@ import org.jrdf.graph.*;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.rules.*;
 import org.mulgara.server.Session;
 import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.tuples.TuplesOperations;
 
 /**
  * A database session.
@@ -63,12 +53,6 @@ import org.mulgara.store.tuples.TuplesOperations;
  * @created 2004-04-26
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.17 $
- *
- * @modified $Date: 2005/07/03 13:00:26 $ by $Author: pgearon $
- *
- * @maintenanceAuthor $Author: pgearon $
  *
  * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
  *   Technology, Inc</a>
@@ -88,30 +72,34 @@ class DatabaseSession implements Session {
    *
    * This field is read-only.
    */
-  private final Set cachedResolverFactorySet;
+  private final Set<ResolverFactory> cachedResolverFactorySet;
 
-  /** The list of all registered {@link ResolverFactory} instances.  */
-  private final List resolverFactoryList;
+  /**
+   * The list of all registered {@link ResolverFactory} instances.
+   * Not used in this implementation.
+   */
+  @SuppressWarnings("unused")
+  private final List<ResolverFactory> resolverFactoryList;
 
   /**
    * Map from URL protocol {@link String}s to the {@link ResolverFactory} which
    * handles external models using that protocol.
    */
-  private final Map externalResolverFactoryMap;
+  private final Map<String,ResolverFactory> externalResolverFactoryMap;
 
   /**
    * Map from modelType {@link LocalNode}s to the {@link ResolverFactory} which
    * handles that model type.
    */
-  private final Map internalResolverFactoryMap;
+  private final Map<URI,InternalResolverFactory> internalResolverFactoryMap;
 
   private final DatabaseMetadata metadata;
 
   /** Security adapters this instance should enforce. */
-  private final List securityAdapterList;
+  private final List<SecurityAdapter> securityAdapterList;
 
   /** Symbolic transformations this instance should apply. */
-  private final List symbolicTransformationList;
+  private final List<SymbolicTransformation> symbolicTransformationList;
 
   /** Persistent string pool. */
   private final ResolverSessionFactory resolverSessionFactory;
@@ -171,17 +159,17 @@ class DatabaseSession implements Session {
    * @throws IllegalArgumentException if any argument is <code>null</code>
    */
   DatabaseSession(MulgaraTransactionManager transactionManager,
-      List securityAdapterList,
-      List symbolicTransformationList,
+      List<SecurityAdapter> securityAdapterList,
+      List<SymbolicTransformation> symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
       SystemResolverFactory systemResolverFactory,
       ResolverFactory temporaryResolverFactory,
-      List resolverFactoryList,
-      Map externalResolverFactoryMap,
-      Map internalResolverFactoryMap,
+      List<ResolverFactory> resolverFactoryList,
+      Map<String,ResolverFactory> externalResolverFactoryMap,
+      Map<URI,InternalResolverFactory> internalResolverFactoryMap,
       DatabaseMetadata metadata,
       ContentHandlerManager contentHandlers,
-      Set cachedResolverFactorySet,
+      Set<ResolverFactory> cachedResolverFactorySet,
       URI temporaryModelTypeURI,
       String ruleLoaderClassName) throws ResolverFactoryException {
 
@@ -251,17 +239,17 @@ class DatabaseSession implements Session {
    * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
    */
   DatabaseSession(MulgaraTransactionManager transactionManager,
-      List securityAdapterList,
-      List symbolicTransformationList,
+      List<SecurityAdapter> securityAdapterList,
+      List<SymbolicTransformation> symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
       SystemResolverFactory systemResolverFactory,
       ResolverFactory temporaryResolverFactory,
-      List resolverFactoryList,
-      Map externalResolverFactoryMap,
-      Map internalResolverFactoryMap,
+      List<ResolverFactory> resolverFactoryList,
+      Map<String,ResolverFactory> externalResolverFactoryMap,
+      Map<URI,InternalResolverFactory> internalResolverFactoryMap,
       DatabaseMetadata metadata,
       ContentHandlerManager contentHandlers,
-      Set cachedResolverFactorySet,
+      Set<ResolverFactory> cachedResolverFactorySet,
       URI temporaryModelTypeURI) throws ResolverFactoryException {
     this(transactionManager, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
         systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
@@ -309,7 +297,7 @@ class DatabaseSession implements Session {
   // Methods implementing Session
   //
 
-  public void insert(URI modelURI, Set statements) throws QueryException {
+  public void insert(URI modelURI, Set<Triple> statements) throws QueryException {
     modify(modelURI, statements, ASSERT_STATEMENTS);
   }
 
@@ -317,7 +305,7 @@ class DatabaseSession implements Session {
     modify(modelURI, query, ASSERT_STATEMENTS);
   }
 
-  public void delete(URI modelURI, Set statements) throws QueryException {
+  public void delete(URI modelURI, Set<Triple> statements) throws QueryException {
     modify(modelURI, statements, DENY_STATEMENTS);
   }
 
@@ -389,7 +377,7 @@ class DatabaseSession implements Session {
     return queryOperation.getAnswer();
   }
 
-  public List query(List queryList) throws QueryException {
+  public List<Answer> query(List<Query> queryList) throws QueryException {
     if (logger.isInfoEnabled()) {
       StringBuffer log = new StringBuffer("QUERYING LIST: ");
       for (int i = 0; i < queryList.size(); i++) {
@@ -567,8 +555,8 @@ class DatabaseSession implements Session {
 
     if (securityDomain.equals(metadata.getSecurityDomainURI())) {
       // Propagate the login event to the security adapters
-      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
-        ((SecurityAdapter) i.next()).login(user, password);
+      for (SecurityAdapter adapter: securityAdapterList) {
+        adapter.login(user, password);
       }
     }
   }
@@ -594,7 +582,7 @@ class DatabaseSession implements Session {
   //
   // Internal utility methods.
   //
-  protected void modify(URI modelURI, Set statements, boolean insert) throws QueryException
+  protected void modify(URI modelURI, Set<Triple> statements, boolean insert) throws QueryException
   {
     if (logger.isInfoEnabled()) {
       logger.info("Inserting statements into " + modelURI);

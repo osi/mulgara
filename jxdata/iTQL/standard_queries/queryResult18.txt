@@ -1,5 +1,4 @@
-ItqlInterpreter error - org.mulgara.query.QueryException: Query failed
-Caused by: (QueryException) Query failed
+ItqlInterpreter error - Query failed
 Caused by: (QueryException) org.mulgara.query.MulgaraTransactionException: Transaction rollback triggered
 Caused by: (QueryException) Error resolving [$s $p $o $_from] from mailto:foo@bar.com
 Caused by: (QueryException) Unable to extract hostname from: mailto:foo@bar.com

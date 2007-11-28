@@ -57,39 +57,25 @@ import java.util.*;
  */
 public class RDFLoadLog {
 
-  /**
-   * Get line separator.
-   */
+  /** Get line separator. */
   private static final String eol = System.getProperty("line.separator");
 
-  /**
-   * The file to log to.
-   */
+  /** The file to log to. */
   private File logFile = null;
 
-  /**
-   * Writer for writing to the log file
-   */
+  /** Writer for writing to the log file */
   private PrintWriter logWriter = null;
 
-  /**
-   * Set of files from the log that are already loaded
-   */
-  private Set loadedFileSet = new HashSet();
+  /** Set of files from the log that are already loaded */
+  private Set<String> loadedFileSet = new HashSet<String>();
 
-  /**
-   * A buffer to log errors to
-   */
+  /** A buffer to log errors to */
   private StringBuffer errorBuffer = new StringBuffer();
 
-  /**
-   * The number of files loaded in all logged runs
-   */
+  /** The number of files loaded in all logged runs */
   private int numLoaded = 0;
 
-  /**
-   * The number of errors that occurred
-   */
+  /** The number of errors that occurred */
   private int numErrors = 0;
 
   /**
@@ -104,17 +90,13 @@ public class RDFLoadLog {
 
     logFile = file;
 
-    List loadedList = null;
+    List<String> loadedList = null;
 
-    if (read) {
-
-      loadedList = readLog();
-    }
+    if (read) loadedList = readLog();
 
     setupLogWriter();
 
-    if ( (loadedList != null) && (loadedList.size() > 0)) {
-
+    if ((loadedList != null) && (loadedList.size() > 0)) {
       writeExisting(loadedList);
     }
   }
@@ -122,22 +104,19 @@ public class RDFLoadLog {
   /**
    * Is the file already loaded.
    *
-   * @param file PARAMETER TO DO
+   * @param file The name of the file to check.
    * @return true if the file is already loaded.
    */
   public boolean isLoaded(String file) {
-
     return loadedFileSet.contains(file);
   }
 
   /**
    * Get the number of files loaded from the current and previous logged runs.
    *
-   * @return The number of files loaded from the current and previous logged
-   *      runs.
+   * @return The number of files loaded from the current and previous logged runs.
    */
   public int getNumLoaded() {
-
     return numLoaded;
   }
 
@@ -147,7 +126,6 @@ public class RDFLoadLog {
    * @return The the number of errors that occurred.
    */
   public int getNumErrors() {
-
     return numErrors;
   }
 
@@ -157,7 +135,6 @@ public class RDFLoadLog {
    * @param file The file to log as loaded.
    */
   public void logLoadedFile(File file) {
-
     logWriter.println(file.getAbsolutePath());
     logWriter.flush();
     numLoaded++;
@@ -168,13 +145,8 @@ public class RDFLoadLog {
    *
    * @param list The list of files (File objects) to log as loaded.
    */
-  public void logLoadedFiles(List list) {
-
-    Iterator iter = list.iterator();
-
-    while (iter.hasNext()) {
-
-      File file = (File) iter.next();
+  public void logLoadedFiles(List<File> list) {
+    for (File file: list) {
       logWriter.println(file.getAbsolutePath());
       numLoaded++;
     }
@@ -189,7 +161,6 @@ public class RDFLoadLog {
    * @param message An error message.
    */
   public void logLoadError(File file, String message) {
-
     errorBuffer.append("Could not load file '" + file.getAbsolutePath() +
                        "'." + eol + message + eol + eol);
     numErrors++;
@@ -201,7 +172,6 @@ public class RDFLoadLog {
    * @param message An error message.
    */
   public void logLoadError(String message) {
-
     errorBuffer.append(message + eol + eol);
     numErrors++;
   }
@@ -211,7 +181,6 @@ public class RDFLoadLog {
    *
    */
   public void close() {
-
     // Write out the errors
     logWriter.println();
     logWriter.println("Total files loaded: " + numLoaded);
@@ -238,13 +207,9 @@ public class RDFLoadLog {
    */
   private void setupLogWriter() throws IOException {
 
-    // Make the log file and any required directories
-    if (!logFile.exists()) {
-
-      logFile.getParentFile().mkdirs();
-    }
-
     if (logFile != null) {
+      // Make the log file and any required directories
+      if (!logFile.exists()) logFile.getParentFile().mkdirs();
 
       logWriter = new PrintWriter(new FileWriter(logFile));
     }
@@ -253,12 +218,12 @@ public class RDFLoadLog {
   /**
    * Reads in the files already loaded from the log file.
    *
-   * @return RETURNED VALUE TO DO
+   * @return A list of all the lines from the log file.
    * @throws IOException on error.
    */
-  private List readLog() throws IOException {
+  private List<String> readLog() throws IOException {
 
-    List loadedList = new ArrayList();
+    List<String> loadedList = new ArrayList<String>();
 
     if (logFile.exists()) {
 
@@ -266,12 +231,11 @@ public class RDFLoadLog {
       String line = inReader.readLine();
 
       // Read in the files previously loaded.
-      while ( (line != null) && (line.trim().length() != 0)) {
+      while ((line != null) && (line.trim().length() != 0)) {
 
         loadedFileSet.add(line);
 
-        // Use list as well to keep files in same log order when written out
-        // again.
+        // Use list as well to keep files in same log order when written out again.
         loadedList.add(line);
         line = inReader.readLine();
       }
@@ -287,13 +251,10 @@ public class RDFLoadLog {
    *
    * @param loadedList The list of file loaded last time.
    */
-  private void writeExisting(List loadedList) {
+  private void writeExisting(List<String> loadedList) {
 
-    Iterator iter = loadedList.iterator();
-
-    while (iter.hasNext()) {
-
-      logWriter.println(iter.next());
+    for (String file: loadedList) {
+      logWriter.println(file);
       numLoaded++;
     }
 

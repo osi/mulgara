@@ -28,27 +28,13 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 // Third party packages
-import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Log4J
-import org.jrdf.vocabulary.RDF;  // JRDF
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Mulgara;
-import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
-import org.mulgara.util.FileUtil;
 
 /**
 * Test case for {@link DatabaseSession}.
@@ -62,23 +48,21 @@ import org.mulgara.util.FileUtil;
 *      Software Pty Ltd</a>
 * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
 */
-
 public class TestDef {
   /** Logger.  */
-  private static Logger logger =
-    Logger.getLogger(TestDef.class.getName());
+  private static Logger logger = Logger.getLogger(TestDef.class.getName());
 
   public String name;
   public String[] resolvers;
-  public List selectList;
+  public List<Variable> selectList;
   public ModelExpression model;
   public ConstraintExpression query;
-  public List results;
+  public List<List<Object>> results;
   public String errorString;
 
+  @SuppressWarnings("unchecked")
   public TestDef(String name, String[] resolvers, TestQuery query,
-                 ModelExpression model, List results, String errorString)
-  {
+                 ModelExpression model, List results, String errorString) {
     this.name = name;
     this.resolvers = resolvers;
     this.model = model;
@@ -90,10 +74,9 @@ public class TestDef {
 
 
   static private class TestQuery {
-    public List selectList;
+    public List<Variable> selectList;
     public ConstraintExpression query;
-    public TestQuery(List selectList, ConstraintExpression query)
-    {
+    public TestQuery(List<Variable> selectList, ConstraintExpression query) {
       this.selectList = selectList;
       this.query = query;
     }
@@ -110,8 +93,7 @@ public class TestDef {
     }
 
     public TestDef parse(String name, String[] resolvers, String query,
-                         String model, String resultDefs, String errorString)
-    {
+                         String model, String resultDefs, String errorString) {
       return new TestDef(name, resolvers,
           query == null ? null : parseQuery(new StringTokenizer(query, "() ", true)),
           model == null ? null : parseModel(new StringTokenizer(model, "() ", true)),
@@ -120,8 +102,7 @@ public class TestDef {
     }
 
 
-    private String getToken(StringTokenizer tokenizer)
-    {
+    private String getToken(StringTokenizer tokenizer) {
       String token;
       do {
         token = tokenizer.nextToken();
@@ -132,9 +113,7 @@ public class TestDef {
     }
 
 
-    private ModelExpression parseModel(StringTokenizer tokenizer)
-    {
-      ModelExpression expr;
+    private ModelExpression parseModel(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
 
       if ("(".equals(token)) {
@@ -147,8 +126,7 @@ public class TestDef {
     }
 
 
-    private ModelOperation parseModelOperation(StringTokenizer tokenizer)
-    {
+    private ModelOperation parseModelOperation(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
       ModelExpression lhs = parseModel(tokenizer);
       ModelExpression rhs = parseModel(tokenizer);
@@ -166,8 +144,7 @@ public class TestDef {
     }
 
 
-    private ModelResource parseModelResource(String token)
-    {
+    private ModelResource parseModelResource(String token) {
       try {
         int index = Integer.parseInt(token.substring(1));
         if (index > models.length) {
@@ -181,8 +158,7 @@ public class TestDef {
     }
 
 
-    private TestQuery parseQuery(StringTokenizer tokenizer)
-    {
+    private TestQuery parseQuery(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
       if ("(".equals(token)) {
         return parseQueryExpression(tokenizer);
@@ -192,11 +168,10 @@ public class TestDef {
     }
 
 
-    private TestQuery parseQueryExpression(StringTokenizer tokenizer)
-    {
+    private TestQuery parseQueryExpression(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
       if ("query".equals(token)) {
-        List selectList = parseSelectList(tokenizer);
+        List<Variable> selectList = parseSelectList(tokenizer);
 
         token = getToken(tokenizer);
         if (!"(".equals(token)) {
@@ -211,8 +186,7 @@ public class TestDef {
     }
 
 
-    private List parseSelectList(StringTokenizer tokenizer)
-    {
+    private List<Variable> parseSelectList(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
       if ("(".equals(token)) {
         return parseVariableList(tokenizer);
@@ -222,9 +196,8 @@ public class TestDef {
     }
 
 
-    private List parseVariableList(StringTokenizer tokenizer)
-    {
-      List variableList = new ArrayList();
+    private List<Variable> parseVariableList(StringTokenizer tokenizer) {
+      List<Variable> variableList = new ArrayList<Variable>();
       String token = getToken(tokenizer);
       while (!")".equals(token)) {
         variableList.add(parseVariable(token));
@@ -235,8 +208,7 @@ public class TestDef {
     }
 
 
-    private Variable parseVariable(String token)
-    {
+    private Variable parseVariable(String token) {
       try {
         int index = Integer.parseInt(token.substring(1));
         if (index > elements.length) {
@@ -253,8 +225,7 @@ public class TestDef {
     }
 
 
-    private ConstraintExpression parseConstraintExpression(StringTokenizer tokenizer)
-    {
+    private ConstraintExpression parseConstraintExpression(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
       if ("and".equals(token)) {
         return new ConstraintConjunction(parseConstraintArguments(tokenizer));
@@ -269,9 +240,8 @@ public class TestDef {
     }
 
 
-    private List parseConstraintArguments(StringTokenizer tokenizer)
-    {
-      List arguments = new ArrayList();
+    private List<ConstraintExpression> parseConstraintArguments(StringTokenizer tokenizer) {
+      List<ConstraintExpression> arguments = new ArrayList<ConstraintExpression>();
 
       while (true) {
         String token = getToken(tokenizer);
@@ -288,8 +258,7 @@ public class TestDef {
     }
 
 
-    private Constraint parseConstraint(StringTokenizer tokenizer)
-    {
+    private Constraint parseConstraint(StringTokenizer tokenizer) {
       Constraint constraint =
           new ConstraintImpl(parseConstraintElement(getToken(tokenizer)),
                          parseConstraintElement(getToken(tokenizer)),
@@ -303,8 +272,7 @@ public class TestDef {
     }
 
 
-    private ConstraintElement parseConstraintElement(String token)
-    {
+    private ConstraintElement parseConstraintElement(String token) {
       try {
         int index = Integer.parseInt(token.substring(1));
         if (index > elements.length) {
@@ -319,10 +287,10 @@ public class TestDef {
 
 
     /**
-     * @return A list of lists of result-strings.
+     * @return A list of lists (to arbitrary depth) of result-strings.
      */
-    private List parseResultDefinition(StringTokenizer tokenizer)
-    {
+    @SuppressWarnings("unchecked")
+    private List parseResultDefinition(StringTokenizer tokenizer) {
       logger.debug("Parsing Result Definition");
       String token = getToken(tokenizer);
       if ("(".equals(token)) {
@@ -334,14 +302,14 @@ public class TestDef {
 
 
     /**
-     * @return A list of lists of result-strings.
+     * @return A list of lists (to arbitrary depth) of result-strings.
      */
-    private List parseResultExpression(StringTokenizer tokenizer)
-    {
+    @SuppressWarnings("unchecked")
+    private List parseResultExpression(StringTokenizer tokenizer) {
       logger.debug("parseResultExpression");
       String token = getToken(tokenizer);
       if ("result".equals(token)) {
-        List result = parseResultList(tokenizer);
+        List<List<String>> result = parseResultList(tokenizer);
         logger.debug("returning result-list-expression: " + result);
         return result;
       }
@@ -366,10 +334,9 @@ public class TestDef {
     /**
      * @return A list of lists of result-strings.
      */
-    private List parseResultList(StringTokenizer tokenizer)
-    {
+    private List<List<String>> parseResultList(StringTokenizer tokenizer) {
       logger.debug("parseResultList");
-      List result = new ArrayList();
+      List<List<String>> result = new ArrayList<List<String>>();
       String token = getToken(tokenizer);
       while (!")".equals(token)) {
 
@@ -380,7 +347,7 @@ public class TestDef {
 
           // Create a temporary token to store our tokenised string
           String tempToken = "";
-          List tempList = new ArrayList();
+          List<String> tempList = new ArrayList<String>();
 
           // Get the next token
           token = getToken(tokenizer);
@@ -402,8 +369,7 @@ public class TestDef {
           result.addAll(parseResult(token));
           //result.add(tempList);
           token = getToken(tokenizer);
-        }
-        else {
+        } else {
           result.addAll(parseResult(token));
           token = getToken(tokenizer);
         }
@@ -415,10 +381,9 @@ public class TestDef {
     /**
      * @return A list of result-strings.
      */
-    private List parseResult(String token)
-    {
+    private List<List<String>> parseResult(String token) {
       logger.debug("parsing result " + token);
-      List result = new ArrayList();
+      List<List<String>> result = new ArrayList<List<String>>();
 
       if (token.startsWith("p") || token.startsWith("o") || token.startsWith("s")) {
         if (token.endsWith("*")) {
@@ -442,8 +407,8 @@ public class TestDef {
      *
      * Specifically a list of result-expressions.
      */
-    private LinkedList parseProductTerms(StringTokenizer tokenizer)
-    {
+    @SuppressWarnings("unchecked")
+    private LinkedList parseProductTerms(StringTokenizer tokenizer) {
       logger.debug("parseProductTerms");
       LinkedList result = new LinkedList();
 
@@ -464,8 +429,8 @@ public class TestDef {
      * @param productTerms A list of lists of lists of result-strings, from parseProductTerms.
      * @return A list of lists of result-strings.
      */
-    private List produceProduct(LinkedList productTerms)
-    {
+    @SuppressWarnings("unchecked")
+    private List produceProduct(LinkedList productTerms) {
       logger.debug("produceProduct");
       if (productTerms.size() == 1) {
         return (List)productTerms.get(0);
@@ -498,8 +463,8 @@ public class TestDef {
       }
     }
 
-    private LinkedList parseDivideTerms(StringTokenizer tokenizer)
-    {
+    @SuppressWarnings("unchecked")
+    private LinkedList parseDivideTerms(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
       if (!"(".equals(token)) {
         throw new IllegalArgumentException("Divide requires s-expr for foreach " + token);
@@ -511,8 +476,8 @@ public class TestDef {
       return parseForeachResults(tokenizer);
     }
 
-    private LinkedList parseForeachResults(StringTokenizer tokenizer)
-    {
+    @SuppressWarnings("unchecked")
+    private LinkedList parseForeachResults(StringTokenizer tokenizer) {
       LinkedList result = new LinkedList();
 
       String token = getToken(tokenizer);
@@ -527,8 +492,8 @@ public class TestDef {
       return result;
     }
 
-    private List produceDivide(List divideTerm, List divisor)
-    {
+    @SuppressWarnings("unchecked")
+    private List produceDivide(List divideTerm, List divisor) {
       List result = new ArrayList();
       Iterator i = divideTerm.iterator();
       while (i.hasNext()) {
@@ -539,8 +504,8 @@ public class TestDef {
       return result;
     }
 
-    private List produceDivideResult(List divideResult, List divisor)
-    {
+    @SuppressWarnings("unchecked")
+    private List produceDivideResult(List divideResult, List divisor) {
       List result = new ArrayList();
 
       assert divisor.size() % divideResult.size() == 0;

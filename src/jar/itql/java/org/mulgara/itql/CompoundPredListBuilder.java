@@ -60,12 +60,6 @@ import org.mulgara.itql.node.*;
  *
  * @author Andrae Muys
  *
- * @version $Revision: 1.1.1.1 $
- *
- * @modified $Date: $ by $Author: $
- *
- * @maintenanceAuthor $Author: $
- *
  * @company <a href="mailto:mail@netymon.com">Netymon Pty Ltd</a>
  *
  * @copyright &copy;2006 Australian Commonwealth Government.
@@ -77,15 +71,16 @@ public class CompoundPredListBuilder extends AnalysisAdapter {
 
   private final static Logger logger = Logger.getLogger(CompoundPredListBuilder.class.getName());
 
-  private List predLists;
+  private List<CompoundPredicate> predLists;
+
   /**
    * Constructor.
    */
   public CompoundPredListBuilder() {
-    predLists = new ArrayList();
+    predLists = new ArrayList<CompoundPredicate>();
   }
 
-  public List getPredLists() {
+  public List<CompoundPredicate> getPredLists() {
     return predLists;
   }
 
@@ -97,24 +92,18 @@ public class CompoundPredListBuilder extends AnalysisAdapter {
   }
 
   public void caseAColonExistsExpression(AColonExistsExpression expr) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found a colon exists expression: " + expr);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Found a colon exists expression: " + expr);
     expr.getExistsExpression().apply(this);
     expr.getExistsPterm().apply(this);
   }
 
   public void caseAEtermExistsExpression(AEtermExistsExpression expr) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found a colon exists expression: " + expr);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Found a colon exists expression: " + expr);
     expr.getExistsPterm().apply(this);
   }
 
   public void caseAPtermExistsPterm(APtermExistsPterm rawTerm) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found an Existential Predicate Term: " + rawTerm);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Found an Existential Predicate Term: " + rawTerm);
 
     ObjectListBuilder builder = new ObjectListBuilder();
     rawTerm.getExistsOterm().apply(builder);
@@ -123,9 +112,7 @@ public class CompoundPredListBuilder extends AnalysisAdapter {
   }
 
   public void defaultCase(Node node) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found node in pred builder: " + node + "::" + node.getClass());
-    }
+    if (logger.isDebugEnabled()) logger.debug("Found node in pred builder: " + node + "::" + node.getClass());
   }
 }
 

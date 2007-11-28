@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 
 // Local packages
 import org.mulgara.query.rdf.URIReferenceImpl;
@@ -61,11 +61,11 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  */
 public class ConstraintIs extends AbstractConstraintExpression implements Constraint {
 
-  /**
-   * Logger.
-   */
-  private final static Category logger =
-      Category.getInstance(ConstraintIs.class.getName());
+  /** Serialization ID for marshalling */
+  private static final long serialVersionUID = 7952821738407976852L;
+
+  // /** Logger. */
+  // private final static Category logger = Category.getInstance(ConstraintIs.class.getName());
 
   /** Create the predicate to be used to indicate equality. */
   public static final URIReferenceImpl MULGARA_IS = new URIReferenceImpl(SpecialPredicates.MULGARA_IS);
@@ -168,20 +168,19 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
 
 
   /**
-   * Get all constraints which are variables. For back-compatibility, this
-   * method currently ignores the fourth element of the triple.
+   * Get all constraints which are variables. This
+   * method now uses the fourth element of the triple.
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
+  public Set<Variable> getVariables() {
     if (variables == null) {
-      Set v = new HashSet();
+      Set<Variable> v = new HashSet<Variable>();
       Variable e = getVariable();
-      if (!e.getName().startsWith("_")) {
-        v.add(e);
-      }
+      if (!e.getName().startsWith("_")) v.add(e);
+      // now check the graph
       if (element[3] instanceof Variable && !((Variable)element[3]).getName().startsWith("_")) {
-        v.add(element[3]);
+        v.add((Variable)element[3]);
       }
       variables = Collections.unmodifiableSet(v);
     }
@@ -196,18 +195,12 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
    * @return <code>true</code> if object is the same as this.
    */
   public boolean equals(Object object) {
-    if (object == null) {
-      return false;
-    }
+    if (object == null) return false;
 
-    if (object == this) {
-      return true;
-    }
+    if (object == this) return true;
 
     // Check that the given object is the correct class
-    if (!object.getClass().equals(this.getClass())) {
-      return false;
-    }
+    if (!object.getClass().equals(this.getClass())) return false;
 
     // Check each element.
     ConstraintIs tmpConstraint = (ConstraintIs) object;

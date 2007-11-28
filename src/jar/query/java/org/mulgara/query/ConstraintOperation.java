@@ -31,7 +31,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 
 /**
  * A constraint expression composed of two subexpressions and a dyadic operator.
@@ -64,11 +64,8 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    */
   static final long serialVersionUID = -236847137057853871L;
 
-  /**
-   * Logger.
-   */
-  private static Category logger =
-      Category.getInstance(ConstraintOperation.class.getName());
+  // /** Logger. */
+  // private static Category logger = Category.getInstance(ConstraintOperation.class.getName());
 
   //
   // Constructor
@@ -84,21 +81,17 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    */
   protected ConstraintOperation(ConstraintExpression lhs, ConstraintExpression rhs) {
     // Validate "lhs" parameter
-    if (lhs == null) {
-      throw new IllegalArgumentException("Null \"lhs\" parameter");
-    }
+    if (lhs == null) throw new IllegalArgumentException("Null \"lhs\" parameter");
 
     // Validate "rhs" parameter
-    if (rhs == null) {
-      throw new IllegalArgumentException("Null \"rhs\" parameter");
-    }
+    if (rhs == null) throw new IllegalArgumentException("Null \"rhs\" parameter");
 
     // Initialize fields
-    elements = new ArrayList(2);
+    elements = new ArrayList<ConstraintExpression>(2);
 
     // Add the LHS
     if (lhs.getClass().equals(getClass())) {
-      elements.addAll( ( (ConstraintOperation) lhs).getElements());
+      elements.addAll(((ConstraintOperation)lhs).getElements());
     } else {
       elements.add(lhs);
     }
@@ -112,33 +105,17 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
   }
 
   /**
-   * CONSTRUCTOR ConstraintOperation TO DO
+   * Creates a new ConstraintOperation build on a list of ConstraintExpression
    *
-   * @param elements PARAMETER TO DO
+   * @param elements A list of ConstraintExpression to be the parameters of this expression
    */
-  protected ConstraintOperation(List elements) {
+  protected ConstraintOperation(List<ConstraintExpression> elements) {
     // Validate "elements" parameter
-    if (elements == null) {
-      throw new IllegalArgumentException("Null \"elements\" parameter");
-    }
+    if (elements == null) throw new IllegalArgumentException("Null \"elements\" parameter");
+    // assert elements.size() > 1;
 
     // Initialize fields
-    this.elements = new ArrayList(elements);
-
-    ListIterator i = this.elements.listIterator();
-
-    while (i.hasNext()) {
-      Object o = i.next();
-
-      assert o != null;
-      if (o instanceof ConstraintExpression ||
-          o instanceof Constraint) {
-        i.set(o);
-      } else {
-        logger.error("Bad element: "+o.getClass()+" in "+getClass());
-        throw new Error("Bad element: " + o.getClass());
-      }
-    }
+    this.elements = new ArrayList<ConstraintExpression>(elements);
   }
 
 
@@ -147,7 +124,7 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    *
    * @return a list of {@link ConstraintExpression}s
    */
-  public List getElements() {
+  public List<ConstraintExpression> getElements() {
     return Collections.unmodifiableList(elements);
   }
 
@@ -168,21 +145,15 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    * @return equality.
    */
   public boolean equals(Object o) {
-    if (!super.equals(o)) {
-      return false;
-    }
+    if (!super.equals(o)) return false;
 
     ConstraintOperation co = (ConstraintOperation) o;
-    if (elements.size() != co.elements.size()) {
-      return false;
-    }
+    if (elements.size() != co.elements.size()) return false;
 
-    Iterator lhs = elements.iterator();
-    Iterator rhs = co.elements.iterator();
+    Iterator<ConstraintExpression> lhs = elements.iterator();
+    Iterator<ConstraintExpression> rhs = co.elements.iterator();
     while (lhs.hasNext()) {
-      if (!(lhs.next().equals(rhs.next()))) {
-        return false;
-      }
+      if (!(lhs.next().equals(rhs.next()))) return false;
     }
 
     return true;
@@ -194,18 +165,12 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
+  public Set<Variable> getVariables() {
     // Check to see if there variables have been retrieved.
     if (variables == null) {
-      Set v = new HashSet();
+      Set<Variable> v = new HashSet<Variable>();
 
-      for (Iterator it = getElements().iterator(); it.hasNext(); ) {
-        // Get the operands and check to see if they are a valid constraint.
-        Object e = it.next();
-        if (e instanceof ConstraintExpression) {
-          v.addAll(((ConstraintExpression)e).getVariables());
-        }
-      }
+      for (ConstraintExpression expr: getElements()) v.addAll(expr.getVariables());
 
       variables = Collections.unmodifiableSet(v);
     }
@@ -221,10 +186,8 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    */
   public int hashCode() {
     int hashCode = 0;
-    Iterator i = elements.iterator();
-    while (i.hasNext()) {
-      hashCode ^= i.next().hashCode();
-    }
+    Iterator<ConstraintExpression> i = elements.iterator();
+    while (i.hasNext()) hashCode ^= i.next().hashCode();
     return hashCode;
   }
 
@@ -235,13 +198,11 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer("(" + getName());
-    Iterator i = getElements().iterator();
+    Iterator<ConstraintExpression> i = getElements().iterator();
 
     while (i.hasNext()) {
       buffer.append(i.next().toString());
-      if (i.hasNext()) {
-        buffer.append(" ");
-      }
+      if (i.hasNext()) buffer.append(" ");
     }
 
     buffer.append(")");

@@ -40,7 +40,6 @@ import java.util.*;
 // Third party packages
 import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Log4J
-import org.jrdf.vocabulary.RDF;  // JRDF
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -50,9 +49,6 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.Database;
 import org.mulgara.resolver.TestDef;
 import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.transaction.TransactionManagerFactory;
 import org.mulgara.util.FileUtil;
 
@@ -61,8 +57,6 @@ import org.mulgara.util.FileUtil;
 *
 * @created 2004-04-27
 * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
-* @version $Revision: 1.10 $
-* @modified $Date: 2005/06/26 12:48:13 $ by $Author: pgearon $
 * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
 * @copyright &copy; 2004 <a href="http://www.PIsoftware.com/">Plugged In
 *      Software Pty Ltd</a>
@@ -70,30 +64,10 @@ import org.mulgara.util.FileUtil;
 */
 public class ViewResolverUnitTest extends TestCase {
   /** The URI of the {@link #database}: <code>local:database</code>.  */
-  private static final URI databaseURI;
-
-  /**
-  * The URI of the {@link #database}'s system model:
-  * <code>local:database#</code>.
-  */
-  private static final URI systemModelURI;
-
-  /** The URI of the {@link #database}'s system model type.  */
-  private static final URI memoryModelURI;
-
-  static {
-    try {
-      databaseURI    = new URI("local:database");
-      systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
-    }
-  }
+  private static final URI databaseURI = URI.create("local:database");
 
   /** Logger.  */
-  private static Logger logger =
-    Logger.getLogger(ViewResolverUnitTest.class.getName());
+  private static Logger logger = Logger.getLogger(ViewResolverUnitTest.class.getName());
 
   /**
   * In-memory test {@link Database} used to generate {@link Session}s
@@ -600,15 +574,11 @@ public class ViewResolverUnitTest extends TestCase {
 
     database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
 
-    try {
-      URI modelTypeURI = new URI(Mulgara.NAMESPACE+"Model");
-      Session session = database.newSession();
-      for (int i = 1; i < modelURIs.length; i++) {
-        session.createModel(modelURIs[i], modelTypeURI);
-        session.setModel(modelURIs[i], new ModelResource(modelDataURIs[i]));
-      }
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded XA store model URI", e);
+    URI modelTypeURI = URI.create(Mulgara.NAMESPACE+"Model");
+    Session session = database.newSession();
+    for (int i = 1; i < modelURIs.length; i++) {
+      session.createModel(modelURIs[i], modelTypeURI);
+      session.setModel(modelURIs[i], new ModelResource(modelDataURIs[i]));
     }
   }
 
@@ -624,20 +594,20 @@ public class ViewResolverUnitTest extends TestCase {
   // Test cases
   //
 
+  @SuppressWarnings("unchecked")
   public void testModel() {
     try {
       logger.warn("Testing: " + test.errorString);
       Session session = database.newSession();
       try {
-        List orderList = new ArrayList();
-        Iterator i = test.selectList.iterator();
-        while (i.hasNext()) {
-          orderList.add(new Order((Variable)i.next(), true));
+        List<Order> orderList = new ArrayList<Order>();
+        for (Variable v: test.selectList) {
+          orderList.add(new Order(v, true));
         }
 
         // Evaluate the query
         Answer answer = new ArrayAnswer(session.query(new Query(
-          test.selectList,          // SELECT
+          (List<Object>)(List)test.selectList,  // SELECT
           test.model,               // FROM
           test.query,               // WHERE
           null,                     // HAVING
@@ -649,7 +619,7 @@ public class ViewResolverUnitTest extends TestCase {
 
         logger.warn("Results Expected in " + test.errorString + " = " + test.results);
         logger.warn("Results Received in " + test.errorString + " = " + answer);
-        i = test.results.iterator();
+        Iterator<List<Object>> i = test.results.iterator();
         answer.beforeFirst();
         while (true) {
           boolean hasAnswer = answer.next();
@@ -658,10 +628,9 @@ public class ViewResolverUnitTest extends TestCase {
             break;
           }
           assertTrue(test.errorString, hasAnswer && hasResult);
-          Iterator j = ((List)i.next()).iterator();
           int c = 0;
-          while (j.hasNext()) {
-            assertEquals(test.errorString, j.next().toString(), answer.getObject(c++).toString());
+          for (Object obj: i.next()) {
+            assertEquals(test.errorString, obj.toString(), answer.getObject(c++).toString());
           }
         }
       } finally {
@@ -679,6 +648,7 @@ public class ViewResolverUnitTest extends TestCase {
   /**
   * Fail with an unexpected exception
   */
+  @SuppressWarnings("unused")
   private void fail(Throwable throwable) {
     fail(null, throwable);
   }

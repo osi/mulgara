@@ -35,7 +35,6 @@ import java.util.List;
 import org.mulgara.query.Answer;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
-import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.SecurityAdapter;
@@ -88,7 +87,7 @@ interface OperationContext
    *
    * @return an unmodifiable list of {@link SecurityAdapter}s
    */
-  public List getSecurityAdapterList();
+  public List<SecurityAdapter> getSecurityAdapterList();
 
   /**
    * This method should be used to obtain a {@link Resolver} instance, rather

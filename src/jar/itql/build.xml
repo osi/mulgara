@@ -62,11 +62,11 @@
   </target>
 
   <target name="-itql-token-build-label" depends="-itql-token-build-label-uptodate" unless="itql.token.build.label.uptodate">
-    <replace file="${itql.obj.dir}/java/org/mulgara/itql/ItqlSession.java" token="@@build.label@@" value="${build.label}"/>
+    <replace file="${itql.obj.dir}/java/org/mulgara/itql/TqlSession.java" token="@@build.label@@" value="${build.label}"/>
   </target>
   <target name="-itql-token-build-label-uptodate">
-    <uptodate property="itql.token.build.label.uptodate" targetfile="${itql.obj.dir}/java/org/mulgara/itql/ItqlSession.java">
-      <srcfiles dir="${itql.src.dir}" includes="**/ItqlSession.java"/>
+    <uptodate property="itql.token.build.label.uptodate" targetfile="${itql.obj.dir}/java/org/mulgara/itql/TqlSession.java">
+      <srcfiles dir="${itql.src.dir}" includes="**/TqlSession.java"/>
     </uptodate>
   </target>
 
@@ -83,12 +83,12 @@
   <target name="-itql-create-manifest">
     <mkdir dir="${obj.dir}/META-INF"/>
     <manifest file="${obj.dir}/META-INF/MANIFEST_ITQL_BASE.MF">
-      <attribute name="Main-Class" value="org.mulgara.itql.ItqlSession"/>
+      <attribute name="Main-Class" value="org.mulgara.itql.TqlSession"/>
     </manifest>
     <manifest file="${obj.dir}/META-INF/MANIFEST_ITQL_BOOTSTRAP.MF">
       <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="${query.jar}, ${driver.jar}, ${itql.jar},${util.jar}, ${server-beep.jar}, ${server-rmi.jar}, apache-soap-2.2.jar, log4j-1.2.8.jar,jargs-0.2.jar, ${jrdf.jar}, ${saaj.jar}, ${emory-util.jar}"/>
-      <attribute name="Embedded-Main-Class" value="org.mulgara.itql.ItqlSession"/>
+      <attribute name="Embedded-Main-Class" value="org.mulgara.itql.TqlSession"/>
     </manifest>
   </target>
 
@@ -109,13 +109,12 @@
   <target name="itql-dist"
           depends="itql-uptodate, itql-jar, server-beep-jar, server-rmi-jar"
           unless="itql.uptodate"
-          description="Performs all tasks related to finalising this itql
-                       and readying it for distribution">
+          description="Performs all tasks related to finalising this itql and readying it for distribution">
 
     <mkdir dir="${obj.dir}/META-INF"/>
 
     <manifest file="${obj.dir}/META-INF/itql-MANIFEST.MF">
-      <attribute name="Main-Class" value="org.mulgara.itql.ItqlSession"/>
+      <attribute name="Main-Class" value="org.mulgara.itql.TqlSession"/>
     </manifest>
 
     <jar jarfile="${dist.dir}/${itql.jar}"

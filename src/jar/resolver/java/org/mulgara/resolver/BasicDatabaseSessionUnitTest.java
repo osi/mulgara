@@ -45,9 +45,6 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.util.FileUtil;
 
 /**
@@ -65,26 +62,16 @@ import org.mulgara.util.FileUtil;
 public class BasicDatabaseSessionUnitTest extends TestCase
 {
   /** The URI of the {@link #database}: <code>local:database</code>.  */
-  private static final URI databaseURI;
+  private static final URI databaseURI = URI.create("local:database");
 
   /**
   * The URI of the {@link #database}'s system model:
   * <code>local:database#</code>.
   */
-  private static final URI systemModelURI;
+  private static final URI systemModelURI = URI.create("local:database#");
 
   /** The URI of the {@link #database}'s system model type.  */
-  private static final URI memoryModelURI;
-
-  static {
-    try {
-      databaseURI    = new URI("local:database");
-      systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
-    }
-  }
+  private static final URI memoryModelURI = URI.create(Mulgara.NAMESPACE+"MemoryModel");
 
   /** Logger.  */
   private static Logger logger =
@@ -103,8 +90,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
    *
    * @param name  the test name
    */
-  public BasicDatabaseSessionUnitTest(String name)
-  {
+  public BasicDatabaseSessionUnitTest(String name) {
     super(name);
   }
 
@@ -114,8 +100,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   *
   * @return the test suite
   */
-  public static Test suite()
-  {
+  public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new BasicDatabaseSessionUnitTest("testQuery1"));
     suite.addTest(new BasicDatabaseSessionUnitTest("testSetModel"));
@@ -127,8 +112,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   /**
   * Create test objects.
   */
-  public void setUp() throws Exception
-  {
+  public void setUp() throws Exception {
     // Create the persistence directory
     File persistenceDirectory =
       new File(new File(System.getProperty("cvs.root")), "testDatabase");
@@ -181,8 +165,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   /**
   * The teardown method for JUnit
   */
-  public void tearDown()
-  {
+  public void tearDown() {
     database.delete();
   }
 
@@ -204,7 +187,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -249,8 +232,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   /**
   * Test the {@link DatabaseSession#setModel} method.
   */
-  public void testSetModel() throws URISyntaxException
-  {
+  public void testSetModel() throws URISyntaxException {
     logger.info("testSetModel");
     URI fileURI  = new File("data/dc.rdfs").toURI();
     URI modelURI = new URI("local:database#model");
@@ -294,13 +276,13 @@ public class BasicDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
 
         // Evaluate the query
-        Answer answer = new ArrayAnswer(session.query(new Query(
+        new ArrayAnswer(session.query(new Query(
           selectList,                                       // SELECT
           new ModelUnion(new ModelResource(dcFileURI),      // FROM
                          new ModelResource(rdfsFileURI)),
@@ -331,8 +313,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
   /**
   * Fail with an unexpected exception
   */
-  private void fail(Throwable throwable)
-  {
+  private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(stringWriter));
     fail(stringWriter.toString());

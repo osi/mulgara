@@ -65,13 +65,11 @@ import java.util.Iterator;
 
 //JRDF packages
 import org.jrdf.graph.*;
-import org.jrdf.util.ClosableIterator;
 
 //Mulgara packages
-import org.mulgara.itql.lexer.*;
-import org.mulgara.itql.parser.*;
-import org.mulgara.client.jrdf.*;
 import org.mulgara.itql.*;
+import org.mulgara.parser.MulgaraLexerException;
+import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.server.Session;
@@ -113,7 +111,7 @@ public abstract class ItqlQueryUtil {
    * @throws GraphException
    * @return Answer
    */
-  public static Answer executeQuery(String query, ItqlInterpreter interpreter,
+  public static Answer executeQuery(String query, TqlInterpreter interpreter,
                                     Session session) throws GraphException {
 
     try {
@@ -127,12 +125,12 @@ public abstract class ItqlQueryUtil {
       throw new GraphException("Could not execute query: " + query,
                                queryException);
     }
-    catch (LexerException lexerException) {
+    catch (MulgaraLexerException lexerException) {
 
       throw new GraphException("Could not parse query: " + query,
                                lexerException);
     }
-    catch (ParserException parserException) {
+    catch (MulgaraParserException parserException) {
 
       throw new GraphException("Could not parse query: " + query,
                                parserException);
@@ -151,7 +149,7 @@ public abstract class ItqlQueryUtil {
    * @param session Session
    * @throws GraphException
    */
-  public static void executeCommand(String command, ItqlInterpreter interpreter,
+  public static void executeCommand(String command, TqlInterpreter interpreter,
                                     Session session) throws GraphException {
 
     Answer answer = null;
@@ -232,15 +230,13 @@ public abstract class ItqlQueryUtil {
    * @param modelURI String
    * @throws GraphException
    */
-  public static String getDeleteQuery(Iterator triples, String modelURI) throws
-      GraphException {
+  public static String getDeleteQuery(Iterator<Triple> triples, String modelURI) throws GraphException {
 
     //value to be returned
     StringBuffer query = new StringBuffer("");
 
     //there must be triples to insert
-    if ( (triples != null)
-        && (triples.hasNext())) {
+    if ((triples != null) && (triples.hasNext())) {
 
       query.append("delete ");
 
@@ -269,15 +265,14 @@ public abstract class ItqlQueryUtil {
    * @param modelURI String
    * @throws GraphException
    */
-  public static String getInsertQuery(Iterator triples, String modelURI) throws
+  public static String getInsertQuery(Iterator<Triple> triples, String modelURI) throws
       GraphException {
 
     //value to be returned
     StringBuffer query = new StringBuffer("");
 
     //there must be triples to insert
-    if ( (triples != null)
-        && (triples.hasNext())) {
+    if ((triples != null) && (triples.hasNext())) {
 
       query.append("insert ");
 
@@ -306,8 +301,7 @@ public abstract class ItqlQueryUtil {
    * @throws GraphException
    * @return String
    */
-  private static String getTripleSetQuery(Iterator triples) throws
-      GraphException {
+  private static String getTripleSetQuery(Iterator<Triple> triples) throws GraphException {
 
     //value to be returned
     StringBuffer tripleSet = new StringBuffer();
@@ -317,7 +311,7 @@ public abstract class ItqlQueryUtil {
       //append each
       while (triples.hasNext()) {
 
-        tripleSet.append(getTripleString( (Triple) triples.next()));
+        tripleSet.append(getTripleString(triples.next()));
       }
     }
 

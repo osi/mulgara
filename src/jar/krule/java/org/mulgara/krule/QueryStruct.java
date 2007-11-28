@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.Node;
 import org.jrdf.graph.URIReference;
 import org.mulgara.itql.VariableFactoryImpl;
 import org.mulgara.query.ConstantValue;
@@ -44,6 +46,7 @@ import org.mulgara.query.ConstraintHaving;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.ModelResource;
 import org.mulgara.query.ModelUnion;
+import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
@@ -72,8 +75,8 @@ public class QueryStruct implements Serializable {
   /** The selection list. */
   private ConstraintElement[] select = new ConstraintElement[3];
 
-  /** List of elements which are variables. */
-  private List variables;
+  /** List of elements which are variables, or ConstantValues. */
+  private List<Object> variables;
 
   /** The model expresison for the query. */
   private ModelExpression models;
@@ -96,7 +99,12 @@ public class QueryStruct implements Serializable {
    * @throws IllegalArgumentException If the types are incorrect, the elements are not named as expected,
    *         or the references are not found in the references map.
    */
-  public QueryStruct(URIReference[] vs, URIReference[] types, Map alias, Map uriReferences, Map varReferences, Map litReferences) {
+  public QueryStruct(
+      URIReference[] vs, URIReference[] types, Map<String,URI> alias,
+      Map<URIReference,URIReference> uriReferences, Map<URIReference,Variable> varReferences,
+      Map<Node,Literal> litReferences
+  ) {
+
     if (vs.length != 3 && types.length != 3) {
       throw new IllegalArgumentException("Wrong number of elements for a rule query");
     }
@@ -104,7 +112,7 @@ public class QueryStruct implements Serializable {
     VariableFactory variableFactory = new VariableFactoryImpl();
 
     // set up a list of variables
-    variables = new ArrayList();
+    variables = new ArrayList<Object>();
 
     // convert the parameters to usable objects
     for (int i = 0; i < 3; i++) {
@@ -208,9 +216,10 @@ public class QueryStruct implements Serializable {
    *
    * @return a new {@link org.mulgara.query.Query}
    */
+  @SuppressWarnings("unchecked")
   public Query extractQuery() {
     logger.debug("Extracting query");
-    return new Query(variables, models, where, having, Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
+    return new Query(variables, models, where, having, (List<Order>)Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
   }
 
 }

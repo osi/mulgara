@@ -29,14 +29,13 @@ package org.mulgara.query;
 
 // java packages
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Set;
 
 // external packages
-import org.jrdf.graph.URIReference;
 import org.jrdf.vocabulary.Vocabulary;
 
 // local packages
-import org.mulgara.query.rdf.Mulgara;
+import static org.mulgara.query.rdf.Mulgara.NAMESPACE;
 
 /**
  * Provides a central point for defining all magic predicates used by Mulgara.
@@ -57,22 +56,23 @@ import org.mulgara.query.rdf.Mulgara;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
+@SuppressWarnings({ "serial", "unchecked" })
 public class SpecialPredicates extends Vocabulary {
 
   /** The string for the equality predicate */
-  public static final String IS = Mulgara.NAMESPACE + "is";
+  public static final String IS = NAMESPACE + "is";
 
   /** The string for the cardinality equality predicate */
-  public static final String OCCURS = Mulgara.NAMESPACE + "occurs";
+  public static final String OCCURS = NAMESPACE + "occurs";
 
   /** The string for the cardinality equality predicate */
-  public static final String NOT_OCCURS = Mulgara.NAMESPACE + "notOccurs";
+  public static final String NOT_OCCURS = NAMESPACE + "notOccurs";
 
   /** The string for the cardinality less than predicate */
-  public static final String OCCURS_LESS_THAN = Mulgara.NAMESPACE + "occursLessThan";
+  public static final String OCCURS_LESS_THAN = NAMESPACE + "occursLessThan";
 
   /** The string for the cardinality greater than predicate */
-  public static final String OCCURS_MORE_THAN = Mulgara.NAMESPACE + "occursMoreThan";
+  public static final String OCCURS_MORE_THAN = NAMESPACE + "occursMoreThan";
 
   /** The URI for the equality predicate */
   public static final URI MULGARA_IS;
@@ -91,22 +91,17 @@ public class SpecialPredicates extends Vocabulary {
 
   // intialize all predicate URIs
   static {
-    try {
-      MULGARA_IS = new URI(IS);
-      MULGARA_OCCURS = new URI(OCCURS);
-      MULGARA_NOT_OCCURS = new URI(NOT_OCCURS);
-      MULGARA_OCCURS_LESS_THAN = new URI(OCCURS_LESS_THAN);
-      MULGARA_OCCURS_MORE_THAN = new URI(OCCURS_MORE_THAN);
+    MULGARA_IS = URI.create(IS);
+    MULGARA_OCCURS = URI.create(OCCURS);
+    MULGARA_NOT_OCCURS = URI.create(NOT_OCCURS);
+    MULGARA_OCCURS_LESS_THAN = URI.create(OCCURS_LESS_THAN);
+    MULGARA_OCCURS_MORE_THAN = URI.create(OCCURS_MORE_THAN);
 
-      resources.add(MULGARA_IS);
-      resources.add(MULGARA_OCCURS);
-      resources.add(MULGARA_NOT_OCCURS);
-      resources.add(MULGARA_OCCURS_LESS_THAN);
-      resources.add(MULGARA_OCCURS_MORE_THAN);
-    } catch (URISyntaxException e) {
-      // Houston, we have a problem.  Not much we can do with it, so rethrow as an error.
-      throw new ExceptionInInitializerError(e);
-    }
+    ((Set<URI>)resources).add(MULGARA_IS);
+    ((Set<URI>)resources).add(MULGARA_OCCURS);
+    ((Set<URI>)resources).add(MULGARA_NOT_OCCURS);
+    ((Set<URI>)resources).add(MULGARA_OCCURS_LESS_THAN);
+    ((Set<URI>)resources).add(MULGARA_OCCURS_MORE_THAN);
   }
 
 

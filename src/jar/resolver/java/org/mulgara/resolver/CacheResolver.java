@@ -37,7 +37,6 @@ import javax.transaction.xa.*;
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.tuples.Tuples;
 
 /**
  * Cached access to models managed by some other {@link ResolverFactory}.
@@ -45,12 +44,6 @@ import org.mulgara.store.tuples.Tuples;
  * @created 2004-11-10
  *
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.10 $
- *
- * @modified $Date: 2005/05/02 20:07:55 $
- *
- * @maintenanceAuthor $Author: raboczi $
  *
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  *
@@ -61,9 +54,9 @@ import org.mulgara.store.tuples.Tuples;
  */
 
 class CacheResolver implements Resolver {
-  private final Set cachedModelSet;
+  private final Set<LocalNode> cachedModelSet;
   private final boolean canWrite;
-  private final Set changedCachedModelSet;
+  private final Set<LocalNode> changedCachedModelSet;
   private final ResolverFactory externalResolverFactory;
   private final ResolverSession resolverSession;
   private final Resolver systemResolver;
@@ -83,8 +76,8 @@ class CacheResolver implements Resolver {
       ResolverFactory externalResolverFactory,
       ResolverFactory temporaryResolverFactory,
       URI temporaryModelTypeURI,
-      Set cachedModelSet,
-      Set changedCachedModelSet) {
+      Set<LocalNode> cachedModelSet,
+      Set<LocalNode> changedCachedModelSet) {
     // Initialize fields
     this.cachedModelSet = cachedModelSet;
     this.canWrite = canWrite;
@@ -115,16 +108,14 @@ class CacheResolver implements Resolver {
     return new DummyXAResource(3600 /* one hour timeout */);
   }
 
-  public void modifyModel(long model, Statements statements,
-      boolean occurs) throws ResolverException {
+  public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {
     LocalNode modelLocalNode = new LocalNode(model);
 
     // Obtain the resolver against the cached version
     Resolver temporaryResolver;
     try {
       temporaryResolver = getTemporaryResolver(modelLocalNode);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new ResolverException("Unable to cache model " + modelLocalNode, e);
     }
     assert temporaryResolver != null;
@@ -156,14 +147,13 @@ class CacheResolver implements Resolver {
     }
     assert constraint.getModel() instanceof LocalNode;
 
-    LocalNode modelLocalNode = (LocalNode) constraint.getModel();
+    LocalNode modelLocalNode = (LocalNode)constraint.getModel();
 
     // Obtain the resolver against the cached version
     Resolver temporaryResolver;
     try {
       temporaryResolver = getTemporaryResolver(modelLocalNode);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new QueryException("Unable to cache model " + modelLocalNode, e);
     }
     assert temporaryResolver != null;

@@ -37,7 +37,6 @@ package org.mulgara.resolver.test;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.net.URISyntaxException;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -47,7 +46,6 @@ import org.jrdf.vocabulary.RDF;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 
 /**
  * @created 2005-05-03
@@ -61,30 +59,10 @@ import org.mulgara.server.Session;
  */
 public class TestResolverFactory implements ResolverFactory {
   /** Logger.  */
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(TestResolverFactory.class.getName());
 
-  private static URI modelTypeURI;
-
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "TestModel");
-      assert modelTypeURI != null;
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded Test model URI", e);
-    }
-  }
-
-  /** The preallocated local node representing the system model */
-  private long systemModel;
-
-  /**
-   * The preallocated local node representing the <code>rdf:type</code>
-   * property.
-   */
-  private long rdfType;
-
-  /** The preallocated local node representing models stored on the Java heap. */
-  private long modelType;
+  private static URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "TestModel");
 
   /**
    * Construct a local query.
@@ -105,11 +83,9 @@ public class TestResolverFactory implements ResolverFactory {
     }
 
     // Initialize fields
-    rdfType = resolverFactoryInitializer.preallocate(new URIReferenceImpl(RDF.TYPE));
+    resolverFactoryInitializer.preallocate(new URIReferenceImpl(RDF.TYPE));
 
-    modelType = resolverFactoryInitializer.preallocate(new URIReferenceImpl(modelTypeURI));
-
-    systemModel = resolverFactoryInitializer.getSystemModel();
+    resolverFactoryInitializer.preallocate(new URIReferenceImpl(modelTypeURI));
 
     // Claim mulgara:TestModel
     resolverFactoryInitializer.addModelType(modelTypeURI, this);

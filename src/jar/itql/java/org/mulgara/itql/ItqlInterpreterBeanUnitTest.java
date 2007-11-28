@@ -82,32 +82,19 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   // Members
   //
 
-  /**
-   * the category to send logging info to
-   *
-   */
-  private static Category log =
-      Category.getInstance(ItqlInterpreterBeanUnitTest.class.getName());
+  /** The category to send logging info to */
+  private static Category log = Category.getInstance(ItqlInterpreterBeanUnitTest.class.getName());
 
-  /**
-   * Description of the Field
-   *
-   */
+  /** Description of the Field */
   private ItqlInterpreterBean bean = null;
 
-  /**
-   * host name of server
-   */
+  /** host name of server */
   private static String hostName = System.getProperty("host.name");
 
-  /**
-   * an example model
-   */
+  /** an example model */
   private static String testModel = "rmi://" + hostName + "/server1#itqlmodel";
 
-  /**
-   * Data directory for test files
-   */
+  /** Data directory for test files */
   private static String dataDirectory = System.getProperty("cvs.root") + "/data";
 
   static {
@@ -116,15 +103,8 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     }
   }
 
-  /**
-   * a temp directory location
-   */
+  /** a temp directory location */
   private static File tmpDirectory = TempDir.getTempDir();
-
-  /**
-   * location of test directory
-   */
-  private static String testDir = System.getProperty("test.dir");
 
   //
   // Public API
@@ -142,17 +122,11 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     // load the logging configuration
     try {
-
-      DOMConfigurator.configure(System.getProperty("cvs.root") +
-          "/log4j-conf.xml");
-    }
-    catch (FactoryConfigurationError fce) {
-
-      log.error("Unable to configure logging service from XML configuration " +
-          "file");
+      DOMConfigurator.configure(System.getProperty("cvs.root") + "/log4j-conf.xml");
+    } catch (FactoryConfigurationError fce) {
+      log.error("Unable to configure logging service from XML configuration file");
     }
 
-    // try-catch
   }
 
   /**
@@ -193,7 +167,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    * The main program for the ItqlInterpreterBeanUnitTest class
    *
    * @param args The command line arguments
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General catch-all for exceptions thrown during the entire test suite
    */
   public static void main(String[] args) throws Exception {
 
@@ -222,7 +196,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   /**
    * A unit test for JUnit
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General catch-all for exceptions thrown during the test
    */
   public void testQuery2() throws Exception {
 
@@ -237,7 +211,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   /**
    * A unit test for JUnit
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General catch-all for exceptions thrown during the test
    */
   public void testQuery3() throws Exception {
 
@@ -258,10 +232,8 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
       log.error("\nDIRECT:'" + directAnswer + "'");
       log.error("\nSOAP  :'" + soapAnswer + "'");
       log.error("\nEQUALS  :'" + soapAnswer.equals(directAnswer) + "'");
-      log.error("\nSSTARTS  :'" + soapAnswer.startsWith(directAnswer) +
-          "'");
-      log.error("\nDSTARTS  :'" + directAnswer.startsWith(soapAnswer) +
-          "'");
+      log.error("\nSSTARTS  :'" + soapAnswer.startsWith(directAnswer) + "'");
+      log.error("\nDSTARTS  :'" + directAnswer.startsWith(soapAnswer) + "'");
     }
 
     assertEquals("A insert SOAP iTQL result is not the same as a direct call",
@@ -273,7 +245,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    * A unit test for JUnit. Tests that an Answer can be obtained and
    * iterated over and reset multiple times.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General catch-all for exceptions thrown during the test
    */
   public void testAnswerIteration() throws Exception {
 
@@ -329,17 +301,16 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   }
 
   /**
-   * METHOD TO DO
+   * Performs a query over the SOAP interface
    *
-   * @param query PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws Exception EXCEPTION TO DO
+   * @param query The TQL query to execute over the interface.
+   * @return The XML response to the call, as a string.
+   * @throws Exception General catch-all for exceptions thrown during the call
    */
   public String executeSoapCall(String query) throws Exception {
 
     //URL url = new URL("http://" + hostName + ":8080/soap/servlet/rpcrouter");
-    URL url = new URL("http://" + hostName +
-        ":8080/webservices/services/ItqlBeanService");
+    URL url = new URL("http://" + hostName + ":8080/webservices/services/ItqlBeanService");
 
     // Build the call.
     Call call = new Call();
@@ -349,7 +320,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     //call.setEncodingStyleURI(Constants.NS_URI_LITERAL_XML);
     call.setEncodingStyleURI(Constants.NS_URI_SOAP_ENC);
 
-    Vector params = new Vector();
+    Vector<Parameter> params = new Vector<Parameter>();
     params.addElement(new Parameter("queryString", String.class, query,
         Constants.NS_URI_SOAP_ENC));
     call.setParams(params);
@@ -369,8 +340,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
           " Fault String = " + fault.getFaultString());
 
       return fault.getFaultCode() + " - " + fault.getFaultString();
-    }
-    else {
+    } else {
 
       Parameter result = resp.getReturnValue();
 
@@ -426,8 +396,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // execute the load remotely
     long statements = bean.load(null, sourceURI, modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 146,
-        statements);
+    assertEquals("Incorrect number of statements inserted", 146, statements);
   }
 
   // testLoadApi1()
@@ -458,8 +427,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     long statements = bean.load(inputStream,
         sourceURI, modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 146,
-        statements);
+    assertEquals("Incorrect number of statements inserted", 146, statements);
 
     inputStream.close();
 
@@ -486,8 +454,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     long statements = bean.load(sourceURI.toURL().openStream(),
         dummyURI, modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 146,
-        statements);
+    assertEquals("Incorrect number of statements inserted", 146, statements);
 
   }
 
@@ -508,8 +475,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     long statements = bean.load(sourceURI.toURL().openStream(),
         modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 146,
-        statements);
+    assertEquals("Incorrect number of statements inserted", 146, statements);
 
   }
 
@@ -529,8 +495,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // execute the load locally
     long statements = bean.load(source, modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 1482,
-        statements);
+    assertEquals("Incorrect number of statements inserted", 1482, statements);
 
   }
 
@@ -550,8 +515,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // execute the load locally
     long statements = bean.load(source, modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 103,
-        statements);
+    assertEquals("Incorrect number of statements inserted", 103, statements);
 
   }
 
@@ -572,13 +536,12 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     // execute the load locally
     try {
-      long statements = bean.load(source, modelURI);
-    }
-    catch (QueryException ex) {
+      bean.load(source, modelURI);
+    } catch (QueryException ex) {
       badFile = true;
     }
 
-    this.assertTrue("Excepting a bad file", badFile);
+    assertTrue("Excepting a bad file", badFile);
 
   }
 
@@ -598,7 +561,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // execute the load locally
     long statements = bean.load(source, modelURI);
 
-    this.assertEquals("Incorrect number of statements inserted", 99, statements);
+    assertEquals("Incorrect number of statements inserted", 99, statements);
 
   }
 
@@ -620,8 +583,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
       // execute the load locally
       long statements = bean.load(source, modelURI);
 
-      this.assertEquals("Incorrect number of statements inserted", 512,
-          statements);
+      assertEquals("Incorrect number of statements inserted", 512, statements);
     } catch (Exception exception) {
 
       exception.printStackTrace();
@@ -647,7 +609,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     bean.backup(modelURI, file);
 
-    this.assertTrue("Excepting a backup file", file.exists());
+    assertTrue("Excepting a backup file", file.exists());
 
   }
 
@@ -669,7 +631,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     bean.backup(serverURI, file);
 
-    this.assertTrue("Excepting a backup file", file.exists());
+    assertTrue("Excepting a backup file", file.exists());
 
   }
 
@@ -691,7 +653,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     bean.backup(modelURI, new FileOutputStream(file));
 
-    this.assertTrue("Excepting a backup file", file.exists());
+    assertTrue("Excepting a backup file", file.exists());
 
   }
 
@@ -713,7 +675,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     bean.backup(serverURI, new FileOutputStream(file));
 
-    this.assertTrue("Excepting a backup file", file.exists());
+    assertTrue("Excepting a backup file", file.exists());
 
   }
 
@@ -775,23 +737,23 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     // select the statement
     Answer answer = bean.executeQuery(select);
-    this.assertTrue("Excepting a answer before restore", answer != null);
-    this.assertTrue("Excepting a single result and found :" +
+    assertTrue("Excepting a answer before restore", answer != null);
+    assertTrue("Excepting a single result and found :" +
         answer.getRowCount(), (answer.getRowCount() == 3));
 
     //backup the server
     File file = new File(tmpDirectory, "roundtrip.gz");
     file.delete();
     bean.backup(serverURI, new FileOutputStream(file));
-    this.assertTrue("Excepting a backup file", file.exists());
+    assertTrue("Excepting a backup file", file.exists());
 
     // restore the server
     bean.restore(file.toURL().openStream(), serverURI);
 
     // select the statement
     answer = bean.executeQuery(select);
-    this.assertTrue("Excepting a answer after restore", answer != null);
-    this.assertTrue("Excepting a single result and found :" +
+    assertTrue("Excepting a answer after restore", answer != null);
+    assertTrue("Excepting a single result and found :" +
         answer.getRowCount(), (answer.getRowCount() == 3));
 
   }
@@ -824,7 +786,8 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         "/server1#> where $s $p $o;";
 
     // create a 100 beans
-    for (int count = 1; count < 1000; count++) {
+    // TODO: change back to 1000
+    for (int count = 1; count < 100; count++) {
       ItqlInterpreterBean bean = null;
       Answer answer = null;
       try {
@@ -838,15 +801,14 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         assertTrue("Failed to query system model", answer.getRowCount() > 0);
         answer.close();
 
-      }
-      catch (Exception ex) {
-        log.error("Failed to create/query the " + count +
-            " ItqlInterpreterBean", ex);
-        assertTrue("Failed to create/query the " + count +
-            " ItqlInterpreterBean", false);
+      } catch (Exception ex) {
+        log.error("Failed to create/query the " + count + " ItqlInterpreterBean", ex);
+        System.err.println("Failed to create/query the " + count + " ItqlInterpreterBean");
+        System.err.println("Exception: " + ex.getMessage());
+        ex.printStackTrace();
+        assertTrue("Failed to create/query the " + count + " ItqlInterpreterBean", false);
         break;
-      }
-      finally {
+      } finally {
         bean.close();
       }
     }
@@ -879,8 +841,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     if (bean != null) {
       try {
         bean.close();
-      }
-      finally {
+      } finally {
         bean = null;
       }
     }

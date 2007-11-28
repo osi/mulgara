@@ -301,7 +301,7 @@ public class IntervalTransformationUnitTest extends TestCase
     Variable x = new Variable("x");
 
     assertEquals(
-      new ConstraintConjunction(Arrays.asList(new Object[] {
+      new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new ConstraintImpl(x, greaterThan, new LiteralImpl(3), nonXSDModel),
           new ConstraintImpl(x, lessThan, new LiteralImpl(4), nonXSDModel),
           new IntervalConstraint(
@@ -311,7 +311,7 @@ public class IntervalTransformationUnitTest extends TestCase
             xsdModel)
       })),
       intervalTransformation.transformExpression(context,
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new ConstraintImpl(x, greaterThan, new LiteralImpl(3), nonXSDModel),
           new ConstraintImpl(x, lessThan, new LiteralImpl(4), nonXSDModel),
           new ConstraintImpl(x, greaterThan, new LiteralImpl(2), xsdModel),

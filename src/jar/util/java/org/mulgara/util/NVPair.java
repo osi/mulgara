@@ -41,26 +41,26 @@ import java.util.*;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class NVPair
-{
-  protected Object name;
-  protected Object value;
+public class NVPair<N,V> {
 
-  public NVPair(Object name, Object value) {
+  protected N name;
+  protected V value;
+
+  public NVPair(N name, V value) {
     this.name = name;
     this.value = value;
   }
 
-  public Object getName() {
+  public N getName() {
     return name;
   }
 
-  public Object getValue() {
+  public V getValue() {
     return value;
   }
 
-  static public Map nvPairsToMap(NVPair[] pairs) {
-    Map map = new HashMap();
+  static public <N,V> Map<N,V> nvPairsToMap(NVPair<N,V>[] pairs) {
+    Map<N,V> map = new HashMap<N,V>();
     for (int i = 0; i < pairs.length; i++) {
       map.put(pairs[i].getName(), pairs[i].getValue());
     }

@@ -346,7 +346,7 @@ public class HelpPrinter {
     helpMsg.append("\nAuthenticates a user." + eol);
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> su <ldap://bar.org> fred Fo0Bar ;" + eol);
+    helpMsg.append("  TQL> su <ldap://bar.org> fred Fo0Bar ;" + eol);
 
     // return the help mesage
     return helpMsg;
@@ -376,7 +376,7 @@ public class HelpPrinter {
     helpMsg.append("  o autocommit - automatically commits after each insert" + eol);
     helpMsg.append("  o time - displays command execution time" + eol);
     helpMsg.append(eol + "For example:" + eol + eol);
-    helpMsg.append("  iTQL> set time on ;" + eol);
+    helpMsg.append("  TQL> set time on ;" + eol);
 
     // return the help mesage
     return helpMsg;
@@ -399,7 +399,7 @@ public class HelpPrinter {
     helpMsg.append("\nExecutes an iTQL script." + eol);
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> execute " +
+    helpMsg.append("  TQL> execute " +
         "<file:/usr/local/mulgara/sample/itql/loaddc.itql> ;" + eol);
 
     // return the help mesage
@@ -423,9 +423,9 @@ public class HelpPrinter {
     helpMsg.append("\nCreates an alias to a URL, model or database." + eol);
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> alias <http://www.w3.org/2000/01/rdf-schema#> as " +
+    helpMsg.append("  TQL> alias <http://www.w3.org/2000/01/rdf-schema#> as " +
         "rdfs ;" + eol);
-    helpMsg.append("  iTQL> select $subj $obj from " +
+    helpMsg.append("  TQL> select $subj $obj from " +
         "<http://purl.org/dc/elements/1.1/> where $subj <rdfs:label> $obj ;" + eol);
 
     // return the help mesage
@@ -449,7 +449,7 @@ public class HelpPrinter {
     helpMsg.append(eol + "Creates a new (empty) model." + eol);
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> create <rmi://localhost/foo#bar> ;" + eol);
+    helpMsg.append("  TQL> create <rmi://localhost/foo#bar> ;" + eol);
 
     // return the help mesage
     return helpMsg;
@@ -472,7 +472,7 @@ public class HelpPrinter {
     helpMsg.append(eol + "Drops a model." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> drop <rmi://localhost/foo#bar> ;" + eol);
+    helpMsg.append("  TQL> drop <rmi://localhost/foo#bar> ;" + eol);
 
     // return the help mesage
     return helpMsg;
@@ -496,7 +496,7 @@ public class HelpPrinter {
         "query into a model or database." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> insert (<http://purl.org/dc/elements/1.1/subject> " +
+    helpMsg.append("  TQL> insert (<http://purl.org/dc/elements/1.1/subject> " +
         "<http://www.w3.org/2000/01/rdf-schema#label> 'Subject') into " +
         "<rmi://localhost/foo#bar> ;" + eol);
 
@@ -522,7 +522,7 @@ public class HelpPrinter {
         "query from a model or database." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> delete (<http://purl.org/dc/elements/1.1/subject> " +
+    helpMsg.append("  TQL> delete (<http://purl.org/dc/elements/1.1/subject> " +
         "<http://www.w3.org/2000/01/rdf-schema#label> 'Subject') from " +
         "<rmi://localhost/foo#bar> ;" + eol);
 
@@ -547,11 +547,11 @@ public class HelpPrinter {
     helpMsg.append("\nLoads the contents of a file into a model." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> load <http://foo.com/bar.rdf> into " +
+    helpMsg.append("  TQL> load <http://foo.com/bar.rdf> into " +
         "<rmi://localhost/foo#bar> ;" + eol);
-    helpMsg.append("  iTQL> load local <file:/c:/data/foo.rdf> into " +
+    helpMsg.append("  TQL> load local <file:/c:/data/foo.rdf> into " +
         "<rmi://localhost/foo#foo> ;" + eol);
-    helpMsg.append("  iTQL> load remote <file:/m:/files/foo.rdf> into " +
+    helpMsg.append("  TQL> load remote <file:/m:/files/foo.rdf> into " +
         "<rmi://localhost/foo#foo> ;" + eol);
     helpMsg.append("" + eol);
     helpMsg.append("'local' refers to the file system on the client" + eol);
@@ -579,9 +579,9 @@ public class HelpPrinter {
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append(
-        "  iTQL> backup <rmi://localhost/server1> to remote <file:/tmp/server1backup> ;" + eol);
+        "  TQL> backup <rmi://localhost/server1> to remote <file:/tmp/server1backup> ;" + eol);
     helpMsg.append(
-        "  iTQL> backup <rmi://localhost/server1#foo> to local <file:/tmp/foo.rdf> ;" + eol);
+        "  TQL> backup <rmi://localhost/server1#foo> to local <file:/tmp/foo.rdf> ;" + eol);
     helpMsg.append("" + eol);
     helpMsg.append("'local' refers to the file system on the client" + eol);
     helpMsg.append("'remote' refers to the file system on the server [default]" + eol);
@@ -609,9 +609,9 @@ public class HelpPrinter {
         "contents of the file" + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> restore <rmi://localhost/server1> from local " +
+    helpMsg.append("  TQL> restore <rmi://localhost/server1> from local " +
         "<file:/tmp/server1backup> ;" + eol);
-    helpMsg.append("  iTQL> restore <rmi://localhost/server1> from remote " +
+    helpMsg.append("  TQL> restore <rmi://localhost/server1> from remote " +
         "<file:/tmp/server1backup> ;" + eol);
     helpMsg.append("" + eol);
     helpMsg.append("'local' refers to the file system on the client" + eol);
@@ -638,7 +638,7 @@ public class HelpPrinter {
     helpMsg.append("\nPerforms a query on a set of triples." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> select $subj $obj from " +
+    helpMsg.append("  TQL> select $subj $obj from " +
         "<http://purl.org/dc/elements/1.1/> where $subj <rdfs:label> $obj ;" + eol);
 
     // return the help mesage
@@ -662,7 +662,7 @@ public class HelpPrinter {
     helpMsg.append("\nCommits a transaction." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> commit ;" + eol);
+    helpMsg.append("  TQL> commit ;" + eol);
 
     // return the help mesage
     return helpMsg;
@@ -685,7 +685,7 @@ public class HelpPrinter {
     helpMsg.append("\nRolls back changes." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
-    helpMsg.append("  iTQL> rollback ;" + eol);
+    helpMsg.append("  TQL> rollback ;" + eol);
 
     // return the help mesage
     return helpMsg;
@@ -708,10 +708,10 @@ public class HelpPrinter {
     helpMsg.append("\nApplies a set of rules." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol);
-    helpMsg.append("  iTQL> apply <rmi://localhost/server1#krule> to <rmi://localhost/server1#camera>;" + eol);
+    helpMsg.append("  TQL> apply <rmi://localhost/server1#krule> to <rmi://localhost/server1#camera>;" + eol);
     helpMsg.append("This puts entailed statements into <rmi://localhost/server1#camera>" + eol);
     helpMsg.append("Or to put the entailed statements into another model:" + eol);
-    helpMsg.append("  iTQL> apply <rmi://localhost/server1#krule> to <rmi://localhost/server1#camera> <rmi://localhost/server1#entailed>;" + eol);
+    helpMsg.append("  TQL> apply <rmi://localhost/server1#krule> to <rmi://localhost/server1#camera> <rmi://localhost/server1#entailed>;" + eol);
     return helpMsg;
   }
 

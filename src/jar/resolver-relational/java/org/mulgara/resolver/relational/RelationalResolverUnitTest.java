@@ -465,7 +465,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new Variable("s"),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -506,7 +506,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new URIReferenceImpl(new URI("http://www.smith.id/albert")),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -548,7 +548,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new Variable("s"),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -797,7 +797,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
               {
                 new ConstraintImpl(new Variable("s"),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -842,7 +842,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
               {
                 new ConstraintImpl(new Variable("s"),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -891,7 +891,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
               {
                 new ConstraintImpl(new Variable("s"),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -1001,7 +1001,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new Variable("s"),
                                    new URIReferenceImpl(RDF.TYPE),
@@ -1042,7 +1042,7 @@ public class RelationalResolverUnitTest extends TestCase {
       Answer answer = session.query(new Query(
           selectList,          // SELECT
           new ModelResource(systemModelURI),               // FROM
-          new ConstraintConjunction(Arrays.asList(new Constraint[]
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper3")),
                                    new URIReferenceImpl(RDF.TYPE),

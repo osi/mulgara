@@ -29,7 +29,6 @@ package org.mulgara.ant.task.rdf;
 
 import java.io.*;
 import java.net.*;
-import java.sql.*;
 
 // Java
 import java.util.*;
@@ -38,7 +37,6 @@ import java.util.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.*;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 
 // Ant
@@ -47,7 +45,6 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.Answer;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 
 /**
@@ -124,109 +121,67 @@ import org.mulgara.query.TuplesException;
   */
 public class RDFLoad extends Task {
 
-  /**
-   * The logging catgory *
-   */
+  /** The logging catgory */
   private final static Logger logger = Logger.getLogger(RDFLoad.class);
 
-  /**
-   * Get line separator.
-   */
+  /** Get line separator. */
   private static final String eol = System.getProperty("line.separator");
 
-  /**
-   * The file to log to.
-   */
+  /** The file to log to. */
   protected File logFile = null;
 
-  /**
-   * The URI of the model to load into.
-   */
+  /** The URI of the model to load into. */
   protected URI modelURI = null;
 
-  /**
-   * The security domain of server where the model resides.
-   */
+  /** The security domain of server where the model resides. */
   protected URI domainURI = null;
 
-  /**
-   * The username for the security domain.
-   */
+  /** The username for the security domain. */
   protected String username = null;
 
-  /**
-   * The password for the security domain.
-   */
+  /** The password for the security domain. */
   protected String password = null;
 
-  /**
-   * The RDF files to load
-   */
+  /** The RDF files to load */
   protected Path rdfPath = null;
 
-  /**
-   * The directory to load RDF from
-   */
+  /** The directory to load RDF from */
   protected File rdfDir = null;
 
-  /**
-   * Drop the model before loading
-   */
+  /** Drop the model before loading */
   protected boolean dropModel = false;
 
-  /**
-   * The maximum number of permissable errors before aborting the load
-   */
+  /** The maximum number of permissable errors before aborting the load */
   protected int maxErrors = 0;
 
-  /**
-   * Ignore errors
-   */
+  /** Ignore errors */
   protected boolean ignoreErrors = false;
 
-  /**
-   * The number of files to load in each transaction
-   */
+  /** The number of files to load in each transaction */
   protected int transactionSize = 0;
 
-  /**
-   * The log4j XML config file
-   */
+  /** The log4j XML config file */
   protected File logConfig = null;
 
-  /**
-   * The ITQL interpreter
-   */
+  /** The ITQL interpreter */
   protected ItqlInterpreterBean interpreter = null;
 
-  /**
-   * The load log
-   */
+  /** The load log */
   protected RDFLoadLog loadLog = null;
 
-  /**
-   * Is logging enabled
-   */
+  /** Is logging enabled */
   private boolean loggingEnabled = false;
 
-  /**
-   * Should credentials be used
-   */
+  /** Should credentials be used */
   private boolean presentCredentials = false;
 
-  /**
-   * The number of files loaded
-   */
+  /** The number of files loaded */
   private int numLoaded = 0;
 
-  /**
-   * The number of errors
-   */
+  /** The number of errors */
   private int numErrors = 0;
 
-  /**
-   * The default value for <code>autcommit</code> is on
-   */
+  /** The default value for <code>autcommit</code> is on */
   private boolean autocommit = true;
   
   /**
@@ -235,7 +190,6 @@ public class RDFLoad extends Task {
    * @param log The file to log to.
    */
   public void setLogfile(File log) {
-
     logFile = log;
   }
 
@@ -245,7 +199,6 @@ public class RDFLoad extends Task {
    * @param model The URI of the model to load into.
    */
   public void setModeluri(URI model) {
-
     modelURI = model;
   }
 
@@ -255,7 +208,6 @@ public class RDFLoad extends Task {
    * @param domain The security domain of server where the model resides.
    */
   public void setDomainuri(URI domain) {
-
     domainURI = domain;
   }
 
@@ -266,7 +218,6 @@ public class RDFLoad extends Task {
    * @param user The username to use for the security domain.
    */
   public void setUsername(String user) {
-
     username = user;
   }
 
@@ -277,7 +228,6 @@ public class RDFLoad extends Task {
    * @param pass The password to use for the security domain.
    */
   public void setPassword(String pass) {
-
     password = pass;
   }
 
@@ -287,7 +237,6 @@ public class RDFLoad extends Task {
    * @param dir The dir to load RDF from.
    */
   public void setDir(File dir) {
-
     rdfDir = dir;
   }
 
@@ -298,7 +247,6 @@ public class RDFLoad extends Task {
    *      loading.
    */
   public void setDropmodel(boolean drop) {
-
     dropModel = drop;
   }
 
@@ -310,7 +258,6 @@ public class RDFLoad extends Task {
    *      load.
    */
   public void setMaxerrors(int max) {
-
     maxErrors = max;
   }
 
@@ -320,7 +267,6 @@ public class RDFLoad extends Task {
    * @param ignore <code>true</code> if errors should be ignored.
    */
   public void setIgnoreErrors(boolean ignore) {
-
     ignoreErrors = ignore;
   }
 
@@ -330,7 +276,6 @@ public class RDFLoad extends Task {
    * @param size The number of documents loaded per transaction.
    */
   public void setTransactionsize(int size) {
-
     transactionSize = size;
   }
 
@@ -341,7 +286,6 @@ public class RDFLoad extends Task {
    * @param config The log4j XML config file.
    */
   public void setLogconfig(File config) {
-
     logConfig = config;
   }
 
@@ -351,7 +295,6 @@ public class RDFLoad extends Task {
    * @return The number of files loaded.
    */
   public int getNumLoaded() {
-
     return numLoaded;
   }
 
@@ -361,7 +304,6 @@ public class RDFLoad extends Task {
    * @return The number of errors that occurred.
    */
   public int getNumErrors() {
-
     return numErrors;
   }
 
@@ -371,7 +313,6 @@ public class RDFLoad extends Task {
    * @throws BuildException on error.
    */
   public void init() throws BuildException {
-
     super.init();
   }
 
@@ -382,9 +323,7 @@ public class RDFLoad extends Task {
    * @return A path element specifying the RDF location.
    */
   public Path createRdfpath() {
-
     rdfPath = new Path(this.getProject());
-
     return rdfPath;
   }
 
@@ -394,47 +333,35 @@ public class RDFLoad extends Task {
    * @throws BuildException on error.
    */
   public void execute() throws BuildException {
-
     try {
-
       log("Running with this config:" + eol + this.toString(), Project.MSG_DEBUG);
 
       checkParams();
-
       setupLog();
 
       if (logger.isDebugEnabled()) {
-
         logger.debug("Running with this config:" + eol + this.toString());
       }
 
       interpreter = new ItqlInterpreterBean();
 
       presentCredentials();
-
       createModel();
 
       if (dropModel) {
-
         dropModel();
         createModel();
       }
 
       loadRDF();
-    }
-    finally {
+    } finally {
 
-      if (loadLog != null) {
-
-        loadLog.close();
-      }
+      if (loadLog != null) loadLog.close();
 
       if (interpreter != null) {
-
         try {
           interpreter.close();
-        }
-        finally {
+        } finally {
           interpreter = null;
         }
       }
@@ -476,42 +403,25 @@ public class RDFLoad extends Task {
 
     // log4j logging
     if (logConfig != null) {
-
       try {
-
         DOMConfigurator.configure(logConfig.toURL());
-      }
-      catch (MalformedURLException me) {
-
+      } catch (MalformedURLException me) {
         throw new BuildException("Could not configure log4j!", me);
       }
-    }
-    else {
-
+    } else {
       BasicConfigurator.configure();
-
       // Disable debug
       LogManager.getLoggerRepository().setThreshold(Level.OFF);
     }
 
     if (logFile != null) {
-
       loggingEnabled = true;
 
       // Don't read from existing log as model is dropped
       try {
-
-        if (dropModel) {
-
-          loadLog = new RDFLoadLog(logFile, false);
-        }
-        else {
-
-          loadLog = new RDFLoadLog(logFile, true);
-        }
-      }
-      catch (IOException ioe) {
-
+        if (dropModel) loadLog = new RDFLoadLog(logFile, false);
+        else loadLog = new RDFLoadLog(logFile, true);
+      } catch (IOException ioe) {
         throw new BuildException("A problem occurred with the log file.", ioe);
       }
     }
@@ -527,30 +437,20 @@ public class RDFLoad extends Task {
    */
   protected Object getQueryResult(String query) {
 
-    if (logger.isDebugEnabled()) {
-
-      logger.debug("Executing query: " + query);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Executing query: " + query);
 
     log("Executing query: " + query, Project.MSG_DEBUG);
 
-    List list = interpreter.executeQueryToList(query, true);
+    List<Object> list = interpreter.executeQueryToList(query, true);
 
     if (list.size() > 0) {
-
       Object answer = list.get(0);
-
       try {
         if (answer instanceof String) {
-
           return (String) answer;
-        }
-        else if (answer instanceof Exception) {
-
+        } else if (answer instanceof Exception) {
           return answer;
-        }
-        else {
-
+        } else {
           throw new BuildException(
               "Expected a string or exception but got a result of type: " +
               answer.getClass().getName());
@@ -564,9 +464,7 @@ public class RDFLoad extends Task {
           throw new BuildException("Received bad answer from query: " + query);
         }
       }
-    }
-    else {
-
+    } else {
       return null;
     }
   }
@@ -579,29 +477,22 @@ public class RDFLoad extends Task {
   protected void checkParams() throws BuildException {
 
     // Only some set
-    if ( (domainURI != null) && (password != null) && (username != null)) {
-
+    if ((domainURI != null) && (password != null) && (username != null)) {
       presentCredentials = true;
-    }
-    else if ( (domainURI != null) || (password != null) || (username != null)) {
-
+    } else if ( (domainURI != null) || (password != null) || (username != null)) {
       throw new BuildException("Either none or all of the attributes " +
                                "'domainuri' 'username' 'password' must be set.");
     }
 
     // Is model set?
     if (modelURI == null) {
-
       throw new BuildException("The modeluri attribute must be set.");
     }
 
     // RDF files to load
-    if ( (rdfDir != null) && (rdfPath != null)) {
-
+    if ((rdfDir != null) && (rdfPath != null)) {
       throw new BuildException("Only one of rdfpath or rdfdir may be set.");
-    }
-    else if ( (rdfDir == null) && (rdfPath == null)) {
-
+    } else if ( (rdfDir == null) && (rdfPath == null)) {
       throw new BuildException("Either one of rdfpath or rdfdir must be set.");
     }
   }
@@ -614,7 +505,6 @@ public class RDFLoad extends Task {
   protected void presentCredentials() throws BuildException {
 
     if (presentCredentials) {
-
       executeQuery("su <" + domainURI + "> " + username + " " + password +
                    " ;", "credentials", "Credential presented");
     }
@@ -626,7 +516,6 @@ public class RDFLoad extends Task {
    * @throws BuildException on error.
    */
   protected void createModel() throws BuildException {
-
     executeQuery("create <" + modelURI + "> ;", "create model",
                  "Successfully created model ");
   }
@@ -637,7 +526,6 @@ public class RDFLoad extends Task {
    * @throws BuildException on error.
    */
   protected void dropModel() throws BuildException {
-
     executeQuery("drop <" + modelURI + "> ;", "drop model",
                  "Successfully dropped model ");
   }
@@ -651,8 +539,7 @@ public class RDFLoad extends Task {
 
     // TODO: This badly needs to be refactored - but it works!! :-)
     // If no path specified, then create one using the directory specified.
-    if ( (rdfPath == null) && (rdfDir != null)) {
-
+    if ((rdfPath == null) && (rdfDir != null)) {
       createRdfpath();
 
       FileSet fileSet = new FileSet();
@@ -660,28 +547,24 @@ public class RDFLoad extends Task {
       rdfPath.addFileset(fileSet);
     }
 
-    Set loadSet = new HashSet();
+    Set<String> loadSet = new HashSet<String>();
     String[] fileArray = rdfPath.list();
 
     // Build set of files to load
     for (int i = 0; i < fileArray.length; i++) {
-
       if (loggingEnabled && !loadLog.isLoaded(fileArray[i])) {
-
         loadSet.add(fileArray[i]);
-      }
-      else if (!loggingEnabled) {
-
+      } else if (!loggingEnabled) {
         loadSet.add(fileArray[i]);
       }
     }
 
     // Sort the list - greater chance that problem files are grouped
     // and log will be easier to read.
-    ArrayList loadList = new ArrayList(loadSet);
+    ArrayList<String> loadList = new ArrayList<String>(loadSet);
     Collections.sort(loadList);
 
-    List transList = new ArrayList();
+    List<File> transList = new ArrayList<File>();
     int fileIndex = 0;
     numErrors = 0;
     numLoaded = 0;
@@ -694,9 +577,7 @@ public class RDFLoad extends Task {
       // Turn off auto commit off if it needs to be
       if (transactionSize > 0) {
       	// if on then toggle it off for transaction support
-      	if ( autocommit ) {
-          this.setAutoCommit(false);
-      	}
+      	if (autocommit) this.setAutoCommit(false);
       }
 
     	
@@ -704,16 +585,11 @@ public class RDFLoad extends Task {
       File file = new File(filename);
       URI fileURI = file.toURI();
 
-      Object result =
-          getQueryResult("load <" + fileURI + "> into <" + modelURI + "> ;");
+      Object result = getQueryResult("load <" + fileURI + "> into <" + modelURI + "> ;");
 
       if (result == null) {
-
-        throw new BuildException(
-            "Did not get a result back from the load file query");
-      }
-      else if (result instanceof String) {
-
+        throw new BuildException("Did not get a result back from the load file query");
+      } else if (result instanceof String) {
         String string = (String) result;
 
         if (!string.trim().startsWith("Successfully loaded ")) {
@@ -726,10 +602,7 @@ public class RDFLoad extends Task {
             log("Could not load file '" + filename + "'. The message was '" +
                 string + "',  continuing...", Project.MSG_INFO);
 
-            if (loggingEnabled) {
-
-              loadLog.logLoadError(file, string);
-            }
+            if (loggingEnabled) loadLog.logLoadError(file, string);
 
             // Remove file from load list
             loadList.remove(fileIndex);
@@ -742,21 +615,15 @@ public class RDFLoad extends Task {
             // since an error has occured we need to
             // set autocommit is on;
             this.setAutoCommit(true);
-          }
 
-          // Max errors reached
-          else {
+          } else {
+            // Max errors reached
 
-            log("Could not load file '" + filename + "'. The message was '" +
-                string + "'");
+            log("Could not load file '" + filename + "'. The message was '" + string + "'");
 
-            if (loggingEnabled) {
+            if (loggingEnabled) loadLog.logLoadError(file, string);
 
-              loadLog.logLoadError(file, string);
-            }
-
-            log("Maximum number of load errors (" + maxErrors +
-                ") reached. Aborting load.", Project.MSG_INFO);
+            log("Maximum number of load errors (" + maxErrors + ") reached. Aborting load.", Project.MSG_INFO);
 
             // since an error has occured we need to
             // set autocommit is on;
@@ -764,17 +631,13 @@ public class RDFLoad extends Task {
            
             break;
           }
-        }
 
-        // Successful load
-        else {
+        } else {
+          // Successful load
 
           log("Successful load for: " + fileURI, Project.MSG_DEBUG);
 
-          if (logger.isDebugEnabled()) {
-
-            logger.debug("Successful load for: " + fileURI);
-          }
+          if (logger.isDebugEnabled()) logger.debug("Successful load for: " + fileURI);
 
           if (transactionSize > 0) {
 
@@ -783,39 +646,30 @@ public class RDFLoad extends Task {
             // New transaction?
             if (transList.size() == transactionSize) {
 
-              executeQuery("commit;", "commit",
-                           "Successfully committed transaction");
+              executeQuery("commit;", "commit", "Successfully committed transaction");
 
               // Log all files in transaction
-              if (loggingEnabled) {
-
-                loadLog.logLoadedFiles(transList);
-              }
+              if (loggingEnabled) loadLog.logLoadedFiles(transList);
 
               numLoaded += transList.size();
 
               // New transaction
               transList.clear();
             }
-          }
 
-          // Not using transactions
-          else {
+          } else {
+            // Not using transactions
 
-            if (loggingEnabled) {
-
-              loadLog.logLoadedFile(file);
-            }
+            if (loggingEnabled) loadLog.logLoadedFile(file);
 
             numLoaded++;
           }
         }
 
         fileIndex++;
-      }
 
-      // Exception
-      else {
+      } else {
+        // Exception
 
         Exception ex = (Exception) result;
         StringWriter swriter = new StringWriter();
@@ -846,18 +700,14 @@ public class RDFLoad extends Task {
           // since an error has occured we need to
           // set autocommit is on;
           this.setAutoCommit(true);                     
-        }
 
-        // Max errors reached
-        else {
+        } else {
+          // Max errors reached
 
           log("Could not load file '" + filename + "'. The exception was " +
               eol + swriter.toString(), Project.MSG_INFO);
 
-          if (loggingEnabled) {
-
-            loadLog.logLoadError(file, swriter.toString());
-          }
+          if (loggingEnabled) loadLog.logLoadError(file, swriter.toString());
 
           log("Maximum number of load errors (" + maxErrors +
               ") reached. Aborting load.", Project.MSG_INFO);
@@ -881,10 +731,7 @@ public class RDFLoad extends Task {
         executeQuery("commit;", "commit", "Successfully committed transaction");
 
         // Log all files in transaction
-        if (loggingEnabled) {
-
-          loadLog.logLoadedFiles(transList);
-        }
+        if (loggingEnabled) loadLog.logLoadedFiles(transList);
 
         numLoaded += transList.size();
       }
@@ -892,17 +739,12 @@ public class RDFLoad extends Task {
       this.setAutoCommit(true);
     }
 
-    log("Loaded " + numLoaded + " files with " + numErrors + " errors.",
-        Project.MSG_INFO);
-    logger.info("Loaded " + numLoaded + " files with " + numErrors +
-                " errors.");
+    log("Loaded " + numLoaded + " files with " + numErrors + " errors.", Project.MSG_INFO);
+    logger.info("Loaded " + numLoaded + " files with " + numErrors + " errors.");
 
     if (loggingEnabled) {
-
-      log("Total files loaded in log is " + loadLog.getNumLoaded() + ".",
-          Project.MSG_INFO);
-      logger.info("Total files loaded in log is " + loadLog.getNumLoaded() +
-                  ".");
+      log("Total files loaded in log is " + loadLog.getNumLoaded() + ".", Project.MSG_INFO);
+      logger.info("Total files loaded in log is " + loadLog.getNumLoaded() + ".");
     }
   }
 
@@ -921,35 +763,26 @@ public class RDFLoad extends Task {
     Object result = getQueryResult(query);
 
     if (result == null) {
+      throw new BuildException("Did not get a result back from the " + queryName + " query");
+    } else if (result instanceof String) {
 
-      throw new BuildException("Did not get a result back from the " +
-                               queryName + " query");
-    }
-    else if (result instanceof String) {
-
-      String string = (String) result;
+      String string = (String)result;
 
       if (!string.trim().startsWith(successMessage)) {     	
         // an unexpected response. 
         throw new BuildException("Bad " + queryName + " query: " + string);
-      }
-      else {
+      } else {
 
         log("Query result: " + string, Project.MSG_DEBUG);
 
-        if (logger.isDebugEnabled()) {
-
-          logger.debug("Query result: " + string);
-        }
+        if (logger.isDebugEnabled()) logger.debug("Query result: " + string);
       }
-    }
 
-    // Exception
-    else {
+    } else {
+      // Exception
 
       Exception e = (Exception) result;
-      throw new BuildException("Bad " + queryName + " query: (" + query + ")",
-                               e);
+      throw new BuildException("Bad " + queryName + " query: (" + query + ")", e);
     }
   }
   
@@ -959,10 +792,9 @@ public class RDFLoad extends Task {
    * @param state value of autocommit
    */
   private void setAutoCommit( boolean state ) { 
-    if ( state ) {
+    if (state) {
       executeQuery("set autocommit on;", "autocommit on", "Auto commit is on");
-    }
-    else {
+    } else {
   	  executeQuery("set autocommit off;", "autocommit off", "Auto commit is off");      
     }
     this.autocommit = state;    

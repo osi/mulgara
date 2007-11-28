@@ -40,6 +40,7 @@ import org.mulgara.resolver.spi.Statements;
 
 import org.apache.log4j.Logger;
 import org.jrdf.graph.Node;
+import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
 
 import java.net.URI;
@@ -119,7 +120,7 @@ public class NetworkDelegator implements Delegator {
     logger.debug("Adding data to model: " + modelRef + " on server: " + serverUri);
     // convert the data to something shippable
     try {
-      Set statementSet = StatementSetFactory.newStatementSet(statements, session);
+      Set<Triple> statementSet = StatementSetFactory.newStatementSet(statements, session);
       getServerSession(serverUri).insert(modelRef.getURI(), statementSet);
     } catch (GlobalizeException ge) {
       throw new ResolverException("Insertion data can't be sent over a network", ge);
@@ -144,7 +145,7 @@ public class NetworkDelegator implements Delegator {
     logger.debug("Removing data from model: " + modelRef + " on server: " + serverUri);
     // convert the data to something shippable
     try {
-      Set statementSet = StatementSetFactory.newStatementSet(statements, session);
+      Set<Triple> statementSet = StatementSetFactory.newStatementSet(statements, session);
       getServerSession(serverUri).delete(modelRef.getURI(), statementSet);
     } catch (GlobalizeException ge) {
       throw new ResolverException("Deletion data can't be sent over a network", ge);
@@ -197,7 +198,7 @@ public class NetworkDelegator implements Delegator {
     );
 
     // convert the variable set to a variable list - add types via unchecked casts
-    List<Variable> variables = new ArrayList<Variable>((Set<Variable>)globalConstraint.getVariables());
+    List<Object> variables = new ArrayList<Object>((Set<Variable>)globalConstraint.getVariables());
     // build the new query
     return new Query(variables, new ModelResource(model.getURI()), globalConstraint, null, Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
   }

@@ -27,11 +27,8 @@
 
 package org.mulgara.query;
 
-// Java 2 standard packages
-import java.util.*;
-
 // Third party packages
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 
 // Local packages
 import org.mulgara.query.rdf.URIReferenceImpl;
@@ -59,11 +56,16 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  */
 public class ConstraintOccursLessThan extends ConstraintHaving {
 
+  // /** Logger. */
+  // private final static Category logger = Category.getInstance(ConstraintOccursLessThan.class.getName());
+
   /**
-   * Logger.
+   * Allow newer compiled version of the stub to operate when changes
+   * have not occurred with the class.
+   * NOTE : update this serialVersionUID when a method or a public member is
+   * deleted.
    */
-  private final static Category logger =
-      Category.getInstance(ConstraintOccursLessThan.class.getName());
+  private static final long serialVersionUID = -4589400796204186895L;
 
   /**
    * Create the predicate to be used to indicate equality.

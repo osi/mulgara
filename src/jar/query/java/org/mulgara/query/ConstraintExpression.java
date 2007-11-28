@@ -61,10 +61,9 @@ public interface ConstraintExpression extends Serializable {
   static final long serialVersionUID = 3476137906321174349L;
 
   /**
-   * Get all constraints which are variables. For back-compatibility, this
-   * method currently ignores the fourth element of the triple.
+   * Get all variables from component constraints.
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables();
+  public Set<Variable> getVariables();
 }

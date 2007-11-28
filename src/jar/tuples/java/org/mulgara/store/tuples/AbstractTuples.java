@@ -61,36 +61,23 @@ import org.mulgara.store.statement.StatementStore;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public abstract class AbstractTuples implements Tuples {
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-      Logger.getLogger(AbstractTuples.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(AbstractTuples.class.getName());
 
-  /**
-   * Empty variable array.
-   */
+  /** Empty variable array. */
   private final static Variable[] emptyVariables = new Variable[] {};
 
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   private final static long[] NO_PREFIX = new long[] {};
 
-  /**
-   * Description of the Field
-   */
-  private final static RowComparator defaultRowComparator =
-      new DefaultRowComparator();
+  /** Description of the Field */
+  private final static RowComparator defaultRowComparator = new DefaultRowComparator();
 
-  /**
-   * The variable names of each column.
-   */
+  /** The variable names of each column. */
   private Variable[] variables = null;
 
-  /**
-   * Cache the row count when calculated.
-   */
+  /** Cache the row count when calculated. */
   protected long rowCount = -1;
   protected int rowCardinality = -1;
 
@@ -248,8 +235,7 @@ public abstract class AbstractTuples implements Tuples {
     if (variables != null) {
       newVariables = new Variable[variables.length];
       System.arraycopy(variables, 0, newVariables, 0, variables.length);
-    }
-    else {
+    } else {
       newVariables = emptyVariables;
     }
 
@@ -280,8 +266,7 @@ public abstract class AbstractTuples implements Tuples {
   public long getRowCount() throws TuplesException {
     if (rowCount != -1) {
       return rowCount;
-    }
-    else if (isMaterialized()) {
+    } else if (isMaterialized()) {
       return getRowUpperBound(); // Upper bound is accurate if tuples is materialized.
     }
     Tuples temp = (Tuples)this.clone();
@@ -298,14 +283,11 @@ public abstract class AbstractTuples implements Tuples {
   public abstract long getRowUpperBound() throws TuplesException;
 
   public int getRowCardinality() throws TuplesException {
-    if (rowCardinality != -1) {
-      return rowCardinality;
-    }
+    if (rowCardinality != -1) return rowCardinality;
 
     if (rowCount > 1) {
       rowCardinality = Cursor.MANY;
-    }
-    else {
+    } else {
       switch ((int) rowCount) {
         case 0:
           rowCardinality = Cursor.ZERO;
@@ -319,12 +301,10 @@ public abstract class AbstractTuples implements Tuples {
           if (!temp.next()) {
             rowCount = 0;
             rowCardinality = Cursor.ZERO;
-          }
-          else if (!temp.next()) {
+          } else if (!temp.next()) {
             rowCount = 1;
             rowCardinality = Cursor.ONE;
-          }
-          else {
+          } else {
             rowCardinality = Cursor.MANY;
           }
           temp.close();
@@ -362,17 +342,14 @@ public abstract class AbstractTuples implements Tuples {
     Variable[] variables = getVariables();
 
     for (int i = 0; i < variables.length; i++) {
-      if (variables[i].equals(variable)) {
-        return i;
-      }
+      if (variables[i].equals(variable)) return i;
     }
 
     throw new TuplesException("No such variable " + variable + " in tuples " +
         Arrays.asList(variables) + " (" + getClass() + ")");
   }
 
-  public abstract boolean isColumnEverUnbound(int column)
-      throws TuplesException;
+  public abstract boolean isColumnEverUnbound(int column) throws TuplesException;
 
   /**
    * Gets the Materialized attribute of the AbstractTuples object
@@ -417,8 +394,7 @@ public abstract class AbstractTuples implements Tuples {
    * @throws IllegalArgumentException if <var>prefix</var> is <code>null</code>
    * @throws TuplesException EXCEPTION TO DO
    */
-  public abstract void beforeFirst(long[] prefix, int suffixTruncation)
-      throws TuplesException;
+  public abstract void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException;
 
   /**
    * Convenience method for the usual case of wanting to reset a tuples to
@@ -478,15 +454,14 @@ public abstract class AbstractTuples implements Tuples {
   }
 
   /**
-   * METHOD TO DO
+   * Clone this tuples.
    *
-   * @return RETURNED VALUE TO DO
+   * @return A new instance euqivalent to the current Tuples.
    */
   public Object clone() {
     try {
       return super.clone();
-    }
-    catch (CloneNotSupportedException e) {
+    } catch (CloneNotSupportedException e) {
       throw new Error(getClass() + " doesn't support clone, which it must", e);
     }
   }
@@ -547,18 +522,15 @@ public abstract class AbstractTuples implements Tuples {
               }
 
               isEqual = tuplesEqual;
-            }
-            finally {
+            } finally {
               t1.close();
               t2.close();
             }
           }
         }
-      }
-      catch (ClassCastException cce) {
+      } catch (ClassCastException cce) {
         // Not of the correct type return false.
-      }
-      catch (TuplesException ex) {
+      } catch (TuplesException ex) {
         throw new RuntimeException(ex.toString(), ex);
       }
     }
@@ -567,9 +539,9 @@ public abstract class AbstractTuples implements Tuples {
   }
 
   /**
-   * METHOD TO DO
+   * Output the contents of this tuples in a string.
    *
-   * @return RETURNED VALUE TO DO
+   * @return The string representing the tuples.
    */
   public String toString() {
     return SimpleTuplesFormat.format(this);
@@ -580,9 +552,8 @@ public abstract class AbstractTuples implements Tuples {
    *
    * @param variableList the list containing variables.
    */
-  protected void setVariables(List variableList) {
-    variables =
-        (Variable[]) variableList.toArray(new Variable[variableList.size()]);
+  protected void setVariables(List<Variable> variableList) {
+    variables = variableList.toArray(new Variable[variableList.size()]);
   }
 
   /**
@@ -594,7 +565,7 @@ public abstract class AbstractTuples implements Tuples {
     variables = variableArray;
   }
 
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
     return null;
   }
 }

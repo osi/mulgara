@@ -36,20 +36,15 @@ import java.util.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.ConstraintModelRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.ModelResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
-import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.util.NVPair;
 
@@ -74,54 +69,59 @@ public class ConstraintOperations
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(ConstraintOperations.class.getName());
 
-  static Map modelResolutionHandlers = new HashMap();
-  static Map constraintResolutionHandlers = new HashMap();
-  static Map constraintBindingHandlers = new HashMap();
-  static Map constraintLocalizations = new HashMap();
-  static Map constraintModelRewrites = new HashMap();
+  static Map<Class<? extends ConstraintExpression>,Object> modelResolutionHandlers =
+      new HashMap<Class<? extends ConstraintExpression>,Object>();
+  static Map<Class<? extends ConstraintExpression>,Object> constraintResolutionHandlers =
+      new HashMap<Class<? extends ConstraintExpression>,Object>();
+  static Map<Class<? extends ConstraintExpression>,Object> constraintBindingHandlers =
+      new HashMap<Class<? extends ConstraintExpression>,Object>();
+  static Map<Class<? extends ConstraintExpression>,Object> constraintLocalizations =
+      new HashMap<Class<? extends ConstraintExpression>,Object>();
+  static Map<Class<? extends ConstraintExpression>,Object> constraintModelRewrites =
+      new HashMap<Class<? extends ConstraintExpression>,Object>();
 
   static {
     DefaultConstraintHandlers.initializeHandlers();
   }
 
-  static void addConstraintResolutionHandlers(NVPair[] resolutionHandlers) throws RuntimeException {
+  static void addConstraintResolutionHandlers(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, constraintResolutionHandlers,
              ConstraintExpression.class, ConstraintResolutionHandler.class);
   }
 
 
-  static void addConstraintBindingHandlers(NVPair[] bindingHandlers) throws RuntimeException {
+  static void addConstraintBindingHandlers(NVPair<Class<? extends ConstraintExpression>,Object>[] bindingHandlers) throws RuntimeException {
     addToMap(bindingHandlers, constraintBindingHandlers,
              ConstraintExpression.class, ConstraintBindingHandler.class);
   }
 
 
-  static void addModelResolutionHandlers(NVPair[] resolutionHandlers) throws RuntimeException {
+  static void addModelResolutionHandlers(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, modelResolutionHandlers,
              ModelExpression.class, ModelResolutionHandler.class);
   }
 
-  static void addConstraintModelRewrites(NVPair[] resolutionHandlers) throws RuntimeException {
+  static void addConstraintModelRewrites(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, constraintModelRewrites,
              ConstraintExpression.class, ConstraintModelRewrite.class);
   }
 
-  static void addConstraintLocalizations(NVPair[] resolutionHandlers) throws RuntimeException {
+  static void addConstraintLocalizations(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, constraintLocalizations,
              Constraint.class, ConstraintLocalization.class);
   }
 
-  static boolean constraintRegistered(Class constraintClass) {
+  static boolean constraintRegistered(Class<? extends ConstraintExpression> constraintClass) {
   return modelResolutionHandlers.containsKey(constraintClass) ||
          constraintResolutionHandlers.containsKey(constraintClass) ||
          constraintLocalizations.containsKey(constraintClass) ||
          constraintModelRewrites.containsKey(constraintClass);
   }
 
-  static void addToMap(NVPair[] pairs, Map dest, Class keyClass, Class valueClass) throws ClassCastException {
+  static void addToMap(NVPair<Class<? extends ConstraintExpression>,Object>[] pairs, Map<Class<? extends ConstraintExpression>,Object> dest, Class<?> keyClass, Class<?> valueClass) throws ClassCastException {
     // Type check array.
     for (int i = 0; i < pairs.length; i++) {
-      Class key = (Class)pairs[i].getName();
+      Class<?> key = pairs[i].getName();
       Object value = pairs[i].getValue();
       if (!keyClass.isAssignableFrom(key)) {
         throw new ClassCastException(key + " is not assignable to " + keyClass);
@@ -190,7 +190,7 @@ public class ConstraintOperations
   }
 
 
-  public static ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws QueryException {
+  public static ConstraintExpression bindVariables(Map<Variable,Value> bindings, ConstraintExpression constraintExpr) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("Binding Variables in ConstraintExpression[" + constraintExpr.getClass() + "]");
@@ -264,7 +264,7 @@ public class ConstraintOperations
   }
 
 
-  public static Constraint replace(Map bindings, Constraint constraint) throws QueryException {
+  public static Constraint replace(Map<Variable,Value> bindings, Constraint constraint) throws QueryException {
     return ConstraintFactory.newConstraint(replace(bindings, constraint.getElement(0)),
                                            replace(bindings, constraint.getElement(1)),
                                            replace(bindings, constraint.getElement(2)),
@@ -272,7 +272,7 @@ public class ConstraintOperations
   }
 
 
-  public static ConstraintElement replace(Map bindings, ConstraintElement element) {
+  public static ConstraintElement replace(Map<Variable,Value> bindings, ConstraintElement element) {
     if (element instanceof Variable && bindings.containsKey(element)) {
       return (ConstraintElement)bindings.get(element);
     } else {
@@ -280,11 +280,10 @@ public class ConstraintOperations
     }
   }
 
-  public static List replaceOperationArgs(Map bindings, ConstraintOperation constraint) throws QueryException {
-    List newArgs = new ArrayList();
-    Iterator i = constraint.getElements().iterator();
-    while (i.hasNext()) {
-      newArgs.add(bindVariables(bindings, (ConstraintExpression)i.next()));
+  public static List<ConstraintExpression> replaceOperationArgs(Map<Variable,Value> bindings, ConstraintOperation constraint) throws QueryException {
+    List<ConstraintExpression> newArgs = new ArrayList<ConstraintExpression>();
+    for (ConstraintExpression expr: constraint.getElements()) {
+      newArgs.add(bindVariables(bindings, expr));
     }
 
     return newArgs;

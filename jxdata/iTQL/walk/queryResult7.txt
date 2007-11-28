@@ -1,5 +1,4 @@
-ItqlInterpreter error - org.mulgara.query.QueryException: Error getting information for answer
-Caused by: (QueryException) Error getting information for answer
+ItqlInterpreter error - Error getting information for answer
 Caused by: (QueryException) org.mulgara.query.TuplesException: Transaction error
 Caused by: (QueryException) org.mulgara.query.MulgaraTransactionException: Transaction rollback triggered
 Caused by: (QueryException) org.mulgara.query.TuplesException: Couldn't evaluate aggregate

@@ -28,25 +28,17 @@
 package org.mulgara.itql;
 
 // Java APIs
-import java.io.*;
 import java.sql.*;
 import java.text.DateFormat;
 import java.util.*;
-import javax.activation.DataHandler;
 
 // Mail api
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 
 // Third party packages
 import org.apache.log4j.*;
 import org.apache.soap.*;
-import org.apache.soap.rpc.*;
-import org.apache.soap.util.xml.*;
 
 // JRDF
 import org.jrdf.graph.URIReference;
@@ -58,7 +50,6 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.util.StringUtil;
-import org.w3c.dom.*;
 
 /**
  * Collaborator contains methods to store and manipulate annotations for the
@@ -69,12 +60,6 @@ import org.w3c.dom.*;
  *
  * @author <a href="http://staff.PIsoftware.com/tate/">Tate Jones</a>
  *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:15 $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
  * @copyright &copy; 2002-2003 <A href="http://www.PIsoftware.com/">Plugged In
@@ -84,165 +69,109 @@ import org.w3c.dom.*;
  */
 public class Collaborator {
 
-  /**
-   * Get line separator.
-   */
+  /** the logging category to log to */
+  private final static Logger log = Logger.getLogger(Collaborator.class.getName());
+
+  /** Get line separator. */
   private static final String eol = System.getProperty("line.separator");
 
-  /**
-   * Default server name to query
-   */
+  /** Default server name to query */
   private static String SERVER_NAME = "server1";
 
-  /**
-   * Default server to query
-   */
+  /** Default server to query */
   private static String SERVER = "";
 
   //Determine the localhost name
   static {
-
     try {
-
       SERVER = "rmi://" + java.net.InetAddress.getLocalHost().getCanonicalHostName() +
           "/" + SERVER_NAME + "#";
     } catch (java.net.UnknownHostException ex) {
-
       System.err.print("Unable to determine local host name :" + ex.toString());
     }
   }
 
-  /**
-   * The ITQL interpreter Bean.
-   */
+  /** The ITQL interpreter Bean. */
   private static ItqlInterpreterBean itqlBean = null;
 
-  /**
-   * Default model to use
-   */
+  /** Default model to use */
   private final static String MODEL = "collaborator";
 
-  /**
-   * Namespace for document
-   */
-  private final static String NS =
-      "http://mulgara.org/mulgara/Annotation#";
+  /** Namespace for document */
+  private final static String NS = "http://mulgara.org/mulgara/Annotation#";
 
-  /**
-   * Email address predicate
-   */
+  /** Email address predicate */
   private final static String EMAIL_ADDRESS = NS + "emailAddress";
 
-  /**
-   * Nick name predicate
-   */
+  /** Nick name predicate */
   private final static String NICK_NAME = NS + "nickName";
 
-  /**
-   * Text predicate
-   */
+  /** Text predicate */
   private final static String TEXT = NS + "text";
 
-  /**
-   * documentId predicate
-   */
+  /** documentId predicate */
   private final static String DOCUMENT_ID = NS + "documentId";
 
-  /**
-   * annotationId predicate
-   */
+  /** annotationId predicate */
   private final static String ANNOTATION_ID_PREFIX = NS + "annotationId";
 
-  /**
-   * annotationId predicate
-   */
+  /** annotationId predicate */
   private final static String DATE = NS + "lastUpdate";
 
-  /**
-   * page number predicate
-   */
+  /** page number predicate */
   private final static String PAGE_NUMBER = NS + "pageNumber";
 
-  /**
-   * x position predicate
-   */
+  /** x position predicate */
   private final static String X_POSITION = NS + "xPosition";
 
-  /**
-   * y position predicate
-   */
+  /** y position predicate */
   private final static String Y_POSITION = NS + "yPosition";
 
-  /**
-   * x anchor predicate
-   */
+  /** x anchor predicate */
   private final static String X_ANCHOR = NS + "xAnchor";
 
-  /**
-   * y anchor predicate
-   */
+  /** y anchor predicate */
   private final static String Y_ANCHOR = NS + "yAnchor";
 
-  /**
-   * height predicate
-   */
+  /** height predicate */
   private final static String HEIGHT = NS + "height";
 
-  /**
-   * width predicate
-   */
+  /** width predicate */
   private final static String WIDTH = NS + "width";
 
-  /**
-   * Access key prefix
-   */
+  /** Access key prefix */
   private final static String KEY_PREFIX = NS + "key";
 
-  /**
-   * Check Mulgara for the collaborator model
-   */
+  /** Check Mulgara for the collaborator model */
   private final static String CHECK_MODEL =
       "select $model from <" + SERVER + "> " +
       "where $model <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> " +
       "<http://mulgara.org/mulgara#Model> ;";
 
-  /**
-   * Create model for collaborator
-   */
-  private final static String CREATE_MODEL = "create <" + SERVER + MODEL +
-      ">;";
+  /** Create model for collaborator */
+  private final static String CREATE_MODEL = "create <" + SERVER + MODEL + ">;";
 
-  /**
-   * Delete the collaboration model
-   */
+  /** Delete the collaboration model */
   private final static String DROP_MODEL = "drop <" + SERVER + MODEL + ">;";
 
-  /**
-   * Check for registration
-   */
+  /** Check for registration */
   private final static String CHECK_REGISTRATION =
       "select $key from <" + SERVER + MODEL + "> " + "where $key <" +
       EMAIL_ADDRESS + "> <mailto:~01> ;";
 
-  /**
-   * Check for registration
-   */
+  /** Check for registration */
   private final static String INSERT_REGISTRATION =
       "insert <" + KEY_PREFIX + "~01> <" + EMAIL_ADDRESS +
       "> <mailto:~02> into <" + SERVER + MODEL + ">; " + "insert <" +
       KEY_PREFIX +
       "~01> <" + NICK_NAME + "> '~03' into <" + SERVER + MODEL + ">; ";
 
-  /**
-   * Check for access key
-   */
+  /** Check for access key */
   private final static String CHECK_ACCESS_KEY =
       "select $emailaddress from <" + SERVER + MODEL + "> " + "where <" +
       KEY_PREFIX + "~01> $emailaddress <mailto:~02> ;";
 
-  /**
-   * Create annotation
-   */
+  /** Create annotation */
   private final static String INSERT_ANNOTATION =
       "insert <" + ANNOTATION_ID_PREFIX + "~01> <" + EMAIL_ADDRESS +
       "> <mailto:~02> into <" + SERVER + MODEL + ">; " + "insert <" +
@@ -264,24 +193,18 @@ public class Collaborator {
       ANNOTATION_ID_PREFIX + "~01> <" + DOCUMENT_ID + "> '~13' into <" + SERVER +
       MODEL + ">; ";
 
-  /**
-   * Retrieve an annotation
-   */
+  /** Retrieve an annotation */
   private final static String RETRIEVE_ANNOTATION =
       "select $predicate $object from <" + SERVER + MODEL + "> " + "where <" +
       ANNOTATION_ID_PREFIX + "~01> $predicate $object and " + "      <" +
       ANNOTATION_ID_PREFIX + "~01> <" + DOCUMENT_ID + "> '~02';";
 
-  /**
-   * Delete an annotation statement
-   */
+  /** Delete an annotation statement */
   private final static String DELETE_ANNOTATION_STATEMENT =
       "delete <" + ANNOTATION_ID_PREFIX + "~01> <~02> ~03 from <" + SERVER +
       MODEL + ">;";
 
-  /**
-   * Retrieve all annotations
-   */
+  /** Retrieve all annotations */
   private final static String RETRIEVE_ANNOTATIONS =
       "select $annotationId $emailaddress $nickname $text $pageno " +
       "$x $y $xanchor $yanchor $height $width $lastupdated $documentid " +
@@ -297,31 +220,26 @@ public class Collaborator {
       "$annotationId <" + DATE + "> $lastupdated and " + "$annotationId <" +
       DOCUMENT_ID + "> $documentid ;";
 
-  /**
-   * the logging category to log to
-   */
-  private final static Logger log =
-      Logger.getLogger(Collaborator.class.getName());
+  /** Method identifier used for transaction naming */
+  private static final String EXECUTE_COMMAND_TX = "executeCommand";
 
-  /**
-   * For testing purposes only!!
-   */
+  /** Method identifier used for transaction naming */
+  private static final String ADD_ANNOTATION_TX = "addAnnotation";
+
+  /** Method identifier used for transaction naming */
+  private static final String REMOVE_ANNOTATION_TX = "removeAnnotation";
+  
+  /** For testing purposes only!! */
   public String lastAccessKeyCreated = null;
 
-  /**
-   * Date formater
-   */
+  /** Date formater */
   DateFormat dateFormat = DateFormat.getInstance();
 
-  /**
-   * Track the document updates
-   */
-  private final Map documentUpdates = new HashMap();
+  /** Track the document updates */
+  private final Map<String,Long> documentUpdates = new HashMap<String,Long>();
 
-  /**
-   * Track when a user last retrieved annotaions for a document
-   */
-  private final Map lastChecked = new HashMap();
+  /** Track when a user last retrieved annotaions for a document */
+  private final Map<String,Long> lastChecked = new HashMap<String,Long>();
 
   /**
    * The Collaborator will create the ITQL interpreter bean.
@@ -333,16 +251,11 @@ public class Collaborator {
       itqlBean = new ItqlInterpreterBean();
 
       //Has the server name been determined
-      if (SERVER.length() == 0) {
-
-        log.fatal("Unable to determine localhost name");
-      }
+      if (SERVER.length() == 0) log.fatal("Unable to determine localhost name");
 
       try {
-
-        this.initializeModel();
+        initializeModel();
       } catch (Exception ex) {
-
         log.fatal("Unable to initialize collaboration model", ex);
       }
     }
@@ -355,6 +268,7 @@ public class Collaborator {
   public void close() {
     if (itqlBean != null) {
       itqlBean.close();
+      itqlBean = null;
     }
   }
 
@@ -467,24 +381,19 @@ public class Collaborator {
     boolean registered = false;
 
     //Check supplied parameters
-    if ( (emailAddress == null) ||
+    if ((emailAddress == null) ||
         (nickName == null) ||
         (emailAddress.length() == 0) ||
         (nickName.length() == 0)) {
 
       log.warn("Null paramaters supplied for email address or nickname");
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Email address and nick name must be supplied");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Email address and nick name must be supplied");
     }
 
     //TODO : validate email address
     //Check for existing registration
-    if (this.executeCommand(CHECK_REGISTRATION, new String[] {emailAddress}
-                            ,
-                            0, false)) {
+    if (executeCommand(CHECK_REGISTRATION, new String[] {emailAddress}, 0, false)) {
 
       //new registration required
       // TODO : create a better access key
@@ -494,28 +403,20 @@ public class Collaborator {
       lastAccessKeyCreated = key;
 
       //TODO : Calculate expiry date
-      registered =
-          this.executeCommand(INSERT_REGISTRATION,
-                              new String[] {key, emailAddress, nickName}
-                              ,
+      registered = executeCommand(INSERT_REGISTRATION, new String[] {key, emailAddress, nickName},
                               "Successfully inserted", true);
 
       //Send an email with the registration key
       if (registered) {
-
-        this.sendEmail("foo@localhost", emailAddress,
+        sendEmail("foo@localhost", emailAddress,
                        "Collaborator Registration",
-                       "Welcome to Mulgara Collaborator. Your access key is " +
-                       key);
+                       "Welcome to Mulgara Collaborator. Your access key is " + key);
       }
     } else {
 
       log.warn("Existing registration already exists for " + emailAddress);
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Your Email address has already been registered");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Your Email address has already been registered");
     }
 
     return registered;
@@ -529,50 +430,36 @@ public class Collaborator {
    * @param key evaulation key ?
    * @param emailAddress email address to validate against the access key
    * @return returns true is the evaluation key is valid
-   * @throws SOAPException excepted errors are : ?key is invaild, key has
-   *      expired ?
+   * @throws SOAPException excepted errors are : ?key is invaild, key has expired ?
    */
-  public boolean checkAccessKey(String key, String emailAddress) throws
-      SOAPException {
+  public boolean checkAccessKey(String key, String emailAddress) throws SOAPException {
 
     boolean accessOk = false;
 
-    //Check supplied parameters
-    if ( (emailAddress == null) ||
+    // Check supplied parameters
+    if ((emailAddress == null) ||
         (key == null) ||
         (emailAddress.length() == 0) ||
         (key.length() == 0)) {
 
       log.warn("Null paramaters supplied for email address and/or key");
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Email address and key name must be supplied");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Email address and key name must be supplied");
     }
 
     //Check for the access key
-    if (this.executeCommand(CHECK_ACCESS_KEY,
-                            new String[] {key, emailAddress}
-                            , 1, false)) {
+    if (executeCommand(CHECK_ACCESS_KEY, new String[] {key, emailAddress}, 1, false)) {
 
       if (log.isDebugEnabled()) {
-
-        log.debug("Access for key :" + key + " email address :" + emailAddress +
-                  " is ok");
+        log.debug("Access for key :" + key + " email address :" + emailAddress + " is ok");
       }
 
       accessOk = true;
     } else {
+      log.warn("Invaild access key :" + key + " for email address :" + emailAddress);
 
-      log.warn("Invaild access key :" + key + " for email address :" +
-               emailAddress);
-
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Invaild access key :" + key +
-                            " for email address :" + emailAddress);
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER,
+                            "Invaild access key :" + key + " for email address :" + emailAddress);
     }
 
     return accessOk;
@@ -615,9 +502,8 @@ public class Collaborator {
                                            String height,
                                            String width) throws SOAPException {
 
-    return this.addAnnotation(emailAddress, key, nickName, documentId, text,
-                              pageNo, xAnchor, yAnchor, x, y, height, width,
-                              true);
+    return addAnnotation(emailAddress, key, nickName, documentId, text,
+                         pageNo, xAnchor, yAnchor, x, y, height, width, true);
   }
 
   /**
@@ -632,13 +518,11 @@ public class Collaborator {
    *      key is invaild, key has expired, invalid parameters supplied,
    *      annotation does not exist
    */
-  public synchronized boolean removeAnnotation(String emailAddress, String key,
-                                               String documentId,
-                                               String annotationId) throws
-      SOAPException {
+  public synchronized boolean removeAnnotation(
+      String emailAddress, String key, String documentId, String annotationId
+   ) throws SOAPException {
 
-    return this.removeAnnotation(emailAddress, key, documentId, annotationId,
-                                 true);
+    return removeAnnotation(emailAddress, key, documentId, annotationId, true);
   }
 
   /**
@@ -673,7 +557,7 @@ public class Collaborator {
 
     // Check the the access key for this user.
     // Will throw an exception if the access key is incorrect
-    this.checkAccessKey(key, emailAddress);
+    checkAccessKey(key, emailAddress);
 
     //Check parameters
     if ( (documentId == null) ||
@@ -711,7 +595,7 @@ public class Collaborator {
 
     // Commence a new transaction for the removing and
     // adding of a new annotation.
-    this.beginTransaction("editAnnotation");
+    beginTransaction("editAnnotation");
 
     try {
 
@@ -729,7 +613,7 @@ public class Collaborator {
     } catch (SOAPException ex) {
 
       //Rollback the transaction
-      this.rollback("editAnnotation");
+      rollback("editAnnotation");
 
       // re-throw the exception
       throw ex;
@@ -739,23 +623,20 @@ public class Collaborator {
     if (!added) {
 
       //Rollback the transaction
-      this.rollback("editAnnotation");
+      rollback("editAnnotation");
 
       log.warn("Unable to edit annotation documentId :" + documentId +
                " annotationId :" + annotationId);
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
+      throw new SOAPException(Constants.FAULT_CODE_SERVER,
                             "Unable to edit annotation");
-
-      throw se;
     } else {
 
       // Commit the changes
-      this.commit("editAnnotation");
+      commit("editAnnotation");
 
       // the flag the update document
-      this.documentHasUpdated(documentId);
+      documentHasUpdated(documentId);
     }
 
     return annotationId;
@@ -772,55 +653,42 @@ public class Collaborator {
    *      is invalid, key has expired, invalid parameters supplied, invalid
    *      documentId supplied
    */
-  public synchronized String retrieveAnnotations(String emailAddress,
-                                                 String key, String documentId) throws
-      SOAPException {
-
-    boolean retrieved = false;
+  public synchronized String retrieveAnnotations(
+      String emailAddress, String key, String documentId
+  ) throws SOAPException {
 
     // Check the the access key for this user.
     // Will throw an exception if the access key is incorrect
-    this.checkAccessKey(key, emailAddress);
+    checkAccessKey(key, emailAddress);
 
     //Check parameters
     if ((documentId == null) || (documentId.length() == 0)) {
 
       log.warn("Invalid paramaters supplied for retrieving annotations");
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
+      throw new SOAPException(Constants.FAULT_CODE_SERVER,
           "Invalid paramaters supplied for retrieving annotations");
-      throw se;
     }
 
     String results = "";
 
     //Subsitute the parameter into the query
-    String query =
-        StringUtil.substituteStrings(RETRIEVE_ANNOTATIONS,
-                                     new String[] {documentId});
+    String query = StringUtil.substituteStrings(RETRIEVE_ANNOTATIONS, documentId);
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Executing query :" + query);
-    }
+    if (log.isDebugEnabled()) log.debug("Executing query :" + query);
 
     //Issue the query
     try {
-
-      results = this.decode(itqlBean.executeQueryToString(query));
+      results = decode(itqlBean.executeQueryToString(query));
     } catch (Exception ex) {
 
       log.error("Unable to retrieve annotations for documentId :" + documentId, ex);
 
-      SOAPException se = new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Unable to retrieve annotations: " + ex.getMessage(), ex);
-
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Unable to retrieve annotations: " + ex.getMessage(), ex);
     }
 
     // track the document retrieval
-    this.documentHasBeenRetrieved(documentId, emailAddress);
+    documentHasBeenRetrieved(documentId, emailAddress);
 
     return results;
   }
@@ -836,32 +704,26 @@ public class Collaborator {
    *      is invalid, key has expired, invalid parameters supplied, invalid
    *      documentId supplied
    */
-  public boolean checkAnnotationUpdates(String emailAddress,
-                                        String key,
-                                        String documentId)
-    throws SOAPException {
+  public boolean checkAnnotationUpdates(
+      String emailAddress, String key, String documentId
+  ) throws SOAPException {
 
     // Check the the access key for this user.
     // Will throw an exception if the access key is incorrect
-    this.checkAccessKey(key, emailAddress);
+    checkAccessKey(key, emailAddress);
 
-    //Check parameters
-    if ( (documentId == null) || (documentId.length() == 0)) {
-
+    // Check parameters
+    if ((documentId == null) || (documentId.length() == 0)) {
       log.warn("Invalid paramaters supplied for retrieving annotations");
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Invalid paramaters supplied for retrieving annotations");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Invalid paramaters supplied for retrieving annotations");
     }
 
-    return this.hasDocumentUpdated(documentId, emailAddress);
+    return hasDocumentUpdated(documentId, emailAddress);
   }
 
   /**
-       * Checks for the collaboration model. If the model does not exist then create
-   * it.
+   * Checks for the collaboration model. If the model does not exist then create it.
    *
    * @return return true if successful with initialisation
    * @throws QueryException Unable to extract or create model
@@ -874,25 +736,20 @@ public class Collaborator {
     boolean initialized = false;
 
     try {
-
-      String ans = itqlBean.executeQueryToString(CHECK_MODEL);
+      // ignore string output
+      itqlBean.executeQueryToString(CHECK_MODEL);
     } catch (Exception ex) {
 
       ex.printStackTrace();
     }
 
-    List answers = itqlBean.executeQueryToList(CHECK_MODEL);
-
-    Object obj = null;
     String model = null;
 
-    for (Iterator ai = answers.iterator(); ai.hasNext(); ) {
-
-      obj = ai.next();
+    for (Object obj: itqlBean.executeQueryToList(CHECK_MODEL)) {
 
       if (obj instanceof Answer) {
 
-        Answer answer = (Answer) obj;
+        Answer answer = (Answer)obj;
 
         try {
           //reset cursor
@@ -900,23 +757,15 @@ public class Collaborator {
 
           while (answer.next()) {
 
-            model = ((URIReference) answer.getObject(answer.getColumnIndex(new
-Variable("model")))).getURI().toString();
+            model = ((URIReference)answer.getObject(answer.getColumnIndex(new Variable("model")))).getURI().toString();
 
-            if (log.isDebugEnabled()) {
-
-              log.debug("Found model :" + model);
-            }
+            if (log.isDebugEnabled()) log.debug("Found model :" + model);
 
             int pos = model.indexOf("#");
 
             if (pos >= 0) {
 
-              if (log.isDebugEnabled()) {
-
-                log.debug("Testing model :" + model.substring(pos + 1));
-              }
-
+              if (log.isDebugEnabled()) log.debug("Testing model :" + model.substring(pos + 1));
               initialized = (model.substring(pos + 1).equals(MODEL));
             }
           }
@@ -927,22 +776,18 @@ Variable("model")))).getURI().toString();
 
         if (obj instanceof String) {
 
-          log.error("Unable to check collaboration model for existance :" +
-                    ( (String) obj).toString() + " Using query :" + CHECK_MODEL);
+          log.error("Unable to check collaboration model for existance :" + obj + " Using query :" + CHECK_MODEL);
         } else {
 
-          log.error("Unable to check collaboration model for existance " +
-                    " Using query :" + CHECK_MODEL);
+          log.error("Unable to check collaboration model for existance Using query :" + CHECK_MODEL);
         }
       }
     }
 
     if (initialized == false) {
-
-      //Model has not been initialized
-      initialized = this.createModel();
+      // Model has not been initialized
+      initialized = createModel();
     } else {
-
       log.debug("Collaborator model already initialized at " + SERVER + MODEL);
     }
 
@@ -953,13 +798,12 @@ Variable("model")))).getURI().toString();
    * Creates a new collaborator model
    *
    * @return returns true if successful
-   * @throws SOAPException EXCEPTION TO DO
+   * @throws SOAPException Error creating the model on the server
    */
   public synchronized boolean createModel() throws SOAPException {
 
     log.warn("creating model " + SERVER + MODEL);
-
-    return this.executeCommand(CREATE_MODEL, "Successfully created model", false);
+    return executeCommand(CREATE_MODEL, "Successfully created model", false);
   }
 
   /**
@@ -971,8 +815,7 @@ Variable("model")))).getURI().toString();
   public synchronized boolean dropModel() throws SOAPException {
 
     log.warn("dropping model " + SERVER + MODEL);
-
-    return this.executeCommand(DROP_MODEL, "Successfully dropped model", false);
+    return executeCommand(DROP_MODEL, "Successfully dropped model", false);
   }
 
   /**
@@ -1006,27 +849,21 @@ Variable("model")))).getURI().toString();
 
     // Check the the access key for this user.
     // Will throw an exception if the access key is incorrect
-    if (trans) {
-
-      this.checkAccessKey(key, emailAddress);
-    }
+    if (trans) checkAccessKey(key, emailAddress);
 
     //Check parameters
-    if ( (documentId == null) ||
+    if ((documentId == null) ||
         (documentId.length() == 0) ||
         (annotationId == null) ||
         (annotationId.length() == 0)) {
 
       log.warn("Invalid paramaters supplied for annotation removal");
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Invalid paramaters supplied for annotation removal");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Invalid paramaters supplied for annotation removal");
     }
 
     //Retrieve the annotation
-    Answer annotation = this.retrieveAnnotation(documentId, annotationId);
+    Answer annotation = retrieveAnnotation(documentId, annotationId);
 
     if (annotation != null) {
 
@@ -1034,10 +871,7 @@ Variable("model")))).getURI().toString();
       String object = null;
 
       //Begin a transaction to remove the statements
-      if (trans) {
-
-        this.beginTransaction("removeAnnotation");
-      }
+      if (trans) beginTransaction(REMOVE_ANNOTATION_TX);
 
       try {
 
@@ -1048,31 +882,22 @@ Variable("model")))).getURI().toString();
         while (annotation.next()) {
 
           //grab the predicate
-          predicate = ((URIReference) annotation.getObject(annotation.getColumnIndex(new Variable("predicate")))).getURI().toString();
+          predicate = ((URIReference)annotation.getObject(annotation.getColumnIndex(new Variable("predicate")))).getURI().toString();
 
           //grab the object - could be a literal or a resource
           int objectIndex = annotation.getColumnIndex(new Variable("object"));
           if (annotation.getObject(objectIndex) instanceof LiteralImpl) {
 
-            object =
-                "'" +
-                this.encode(((LiteralImpl) annotation.getObject(objectIndex)).getLexicalForm()) +
-                "'";
+            object = "'" + encode(((LiteralImpl) annotation.getObject(objectIndex)).getLexicalForm()) + "'";
           } else if (annotation.getObject(objectIndex) instanceof URIReference) {
 
-            object =
-                "<" +
-                ((URIReference) annotation.getObject(objectIndex)).getURI().
-                toString() +
-                ">";
+            object = "<" + ((URIReference)annotation.getObject(objectIndex)).getURI() + ">";
           }
 
-          //delete the annotation statement
-          removed =
-              this.executeCommand(DELETE_ANNOTATION_STATEMENT,
-                                  new String[] {annotationId, predicate, object}
-                                  , "Successfully",
-                                  false);
+          String[] removalParams = new String[] {annotationId, predicate, object};
+          
+          // delete the annotation statement
+          removed = executeCommand(DELETE_ANNOTATION_STATEMENT,removalParams, "Successfully", false);
 
           if (!removed) {
 
@@ -1080,48 +905,32 @@ Variable("model")))).getURI().toString();
                      documentId + " annotationId :" + annotationId +
                      " predicate :" +
                      predicate + " object :" + object);
-
-            SOAPException se =
-                new SOAPException(Constants.FAULT_CODE_SERVER,
-                                  "Unable to remove annotation");
-            throw se;
+            throw new SOAPException(Constants.FAULT_CODE_SERVER, "Unable to remove annotation");
           } else {
 
             // the flag the update document
-            this.documentHasUpdated(documentId);
+            documentHasUpdated(documentId);
           }
         }
 
         // Commit the deletions
-        if (trans) {
+        if (trans) commit(REMOVE_ANNOTATION_TX);
 
-          this.commit("removeAnnotation");
-        }
       } catch (TuplesException ex) {
-
-        //Rollback the transaction
-        if (trans) {
-
-          this.rollback("removeAnnotation");
-        }
+        // Rollback the transaction
+        if (trans) rollback(REMOVE_ANNOTATION_TX);
 
         log.error("Unable to locate annotation for removal documentId :" +
                   documentId + " annotationId :" + annotationId, ex);
 
-        SOAPException se =
-            new SOAPException(Constants.FAULT_CODE_SERVER,
-                              "Unable to locate annotation for removal");
-        throw se;
+        throw new SOAPException(Constants.FAULT_CODE_SERVER, "Unable to locate annotation for removal");
       }
     } else {
 
       log.warn("Unable to locate annotation for removal documentId :" +
                documentId + " annotationId :" + annotationId);
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Unable to locate annotation for removal");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Unable to locate annotation for removal");
     }
 
     return removed;
@@ -1159,21 +968,18 @@ Variable("model")))).getURI().toString();
                                String pageNo,
                                String xAnchor, String yAnchor, String x,
                                String y, String height,
-                               String width, boolean trans) throws
-      SOAPException {
+                               String width, boolean trans
+  ) throws SOAPException {
 
     String annotationId = "";
 
     // Check the the access key for this user.
     // Will throw an exception if the access key is incorrect
     // Only check if not nested in another transaction
-    if (trans) {
+    if (trans) checkAccessKey(key, emailAddress);
 
-      this.checkAccessKey(key, emailAddress);
-    }
-
-    //Check parameters
-    if ( (documentId == null) ||
+    // Check parameters
+    if ((documentId == null) ||
         (documentId.length() == 0) ||
         (pageNo == null) ||
         (pageNo.length() == 0) ||
@@ -1192,73 +998,51 @@ Variable("model")))).getURI().toString();
 
       log.warn("Invalid paramaters supplied for annotation");
 
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-                            "Invalid paramaters supplied for annotation");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER, "Invalid paramaters supplied for annotation");
     }
 
-    //Correct the text if null
-    if (text == null) {
-
-      text = "";
-    }
+    // Correct the text if null
+    if (text == null) text = "";
 
     // Create the supporting attributes
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     String lastUpdated = dateFormat.format(cal.getTime());
 
-    //TODO : create a better annotation id
+    // TODO : create a better annotation id
     annotationId = String.valueOf(System.currentTimeMillis());
 
     if (log.isDebugEnabled()) {
-
       log.debug("Adding annotation with documentId :" + documentId +
                 " email address :" + emailAddress + " nickName :" + nickName +
-                " text :" + text + " pageNo :" + pageNo + " xAnchor :" +
-                xAnchor +
-                " yAnchor :" + yAnchor + " x :" + x + " y:" + y + " height :" +
-                height +
-                " width :" + width + " lastUpdated :" + lastUpdated +
-                " annotationId :" + annotationId);
+                " text :" + text + " pageNo :" + pageNo + " xAnchor :" + xAnchor +
+                " yAnchor :" + yAnchor + " x :" + x + " y:" + y +
+                " height :" + height + " width :" + width +
+                " lastUpdated :" + lastUpdated + " annotationId :" + annotationId);
     }
 
     // Start a transaction for all the inserts
-    if (trans) {
+    if (trans) beginTransaction(ADD_ANNOTATION_TX);
 
-      this.beginTransaction("addAnnotation");
-    }
+    String[] annotationParams = new String[] {
+        annotationId, emailAddress, nickName, encode(text), pageNo,
+        xAnchor, yAnchor, x, y, height, width, lastUpdated, documentId
+    };
 
-    boolean added =
-        this.executeCommand(INSERT_ANNOTATION,
-                            new String[] {
-                            annotationId, emailAddress, nickName,
-                            this.encode(text), pageNo,
-                            xAnchor, yAnchor, x, y, height, width, lastUpdated,
-                            documentId
-    }
-        , "Successfully inserted", false);
-
-    // Clear the annotationId if unsuccessful
-    if (!added) {
+    // Clear the annotationId if unsuccessful - handling transactions at this level
+    if (!executeCommand(INSERT_ANNOTATION, annotationParams, "Successfully inserted", false)) {
 
       annotationId = "";
 
       // Rollback the inserts
-      if (trans) {
+      if (trans) rollback(ADD_ANNOTATION_TX);
 
-        this.rollback("addAnnotation");
-      }
     } else {
 
       // Commit the inserts
-      if (trans) {
-
-        this.commit("addAnnotation");
-      }
+      if (trans) commit(ADD_ANNOTATION_TX);
 
       // the flag the update document
-      this.documentHasUpdated(documentId);
+      documentHasUpdated(documentId);
     }
 
     return annotationId;
@@ -1290,108 +1074,77 @@ Variable("model")))).getURI().toString();
    * @return returns true if the expect result is found in the response
    * @throws SOAPException EXCEPTION TO DO
    */
-  private boolean executeCommand(String command, String[] substituteArray,
-                                 String expectedResult, boolean trans) throws
-      SOAPException {
+  private boolean executeCommand(
+      String command, String[] substituteArray, String expectedResult, boolean trans
+  ) throws SOAPException {
 
     boolean successful = false;
 
     //Perform any subsitutions
     if (substituteArray != null) {
-
       command = StringUtil.substituteStrings(command, substituteArray);
     }
 
-    Object obj = null;
     String message = null;
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Executing command :" + command);
-    }
+    if (log.isDebugEnabled()) log.debug("Executing command :" + command);
 
     // Commence a new transaction if required
-    if (trans) {
+    if (trans) beginTransaction(EXECUTE_COMMAND_TX);
 
-      this.beginTransaction("executeCommand");
-    }
+    // Issue the itql command
+    for (Object obj: itqlBean.executeQueryToList(command)) {
 
-    //Issue the itql command
-    List answers = itqlBean.executeQueryToList(command);
-
-    for (Iterator ai = answers.iterator(); ai.hasNext(); ) {
-
-      //Check the result
-      obj = ai.next();
-
-      //Is the result a message?
+      // Is the result a message?
       if (obj instanceof String) {
 
-        message = (String) obj;
+        message = (String)obj;
 
-        if (log.isDebugEnabled()) {
-
-          log.debug("returned message :" + message);
-        }
+        if (log.isDebugEnabled()) log.debug("returned message :" + message);
 
         // Check the outcome against the expect result
-        successful = ( (message != null) &&
-                      (message.indexOf(expectedResult) >= 0));
+        successful = ((message != null) && (message.indexOf(expectedResult) >= 0));
 
         // break if failure occurs
         if (!successful) {
-
+          log.error("Collaborator command: " + command + "\nmessage: " + message + "\nexpected: " + expectedResult);
           break;
         }
       }
 
-      //Is the result an ansert?
+      // Is the result an answer?
       if (obj instanceof Answer) {
 
         try {
 
-          //Check the number of rows returned
-          long solutionCount = ( (Answer) obj).getRowUpperBound();
+          // Check the number of rows returned
+          long solutionCount = ((Answer)obj).getRowUpperBound();
 
-          if (log.isDebugEnabled()) {
-
-            log.debug("found answer :" + solutionCount);
-          }
+          if (log.isDebugEnabled()) log.debug("found answer :" + solutionCount);
 
           message = String.valueOf(solutionCount);
 
           // Check the outcome against the expect result
-          successful = ( (message != null) &&
-                        (message.indexOf(expectedResult) >= 0));
+          successful = ((message != null) && (message.indexOf(expectedResult) >= 0));
 
           // break if failure occurs
-          if (!successful) {
+          if (!successful) break;
 
-            break;
-          }
         } catch (TuplesException ex) {
 
           log.error("Error executing command :" + command, ex);
-
-          //Rollback the changes
-          if (trans) {
-
-            this.rollback("executeCommand");
-          }
+          // Rollback the changes
+          if (trans) rollback(EXECUTE_COMMAND_TX);
+          return false;
         }
       }
     }
 
-    // Commit the changes
-    if (trans) {
-
-      this.commit("executeCommand");
-    }
+    // Commit the changes whether successful or not
+    if (trans) commit(EXECUTE_COMMAND_TX);
 
     if (log.isDebugEnabled()) {
-
-      log.debug("Command :" + command + "message :" + message + " result :" +
-                successful);
+      log.debug("Command :" + command + "message :" + message + " result :" + successful);
     }
 
     return successful;
@@ -1426,7 +1179,6 @@ Variable("model")))).getURI().toString();
         StringUtil.substituteStrings(RETRIEVE_ANNOTATION,
                                      new String[] {annotationId, documentId});
 
-    Object obj = null;
     Answer answer = null;
 
     if (log.isDebugEnabled()) {
@@ -1435,13 +1187,7 @@ Variable("model")))).getURI().toString();
     }
 
     //Issue the query command
-    List answers = itqlBean.executeQueryToList(query);
-
-    //Iterate over the results ( only return the first resultSet )
-    for (Iterator ai = answers.iterator(); ai.hasNext(); ) {
-
-      //Check the result
-      obj = ai.next();
+    for (Object obj: itqlBean.executeQueryToList(query)) {
 
       //Check for an answer
       if (obj instanceof Answer) {
@@ -1520,20 +1266,19 @@ Variable("model")))).getURI().toString();
     //Find out when the user performed the last retrieval for a document
     if (lastChecked.containsKey(documentId + emailAddress)) {
 
-      lastCheckedTime =
-          ( (Long) lastChecked.get(documentId + emailAddress)).longValue();
+      lastCheckedTime = lastChecked.get(documentId + emailAddress).longValue();
     }
 
     //Find out the last updated time
     if (documentUpdates.containsKey(documentId)) {
 
       // has been updated
-      lastUpdatedTime = ( (Long) documentUpdates.get(documentId)).longValue();
+      lastUpdatedTime = documentUpdates.get(documentId).longValue();
     } else {
 
       // No modification has occur for this document.
       // ie. server has been started without any updates
-      this.documentHasUpdated(documentId);
+      documentHasUpdated(documentId);
     }
 
     //Is the last check time less than the last updated time?
@@ -1553,98 +1298,66 @@ Variable("model")))).getURI().toString();
   /**
    * Commence a new transaction for this session
    *
-   * @param name PARAMETER TO DO
-   * @throws SOAPException EXCEPTION TO DO
+   * @param name Name of this transaction
+   * @throws SOAPException Unable to create a transaction on the server
    */
   private void beginTransaction(String name) throws SOAPException {
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Begin transaction : " + name);
-    }
+    if (log.isDebugEnabled()) log.debug("Begin transaction : " + name);
 
     try {
-
       itqlBean.beginTransaction(name);
     } catch (QueryException ex) {
-
-      log.error("Unable to obtain a transaction for the Mulgara Collaborator <" +
-                name + ">", ex);
-
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Unable to obtain a transaction for the Mulgara Collaborator <" +
-          name + ">");
-      throw se;
+      log.error("Unable to obtain a transaction for the Mulgara Collaborator <" + name + ">", ex);
+      throw new SOAPException(Constants.FAULT_CODE_SERVER,
+          "Unable to obtain a transaction for the Mulgara Collaborator <" + name + ">");
     }
   }
 
   /**
    * Commit the current transaction
    *
-   * @param name PARAMETER TO DO
-   * @throws SOAPException EXCEPTION TO DO
+   * @param name Name of the transaction to commit
+   * @throws SOAPException Unable to commit the transaction on the server
    */
   private void commit(String name) throws SOAPException {
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Commit transaction : " + name);
-    }
+    if (log.isDebugEnabled()) log.debug("Commit transaction : " + name);
 
     try {
-
       itqlBean.commit(name);
     } catch (QueryException ex) {
-
-      log.error("Unable to obtain a transaction for the Mulgara Collaborator <" +
-                name + ">", ex);
-
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Unable to commit changes for the Mulgara Collaborator <" + name +
-          ">");
-
-      throw se;
+      log.error("Unable to obtain a transaction for the Mulgara Collaborator <" + name + ">", ex);
+      throw new SOAPException(Constants.FAULT_CODE_SERVER,
+          "Unable to commit changes for the Mulgara Collaborator <" + name + ">");
     }
   }
 
   /**
    * Rollback the current transaction
    *
-   * @param name PARAMETER TO DO
-   * @throws SOAPException EXCEPTION TO DO
+   * @param name Name of the transaction to roll back
+   * @throws SOAPException Unable to roll back the transaction
    */
   private void rollback(String name) throws SOAPException {
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Rollback transaction : " + name);
-    }
+    if (log.isDebugEnabled()) log.debug("Rollback transaction : " + name);
 
     try {
-
       itqlBean.rollback(name);
     } catch (QueryException ex) {
+      log.error("Unable to rollback a transaction for the Mulgara Collaborator <" + name + ">", ex);
 
-      log.error(
-          "Unable to rollback a transaction for the Mulgara Collaborator <" +
-          name + ">",
-          ex);
-
-      SOAPException se =
-          new SOAPException(Constants.FAULT_CODE_SERVER,
-          "Unable to rollback a transaction for the Mulgara Collaborator <" +
-          name + ">");
-      throw se;
+      throw new SOAPException(Constants.FAULT_CODE_SERVER,
+          "Unable to rollback a transaction for the Mulgara Collaborator <" + name + ">");
     }
   }
 
   /**
    * Encode a literal string
    *
-   * @param value PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param value String to encode
+   * @return A new encoded string 
    */
   private String encode(String value) {
 
@@ -1654,8 +1367,8 @@ Variable("model")))).getURI().toString();
   /**
    * Decode a literal string
    *
-   * @param value PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param value The string to decode
+   * @return A new decoded string
    */
   private String decode(String value) {
 

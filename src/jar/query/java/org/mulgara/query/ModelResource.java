@@ -107,7 +107,8 @@ public class ModelResource implements Model {
    *   the server if this is a Java RMI or BEEP model, or the empty {@link Set}
    *   otherwise
    */
-  public Set getDatabaseURIs() {
+  @SuppressWarnings("unchecked")
+  public Set<URI> getDatabaseURIs() {
 
     try {
 
@@ -121,16 +122,11 @@ public class ModelResource implements Model {
                                              uri.getPath(),
                                              null,
                                              null));
+      } else {
+        return (Set<URI>)Collections.EMPTY_SET;
       }
-      else {
-
-        return Collections.EMPTY_SET;
-      }
-    }
-    catch (URISyntaxException e) {
-
-      throw new RuntimeException("Couldn't truncate model URI " + uri +
-          " to obtain a database URI");
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Couldn't truncate model URI " + uri + " to obtain a database URI");
     }
 
   }

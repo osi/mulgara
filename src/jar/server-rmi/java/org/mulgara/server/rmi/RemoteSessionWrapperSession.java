@@ -28,18 +28,18 @@
 package org.mulgara.server.rmi;
 
 // Java 2 standard packages
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.io.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
 
 // Locally written packages
+import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
@@ -59,12 +59,6 @@ import javax.naming.*;
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
  * @created 2002-01-03
- *
- * @version $Revision: 1.10 $
- *
- * @modified $Date: 2005/06/26 12:48:16 $
- *
- * @maintenanceAuthor $Author: pgearon $
  *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
@@ -86,25 +80,16 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    */
   static final long serialVersionUID = -2647357071965350751L;
 
-  /**
-   * The number of times to retry a call.
-   */
+  /** The number of times to retry a call. */
   protected static final int RETRY_COUNT = 2;
 
-  /**
-   * The number of times remaining to retry the current call.
-   */
+  /** The number of times remaining to retry the current call. */
   protected int retryCount;
 
-  /**
-   * The wrapped {@link RemoteSession}
-   */
+  /** The wrapped {@link RemoteSession} */
   private RemoteSession remoteSession;
 
-  /**
-   * The serverURI of the remoteSessionFactory
-   * Used to reconnect sessions.
-   */
+  /** The serverURI of the remoteSessionFactory. Used to reconnect sessions. */
   protected URI serverURI = null;
 
   /**
@@ -120,15 +105,15 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   //
 
   /**
-   *
-   * @param remoteSession the wrapped remote session
+   * Wrap a remote session to make it appear as a local session.
+   * @param remoteSession the wrapped remote session.
+   * @param The server the session is connecting to.
    * @throws IllegalArgumentException if <var>remoteSession</var> is <code>null</code>
    */
   protected RemoteSessionWrapperSession(RemoteSession remoteSession, URI serverURI) {
 
     // Validate "remoteSession" parameter
     if (remoteSession == null) {
-
       throw new IllegalArgumentException("Null \"remoteSession\" parameter");
     }
 
@@ -139,65 +124,60 @@ class RemoteSessionWrapperSession implements Serializable, Session {
     resetRetries();
   }
 
+
   /**
-   * Sets the Model attribute of the RemoteSessionWrapperSession object
+   * Sets the contents of a model, via a model expression.
    *
-   * @param uri The new Model value
-   * @param modelExpression The new Model value
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * @param uri The name of the model to set.
+   * @param modelExpression The expression describing the data to put in the model.
+   * @return The number of statements inserted into the model.
+   * @throws QueryException An error getting data for the model, or inserting into the new model.
    */
-  public long setModel(URI uri,
-      ModelExpression modelExpression) throws QueryException {
+  public long setModel(URI uri, ModelExpression modelExpression) throws QueryException {
 
     try {
-
       long r = remoteSession.setModel(uri, modelExpression);
       resetRetries();
       return r;
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       return setModel(uri, modelExpression);
     }
   }
 
+
   /**
-   * Sets the Model attribute of the RemoteSessionWrapperSession object
+   * Define the contents of a model via an {@link InputStream}.
    *
    * @param inputStream a remote inputstream
-   * @param uri The new Model value
-   * @param modelExpression The new Model value
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * @param uri the {@link URI} of the model to be redefined
+   * @param modelExpression the new content for the model
+   * @return The number of statements inserted into the model
+   * @throws QueryException if the model can't be modified
    */
-  public long setModel(InputStream inputStream, URI uri,
-      ModelExpression modelExpression) throws QueryException {
+  public long setModel(InputStream inputStream, URI uri, ModelExpression modelExpression) throws QueryException {
 
     try {
 
       long r = remoteSession.setModel(inputStream, uri, modelExpression);
       resetRetries();
       return r;
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       return setModel(inputStream, uri, modelExpression);
     }
   }
 
+
   /**
    * Sets the AutoCommit attribute of the RemoteSessionWrapperSession object
    *
    * @param autoCommit The new AutoCommit value
-   * @throws QueryException EXCEPTION TO DO
+   * @throws QueryException Autocommit cannot be changed.
    */
   public void setAutoCommit(boolean autoCommit) throws QueryException {
 
     try {
-
       remoteSession.setAutoCommit(autoCommit);
 
       // autoCommit has been successfully issued on the
@@ -205,8 +185,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
       this.autoCommit = autoCommit;
 
       resetRetries();
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
 
       // if autocommit was set the off/false then an
       // exception would be thrown by testRetry informing
@@ -220,69 +199,73 @@ class RemoteSessionWrapperSession implements Serializable, Session {
 
       // set the requested value of autocommit
       setAutoCommit(autoCommit);
-
     }
   }
+
 
   //
   // Methods implementing the Session interface
   //
 
-  public void insert(URI modelURI, Set statements) throws QueryException {
+  /**
+   * {@inheritDoc}
+   */
+  public void insert(URI modelURI, Set<Triple> statements) throws QueryException {
 
     try {
-
       remoteSession.insert(modelURI, statements);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       insert(modelURI, statements);
     }
   }
 
+
+  /**
+   * {@inheritDoc}
+   */
   public void insert(URI modelURI, Query query) throws QueryException {
 
     try {
-
       remoteSession.insert(modelURI, query);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       insert(modelURI, query);
     }
   }
 
-  public void delete(URI modelURI, Set statements) throws QueryException {
+
+  /**
+   * {@inheritDoc}
+   */
+  public void delete(URI modelURI, Set<Triple> statements) throws QueryException {
 
     try {
-
       remoteSession.delete(modelURI, statements);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       delete(modelURI, statements);
     }
   }
 
+
+  /**
+   * {@inheritDoc}
+   */
   public void delete(URI modelURI, Query query) throws QueryException {
 
     try {
-
       remoteSession.delete(modelURI, query);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       delete(modelURI, query);
     }
   }
+
 
  /**
   * Backup all the data on the specified server. The database is not changed by
@@ -295,16 +278,14 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   public void backup(URI sourceURI, URI destinationURI) throws QueryException {
 
     try {
-
       remoteSession.backup(sourceURI, destinationURI);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       backup(sourceURI, destinationURI);
     }
   }
+
 
   /**
    * Backup all the data on the specified server to an output stream.
@@ -314,16 +295,12 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, OutputStream outputStream)
-    throws QueryException {
+  public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
 
     try {
-
       remoteSession.backup(sourceURI, outputStream);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       backup(sourceURI, outputStream);
     }
@@ -342,16 +319,14 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   public void restore(URI serverURI, URI sourceURI) throws QueryException {
 
     try {
-
       remoteSession.restore(serverURI, sourceURI);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       restore(serverURI, sourceURI);
     }
   }
+
 
   /**
    * Restore all the data on the specified server. If the database is not
@@ -368,12 +343,9 @@ class RemoteSessionWrapperSession implements Serializable, Session {
       throws QueryException {
 
     try {
-
       remoteSession.restore(inputStream, serverURI, sourceURI);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       restore(inputStream, serverURI, sourceURI);
     }
@@ -381,112 +353,93 @@ class RemoteSessionWrapperSession implements Serializable, Session {
 
 
   /**
-   * METHOD TO DO
-   *
-   * @param modelURI PARAMETER TO DO
-   * @param modelTypeURI PARAMETER TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * {@inheritDoc}
    */
   public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
 
     try {
-
       remoteSession.createModel(modelURI, modelTypeURI);
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       createModel(modelURI, modelTypeURI);
     }
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @param uri PARAMETER TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * {@inheritDoc}
    */
   public void removeModel(URI uri) throws QueryException {
 
     try {
       remoteSession.removeModel(uri);
       resetRetries();
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
       testRetry(e);
       removeModel(uri);
     }
   }
 
+
+  /**
+   * {@inheritDoc}
+   */
   public boolean modelExists(URI uri) throws QueryException {
     try {
       boolean modelExists = remoteSession.modelExists(uri);
       resetRetries();
       return modelExists;
-    }
-    catch (RemoteException e) {
+    } catch (RemoteException e) {
       testRetry(e);
       return modelExists(uri);
     }
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @throws QueryException EXCEPTION TO DO
+   * {@inheritDoc}
    */
   public void commit() throws QueryException {
 
     try {
-
       remoteSession.commit();
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       commit();
     }
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @throws QueryException EXCEPTION TO DO
+   * {@inheritDoc}
    */
   public void rollback() throws QueryException {
 
     try {
-
       remoteSession.rollback();
       resetRetries();
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       rollback();
     }
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @param queries PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * {@inheritDoc}
    */
-  public List query(List queries) throws QueryException {
+  @SuppressWarnings("unchecked")
+  public List<Answer> query(List<Query> queries) throws QueryException {
 
     try {
 
-      List remoteAnswers = remoteSession.query(queries);
+      List<Object> remoteAnswers = (List<Object>)remoteSession.query(queries);
       resetRetries();
-      List localAnswers = new ArrayList(remoteAnswers.size());
+      List<Answer> localAnswers = new ArrayList<Answer>(remoteAnswers.size());
 
-      Iterator i = remoteAnswers.iterator();
-      while (i.hasNext()) {
-        Object ans = i.next();
+      for (Object ans: remoteAnswers) {
         if (!(ans instanceof RemoteAnswer)) {
           throw new QueryException("Non-answer returned from query.");
         }
@@ -494,72 +447,55 @@ class RemoteSessionWrapperSession implements Serializable, Session {
       }
 
       return localAnswers;
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       return query(queries);
     }
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @param query PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * {@inheritDoc}
    */
   public Answer query(Query query) throws QueryException {
 
     try {
-
       RemoteAnswer ans = remoteSession.query(query);
       resetRetries();
       return new RemoteAnswerWrapperAnswer(ans);
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       testRetry(e);
       return query(query);
     }
   }
 
+
   /**
-   * METHOD TO DO
+   * {@inheritDoc}
    */
   public void close() throws QueryException {
 
     try {
-
       remoteSession.close();
       resetRetries();
-    }
-    catch (java.rmi.NoSuchObjectException e) {
+    } catch (java.rmi.NoSuchObjectException e) {
       // do nothing as the RMI server has removed
       // the reference
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       // no need to retry, since the session is gone
       throw new QueryException("Java RMI failure", e);
     }
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @param securityDomain PARAMETER TO DO
-   * @param username PARAMETER TO DO
-   * @param password PARAMETER TO DO
+   * {@inheritDoc}
    */
   public void login(URI securityDomain, String username, char[] password) {
 
     try {
-
       remoteSession.login(securityDomain, username, password);
-    }
-    catch (RemoteException e) {
-
+    } catch (RemoteException e) {
       try {
         // test if this should be retried
         testRetry(e);
@@ -608,15 +544,13 @@ class RemoteSessionWrapperSession implements Serializable, Session {
       }
 
       // obtain a new remoteSession and replace the current one
-      remoteSession = rmiSessionFactory.
-          getRemoteSessionFactory().newRemoteSession();
+      remoteSession = rmiSessionFactory.getRemoteSessionFactory().newRemoteSession();
 
-      // was a transaction in progress before the server connectivity
-      // was lost?
-      if ( ! this.autoCommit ) {
+      // was a transaction in progress before the server connectivity was lost?
+      if (!autoCommit) {
 
         // all new sessions will result in automcommit set to on;
-        this.autoCommit = true;
+        autoCommit = true;
 
         // since a transaction was in progress when server connectivity
         // was lost we must notify the user a possible rollback
@@ -634,6 +568,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
     retryCount--;
   }
 
+
   /**
    * Resets the retry count.
    */
@@ -641,9 +576,14 @@ class RemoteSessionWrapperSession implements Serializable, Session {
     retryCount = RETRY_COUNT;
   }
 
+
+  /**
+   * {@inheritDoc}
+   */
   public boolean isLocal() {
     return false;
   }
+
 
   /**
    * {@inheritDoc}
@@ -651,12 +591,13 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
     try {
       RulesRef ref = remoteSession.buildRules(ruleModel, baseModel, destModel);
-      logger.warn("got rules from RMI");
+      logger.info("got rules from RMI");
       return ref;
     } catch (RemoteException re) {
       throw new org.mulgara.rules.InitializerException("Java RMI reconnection failure", re);
     }
   }
+
 
   /**
    * {@inheritDoc}

@@ -168,6 +168,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
     }
   }
 
+  @SuppressWarnings("unchecked")
   public Answer find(URI modelURI, SubjectNode subject, PredicateNode predicate,
       ObjectNode object) throws GraphException {
 
@@ -190,11 +191,11 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
       constraint = appendMulgaraIsConstraint(vars[2], toValue(object), constraint);
 
       Query query = new Query(
-          Arrays.asList(vars),             // variable list
+          Arrays.asList((Object[])vars),   // variable list
           new ModelResource(modelURI),     // model expression
           constraint,                      // constraint expr
           null,                            // no having
-          Collections.EMPTY_LIST,          // no ordering
+          (List<Order>)Collections.EMPTY_LIST,          // no ordering
           null,                            // no limit
           0,                               // zero offset
           new UnconstrainedAnswer()        // nothing given

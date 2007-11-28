@@ -28,7 +28,6 @@
 package org.mulgara.resolver.nodetype;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 
 // Third party packages
@@ -52,13 +51,9 @@ import org.mulgara.resolver.spi.*;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class NodeTypeResolverFactory implements ResolverFactory
-{
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-    Logger.getLogger(NodeTypeResolverFactory.class.getName());
+public class NodeTypeResolverFactory implements ResolverFactory {
+  /** Logger. */
+  private static Logger logger = Logger.getLogger(NodeTypeResolverFactory.class.getName());
 
   /** The preallocated local node representing the <code>rdf:type</code> property.  */
   private long rdfType;
@@ -74,21 +69,10 @@ public class NodeTypeResolverFactory implements ResolverFactory
 
 
   /** The URI for the modelType.  */
-  private static final URI modelTypeURI;
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "TypeModel");
 
   /** The URI for the internal URI reference type. */
-  private static final URI mulgaraUriReferenceURI;
-
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "TypeModel");
-      mulgaraUriReferenceURI = new URI(Mulgara.NAMESPACE + "uriReference");
-      assert modelTypeURI != null;
-      assert mulgaraUriReferenceURI != null;
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded internal URIs for Node Types", e);
-    }
-  }
+  private static final URI mulgaraUriReferenceURI = URI.create(Mulgara.NAMESPACE + "uriReference");
 
 
   /**
@@ -110,20 +94,14 @@ public class NodeTypeResolverFactory implements ResolverFactory
 
     // Validate "resolverFactoryInitializer" parameter
     if (initializer == null) {
-      throw new IllegalArgumentException(
-        "Null \"resolverFactoryInitializer\" parameter"
-      );
+      throw new IllegalArgumentException("Null \"resolverFactoryInitializer\" parameter");
     }
 
     // intialize the fields
     rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
-
     modelType = initializer.preallocate(new URIReferenceImpl(modelTypeURI));
-
     rdfsLiteral = initializer.preallocate(new URIReferenceImpl(RDFS.LITERAL));
-
     mulgaraUriReference = initializer.preallocate(new URIReferenceImpl(mulgaraUriReferenceURI));
-
     systemModel = initializer.getSystemModel();
 
     // Claim the type supported by the resolver
@@ -137,16 +115,14 @@ public class NodeTypeResolverFactory implements ResolverFactory
   /**
    * {@inheritDoc ResolverFactory}
    */
-  public void close()
-  {
+  public void close() {
     // null implementation
   }
 
   /**
    * {@inheritDoc ResolverFactory}
    */
-  public void delete()
-  {
+  public void delete() {
     // null implementation
   }
 
@@ -161,6 +137,7 @@ public class NodeTypeResolverFactory implements ResolverFactory
   public static ResolverFactory newInstance(
     ResolverFactoryInitializer resolverFactoryInitializer
   ) throws InitializerException {
+    if (logger.isDebugEnabled()) logger.debug("Creating new node type resolver factory");
     return new NodeTypeResolverFactory(resolverFactoryInitializer);
   }
 
@@ -177,6 +154,7 @@ public class NodeTypeResolverFactory implements ResolverFactory
       boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
   ) throws ResolverFactoryException {
 
+    if (logger.isDebugEnabled()) logger.debug("Creating new node type resolver");
     return new NodeTypeResolver(
         resolverSession, systemResolver, rdfType, systemModel,
         rdfsLiteral, mulgaraUriReference, modelType, modelTypeURI

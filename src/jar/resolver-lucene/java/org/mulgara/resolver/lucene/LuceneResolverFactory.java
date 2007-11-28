@@ -28,7 +28,6 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 
 // Third party packages
@@ -62,17 +61,13 @@ import org.mulgara.resolver.spi.*;
  */
 public class LuceneResolverFactory implements ResolverFactory {
 
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-      Logger.getLogger(LuceneResolverFactory.class.getName());
+  /** Logger. */
+  private static Logger logger = Logger.getLogger(LuceneResolverFactory.class.getName());
 
   private String directory;
   private URI modelTypeURI;
   private long rdfType;
   private long systemModel;
-  private ResolverFactory systemResolverFactory;
 
   //
   // Constructors
@@ -89,7 +84,7 @@ public class LuceneResolverFactory implements ResolverFactory {
     }
 
     try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "LuceneModel");
+      modelTypeURI = URI.create(Mulgara.NAMESPACE + "LuceneModel");
       assert modelTypeURI != null;
 
       // Initialize fields
@@ -99,13 +94,9 @@ public class LuceneResolverFactory implements ResolverFactory {
 
       systemModel = initializer.getSystemModel();
 
-      systemResolverFactory = initializer.getSystemResolverFactory();
-
       // Claim mulgara:LuceneModel
       initializer.addModelType(modelTypeURI, this);
 
-    } catch (URISyntaxException eu) {
-      throw new Error("Bad hardcoded lucene model URI", eu);
     } catch (NoSystemResolverFactoryException en) {
       throw new InitializerException("Unable to obtain system resolver", en);
     }
@@ -146,6 +137,7 @@ public class LuceneResolverFactory implements ResolverFactory {
   public static ResolverFactory newInstance(
       ResolverFactoryInitializer resolverFactoryInitializer
       ) throws InitializerException {
+    if (logger.isDebugEnabled()) logger.debug("Creating Lucene resolver factory");
     return new LuceneResolverFactory(resolverFactoryInitializer);
   }
 
@@ -160,6 +152,7 @@ public class LuceneResolverFactory implements ResolverFactory {
    */
   public Resolver newResolver(boolean canWrite, ResolverSession resolverSession, Resolver systemResolver)
       throws ResolverFactoryException {
+    if (logger.isDebugEnabled()) logger.debug("Creating Lucene resolver");
     return canWrite
       ? new LuceneResolver(systemResolver, rdfType, systemModel, modelTypeURI, resolverSession, directory)
       : new ReadOnlyLuceneResolver(systemResolver, rdfType, systemModel, modelTypeURI, resolverSession, directory);

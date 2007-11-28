@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 
 /**
  * A constraint. The elements within the constraint can be either variables or
@@ -56,8 +56,7 @@ import org.apache.log4j.Category;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ConstraintImpl extends AbstractConstraintExpression implements
-    Constraint {
+public class ConstraintImpl extends AbstractConstraintExpression implements Constraint {
 
  /**
   * Allow newer compiled version of the stub to operate when changes
@@ -67,11 +66,8 @@ public class ConstraintImpl extends AbstractConstraintExpression implements
   */
   static final long serialVersionUID = -3127160729187334757L;
 
-  /**
-   * Logger.
-   */
-  private final static Category logger =
-      Category.getInstance(ConstraintImpl.class.getName());
+  // /** Logger. */
+  // private final static Category logger = Category.getInstance(ConstraintImpl.class.getName());
 
   /**
    * The 4-tuple of elements (either nodes or variables)
@@ -172,18 +168,17 @@ public class ConstraintImpl extends AbstractConstraintExpression implements
   }
 
   /**
-   * Get all constraints which are variables. For back-compatibility, this
-   * method currently ignores the fourth element of the triple.
+   * Get all constraints which are variables. This
+   * method uses the fourth element of the triple.
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
+  public Set<Variable> getVariables() {
     if (variables == null) {
-      Set v = new HashSet();
+      Set<Variable> v = new HashSet<Variable>();
       for (int i = 0; i < 4; i++) {
-        if (element[i] instanceof Variable &&
-            ! ( (Variable) element[i]).getName().startsWith("_")) {
-          v.add(element[i]);
+        if (element[i] instanceof Variable && !((Variable)element[i]).getName().startsWith("_")) {
+          v.add((Variable)element[i]);
         }
       }
       variables = Collections.unmodifiableSet(v);
@@ -194,25 +189,17 @@ public class ConstraintImpl extends AbstractConstraintExpression implements
   /**
    * Equality is by value.
    *
-   * @param object PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param object The instance to compare to
+   * @return <code>true</code> iff objects are compatible and contain the same data.
    */
   public boolean equals(Object object) {
     // FIXME: Refactor to exploit equals() method on ConstraintExpression.
-    if (object == null) {
-
-      return false;
-    }
-
-    if (object == this) {
-
-      return true;
-    }
+    if (object == null) return false;
+    if (object == this) return true;
 
     boolean returnValue = false;
 
-    // Check that the given object is the correct class if so check each
-    // element.
+    // Check that the given object is the correct class if so check each element.
     if (object.getClass().equals(this.getClass())) {
 
       Constraint tmpConstraint = (Constraint) object;
@@ -227,16 +214,17 @@ public class ConstraintImpl extends AbstractConstraintExpression implements
     return returnValue;
   }
 
+
   /**
-   * METHOD TO DO
-   *
-   * @return RETURNED VALUE TO DO
+   * Generate a relatively unique number for the given data
+   * @return A reproducible number that changes with the data
    */
   public int hashCode() {
 
     return element[0].hashCode() + element[1].hashCode() +
         element[2].hashCode() + element[3].hashCode();
   }
+
 
   /**
    * Creates a string representation of these constraints. A typical result

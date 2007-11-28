@@ -31,23 +31,16 @@ package org.mulgara.ant.task.itql;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.io.*;
 import java.net.*;
-import java.sql.*;
 
 // Java
 import java.util.*;
 
 // Log4j
 import org.apache.log4j.*;
-import org.apache.tools.ant.BuildException;
 
 // Ant
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Path;
 import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.Answer;
 
@@ -58,75 +51,45 @@ import org.mulgara.query.Answer;
  *
  * @author Ben Warren
  *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:57:32 $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
- * @copyright &copy;2002 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
+ * @copyright &copy;2002 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class ITQLCommandUnitTest extends TestCase {
 
-  /**
-   * Log category
-   */
+  /** Log category */
+  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(ITQLCommandUnitTest.class);
 
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   String RDF_TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   String MODEL_URI = "http://mulgara.org/mulgara#Model";
 
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   String JOURNAL_URI = "urn:medline:Journal";
 
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   ItqlInterpreterBean interpreter = null;
 
-  /**
-   * Description of the Field
-   */
-  String hostName = null;
-
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   String testModel = null;
 
-  /**
-   * Description of the Field
-   */
+  /** Description of the Field */
   ITQLCommand command = null;
-
-  /**
-   * Description of the Field
-   */
-  String baseDir = System.getProperty("basedir");
 
   /**
    * Public constructor.
    *
-   * @param name PARAMETER TO DO
-   * @throws Exception EXCEPTION TO DO
+   * @param name Name of the test
+   * @throws Exception Initialization was not possible.
    */
   public ITQLCommandUnitTest(String name) throws Exception {
     super(name);
-    hostName = InetAddress.getLocalHost().getCanonicalHostName();
+    String hostName = InetAddress.getLocalHost().getCanonicalHostName();
     testModel = "rmi://" + hostName + "/server1#itqlcommand-test-model";
   }
 
@@ -134,14 +97,12 @@ public class ITQLCommandUnitTest extends TestCase {
    * Builds a test suite.
    *
    * @return A test suite.
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception Unable to create the suite
    */
   public static TestSuite suite() throws Exception {
-
     TestSuite suite = new TestSuite();
     suite.addTest(new ITQLCommandUnitTest("testAbortOnErrors"));
     suite.addTest(new ITQLCommandUnitTest("testIgnoreErrors"));
-
     return suite;
   }
 
@@ -149,17 +110,9 @@ public class ITQLCommandUnitTest extends TestCase {
    * Runs the tests.
    *
    * @param args The args.
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception The tests would not run
    */
   public static void main(String[] args) throws Exception {
-
-    String baseDir = System.getProperty("basedir");
-
-    if (baseDir == null) {
-
-      throw new RuntimeException("Could not get the 'basedir' system property");
-    }
-
     BasicConfigurator.configure();
     junit.textui.TestRunner.run(suite());
   }
@@ -169,26 +122,24 @@ public class ITQLCommandUnitTest extends TestCase {
    *
    */
   public void setUp() throws Exception {
-
     interpreter = new ItqlInterpreterBean();
-    boolean exceptionOccurred = true;
     try {
       Project project = new Project();
       project.init();
       command = new ITQLCommand();
       command.init();
       command.setProject(project);
-
-      exceptionOccurred = false;
-    } finally {
-      if (exceptionOccurred) tearDown();
+    } catch (Exception e) {
+      log.error("Unable to set up the curren test", e);
+      e.printStackTrace();
+      tearDown();
     }
   }
 
   /**
    * Test presenting credentials.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception Generic failed test condition.
    */
   public void testAbortOnErrors() throws Exception {
 
@@ -202,13 +153,11 @@ public class ITQLCommandUnitTest extends TestCase {
 
     // Insert some data
     ITQLQuery query3 = new ITQLQuery();
-    query3.setQuery("insert <http://test> <http://data> 'Hello World' " +
-                    "into <" + testModel + "> ;");
+    query3.setQuery("insert <http://test> <http://data> 'Hello World' into <" + testModel + "> ;");
 
     // Query the data
     ITQLQuery query4 = new ITQLQuery();
-    query4.setQuery("select $s $p $o from <" + testModel +
-                    "> where $s $p $o ;");
+    query4.setQuery("select $s $p $o from <" + testModel + "> where $s $p $o ;");
 
     // Commit
     ITQLQuery query5 = new ITQLQuery();
@@ -220,8 +169,7 @@ public class ITQLCommandUnitTest extends TestCase {
 
     // Insert some more data
     ITQLQuery query7 = new ITQLQuery();
-    query7.setQuery("insert <http://more> <http://data> ':-)' " + "into <" +
-                    testModel + "> ;");
+    query7.setQuery("insert <http://more> <http://data> ':-)' " + "into <" + testModel + "> ;");
 
     // Set auto commit on
     ITQLQuery query8 = new ITQLQuery();
@@ -242,18 +190,12 @@ public class ITQLCommandUnitTest extends TestCase {
     assertEquals("Wrong number of errors", 1, command.getNumErrors());
 
     // Check number executed
-    assertEquals("Wrong number of commands executed", 6,
-                 command.getNumExecuted());
+    assertEquals("Wrong number of commands executed", 6, command.getNumExecuted());
 
     // Check for second lot of data
-    Answer answer =
-        (Answer) interpreter.executeQueryToList("select $o from <" + testModel +
-                                                 "> where $s $p $o;").get(0);
+    Answer answer = (Answer)interpreter.executeQueryToList("select $o from <" + testModel + "> where $s $p $o;").get(0);
 
-    if (answer.isUnconstrained()) {
-
-      fail("Result set was null");
-    }
+    if (answer.isUnconstrained()) fail("Result set was null");
 
     // There should be 1 row of data
     assertEquals("Wrong number of rows", 1, answer.getRowCount());
@@ -263,7 +205,7 @@ public class ITQLCommandUnitTest extends TestCase {
   /**
    * Test presenting credentials.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception Generic failed test condition
    */
   public void testIgnoreErrors() throws Exception {
 
@@ -277,13 +219,11 @@ public class ITQLCommandUnitTest extends TestCase {
 
     // Insert some data
     ITQLQuery query3 = new ITQLQuery();
-    query3.setQuery("insert <http://test> <http://data> 'Hello World' " +
-                    "into <" + testModel + "> ;");
+    query3.setQuery("insert <http://test> <http://data> 'Hello World' into <" + testModel + "> ;");
 
     // Query the data
     ITQLQuery query4 = new ITQLQuery();
-    query4.setQuery("select $s $p $o from <" + testModel +
-                    "> where $s $p $o ;");
+    query4.setQuery("select $s $p $o from <" + testModel + "> where $s $p $o ;");
 
     // Commit
     ITQLQuery query5 = new ITQLQuery();
@@ -295,8 +235,7 @@ public class ITQLCommandUnitTest extends TestCase {
 
     // Insert some more data
     ITQLQuery query7 = new ITQLQuery();
-    query7.setQuery("insert <http://more> <http://data> ':-)' " + "into <" +
-                    testModel + "> ;");
+    query7.setQuery("insert <http://more> <http://data> ':-)' " + "into <" + testModel + "> ;");
 
     // Set auto commit on
     ITQLQuery query8 = new ITQLQuery();
@@ -317,18 +256,13 @@ public class ITQLCommandUnitTest extends TestCase {
     assertEquals("Wrong number of errors", 1, command.getNumErrors());
 
     // Check number executed
-    assertEquals("Wrong number of commands executed", 8,
-                 command.getNumExecuted());
+    assertEquals("Wrong number of commands executed", 8, command.getNumExecuted());
 
     // Check for second lot of data
-    List resultList = interpreter.executeQueryToList("select $o from <" + testModel +
-                                                 "> where $s $p $o;");
+    List<Object> resultList = interpreter.executeQueryToList("select $o from <" + testModel + "> where $s $p $o;");
     Answer answer = (Answer)resultList.get(0);
 
-    if (answer.isUnconstrained()) {
-
-      fail("Result set was null");
-    }
+    if (answer.isUnconstrained()) fail("Result set was null");
 
     // There should be 2 rows of data
     assertEquals("Wrong number of rows", 2, answer.getRowCount());

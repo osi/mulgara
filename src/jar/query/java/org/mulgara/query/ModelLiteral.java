@@ -122,9 +122,10 @@ public class ModelLiteral implements Model {
   /**
    * @return an empty {@link Set}
    */
-  public Set getDatabaseURIs() {
+  @SuppressWarnings("unchecked")
+  public Set<URI> getDatabaseURIs() {
 
-    return Collections.EMPTY_SET;
+    return (Set<URI>)Collections.EMPTY_SET;
   }
 
   //

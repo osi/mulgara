@@ -31,7 +31,6 @@ package org.mulgara.resolver.store;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -65,20 +64,10 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
       Logger.getLogger(StatementStoreResolverFactory.class.getName());
 
   // Generate the XA store model type URI
-  private static final URI modelTypeURI;
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "Model");
-      assert modelTypeURI != null;
-    }
-    catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded XA store model URI", e);
-    }
-  }
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "Model");
 
   /** The system model.  */
   private long systemModel;
-  private long modelType;
   private long rdfType;
 
   /** The underlying transactional graph that backs the generated resolvers.  */
@@ -109,8 +98,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
       File filePrefix = new File(initializer.getDirectory(), "xa");
       statementStore = new XAStatementStoreImpl(filePrefix.toString());
       resolverSessionFactory.registerStatementStore(statementStore);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new InitializerException("Couldn't initialize XA store", e);
     }
 
@@ -132,7 +120,6 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
 
   public void setDatabaseMetadata(DatabaseMetadata metadata) {
     rdfType = metadata.getRdfTypeNode();
-    modelType = metadata.getSystemModelTypeNode();
     systemModel = metadata.getSystemModelNode();
   }
 
@@ -143,8 +130,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
   public void close() throws ResolverFactoryException {
     try {
       statementStore.close();
-    }
-    catch (StatementStoreException e) {
+    } catch (StatementStoreException e) {
       throw new ResolverFactoryException("Unable to close", e);
     }
   }
@@ -152,8 +138,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
   public void delete() throws ResolverFactoryException {
     try {
       statementStore.delete();
-    }
-    catch (StatementStoreException e) {
+    } catch (StatementStoreException e) {
       throw new ResolverFactoryException("Unable to delete", e);
     }
   }
@@ -211,8 +196,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
           allowWrites
               ? statementStore.newWritableStatementStore()
               : statementStore.newReadOnlyStatementStore());
-    }
-    catch (ResolverSessionFactoryException er) {
+    } catch (ResolverSessionFactoryException er) {
       throw new ResolverFactoryException(
           "Failed to obtain a new ResolverSession", er);
     }
@@ -233,8 +217,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
           (XAResolverSession) resolverSessionFactory.newReadOnlyResolverSession(),
           allowWrites ? statementStore.newWritableStatementStore()
           : statementStore.newReadOnlyStatementStore());
-    }
-    catch (ResolverSessionFactoryException er) {
+    } catch (ResolverSessionFactoryException er) {
       throw new ResolverFactoryException(
           "Failed to obtain a new ResolverSession", er);
     }

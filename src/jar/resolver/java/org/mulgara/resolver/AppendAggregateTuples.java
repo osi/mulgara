@@ -297,8 +297,8 @@ class AppendAggregateTuples extends AbstractTuples {
     return cache[index];
   }
 
-  private Map createBindingMap(Tuples tuples) throws TuplesException {
-    Map bindings = new HashMap();
+  private Map<Variable,Value> createBindingMap(Tuples tuples) throws TuplesException {
+    Map<Variable,Value> bindings = new HashMap<Variable,Value>();
     Variable[] vars = tuples.getVariables();
 
     for (int i = 0; i < columnIsAggregate.length; i++) {

@@ -28,13 +28,10 @@
 package org.mulgara.resolver.spi;
 
 // Java 2 standard packages
-import java.io.File;
 import java.net.URI;
-import java.util.List;
 
 // Third party packages
 import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.content.ContentHandler;
@@ -61,8 +58,7 @@ import org.mulgara.store.stringpool.StringPool;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface ResolverFactoryInitializer extends FactoryInitializer
-{
+public interface ResolverFactoryInitializer extends FactoryInitializer {
   /**
    * Register this resolver factory as being able to create and drop models of
    * a particular type.

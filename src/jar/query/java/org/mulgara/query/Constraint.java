@@ -29,7 +29,6 @@
 
 package org.mulgara.query;
 
-import java.util.Set;
 
 /**
  * A variable and its ordering, for composing <code>ORDER BY</code> clauses.

@@ -29,11 +29,10 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Set;
 
 // Local packages
-import org.mulgara.query.rdf.Mulgara;
+import static org.mulgara.query.rdf.Mulgara.NAMESPACE;
 import org.mulgara.resolver.spi.DatabaseMetadata;
 
 /**
@@ -49,21 +48,10 @@ import org.mulgara.resolver.spi.DatabaseMetadata;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-
-public class DatabaseMetadataImpl implements DatabaseMetadata
-{
-  private static final URI PREALLOCATED_SUBJECT_URI;
-  private static final URI PREALLOCATED_PREDICATE_URI;
-  private static final URI PREALLOCATED_MODEL_URI;
-  static {
-    try {
-     PREALLOCATED_SUBJECT_URI = new URI(Mulgara.NAMESPACE + "preallocatedNodes");
-     PREALLOCATED_PREDICATE_URI = new URI(Mulgara.NAMESPACE + "preallocatedNode");
-     PREALLOCATED_MODEL_URI = new URI(Mulgara.NAMESPACE + "preallocatedNodeModel");
-    } catch (URISyntaxException eu) {
-      throw new Error("Invalid URI Syntax", eu);
-    }
-  }
+public class DatabaseMetadataImpl implements DatabaseMetadata {
+  private static final URI PREALLOCATED_SUBJECT_URI = URI.create(NAMESPACE + "preallocatedNodes");
+  private static final URI PREALLOCATED_PREDICATE_URI = URI.create(NAMESPACE + "preallocatedNode");
+  private static final URI PREALLOCATED_MODEL_URI = URI.create(NAMESPACE + "preallocatedNodeModel");
   private long preallocatedSubjectNode = -1;
   private long preallocatedPredicateNode = -1;
   private long preallocatedModelNode = -1;
@@ -75,7 +63,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   private URI systemModelTypeURI;
 
   /** The set of alternative hostnames for the current host. */
-  private final Set hostnameAliases;
+  private final Set<String> hostnameAliases;
 
   private long systemModelNode = -1;
   private long systemModelTypeNode = -1;
@@ -83,8 +71,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   private String serverName;
 
 
-  DatabaseMetadataImpl(URI uri, Set hostnameAliases, URI securityDomainURI, URI systemModelURI, URI rdfTypeURI, URI systemModelTypeURI)
-  {
+  DatabaseMetadataImpl(URI uri, Set<String> hostnameAliases, URI securityDomainURI, URI systemModelURI, URI rdfTypeURI, URI systemModelTypeURI) {
     // Validate parameters.
     if (uri == null) {
       throw new IllegalArgumentException("uri null");
@@ -114,37 +101,32 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public URI getURI()
-  {
+  public URI getURI() {
     return uri;
   }
 
 
-  public URI getSecurityDomainURI()
-  {
+  public URI getSecurityDomainURI() {
     return securityDomainURI;
   }
 
 
-  public URI getSystemModelURI()
-  {
+  public URI getSystemModelURI() {
     return systemModelURI;
   }
 
 
-  public URI getSystemModelTypeURI()
-  {
+  public URI getSystemModelTypeURI() {
     return systemModelTypeURI;
   }
 
 
-  public URI getRdfTypeURI()
-  {
+  public URI getRdfTypeURI() {
     return rdfTypeURI;
   }
 
 
-  public Set getHostnameAliases() {
+  public Set<String> getHostnameAliases() {
     return hostnameAliases;
   }
 
@@ -159,8 +141,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
     return serverName;
   }
 
-  public long getSystemModelNode()
-  {
+  public long getSystemModelNode() {
     if (systemModelNode == -1) {
       throw new IllegalStateException("Requesting systemModelNode before initialisation");
     }
@@ -169,8 +150,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public long getSystemModelTypeNode()
-  {
+  public long getSystemModelTypeNode() {
     if (systemModelTypeNode == -1) {
       throw new IllegalStateException("Requesting systemModelTypeNode before initialisation");
     }
@@ -179,8 +159,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public long getRdfTypeNode()
-  {
+  public long getRdfTypeNode() {
     if (rdfTypeNode == -1) {
       throw new IllegalStateException("Requesting rdfTypeNode before initialisation");
     }
@@ -190,26 +169,22 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
 
 
 
-  public URI getPreallocationSubjectURI()
-  {
+  public URI getPreallocationSubjectURI() {
     return PREALLOCATED_SUBJECT_URI;
   }
 
 
-  public URI getPreallocationPredicateURI()
-  {
+  public URI getPreallocationPredicateURI() {
     return PREALLOCATED_PREDICATE_URI;
   }
 
 
-  public URI getPreallocationModelURI()
-  {
+  public URI getPreallocationModelURI() {
     return PREALLOCATED_MODEL_URI;
   }
 
 
-  public long getPreallocationSubjectNode()
-  {
+  public long getPreallocationSubjectNode() {
     if (preallocatedSubjectNode == -1) {
       throw new IllegalStateException("Requesting preallocatedSubjectNode before initialisation");
     }
@@ -218,8 +193,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public long getPreallocationPredicateNode()
-  {
+  public long getPreallocationPredicateNode() {
     if (preallocatedPredicateNode == -1) {
       throw new IllegalStateException("Requesting preallocatedPredicateNode before initialisation");
     }
@@ -228,8 +202,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public long getPreallocationModelNode()
-  {
+  public long getPreallocationModelNode() {
     if (preallocatedModelNode == -1) {
       throw new IllegalStateException("Requesting preallocatedModelNode before initialisation");
     }
@@ -238,8 +211,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public void initializeSystemNodes(long systemModelNode, long rdfTypeNode, long systemModelTypeNode)
-  {
+  public void initializeSystemNodes(long systemModelNode, long rdfTypeNode, long systemModelTypeNode) {
     if (systemModelNode < 0) {
       throw new IllegalArgumentException("Attempting to set invalid systemModelNode");
     }
@@ -265,8 +237,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata
   }
 
 
-  public void initializePreallocationNodes(long preallocatedSubjectNode, long preallocatedPredicateNode, long preallocatedModelNode)
-  {
+  public void initializePreallocationNodes(long preallocatedSubjectNode, long preallocatedPredicateNode, long preallocatedModelNode) {
     if (preallocatedSubjectNode < 0) {
       throw new IllegalArgumentException("Attempting to set invalid preallocatedSubjectNode");
     }

@@ -312,7 +312,7 @@
            drop &lt;@server@#normal_zh&gt; ;
            drop &lt;@server@#fulltext_zh&gt; ;
            drop &lt;@server@#numbers_test&gt; ;
-           drop &lt;@server@#numbers; ;"/>
+           drop &lt;@server@#numbers_fulltext&gt; ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="drop1.txt" name="queryResult">

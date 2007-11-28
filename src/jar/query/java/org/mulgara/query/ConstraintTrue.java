@@ -99,8 +99,8 @@ public class ConstraintTrue implements ConstraintExpression {
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
-    return new HashSet();
+  public Set<Variable> getVariables() {
+    return new HashSet<Variable>();
   }
 
   //
@@ -108,14 +108,14 @@ public class ConstraintTrue implements ConstraintExpression {
   //
 
   /**
-   * METHOD TO DO
+   * Converts an expression to be made against a new source. In this case, nothing need change.
    *
-   * @param modelExpression PARAMETER TO DO
-   * @param transformation PARAMETER TO DO
-   * @param modelProperty PARAMETER TO DO
-   * @param systemModel PARAMETER TO DO
-   * @param variableFactory PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param modelExpression ignored
+   * @param transformation ignored
+   * @param modelProperty ignored
+   * @param systemModel ignored
+   * @param variableFactory ignored
+   * @return The current constraint.
    */
   public ConstraintExpression from(ModelExpression modelExpression,
       Transformation transformation, Value modelProperty, Value systemModel,

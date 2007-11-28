@@ -20,10 +20,7 @@ package org.mulgara.resolver;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -35,7 +32,6 @@ import org.mulgara.resolver.spi.ResolverSessionFactory;
 
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.TuplesException;
-import org.mulgara.query.QueryException;
 
 /**
  * Responsible for the javax.transaction.Transaction object.
@@ -499,11 +495,8 @@ public class MulgaraTransaction {
           throw new MulgaraTransactionException("Unknown state");
       }
     } catch (Throwable th) {
-      try {
-        errorReport("Attempt to rollback failed; initiating cause: ", cause);
-      } finally {
-        throw abortTransaction("Failed to rollback normally - see log for inititing cause", th);
-      }
+      errorReport("Attempt to rollback failed; initiating cause: ", cause);
+      throw abortTransaction("Failed to rollback normally - see log for inititing cause", th);
     } finally {
       report("Leaving implicitRollback");
     }

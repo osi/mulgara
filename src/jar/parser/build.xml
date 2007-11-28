@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="parser" default="parser-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="parser-classpath">
+    <path refid="common-classpath"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+  </path>
+  <path id="parser-test-classpath">
+    <path refid="parser-classpath"/>
+  </path>
+
+  <target name="parser-clean" description="Removes all compile generated files for the parser">
+    <tstamp/>
+    <delete dir="${parser.obj.dir}"/>
+    <delete dir="${parser.test.dir}"/>
+    <delete dir="${parser.dist.dir}"/>
+  </target>
+
+  <target name="-parser-prepare" description="Creates all directories associated with the parser's compilation"
+      depends="-prepare-build">
+    <mkdir dir="${parser.obj.dir}"/>
+    <mkdir dir="${parser.test.dir}"/>
+    <mkdir dir="${parser.dist.dir}"/>
+    <mkdir dir="${parser.obj.dir}/classes"/>
+    <mkdir dir="${parser.obj.dir}/java"/>
+  </target>
+
+  <target name="parser-compile" depends="-parser-prepare" description="Compiles all parser related files">
+    <javac destdir="${parser.obj.dir}/classes" debug="on" deprecation="on" source="1.5" classpathref="parser-classpath">
+      <src path="${parser.src.dir}/java"/>
+    </javac>
+  </target>
+
+  <target name="parser-jar" depends="parser-compile, -parser-jar-uptodate" unless="parser.jar.uptodate" description="Creates the parser's jar/s">
+    <jar jarfile="${parser.dist.dir}/${parser.jar}">
+      <fileset dir="${parser.obj.dir}/classes" excludes="**/*.java"/>
+    </jar>
+  </target>
+
+  <target name="-parser-jar-uptodate">
+    <uptodate property="parser.jar.uptodate" targetfile="${parser.dist.dir}/${parser.jar}">
+      <srcfiles dir="${parser.obj.dir}/classes" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="parser-dist"
+          depends="parser-jar"
+          unless="parser.uptodate"
+          description="Performs all tasks related to finalising this parser
+                       and readying it for distribution">
+
+  </target>
+
+  <target name="parser-uptodate">
+
+    <uptodate property="parser.uptodate"
+              targetfile="${dist.dir}/${parser.jar}">
+
+      <srcfiles dir="${parser.dist.dir}" includes="${parser.jar}"/>
+      <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
+    </uptodate>
+  </target>
+
+  <target name="parser-test"
+          depends="parser-jar, test-data"
+          description="Carries out unit testing for this parser">
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="parser-test-classpath"/>
+      <param name="dir" value="${parser.src.dir}"/>
+      <param name="jar" value="${parser.jar}"/>
+    </antcall>
+
+  </target>
+
+  <target name="parser-javadoc"
+          depends="parser-jar"
+          description="Creates the javadoc for this parser">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.mulgara.parser.*,
+                                           org.mulgara.store.*"/>
+      <param name="javadoc.classpath" value="parser-classpath"/>
+      <param name="javadoc.sourcepath" value="${parser.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="parser-help"
+          description="Displays the help information for this parser">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this parser -->
+
+    <echo message="Welcome to the build script for ${parser.name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main"
+          newenvironment="false">
+
+      <jvmarg value="${arch.bits}"/>
+
+      <arg line="-buildfile ${parser.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

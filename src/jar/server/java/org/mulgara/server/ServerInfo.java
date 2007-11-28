@@ -32,8 +32,9 @@ import java.net.URI;
 import java.util.Set;
 
 // log4j packages
-import org.apache.log4j.*;
-import org.apache.log4j.xml.DOMConfigurator;
+// import org.apache.log4j.*;
+// import org.apache.log4j.xml.DOMConfigurator;
+
 import org.mulgara.server.SessionFactory;
 
 /**
@@ -74,7 +75,7 @@ public class ServerInfo {
   private static int httpPort = 0;
 
   /** The set of hostname aliases. */
-  private static Set hostnames = null;
+  private static Set<String> hostnames = null;
 
 
   /**
@@ -151,7 +152,7 @@ public class ServerInfo {
    *
    * @return the set of host names
    */
-  public static Set getHostnameAliases() {
+  public static Set<String> getHostnameAliases() {
     return hostnames;
   }
 
@@ -163,7 +164,7 @@ public class ServerInfo {
    * @param hostnames The set of host names
    * @throws IllegalStateException If the host names have already been set 
    */
-  public static void setHostnameAliases(Set hostnames) {
+  public static void setHostnameAliases(Set<String> hostnames) {
     if (ServerInfo.hostnames != null) {
       throw new IllegalStateException("Host names have already been set");
     }

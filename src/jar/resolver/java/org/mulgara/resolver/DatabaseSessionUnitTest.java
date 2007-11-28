@@ -38,16 +38,12 @@ import java.util.*;
 // Third party packages
 import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Log4J
-import org.jrdf.vocabulary.RDF;  // JRDF
 
 // Locally written packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.util.FileUtil;
 
 /**
@@ -64,26 +60,18 @@ import org.mulgara.util.FileUtil;
 */
 public class DatabaseSessionUnitTest extends TestCase {
   /** The URI of the {@link #database}: <code>local:database</code>.  */
-  private static final URI databaseURI;
+  private static final URI databaseURI = URI.create("local:database");
 
   /**
    * The URI of the {@link #database}'s system model:
    * <code>local:database#</code>.
    */
-  private static final URI systemModelURI;
+  @SuppressWarnings("unused")
+  private static final URI systemModelURI = URI.create("local:database#");
 
   /** The URI of the {@link #database}'s system model type.  */
-  private static final URI memoryModelURI;
-
-  static {
-    try {
-      databaseURI    = new URI("local:database");
-      systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
-    }
-  }
+  @SuppressWarnings("unused")
+  private static final URI memoryModelURI = URI.create(Mulgara.NAMESPACE+"MemoryModel");
 
   /** Logger.  */
   private static Logger logger =
@@ -559,20 +547,18 @@ public class DatabaseSessionUnitTest extends TestCase {
   // Test cases
   //
 
+  @SuppressWarnings("unchecked")
   public void testModel() {
     try {
       logger.debug("Testing: " + test.errorString);
       Session session = database.newSession();
       try {
-        List orderList = new ArrayList();
-        Iterator i = test.selectList.iterator();
-        while (i.hasNext()) {
-          orderList.add(new Order((Variable)i.next(), true));
-        }
+        List<Order> orderList = new ArrayList<Order>();
+        for (Variable v: test.selectList) orderList.add(new Order(v, true));
 
         // Evaluate the query
         Answer answer = new ArrayAnswer(session.query(new Query(
-          test.selectList,          // SELECT
+          (List<Object>)(List)test.selectList,  // SELECT
           test.model,               // FROM
           test.query,               // WHERE
           null,                     // HAVING
@@ -584,7 +570,7 @@ public class DatabaseSessionUnitTest extends TestCase {
 
         logger.debug("Results Expected in " + test.errorString + " = " + test.results);
         logger.debug("Results Received in " + test.errorString + " = " + answer);
-        i = test.results.iterator();
+        Iterator<List<Object>> i = test.results.iterator();
         answer.beforeFirst();
         while (true) {
           boolean hasAnswer = answer.next();
@@ -593,10 +579,9 @@ public class DatabaseSessionUnitTest extends TestCase {
             break;
           }
           assertTrue(test.errorString, hasAnswer && hasResult);
-          Iterator j = ((List)i.next()).iterator();
           int c = 0;
-          while (j.hasNext()) {
-            assertEquals(test.errorString, j.next().toString(), answer.getObject(c++).toString());
+          for (Object obj: i.next()) {
+            assertEquals(test.errorString, obj.toString(), answer.getObject(c++).toString());
           }
         }
       } finally {
@@ -614,6 +599,7 @@ public class DatabaseSessionUnitTest extends TestCase {
   /**
   * Fail with an unexpected exception
   */
+  @SuppressWarnings("unused")
   private void fail(Throwable throwable) {
     fail(null, throwable);
   }

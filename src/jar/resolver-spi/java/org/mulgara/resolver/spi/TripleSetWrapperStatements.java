@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.Iterator;
 
 // Third party packages
-import org.apache.log4j.Logger;
+// import org.apache.log4j.Logger;
 import org.jrdf.graph.Node;
 import org.jrdf.graph.Triple;
 import gnu.trove.TObjectLongHashMap;
@@ -57,9 +57,8 @@ import org.mulgara.store.tuples.Tuples;
 
 public class TripleSetWrapperStatements implements Statements
 {
-  /** Logger.  */
-  private final Logger logger =
-    Logger.getLogger(TripleSetWrapperStatements.class.getName());
+  // /** Logger.  */
+  // private final Logger logger = Logger.getLogger(TripleSetWrapperStatements.class.getName());
 
   public static final int PERSIST = 0;
   public static final int TEMP = 1;
@@ -72,8 +71,8 @@ public class TripleSetWrapperStatements implements Statements
   
   TObjectLongHashMap nodeMap;
 
-  Set triples;
-  Iterator iter;
+  Set<Triple> triples;
+  Iterator<Triple> iter;
   Triple currentTriple;
   boolean persistent;
 
@@ -81,7 +80,7 @@ public class TripleSetWrapperStatements implements Statements
   // Constructors
   //
 
-  public TripleSetWrapperStatements(Set triples, ResolverSession resolverSession, int persistent)
+  public TripleSetWrapperStatements(Set<Triple> triples, ResolverSession resolverSession, int persistent)
       throws TuplesException {
     this.triples = triples;
     this.resolverSession = resolverSession;
@@ -148,7 +147,7 @@ public class TripleSetWrapperStatements implements Statements
       currentTriple = null;
       return false;
     } else {
-      currentTriple = (Triple)iter.next();
+      currentTriple = iter.next();
       return true;
     }
   }

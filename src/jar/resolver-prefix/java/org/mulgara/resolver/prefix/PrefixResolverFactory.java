@@ -13,12 +13,10 @@
 package org.mulgara.resolver.prefix;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.vocabulary.*;
 
 // Locally written packages
 import org.mulgara.query.rdf.Mulgara;
@@ -30,40 +28,21 @@ import org.mulgara.resolver.spi.*;
  *
  * @created 2005-4-19
  * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
- * @version $Revision: $
- * @modified $Date: $ @maintenanceAuthor $Author: $
  * @copyright &copy; 2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class PrefixResolverFactory implements ResolverFactory
-{
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-    Logger.getLogger(PrefixResolverFactory.class.getName());
-
+public class PrefixResolverFactory implements ResolverFactory {
+  /** Logger. */
+  private static Logger logger = Logger.getLogger(PrefixResolverFactory.class.getName());
 
   /** The URI for the modelType.  */
-  private static final URI modelTypeURI;
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "PrefixModel");
 
   /** The URI for prefixes. */
-  private static final URI mulgaraPrefixURI;
+  private static final URI mulgaraPrefixURI = URI.create(Mulgara.NAMESPACE + "prefix");
 
   /** The preallocated local node representing the prefix predicate. */
   private long mulgaraPrefix;
-
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "PrefixModel");
-      mulgaraPrefixURI = new URI(Mulgara.NAMESPACE + "prefix");
-      assert modelTypeURI != null;
-      assert mulgaraPrefixURI != null;
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded internal URIs for Node Types", e);
-    }
-  }
-
 
   //
   // Constructors
@@ -94,16 +73,14 @@ public class PrefixResolverFactory implements ResolverFactory
   /**
    * {@inheritDoc ResolverFactory}
    */
-  public void close()
-  {
+  public void close() {
     // null implementation
   }
 
   /**
    * {@inheritDoc ResolverFactory}
    */
-  public void delete()
-  {
+  public void delete() {
     // null implementation
   }
 
@@ -133,9 +110,7 @@ public class PrefixResolverFactory implements ResolverFactory
   public Resolver newResolver(
       boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
   ) throws ResolverFactoryException {
-
-    return new PrefixResolver(
-        resolverSession, systemResolver, mulgaraPrefix, modelTypeURI
-    );
+    if (logger.isDebugEnabled()) logger.debug("Creating new Prefix resolver");
+    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, modelTypeURI);
   }
 }

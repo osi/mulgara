@@ -94,6 +94,8 @@ public class ModelExpressionBuilder {
    * org.mulgara.itql.node.PModelExpression}, using an <code>aliasMap</code>
    * to resolve aliases.
    *
+   * TODO: aliasMap is currently ignored!
+   * 
    * @param aliasMap the map from targets to aliases
    * @param expression a model expression from the parser
    * @return RETURNED VALUE TO DO
@@ -103,7 +105,7 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  public static ModelExpression build(Map aliasMap,
+  public static ModelExpression build(Map<String,URI> aliasMap,
     PModelExpression expression) throws QueryException, URISyntaxException {
 
     // validate aliasMap parameter
@@ -126,7 +128,7 @@ public class ModelExpressionBuilder {
     }
 
     // build the model expression from the parser input
-    ModelExpression modelExpression = buildModelExpression(expression);
+    ModelExpression modelExpression = buildModelExpression(expression, aliasMap);
 
     // logger that we've building successfully built a model expression
     if (logger.isDebugEnabled()) {
@@ -156,7 +158,7 @@ public class ModelExpressionBuilder {
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   private static ModelExpression buildModelExpression(
-    PModelExpression rawModelExpression)
+    PModelExpression rawModelExpression, Map<String,URI> aliasMap)
     throws QueryException, URISyntaxException {
 
     // validate the rawModelExpression parameter
@@ -198,8 +200,8 @@ public class ModelExpressionBuilder {
       }
 
       // get the LHS and RHS operands of the union
-      ModelExpression lhs = buildModelExpression(orModelExpression);
-      ModelExpression rhs = buildModelExpression(modelTerm);
+      ModelExpression lhs = buildModelExpression(orModelExpression, aliasMap);
+      ModelExpression rhs = buildModelExpression(modelTerm, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -209,8 +211,7 @@ public class ModelExpressionBuilder {
 
       // apply the union
       modelExpression = new ModelUnion(lhs, rhs);
-    }
-    else if (rawModelExpression instanceof ATermModelExpression) {
+    } else if (rawModelExpression instanceof ATermModelExpression) {
 
       // logger that we've got a term model expression
       if (logger.isDebugEnabled()) {
@@ -218,8 +219,7 @@ public class ModelExpressionBuilder {
       }
 
       // get the model term
-      PModelTerm modelTerm =
-        ((ATermModelExpression) rawModelExpression).getModelTerm();
+      PModelTerm modelTerm = ((ATermModelExpression)rawModelExpression).getModelTerm();
 
       // logger that we're about to resolve the term into an expression
       if (logger.isDebugEnabled()) {
@@ -227,7 +227,7 @@ public class ModelExpressionBuilder {
       }
 
       // drill down into the model term
-      modelExpression = buildModelExpression(modelTerm);
+      modelExpression = buildModelExpression(modelTerm, aliasMap);
     }
 
     // end if
@@ -263,8 +263,9 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  private static ModelExpression buildModelExpression(PModelTerm rawModelTerm)
-    throws QueryException, URISyntaxException {
+  private static ModelExpression buildModelExpression(
+      PModelTerm rawModelTerm, Map<String,URI> aliasMap
+    ) throws QueryException, URISyntaxException {
 
     // validate the rawModelTerm parameter
     if (rawModelTerm == null) {
@@ -299,9 +300,9 @@ public class ModelExpressionBuilder {
       }
 
       // drill down into the model part
-      modelExpression = buildModelExpression(modelPart);
-    }
-    else if (rawModelTerm instanceof AAndModelTerm) {
+      modelExpression = buildModelExpression(modelPart, aliasMap);
+
+    } else if (rawModelTerm instanceof AAndModelTerm) {
 
       // logger that we've got a AND model term
       if (logger.isDebugEnabled()) {
@@ -309,10 +310,10 @@ public class ModelExpressionBuilder {
       }
 
       // get the model term
-      PModelTerm modelTerm = ((AAndModelTerm) rawModelTerm).getModelTerm();
+      PModelTerm modelTerm = ((AAndModelTerm)rawModelTerm).getModelTerm();
 
       // get the model part
-      PModelPart modelPart = ((AAndModelTerm) rawModelTerm).getModelPart();
+      PModelPart modelPart = ((AAndModelTerm)rawModelTerm).getModelPart();
 
       // logger that we've found the operands of the union
       if (logger.isDebugEnabled()) {
@@ -321,8 +322,8 @@ public class ModelExpressionBuilder {
       }
 
       // get the LHS and RHS operands of the intersection
-      ModelExpression lhs = buildModelExpression(modelTerm);
-      ModelExpression rhs = buildModelExpression(modelPart);
+      ModelExpression lhs = buildModelExpression(modelTerm, aliasMap);
+      ModelExpression rhs = buildModelExpression(modelPart, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -338,8 +339,7 @@ public class ModelExpressionBuilder {
     // we should not be returning null
     if (modelExpression == null) {
 
-      throw new QueryException("Unable to parse ITQL model term " +
-        "into a valid model expression");
+      throw new QueryException("Unable to parse ITQL model term into a valid model expression");
     }
 
     // end if
@@ -367,8 +367,9 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  private static ModelExpression buildModelExpression(PModelPart rawModelPart)
-    throws QueryException, URISyntaxException {
+  private static ModelExpression buildModelExpression(
+      PModelPart rawModelPart, Map<String,URI> aliasMap
+    ) throws QueryException, URISyntaxException {
 
     // validate the rawModelPart parameter
     if (rawModelPart == null) {
@@ -394,8 +395,7 @@ public class ModelExpressionBuilder {
       }
 
       // get the model factor
-      PModelFactor modelFactor =
-        ((AFactorModelPart) rawModelPart).getModelFactor();
+      PModelFactor modelFactor = ((AFactorModelPart)rawModelPart).getModelFactor();
 
       // logger that we're recursing with a model factor
       if (logger.isDebugEnabled()) {
@@ -403,9 +403,8 @@ public class ModelExpressionBuilder {
       }
 
       // drill down into the model part
-      modelExpression = buildModelExpression(modelFactor);
-    }
-    else if (rawModelPart instanceof AXorModelPart) {
+      modelExpression = buildModelExpression(modelFactor, aliasMap);
+    } else if (rawModelPart instanceof AXorModelPart) {
 
       // logger that we've got a AND model term
       if (logger.isDebugEnabled()) {
@@ -413,21 +412,19 @@ public class ModelExpressionBuilder {
       }
 
       // get the model term
-      PModelPart modelPart = ((AXorModelPart) rawModelPart).getModelPart();
+      PModelPart modelPart = ((AXorModelPart)rawModelPart).getModelPart();
 
       // get the model factor
-      PModelFactor modelFactor =
-        ((AXorModelPart) rawModelPart).getModelFactor();
+      PModelFactor modelFactor = ((AXorModelPart)rawModelPart).getModelFactor();
 
       // logger that we've found the operands of the union
       if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with model part " + modelPart + " & model factor " +
-          modelFactor);
+        logger.debug("Recursing with model part " + modelPart + " & model factor " + modelFactor);
       }
 
       // get the LHS and RHS operands of the intersection
-      ModelExpression lhs = buildModelExpression(modelPart);
-      ModelExpression rhs = buildModelExpression(modelFactor);
+      ModelExpression lhs = buildModelExpression(modelPart, aliasMap);
+      ModelExpression rhs = buildModelExpression(modelFactor, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -443,8 +440,7 @@ public class ModelExpressionBuilder {
     // we should not be returning null
     if (modelExpression == null) {
 
-      throw new QueryException("Unable to parse ITQL model term " +
-        "into a valid model expression");
+      throw new QueryException("Unable to parse ITQL model term into a valid model expression");
     }
 
     // end if
@@ -473,13 +469,13 @@ public class ModelExpressionBuilder {
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   private static ModelExpression buildModelExpression(
-    PModelFactor rawModelFactor) throws QueryException, URISyntaxException {
+        PModelFactor rawModelFactor, Map<String,URI> aliasMap
+      ) throws QueryException, URISyntaxException {
 
     // validate the rawModelFactor parameter
     if (rawModelFactor == null) {
 
-      throw new IllegalArgumentException("Null \"rawModelFactor\" " +
-        "parameter");
+      throw new IllegalArgumentException("Null \"rawModelFactor\" parameter");
     }
 
     // end if
@@ -500,8 +496,7 @@ public class ModelExpressionBuilder {
       }
 
       // get the resource
-      String resource =
-        ((AResourceModelFactor) rawModelFactor).getResource().getText();
+      String resource = ((AResourceModelFactor)rawModelFactor).getResource().getText();
 
       // logger that we've found a resource
       if (logger.isDebugEnabled()) {
@@ -509,10 +504,9 @@ public class ModelExpressionBuilder {
       }
 
       // this resource is what we're looking for
-      URI modelURI = new URI(resource);
+      URI modelURI = URIUtil.convertToURI(resource, aliasMap);
       modelExpression = new ModelResource(ServerURIHandler.removePort(modelURI));
-    }
-    else if (rawModelFactor instanceof AExpressionModelFactor) {
+    } else if (rawModelFactor instanceof AExpressionModelFactor) {
 
       // logger that we've got an expression model factor
       if (logger.isDebugEnabled()) {
@@ -520,8 +514,7 @@ public class ModelExpressionBuilder {
       }
 
       // get the model expression
-      PModelExpression embeddedModelExpression =
-        ((AExpressionModelFactor) rawModelFactor).getModelExpression();
+      PModelExpression embeddedModelExpression = ((AExpressionModelFactor)rawModelFactor).getModelExpression();
 
       // logger that we're recursing with a model expression
       if (logger.isDebugEnabled()) {
@@ -529,7 +522,7 @@ public class ModelExpressionBuilder {
       }
 
       // build the model expression
-      modelExpression = buildModelExpression(embeddedModelExpression);
+      modelExpression = buildModelExpression(embeddedModelExpression, aliasMap);
     }
 
     // end if

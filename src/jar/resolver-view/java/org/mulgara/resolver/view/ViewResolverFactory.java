@@ -28,10 +28,7 @@
 package org.mulgara.resolver.view;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
-import java.util.HashSet;
-import java.util.Set;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -42,9 +39,6 @@ import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.xa.SimpleXAResourceException;
-import org.mulgara.store.xa.XAResolverSessionFactory;
 
 /**
  * Resolves constraints in models stored on the Java heap.
@@ -58,13 +52,9 @@ import org.mulgara.store.xa.XAResolverSessionFactory;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ViewResolverFactory implements ResolverFactory
-{
-  /**
-   * Logger.
-   */
-  private static final Logger logger =
-    Logger.getLogger(ViewResolverFactory.class.getName());
+public class ViewResolverFactory implements ResolverFactory {
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(ViewResolverFactory.class.getName());
 
   /**
    * The preallocated local node representing the <code>rdf:type</code>
@@ -81,23 +71,10 @@ public class ViewResolverFactory implements ResolverFactory
   private long unionNode;
   private long intersectNode;
 
-  /**
-   * The preallocated local node representing views.
-   */
-  private long modelType;
-
   /** 
    * The URL associated with the view type.
    */
-  private static final URI modelTypeURI;
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE+"ViewModel");
-      assert modelTypeURI != null;
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded view model URI", e);
-    }
-  }
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE+"ViewModel");
 
 
   /**
@@ -114,15 +91,13 @@ public class ViewResolverFactory implements ResolverFactory
    * Instantiate a {@link ViewResolverFactory}.
    */
   private ViewResolverFactory(ResolverFactoryInitializer initializer)
-      throws InitializerException
-  {
+      throws InitializerException {
     // Validate parameters
     if (initializer == null) {
       throw new IllegalArgumentException(
         "Null 'resolverFactoryInitializer' parameter");
     }
 
-    modelType = initializer.getSystemModelType();
     systemModel = initializer.getSystemModel();
     systemModelType = initializer.getSystemModelType();
 
@@ -157,8 +132,7 @@ public class ViewResolverFactory implements ResolverFactory
    * This is actually a non-operation, because there are no persistent
    * resources.
    */
-  public void close()
-  {
+  public void close() {
     // null implementation
   }
                                                                                 
@@ -168,8 +142,7 @@ public class ViewResolverFactory implements ResolverFactory
    * This is actually a non-operation, because there are no persistent
    * resources.
    */
-  public void delete()
-  {
+  public void delete() {
     // null implementation
   }
 
@@ -183,8 +156,7 @@ public class ViewResolverFactory implements ResolverFactory
    *   created
    */
   public static ResolverFactory newInstance(ResolverFactoryInitializer initializer)
-      throws InitializerException
-  {
+      throws InitializerException {
     return new ViewResolverFactory(initializer);
   }
 
@@ -197,9 +169,9 @@ public class ViewResolverFactory implements ResolverFactory
    *   <code>null</code>
    * @throws ResolverFactoryException {@inheritDoc}
    */
-  public Resolver newResolver(boolean canWrite,
-      ResolverSession resolverSession, Resolver systemResolver) throws ResolverFactoryException
-  {
+  public Resolver newResolver(
+      boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
+  ) throws ResolverFactoryException {
     return new ViewResolver(resolverSession,
                             systemResolver,
                             rdfType,

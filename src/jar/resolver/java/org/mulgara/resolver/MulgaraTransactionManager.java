@@ -20,7 +20,6 @@ package org.mulgara.resolver;
 // Java2 packages
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
@@ -28,7 +27,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -327,8 +325,6 @@ public class MulgaraTransactionManager {
         } catch (Throwable th) {
           error = th;
         }
-
-        final Throwable trigger = new MulgaraTransactionException("trigger rollback");
 
         if (transactions.containsKey(session)) {
           for (MulgaraTransaction transaction : transactions.get(session)) {

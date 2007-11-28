@@ -62,24 +62,19 @@ public abstract class AbstractConstraintExpression implements ConstraintExpressi
   /**
    * A set of all variables the compose the constraint.
    */
-  protected Set variables = null;
+  protected Set<Variable> variables = null;
 
   /**
    * The operands.
    */
-  protected ArrayList elements;
+  protected ArrayList<ConstraintExpression> elements;
 
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
-    if (o == this) {
-      return true;
-    }
+    if (o == null) return false;
+    if (o == this) return true;
 
     if (o instanceof ConstraintExpression) {
-      ConstraintExpression ce = (ConstraintExpression) o;
-      return (getVariables().equals(((ConstraintExpression) o).getVariables()));
+      return (getVariables().equals(((ConstraintExpression)o).getVariables()));
     } else {
       return false;
     }

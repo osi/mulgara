@@ -67,7 +67,7 @@ public interface ModelExpression extends Cloneable, Serializable {
    *
    * @return a set containing the {@link URI}s of the databases
    */
-  public Set getDatabaseURIs();
+  public Set<URI> getDatabaseURIs();
 
   /**
    * Clones sets of models in the rhs and lhs objects.

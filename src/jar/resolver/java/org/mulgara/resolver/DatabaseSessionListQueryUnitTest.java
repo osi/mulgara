@@ -29,10 +29,7 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 // Third party packages
@@ -42,17 +39,14 @@ import org.jrdf.vocabulary.RDF; // JRDF
 import org.jrdf.vocabulary.RDFS; // JRDF
 
 // Locally written packages
+import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactoryFactory;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.util.FileUtil;
 
 /**
@@ -69,21 +63,15 @@ import org.mulgara.util.FileUtil;
  */
 public class DatabaseSessionListQueryUnitTest extends TestCase {
   /** The URI of the {@link #database}: <code>local:database</code>.  */
-  private static final URI databaseURI;
-
-  /**
-   * The URI of the {@link #database}'s system model:
-   * <code>local:database#</code>.
-   */
-  private static final URI systemModelURI;
+  private static final URI databaseURI = URI.create("local:database");
 
   /** The URI of the {@link #database}'s system model type.  */
-  private static final URI memoryModelURI;
+  private static final URI memoryModelURI = URI.create(Mulgara.NAMESPACE + "MemoryModel");
 
   /** A list of model URIs that can be queried.
    * local:database#model0 -> local:database#modelNUM_MODELS
    */
-  private static final List modelURIs;
+  private static final List<URI> modelURIs;
 
   /** Number of models to be queried */
   private static final int NUM_MODELS = 10;
@@ -92,25 +80,15 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
   private static final int NUM_STATEMENTS = 20;
 
   static {
-    try {
-      databaseURI = new URI("local:database");
-      systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Mulgara.NAMESPACE + "MemoryModel");
-
-      //generate a number of models to be 'batch' queried
-      modelURIs = new ArrayList();
-      for (int i = 0; i < NUM_MODELS; i++) {
-        modelURIs.add(new URI("local:database#model" + i));
-      }
-    }
-    catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
+    //generate a number of models to be 'batch' queried
+    modelURIs = new ArrayList<URI>();
+    for (int i = 0; i < NUM_MODELS; i++) {
+      modelURIs.add(URI.create("local:database#model" + i));
     }
   }
 
   /** Logger.  */
-  private static Logger logger =
-      Logger.getLogger(DatabaseSessionListQueryUnitTest.class.getName());
+  private static Logger logger = Logger.getLogger(DatabaseSessionListQueryUnitTest.class.getName());
 
   /**
    * In-memory test {@link Database} used to generate {@link DatabaseSession}s
@@ -244,8 +222,8 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     try {
 
       session = database.newSession();
-      List queryList = generateQueries();
-      List answerList = session.query(queryList);
+      List<Query> queryList = generateQueries();
+      List<Answer> answerList = session.query(queryList);
 
       //perform operations on the answers
       assertNotNull("Session.query(List) returned null.", answerList);
@@ -280,14 +258,14 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    * @throws Exception
    * @return List
    */
-  private List generateQueries() throws Exception {
+  private List<Query> generateQueries() throws Exception {
 
-    List list = new ArrayList();
+    List<Query> list = new ArrayList<Query>();
 
     //create a selectAll query for each modelURI
     for (int i = 0; i < modelURIs.size(); i++) {
 
-      list.add(selectAll((URI) modelURIs.get(i)));
+      list.add(selectAll(modelURIs.get(i)));
     }
 
     return list;
@@ -300,6 +278,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    * @throws Exception
    * @return Query
    */
+  @SuppressWarnings("unchecked")
   private Query selectAll(URI modelURI) throws Exception {
 
     //select $s $p $o
@@ -316,11 +295,11 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     ConstraintImpl varConstraint = new ConstraintImpl(vars[0], vars[1], vars[2]);
 
     return new Query(
-        Arrays.asList(vars), // variable list
+        Arrays.asList((Object[])vars), // variable list
         model, // model expression
         varConstraint, // constraint expr
         null, // no having
-        Collections.EMPTY_LIST, // no ordering
+        (List<Order>)Collections.EMPTY_LIST, // no ordering
         null, // no limit
         0, // zero offset
         new UnconstrainedAnswer() // nothing given
@@ -336,7 +315,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    */
   private void populateModel(URI modelURI, Session session) throws Exception {
 
-    Set statements = new HashSet();
+    Set<Triple> statements = new HashSet<Triple>();
 
     //add some statements
     URIReference subject = null;
@@ -344,7 +323,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     URIReference object = new URIReferenceImpl(new URI(RDFS.baseURI + "Class"));
     for (int i = 0; i < NUM_STATEMENTS; i++) {
 
-      subject = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "subject" + i));
+      subject = new URIReferenceImpl(URI.create(Mulgara.NAMESPACE + "subject" + i));
       statements.add(new TripleImpl(subject, predicate, object));
     }
 
@@ -359,7 +338,6 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    * @throws Exception
    */
   private void createModel(URI modelURI, Session session) throws Exception {
-
 //    session.createModel(modelURI, new URI(Mulgara.NAMESPACE + "Model"));
     session.createModel(modelURI, memoryModelURI);
   }
@@ -372,7 +350,6 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    * @throws Exception
    */
   private void dropModel(URI modelURI, Session session) throws Exception {
-
     session.removeModel(modelURI);
   }
 

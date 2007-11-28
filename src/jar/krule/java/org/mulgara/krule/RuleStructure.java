@@ -30,8 +30,6 @@ package org.mulgara.krule;
 // Java 2 standard packages
 import java.net.URI;
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,31 +65,31 @@ public class RuleStructure implements Rules, Serializable {
   private static Logger logger = Logger.getLogger(RuleStructure.class.getName());
 
   /** The rules in the framework. */
-  private Set rules;
+  private Set<Rule> rules;
 
   /** Map of rule names to the rule. */
-  private Map ruleMap;
+  private Map<String,Rule> ruleMap;
 
-  /** The model containing the base data. */
+  /** The model containing the base data.  Current unused. */
   private URI baseModel;
 
   /** The terget model to contain the entailments. */
   private URI targetModel;
 
   /** The current list of rules that have to be run. */
-  private LinkedHashSet runQueue;
+  private LinkedHashSet<Rule> runQueue;
 
   /** The set of axioms pertinent to these rules. */
-  private Set axioms;
+  private Set<org.jrdf.graph.Triple> axioms;
 
 
   /**
    * Principle constructor.
    */
   public RuleStructure() {
-    rules = new HashSet();
-    ruleMap = new HashMap();
-    runQueue = new LinkedHashSet();
+    rules = new HashSet<Rule>();
+    ruleMap = new HashMap<String,Rule>();
+    runQueue = new LinkedHashSet<Rule>();
     axioms = null;
   }
 
@@ -116,8 +114,8 @@ public class RuleStructure implements Rules, Serializable {
    */
   public void setTrigger(String src, String dest) throws InitializerException {
     // get the rules
-    Rule srcRule = (Rule)ruleMap.get(src);
-    Rule destRule = (Rule)ruleMap.get(dest);
+    Rule srcRule = ruleMap.get(src);
+    Rule destRule = ruleMap.get(dest);
     // check that the rules exist
     if (srcRule == null || destRule == null) {
       throw new InitializerException("Nonexistent rule: " + srcRule == null ? src : dest);
@@ -134,7 +132,7 @@ public class RuleStructure implements Rules, Serializable {
    * @param axioms A {@link java.util.Set} of {@link org.jrdf.graph.Triple}s
    *   comprising axiomatic statements.
    */
-  public void setAxioms(Set axioms) {
+  public void setAxioms(Set<org.jrdf.graph.Triple> axioms) {
     this.axioms = axioms;
   }
 
@@ -164,7 +162,7 @@ public class RuleStructure implements Rules, Serializable {
    *
    * @return An iterator for the rules.
    */
-  public Iterator getRuleIterator() {
+  public Iterator<Rule> getRuleIterator() {
     return rules.iterator();
   }
 
@@ -176,11 +174,7 @@ public class RuleStructure implements Rules, Serializable {
    */
   public String toString() {
     String result = "Rules = {\n";
-    Iterator i = rules.iterator();
-    while (i.hasNext()) {
-      Rule r = (Rule)i.next();
-      result += r.getName() + "\n";
-    }
+    for (Rule r: rules) result += r.getName() + "\n";
     result += "}";
     return result;
   }
@@ -192,11 +186,18 @@ public class RuleStructure implements Rules, Serializable {
    * @param base The URI of the base data to apply rules to.
    */
   public void setBaseModel(URI base) {
-    Iterator it = rules.iterator();
-    while (it.hasNext()) {
-      Rule rule = (Rule)it.next();
-      rule.setBaseModel(base);
-    }
+    baseModel = base;
+    for (Rule rule: rules) rule.setBaseModel(base);
+  }
+
+
+  /**
+   * Get the base model for the rules.  Currently unused.
+   *
+   * @param base The URI of the base data to apply rules to.
+   */
+  public URI setBaseModel() {
+    return baseModel;
   }
 
 
@@ -207,11 +208,7 @@ public class RuleStructure implements Rules, Serializable {
    */
   public void setTargetModel(URI target) {
     targetModel = target;
-    Iterator it = rules.iterator();
-    while (it.hasNext()) {
-      Rule rule = (Rule)it.next();
-      rule.setTargetModel(target);
-    }
+    for (Rule rule: rules) rule.setTargetModel(target);
   }
 
 
@@ -229,7 +226,7 @@ public class RuleStructure implements Rules, Serializable {
     }
     Session session = (Session)params;
     // set up the run queue
-    runQueue = new LinkedHashSet(rules);
+    runQueue = new LinkedHashSet<Rule>(rules);
     // fill the run queue
     runQueue.addAll(rules);
     Rule currentRule = null;
@@ -294,10 +291,10 @@ public class RuleStructure implements Rules, Serializable {
    */
   private Rule popRunQueue() {
     // get an iterator for the queue
-    Iterator iterator = runQueue.iterator();
+    Iterator<Rule> iterator = runQueue.iterator();
     // this queue must have data in it
     assert iterator.hasNext();
-    Rule head = (Rule)iterator.next();
+    Rule head = iterator.next();
     iterator.remove();
     return head;
   }

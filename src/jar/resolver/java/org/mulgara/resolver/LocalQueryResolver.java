@@ -88,8 +88,8 @@ import org.mulgara.util.NVPair;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class LocalQueryResolver implements QueryEvaluationContext
-{
+@SuppressWarnings({ "unchecked", "unchecked", "unchecked" })
+class LocalQueryResolver implements QueryEvaluationContext {
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(LocalQueryResolver.class.getName());
 
@@ -108,7 +108,6 @@ class LocalQueryResolver implements QueryEvaluationContext
     this.operationContext = operationContext;
     this.resolverSession = resolverSession;
   }
-
 
   public List resolveConstraintOperation(ModelExpression modelExpr,
                                          ConstraintOperation constraintOper)

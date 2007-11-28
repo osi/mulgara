@@ -40,6 +40,8 @@ import java.util.Map;
 
 // Local packages
 import org.mulgara.query.ConstraintExpression;
+import org.mulgara.query.Value;
+import org.mulgara.query.Variable;
 
 /**
  * Instances of this interface define how to bind variables to known 
@@ -69,6 +71,6 @@ public interface ConstraintBindingHandler
    * Rebind ConstraintExpression given a known set of variable bindings.
    *
    */
-  public ConstraintExpression bindVariables(Map bindings,
+  public ConstraintExpression bindVariables(Map<Variable,Value> bindings,
       ConstraintExpression constraintExpr) throws Exception;
 }

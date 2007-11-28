@@ -39,10 +39,10 @@ import java.util.*;
 // Third party packages
 import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Log4J
-import org.jrdf.vocabulary.RDF;  // JRDF
 import org.jrdf.graph.SubjectNode;  // JRDF
 import org.jrdf.graph.PredicateNode;  // JRDF
 import org.jrdf.graph.ObjectNode;  // JRDF
+import org.jrdf.graph.Triple;
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -50,9 +50,6 @@ import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.util.FileUtil;
 
 /**
@@ -71,43 +68,23 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   private static Logger logger =
     Logger.getLogger(AdvDatabaseSessionUnitTest.class.getName());
 
-  private static final URI databaseURI;
+  private static final URI databaseURI = URI.create("local:database");
 
-  private static final URI systemModelURI;
+  private static final URI modelURI = URI.create("local:database#model");
+  private static final URI model2URI = URI.create("local:database#model2");
+  private static final URI model3URI = URI.create("local:database#model3");
+  private static final URI model4URI = URI.create("local:database#model4");
+  private static final URI model5URI = URI.create("local:database#model5");
 
-  private static final URI modelURI;
-  private static final URI model2URI;
-  private static final URI model3URI;
-  private static final URI model4URI;
-  private static final URI model5URI;
-
-  private static final URI xsdModelTypeURI;
-
-  static {
-    try {
-      databaseURI    = new URI("local:database");
-      systemModelURI = new URI("local:database#");
-      modelURI       = new URI("local:database#model");
-      model2URI      = new URI("local:database#model2");
-      model3URI      = new URI("local:database#model3");
-      model4URI      = new URI("local:database#model4");
-      model5URI      = new URI("local:database#model5");
-
-      xsdModelTypeURI = new URI(Mulgara.NAMESPACE + "XMLSchemaModel");
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
-    }
-  }
+  private static final URI xsdModelTypeURI = URI.create(Mulgara.NAMESPACE + "XMLSchemaModel");
 
   private static Database database = null;
 
-  public AdvDatabaseSessionUnitTest(String name)
-  {
+  public AdvDatabaseSessionUnitTest(String name) {
     super(name);
   }
 
-  public static Test suite()
-  {
+  public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new AdvDatabaseSessionUnitTest("testSetModel"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testBasicQuery"));
@@ -171,9 +148,6 @@ public class AdvDatabaseSessionUnitTest extends TestCase
       String tempResolverFactoryClassName =
         "org.mulgara.resolver.memory.MemoryResolverFactory";
 
-      String ruleLoaderFactoryClassName =
-        "org.mulgara.rules.RuleLoaderFactory";
-
       // Create a database which keeps its system models on the Java heap
       database = new Database(
                    databaseURI,
@@ -205,8 +179,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   /**
   * The teardown method for JUnit
   */
-  public void tearDown()
-  {
+  public void tearDown() {
   }
 
   //
@@ -216,8 +189,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   /**
   * Test the {@link DatabaseSession#setModel} method.
   */
-  public void testSetModel() throws URISyntaxException
-  {
+  public void testSetModel() throws URISyntaxException {
     logger.info("testSetModel");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -247,7 +219,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -305,7 +277,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -365,10 +337,10 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
-          Collections.singletonList(objectVariable),
+          Collections.singletonList((Object)objectVariable),
           new ModelResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
@@ -440,10 +412,10 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
-          Collections.singletonList(objectVariable),
+          Collections.singletonList((Object)objectVariable),
           new ModelResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
@@ -529,7 +501,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -554,7 +526,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
         answer.beforeFirst();
         while (answer.next()) {
-          session.insert(model2URI, Collections.singleton(new TripleImpl(
+          session.insert(model2URI, Collections.singleton((Triple)new TripleImpl(
               (SubjectNode)answer.getObject(0),
               (PredicateNode)answer.getObject(1),
               (ObjectNode)answer.getObject(2))));
@@ -616,7 +588,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<Object> selectList = new ArrayList<Object>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -675,8 +647,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   }
 
   
-  public void testExplicitIsolationQuery() throws URISyntaxException
-  {
+  public void testExplicitIsolationQuery() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -693,7 +664,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List selectList = new ArrayList(3);
+          List<Object> selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -721,7 +692,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
           session1.setAutoCommit(true);
 
-          selectList = new ArrayList(3);
+          selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -773,8 +744,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     }
   }
 
-  public void testExplicitRollbackIsolationQuery() throws URISyntaxException
-  {
+  public void testExplicitRollbackIsolationQuery() throws URISyntaxException {
     logger.info("testExplicitRollbackIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -791,7 +761,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List selectList = new ArrayList(3);
+          List<Object> selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -820,7 +790,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           session1.rollback();
           session1.setAutoCommit(true);
 
-          selectList = new ArrayList(3);
+          selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -858,8 +828,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   }
 
 
-  public void testExplicitCommitIsolationQuery() throws URISyntaxException
-  {
+  public void testExplicitCommitIsolationQuery() throws URISyntaxException {
     logger.info("testExplicitCommitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -876,7 +845,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List selectList = new ArrayList(3);
+          List<Object> selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -904,7 +873,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
           session1.commit();
 
-          selectList = new ArrayList(3);
+          selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -947,7 +916,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           session1.removeModel(model3URI);
           session1.createModel(model3URI, null);
 
-          selectList = new ArrayList(3);
+          selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -989,7 +958,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
           session1.setAutoCommit(true);
 
-          selectList = new ArrayList(3);
+          selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -1026,8 +995,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   }
 
 
-  public void testImplicitCommitQuery() throws URISyntaxException
-  {
+  public void testImplicitCommitQuery() throws URISyntaxException {
     logger.info("testImplicitCommitQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1043,7 +1011,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List selectList = new ArrayList(3);
+          List<Object> selectList = new ArrayList<Object>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -1091,7 +1059,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                            predicateVariable,
                            objectVariable),
             null,                                             // HAVING
-            new ArrayList(),                                  // ORDER BY
+            new ArrayList<Order>(),                           // ORDER BY
             null,                                             // LIMIT
             0,                                                // OFFSET
             new UnconstrainedAnswer()                         // GIVEN
@@ -1107,7 +1075,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                            predicateVariable,
                            objectVariable),
             null,                                             // HAVING
-            new ArrayList(),                                  // ORDER BY
+            new ArrayList<Order>(),                           // ORDER BY
             null,                                             // LIMIT
             0,                                                // OFFSET
             new UnconstrainedAnswer()                         // GIVEN
@@ -1133,8 +1101,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
    * Test two simultaneous, explicit transactions, in two threads. The second one should block
    * until the first one sets auto-commit back to true.
    */
-  public void testConcurrentExplicitTxn() throws URISyntaxException
-  {
+  public void testConcurrentExplicitTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1163,7 +1130,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                 Variable predicateVariable = new Variable("predicate");
                 Variable objectVariable    = new Variable("object");
 
-                List selectList = new ArrayList(3);
+                List<Object> selectList = new ArrayList<Object>(3);
                 selectList.add(subjectVariable);
                 selectList.add(predicateVariable);
                 selectList.add(objectVariable);
@@ -1265,8 +1232,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
    * Test two simultaneous transactions, the first one explicit and the second one in auto-commit,
    * in two threads. The second one should proceed but not see uncommitted data.
    */
-  public void testConcurrentImplicitTxn() throws URISyntaxException
-  {
+  public void testConcurrentImplicitTxn() throws URISyntaxException {
     logger.info("testConcurrentImplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1286,7 +1252,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                 Variable predicateVariable = new Variable("predicate");
                 Variable objectVariable    = new Variable("object");
 
-                List selectList = new ArrayList(3);
+                List<Object> selectList = new ArrayList<Object>(3);
                 selectList.add(subjectVariable);
                 selectList.add(predicateVariable);
                 selectList.add(objectVariable);
@@ -1342,7 +1308,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                 Variable predicateVariable = new Variable("predicate");
                 Variable objectVariable    = new Variable("object");
 
-                List selectList = new ArrayList(3);
+                List<Object> selectList = new ArrayList<Object>(3);
                 selectList.add(subjectVariable);
                 selectList.add(predicateVariable);
                 selectList.add(objectVariable);
@@ -1412,8 +1378,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   }
 
 
-  public void testPrefixingWithUnbound() throws URISyntaxException
-  {
+  public void testPrefixingWithUnbound() throws URISyntaxException {
     logger.warn("testPrefixingWithUnbound");
     URI fileURI  = new File("data/prefix-unbound.rdf").toURI();
 
@@ -1427,7 +1392,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable varB   = new Variable("b");
         Variable varT = new Variable("t");
 
-        List selectList = new ArrayList(2);
+        List<Object> selectList = new ArrayList<Object>(2);
         selectList.add(varA);
         selectList.add(varT);
 
@@ -1533,8 +1498,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     assertFalse(answer2.next());
   }
 
-  public void testCreateModel() throws URISyntaxException
-  {
+  public void testCreateModel() throws URISyntaxException {
     logger.info("testCreateModel");
 
     try {
@@ -1561,8 +1525,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
   /**
    * Fail with an unexpected exception
    */
-  private void fail(Throwable throwable)
-  {
+  private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(stringWriter));
     fail(stringWriter.toString());

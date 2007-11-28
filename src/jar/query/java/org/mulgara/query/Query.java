@@ -29,10 +29,14 @@ package org.mulgara.query;
 
 // Java 2 standard packages;
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 
 // Third party packages
+
 import org.apache.log4j.*;
+import org.mulgara.connection.Connection;
+import org.mulgara.query.operation.Command;
 
 /**
  * An ITQL query. This is a data structure used as an argument to the
@@ -42,12 +46,6 @@ import org.apache.log4j.*;
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:20 $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
  * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In
@@ -55,20 +53,17 @@ import org.apache.log4j.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class Query implements Cloneable, Serializable {
+public class Query implements Cloneable, Serializable, Command {
 
  /**
   * Allow newer compiled version of the stub to operate when changes
   * have not occurred with the class.
   * NOTE : update this serialVersionUID when a method or a public member is
   * deleted.
-  * NOTE: Incremented UID to reflect removal of relatedTo.
   */
-  static final long serialVersionUID = 7973523792022156621L;
+  private static final long serialVersionUID = 5165341858790210479L;
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
   private static Logger logger = Logger.getLogger(Query.class.getName());
 
   /**
@@ -77,29 +72,21 @@ public class Query implements Cloneable, Serializable {
    * that there is no <code>select</code> clause and that no projection will be
    * performed.
    */
-  private List variableList;
+  private List<Object> variableList;
 
   /**
    * Mutable version of the variable list. This isn't exposed via {@link
    * #getVariableList} the way {@link #variableList} is.
    */
-  private List mutableVariableList;
+  private List<Object> mutableVariableList;
 
-  /**
-   * The model expression.
-   *
-   * It corresponds to the <code>from</code> clause.
-   */
+  /** The model expression. It corresponds to the <code>from</code> clause. */
   private ModelExpression modelExpression;
 
-  /**
-   * The constraint expression.  It corresponds to the <code>where</code> clause.
-   */
+  /** The constraint expression.  It corresponds to the <code>where</code> clause. */
   private ConstraintExpression constraintExpression;
 
-  /**
-   * The having expression.  It corresponds to the <code>having</code> clause.
-   */
+  /** The having expression.  It corresponds to the <code>having</code> clause. */
   private ConstraintHaving havingConstraint;
 
   /**
@@ -107,7 +94,7 @@ public class Query implements Cloneable, Serializable {
    * major orderings preceding minor orderings. It's only sensible for this to
    * contain orders on variables in the {@link #variableList}.
    */
-  private List orderList;
+  private List<Order> orderList;
 
   /**
    * The limit on rows in the result. If this is <code>null</code>, it indicates
@@ -115,16 +102,14 @@ public class Query implements Cloneable, Serializable {
    */
   private Integer limit;
 
-  /**
-   * The offset on rows in the result. This value is never negative.
-   */
+  /** The offset on rows in the result. This value is never negative. */
   private int offset;
 
-  /**
-   * The accumulated solutions. This can be <code>null</code>, indicating no
-   * solutions.
-   */
+  /** The accumulated solutions. This can be <code>null</code>, indicating no solutions. */
   private Answer answer;
+
+  /** A UI message describing the result of this message. */
+  private String resultMessage = "";
 
   //
   // Constructors
@@ -135,15 +120,16 @@ public class Query implements Cloneable, Serializable {
    *
    * @param variableList {@link Variable}s or node values to appear as bindings
    *     in the solution (i.e. columns of the result {@link Answer});
-   *     <code>null</code> indicates that all columns are to be retained
+   *     <code>null</code> indicates that all columns are to be retained.
+   *     This is a list of: Variable; ConstantValue; Count; Subquery.
    * @param modelExpression an expression defining the model to query, never
    *     <code>null</code>
    * @param constraintExpression an expression defining the constraints to
    *     satisfy, never <code>null</code>
    * @param havingExpression an expression defining the conditions to apply to
    *     aggregate functions or null if not given.
-   * @param orderList sort order column names, currently a list of {@link
-   *     Variable}s with the order assumed to be ascending in all cases
+   * @param orderList sort order column names. This is a list of {@link Order}s
+   *     which is a wrapper around Variable, with an "ascending" flag.
    * @param limit the maximum number of rows to return, which must be
    *     non-negative; <code>null</code> indicates no limit
    * @param offset the number of rows to skip from the beginning of the result,
@@ -156,9 +142,9 @@ public class Query implements Cloneable, Serializable {
    *     <var>constraintExpression</var>, <var>orderList<var> or
    *     <var>answer</var> are <code>null</code>
    */
-  public Query(List variableList, ModelExpression modelExpression,
+  public Query(List<Object> variableList, ModelExpression modelExpression,
       ConstraintExpression constraintExpression,
-      ConstraintHaving havingExpression, List orderList, Integer limit,
+      ConstraintHaving havingExpression, List<Order> orderList, Integer limit,
       int offset, Answer answer) {
 
     // Validate parameters
@@ -175,14 +161,12 @@ public class Query implements Cloneable, Serializable {
     } else if (answer == null) {
       throw new IllegalArgumentException("Null \"answer\" parameter");
     } else if (variableList != null) {
-      Set variableSet = new HashSet(constraintExpression.getVariables());
+      Set<Variable> variableSet = new HashSet<Variable>(constraintExpression.getVariables());
       variableSet.addAll(Arrays.asList(answer.getVariables()));
 
-      Iterator i = variableList.iterator();
-      while (i.hasNext()) {
-        Object o = i.next();
+      for (Object o: variableList) {
         if (o instanceof Variable) {
-          Variable var = (Variable) o;
+          Variable var = (Variable)o;
           if (!variableSet.contains(var)) {
             logger.warn("Failed to find " + var + " in " + variableSet);
             throw new IllegalArgumentException("Failed to constrain all variables: " + var +
@@ -193,15 +177,12 @@ public class Query implements Cloneable, Serializable {
     }
 
     // Initialize fields
-    this.mutableVariableList =
-        (variableList == null) ? null : new ArrayList(variableList);
-    this.variableList =
-        (variableList == null) ? null
-        : Collections.unmodifiableList(mutableVariableList);
+    this.mutableVariableList = (variableList == null) ? null : new ArrayList<Object>(variableList);
+    this.variableList = (variableList == null) ? null : Collections.unmodifiableList(mutableVariableList);
     this.modelExpression = modelExpression;
     this.constraintExpression = constraintExpression;
     this.havingConstraint = havingExpression;
-    this.orderList = Collections.unmodifiableList(new ArrayList(orderList));
+    this.orderList = Collections.unmodifiableList(new ArrayList<Order>(orderList));
     this.limit = limit;
     this.offset = offset;
     this.answer = answer;
@@ -252,8 +233,8 @@ public class Query implements Cloneable, Serializable {
       cloned.mutableVariableList = null;
       cloned.variableList = null;
     } else {
-      cloned.variableList = new ArrayList();
-      Iterator i = variableList.iterator();
+      cloned.variableList = new ArrayList<Object>();
+      Iterator<Object> i = variableList.iterator();
       while (i.hasNext()) {
         Object o = i.next();
         if (o instanceof Subquery) {
@@ -269,7 +250,7 @@ public class Query implements Cloneable, Serializable {
       cloned.mutableVariableList = Collections.unmodifiableList(cloned.variableList);
     }
     cloned.modelExpression = modelExpression;  // FIXME: should be cloned
-    cloned.answer = (Answer) answer.clone();
+    cloned.answer = (Answer)answer.clone();
 
     // Copy immutable fields by reference
     cloned.orderList = orderList;
@@ -286,15 +267,16 @@ public class Query implements Cloneable, Serializable {
   /**
    * Accessor for the <code>variableList</code> property.
    *
-   * @return a {@link List} containing one or more {@link Variable}s
+   * @return a {@link List} containing one or more {@link Variable}s, {@link ContantValue}s,
+   * {@link Count}s or {@link Subquery}
    */
-  public List getVariableList() {
+  public List<Object> getVariableList() {
     return variableList;
   }
 
+
   /**
    * Accessor for the <code>constraintExpression</code> property.
-   *
    * @return a {@link ConstraintExpression}
    */
   public ConstraintExpression getConstraintExpression() {
@@ -302,8 +284,7 @@ public class Query implements Cloneable, Serializable {
   }
 
   /**
-   * Accesor for the <code>havingExpression</code> property.
-   *
+   * Accessor for the <code>havingExpression</code> property.
    * @return a {@link ConstraintExpression} containing only
    *   {@link ConstraintHaving} or <code>null</code> to indicate an empty
    *   having clause.
@@ -312,54 +293,54 @@ public class Query implements Cloneable, Serializable {
     return havingConstraint;
   }
 
+
   /**
    * Accessor for the <code>modelExpression</code> property.
-   *
-   * @return a {@link ModelExpression}, or <code>null</code> to indicate the
-   *      empty model
+   * @return a {@link ModelExpression}, or <code>null</code> to indicate the empty model
    */
   public ModelExpression getModelExpression() {
     return modelExpression;
   }
 
+
   /**
    * Accessor for the <code>orderList</code> property.
-   *
-   * @return a {@link List} containing one or more {@link Variable}s
+   * @return a {@link List} containing one or more {@link Order}s
+   *         (which wrap {@link Variable}s)
    */
-  public List getOrderList() {
+  public List<Order> getOrderList() {
     return orderList;
   }
 
+
   /**
    * Accessor for the <code>limit</code> property.
-   *
    * @return the limit for this query, or <code>null</code> if unlimited
    */
   public Integer getLimit() {
     return limit;
   }
 
+
   /**
    * Accessor for the <code>offset</code> property.
-   *
    * @return the offset for this query, a non-negative integer
    */
   public int getOffset() {
     return offset;
   }
 
+
   /**
    * Accessor for the <code>answer</code> property. If the <var>
    * constraintExpression</var> property is <code>null</code>, this is the
    * answer to the entire query.
-   *
-   * @return an {@link Answer}, or <code>null</code> to indicate the set of all
-   *      statements
+   * @return an {@link Answer}, or <code>null</code> to indicate the set of all statements
    */
   public Answer getGiven() {
     return answer;
   }
+
 
   //
   // Methods overriding Object
@@ -367,93 +348,56 @@ public class Query implements Cloneable, Serializable {
 
   /**
    * Equality is by value.
-   *
-   * @param object PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param object The object to compare to
+   * @return <code>true</code> if object is functionaly equivalent to this object.
    */
   public boolean equals(Object object) {
 
-    if (object == this) {
+    if (object == this) return true;
+    if (object == null) return false;
+    if (!(object instanceof Query)) return false;
 
-      return true;
-    }
-
-    if (object == null) {
-
-      return false;
-    }
-
-    if (! (object instanceof Query)) {
-
-      return false;
-    }
-
-    Query query = (Query) object;
+    Query query = (Query)object;
 
     // Check the variableList field
-    if (!variableList.equals(query.variableList)) {
-
-      return false;
-    }
+    if (!variableList.equals(query.variableList)) return false;
 
     // Check the modelExpression field
-    if ( (modelExpression == null) ? (query.modelExpression != null)
-        : (!modelExpression.equals(
-        query.modelExpression))) {
-
+    if ((modelExpression == null) ?
+        (query.modelExpression != null) :
+        (!modelExpression.equals(query.modelExpression))) {
       return false;
     }
 
     // Check the constraintExpression field
-    if ((constraintExpression == null) ? (query.constraintExpression != null)
-        : (!constraintExpression.equals(query.constraintExpression))) {
-
+    if ((constraintExpression == null) ?
+        (query.constraintExpression != null) :
+        (!constraintExpression.equals(query.constraintExpression))) {
       return false;
     }
 
-    if ((havingConstraint == null) ? (query.havingConstraint != null)
-        : (!havingConstraint.equals(query.havingConstraint))) {
-
+    if ((havingConstraint == null) ?
+        (query.havingConstraint != null) :
+        (!havingConstraint.equals(query.havingConstraint))) {
       return false;
     }
 
     // Check the orderList field
-    if ( (orderList == null) ^ (query.orderList == null)) {
+    if ((orderList == null) ^ (query.orderList == null)) return false;
 
-      return false;
-    }
-
-    if ( (orderList != null) && !orderList.equals(query.orderList)) {
-
-      return false;
-    }
+    if ((orderList != null) && !orderList.equals(query.orderList)) return false;
 
     // Check the limit field
-    if ( (limit == null) ^ (query.limit == null)) {
-
-      return false;
-    }
-
-    if ( (limit != null) && !limit.equals(query.limit)) {
-
-      return false;
-    }
+    if ((limit == null) ^ (query.limit == null)) return false;
+    if ((limit != null) && !limit.equals(query.limit)) return false;
 
     // Check the offset field
-    if (offset != query.offset) {
+    if (offset != query.offset) return false;
 
-      return false;
-    }
-
-    // Check the answer field
-    if (!answer.equals(query.answer)) {
-
-      return false;
-    }
-
-    // All checks passed, so the object is equal
-    return true;
+    // Finally, it comes down to the answer field
+    return answer.equals(query.answer);
   }
+
 
   /**
    * Close this {@link Query}, and the underlying {@link Answer} objects.
@@ -463,34 +407,25 @@ public class Query implements Cloneable, Serializable {
     answer = null;
 
     if (mutableVariableList != null) {
-      Iterator it = mutableVariableList.iterator();
-      while (it.hasNext()) {
-        Object v = it.next();
-        if (v instanceof AggregateFunction)
-          ((AggregateFunction)v).getQuery().close();
+      for (Object v: mutableVariableList) {
+        if (v instanceof AggregateFunction) ((AggregateFunction)v).getQuery().close();
       }
     }
   }
 
+
   /**
    * Generate a legible representation of the query.
    *
-   * @return RETURNED VALUE TO DO
+   * @return A string representing all the elements of a query.
    */
   public String toString() {
-
     StringBuffer buffer = new StringBuffer();
 
     // SELECT
     if (variableList != null) {
-
       buffer.append("SELECT");
-
-      for (Iterator i = variableList.iterator(); i.hasNext(); ) {
-
-        buffer.append(" ").append(i.next());
-      }
-
+      for (Object i: variableList) buffer.append(" ").append(i);
       buffer.append(" ");
     }
 
@@ -501,38 +436,22 @@ public class Query implements Cloneable, Serializable {
     buffer.append(" WHERE ").append(constraintExpression);
 
     // HAVING
-    if (havingConstraint != null) {
-      buffer.append(" HAVING ").append(havingConstraint);
-    }
+    if (havingConstraint != null) buffer.append(" HAVING ").append(havingConstraint);
 
     // ORDER BY
     if (!orderList.isEmpty()) {
-
       buffer.append(" ORDER BY");
-
-      for (Iterator i = orderList.iterator(); i.hasNext(); ) {
-
-        buffer.append(" ").append(i.next());
-      }
+      for (Order o: orderList) buffer.append(" ").append(o);
     }
 
     // LIMIT
-    if (limit != null) {
-
-      buffer.append(" LIMIT ").append(limit.intValue());
-    }
+    if (limit != null) buffer.append(" LIMIT ").append(limit.intValue());
 
     // OFFSET
-    if (offset != 0) {
-
-      buffer.append(" OFFSET ").append(offset);
-    }
+    if (offset != 0) buffer.append(" OFFSET ").append(offset);
 
     // GIVEN
-    if (answer != null) {
-
-      buffer.append(" GIVEN ").append(answer);
-    }
+    if (answer != null) buffer.append(" GIVEN ").append(answer);
 
     return buffer.toString();
   }
@@ -540,7 +459,6 @@ public class Query implements Cloneable, Serializable {
 
   /**
    * Serializes the current object to a stream.
-   *
    * @param out The stream to write to.
    * @throws IOException If an I/O error occurs while writing.
    */
@@ -558,4 +476,81 @@ public class Query implements Cloneable, Serializable {
     }
     out.defaultWriteObject();
   }
+
+
+  //
+  // Command interface methods
+  //
+  
+  /**
+   * Operation can only be run by a server.
+   * @return <code>false</code> as this is AST for a server.
+   */
+  public boolean isLocalOperation() {
+    return false;
+  }
+
+
+  /**
+   * Operation is not restricted to a user interface.
+   * @return <code>false</code> as this operation has no effect on a UI.
+   */
+  public boolean isUICommand() {
+    return false;
+  }
+
+
+  /**
+   * Indicates that this command returns an Answer. Saves the overhead of checking
+   * the return type of execute.
+   * @return <code>true</code>.
+   */
+  public boolean isAnswerable() {
+    return true;
+  }
+
+
+  /**
+   * Indicates that the command modifies the state in a transaction.
+   * @return <code>true</code> If the transaction state is to be modified.
+   */
+  public boolean isTxCommitRollback() {
+    return false;
+  }
+  
+  /**
+   * Gets the associated server for a non-local operation.
+   * @return the server URI, or <code>null</code> if the data should be found locally.
+   */
+  public URI getServerURI() {
+    Set<URI> dbURIs = getModelExpression().getDatabaseURIs();
+    return dbURIs.isEmpty() ? null : dbURIs.iterator().next();
+  }
+
+
+  /**
+   * Gets a message text relevant to the operation.  Useful for the UI.
+   * Consider changing this to a serialization of the result.
+   * @return A text message associated with the result of this operation. Usually empty.
+   */
+  public String getResultMessage() {
+    return resultMessage;
+  }
+
+
+  /**
+   * Executes this query on a connection.
+   * @param conn The connection to a database session to execute the query against.
+   * @return The answer to this query.  This must be closed by the calling code.
+   */
+  public Object execute(Connection conn) throws QueryException, TuplesException {
+    if (logger.isDebugEnabled()) logger.debug("Executing query " + toString());
+    Answer answer = conn.getSession().query(this);
+    if (answer == null) throw new QueryException("Invalid answer received");
+    if (logger.isDebugEnabled()) logger.debug("Successfully executed query");
+    // move to the first row
+    answer.beforeFirst();
+    return answer;
+  }
+
 }

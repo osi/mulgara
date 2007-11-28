@@ -43,13 +43,11 @@ import java.util.Collections;
 import java.util.Set;
 
 // Third party packages
-import org.apache.log4j.Logger; // Apache Log4J
+// import org.apache.log4j.Logger; // Apache Log4J
 
 // Local classes
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.Query;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.jrdf.graph.URIReference;
@@ -75,9 +73,16 @@ import org.jrdf.graph.URIReference;
  */
 public class IntervalConstraint implements Constraint {
 
-  /** Logger */
-  private static Logger logger =
-    Logger.getLogger(IntervalConstraint.class.getName());
+  // /** Logger */
+  // private static Logger logger = Logger.getLogger(IntervalConstraint.class.getName());
+
+  /**
+   * Allow newer compiled version of the stub to operate when changes
+   * have not occurred with the class.
+   * NOTE : update this serialVersionUID when a method or a public member is
+   * deleted.
+   */
+  private static final long serialVersionUID = 7653707287858079768L;
 
   /**
    * The variable under constraint.
@@ -116,8 +121,7 @@ public class IntervalConstraint implements Constraint {
    * @throws IllegalArgumentException if <var>variable</var> is
    *   <code>null</code>
    */
-  IntervalConstraint(Variable variable, Bound lowerBound, Bound upperBound, URIReference model)
-  {
+  IntervalConstraint(Variable variable, Bound lowerBound, Bound upperBound, URIReference model) {
     if (variable == null) { throw new IllegalArgumentException("Null \"variable\" parameter"); }
     if (model == null) { throw new IllegalArgumentException("Null 'model' parameter"); }
 
@@ -134,8 +138,7 @@ public class IntervalConstraint implements Constraint {
    * @throws IllegalArgumentException if the <var>intervalConstraint</var> does
    *   not constrain the same variable as this instance or is <code>null</code>
    */
-  IntervalConstraint conjoin(IntervalConstraint intervalConstraint)
-  {
+  IntervalConstraint conjoin(IntervalConstraint intervalConstraint) {
     // Validate "intervalConstraint" parameter
     if (intervalConstraint == null) {
       throw new IllegalArgumentException(
@@ -178,22 +181,15 @@ public class IntervalConstraint implements Constraint {
    * @return the largest of <var>lhs</var> and <var>rhs</var>, or
    *   <code>null</code> if both are <code>null</code>
    */
-  private static Bound maximumBound(Bound lhs, Bound rhs)
-  {
+  private static Bound maximumBound(Bound lhs, Bound rhs) {
     if (lhs == null) {
       return (rhs == null) ? null : rhs;
-    }
-    else {
+    } else {
       if (rhs == null) {
         return lhs;
-      }
-      else {
-        if (lhs.getValue() < rhs.getValue()) {
-          return rhs;
-        }
-        if (lhs.getValue() > rhs.getValue()) {
-          return lhs;
-        }
+      } else {
+        if (lhs.getValue() < rhs.getValue()) return rhs;
+        if (lhs.getValue() > rhs.getValue()) return lhs;
         assert lhs.getValue() == rhs.getValue();
         return lhs.isClosed() ? lhs : rhs;
       }
@@ -208,22 +204,15 @@ public class IntervalConstraint implements Constraint {
    * @return the smallest of <var>lhs</var> and <var>rhs</var>, or
    *   <code>null</code> if both are <code>null</code>
    */
-  private static Bound minimumBound(Bound lhs, Bound rhs)
-  {
+  private static Bound minimumBound(Bound lhs, Bound rhs) {
     if (lhs == null) {
       return (rhs == null) ? null : rhs;
-    }
-    else {
+    } else {
       if (rhs == null) {
         return lhs;
-      }
-      else {
-        if (lhs.getValue() < rhs.getValue()) {
-          return lhs;
-        }
-        if (lhs.getValue() > rhs.getValue()) {
-          return rhs;
-        }
+      } else {
+        if (lhs.getValue() < rhs.getValue()) return lhs;
+        if (lhs.getValue() > rhs.getValue()) return rhs;
         assert lhs.getValue() == rhs.getValue();
         return lhs.isClosed() ? rhs : lhs;
       }
@@ -234,8 +223,7 @@ public class IntervalConstraint implements Constraint {
    * @return the lower {@link Bound} of the constraint, or <code>null</code>
    *   if it has no lower {@link Bound}
    */
-  Bound getLowerBound()
-  {
+  Bound getLowerBound() {
     return lowerBound;
   }
 
@@ -243,16 +231,14 @@ public class IntervalConstraint implements Constraint {
    * @return the upper {@link Bound} of the constraint, or <code>null</code>
    *   if it has no upper {@link Bound}
    */
-  Bound getUpperBound()
-  {
+  Bound getUpperBound() {
     return upperBound;
   }
 
   /**
    * @return the constrained variable
    */
-  Variable getVariable()
-  {
+  Variable getVariable() {
     return variable;
   }
 
@@ -260,23 +246,15 @@ public class IntervalConstraint implements Constraint {
    * @return <code>true</code> if the constraint can never be satisfied (i.e.
    *   the lower bound is above the upper bound)
    */
-  boolean isEmpty()
-  {
-    if (lowerBound == null) {
-      return false;
-    }
+  boolean isEmpty() {
+    
+    if (lowerBound == null) return false;
 
-    if (upperBound == null) {
-      return false;
-    }
+    if (upperBound == null) return false;
 
-    if (lowerBound.getValue() < upperBound.getValue()) {
-      return false;
-    }
+    if (lowerBound.getValue() < upperBound.getValue()) return false;
 
-    if (lowerBound.getValue() > upperBound.getValue()) {
-      return true;
-    }
+    if (lowerBound.getValue() > upperBound.getValue()) return true;
 
     assert lowerBound.getValue() == upperBound.getValue();
     return !(lowerBound.isClosed() && upperBound.isClosed());
@@ -285,8 +263,7 @@ public class IntervalConstraint implements Constraint {
   /**
    * @return whether the interval admits only a single value
    */
-  boolean isSingleton()
-  {
+  boolean isSingleton() {
     return lowerBound != null &&
            lowerBound.isClosed() &&
            lowerBound.equals(upperBound);
@@ -296,8 +273,7 @@ public class IntervalConstraint implements Constraint {
    * @return whether the interval has neither a lower nor an upper bound, and
    *   is thus not really a constraint at all
    */
-  boolean isUnconstrained()
-  {
+  boolean isUnconstrained() {
     return (lowerBound == null) && (upperBound == null);
   }
 
@@ -305,8 +281,7 @@ public class IntervalConstraint implements Constraint {
   // Methods implementing ConstraintExpression
   //
 
-  public Set getVariables()
-  {
+  public Set<Variable> getVariables() {
     return Collections.singleton(variable);
   }
 
@@ -317,26 +292,17 @@ public class IntervalConstraint implements Constraint {
   /**
    * Equality is by value rather than by reference.
    */
-  public boolean equals(Object object)
-  {
-    if (object == null) {
-      return false;
-    }
+  public boolean equals(Object object) {
+    if (object == null) return false;
 
-    if (!object.getClass().equals(IntervalConstraint.class)) {
-      return false;
-    }
+    if (!object.getClass().equals(IntervalConstraint.class)) return false;
 
     assert object instanceof IntervalConstraint;
     IntervalConstraint intervalConstraint = (IntervalConstraint) object;
     
-    if (isEmpty() && intervalConstraint.isEmpty()) {
-      return true;
-    }
+    if (isEmpty() && intervalConstraint.isEmpty()) return true;
 
-    if (isUnconstrained() && intervalConstraint.isUnconstrained()) {
-      return true;
-    }
+    if (isUnconstrained() && intervalConstraint.isUnconstrained()) return true;
 
     return variable.equals(intervalConstraint.variable) &&
            Bound.equals(lowerBound, intervalConstraint.lowerBound) &&
@@ -347,8 +313,7 @@ public class IntervalConstraint implements Constraint {
    * @return a legible representation of the constraint, for instance
    *   <pre>[1.5 < $x <= 2.5]</pre>
    */
-  public String toString()
-  {
+  public String toString() {
     StringBuffer buffer = new StringBuffer("[");
     if (lowerBound != null) {
       buffer.append(lowerBound.getValue());

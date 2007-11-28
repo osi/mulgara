@@ -29,8 +29,8 @@ package org.mulgara.itql;
 
 // Java APIs
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import javax.xml.soap.SOAPException;
 import org.w3c.dom.*;
@@ -43,13 +43,25 @@ import org.jrdf.graph.URIReference;     // JRDF
 import org.jrdf.graph.BlankNode;
 
 // Mulgara packages
+import org.mulgara.connection.Connection;
+import org.mulgara.connection.ConnectionException;
 import org.mulgara.itql.lexer.LexerException;
 import org.mulgara.itql.parser.ParserException;
+import org.mulgara.parser.Interpreter;
+import org.mulgara.parser.MulgaraLexerException;
+import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.Answer;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
+import org.mulgara.query.operation.Backup;
+import org.mulgara.query.operation.Command;
+import org.mulgara.query.operation.DataTx;
+import org.mulgara.query.operation.Load;
+import org.mulgara.query.operation.Restore;
+import org.mulgara.query.operation.SetAutoCommit;
 import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.server.Session;
 
 /**
@@ -74,63 +86,53 @@ import org.mulgara.server.Session;
  */
 public class ItqlInterpreterBean {
 
-  /**
-   * the logging category to log to
-   */
-  private final static Logger log =
-      Logger.getLogger(ItqlInterpreterBean.class.getName());
+  /** The logger */
+  private final static Logger log = Logger.getLogger(ItqlInterpreterBean.class.getName());
 
-  /**
-   * Get line separator.
-   */
+  /** line separator */
   private static final String EOL = System.getProperty("line.separator");
 
   /**
    * The TQL namespace, used when creating an XML response.
-   *
    * TODO: Bring this into line with the Mulgara.NAMESPACE, which may break existing client.
    */
   private final static String TQL_NS = "http://mulgara.org/tql#";
+  
+  /** Dummy load source for RDF files on an input stream. */
+  private final static URI DUMMY_RDF_SOURCE = URI.create(Mulgara.NAMESPACE+"locally-sourced-inputStream.rdf");
+
+  /** The ITQL interpreter Bean. */
+  private final TqlAutoInterpreter interpreter = new TqlAutoInterpreter();
+  
+  /** A legacy session handle. Only used to remember the session a client asked for. */
+  private Session legacySession = null;
+  
+  /** An internal parser.  Only used when a legacy client wants to build their own query. */
+  private Interpreter parser = new TqlInterpreter();
+  
+  /** Indicates that the last command wanted to quit. */
+  private boolean quit = false;
 
   /**
-   * The ITQL interpreter Bean.
-   */
-  private final ItqlInterpreter interpreter =
-    new ItqlInterpreter(ItqlInterpreter.getDefaultAliases());
-
-  /**
-   * Create the ITQL interpreter.
-   *
-   * The session will be obtained using a
-   *   {@link org.mulgara.server.driver.SessionFactoryFinder}.
+   * Create the TQL interpreter.
    */
   public ItqlInterpreterBean() {
-
-    if (log.isInfoEnabled()) {
-
-      log.info("Created an ItqlInterpreterBean");
-    }
-
+    if (log.isInfoEnabled()) log.info("Created an ItqlInterpreterBean");
   }
 
   /**
-   * Create the ITQL interpreter using the given <code>session</code>.
-   *
+   * @deprecated
+   * Create the TQL interpreter using the given <code>session</code>.
+   * The Session will be ignored.  Security is currently unimplemented, but the domain is recorded.
    * @param session the session to use to communicate with the Mulgara server
    */
   public ItqlInterpreterBean(Session session, URI securityDomain) {
-
     if (log.isInfoEnabled()) {
       log.info("Created an ItqlInterpreterBean with a supplied session and security domain");
     }
-
-    try {
-      interpreter.setSession(session, securityDomain);
-    } catch (QueryException e) {
-
-      interpreter.setLastError(e);
-      interpreter.setLastMessage("Couldn't set interpreter session: " + e.getMessage());
-    }
+    legacySession = session;
+    interpreter.preSeedSession(session);
+    interpreter.setSecurityDomain(securityDomain);
   }
 
   // executeQueryToMap()
@@ -143,7 +145,7 @@ public class ItqlInterpreterBean {
    */
   public static String[] splitQuery(String multiQuery) {
 
-    List singleQueryList = new ArrayList();
+    List<String> singleQueryList = new ArrayList<String>();
 
     // Inside a URI?
     boolean INSIDE_URI = false;
@@ -154,10 +156,7 @@ public class ItqlInterpreterBean {
     // Start index for next single query
     int startIndex = 0;
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("About to break up query: " + multiQuery);
-    }
+    if (log.isDebugEnabled()) log.debug("About to break up query: " + multiQuery);
 
     multiQuery = multiQuery.trim();
 
@@ -172,59 +171,39 @@ public class ItqlInterpreterBean {
         // (OK so maybe it won't appear in a legal URI but let things further
         // down handle this)
         case '\'':
-
           if (!INSIDE_URI) {
-
             if (INSIDE_TEXT) {
-
               // Check for an \' inside a literal
               if ( (lineIndex > 1) && (multiQuery.charAt(lineIndex - 1) != '\\')) {
-
                 INSIDE_TEXT = false;
               }
             } else {
-
               INSIDE_TEXT = true;
             }
           }
-
           break;
 
           // URI start - if not in a literal
         case '<':
-
           if (!INSIDE_TEXT) {
-
             INSIDE_URI = true;
           }
-
           break;
 
           // URI end - if not in a literal
         case '>':
-
           if (!INSIDE_TEXT) {
-
             INSIDE_URI = false;
           }
-
           break;
 
         case ';':
-
           if (!INSIDE_TEXT && !INSIDE_URI) {
-
-            String singleQuery =
-                multiQuery.substring(startIndex, lineIndex + 1).trim();
+            String singleQuery = multiQuery.substring(startIndex, lineIndex + 1).trim();
             startIndex = lineIndex + 1;
             singleQueryList.add(singleQuery);
-
-            if (log.isDebugEnabled()) {
-
-              log.debug("Found single query: " + singleQuery);
-            }
+            if (log.isDebugEnabled()) log.debug("Found single query: " + singleQuery);
           }
-
           break;
 
         default:
@@ -233,38 +212,36 @@ public class ItqlInterpreterBean {
 
     // Lasy query is not terminated with a ';'
     if (startIndex < multiQuery.length()) {
-
       singleQueryList.add(multiQuery.substring(startIndex, multiQuery.length()));
     }
 
-    return (String[]) singleQueryList.toArray(new String[singleQueryList.size()]);
+    return singleQueryList.toArray(new String[singleQueryList.size()]);
   }
 
   /**
    * Returns the session to use to communicate with the Mulgara server.
-   *
-   * @return the session to use to communicate with the Mulgara server
+   * If you need a session, use a {@link ConnectionFactory} instead.
+   * @deprecated The user should not be accessing a session through a
+   * command interpreter.
+   * @return the session to use to communicate with the Mulgara server.  This is probably <code>null</code>.
    */
   public Session getSession() {
-
-    try {
-      return this.interpreter.getSession();
-    } catch (QueryException e) {
-      return null;
-    }
+    return legacySession;
   }
 
   /**
    * Returns the session to use to communicate with the specified Mulgara server.
-   *
+   * @deprecated The user should not be accessing a session through a
+   * command interpreter.
    * @param serverURI URI Server to get a Session for.
-   * @return the session to use to communicate with the specified Mulgara server
+   * @return the session to use to communicate with the specified Mulgara server,
+   * or <code>null</code> if it was not possible to create a session for the URI.
    */
   public Session getSession(URI serverURI) {
-
     try {
-      return this.interpreter.getSession(serverURI);
-    } catch (QueryException e) {
+      return interpreter.establishConnection(serverURI).getSession();
+    } catch (Exception e) {
+      log.error("Unable to get session for: " + serverURI, e);
       return null;
     }
   }
@@ -275,26 +252,16 @@ public class ItqlInterpreterBean {
    *
    * @return the alias namespace map associated with this bean.
    */
-  public Map getAliasMap() {
-
-    return this.interpreter.getAliasMap();
+  @SuppressWarnings("deprecation")
+  public Map<String,URI> getAliasMap() {
+    return this.interpreter.getAliasesInUse();
   }
 
   /**
    * Closes the session underlying this bean.
    */
   public void close() {
-    try {
-      Session session = interpreter.getSession();
-      if (session != null) {
-        session.close();
-      }
-      session = null;
-    } catch (QueryException e) {
-      if (log.isInfoEnabled()) {
-        log.info("Couldn't close interpreter session", e);
-      }
-    }
+    interpreter.close();
   }
 
   //
@@ -304,48 +271,60 @@ public class ItqlInterpreterBean {
   /**
    * Begin a new transaction by setting the autocommit off
    *
-   * @param name the name of the transaction ( debug purposes only )
-   * @throws QueryException EXCEPTION TO DO
+   * @param name the name of the transaction (debug purposes only)
+   * @throws QueryException Error setting up the transaction.
    */
   public void beginTransaction(String name) throws QueryException {
 
-    if (log.isDebugEnabled()) {
+    if (log.isDebugEnabled()) log.debug("Begin transaction for :" + name);
 
-      log.debug("Begin transaction for :" + name);
+    if (legacySession != null) legacySession.setAutoCommit(false);
+    SetAutoCommit autocommitCmd = new SetAutoCommit(false);
+    try {
+      // do what the autointerpreter does, but don't worry about the result
+      Connection localConnection = interpreter.getLocalConnection();
+      autocommitCmd.execute(localConnection);
+      interpreter.updateConnectionsForTx(localConnection, autocommitCmd);
+    } catch (QueryException qe) {
+      throw qe;
+    } catch (Exception e) {
+      throw new QueryException("Unable to start a transaction", e);
     }
-
-    this.getSession().setAutoCommit(false);
   }
 
   /**
    * Commit a new transaction by setting the autocommit on
    *
    * @param name the name of the transaction ( debug purposes only ) *
-   * @throws QueryException EXCEPTION TO DO
+   * @throws QueryException Unable to commit one of the connections.
    */
+  @SuppressWarnings("deprecation")
   public void commit(String name) throws QueryException {
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Commit transaction for :" + name);
-    }
+    if (log.isDebugEnabled()) log.debug("Commit transaction for :" + name);
 
     // this is the same as a commit call
-    this.getSession().setAutoCommit(true);
+    if (legacySession != null) legacySession.setAutoCommit(true);
+    interpreter.commitAll();
   }
+
 
   /**
    * Rollback an existing transaction
    *
    * @param name the name of the transaction ( debug purposes only ) *
-   * @throws QueryException EXCEPTION TO DO
+   * @throws QueryException Unable to rollback one of the connections
    */
+  @SuppressWarnings("deprecation")
   public void rollback(String name) throws QueryException {
 
     log.warn("Rollback transaction for :" + name);
 
-    this.getSession().rollback();
-    this.getSession().setAutoCommit(true);
+    if (legacySession != null) {
+      legacySession.rollback();
+      legacySession.setAutoCommit(true);
+    }
+    interpreter.rollbackAll();
   }
 
   /**
@@ -381,14 +360,14 @@ public class ItqlInterpreterBean {
           log.debug("Executing query : " + singleQuery);
         }
 
-        interpreter.executeCommand(singleQuery);
+        executeCommand(singleQuery);
 
         Answer answer = null;
         try {
           answer = this.interpreter.getLastAnswer();
 
           if ((answer == null) || answer.isUnconstrained()) {
-            if (this.interpreter.getLastError() == null) {
+            if (this.interpreter.getLastException() == null) {
               //Not an error, but a message does exist
               Element message =
                   (Element)query.appendChild(doc.createElementNS(TQL_NS, "message"));
@@ -400,10 +379,13 @@ public class ItqlInterpreterBean {
             } else {
               //Error has occurred at the interpreter
               //Generate a SOAP fault
-              // TODO REMOVE Constants.FAULT_CODE_SERVER,
-              log.error("Execute query failed.  Returning error", interpreter.getLastError());
+              System.err.println("Generating a SOAP fault due to interpreter exception:");
+              interpreter.getLastException().printStackTrace();
+              log.error("Execute query failed.  Returning error", interpreter.getLastException());
               throw new SOAPException("ItqlInterpreter error - " +
-                  interpreter.getCause(interpreter.getLastError(), 0));
+                  ItqlUtil.getCause(interpreter.getLastException(), 0));
+              // TODO: consider adding + EOL + "Query: [" + singleQuery + "]");
+              // though must first consider impact on clients
             }
             // Ensure answer is null.
             answer = null;
@@ -427,24 +409,24 @@ public class ItqlInterpreterBean {
     }
   }
 
+
   /**
    * Answer TQL queries.
    *
-   * @param queryString PARAMETER TO DO
+   * @param queryString A query to execute
    * @return the answer String to the TQL query
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General exception type to cover all possible conditions,
+   *         including bad query syntax, network errors, unknown graphs, etc.
    */
   public String executeQueryToString(String queryString) throws Exception {
-
     String result = DOM2Writer.nodeToString(this.execute(queryString), false);
 
-    if (log.isDebugEnabled()) {
-      log.debug("Sending result to caller : " + result);
-    }
+    if (log.isDebugEnabled()) log.debug("Sending result to caller : " + result);
 
     return result;
   }
 
+
   /**
    * Executes a semicolon delimited string of queries. <p>
    *
@@ -469,11 +451,11 @@ public class ItqlInterpreterBean {
    *      org.mulgara.query.Answer}, the messages are {@link
    *      java.lang.String}s
    */
-  public List executeQueryToList(String queryString) {
-
+  public List<Object> executeQueryToList(String queryString) {
     return executeQueryToList(queryString, false);
   }
 
+
   /**
    * Executes a semicolon delimited string of queries. <p>
    *
@@ -492,21 +474,16 @@ public class ItqlInterpreterBean {
    * {@link org.mulgara.query.Answer} or a {@link java.lang.String} (error)
    * message. </p>
    *
-   * @param queryString semi-colon delimited string containing the queries to be
-   *      executed
+   * @param queryString semi-colon delimited string containing the queries to be executed
    * @param keepExceptions return exceptions, don't convert them to a string.
-   * @return a list of answers, messages and errors, answers are of type {@link
-   *      org.mulgara.query.Answer}, the messages are {@link
-   *      java.lang.String}s
+   * @return a list of answers, messages and errors, answers are of type
+   *      {@link org.mulgara.query.Answer}, the messages are {@link java.lang.String}s
    */
-  public List executeQueryToList(String queryString, boolean keepExceptions) {
+  public List<Object> executeQueryToList(String queryString, boolean keepExceptions) {
 
-    List answers = new ArrayList();
+    List<Object> answers = new ArrayList<Object>();
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Received a TQL query : " + queryString);
-    }
+    if (log.isDebugEnabled()) log.debug("Received a TQL query : " + queryString);
 
     String[] queries = splitQuery(queryString);
 
@@ -515,20 +492,16 @@ public class ItqlInterpreterBean {
       String singleQuery = queries[queryIndex];
 
       // Resolve the query
-      if (log.isDebugEnabled()) {
+      if (log.isDebugEnabled()) log.debug("Executing query : " + singleQuery);
 
-        log.debug("Executing query : " + singleQuery);
-      }
-
-      // end if
       // execute it
       answers.add(this.executeQueryToNiceResult(singleQuery, keepExceptions));
     }
 
-    // end for
     // Send the answers back to the caller
     return answers;
   }
+
 
   /**
    * Executes a {@link java.util.Map} of queries, returning the results of those
@@ -570,40 +543,34 @@ public class ItqlInterpreterBean {
    * @param queries a map of keys to queries to be executed
    * @return a map of answers and error messages
    */
-  public Map executeQueryToMap(Map queries) {
+  public Map<Object,Object> executeQueryToMap(Map<Object,String> queries) {
 
     // create the answer map
-    HashMap answers = new HashMap();
+    HashMap<Object,Object> answers = new HashMap<Object,Object>();
 
     // iterate over the queries
-    for (Iterator keyIter = queries.keySet().iterator(); keyIter.hasNext(); ) {
+    for (Iterator<Object> keyIter = queries.keySet().iterator(); keyIter.hasNext(); ) {
 
       // get the key and the query
       Object key = keyIter.next();
-      String query = (String) queries.get(key);
+      String query = queries.get(key);
 
       // log the query we're executing
-      if (log.isDebugEnabled()) {
+      if (log.isDebugEnabled()) log.debug("Executing " + key + " -> " + query);
 
-        log.debug("Executing " + key + " -> " + query);
-      }
-
-      // end if
       // execute the query
       answers.put(key, this.executeQueryToNiceResult(query, false));
     }
 
-    // end for
     // return the answers
     return answers;
   }
 
-  // getSession()
 
   /**
    * Builds a {@link org.mulgara.query.Query} from the given <var>query</var>.
    *
-   * @param query PARAMETER TO DO
+   * @param query Command containing a query (<em>select $x $y .....</em>).
    * @return a {@link org.mulgara.query.Query} constructed from the given
    *      <var>query</var>
    * @throws IOException if the <var>query</var> can't be buffered
@@ -611,13 +578,12 @@ public class ItqlInterpreterBean {
    * @throws ParserException if the <var>query</var> is not syntactically
    *      correct
    */
-  public Query buildQuery(String query) throws IOException, LexerException,
-      ParserException {
+  public Query buildQuery(String query) throws IOException, MulgaraLexerException, MulgaraParserException {
+    Command cmd =  parser.parseCommand(query);
+    if (!(cmd instanceof Query)) throw new MulgaraParserException("Command is valid, but is not a query: " + query + "(" + cmd.getClass().getName() + ")");
+    return (Query)cmd;
+  }
 
-    // defer to the interpreter
-    return this.interpreter.parseQuery(query);
-
-  } // buildQuery()
 
   /**
    * Execute an iTQL &quot;update&quot; statement that returns no results.
@@ -634,14 +600,13 @@ public class ItqlInterpreterBean {
   public void executeUpdate(String itql) throws ItqlInterpreterException {
 
     try {
-
-      interpreter.executeCommand(itql);
+      executeCommand(itql);
     } catch (Exception e) {
-
       throw new ItqlInterpreterException(e);
     }
 
-    ItqlInterpreterException exception = interpreter.getLastError();
+    Exception e = interpreter.getLastException();
+    ItqlInterpreterException exception = (e == null) ? null : new ItqlInterpreterException(e);
     Answer answer = interpreter.getLastAnswer();
 
     if (answer != null) {
@@ -649,15 +614,13 @@ public class ItqlInterpreterBean {
       try {
         answer.close();
       } catch (TuplesException te) { /* use the following exception */ }
-      throw new IllegalStateException("The execute update method should not " +
-          "return an Answer object!");
+
+      throw new IllegalStateException("The execute update method should not return an Answer object!");
     }
 
-    if (exception != null) {
-
-      throw exception;
-    }
+    if (exception != null) throw exception;
   }
+
 
   /**
    * Returns true if a quit command has been entered, simply calls the
@@ -668,7 +631,7 @@ public class ItqlInterpreterBean {
    * @see ItqlInterpreter#isQuitRequested()
    */
   public boolean isQuitRequested() {
-    return interpreter.isQuitRequested();
+    return quit;
   }
 
 
@@ -682,23 +645,21 @@ public class ItqlInterpreterBean {
    * @see ItqlInterpreter#getLastMessage()
    */
   public String getLastMessage() {
-
     return interpreter.getLastMessage();
   }
 
 
   /**
-   * Returns the {@linkplain ItqlInterpreter#getLastError last error} of the
+   * Returns the {@linkplain ItqlInterpreter#getLastException last error} of the
    * interpreter.
    *
    * @return the results of the last command execution, null if the command did
    *      not set any message
    *
-   * @see ItqlInterpreter#getLastError()
+   * @see ItqlInterpreter#getLastException()
    */
-  public ItqlInterpreterException getLastError() {
-
-    return interpreter.getLastError();
+  public ItqlInterpreterException getLastException() {
+    return new ItqlInterpreterException(interpreter.getLastException());
   }
 
 
@@ -710,23 +671,16 @@ public class ItqlInterpreterBean {
    * @throws ItqlInterpreterException if the query fails.
    */
   public Answer executeQuery(String itql) throws ItqlInterpreterException {
-
     try {
-      interpreter.executeCommand(itql);
+      executeCommand(itql);
     } catch (Exception e) {
       throw new ItqlInterpreterException(e);
     }
 
-    ItqlInterpreterException exception = interpreter.getLastError();
+    Exception exception = interpreter.getLastException();
+    if (exception != null) throw new ItqlInterpreterException(exception);
 
-    if (exception != null) {
-
-      throw exception;
-    }
-
-    Answer answer = interpreter.getLastAnswer();
-
-    return answer;
+    return interpreter.getLastAnswer();
   }
 
 
@@ -747,34 +701,27 @@ public class ItqlInterpreterBean {
    * @throws QueryException if the data fails to load or the file does not exist
    * on the local file system.
    */
-  public long load(File sourceFile, URI destinationURI)
-                throws QueryException {
-
-    long NumberOfStatements = 0;
-    InputStream inputStream = null;
+  public long load(File sourceFile, URI destinationURI) throws QueryException {
+    long numberOfStatements = 0;
 
     // check for the local file
-    if ( ! sourceFile.exists() ) {
-      throw new QueryException(sourceFile+" does not exist on the local file "+
-                               "system");
+    if (!sourceFile.exists()) {
+      throw new QueryException(sourceFile+" does not exist on the local file system");
     }
     try {
-      inputStream = sourceFile.toURL().openStream();
-      NumberOfStatements = interpreter.load(inputStream, sourceFile.toURI(), destinationURI);
-    } catch (IOException ex) {
-      throw new QueryException("Unable to read the contents of "+sourceFile, ex );
-    } finally {
-      if (inputStream != null) {
-        try {
-          inputStream.close();
-        } catch (IOException ex) {}
-      }
+      Load loadCmd = new Load(sourceFile.toURI(), destinationURI, true);
+      numberOfStatements = (Long)loadCmd.execute(interpreter.establishConnection(loadCmd.getServerURI()));
+    } catch (QueryException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new QueryException("Unable to load data: " + ex.getMessage(), ex);
     }
-    return NumberOfStatements;
+    return numberOfStatements;
    }
 
- /**
-   * Backup all the data on the specified server or model to a local file.
+
+  /**
+   * Backup all the data on the specified server or model to a client local file.
    * The database is not changed by this method.
    *
    * @param sourceURI The URI of the server or model to backup.
@@ -782,10 +729,17 @@ public class ItqlInterpreterBean {
    * receive the backup contents.
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, File destinationFile ) throws QueryException {
-
-    interpreter.backup(sourceURI, destinationFile);
+  public void backup(URI sourceURI, File destinationFile) throws QueryException {
+    Backup backup = new Backup(sourceURI, destinationFile.toURI(), true);
+    try {
+      backup.execute(interpreter.establishConnection(backup.getServerURI()));
+    } catch (MalformedURLException e) {
+      throw new QueryException("Bad source graph URI: " + sourceURI, e);
+    } catch (ConnectionException e) {
+      throw new QueryException("Unable to establish connection to: " + backup.getServerURI(), e);
+    }
   }
+
 
   /**
    * Backup all the data on the specified server to an output stream.
@@ -796,9 +750,15 @@ public class ItqlInterpreterBean {
    * @throws QueryException if the backup cannot be completed.
    */
   public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
-
-    interpreter.backup(sourceURI, outputStream);
+    URI serverUri = DataTx.calcServerUri(sourceURI);
+    try {
+      Connection conn = interpreter.establishConnection(serverUri);
+      Backup.backup(conn, sourceURI, outputStream);
+    } catch (ConnectionException e) {
+      throw new QueryException("Unable to establish connection to: " + serverUri, e);
+    }
   }
+
 
   /**
    * Load the contents of an InputStream into a database/model.  The method assumes
@@ -813,9 +773,9 @@ public class ItqlInterpreterBean {
    * @return number of rows inserted into the destination model
    */
   public long load(InputStream inputStream, URI destinationURI) throws QueryException {
-
-    return interpreter.load(inputStream, destinationURI);
+    return load(inputStream, DUMMY_RDF_SOURCE, destinationURI);
   }
+
 
   /**
    * Load the contents of an InputStream or a URI into a database/model.
@@ -833,11 +793,20 @@ public class ItqlInterpreterBean {
    * @return number of rows inserted into the destination model
    * @throws QueryException if the data fails to load
    */
-  public long load(InputStream inputStream, URI sourceURI, URI destinationURI)
-                throws QueryException {
-
-     return interpreter.load(inputStream, sourceURI, destinationURI);
+  public long load(InputStream inputStream, URI sourceURI, URI destinationURI) throws QueryException {
+    long numberOfStatements = 0;
+    try {
+      Load loadCmd = new Load(sourceURI, destinationURI, true);
+      loadCmd.setOverrideStream(inputStream);
+      numberOfStatements = (Long)loadCmd.execute(interpreter.establishConnection(loadCmd.getServerURI()));
+    } catch (QueryException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new QueryException("Unable to load data: " + ex.getMessage(), ex);
+    }
+    return numberOfStatements;
   }
+
 
   /**
    * Restore all the data on the specified server. If the database is not
@@ -849,8 +818,9 @@ public class ItqlInterpreterBean {
    * @throws QueryException if the restore cannot be completed.
    */
   public void restore(InputStream inputStream, URI serverURI) throws QueryException {
-     interpreter.restore(inputStream, serverURI);
+     restore(inputStream, serverURI, DUMMY_RDF_SOURCE);
   }
+
 
   /**
    * Restore all the data on the specified server. If the database is not
@@ -863,9 +833,16 @@ public class ItqlInterpreterBean {
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(InputStream inputStream, URI serverURI, URI sourceURI)
-      throws QueryException {
-     interpreter.restore(inputStream, serverURI, sourceURI);
+  public void restore(InputStream inputStream, URI serverURI, URI sourceURI) throws QueryException {
+    try {
+      Restore restoreCmd = new Restore(sourceURI, serverURI, true);
+      restoreCmd.setOverrideStream(inputStream);
+      restoreCmd.execute(interpreter.establishConnection(restoreCmd.getServerURI()));
+    } catch (QueryException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new QueryException("Unable to load data: " + ex.getMessage(), ex);
+    }
   }
 
 
@@ -886,10 +863,7 @@ public class ItqlInterpreterBean {
       Element variables = (Element) parent.appendChild(VARIABLES);
 
       for (int column = 0; column < answer.getVariables().length; column++) {
-
-        Element variable =
-            (Element) variables.appendChild(doc.createElement(
-            answer.getVariables()[column].getName()));
+        variables.appendChild(doc.createElement(answer.getVariables()[column].getName()));
       }
 
       // Add any solutions
@@ -904,9 +878,7 @@ public class ItqlInterpreterBean {
           Object object = answer.getObject(column);
 
           // If the node is null, don't add a tag at all
-          if (object == null) {
-            continue;
-          }
+          if (object == null) continue;
 
           // Otherwise, add a tag for the node
           Element variable =
@@ -949,7 +921,8 @@ public class ItqlInterpreterBean {
     } catch (TuplesException e) {
       throw new QueryException("Couldn't build query", e);
     }
-  } // appendSolutions
+  }
+
 
   //
   // Internal methods
@@ -974,47 +947,40 @@ public class ItqlInterpreterBean {
     try {
 
       // get the answer to the query
-      interpreter.executeCommand(query);
+      executeCommand(query);
       Answer answer = this.interpreter.getLastAnswer();
 
       // log the query response
       if (log.isDebugEnabled()) {
-
         log.debug("Query response message = " + interpreter.getLastMessage());
       }
 
       // end if
       // turn the answer into a form we can handle
       if (answer != null) {
-
         // set this as the answer
         result = answer;
       } else {
 
         // get the error in an appropriate form
-        if (this.interpreter.getLastError() != null) {
+        if (this.interpreter.getLastException() != null) {
 
           // error has occurred at the interpreter
           if (log.isDebugEnabled()) {
-
-            log.debug("Adding query error to map - " +
-                this.interpreter.getLastError());
+            log.debug("Adding query error to map - " + this.interpreter.getLastException());
           }
 
           // end if
           // set this as the answer
           if (keepExceptions) {
-
-            result = this.interpreter.getLastError();
+            result = this.interpreter.getLastException();
           } else {
-
-            result = this.interpreter.getLastError().getMessage();
+            result = this.interpreter.getLastException().getMessage();
           }
         } else {
 
           // log that we're adding the response message
           if (log.isDebugEnabled()) {
-
             log.debug("Adding response message to map - " + interpreter.getLastMessage());
           }
 
@@ -1030,7 +996,6 @@ public class ItqlInterpreterBean {
     } catch (Exception e) {
 
       if (keepExceptions) {
-
         result = e;
       } else {
 
@@ -1039,7 +1004,6 @@ public class ItqlInterpreterBean {
         Throwable lastCause = e;
 
         while (cause != null) {
-
           lastCause = cause;
           cause = cause.getCause();
         }
@@ -1049,7 +1013,6 @@ public class ItqlInterpreterBean {
         String exceptionMessage = lastCause.getMessage();
 
         if (exceptionMessage == null) {
-
           exceptionMessage = lastCause.toString();
         }
 
@@ -1059,7 +1022,6 @@ public class ItqlInterpreterBean {
 
         // log the message
         if (log.isDebugEnabled()) {
-
           log.debug(exceptionMessage);
         }
 
@@ -1079,55 +1041,39 @@ public class ItqlInterpreterBean {
       }
     }
 
-    // try-catch
-    // return the result
     return result;
   }
 
+
   /**
-    * Sets the serverURI of the interpreter.
+    * Sets the serverURI of the interpreter.  This method now does nothing.
     * @param serverURI The new URI of the server for the interpreter
+    * @deprecated Establishing communication with a server now requires a connection.
+    * Connections can be evaluated automatically with the TqlAutoInterpreter.
     */
   public void setServerURI(String serverURI) {
-
-    try {
-
-      // Set the server URI of the interpreter
-      interpreter.setServerURI((serverURI == null) ? null : new URI(serverURI));
-    } catch (URISyntaxException uriSyntaxException) {
-
-      log.error("Could not change server due to bad uri syntax.",
-                uriSyntaxException);
-
-      // Set the last error to be the syntax exception
-      interpreter.setLastError(uriSyntaxException);
-    } catch (QueryException queryException) {
-
-      log.error("Could not change the server due to a query exception.",
-                queryException);
-
-      // Set the last error to be a query exception
-      interpreter.setLastError(queryException);
-    }
+    // Do nothing
   }
+
 
   /**
    * Sets the aliases associated with this bean.
    *
    * @param aliasMap the alias map associated with this bean
    */
-  public void setAliasMap(HashMap aliasMap) {
-
-    this.interpreter.setAliasMap(aliasMap);
+  @SuppressWarnings("deprecation")
+  public void setAliasMap(HashMap<String,URI> aliasMap) {
+    ((TqlInterpreter)parser).setAliasMap(aliasMap);
+    interpreter.setAliasesInUse(aliasMap);
   }
 
   /**
     * Clears the last error of the interpreter.
     */
+  @SuppressWarnings("deprecation")
   public void clearLastError() {
-
     // Set the last error to be null
-    interpreter.setLastError(null);
+    interpreter.clearLastException();
   }
 
  /**
@@ -1136,15 +1082,20 @@ public class ItqlInterpreterBean {
   * container or the user has not called close().
   */
   protected void finalize() throws Throwable {
-
     try {
-
       // close the interpreter session
       this.close();
-
     } finally {
-
       super.finalize();
     }
+  }
+
+
+  /**
+   * Executes the requested command, and records if the command wants to quit.
+   * @param command The command to execute.
+   */
+  private void executeCommand(String command) {
+    quit = !interpreter.executeCommand(command);
   }
 }

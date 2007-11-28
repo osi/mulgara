@@ -193,15 +193,13 @@ public class ClientGraphUnitTest extends TestCase {
     log.debug("Testing Answer implementation");
 
     //get all statments from the graph
-    Answer answer = this.getEntireGraph(this.graphURI);
+    Answer answer = this.getEntireGraph(graphURI);
 
     //create a Client Graph from it.
-    ClientGraph client = AbstractGraphFactory.createGraph(answer,
-        answerBean.getSession());
+    ClientGraph client = AbstractGraphFactory.createGraph(answer, answerBean.getSession(serverURI));
 
     //ensure the client is not null
-    assertNotNull("AbstractGraphFactory.createGraph(Answer) returned a null " +
-                  "ClientGraph.", client);
+    assertNotNull("AbstractGraphFactory.createGraph(Answer) returned a null ClientGraph.", client);
 
     //close the graph
     client.close();
@@ -244,9 +242,8 @@ public class ClientGraphUnitTest extends TestCase {
   public void testAnswerFind() throws Exception {
 
     //create a Client Graph from it.
-    Answer answer = this.getEntireGraph(this.graphURI);
-    ClientGraph client = AbstractGraphFactory.createGraph(answer,
-        answerBean.getSession());
+    Answer answer = this.getEntireGraph(graphURI);
+    ClientGraph client = AbstractGraphFactory.createGraph(answer, answerBean.getSession(serverURI));
     GraphElementFactory factory = client.getElementFactory();
 
     //-- FIND ALL --
@@ -533,8 +530,7 @@ public class ClientGraphUnitTest extends TestCase {
   public void testAnswerOutputRDF() throws Exception {
 
     //create a Client Graph containing all statments
-    ClientGraph client1 = AbstractGraphFactory.createGraph(this.getEntireGraph(this.
-        graphURI), answerBean.getSession());
+    ClientGraph client1 = AbstractGraphFactory.createGraph(this.getEntireGraph(graphURI), answerBean.getSession(serverURI));
     File rdfOutput1 = new File(CLIENT_TEST_FILE1);
     this.outputRDF(rdfOutput1, client1);
 
@@ -544,8 +540,7 @@ public class ClientGraphUnitTest extends TestCase {
     this.interpreterBean.load(rdfOutput1, graph2);
 
     //output new model
-    ClientGraph client2 = AbstractGraphFactory.createGraph(this.getEntireGraph(
-        graph2), answerBean.getSession());
+    ClientGraph client2 = AbstractGraphFactory.createGraph(this.getEntireGraph(graph2), answerBean.getSession(serverURI));
     File rdfOutput2 = new File(CLIENT_TEST_FILE2);
     this.outputRDF(rdfOutput2, client2);
 

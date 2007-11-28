@@ -35,7 +35,7 @@ public class StatementSetFactory {
   /** The size for transitioning between a serializable set and a remote set. */
   static final long WATER_MARK = 2048L;
 
-  public static Set newStatementSet(Statements statements, ResolverSession session) throws TuplesException, GlobalizeException {
+  public static Set<Triple> newStatementSet(Statements statements, ResolverSession session) throws TuplesException, GlobalizeException {
     // make sure the WATER_MARK refers to a set that is indexable by integer
     assert (long)(int)WATER_MARK == WATER_MARK;
     if (statements.getRowUpperBound() < WATER_MARK) return new ShortGlobalStatementSet(statements, session);

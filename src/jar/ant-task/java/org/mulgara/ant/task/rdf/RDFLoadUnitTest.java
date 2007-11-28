@@ -33,7 +33,6 @@ import junit.framework.TestSuite;
 
 import java.io.*;
 import java.net.*;
-import java.sql.*;
 
 // Java
 import java.util.*;
@@ -44,8 +43,6 @@ import org.apache.tools.ant.BuildException;
 
 // Ant
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 import org.mulgara.itql.ItqlInterpreterBean;
@@ -74,83 +71,57 @@ import org.mulgara.util.TempDir;
  */
 public class RDFLoadUnitTest extends TestCase {
 
-  /**
-   * Log category
-   */
-  private final static Logger log =
-      Logger.getLogger(RDFLoadUnitTest.class);
+  /** Log category */
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(RDFLoadUnitTest.class);
 
-  /**
-   * Description of the Field
-   */
+  /** URI string for rdf:type */
   String RDF_TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 
-  /**
-   * Description of the Field
-   */
+  /** URI string for the Mulgara model/graph type */
   String MODEL_URI = "http://mulgara.org/mulgara#Model";
 
-  /**
-   * Description of the Field
-   */
+  /** URI string for journals */
   String JOURNAL_URI = "urn:medline:Journal";
 
-  /**
-   * Description of the Field
-   */
+  /** The query object */
   ItqlInterpreterBean interpreter = null;
 
-  /**
-   * Description of the Field
-   */
+  /** The name of the server */
   String hostName = null;
 
-  /**
-   * Description of the Field
-   */
+  /** The name of the graph for testing */
   String testModel = null;
 
-  /**
-   * Description of the Field
-   */
+  /** The load object */
   RDFLoad load = null;
 
-  /**
-   * Description of the Field
-   */
+  /** The directory to work under */
   String baseDir = System.getProperty("basedir");
 
-  /**
-   * Description of the Field
-   */
+  /** A directory to work with for RDF files */
   File goodRDFDir =
       new File(baseDir + File.separator + "jxdata" + File.separator +
                "ant-tasks" + File.separator + "rdf-good");
 
-  /**
-   * Description of the Field
-   */
+  /** An erroneous directory to work with for RDF files */
   File badRDFDir =
       new File(baseDir + File.separator + "jxdata" + File.separator +
                "ant-tasks" + File.separator + "rdf-bad");
 
-  /**
-   * Description of the Field
-   */
+  /** An erroneous directory to work with for RDF files */
   File badRDFDir2 =
       new File(baseDir + File.separator + "jxdata" + File.separator +
                "ant-tasks" + File.separator + "rdf-bad2");
 
-  /**
-   * Description of the Field
-   */
+  /** File to write log info into */
   File logFile = new File(TempDir.getTempDir(), "rdfload-log.txt");
 
   /**
    * Public constructor.
    *
-   * @param name PARAMETER TO DO
-   * @throws Exception EXCEPTION TO DO
+   * @param name The name of the test
+   * @throws Exception Thrown if the test cannot be set up
    */
   public RDFLoadUnitTest(String name) throws Exception {
     super(name);
@@ -162,7 +133,7 @@ public class RDFLoadUnitTest extends TestCase {
    * Builds a test suite.
    *
    * @return A test suite.
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception Thrown if any of the tests cannot be set up
    */
   public static TestSuite suite() throws Exception {
 
@@ -196,14 +167,13 @@ public class RDFLoadUnitTest extends TestCase {
    * Runs the tests.
    *
    * @param args The args.
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception Thrown if the tests cannot be run
    */
   public static void main(String[] args) throws Exception {
 
     String baseDir = System.getProperty("basedir");
 
     if (baseDir == null) {
-
       throw new RuntimeException("Could not get the 'basedir' system property");
     }
 
@@ -217,7 +187,6 @@ public class RDFLoadUnitTest extends TestCase {
 
   /**
    * Set up for tests.
-   *
    */
   public void setUp() {
     interpreter = new ItqlInterpreterBean();
@@ -237,7 +206,6 @@ public class RDFLoadUnitTest extends TestCase {
 
   /**
    * Test presenting credentials.
-   *
    */
   public void testPresentCredentials() {
 
@@ -250,12 +218,9 @@ public class RDFLoadUnitTest extends TestCase {
     load.interpreter = interpreter;
 
     try {
-
       load.checkParams();
       load.presentCredentials();
-    }
-    catch (BuildException be) {
-
+    } catch (BuildException be) {
       fail("Unexpected exception whilst presenting credentials: " + be);
     }
 
@@ -263,12 +228,10 @@ public class RDFLoadUnitTest extends TestCase {
     load.setUsername("");
 
     try {
-
       load.checkParams();
       load.presentCredentials();
       fail("Credential presentation should have failed");
-    }
-    catch (BuildException be) {
+    } catch (BuildException be) {
 
     }
 
@@ -276,11 +239,9 @@ public class RDFLoadUnitTest extends TestCase {
     load.setDomainuri(null);
 
     try {
-
       load.checkParams();
       fail("Credential presentation should have failed");
-    }
-    catch (BuildException be) {
+    } catch (BuildException be) {
 
     }
   }
@@ -288,7 +249,7 @@ public class RDFLoadUnitTest extends TestCase {
   /**
    * Test creating the model.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void testCreateDropModel() throws Exception {
 
@@ -297,23 +258,19 @@ public class RDFLoadUnitTest extends TestCase {
     load.interpreter = interpreter;
 
     try {
-
       load.createModel();
-    }
-    catch (BuildException be) {
-
+    } catch (BuildException be) {
       fail("Unexpected exception whilst creating model: " + be);
     }
 
     // Check for the model
-    List list =
+    List<Object> list =
         interpreter.executeQueryToList("select 'text' from <rmi://" + hostName +
                                        "/server1#> where " + " <" + testModel +
                                        "> <" + RDF_TYPE_URI + "> <" +
                                        MODEL_URI + ">;");
 
     if (list.get(0)instanceof String) {
-
       fail("Got exception instead of answer: " + list.get(0));
     }
 
@@ -321,7 +278,6 @@ public class RDFLoadUnitTest extends TestCase {
     answer.beforeFirst();
 
     if (answer.isUnconstrained() || !answer.next()) {
-
       fail("Model was not created!");
     }
     assertEquals("Query should not return multiple answers", list.size(), 1);
@@ -337,11 +293,10 @@ public class RDFLoadUnitTest extends TestCase {
                                        "> <" + RDF_TYPE_URI + "> <" +
                                        MODEL_URI + ">;");
 
-    answer = (Answer) list.get(0);
+    answer = (Answer)list.get(0);
     answer.beforeFirst();
 
     if (answer.next()) {
-
       fail("Model was not dropped!");
     }
     assertEquals("Query should not return multiple answers", list.size(), 1);
@@ -351,32 +306,26 @@ public class RDFLoadUnitTest extends TestCase {
     load.setModeluri(URI.create("rmi://blah"));
 
     try {
-
       load.createModel();
       fail("Model creation should have failed");
-    }
-    catch (BuildException be) {
-
+    } catch (BuildException be) {
     }
 
     // Missing model
     load.setModeluri(null);
 
     try {
-
       load.interpreter = null;
       load.execute();
       fail("Model creation should have failed");
-    }
-    catch (BuildException be) {
-
+    } catch (BuildException be) {
     }
   }
 
   /**
    * Test a normal load with no logging using a directory.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void testDirLoadNoLog() throws Exception {
 
@@ -386,13 +335,12 @@ public class RDFLoadUnitTest extends TestCase {
     load.execute();
 
     Answer answer =
-        (Answer) interpreter.executeQueryToList("select $s from <" + testModel +
-                                                "> where $s <" + RDF_TYPE_URI +
-                                                "> <" + JOURNAL_URI +
+        (Answer)interpreter.executeQueryToList("select $s from <" + testModel +
+                                               "> where $s <" + RDF_TYPE_URI +
+                                               "> <" + JOURNAL_URI +
         ">;").get(0);
 
     if (answer.isUnconstrained()) {
-
       fail("The data did not load");
     }
 
@@ -407,7 +355,7 @@ public class RDFLoadUnitTest extends TestCase {
   /**
    * Test a normal load with no logging using an rdf path.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void testPathLoadWithLog() throws Exception {
 
@@ -421,13 +369,12 @@ public class RDFLoadUnitTest extends TestCase {
     load.execute();
 
     Answer answer =
-        (Answer) interpreter.executeQueryToList("select $s from <" + testModel +
+        (Answer)interpreter.executeQueryToList("select $s from <" + testModel +
                                                 "> where $s <" + RDF_TYPE_URI +
                                                 "> <" + JOURNAL_URI +
         ">;").get(0);
 
     if (answer.isUnconstrained()) {
-
       fail("The data did not load");
     }
 
@@ -451,7 +398,7 @@ public class RDFLoadUnitTest extends TestCase {
    * This test relies on the test {@link #testPathLoadWithLog()} running first.
    * </p>
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void testReadLog() throws Exception {
 
@@ -473,7 +420,7 @@ public class RDFLoadUnitTest extends TestCase {
    *
    * This test relies on the test {@link #testReadLog()} running first. </p>
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void testDropModelWithLog() throws Exception {
 
@@ -490,14 +437,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
@@ -509,22 +454,16 @@ public class RDFLoadUnitTest extends TestCase {
       // Check loader
       assertEquals("Five documents should have been loaded!", 5,
                    load.getNumLoaded());
-    }
-
-    // Get rid of the log file
-    finally {
-
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+    } finally {
+      // Get rid of the log file
+      if (logFile.exists()) logFile.delete();
     }
   }
 
   /**
    * The load should stop after the first error.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void test1ErrorNoLog() throws Exception {
 
@@ -533,13 +472,12 @@ public class RDFLoadUnitTest extends TestCase {
     load.execute();
 
     Answer answer =
-        (Answer) interpreter.executeQueryToList("select $s from <" + testModel +
-                                                "> where $s <" + RDF_TYPE_URI +
-                                                "> <" + JOURNAL_URI +
+        (Answer)interpreter.executeQueryToList("select $s from <" + testModel +
+                                               "> where $s <" + RDF_TYPE_URI +
+                                               "> <" + JOURNAL_URI +
         ">;").get(0);
 
     if (answer.isUnconstrained()) {
-
       fail("The data did not load");
     }
 
@@ -572,14 +510,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
@@ -595,22 +531,16 @@ public class RDFLoadUnitTest extends TestCase {
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       assertEquals("Wrong number of documents in log!", 1,
                    loadLog.getNumLoaded());
-    }
-
-    // Get rid of the log file
-    finally {
-
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+    } finally {
+      // Get rid of the log file
+      if (logFile.exists()) logFile.delete();
     }
   }
 
   /**
    * The load should stop after the first 2 errors.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void test2ErrorsNoLog() throws Exception {
 
@@ -620,19 +550,17 @@ public class RDFLoadUnitTest extends TestCase {
     load.execute();
 
     Answer answer =
-        (Answer) interpreter.executeQueryToList("select $s from <" + testModel +
-                                                "> where $s <" + RDF_TYPE_URI +
-                                                "> <" + JOURNAL_URI +
+        (Answer)interpreter.executeQueryToList("select $s from <" + testModel +
+                                               "> where $s <" + RDF_TYPE_URI +
+                                               "> <" + JOURNAL_URI +
         ">;").get(0);
 
     if (answer.isUnconstrained()) {
-
       fail("The data did not load");
     }
 
     // Mulgara - should be 1 loaded
-    assertEquals("Wrong number of documents loaded!", 1,
-                 answer.getRowCount());
+    assertEquals("Wrong number of documents loaded!", 1, answer.getRowCount());
     answer.close();
 
     // Should be 2 errors
@@ -642,11 +570,11 @@ public class RDFLoadUnitTest extends TestCase {
   /**
    * The load should stop after the first 2 errors.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void test2ErrorsWithLog() throws Exception {
 
-    try {
+    // try {
 
       load.setModeluri(URI.create(testModel));
       load.setLogfile(logFile);
@@ -660,20 +588,17 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
       // Mulgara - should be 1 loaded
-      assertEquals("Wrong number of documents loaded!", 1,
-                   answer.getRowCount());
+      assertEquals("Wrong number of documents loaded!", 1, answer.getRowCount());
       answer.close();
 
       // Should be 2 errors
@@ -682,14 +607,9 @@ public class RDFLoadUnitTest extends TestCase {
       //      // Check log
       //      RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       //      assertEquals("Wrong number of documents in log!", 1, loadLog.getNumLoaded());
-    }
-    finally {
-
-      //
-      //      if (logFile.exists()) {
-      //        logFile.delete();
-      //      }
-    }
+    // } finally {
+      //      if (logFile.exists()) logFile.delete();
+    // }
   }
 
   /**
@@ -698,7 +618,7 @@ public class RDFLoadUnitTest extends TestCase {
    *
    * This test depends on {@link #test2ErrorsWithLog()}. </p>
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void test3ErrorsWithLog() throws Exception {
 
@@ -715,20 +635,17 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
       // Mulgara - should be 1 loaded as tear down would have dropped the model...
-      assertEquals("Wrong number of documents loaded!", 1,
-                   answer.getRowCount());
+      assertEquals("Wrong number of documents loaded!", 1, answer.getRowCount());
       answer.close();
 
       // Should be 3 errors
@@ -741,22 +658,16 @@ public class RDFLoadUnitTest extends TestCase {
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       assertEquals("Wrong number of documents in log!", 2,
                    loadLog.getNumLoaded());
-    }
-
-    // Get rid of the log file
-    finally {
-
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+    } finally {
+      // Get rid of the log file
+      if (logFile.exists()) logFile.delete();
     }
   }
 
   /**
    * Test a normal load with 1 files per transaction.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void test1PerTrans() throws Exception {
 
@@ -774,14 +685,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
@@ -796,20 +705,16 @@ public class RDFLoadUnitTest extends TestCase {
 
       // Should be 0 errors
       assertEquals("Wrong number of errors!", 0, load.getNumErrors());
-    }
-    finally {
+    } finally {
 
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+      if (logFile.exists()) logFile.delete();
     }
   }
 
   /**
    * Test a normal load with 5 file per transaction.
    *
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception General declaration for failed tests.
    */
   public void test5PerTrans() throws Exception {
 
@@ -826,14 +731,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
@@ -848,13 +751,8 @@ public class RDFLoadUnitTest extends TestCase {
 
       // Should be 0 errors
       assertEquals("Wrong number of errors!", 0, load.getNumErrors());
-    }
-    finally {
-
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+    } finally {
+      if (logFile.exists()) logFile.delete();
     }
   }
 
@@ -876,7 +774,7 @@ public class RDFLoadUnitTest extends TestCase {
    */
   public void test2PerTransWith1Error() throws Exception {
 
-    try {
+    // try {
 
       load.setModeluri(URI.create(testModel));
       load.setLogfile(logFile);      
@@ -890,14 +788,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("Null result set");
       }
 
@@ -914,13 +810,11 @@ public class RDFLoadUnitTest extends TestCase {
       //      assertEquals("No documents should be logged!", 0, loadLog.getNumLoaded());
       // Should be 2 errors
       assertEquals("Wrong number of errors!", 2, load.getNumErrors());
-    }
-    finally {
-
+    // } finally {
       //      if (logFile.exists()) {
       //        logFile.delete();
       //      }
-    }
+    // }
   }
 
   /**
@@ -962,14 +856,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
@@ -987,13 +879,8 @@ public class RDFLoadUnitTest extends TestCase {
 
       // Should be 3 errors
       assertEquals("Wrong number of errors!", 3, load.getNumErrors());
-    }
-    finally {
-
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+    } finally {
+      if (logFile.exists()) logFile.delete();
     }
   }
 
@@ -1024,14 +911,12 @@ public class RDFLoadUnitTest extends TestCase {
       load.execute();
 
       Answer answer =
-          (Answer) interpreter.executeQueryToList("select $s from <" +
-                                                  testModel +
-                                                  "> where $s <" + RDF_TYPE_URI +
-                                                  "> <" + JOURNAL_URI + ">;").
-          get(0);
+          (Answer)interpreter.executeQueryToList("select $s from <" +
+                                                 testModel +
+                                                 "> where $s <" + RDF_TYPE_URI +
+                                                 "> <" + JOURNAL_URI + ">;").get(0);
 
       if (answer.isUnconstrained()) {
-
         fail("The data did not load");
       }
 
@@ -1048,13 +933,8 @@ public class RDFLoadUnitTest extends TestCase {
 
       // Should be 3 errors
       assertEquals("Wrong number of errors!", 6, load.getNumErrors());
-    }
-    finally {
-
-      if (logFile.exists()) {
-
-        logFile.delete();
-      }
+    } finally {
+      if (logFile.exists()) logFile.delete();
     }
   }
 

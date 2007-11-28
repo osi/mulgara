@@ -39,7 +39,6 @@ import org.mulgara.content.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.*;
 import org.mulgara.store.statement.*;
 import org.mulgara.store.tuples.*;
 import org.mulgara.util.*;
@@ -69,12 +68,12 @@ import java.util.*;
  */
 public class WritableGISResolver extends ReadOnlyGISResolver {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger log = Logger.getLogger(WritableGISResolver.class.
-      getName());
+  /** Logger. */
+  private final static Logger log = Logger.getLogger(WritableGISResolver.class.getName());
 
+  /** Model type */
+  private static final URI MODEL_TYPE = URI.create(Mulgara.NAMESPACE + "Model");
+  
   /**
    * Constructor.
    *
@@ -106,13 +105,10 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
     if (occurs) {
       try {
         insertStatements(model, statements);
-      }
-      catch (Exception exception) {
+      } catch (Exception exception) {
         throw new ResolverException("Failed to insert statements.", exception);
       }
-    }
-    else {
-
+    } else {
       throw new ResolverException("Delete not implemented");
     }
   }
@@ -160,7 +156,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       yLongs = getPointLongitudes(y, ylong, model);
 
       //join all points (generate inferred statements)
-      List tupleList = new ArrayList();
+      List<Resolution> tupleList = new ArrayList<Resolution>();
       tupleList.add(xPoints);
       tupleList.add(xLats);
       tupleList.add(xLongs);
@@ -175,8 +171,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
 
       //insert the inferred statements
       super.resolver.modifyModel(model, inferredStatements, true);
-    }
-    finally {
+    } finally {
       //clean up
       if (tempModel != -1) {
         dropTemporaryModel(tempModel);
@@ -252,11 +247,9 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
           StatementStore.VARIABLES[1],
           StatementStore.VARIABLES[2]
       };
-      projectedDistTypes = TuplesOperations.project(distanceTypes,
-          Arrays.asList(vars));
+      projectedDistTypes = TuplesOperations.project(distanceTypes, Arrays.asList(vars));
       if (!isEmpty(distanceTypes)) {
-        distTypeStatements = new TuplesWrapperStatements((Tuples) distanceTypes.
-            clone(), d, vars[1], vars[2]);
+        distTypeStatements = new TuplesWrapperStatements((Tuples)distanceTypes.clone(), d, vars[1], vars[2]);
       }
 
       //delete the statements
@@ -269,12 +262,9 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       if (!isEmpty(distTypeStatements)) {
         super.resolver.modifyModel(model, distTypeStatements, false);
       }
-    }
-    finally {
+    } finally {
       //clean up
-      if (tempModel != -1) {
-        dropTemporaryModel(tempModel);
-      }
+      if (tempModel != -1) dropTemporaryModel(tempModel);
       close(xPoints);
       close(yPoints);
       close(points);
@@ -295,11 +285,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
    * @throws TuplesException
    */
   private boolean isEmpty(Cursor cursor) throws TuplesException {
-
-    boolean empty = (cursor == null) ||
-        (cursor.getRowCardinality() == Cursor.ZERO);
-
-    return empty;
+    return (cursor == null) || (cursor.getRowCardinality() == Cursor.ZERO);
   }
 
   /**
@@ -339,23 +325,16 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       dist = getDistanceTypes(distVar, model);
 
       //join all points (generate all point combinations)
-      List tupleList = new ArrayList();
+      List<Resolution> tupleList = new ArrayList<Resolution>();
       tupleList.add(xPoints);
       tupleList.add(dist);
       tupleList.add(yPoints);
       return TuplesOperations.join(tupleList);
-    }
-    finally {
+    } finally {
       //clean up
-      if (xPoints != null) {
-        xPoints.close();
-      }
-      if (dist != null) {
-        dist.close();
-      }
-      if (yPoints != null) {
-        yPoints.close();
-      }
+      if (xPoints != null) xPoints.close();
+      if (dist != null) dist.close();
+      if (yPoints != null) yPoints.close();
     }
   }
 
@@ -383,19 +362,14 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       all = getAllStatements(distVar, p, o, model);
 
       //join all statements for each Distance
-      List tupleList = new ArrayList();
+      List<Resolution> tupleList = new ArrayList<Resolution>();
       tupleList.add(all);
       tupleList.add(dist);
       return TuplesOperations.join(tupleList);
-    }
-    finally {
+    } finally {
       //clean up
-      if (all != null) {
-        all.close();
-      }
-      if (dist != null) {
-        dist.close();
-      }
+      if (all != null) all.close();
+      if (dist != null) dist.close();
     }
   }
 
@@ -418,8 +392,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       return super.resolver.resolve(constraint);
     }
     catch (QueryException queryException) {
-      throw new ResolverException("Could not get all statements.",
-          queryException);
+      throw new ResolverException("Could not get all statements.", queryException);
     }
   }
 
@@ -438,11 +411,9 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       LocalNode rdfType = new LocalNode(RDF_TYPE);
       LocalNode geoPoint = new LocalNode(GEO_POINT);
       LocalNode modelNode = new LocalNode(model);
-      Constraint constraint = new ConstraintImpl(var, rdfType, geoPoint,
-          modelNode);
+      Constraint constraint = new ConstraintImpl(var, rdfType, geoPoint, modelNode);
       return super.resolver.resolve(constraint);
-    }
-    catch (QueryException queryException) {
+    } catch (QueryException queryException) {
       throw new ResolverException("Could not get Points.", queryException);
     }
   }
@@ -462,11 +433,9 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       LocalNode rdfType = new LocalNode(RDF_TYPE);
       LocalNode distance = new LocalNode(DIS_DISTANCE);
       LocalNode modelNode = new LocalNode(model);
-      Constraint constraint = new ConstraintImpl(var, rdfType, distance,
-          modelNode);
+      Constraint constraint = new ConstraintImpl(var, rdfType, distance, modelNode);
       return super.resolver.resolve(constraint);
-    }
-    catch (QueryException queryException) {
+    } catch (QueryException queryException) {
       throw new ResolverException("Could not get Distances.", queryException);
     }
   }
@@ -488,10 +457,8 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       LocalNode modelNode = new LocalNode(model);
       Constraint constraint = new ConstraintImpl(var, geoLat, lat, modelNode);
       return super.resolver.resolve(constraint);
-    }
-    catch (QueryException queryException) {
-      throw new ResolverException("Could not get Point Latitudes.",
-          queryException);
+    } catch (QueryException queryException) {
+      throw new ResolverException("Could not get Point Latitudes.", queryException);
     }
   }
 
@@ -512,10 +479,8 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       LocalNode modelNode = new LocalNode(model);
       Constraint constraint = new ConstraintImpl(var, geoLong, lon, modelNode);
       return super.resolver.resolve(constraint);
-    }
-    catch (QueryException queryException) {
-      throw new ResolverException("Could not get Point Longitudes.",
-          queryException);
+    } catch (QueryException queryException) {
+      throw new ResolverException("Could not get Point Longitudes.", queryException);
     }
   }
 
@@ -530,11 +495,8 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
    * @return Statements
    * @throws ResolverException
    */
-  private Statements getInferredStatements(Tuples points) throws
-      ResolverException {
-
-    return new GISDistanceStatements(points, super.gisCalculator,
-        resolverSession);
+  private Statements getInferredStatements(Tuples points) throws ResolverException {
+    return new GISDistanceStatements(points, super.gisCalculator, resolverSession);
   }
 
   /**
@@ -555,13 +517,10 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
       if (log.isDebugEnabled()) {
         log.debug("Creating temp Model: " + model + " with ID: " + tempModel);
       }
-      super.resolver.createModel(tempModel,
-          new URI(Mulgara.NAMESPACE + "Model"));
+      super.resolver.createModel(tempModel, MODEL_TYPE);
       return tempModel;
-    }
-    catch (Exception exception) {
-      throw new ResolverException("Failed to create temporary Model.",
-          exception);
+    } catch (Exception exception) {
+      throw new ResolverException("Failed to create temporary Model.", exception);
     }
   }
 
@@ -572,10 +531,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
    * @throws ResolverException
    */
   private void dropTemporaryModel(long model) throws ResolverException {
-
-    if (log.isDebugEnabled()) {
-      log.debug("Dropping temp Model with ID: " + model);
-    }
+    if (log.isDebugEnabled()) log.debug("Dropping temp Model with ID: " + model);
     super.resolver.removeModel(model);
   }
 

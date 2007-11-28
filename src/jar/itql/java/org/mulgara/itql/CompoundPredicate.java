@@ -43,14 +43,12 @@
 package org.mulgara.itql;
 
 // Java 2 standard packages
-import java.util.ArrayList;
 import java.util.List;
 
 // Third party packages
-import org.apache.log4j.Logger; 
+// import org.apache.log4j.Logger; 
 
 // Generated packages
-import org.mulgara.itql.analysis.*;
 import org.mulgara.itql.node.*;
 
 /**
@@ -61,12 +59,6 @@ import org.mulgara.itql.node.*;
  *
  * @author Andrae Muys
  *
- * @version $Revision: 1.1.1.1 $
- *
- * @modified $Date: 2005/10/30 19:21:08 $ by $Author: prototypo $
- *
- * @maintenanceAuthor $Author: prototypo $
- *
  * @company <a href="mailto:mail@netymon.com">Netymon Pty Ltd</a>
  *
  * @copyright &copy;2006 Australian Commonwealth Government.
@@ -76,25 +68,21 @@ import org.mulgara.itql.node.*;
  */
 public class CompoundPredicate {
 
-  private final static Logger logger = Logger.getLogger(CompoundPredicate.class.getName());
+  // private final static Logger logger = Logger.getLogger(CompoundPredicate.class.getName());
 
   private PElement predicate;
-  private List objList;
+  private List<PElement> objList;
 
   /** Constructor */
-  public CompoundPredicate(PElement predicate, List objList) {
-    if (predicate == null) {
-      throw new IllegalArgumentException("predicate may not be null");
-    }
-    if (objList == null) {
-      throw new IllegalArgumentException("object list may not be null");
-    }
+  public CompoundPredicate(PElement predicate, List<PElement> objList) {
+    if (predicate == null) throw new IllegalArgumentException("predicate may not be null");
+    if (objList == null) throw new IllegalArgumentException("object list may not be null");
 
     this.predicate = predicate;
     this.objList = objList;
   }
 
-  public List getObjectList() {
+  public List<PElement> getObjectList() {
     return objList;
   }
 

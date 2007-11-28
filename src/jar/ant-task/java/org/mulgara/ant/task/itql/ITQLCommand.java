@@ -29,7 +29,6 @@ package org.mulgara.ant.task.itql;
 
 import java.io.*;
 import java.net.*;
-import java.sql.*;
 
 // Java
 import java.util.*;
@@ -44,9 +43,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.Answer;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
-import org.mulgara.server.Session;
 
 /**
  * An Ant Task to execute ITQL commands. <p>
@@ -78,12 +75,6 @@ import org.mulgara.server.Session;
  *
  * @author Ben Warren
  *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:57:31 $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
  *
  * @copyright &copy;2002 <a href="http://www.pisoftware.com/">Plugged In
@@ -93,146 +84,114 @@ import org.mulgara.server.Session;
  */
 public class ITQLCommand extends Task {
 
-  /**
-   * The logging catgory
-   */
+  /** The logging catgory */
   private final static Logger logger = Logger.getLogger(ITQLCommand.class);
 
-  /**
-   * Get line separator.
-   */
+  /** Get line separator. */
   private static final String eol = System.getProperty("line.separator");
 
-  /**
-   * Ignore errors
-   */
+  /** Ignore errors */
   protected boolean ignoreErrors = false;
 
-  /**
-   * The log4j XML config file
-   */
+  /** The log4j XML config file */
   protected File logConfig = null;
 
-  /**
-   * The queries to execute
-   */
-  protected List queryList = new ArrayList();
+  /** The queries to execute */
+  protected List<ITQLQuery> queryList = new ArrayList<ITQLQuery>();
 
-  /**
-   * The ITQL interpreter
-   */
+  /** The ITQL interpreter */
   protected ItqlInterpreterBean interpreter = null;
 
-  /**
-   * The number of files executed
-   */
+  /** The number of files executed */
   private int numExecuted = 0;
 
-  /**
-   * The number of errors
-   */
+  /** The number of errors */
   private int numErrors = 0;
 
   /**
    * Set if errors should be ignored (default is false).
-   *
    * @param ignore The new IgnoreErrors value
    */
   public void setIgnoreErrors(boolean ignore) {
-
     ignoreErrors = ignore;
   }
+
 
   /**
    * Set the log4j XML config file (Optional - if none specified, console
    * logging will be used).
-   *
    * @param config The log4j XML config file.
    */
   public void setLogconfig(File config) {
-
     logConfig = config;
   }
 
+
   /**
    * Get the number of files executed.
-   *
    * @return The number of files executed.
    */
   public int getNumExecuted() {
-
     return numExecuted;
   }
 
+
   /**
    * Get the number of errors that occurred.
-   *
    * @return The number of errors that occurred.
    */
   public int getNumErrors() {
-
     return numErrors;
   }
 
+
   /**
    * Initialise the task.
-   *
    * @throws BuildException on error.
    */
   public void init() throws BuildException {
-
     super.init();
   }
 
+
   /**
    * Add an ITQL query.
-   *
    * @param query The query to add.
    */
   public void addItqlquery(ITQLQuery query) {
-
     queryList.add(query);
   }
 
+
   /**
    * Executes the commands.
-   *
    * @throws BuildException on error.
    */
   public void execute() throws BuildException {
-
     try {
-
       log("Running with this config:" + eol + this.toString(), Project.MSG_DEBUG);
-
       setupLog();
 
-      if (logger.isDebugEnabled()) {
-
-        logger.debug("Running with this config:" + eol + this.toString());
-      }
+      if (logger.isDebugEnabled()) logger.debug("Running with this config:" + eol + toString());
 
       interpreter = new ItqlInterpreterBean();
 
       executeQueries();
-    }
-    finally {
 
+    } finally {
       if (interpreter != null) {
-
         try {
           interpreter.close();
-        }
-        finally {
+        } finally {
           interpreter = null;
         }
       }
     }
   }
 
+
   /**
    * Overrides Object.toString()
-   *
    * @return A string representing this task.
    */
   public String toString() {
@@ -245,50 +204,42 @@ public class ITQLCommand extends Task {
     return buffer.toString();
   }
 
+
   /**
    * Setup the log if required.
-   *
    * @throws BuildException on error.
    */
   protected void setupLog() throws BuildException {
-
     // log4j logging
     if (logConfig != null) {
-
       try {
-
         DOMConfigurator.configure(logConfig.toURL());
-      }
-      catch (MalformedURLException me) {
-
+      } catch (MalformedURLException me) {
         throw new BuildException("Could not configure log4j!", me);
       }
-    }
-    else {
-
+    } else {
       BasicConfigurator.configure();
-
       // Disable debug
       LogManager.getLoggerRepository().setThreshold(Level.OFF);
     }
   }
 
+
   /**
    * Get the result of a query as a string;
-   *
    * @param query The query to execute.
    * @return The result of the query as a String or Exception or null if there
-   *      was no result.
+   *         was no result.
    * @throws BuildException if the result was of an unexpected type.
    */
   protected Object getQueryResult(String query) {
-
-    List list = interpreter.executeQueryToList(query, true);
+    List<Object> list = interpreter.executeQueryToList(query, true);
 
     if (list.size() > 0) {
 
       Object answer = list.get(0);
       try {
+        // close the rest of the list
         for (int i = 1; i < list.size(); i++) {
           Object a = list.get(i);
           if (a instanceof Answer) ((Answer)a).close();
@@ -298,12 +249,11 @@ public class ITQLCommand extends Task {
       }
 
       return answer;
-    }
-    else {
-
+    } else {
       throw new BuildException("Did not get an answer for the query: " + query);
     }
   }
+
 
   /**
    * Executes the queries.
@@ -313,30 +263,25 @@ public class ITQLCommand extends Task {
   protected void executeQueries() throws BuildException {
 
     // Loop through the commands
-    for (Iterator iter = queryList.iterator(); iter.hasNext(); ) {
+    for (ITQLQuery itqlQuery: queryList) {
 
-      ITQLQuery itqlQuery = (ITQLQuery) iter.next();
       String query = itqlQuery.getQuery();
 
       // Is there a query?
       if (query != null) {
-
-        if (logger.isInfoEnabled()) {
-
-          logger.info("Executing query: " + query);
-        }
+        if (logger.isInfoEnabled()) logger.info("Executing query: " + query);
 
         log("Executing query: " + query, Project.MSG_INFO);
 
         // Do the query
-        Object object = getQueryResult(query);
+        Object queryResult = getQueryResult(query);
 
         numExecuted++;
 
-        // String
-        if (object instanceof String) {
+        // If result is a string
+        if (queryResult instanceof String) {
 
-          String string = (String) object;
+          String string = (String)queryResult;
 
           if (string.startsWith("Successfully") ||
               string.startsWith("Auto commit") ||
@@ -345,54 +290,37 @@ public class ITQLCommand extends Task {
 
             log("Result message: " + string, Project.MSG_INFO);
 
-            if (logger.isInfoEnabled()) {
-
-              logger.info("Result message: " + string);
-            }
-          }
-          else {
+            if (logger.isInfoEnabled()) logger.info("Result message: " + string);
+          } else {
 
             numErrors++;
 
-            log("Exception executing query '" + query + "' : " + string,
-                Project.MSG_ERR);
-            logger.error("Exception executing query '" + query + "' : " +
-                string);
+            log("Exception executing query '" + query + "' : " + string, Project.MSG_ERR);
+            logger.error("Exception executing query '" + query + "' : " + string);
 
-            if (!ignoreErrors) {
-
-              break;
-            }
+            if (!ignoreErrors) break;
           }
-        }
+        } else if (queryResult instanceof Answer) {
+          // Result is an Answer
 
-        // Answer
-        else if (object instanceof Answer) {
-
-          Answer answer = (Answer) object;
+          Answer answer = (Answer) queryResult;
 
           try {
-
             if (!answer.isUnconstrained()) {
 
-              log("Result set contained " + answer.getRowCount() +
-                  " row(s).", Project.MSG_INFO);
+              log("Result set contained " + answer.getRowCount() + " row(s).", Project.MSG_INFO);
 
               if (logger.isInfoEnabled()) {
-
-                logger.info("Result set contained " +
-                    answer.getRowCount() + "rows.");
+                logger.info("Result set contained " + answer.getRowCount() + "rows.");
               }
-            }
-            else {
+            } else {
 
               log("Query result contained null result set.", Project.MSG_INFO);
               logger.info("Query result contained null result set.");
             }
 
             answer.close();
-          }
-          catch (TuplesException qe) {
+          } catch (TuplesException qe) {
 
             log("Exception getting result set: " + qe, Project.MSG_ERR);
 
@@ -401,42 +329,31 @@ public class ITQLCommand extends Task {
               logger.error("Exception getting result set.", qe);
             }
           }
-        }
 
-        // Bad query
-        else if (object instanceof Exception) {
+        } else if (queryResult instanceof Exception) {
+          // Result indicates a bad query
 
-          Exception ex = (Exception) object;
+          Exception ex = (Exception) queryResult;
           StringWriter swriter = new StringWriter();
           PrintWriter pwriter = new PrintWriter(swriter);
           ex.printStackTrace(pwriter);
           numErrors++;
 
-          log("Exception executing query '" + query + "' : " + swriter,
-              Project.MSG_ERR);
-          logger.error("Exception executing query '" + query + "' : " +
-              swriter);
+          log("Exception executing query '" + query + "' : " + swriter, Project.MSG_ERR);
+          logger.error("Exception executing query '" + query + "' : " + swriter);
 
-          if (!ignoreErrors) {
-
-            break;
-          }
-        }
-        else {
-
+          if (!ignoreErrors) break;
+        } else {
           throw new BuildException("Unknown object returned from query: " +
-              object.getClass().getName());
+              queryResult.getClass().getName());
         }
-      }
-      else {
-
+      } else {
+        // query result was not a string, answer, or exception: therefore unknown
         throw new BuildException("A query was null!");
       }
     }
 
-    log("Executed " + numExecuted + " commands with " + numErrors + " errors.",
-        Project.MSG_INFO);
-    logger.info("Executed " + numExecuted + " commands with " + numErrors +
-        " errors.");
+    log("Executed " + numExecuted + " commands with " + numErrors + " errors.", Project.MSG_INFO);
+    logger.info("Executed " + numExecuted + " commands with " + numErrors + " errors.");
   }
 }

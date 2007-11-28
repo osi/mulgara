@@ -66,10 +66,12 @@ class ModelExistsOperation implements Operation
                       ResolverSessionFactory resolverSessionFactory,
                       DatabaseMetadata       metadata) throws Exception
   {
-    long model = systemResolver.lookupPersistent(new URIReferenceImpl(
-        modelURI));
-
-    result = systemResolver.modelExists(model);
+    try {
+      long model = systemResolver.lookupPersistent(new URIReferenceImpl(modelURI));
+      result = systemResolver.modelExists(model);
+    } catch (LocalizeException le) {
+      result = false;
+    }
   }
 
   public boolean isWriteOperation() {

@@ -556,7 +556,7 @@
                        ${axis.jar}, ${commons-discovery.jar},
                        ${jaxrpc.jar}, ${wsdl4j.jar}"/>
       <zipfileset dir="${bin.dir}" prefix="lib" includes="
-          ${query.jar}, ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
+        ${query.jar}, ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}, ${server-local.jar},
           ${resolver.jar}, ${resolver-spi.jar}, ${resolver-filesystem.jar},
@@ -1399,7 +1399,7 @@
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
           lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${date-utils.jar}, ${commons-logging.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
-          ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
+        ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>

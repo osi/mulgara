@@ -21,7 +21,7 @@
     </condition>
   </target>
 
-  <target name="config-generate" depends="config-generate-uptodate"
+  <target name="config-generate"
      description="Generates the Mulgara config code" unless="config-generate-uptodate">
 
     <delete dir="${obj.dir}/jar/config/java"/>

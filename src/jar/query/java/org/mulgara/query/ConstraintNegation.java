@@ -32,7 +32,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Logger;
+// import org.apache.log4j.Logger;
 
 /**
  * A constraint expression composed of the negation (logical NOT) of one
@@ -57,11 +57,8 @@ import org.apache.log4j.Logger;
  */
 public class ConstraintNegation implements Constraint {
 
-  /**
-   * The logger
-   */
-  private final static Logger logger =
-      Logger.getLogger(ConstraintNegation.class.getName());
+  // /** The logger */
+  // private final static Logger logger = Logger.getLogger(ConstraintNegation.class.getName());
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -125,7 +122,7 @@ public class ConstraintNegation implements Constraint {
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
+  public Set<Variable> getVariables() {
     return constraint.getVariables();
   }
 

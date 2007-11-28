@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 
 /**
  * A transitive constraint. The elements within the constraint must be variable
@@ -68,11 +68,8 @@ public class SingleTransitiveConstraint implements Constraint {
    */
   static final long serialVersionUID = -3828723182891026790L;
 
-  /**
-   * Logger.
-   */
-  private final static Category logger =
-      Category.getInstance(Constraint.class.getName());
+  // /** Logger. */
+  // private final static Category logger = Category.getInstance(Constraint.class.getName());
 
   /**
    * The constraint containing the transitive predicate.
@@ -140,7 +137,7 @@ public class SingleTransitiveConstraint implements Constraint {
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
+  public Set<Variable> getVariables() {
     return transConstraint.getVariables();
   }
 

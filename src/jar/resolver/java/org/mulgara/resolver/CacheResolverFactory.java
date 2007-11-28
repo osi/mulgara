@@ -44,9 +44,6 @@ import org.mulgara.resolver.spi.ResolverSession;
  *
  * @created 2004-11-10
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
- * @version $Revision: 1.10 $
- * @modified $Date: 2005/05/02 20:07:55 $
- * @maintenanceAuthor $Author: raboczi $
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  * @copyright &copy;2004 <a href="http://www.pisoftware.com/">Plugged In
  *      Software Pty Ltd</a>
@@ -76,7 +73,7 @@ class CacheResolverFactory implements ResolverFactory
    * This is basically the counterpart of the system model (<code>#</code>)
    * for temporary models instead of persistent ones.
    */
-  private final Set cachedModelSet;
+  private final Set<LocalNode> cachedModelSet;
 
   /**
    * The set of cached models which have been modified.
@@ -85,7 +82,7 @@ class CacheResolverFactory implements ResolverFactory
    * When the cache is cleared, these models will need to have their changes
    * written back.
    */
-  private final Set changedCachedModelSet;
+  private final Set<LocalNode> changedCachedModelSet;
 
   //
   // Constructor
@@ -100,8 +97,8 @@ class CacheResolverFactory implements ResolverFactory
   CacheResolverFactory(ResolverFactory externalResolverFactory,
                        ResolverFactory temporaryResolverFactory,
                        URI             temporaryModelTypeURI,
-                       Set             cachedModelSet,
-                       Set             changedCachedModelSet)
+                       Set<LocalNode>  cachedModelSet,
+                       Set<LocalNode>  changedCachedModelSet)
   {
     assert externalResolverFactory  != null;
     assert temporaryResolverFactory != null;

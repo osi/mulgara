@@ -33,11 +33,9 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 import org.jrdf.graph.*;
 
-// Local packages
-import org.mulgara.query.rdf.URIReferenceImpl;
 
 /**
  * An equality constraint. The elements within the constraint can be either variables or
@@ -62,11 +60,8 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  */
 public abstract class ConstraintHaving extends AbstractConstraintExpression implements Constraint {
 
-  /**
-   * Logger.
-   */
-  private final static Category logger =
-      Category.getInstance(ConstraintHaving.class.getName());
+  // /** Logger. */
+  // private final static Category logger = Category.getInstance(ConstraintHaving.class.getName());
 
   /**
     * The 4-tuple of elements (either nodes or variables)
@@ -151,15 +146,13 @@ public abstract class ConstraintHaving extends AbstractConstraintExpression impl
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
+  public Set<Variable> getVariables() {
     if (variables == null) {
-      Set v = new HashSet();
+      Set<Variable> v = new HashSet<Variable>();
       Variable e = getVariable();
-      if (!e.getName().startsWith("_")) {
-        v.add(e);
-      }
+      if (!e.getName().startsWith("_")) v.add(e);
       if (element[3] instanceof Variable && !((Variable)element[3]).getName().startsWith("_")) {
-        v.add(element[3]);
+        v.add((Variable)element[3]);
       }
       variables = Collections.unmodifiableSet(v);
     }
@@ -174,18 +167,12 @@ public abstract class ConstraintHaving extends AbstractConstraintExpression impl
    * @return <code>true</code> if object is the same as this.
    */
   public boolean equals(Object object) {
-    if (object == null) {
-      return false;
-    }
+    if (object == null) return false;
 
-    if (object == this) {
-      return true;
-    }
+    if (object == this) return true;
 
     // Check that the given object is the correct class
-    if (!object.getClass().equals(this.getClass())) {
-      return false;
-    }
+    if (!object.getClass().equals(this.getClass())) return false;
 
     // Check each element.
     ConstraintHaving tmpConstraint = (ConstraintHaving) object;

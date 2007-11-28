@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;  // Apache Log4J
 
 // Locally written packages
 import org.mulgara.server.*;
+import org.mulgara.util.Reflect;
 
 /**
  * Obtain a {@link SessionFactory} instance.
@@ -65,44 +66,37 @@ import org.mulgara.server.*;
  */
 public abstract class SessionFactoryFinder {
 
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-      Logger.getLogger(SessionFactoryFinder.class.getName());
+  /** Logger. This is named after the class. */
+  private static final Logger logger = Logger.getLogger(SessionFactoryFinder.class.getName());
 
-  /**
-   * A ZeroConf peer.
-   *
-   * This listens for servers on the LAN.
-   */
-  /*
-     private static JmDNS jmdns;
-   */
+  /* A ZeroConf peer. This listens for servers on the LAN. */
+  // private static JmDNS jmdns;
 
   /**
    * Map from a database's URI scheme to the name of a {@link SessionFactory}
    * implementation for it.
    */
-  private static final Map schemeMap = new HashMap();
+  private static final Map<String,String> schemeMap = new HashMap<String,String>();
+
+  /**
+   * Environment setup for setting up a context for the naming registry.
+   */
+  private static final Hashtable<String,String> localContextEnv = new Hashtable<String,String>();
 
   static {
     schemeMap.put("beep", "org.mulgara.server.beep.BEEPSessionFactory");
     schemeMap.put("rmi", "org.mulgara.server.rmi.RmiSessionFactory");
     schemeMap.put("local", "org.mulgara.server.local.LocalSessionFactory");
-
-    /*
-         try {
-      jmdns = new JmDNS(InetAddress.getLocalHost());
-     jmdns.addServiceListener("_itql._tcp.local", new ServerServiceListener());
-         }
-         catch (Exception e) {
-      logger.warn("Couldn't start ZeroConf peer", e);
-         }
-     */
+    localContextEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.rmi.registry.RegistryContextFactory");
+    localContextEnv.put(Context.PROVIDER_URL, "rmi://localhost");
+//    try {
+//      jmdns = new JmDNS(InetAddress.getLocalHost());
+//      jmdns.addServiceListener("_itql._tcp.local", new ServerServiceListener());
+//    } catch (Exception e) {
+//      logger.warn("Couldn't start ZeroConf peer", e);
+//    }
   }
+
 
   /**
    * Obtain a {@link SessionFactory} instance.  Assumes that this is being used
@@ -133,75 +127,61 @@ public abstract class SessionFactoryFinder {
       boolean isRemote) throws SessionFactoryFinderException, NonRemoteSessionException {
 
     // If no serverURI was specified, search the LAN for a local server
-    if (serverURI == null) {
-      serverURI = findServerURI();
-    }
+    if (serverURI == null) serverURI = findServerURI();
     assert serverURI != null;
+
+    String scheme = serverURI.getScheme();
 
     // Obtain the classname for the SessionFactory
     String className;
 
     // Handle RMI schemes differently.
-    if (serverURI.getScheme().equals("rmi")) {
+    if (scheme.equals("rmi")) {
       logger.debug("Attempting to connect via RMI");
       // First attempt to connect via RMI.
       try {
-        Hashtable environment = new Hashtable();
-        environment.put("java.naming.factory.initial",
-            "com.sun.jndi.rmi.registry.RegistryContextFactory");
-        environment.put("java.naming.provider.url",
-            "rmi://" + serverURI.getRawAuthority());
+        Hashtable<String,String> environment = new Hashtable<String,String>();
+        environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.rmi.registry.RegistryContextFactory");
+        environment.put(Context.PROVIDER_URL, "rmi://" + serverURI.getRawAuthority());
         Context rmiRegistryContext = new InitialContext(environment);
-        rmiRegistryContext.lookup(serverURI.getPath()
-          .substring(1));
+        rmiRegistryContext.lookup(serverURI.getPath().substring(1));
 
         // If the lookup is successful connect using RMI.
-        className = (String) schemeMap.get(serverURI.getScheme());
+        className = (String)schemeMap.get(scheme);
       } catch (NamingException ne) {
         logger.debug("Failed to connect via RMI", ne);
 
         // If there is an exception connect locally.
         if (!isRemote) {
           logger.debug("Attempting to fallback to local", ne);
-          className = (String) schemeMap.get("local");
-        }
-        else {
-          throw new SessionFactoryFinderException(
-              "Cannot find server " + serverURI, ne);
+          className = (String)schemeMap.get("local");
+        } else {
+          throw new SessionFactoryFinderException("Cannot find server " + serverURI, ne);
         }
       }
-    }
-    else {
-      className = (String) schemeMap.get(serverURI.getScheme());
+    } else {
+      className = (String)schemeMap.get(scheme);
     }
 
     if (className == null) {
-      throw new SessionFactoryFinderException(
-          serverURI + " has unsupported scheme (" + serverURI.getScheme() + ")"
-      );
+      throw new SessionFactoryFinderException(serverURI + " has unsupported scheme (" + scheme + ")");
     }
     assert className != null;
 
     // Use reflection to create the SessionFactory
     try {
-      try {
-        return (SessionFactory) Class.forName(className).
-            getConstructor(new Class[] { URI.class }).newInstance(new Object[] {
-            serverURI});
-      } catch (java.lang.reflect.InvocationTargetException ie) {
-        // check if the exception thrown indicates we should retry
-        Throwable e = ie.getCause();
-        if (!(e instanceof NonRemoteSessionException)) {
-          throw new SessionFactoryFinderException("Couldn't create session factory for " + serverURI, e);
-        }
-        // tell the calling code
-        throw (NonRemoteSessionException)e;
+      return (SessionFactory)Reflect.newInstance(Class.forName(className), serverURI);
+    } catch (RuntimeException ie) {
+      Throwable originalEx = ie.getCause();
+      // check if the exception thrown indicates we should retry
+      Throwable e = originalEx.getCause();
+      if (!(e instanceof NonRemoteSessionException)) {
+        throw new SessionFactoryFinderException("Couldn't create session factory for " + serverURI, e);
       }
-
+      // tell the calling code
+      throw (NonRemoteSessionException)originalEx;
     } catch (Exception e) {
-      throw new SessionFactoryFinderException(
-          "Couldn't create session factory for " + serverURI, e
-      );
+      throw new SessionFactoryFinderException("Couldn't create session factory for " + serverURI, e);
     }
   }
 
@@ -209,10 +189,10 @@ public abstract class SessionFactoryFinder {
    * Find a server.
    *
    * This currently only tries for a Java RMI server on the local host.
+   * Consider falling back to other hosts seen when asking for a session factory.
    *
-   * @return a Java RMI server {@link URI} for the local host, never
-   *   <code>null</code>
-   * @throws SessionFactoryFinderException  if the server URI can't be composed
+   * @return a Java RMI server {@link URI} for the local host, never <code>null</code>
+   * @throws SessionFactoryFinderException if the server URI can't be composed
    */
   public static URI findServerURI() throws SessionFactoryFinderException {
     // Look for an RMI server named "server1" on the local host
@@ -220,56 +200,34 @@ public abstract class SessionFactoryFinder {
       return new URI(
           "rmi", // Java RMI protocol
           InetAddress.getLocalHost().getCanonicalHostName(), // host
-          "/server1", // default RMI server
+          "/" + getServiceName(),
           null // no fragment means this is a server, not a model
       );
+    } catch (UnknownHostException e) {
+      throw new SessionFactoryFinderException("Couldn't determine local host name", e);
+    } catch (URISyntaxException e) {
+      throw new SessionFactoryFinderException("Invalid local server URI", e);
     }
-    catch (UnknownHostException e) {
-      throw new SessionFactoryFinderException(
-          "Couldn't determine local host name", e
-      );
-    }
-    catch (URISyntaxException e) {
-      throw new SessionFactoryFinderException(
-          "Invalid local server URI", e
-      );
-    }
-
-    /*
-         throw new SessionFactoryFinderException(
-      "Null \"serverURI\" parameter - LAN search not yet implemented"
-         );
-     */
   }
+
 
   /**
-   * Method to ask the ServerInfo for the local database session.
-   * This will return null if ServerInfo is not available -
-   * ie. being run on a host which has no local database, such an an iTQL client.
-   *
-   * @throws SessionFactoryFinderException If ServerInfo can't be called.  This
-   *         should only happen on a client, which should not have asked for a local session
-   *         anyway.
+   * Lookup the local registry for any registered names.
+   * @return The first name registered with the local RMI server, or the default name if this cannot be found.
    */
-  private static SessionFactory getLocalSessionFactory() throws SessionFactoryFinderException {
-    Object factory = null;
+  private static String getServiceName() {
     try {
-      Class rsf = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method getLocalSessionFactory = rsf.getMethod("getLocalSessionFactory", null);
-      factory = getLocalSessionFactory.invoke(null, null);
-    } catch (Exception e) {
-      throw new SessionFactoryFinderException(
-          "Couldn't obtain a local session factory.  Unexpected problem.", e
-      );
-    }
-    if (factory == null) {
-      throw new SessionFactoryFinderException(
-          "Couldn't obtain a local session factory.  Server has no access to database."
-      );
-    }
-    return (SessionFactory)factory;
+      Context rmiRegistryContext = new InitialContext(localContextEnv);
+      // get the list of names for the default context
+      NamingEnumeration<NameClassPair> ne = rmiRegistryContext.list(rmiRegistryContext.getNameInNamespace());
+      // return the first name
+      if (ne.hasMore()) return ne.next().getName(); 
+    } catch (NamingException e) { /* fall back to the default */ }
+    
+    // error or no name found, so return the default name.
+    return SessionFactoryFactory.DEFAULT_SERVER_NAME;
   }
-
+  
   /**
    * Listens for notification via ZeroConf of servers appearing on the LAN.
    */

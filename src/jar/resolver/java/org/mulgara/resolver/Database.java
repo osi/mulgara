@@ -108,8 +108,7 @@ public class Database implements SessionFactory
     Logger.getLogger(Database.class.getName());
 
   /** Startup Logger - will always have info enabled  */
-  private static final Logger startupLogger =
-    Logger.getLogger("Startup");
+  private static final Logger startupLogger = Logger.getLogger("Startup");
 
   /**
    * Placeholder indicating a nonexistent local node.
@@ -117,6 +116,7 @@ public class Database implements SessionFactory
    * This is a stopgap measure to deal with the lack of a defined negative
    * return value from {@link StringPool#findGNode}.
    */
+  @SuppressWarnings("unused")
   private final long NONE = NodePool.NONE;
 
   /** The directory where persistence files are stored.  */
@@ -140,12 +140,12 @@ public class Database implements SessionFactory
    * The set of resolver factories that should have access to their models
    * cached.
    */
-  private final Set cachedResolverFactorySet = new HashSet();
+  private final Set<ResolverFactory> cachedResolverFactorySet = new HashSet<ResolverFactory>();
 
   /**
    * Read-only view of {@link #cachedResolverFactorySet}.
    */
-  private final Set unmodifiableCachedResolverFactorySet =
+  private final Set<ResolverFactory> unmodifiableCachedResolverFactorySet =
     Collections.unmodifiableSet(cachedResolverFactorySet);
 
   /**
@@ -156,13 +156,13 @@ public class Database implements SessionFactory
   /**
    * The set of all registered {@link ResolverFactory} instances.
    */
-  private final List resolverFactoryList = new ArrayList();
+  private final List<ResolverFactory> resolverFactoryList = new ArrayList<ResolverFactory>();
 
   /**
    * Read-only view of {@link #resolverFactoryList}, safe to be handed out to
    * the resolver sessions.
    */
-  private final List unmodifiableResolverFactoryList =
+  private final List<ResolverFactory> unmodifiableResolverFactoryList =
     Collections.unmodifiableList(resolverFactoryList);
 
   /**
@@ -170,13 +170,13 @@ public class Database implements SessionFactory
    * {@link ResolverFactory} instance that manages external models via that
    * protocol.
    */
-  private final Map externalResolverFactoryMap = new HashMap();
+  private final Map<String,ResolverFactory> externalResolverFactoryMap = new HashMap<String,ResolverFactory>();
 
   /**
    * Read-only view of {@link #externalResolverFactoryMap}, safe to be handed
    * out to the resolver sessions.
    */
-  private final Map unmodifiableExternalResolverFactoryMap =
+  private final Map<String,ResolverFactory> unmodifiableExternalResolverFactoryMap =
     Collections.unmodifiableMap(externalResolverFactoryMap);
 
   /**
@@ -184,13 +184,13 @@ public class Database implements SessionFactory
    * {@link InternalResolverFactory} instance that wraps the actual
    * {@link ResolverFactory} instance which manages that model type.
    */
-  private final Map internalResolverFactoryMap = new HashMap();
+  private final Map<URI,InternalResolverFactory> internalResolverFactoryMap = new HashMap<URI,InternalResolverFactory>();
 
   /**
    * Read-only view of {@link #internalResolverFactoryMap}, safe to be handed
    * out to the resolver sessions.
    */
-  private final Map unmodifiableInternalResolverFactoryMap =
+  private final Map<URI,InternalResolverFactory> unmodifiableInternalResolverFactoryMap =
     Collections.unmodifiableMap(internalResolverFactoryMap);
 
   private DatabaseMetadata metadata;
@@ -215,13 +215,13 @@ public class Database implements SessionFactory
    * contain any additional adapters registered via the
    * {@link #addSecurityAdapter} method.
    */
-  private final List securityAdapterList = new ArrayList(1);
+  private final List<SecurityAdapter> securityAdapterList = new ArrayList<SecurityAdapter>(1);
 
   /**
    * Read-only view of {@link #securityAdapterList}, safe to be handed out to
    * the {@link DatabaseSession}s.
    */
-  private final List unmodifiableSecurityAdapterList =
+  private final List<SecurityAdapter> unmodifiableSecurityAdapterList =
     Collections.unmodifiableList(securityAdapterList);
 
   /** The {@link URI} of the security domain this database is within.  */
@@ -230,13 +230,13 @@ public class Database implements SessionFactory
   /**
    * The list of {@link SymbolicTransformation} instances.
    */
-  private final List symbolicTransformationList = new ArrayList();
+  private final List<SymbolicTransformation> symbolicTransformationList = new ArrayList<SymbolicTransformation>();
 
   /**
    * Read-only view of {@link #symbolicTransformationList}, safe to be handed
    * out to the {@link DatabaseSession}s.
    */
-  private final List unmodifiableSymbolicTransformationList =
+  private final List<SymbolicTransformation> unmodifiableSymbolicTransformationList =
     Collections.unmodifiableList(symbolicTransformationList);
 
   /**
@@ -260,11 +260,12 @@ public class Database implements SessionFactory
    */
   private final MulgaraTransactionManager transactionManager;
 
-  /** The unique {@link URI} naming this database.  */
+  /** The unique {@link URI} naming this database.  Not read in this implementation. */
+  @SuppressWarnings("unused")
   private final URI uri;
 
   /** The set of alternative hostnames for the current host. */
-  private final Set hostnameAliases;
+  private final Set<String> hostnameAliases;
 
   /**
    * A {@link SessionFactory} that produces {@link Session}s which aren't
@@ -313,8 +314,8 @@ public class Database implements SessionFactory
              NamingException, NodePoolException, QueryException,
              ResolverException, ResolverFactoryException,
              SecurityAdapterFactoryException, StringPoolException,
-             SystemException, URISyntaxException
-  {
+             SystemException, URISyntaxException {
+
     // Construct this resolver backed by in-memory components
     this(uri,        // database name
          directory,  // persistence directory
@@ -431,8 +432,8 @@ public class Database implements SessionFactory
     throws ConfigurationException, InitializerException, LocalizeException,
            NamingException, NodePoolException, QueryException,
            ResolverException, ResolverFactoryException, StringPoolException,
-           SystemException, URISyntaxException
-  {
+           SystemException, URISyntaxException {
+
     if (logger.isDebugEnabled()) {
       logger.debug("Constructing database");
       logger.debug("Persistent node pool factory: class=" +
@@ -501,10 +502,8 @@ public class Database implements SessionFactory
         defaultContentHandler = (ContentHandler)
           Beans.instantiate(this.getClass().getClassLoader(), defaultContentHandlerClassName);
       }
-      this.contentHandlers =
-        new ContentHandlerManagerImpl(defaultContentHandler);
-    }
-    catch (Exception e) {
+      this.contentHandlers = new ContentHandlerManagerImpl(defaultContentHandler);
+    } catch (Exception e) {
       throw new ConfigurationException(
         "Couldn't instantiate default content handler", e
       );
@@ -522,27 +521,25 @@ public class Database implements SessionFactory
     }
 
     // Create the set of alternative names for the current host.
-    Set hostNames = new HashSet();
+    Set<String> hostNames = new HashSet<String>();
     hostNames.addAll(Arrays.asList(new String[] {"localhost", "127.0.0.1"}));
 
     // Attempt to obtain the IP address
     try {
     	hostNames.add(InetAddress.getLocalHost().getHostAddress());
     } catch(UnknownHostException ex) {
-      logger.info("Unable to obtain local host address "+
-          "aliases", ex);
+      logger.info("Unable to obtain local host address aliases", ex);
     }
     // Attempt to obtain the localhost name
     try {
     	hostNames.add(InetAddress.getLocalHost().getHostName());
     } catch(UnknownHostException ex) {
-      logger.info("Unable to obtain local host name for  "+
-          "aliases", ex);
+      logger.info("Unable to obtain local host name for aliases", ex);
     }
     if (startupLogger.isInfoEnabled()) {
       StringBuffer aliases =
         new StringBuffer("Host name aliases for this server are: [");
-      for (Iterator it = hostNames.iterator(); it.hasNext(); ) {
+      for (Iterator<String> it = hostNames.iterator(); it.hasNext(); ) {
         aliases.append(it.next().toString());
         if (it.hasNext()) {
           aliases.append(", ");
@@ -604,8 +601,7 @@ public class Database implements SessionFactory
     DatabaseFactoryInitializer initializer =
         new DatabaseFactoryInitializer(uri, hostnameAliases, directory);
 
-    jrdfSessionFactory =
-        new JRDFResolverSessionFactory(initializer, spSessionFactory);
+    jrdfSessionFactory = new JRDFResolverSessionFactory(initializer, spSessionFactory);
 
     // Ensure that no further initialization is provided
     initializer.close();
@@ -628,8 +624,7 @@ public class Database implements SessionFactory
                                                    .iterator()
                                                    .next()).getKey();
     */
-    temporaryModelTypeURI = new URI(Mulgara.NAMESPACE + "MemoryModel");
-    assert temporaryModelTypeURI != null;
+    temporaryModelTypeURI = URI.create(Mulgara.NAMESPACE + "MemoryModel");
 
     /*
     // Discard any temporary resolver state
@@ -672,8 +667,7 @@ public class Database implements SessionFactory
 
 
     URI systemModelURI = new URI(uri.getScheme(), uri.getSchemeSpecificPart(), "");
-    metadata =
-      new DatabaseMetadataImpl(uri,
+    metadata = new DatabaseMetadataImpl(uri,
                                hostnameAliases,
                                securityDomainURI,
                                systemModelURI,
@@ -732,8 +726,7 @@ public class Database implements SessionFactory
    * @throws IllegalArgumentException if <var>className</var> is
    *   <code>null</code> or isn't a valid {@link ContentHandler}
    */
-  public void addContentHandler(String className)
-  {
+  public void addContentHandler(String className) {
     if (logger.isDebugEnabled()) {
       logger.debug("Adding content handler " + className);
     }
@@ -765,9 +758,7 @@ public class Database implements SessionFactory
    * @throws InitializerException  if the {@link ResolverFactory}
    *   generated from the <var>className</var> can't be initialized
    */
-  public void addResolverFactory(String className, File dir)
-    throws InitializerException
-  {
+  public void addResolverFactory(String className, File dir) throws InitializerException {
     if (logger.isDebugEnabled()) {
       logger.debug("Adding resolver factory " + className);
     }
@@ -791,6 +782,7 @@ public class Database implements SessionFactory
     }
   }
 
+
   /**
    * Add a {@link SecurityAdapter} to this {@link Database}.
    *
@@ -803,8 +795,7 @@ public class Database implements SessionFactory
    *   <code>null</code>
    */
   public void addSecurityAdapter(SecurityAdapterFactory securityAdapterFactory)
-    throws SecurityAdapterFactoryException
-  {
+        throws SecurityAdapterFactoryException {
     // Create the security adapter even if in admin mode, because we need the
     // side effects like model creation to be trigger
     DatabaseSecurityAdapterInitializer initializer =
@@ -828,8 +819,7 @@ public class Database implements SessionFactory
       if (logger.isDebugEnabled()) {
         logger.debug("Added security adapter");
       }
-    }
-    else {
+    } else {
       // Skip the addition of security adapters if we're started in admin mode
       logger.warn("Skipping addition of security adapter " +
                   securityAdapterFactory.getClass().getName() +
@@ -837,22 +827,20 @@ public class Database implements SessionFactory
     }
   }
 
+
   /**
    * Flush all resources associated with the database into a recoverable state.
    */
-  public void close()
-  {
+  public void close() {
 
     // Transaction management
     transactionManagerFactory.close();
 
     // Resolver factories
-    for (Iterator i = resolverFactoryList.iterator(); i.hasNext();) {
-      ResolverFactory resolverFactory = (ResolverFactory) i.next();
+    for (ResolverFactory resolverFactory: resolverFactoryList) {
       try {
         resolverFactory.close();
-      }
-      catch (ResolverFactoryException e) {
+      } catch (ResolverFactoryException e) {
         logger.warn("Unable to close " + resolverFactory, e);
       }
     }
@@ -861,17 +849,16 @@ public class Database implements SessionFactory
     jrdfSessionFactory.close();
   }
 
+
   /**
    * Remove all persistent resources associated with the database.
    *
    * In other words, erase all the data.  This is generally only useful for
    * testing.
    */
-  public void delete()
-  {
+  public void delete() {
     // Resolver factories
-    for (Iterator i = resolverFactoryList.iterator(); i.hasNext();) {
-      ResolverFactory resolverFactory = (ResolverFactory) i.next();
+    for (ResolverFactory resolverFactory: resolverFactoryList) {
       try {
         resolverFactory.delete();
       } catch (ResolverFactoryException e) {
@@ -887,14 +874,12 @@ public class Database implements SessionFactory
   // Methods implementing SessionFactory
   //
 
-  public URI getSecurityDomain()
-  {
+  public URI getSecurityDomain() {
     assert securityDomainURI != null;
     return securityDomainURI;
   }
 
-  public Session newSession() throws QueryException
-  {
+  public Session newSession() throws QueryException {
     try {
       return new DatabaseSession(
         transactionManager,
@@ -938,8 +923,7 @@ public class Database implements SessionFactory
           contentHandlers,
           cachedResolverFactorySet,
           temporaryModelTypeURI);
-    }
-    catch (ResolverFactoryException e) {
+    } catch (ResolverFactoryException e) {
       throw new QueryException("Couldn't create JRDF session", e);
     }
   }
@@ -949,8 +933,8 @@ public class Database implements SessionFactory
   //
 
   void addModelType(URI modelTypeURI, ResolverFactory resolverFactory)
-    throws InitializerException
-  {
+      throws InitializerException {
+
     if (logger.isDebugEnabled()) {
       logger.debug("Registering model type " + modelTypeURI + " for " +  resolverFactory);
     }
@@ -982,9 +966,8 @@ public class Database implements SessionFactory
   }
 
 
-  void addProtocol(String protocol, ResolverFactory resolverFactory)
-    throws InitializerException
-  {
+  void addProtocol(String protocol, ResolverFactory resolverFactory) throws InitializerException {
+
     if (logger.isDebugEnabled()) {
       logger.debug("Registering protocol " + protocol + " for " +  resolverFactory);
     }
@@ -1011,9 +994,8 @@ public class Database implements SessionFactory
   }
 
 
-  void addSymbolicTransformation(SymbolicTransformation symbolicTransformation)
-    throws InitializerException
-  {
+  void addSymbolicTransformation(SymbolicTransformation symbolicTransformation) throws InitializerException {
+
     if (logger.isDebugEnabled()) {
       logger.debug("Registering symbolic transformation " +
                    symbolicTransformation.getClass());
@@ -1029,15 +1011,12 @@ public class Database implements SessionFactory
   }
 
 
-  File getRootDirectory()
-  {
+  File getRootDirectory() {
     return directory;
   }
 
 
-  private void recoverDatabase(SimpleXARecoveryHandler[] handlers)
-      throws SimpleXAResourceException
-  {
+  private void recoverDatabase(SimpleXARecoveryHandler[] handlers) throws SimpleXAResourceException {
     assert handlers != null;
 
     TIntHashSet[] phaseSets = recoverRecoveryHandlers(handlers);
@@ -1056,8 +1035,7 @@ public class Database implements SessionFactory
 
 
   private TIntHashSet[] recoverRecoveryHandlers(SimpleXARecoveryHandler[] handlers)
-      throws SimpleXAResourceException
-  {
+      throws SimpleXAResourceException {
     TIntHashSet[] phaseSets = new TIntHashSet[handlers.length];
     boolean allEmpty = true;
     for (int i = 0; i < handlers.length; i++) {
@@ -1073,34 +1051,27 @@ public class Database implements SessionFactory
   }
 
 
-  private TIntHashSet intersectPhaseSets(TIntHashSet[] phaseSets)
-  {
+  private TIntHashSet intersectPhaseSets(TIntHashSet[] phaseSets) {
     TIntHashSet phaseSet = phaseSets[0];
-    for (int i = 1; i < phaseSets.length; i++) {
-      phaseSet.retainAll(phaseSets[i].toArray());
-    }
-
+    for (TIntHashSet ps: phaseSets) phaseSet.retainAll(ps.toArray());
     return phaseSet;
   }
 
 
   private void clearDatabase(SimpleXARecoveryHandler[] handlers)
-      throws SimpleXAResourceException
-  {
+      throws SimpleXAResourceException {
     try {
-      for (int i = 0; i < handlers.length; i++) {
-        handlers[i].clear();
-      }
+      for (SimpleXARecoveryHandler handler: handlers) handler.clear();
     } catch (IOException ei) {
       throw new SimpleXAResourceException("IO failure clearing database", ei);
     }
   }
 
 
-  private int highestCommonPhaseNumber(TIntHashSet phaseSet)
-  {
+  private int highestCommonPhaseNumber(TIntHashSet phaseSet) {
     int hcpn = -1;
 
+    // Trove iterators cannot use for() constructs
     TIntIterator i = phaseSet.iterator();
     while (i.hasNext()) {
       int phase = i.next();
@@ -1110,13 +1081,12 @@ public class Database implements SessionFactory
     return hcpn;
   }
 
+
   private void selectCommonPhase(int phaseNumber, SimpleXARecoveryHandler[] handlers)
-      throws SimpleXAResourceException
-  {
+      throws SimpleXAResourceException {
+
     try {
-      for (int i = 0; i < handlers.length; i++) {
-        handlers[i].selectPhase(phaseNumber);
-      }
+      for (SimpleXARecoveryHandler handler: handlers) handler.selectPhase(phaseNumber);
     } catch (IOException ei) {
       throw new SimpleXAResourceException("IO failure selecting phase on database", ei);
     }
@@ -1140,8 +1110,7 @@ public class Database implements SessionFactory
    *   Technology, Inc</a>
    * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
    */
-  private class UnsecuredSessionFactory implements SessionFactory
-  {
+  private class UnsecuredSessionFactory implements SessionFactory {
     //
     // Methods implementing SessionFactory
     //
@@ -1150,21 +1119,19 @@ public class Database implements SessionFactory
      * @return {@inheritDoc}; this is the same value as the outer
      *   {@link Database} returns
      */
-    public URI getSecurityDomain() throws QueryException
-    {
+    public URI getSecurityDomain() throws QueryException {
       return Database.this.getSecurityDomain();
     }
 
     /**
      * @return an unsecured {@link Session} to the outer {@link Database}
      */
-    public Session newSession() throws QueryException
-    {
+    public Session newSession() throws QueryException {
       try {
         return new DatabaseSession(
           transactionManager,
           Collections.singletonList(
-            new SystemModelSecurityAdapter(metadata.getSystemModelNode())
+            (SecurityAdapter)new SystemModelSecurityAdapter(metadata.getSystemModelNode())
           ),
           unmodifiableSymbolicTransformationList,
           spSessionFactory,
@@ -1187,8 +1154,7 @@ public class Database implements SessionFactory
     /**
      * @return an unsecured {@link Session} to the outer {@link Database}
      */
-    public Session newJRDFSession() throws QueryException
-    {
+    public Session newJRDFSession() throws QueryException {
       try {
         return new LocalJRDFDatabaseSession(
           transactionManager,
@@ -1215,16 +1181,14 @@ public class Database implements SessionFactory
     /**
      * {@inheritDoc}  This method is a no-op in this implementation.
      */
-    public void close() throws QueryException
-    {
+    public void close() throws QueryException {
       // null implementation
     }
 
     /**
      * {@inheritDoc}  This method is a no-op in this implementation.
      */
-    public void delete() throws QueryException
-    {
+    public void delete() throws QueryException {
       // null implementation
     }
   }
@@ -1235,9 +1199,9 @@ public class Database implements SessionFactory
    *
    * @param names The set of hostnames to set on ServerInfo
    */
-  private void setHostnameAliases(Set names) {
+  private void setHostnameAliases(Set<String> names) {
     try {
-      Class si = Class.forName("org.mulgara.server.ServerInfo");
+      Class<?> si = Class.forName("org.mulgara.server.ServerInfo");
       java.lang.reflect.Method setter = si.getMethod("setHostnameAliases", new Class[] { Set.class });
       setter.invoke(null, new Object[] { names });
     } catch (Exception e) {

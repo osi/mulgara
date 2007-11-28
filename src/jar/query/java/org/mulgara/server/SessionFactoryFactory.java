@@ -30,8 +30,6 @@ package org.mulgara.server;
 // Java 2 Standard Packages
 import java.net.*;
 import java.io.*;
-import java.util.*;
-import javax.naming.*;
 
 // Third party packages
 import org.apache.log4j.Logger; // Apache Log4J
@@ -65,19 +63,14 @@ import java.lang.reflect.Constructor;
  */
 public class SessionFactoryFactory {
 
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-      Logger.getLogger(SessionFactoryFactory.class.getName());
+  /** Logger. This is named after the class. */
+  private static final Logger logger = Logger.getLogger(SessionFactoryFactory.class.getName());
+
+  /** Server name used if one is not configured */
+  public final static String DEFAULT_SERVER_NAME = "server1";
 
   /** SessionFactory implementation  */
   private String className = "org.mulgara.store.xa.XADatabaseImpl";
-
-  /** Server name used if one is not configured */
-  private final static String DEFAULT_SERVER_NAME = "server1";
 
   /** default location of the config file */
   private static final String CONFIG_PATH = "conf/mulgara-x-config.xml";
@@ -167,19 +160,20 @@ public class SessionFactoryFactory {
    * @throws SessionFactoryException
    * @return SessionFactory
    */
+  @SuppressWarnings("unchecked")
   public SessionFactory getTripleStoreImplementation(String className,
-      Class[] argTypes, Object[] args) throws SessionFactoryException {
+      Class<?>[] argTypes, Object[] args) throws SessionFactoryException {
 
     try {
 
       //load class
-      Class storeClass = Class.forName(className);
+      Class<? extends SessionFactory> storeClass = (Class<? extends SessionFactory>)Class.forName(className);
 
       //get appropriate constructor
-      Constructor constructor = storeClass.getConstructor(argTypes);
+      Constructor<? extends SessionFactory> constructor = storeClass.getConstructor(argTypes);
 
       //instantiate
-      return (SessionFactory) constructor.newInstance(args);
+      return constructor.newInstance(args);
     }
     catch (Exception exception) {
 
@@ -200,7 +194,7 @@ public class SessionFactoryFactory {
   public SessionFactory newSessionFactory()
       throws SessionFactoryException {
 
-    URI serverURI = this.getDefaultServerURI();
+    URI serverURI = getDefaultServerURI();
     File directory = new File(System.getProperty("java.io.tmpdir"));
 
     return this.newSessionFactory(serverURI, directory);
@@ -212,20 +206,19 @@ public class SessionFactoryFactory {
    * @param serverURI the internet server to connect this session to.
    * @param directory The directory to use for storage of triplestore data
    *
-   * @throws SessionFactoryException if a connection can't be established to
-   *   the server
+   * @throws SessionFactoryException if a connection can't be established to the server
    * @return SessionFactory
    */
   public SessionFactory newSessionFactory(URI serverURI, File directory)
                                           throws SessionFactoryException {
 
     //arguments to constructor
-    Class [] argTypes = new Class [] {
+    Class<?>[] argTypes = new Class [] {
       serverURI.getClass(),
       directory.getClass(),
       mulgaraConfig.getClass()
     };
-    Object [] args = new Object [] {
+    Object[] args = new Object [] {
       serverURI,
       directory,
       mulgaraConfig
@@ -248,8 +241,8 @@ public class SessionFactoryFactory {
     SessionFactoryConfiguration config = getConfiguration(inStream);
 
     //arguments to constructor
-    Class [] argTypes = config.getConfigurationTypes();
-    Object [] args = config.getConfigurationObjects();
+    Class<?>[] argTypes = config.getConfigurationTypes();
+    Object[] args = config.getConfigurationObjects();
 
     return getTripleStoreImplementation(config.getClassName(), argTypes, args);
   }
@@ -277,7 +270,7 @@ public class SessionFactoryFactory {
       throws SessionFactoryException {
 
     //arguments to constructor
-    Class [] argTypes = new Class [] {
+    Class<?>[] argTypes = new Class[] {
       uri.getClass(),
       directory.getClass(),
       securityDomain.getClass(),
@@ -287,7 +280,7 @@ public class SessionFactoryFactory {
       temporaryStringPoolFactoryClassName.getClass(),
       systemResolverFactoryClassName.getClass()
     };
-    Object [] args = new Object [] {
+    Object[] args = new Object[] {
       uri,
       directory,
       securityDomain,
@@ -402,7 +395,7 @@ public class SessionFactoryFactory {
       if ((serverName != null)
           && (!"".equals(serverName))) {
 
-        URI uri = this.getServerURI(serverName);
+        URI uri = getServerURI(serverName);
         sessionConfig.setServerURI(uri.toString());
       }
 

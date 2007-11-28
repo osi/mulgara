@@ -41,11 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import javax.transaction.xa.XAResource;
-
-// Java 2 enterprise packages
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -62,7 +57,6 @@ import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
-import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.SecurityAdapter;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.SymbolicTransformation;
@@ -89,15 +83,10 @@ import org.mulgara.store.tuples.TuplesOperations;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseOperationContext implements OperationContext, SessionView, SymbolicTransformationContext
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(DatabaseOperationContext.class.getName());
+class DatabaseOperationContext implements OperationContext, SessionView, SymbolicTransformationContext {
+ 
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(DatabaseOperationContext.class.getName());
 
   /** Logger for {@link SymbolicTransformation} plugins. */
   private static final Logger symbolicLogger =
@@ -110,7 +99,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    * Every model in this set can be manipulated by resolvers from the
    * {@link #temporaryResolverFactory}.
    */
-  private final Set cachedModelSet;
+  private final Set<LocalNode> cachedModelSet;
 
   /**
    * The models from external resolvers which have been cached as temporary
@@ -119,7 +108,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    * Every model in this set can be manipulated by resolvers from the
    * {@link #temporaryResolverFactory}.
    */
-  private final Set changedCachedModelSet;
+  private final Set<LocalNode> changedCachedModelSet;
 
   /**
    * A map from {@link URI}s of models to {@link LocalNode}s representing the
@@ -128,7 +117,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    * This is populated by {@link #findModelTypeURI} and cleared by
    * clear()
    */
-  private final Map systemModelCacheMap = new WeakHashMap();
+  private final Map<LocalNode,URI> systemModelCacheMap = new WeakHashMap<LocalNode,URI>();
 
   /** Resolver used for accessing the system model (<code>#</code>).  */
   protected SystemResolverFactory systemResolverFactory;
@@ -138,29 +127,30 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   private MulgaraTransaction transaction;
 
   // Immutable properties of the containing DatabaseSession
-  private final Set                cachedResolverFactorySet;
-  private final Map                enlistedResolverMap;
-  private final Map                externalResolverFactoryMap;
-  private final Map                internalResolverFactoryMap;
+  private final Set<ResolverFactory> cachedResolverFactorySet;  // NOTE: Currently unused
+  private final Map<ResolverFactory,Resolver> enlistedResolverMap;
+  private final Map<String,ResolverFactory> externalResolverFactoryMap;
+    // Hold a specific type of ResolverFactory to restrict what should be in there
+  private final Map<URI,InternalResolverFactory> internalResolverFactoryMap;
   private final DatabaseMetadata   metadata;
-  private final List               securityAdapterList;
+  private final List<SecurityAdapter> securityAdapterList;
   private final URI                temporaryModelTypeURI;
   private final ResolverFactory    temporaryResolverFactory;
   /** Symbolic transformations this instance should apply. */
-  private final List               symbolicTransformationList;
+  private final List<SymbolicTransformation> symbolicTransformationList;
   private final boolean            isWriting;
 
   // Used as a set, all values are null.  Java doesn't provide a WeakHashSet.
   private WeakHashMap<TransactionalAnswer,Object> answers;
 
-  DatabaseOperationContext(Set                   cachedResolverFactorySet,
-                           Map                   externalResolverFactoryMap,
-                           Map                   internalResolverFactoryMap,
+  DatabaseOperationContext(Set<ResolverFactory> cachedResolverFactorySet,
+                           Map<String,ResolverFactory> externalResolverFactoryMap,
+                           Map<URI,InternalResolverFactory> internalResolverFactoryMap,
                            DatabaseMetadata      metadata,
-                           List                  securityAdapterList,
+                           List<SecurityAdapter> securityAdapterList,
                            URI                   temporaryModelTypeURI,
                            ResolverFactory       temporaryResolverFactory,
-                           List                  symbolicTransformationList,
+                           List<SymbolicTransformation> symbolicTransformationList,
                            SystemResolverFactory systemResolverFactory,
                            boolean               isWriting)
   {
@@ -185,9 +175,9 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     this.isWriting                  = isWriting;
     this.systemResolverFactory      = systemResolverFactory;
 
-    this.cachedModelSet             = new HashSet();
-    this.changedCachedModelSet      = new HashSet();
-    this.enlistedResolverMap        = new HashMap();
+    this.cachedModelSet             = new HashSet<LocalNode>();
+    this.changedCachedModelSet      = new HashSet<LocalNode>();
+    this.enlistedResolverMap        = new HashMap<ResolverFactory,Resolver>();
     this.answers                    = new WeakHashMap<TransactionalAnswer,Object>();
   }
 
@@ -195,12 +185,9 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   // Methods implementing OperationContext
   //
 
-  public ResolverFactory findModelResolverFactory(long model)
-    throws QueryException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Finding resolver factory for model " + model);
-    }
+  public ResolverFactory findModelResolverFactory(long model) throws QueryException {
+
+    if (logger.isDebugEnabled()) logger.debug("Finding resolver factory for model " + model);
 
     // See if the model is an internal one, with a model type
     try {
@@ -210,8 +197,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         if (logger.isDebugEnabled()) {
           logger.debug("Model " + model + " type is " + modelTypeURI);
         }
-        InternalResolverFactory internalResolverFactory =
-          (InternalResolverFactory) internalResolverFactoryMap.get(modelTypeURI);
+        InternalResolverFactory internalResolverFactory = internalResolverFactoryMap.get(modelTypeURI);
 
         if (internalResolverFactory == null) {
           throw new QueryException("Unsupported model type for model " + model);        }
@@ -275,8 +261,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         }
 
         // find the factory for this protocol
-        ResolverFactory resolverFactory =
-            (ResolverFactory) externalResolverFactoryMap.get(modelProtocol);
+        ResolverFactory resolverFactory = externalResolverFactoryMap.get(modelProtocol);
         if (resolverFactory == null) {
           throw new QueryException(
               "Unsupported protocol for destination model (" +
@@ -309,11 +294,9 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    * @return a completely unwrapped resolver factory
    */
   // TODO: Common code with findModelResolverFactory should be consolidated.
-  private ResolverFactory findResolverFactory(long model) throws QueryException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Finding raw resolver factory for model " + model);
-    }
+  private ResolverFactory findResolverFactory(long model) throws QueryException {
+
+    if (logger.isDebugEnabled()) logger.debug("Finding raw resolver factory for model " + model);
 
     try {
       // get the model URI
@@ -345,8 +328,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
       }
 
       // find the factory for this protocol
-      ResolverFactory resolverFactory =
-          (ResolverFactory) externalResolverFactoryMap.get(modelProtocol);
+      ResolverFactory resolverFactory = externalResolverFactoryMap.get(modelProtocol);
       if (resolverFactory == null) {
         throw new QueryException(
             "Unsupported protocol for destination model (" +
@@ -359,24 +341,18 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     }
   }
 
-  public ResolverFactory findModelTypeResolverFactory(URI modelTypeURI)
-    throws QueryException
-  {
-    return (InternalResolverFactory) internalResolverFactoryMap.get(modelTypeURI);
+  public ResolverFactory findModelTypeResolverFactory(URI modelTypeURI) throws QueryException {
+    return internalResolverFactoryMap.get(modelTypeURI);
   }
 
-  public List getSecurityAdapterList()
-  {
+  public List<SecurityAdapter> getSecurityAdapterList() {
     return securityAdapterList;
   }
 
-  public Resolver obtainResolver(ResolverFactory resolverFactory)
-    throws QueryException
-  {
-    ResolverSession session;
+  public Resolver obtainResolver(ResolverFactory resolverFactory) throws QueryException {
 
     // Obtain a resolver
-    Resolver resolver = (Resolver) enlistedResolverMap.get(resolverFactory);
+    Resolver resolver = enlistedResolverMap.get(resolverFactory);
     if (resolver != null) {
       return resolver;
     }
@@ -446,9 +422,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
 
   public URI mapToModelTypeURI(URI modelURI) throws QueryException {
     try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Finding modelTypeURI for " + modelURI);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Finding modelTypeURI for " + modelURI);
       long rawModel = systemResolver.localize(new URIReferenceImpl(modelURI));
       long canModel = getCanonicalModel(rawModel);
 
@@ -479,17 +453,13 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    *   system
    * @throws QueryException if the model type can't be determined
    */
-  private URI findModelTypeURI(long model)
-    throws QueryException, GlobalizeException
-  {
+  private URI findModelTypeURI(long model) throws QueryException, GlobalizeException {
     // If model is a query-node, model cannot exist in the system model so return null.
-    if (model < 0) {
-      return null;
-    }
+    if (model < 0) return null;
 
     // Check our cached version of the system model
     LocalNode modelLocalNode = new LocalNode(model);
-    URI modelTypeURI = (URI) systemModelCacheMap.get(modelLocalNode);
+    URI modelTypeURI = systemModelCacheMap.get(modelLocalNode);
     if (modelTypeURI != null) {
       return modelTypeURI;
     }
@@ -543,8 +513,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    * @throws QueryException if the <var>node</var> can't be globalized or
    *   isn't a URI reference
    */
-  private String findProtocol(long n) throws QueryException
-  {
+  private String findProtocol(long n) throws QueryException {
     try {
       // Globalize the node
       Node node = (Node) systemResolver.globalize(n);
@@ -658,14 +627,12 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
       long realModel = getCanonicalModel(model);
 
       // Make sure security adapters are satisfied
-      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
-        SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+      for (SecurityAdapter securityAdapter: securityAdapterList) {
 
         // Lie to the user
         if (!securityAdapter.canSeeModel(realModel, systemResolver)) {
           try {
-            throw new QueryException(
-              "No such model " + systemResolver.globalize(realModel));
+            throw new QueryException("No such model " + systemResolver.globalize(realModel));
           } catch (GlobalizeException e) {
             logger.warn("Unable to globalize model " + realModel);
             throw new QueryException("No such model");
@@ -673,8 +640,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         }
       }
 
-      for (Iterator i = securityAdapterList.iterator(); i.hasNext();) {
-        SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+      for (SecurityAdapter securityAdapter: securityAdapterList) {
 
         // Tell a different lie to the user
         if (!securityAdapter.canResolve(realModel, systemResolver)) {
@@ -725,9 +691,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     //
     //Iterator i = resolverFactoryList.iterator();
 
-    Iterator i = internalResolverFactoryMap.values().iterator();
-    while (i.hasNext()) {
-      ResolverFactory resolverFactory = (ResolverFactory) i.next();
+    for (ResolverFactory resolverFactory: internalResolverFactoryMap.values()) {
       assert resolverFactory != null;
 
       // Resolve the constraint
@@ -797,8 +761,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     model = getCanonicalModel(model);
 
     // Make sure security adapters are satisfied
-    for (Iterator i = securityAdapterList.iterator(); i.hasNext(); ) {
-      SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+    for (SecurityAdapter securityAdapter: securityAdapterList) {
 
       // Lie to the user
       if (!securityAdapter.canSeeModel(model, systemResolver)) {
@@ -826,8 +789,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     }
   }
 
-  public Answer doQuery(Query query) throws Exception
-  {
+  public Answer doQuery(Query query) throws Exception {
     TransactionalAnswer result;
 
     query = transform(query);
@@ -854,9 +816,9 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     }
 
     MutableLocalQueryImpl mutable = new MutableLocalQueryImpl(query);
-    Iterator i = symbolicTransformationList.iterator();
+    Iterator<SymbolicTransformation> i = symbolicTransformationList.iterator();
     while (i.hasNext()) {
-      SymbolicTransformation symbolicTransformation = (SymbolicTransformation)i.next();
+      SymbolicTransformation symbolicTransformation = i.next();
       assert symbolicTransformation != null;
 
       symbolicTransformation.transform(this, mutable);
@@ -874,6 +836,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
 
         mutable = new MutableLocalQueryImpl(query);
 
+        // start again
         i = symbolicTransformationList.iterator();
       }
     }
@@ -922,8 +885,8 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
       try {
         Resolver temporaryResolver =
           temporaryResolverFactory.newResolver(true, systemResolver, systemResolver);
-        for (Iterator i = cachedModelSet.iterator(); i.hasNext();) {
-          LocalNode modelLocalNode = (LocalNode) i.next();
+        for (Iterator<LocalNode> i = cachedModelSet.iterator(); i.hasNext();) {
+          LocalNode modelLocalNode = i.next();
           long model = modelLocalNode.getValue();
 
           if (changedCachedModelSet.contains(modelLocalNode)) {

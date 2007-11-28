@@ -28,23 +28,16 @@
 package org.mulgara.resolver.filesystem;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
-import java.util.HashSet;
-import java.util.Set;
 
 // Third party packages
 import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
-import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.xa.SimpleXAResourceException;
-import org.mulgara.store.xa.XAResolverSessionFactory;
 
 /**
  * Manages the creation and initialisation of a file system resolver.
@@ -82,27 +75,10 @@ public class FileSystemResolverFactory implements ResolverFactory {
   /** The exclusion predicate node id */
   private long excludeNode;
 
-  /** The preallocated local node representing FileSystems */
-  private long modelType;
-
   /**
    * The URL associated with the FileSystem type.
    */
-  private static final URI modelTypeURI;
-
-  static {
-
-    // Attempt to create the URI which represents our file system model type
-    try {
-
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "FileSystemModel");
-      assert modelTypeURI != null;
-    } catch (URISyntaxException e) {
-
-      // We should never get this
-      throw new Error("Bad hardcoded FileSystem model URI", e);
-    }
-  }
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "FileSystemModel");
 
   /**
    * The preallocated local node representing the system model and it's type(<code>#</code>).
@@ -129,8 +105,8 @@ public class FileSystemResolverFactory implements ResolverFactory {
     }
 
     // Set the model type
-    modelType = initializer.getSystemModelType();
-
+    initializer.getSystemModelType();
+    
     // Set the system model and its type
     systemModel = initializer.getSystemModel();
     systemModelType = initializer.getSystemModelType();

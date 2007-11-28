@@ -31,9 +31,7 @@ package org.mulgara.resolver.spi;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Logger;
-import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
+// import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.*;
@@ -87,6 +85,6 @@ public interface QueryEvaluationContext {
 
   public ResolverSession getResolverSession();
 
-  public List resolveConstraintOperation(ModelExpression modelExpr,
+  public List<Tuples> resolveConstraintOperation(ModelExpression modelExpr,
                                         ConstraintOperation constraintOper) throws QueryException;
 }

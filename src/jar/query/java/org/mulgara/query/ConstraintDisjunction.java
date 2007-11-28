@@ -63,27 +63,21 @@ public class ConstraintDisjunction  extends ConstraintOperation {
   static final long serialVersionUID = -6389569358524360795L;
 
   /**
-   * A set of all variables the compose the constraint.
-   */
-  private Set variables = null;
-
-  /**
    * Construct a constraint disjunction.
    *
    * @param lhs a non-<code>null</code> constraint expression
    * @param rhs another non-<code>null</code> constraint expression
    */
-  public ConstraintDisjunction(ConstraintExpression lhs,
-      ConstraintExpression rhs) {
+  public ConstraintDisjunction(ConstraintExpression lhs, ConstraintExpression rhs) {
     super(lhs, rhs);
   }
 
   /**
-   * CONSTRUCTOR ConstraintDisjunction TO DO
+   * Create a Disjunction (OR expression) between several constraint expressions.
    *
-   * @param elements PARAMETER TO DO
+   * @param elements The expressions to perform a disjunction on.
    */
-  public ConstraintDisjunction(List elements) {
+  public ConstraintDisjunction(List<ConstraintExpression> elements) {
     super(elements);
   }
 

@@ -35,7 +35,7 @@ import java.net.*;
 import java.util.*;
 
 // Log4J
-import org.apache.log4j.Category;
+// import org.apache.log4j.Category;
 
 // Locally written packages.
 import org.mulgara.query.rdf.LiteralImpl;
@@ -66,10 +66,8 @@ public class QueryUnitTest extends TestCase {
    */
   private Query query;
 
-  /**
-   * Logger.
-   */
-  private Category logger = Category.getInstance(QueryUnitTest.class.getName());
+  // /** Logger. */
+  // private Category logger = Category.getInstance(QueryUnitTest.class.getName());
 
   /**
    * Constructs a new answer test with the given name.
@@ -111,17 +109,17 @@ public class QueryUnitTest extends TestCase {
    *
    * @throws Exception EXCEPTION TO DO
    */
+  @SuppressWarnings("unchecked")
   public void setUp() throws Exception {
 
     query = new Query(
-        Arrays.asList(new Variable[] {
-        new Variable("x")}),                    // variable list
+        Arrays.asList(new Object[] {new Variable("x")}), // variable list
         new ModelResource(new URI("x:m")),      // model expression
         new ConstraintImpl(new Variable("x"),   // constraint expression
         new URIReferenceImpl(new URI("x:p")),
         new LiteralImpl("o")),
         null,                                   // no having
-        Collections.EMPTY_LIST,                 // no ordering
+        (List<Order>)Collections.EMPTY_LIST,    // no ordering
         null,                                   // no limit
         0,                                      // zero offset
         new UnconstrainedAnswer());
@@ -160,18 +158,18 @@ public class QueryUnitTest extends TestCase {
    *
    * @throws Exception if query fails when it should have succeeded
    */
+  @SuppressWarnings("unchecked")
   public void test2Equals() throws Exception {
 
     // Compose test instances
     Query query2 = new Query(
-        Arrays.asList(new Variable[] {
-        new Variable("x")}),                    // variable list
+        Arrays.asList(new Object[] {new Variable("x")}),                    // variable list
         new ModelResource(new URI("x:m")),      // model expression
         new ConstraintImpl(new Variable("x"),   // constraint expression
         new URIReferenceImpl(new URI("x:p")),
         new LiteralImpl("o")),
         null,                                  // no having
-        Collections.EMPTY_LIST,                // no ordering
+        (List<Order>)Collections.EMPTY_LIST,                // no ordering
         null,                                  // no limit
         0,                                     // zero offset
         new UnconstrainedAnswer());

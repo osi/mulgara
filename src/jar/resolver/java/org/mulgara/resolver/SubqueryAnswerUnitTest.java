@@ -28,9 +28,6 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -38,7 +35,6 @@ import java.util.*;
 // Third party packages
 import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Log4J
-import org.jrdf.vocabulary.RDF;  // JRDF
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -71,34 +67,27 @@ public class SubqueryAnswerUnitTest extends TestCase {
   /**
    * Logger.
    */
-  private static Logger logger =
-      Logger.getLogger(SubqueryAnswerUnitTest.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(SubqueryAnswerUnitTest.class.getName());
 
   /**
    * The URI of the {@link #database}: <code>local:database</code>.
    */
-  private static final URI databaseURI;
+  @SuppressWarnings("unused")
+  private static final URI databaseURI = URI.create("local:database");
 
   /**
    * The URI of the {@link #database}'s system model:
    * <code>local:database#</code>.
    */
-  private static final URI systemModelURI;
+  @SuppressWarnings("unused")
+  private static final URI systemModelURI = URI.create("local:database#");
 
   /**
    * The URI of the {@link #database}'s system model type.
    */
-  private static final URI memoryModelURI;
-
-  static {
-    try {
-      databaseURI    = new URI("local:database");
-      systemModelURI = new URI("local:database#");
-      memoryModelURI = new URI(Mulgara.NAMESPACE+"MemoryModel");
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
-    }
-  }
+  @SuppressWarnings("unused")
+  private static final URI memoryModelURI = URI.create(Mulgara.NAMESPACE+"MemoryModel");
 
   /**
    * In-memory test {@link Database} used to generate {@link DatabaseSession}s
@@ -171,7 +160,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
         new Variable[] { varX, varY, varZ } );
 
     // Create variable list with differing order.
-    ArrayList variableList = new ArrayList();
+    ArrayList<Variable> variableList = new ArrayList<Variable>();
     variableList.add(varX);
     variableList.add(varZ);
     variableList.add(varY);

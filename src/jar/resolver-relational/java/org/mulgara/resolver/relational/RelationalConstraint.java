@@ -42,27 +42,24 @@
 package org.mulgara.resolver.relational;
 
 // Java 2 standard packages
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.net.URI;
 
 // Third party packages
-import org.apache.log4j.Logger; // Apache Log4J
+// import org.apache.log4j.Logger; // Apache Log4J
 import org.jrdf.graph.URIReference;
 
 // Local classes
 import org.mulgara.query.Constraint;
-import org.mulgara.query.LocalNode;
 import org.mulgara.query.ConstraintElement;
+import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintImpl;
-import org.mulgara.query.Query;
-import org.mulgara.query.QueryException;
+import org.mulgara.query.Value;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
@@ -88,17 +85,24 @@ import org.mulgara.resolver.ConstraintOperations;
  */
 public class RelationalConstraint implements Constraint {
 
-  /** Logger */
-  private static Logger logger =
-    Logger.getLogger(RelationalConstraint.class.getName());
+  // /** Logger */
+  // private static Logger logger = Logger.getLogger(RelationalConstraint.class.getName());
 
-  private Set rdfTypeConstraints;
+  /**
+   * Allow newer compiled version of the stub to operate when changes
+   * have not occurred with the class.
+   * NOTE : update this serialVersionUID when a method or a public member is
+   * deleted.
+   */
+  private static final long serialVersionUID = -2930975307291404712L;
 
-  private Map predConstraints;
+  private Set<ConstraintExpression> rdfTypeConstraints;
+
+  private Map<ConstraintElement,List<Constraint>> predConstraints;
 
   private ConstraintElement model;
 
-  private Set variables;
+  private Set<Variable> variables;
 
   private static final URIReference rdftype;
 
@@ -114,9 +118,9 @@ public class RelationalConstraint implements Constraint {
    * Sole constructor.
    */
   public RelationalConstraint() {
-    this.rdfTypeConstraints = new HashSet();
-    this.variables = new HashSet();
-    this.predConstraints = new HashMap();
+    this.rdfTypeConstraints = new HashSet<ConstraintExpression>();
+    this.variables = new HashSet<Variable>();
+    this.predConstraints = new HashMap<ConstraintElement,List<Constraint>>();
   }
 
   public RelationalConstraint(ConstraintImpl constraint) {
@@ -130,11 +134,9 @@ public class RelationalConstraint implements Constraint {
 
     rdfTypeConstraints.addAll(constraint.rdfTypeConstraints);
 
-    Iterator i = constraint.predConstraints.keySet().iterator();
-    while (i.hasNext()) {
-      ConstraintElement key = (ConstraintElement)i.next();
-      List lhs = (List)constraint.predConstraints.get(key);
-      List rhs = (List)predConstraints.get(key);
+    for (ConstraintElement key: constraint.predConstraints.keySet()) {
+      List<Constraint> lhs = constraint.predConstraints.get(key);
+      List<Constraint> rhs = predConstraints.get(key);
       if (rhs == null) {
         predConstraints.put(key, lhs);
       } else {
@@ -150,10 +152,10 @@ public class RelationalConstraint implements Constraint {
       rdfTypeConstraints.add(constraint);
     } else {
 //    } else if (constraint.getElement(0) instanceof Variable) {
-      List preds = (List)predConstraints.get(constraint.getElement(0));
+      List<Constraint> preds = predConstraints.get(constraint.getElement(0));
       if (preds == null) {
-        preds = new ArrayList();
-        predConstraints.put(constraint.getElement(0), preds);
+        preds = new ArrayList<Constraint>();
+        predConstraints.put((ConstraintElement)constraint.getElement(0), preds);
       }
       preds.add(constraint);
     }
@@ -169,13 +171,13 @@ public class RelationalConstraint implements Constraint {
     variables.addAll(constraint.getVariables());
   }
 
-  public Set getRdfTypeConstraints() {
+  public Set<ConstraintExpression> getRdfTypeConstraints() {
     return rdfTypeConstraints;
   }
   
-  public List getConstraintsBySubject(ConstraintElement subj) {
-    List list = (List)predConstraints.get(subj);
-    return list != null ? list : new ArrayList();
+  public List<Constraint> getConstraintsBySubject(ConstraintElement subj) {
+    List<Constraint> list = predConstraints.get(subj);
+    return list != null ? list : new ArrayList<Constraint>();
   }
 
   public ConstraintElement getModel() {
@@ -190,8 +192,7 @@ public class RelationalConstraint implements Constraint {
     return false;
   }
 
-  public Set getVariables()
-  {
+  public Set<Variable> getVariables() {
     return variables;
   }
 
@@ -211,22 +212,18 @@ public class RelationalConstraint implements Constraint {
     return localized;
   }
 
-  static RelationalConstraint bind(Map bindings, RelationalConstraint constraint) throws Exception {
+  static RelationalConstraint bind(Map<Variable,Value> bindings, RelationalConstraint constraint) throws Exception {
     RelationalConstraint bound = new RelationalConstraint();
 
-    Iterator i = constraint.rdfTypeConstraints.iterator();
-    while (i.hasNext()) {
-      bound.rdfTypeConstraints.add(ConstraintOperations.bindVariables(bindings, (Constraint)i.next()));
+    for (ConstraintExpression c: constraint.rdfTypeConstraints) {
+      bound.rdfTypeConstraints.add(ConstraintOperations.bindVariables(bindings, c));
     }
 
-    i = constraint.predConstraints.keySet().iterator();
-    while (i.hasNext()) {
-      URIReference key = (URIReference)i.next();
-      List entry = (List)constraint.predConstraints.get(key);
-      List bentry = new ArrayList();
-      Iterator j = entry.iterator();
-      while (j.hasNext()) {
-        bentry.add(ConstraintOperations.bindVariables(bindings, (Constraint)j.next()));
+    for (ConstraintElement key: constraint.predConstraints.keySet()) {
+      List<Constraint> entry = constraint.predConstraints.get(key);
+      List<Constraint> bentry = new ArrayList<Constraint>();
+      for (Constraint jc: entry) {
+        bentry.add((Constraint)ConstraintOperations.bindVariables(bindings, jc));
       }
       constraint.predConstraints.put(key, bentry);
     }

@@ -101,8 +101,8 @@ public class ConstraintFalse implements ConstraintExpression {
    *
    * @return A set containing all variable constraints.
    */
-  public Set getVariables() {
-    return new HashSet();
+  public Set<Variable> getVariables() {
+    return new HashSet<Variable>();
   }
 
   //

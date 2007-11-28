@@ -43,12 +43,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 // Third party packages
-import org.apache.log4j.Logger;
+// import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.LiteralImpl;
 
@@ -65,8 +64,8 @@ import org.mulgara.query.rdf.LiteralImpl;
  */
 
 public class TestConstraint implements Constraint {
-  /** Logger */
-  private static Logger logger = Logger.getLogger(TestConstraint.class);
+  // /** Logger */
+  // private static Logger logger = Logger.getLogger(TestConstraint.class);
 
   /**
    * Fixme, generate proper version UID
@@ -125,8 +124,8 @@ public class TestConstraint implements Constraint {
     return false;
   }
 
-  public Set getVariables() {
-    Set vars = new HashSet();
+  public Set<Variable> getVariables() {
+    Set<Variable> vars = new HashSet<Variable>();
     vars.add(var1);
     vars.add(var2);
 

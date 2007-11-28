@@ -31,12 +31,11 @@ package org.mulgara.resolver.memory;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Logger;      // Apache Log4J
+// import org.apache.log4j.Logger;      // Apache Log4J
 
 // Locally written packages
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 
@@ -52,13 +51,9 @@ import org.mulgara.store.tuples.Tuples;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class MemoryResolution extends AbstractTuples implements Resolution
-{
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-    Logger.getLogger(MemoryResolution.class.getName());
+public class MemoryResolution extends AbstractTuples implements Resolution {
+  /** Logger. */
+  // private static Logger logger = Logger.getLogger(MemoryResolution.class.getName());
 
   /**
    * The constraint this instance resolves.
@@ -73,13 +68,13 @@ public class MemoryResolution extends AbstractTuples implements Resolution
    * constructor, so as to avoid side effects when models are subsequently
    * modified.
    */
-  private final Set statingSet;
+  private final Set<Stating> statingSet;
 
   /**
    * The {@link Iterator} use to obtain the {@link #stating} from the
    * {@link #statingSet}.
    */
-  private Iterator iterator;
+  private Iterator<Stating> iterator;
 
   /**
    * The current stating, <code>null</code> if not on a row.
@@ -110,8 +105,7 @@ public class MemoryResolution extends AbstractTuples implements Resolution
    * @throws IllegalArgumentException if the <var>constraint</var> or
    *   <var>statingSet</var> are <code>null</code>
    */
-  MemoryResolution(Constraint constraint, Set statingSet)
-  {
+  MemoryResolution(Constraint constraint, Set<Stating> statingSet) {
     // Validate "constraint" parameter
     if (constraint == null) {
       throw new IllegalArgumentException( "Null \"constraint\" parameter");
@@ -127,23 +121,21 @@ public class MemoryResolution extends AbstractTuples implements Resolution
 
     // Clone the statings, for isolation from subsequent changes
     synchronized (statingSet) {
-      this.statingSet = Collections.unmodifiableSet(new HashSet(statingSet));
+      this.statingSet = Collections.unmodifiableSet(new HashSet<Stating>(statingSet));
     }
 
     // Calculate columnIndex and set the variable list
     int length = 0;
     int[] temp = new int[4];
-    List variableList = new ArrayList(4);
+    List<Variable> variableList = new ArrayList<Variable>(4);
     for (int i=0; i<4; i++) {
       if (constraint.getElement(i) instanceof Variable) {
         temp[length++] = i;
-        variableList.add(constraint.getElement(i));
+        variableList.add((Variable)constraint.getElement(i));
       }
     }
     columnIndex = new int[length];
-    for (int i=0; i<length; i++) {
-      columnIndex[i] = temp[i];
-    }
+    for (int i=0; i<length; i++) columnIndex[i] = temp[i];
     setVariables(variableList);
   }
 
@@ -151,13 +143,11 @@ public class MemoryResolution extends AbstractTuples implements Resolution
   // Methods implementing Resolution
   //
 
-  public Constraint getConstraint()
-  {
+  public Constraint getConstraint() {
     return constraint;
   }
 
-  public boolean isComplete()
-  {
+  public boolean isComplete() {
     return false;
   }
 
@@ -165,23 +155,15 @@ public class MemoryResolution extends AbstractTuples implements Resolution
   // Methods implementing Cursor (superinterface of Statements)
   //
 
-  public void beforeFirst(long[] prefix, int suffixTruncation)
-    throws TuplesException
-  {
+  public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
     // Validate "prefix" parameter
-    if (prefix == null) {
-      throw new IllegalArgumentException("Null \"prefix\" parameter");
-    }
+    if (prefix == null) throw new IllegalArgumentException("Null \"prefix\" parameter");
     if (prefix.length > 4) {
-      throw new TuplesException(
-        "Bad prefix (>4): " + toString(prefix)
-      );
+      throw new TuplesException("Bad prefix (>4): " + toString(prefix));
     }
 
     // Validate "suffixTruncation" parameter
-    if (suffixTruncation != 0) {
-      throw new IllegalArgumentException("Nonzero suffix truncationr");
-    }
+    if (suffixTruncation != 0)  throw new IllegalArgumentException("Nonzero suffix truncationr");
 
     // Reset fields
     iterator    = statingSet.iterator();
@@ -189,31 +171,23 @@ public class MemoryResolution extends AbstractTuples implements Resolution
     stating     = null;
   }
 
-  public Object clone()
-  {
-    MemoryResolution cloned = (MemoryResolution) super.clone();
-
+  public Object clone() {
     // Copy mutable fields by value (all fields are immutable)
-
-    return cloned;
+    return (MemoryResolution) super.clone();
   }
 
   /**
    * Close the RDF/XML formatted input stream.
    */
-  public void close() throws TuplesException
-  {
+  public void close() throws TuplesException {
     // null implementation
   }
 
   /**
    * @param column  0 for the subject, 1 for the predicate, 2 for the object
    */
-  public long getColumnValue(int column) throws TuplesException
-  {
-    if (stating == null) {
-      throw new TuplesException("Not on a row");
-    }
+  public long getColumnValue(int column) throws TuplesException {
+    if (stating == null) throw new TuplesException("Not on a row");
 
     if (column < 0 || column >= columnIndex.length) {
       throw new TuplesException("No such column: " + column);
@@ -222,28 +196,24 @@ public class MemoryResolution extends AbstractTuples implements Resolution
     return stating.get(columnIndex[column]);
   }
 
-  public List getOperands()
-  {
-    return Collections.EMPTY_LIST;
+  @SuppressWarnings("unchecked")
+  public List<Tuples> getOperands() {
+    return (List<Tuples>)Collections.EMPTY_LIST;
   }
 
-  public long getRowCount() throws TuplesException
-  {
+  public long getRowCount() throws TuplesException {
     return statingSet.size();
   }
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     return getRowCount();
   }
 
-  public boolean hasNoDuplicates() throws TuplesException
-  {
+  public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }
 
-  public boolean isColumnEverUnbound(int column) throws TuplesException
-  {
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
     switch (column) {
     case 0: case 1: case 2: case 3:
       return false;
@@ -252,8 +222,7 @@ public class MemoryResolution extends AbstractTuples implements Resolution
     }
   }
 
-  public boolean next() throws TuplesException
-  {
+  public boolean next() throws TuplesException {
     if (iterator == null) {
       throw new TuplesException("Haven't called beforeFirst");
     }
@@ -268,8 +237,7 @@ public class MemoryResolution extends AbstractTuples implements Resolution
       }
       for (int i = 0; i < 4; i++) {
         if (constraint.getElement(i) instanceof LocalNode &&
-            ((LocalNode)constraint.getElement(i)).getValue() != stating.get(i))
-        {
+            ((LocalNode)constraint.getElement(i)).getValue() != stating.get(i)) {
           continue filtering_statings;
         }
       }

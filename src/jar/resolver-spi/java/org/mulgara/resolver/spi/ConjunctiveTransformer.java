@@ -118,7 +118,7 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
     // A single constraint could still be transformed as a singleton conjunction.
     // Therefore pack in conjunction, attempt transform, and check to see if it was.
     if (expr instanceof ConstraintImpl) {
-      ConstraintConjunction conj = new ConstraintConjunction(Arrays.asList(new Object[] { expr }));
+      ConstraintConjunction conj = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] { expr }));
       ConstraintConjunction trans = transformConj(context, conj);
       if (conj == trans) {
         return expr;

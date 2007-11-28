@@ -43,17 +43,18 @@ package org.mulgara.resolver.relational;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+// import org.apache.log4j.Logger;
 
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintDescriptor;
 import org.mulgara.resolver.spi.ConstraintLocalization;
-import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Constraint;
+import org.mulgara.query.Value;
+import org.mulgara.query.Variable;
 import org.mulgara.store.tuples.Tuples;
 
 // FIXME: Need to work out how to delegate this.
@@ -61,9 +62,9 @@ import org.mulgara.resolver.ConstraintOperations;
 
 public class RelationalConstraintDescriptor implements ConstraintDescriptor, ConstraintLocalization, ConstraintBindingHandler {
 
-  private static final Logger logger = Logger.getLogger(RelationalConstraintDescriptor.class.getName());
+  // private static final Logger logger = Logger.getLogger(RelationalConstraintDescriptor.class.getName());
 
-  public Class getConstraintClass() {
+  public Class<? extends Constraint> getConstraintClass() {
     return RelationalConstraint.class;
   }
 
@@ -92,7 +93,7 @@ public class RelationalConstraintDescriptor implements ConstraintDescriptor, Con
     return RelationalConstraint.localize(context, (RelationalConstraint)constraint);
   }
 
-  public ConstraintExpression bindVariables(Map bindings,
+  public ConstraintExpression bindVariables(Map<Variable,Value> bindings,
       ConstraintExpression constraintExpr) throws Exception {
     assert constraintExpr instanceof RelationalConstraint;
     return RelationalConstraint.bind(bindings, (RelationalConstraint)constraintExpr);

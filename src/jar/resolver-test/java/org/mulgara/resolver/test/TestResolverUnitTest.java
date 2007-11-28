@@ -39,7 +39,6 @@ import java.beans.Beans;
 import java.io.File;
 import java.util.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 // JUnit
 import junit.framework.*;
@@ -57,7 +56,6 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.Database;
 import org.mulgara.server.Session;
 import org.mulgara.transaction.TransactionManagerFactory;
@@ -90,19 +88,9 @@ public class TestResolverUnitTest extends TestCase {
   private static Database database = null;
 
   /** The URI of the {@link #database}: <code>local:database</code>.  */
-  private static final URI databaseURI;
-  private static final URI systemModelURI;
-  private static final URI modelTypeURI;
+  private static final URI databaseURI = URI.create("local:database");
+  private static final URI systemModelURI = URI.create("local:database#");
 
-  static {
-    try {
-      databaseURI  = new URI("local:database");
-      systemModelURI     = new URI("local:database#");
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "TestModel");
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded URI", e);
-    }
-  }
 
   /**
    * Named constructor.
@@ -144,7 +132,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b") };
-    List variables = Arrays.asList(varArray);
+    List<Object> variables = Arrays.asList((Object[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -191,7 +179,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("c") };
-    List variables = Arrays.asList(varArray);
+    List<Object> variables = Arrays.asList((Object[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -236,7 +224,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b"), new Variable("c") };
-    List variables = Arrays.asList(varArray);
+    List<Object> variables = Arrays.asList((Object[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -287,7 +275,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b"), new Variable("c") };
-    List variables = Arrays.asList(varArray);
+    List<Object> variables = Arrays.asList((Object[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -338,10 +326,10 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b"), new Variable("c") };
-    List variables = Arrays.asList(varArray);
+    List<Object> variables = Arrays.asList((Object[])varArray);
 
 		try {
-			Answer answer = session.query(new Query(
+			session.query(new Query(
 				variables,                                                                // SELECT
 				new ModelResource(systemModelURI),                                        // FROM
 				new ConstraintConjunction( 																								// WHERE

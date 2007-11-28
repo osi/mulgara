@@ -38,7 +38,6 @@ package org.mulgara.itql;
 // Java 2 standard packages
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 // Third party packages
@@ -61,12 +60,6 @@ import org.mulgara.query.rdf.*;
  *
  * @author Andrew Newman
  *
- * @version $Revision: 1.9 $
- *
- * @modified $Date: 2005/04/10 00:00:06 $ by $Author: pgearon $
- *
- * @maintenanceAuthor $Author: pgearon $
- *
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  *
  * @copyright &copy;2004 <a href="http://www.pisoftware.com/">Plugged In
@@ -76,31 +69,20 @@ import org.mulgara.query.rdf.*;
  */
 public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
-  /**
-   * The logger
-   */
-  private final static Logger logger =
-      Logger.getLogger(ConstraintExpressionBuilder.class.getName());
+  /** The logger */
+  private final static Logger logger = Logger.getLogger(ConstraintExpressionBuilder.class.getName());
 
-  /**
-   * The internal result of parsing a constraint expression.
-   */
+  /** The internal result of parsing a constraint expression. */
   private ConstraintExpression constraintExpression = null;
 
-  /**
-   * URI Syntax Exception - not null if exception occurred since last get.
-   */
+  /** URI Syntax Exception - not null if exception occurred since last get. */
   private URISyntaxException uriException = null;
 
-  /**
-   * Query Exception - not null if exception occurred since last get.
-   */
+  /** Query Exception - not null if exception occurred since last get. */
   private QueryException queryException = null;
 
-  /**
-   * The iTQL interpreter
-   */
-  private ItqlInterpreter interpreter;
+  /** The iTQL interpreter */
+  private SableCCInterpreter interpreter;
 
   /**
    * Create a new builder.  Requires methods on the interpreter in order to
@@ -108,7 +90,7 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param newInterpreter the interpreter to use.
    */
-  public ConstraintExpressionBuilder(ItqlInterpreter newInterpreter) {
+  public ConstraintExpressionBuilder(SableCCInterpreter newInterpreter) {
     interpreter = newInterpreter;
   }
 
@@ -121,27 +103,24 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    * @throws URISyntaxException if the constraint contains a resource whose
    *     text violates <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  public ConstraintExpression getConstraintExpression() throws QueryException,
-      URISyntaxException {
+  public ConstraintExpression getConstraintExpression() throws QueryException, URISyntaxException {
     try {
       ConstraintExpression tmpExpression = constraintExpression;
 
       if (uriException != null) {
         throw uriException;
-      }
-      else if (queryException != null) {
+      } else if (queryException != null) {
         throw queryException;
-      }
-      else {
+      } else {
         return tmpExpression;
       }
-    }
-    finally {
+    } finally {
       uriException = null;
       queryException = null;
       constraintExpression = null;
     }
   }
+
 
   /**
    * Sets constraint expression.  Will set URIException or QueryException if
@@ -149,40 +128,28 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param newConstraintExpression the new expression.
    */
-  private void setConstraintExpression(ConstraintExpression
-      newConstraintExpression) {
+  private void setConstraintExpression(ConstraintExpression newConstraintExpression) {
     constraintExpression = newConstraintExpression;
   }
 
-  public void caseAConstraintConstraintFactor(
-      AConstraintConstraintFactor rawConstraintFactor) {
 
-    // log that we've got a constraint constraint factor
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found constraint constraint factor " + rawConstraintFactor);
-    }
+  public void caseAConstraintConstraintFactor(AConstraintConstraintFactor rawConstraintFactor) {
+
+    if (logger.isDebugEnabled()) logger.debug("Found constraint constraint factor " + rawConstraintFactor);
 
     // get the constraint
-    PConstraint constraint =
-        ((AConstraintConstraintFactor) rawConstraintFactor).getConstraint();
+    PConstraint constraint = ((AConstraintConstraintFactor)rawConstraintFactor).getConstraint();
 
-    // log that we've found a constraint
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found constraint " + constraint + ", resolving components");
-    }
+    if (logger.isDebugEnabled()) logger.debug("Found constraint " + constraint + ", resolving components");
 
     // get the constraint's components
     try {
       Constraint tmpConstraint;
 
-      ConstraintElement subject =
-          toConstraintElement(((AConstraint) constraint).getSubject());
-      ConstraintElement predicate =
-          toConstraintElement(((AConstraint) constraint).getPredicate());
-      ConstraintElement object =
-          toConstraintElement(((AConstraint) constraint).getObject());
+      ConstraintElement subject = toConstraintElement(((AConstraint)constraint).getSubject());
+      ConstraintElement predicate = toConstraintElement(((AConstraint)constraint).getPredicate());
+      ConstraintElement object = toConstraintElement(((AConstraint)constraint).getObject());
 
-      // log the components we've found
       if (logger.isDebugEnabled()) {
         logger.debug("Found subject " + subject);
         logger.debug("Found predicate " + predicate);
@@ -190,20 +157,15 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       }
 
       // check for an IN clause
-      AInClause inClause = (AInClause) ((AConstraint) constraint).getInClause();
+      AInClause inClause = (AInClause)((AConstraint)constraint).getInClause();
 
       // bundle them into a constraint (order is probably important here...?)
       if (inClause != null) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Found model " + inClause.getElement());
-        }
+        if (logger.isDebugEnabled()) logger.debug("Found model " + inClause.getElement());
 
-        ConstraintElement model =
-            toConstraintElement(inClause.getElement());
-        tmpConstraint =
-            ConstraintFactory.newConstraint(subject, predicate, object, model);
-      }
-      else {
+        ConstraintElement model = toConstraintElement(inClause.getElement());
+        tmpConstraint = ConstraintFactory.newConstraint(subject, predicate, object, model);
+      } else {
         tmpConstraint = ConstraintFactory.newConstraint(subject, predicate, object);
       }
 
@@ -213,72 +175,55 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       }
 
       // Set new value.
-      if (logger.isDebugEnabled()) {
-        logger.debug("Setting constraint: " + tmpConstraint);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Setting constraint: " + tmpConstraint);
 
       setConstraintExpression(tmpConstraint);
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Handle a constraint expression.  Will set URIException or QueryException if
    * an exception occurs.
    *
-   * @param rawConstraintFactor the expression to create a constraint expression
-   *   from.
+   * @param rawConstraintFactor the expression to create a constraint expression from.
    */
-  public void caseAExpressionConstraintFactor(
-      AExpressionConstraintFactor rawConstraintFactor) {
+  public void caseAExpressionConstraintFactor(AExpressionConstraintFactor rawConstraintFactor) {
 
     try {
       ConstraintExpression tmpConstraintExpression;
 
-      // log that we've got an expression constraint factor
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found factor expression constraint factor " +
-            rawConstraintFactor);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found factor expression constraint factor " + rawConstraintFactor);
 
       // get the constraint expression
       PConstraintExpression embeddedConstraintExpression =
-          ((AExpressionConstraintFactor) rawConstraintFactor).
-          getConstraintExpression();
+          ((AExpressionConstraintFactor)rawConstraintFactor).getConstraintExpression();
 
-      // log that we're recursing with a constraint expression
-      if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with constraint factor " +
-            embeddedConstraintExpression);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Recursing with constraint factor " + embeddedConstraintExpression);
 
       // build the constraint expression
-      ConstraintExpressionBuilder builder =
-          new ConstraintExpressionBuilder(interpreter);
+      ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
       embeddedConstraintExpression.apply((Switch) builder);
 
       tmpConstraintExpression = builder.getConstraintExpression();
 
       // handle negated expressions
       if (((AExpressionConstraintFactor) rawConstraintFactor).getExclude() != null) {
-        tmpConstraintExpression = new ConstraintNegation(
-            (Constraint) tmpConstraintExpression);
+        tmpConstraintExpression = new ConstraintNegation((Constraint)tmpConstraintExpression);
       }
 
       setConstraintExpression(tmpConstraintExpression);
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Handle a transitive constraint.  Will set URIException or QueryException if
@@ -286,22 +231,16 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param rawConstraintFactor a transitive constraint.
    */
-  public void caseATransitiveConstraintFactor(
-      ATransitiveConstraintFactor rawConstraintFactor) {
+  public void caseATransitiveConstraintFactor(ATransitiveConstraintFactor rawConstraintFactor) {
 
     try {
       ConstraintExpression tmpConstraintExpression = null;
 
-      // log that we've found a transitive predicate expression
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found factor of transitive expression" +
-            rawConstraintFactor);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found factor of transitive expression" + rawConstraintFactor);
 
       // get the constraint transitive
       PTransitiveClause embeddedTransitiveConstraint =
-          ((ATransitiveConstraintFactor) rawConstraintFactor).
-          getTransitiveClause();
+          ((ATransitiveConstraintFactor) rawConstraintFactor).getTransitiveClause();
 
       if (embeddedTransitiveConstraint instanceof ATransitive1TransitiveClause) {
 
@@ -309,39 +248,32 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
         tmpConstraintExpression = new SingleTransitiveConstraint(
             buildConstraint(((ATransitive1TransitiveClause)
             embeddedTransitiveConstraint).getConstraint()));
-      }
-      else if (embeddedTransitiveConstraint instanceof ATransitive2TransitiveClause) {
+      } else if (embeddedTransitiveConstraint instanceof ATransitive2TransitiveClause) {
 
         // build the transitive constraint expression
-        ATransitive2TransitiveClause tmpClause = (ATransitive2TransitiveClause)
-            embeddedTransitiveConstraint;
+        ATransitive2TransitiveClause tmpClause = (ATransitive2TransitiveClause)embeddedTransitiveConstraint;
         Constraint constraint1 = buildConstraint(tmpClause.getConstraint1());
         Constraint constraint2 = buildConstraint(tmpClause.getConstraint2());
-        tmpConstraintExpression = new TransitiveConstraint(constraint1,
-            constraint2);
+        tmpConstraintExpression = new TransitiveConstraint(constraint1, constraint2);
       }
 
       setConstraintExpression(tmpConstraintExpression);
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
 
-   /*
+
+  /**
     * Handle a existential compound constraint.
     */
-   public void caseAExistentialConstraintFactor(
-       AExistentialConstraintFactor rawFactor) {
-    if (logger.isDebugEnabled()) {
-       logger.debug("Found existential - constraint factor " + rawFactor);
-     }
+   public void caseAExistentialConstraintFactor(AExistentialConstraintFactor rawFactor) {
+     if (logger.isDebugEnabled()) logger.debug("Found existential - constraint factor " + rawFactor);
      try {
        setConstraintExpression(
-         buildExistential(
+           buildExistential(
            interpreter.nextAnonVariable(),
            rawFactor.getExistsExpression(),
            (AInClause)rawFactor.getInClause()));
@@ -352,17 +284,15 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
      }
    }
 
-   /*
+
+   /**
     * Handle a concrete compound constraint.
     */
-   public void caseACompoundConstraintFactor(
-       ACompoundConstraintFactor rawFactor) {
-     if (logger.isDebugEnabled()) {
-       logger.debug("Found compound - constraint factor " + rawFactor);
-     }
+   public void caseACompoundConstraintFactor(ACompoundConstraintFactor rawFactor) {
+     if (logger.isDebugEnabled()) logger.debug("Found compound - constraint factor " + rawFactor);
      try {
        setConstraintExpression(
-         buildExistential(
+           buildExistential(
            toConstraintElement(rawFactor.getSubject()),
            rawFactor.getExistsExpression(),
            (AInClause)rawFactor.getInClause()));
@@ -374,35 +304,25 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    }
            
    public ConstraintExpression buildExistential(ConstraintElement subject, PExistsExpression rawTerm, AInClause in)
-       throws URISyntaxException, QueryException
-   {
-     if (logger.isDebugEnabled()) {
-       logger.debug("building existential subject: " + subject + " term.class: " + rawTerm.getClass());
-     }
+       throws URISyntaxException, QueryException {
+
+     if (logger.isDebugEnabled()) logger.debug("building existential subject: " + subject + " term.class: " + rawTerm.getClass());
  
      CompoundPredListBuilder builder = new CompoundPredListBuilder();
      rawTerm.apply(builder);
  
-     if (logger.isDebugEnabled()) {
-       logger.debug("CompoundPredListBuilder built: " + builder.getPredLists());
-     }
+     if (logger.isDebugEnabled()) logger.debug("CompoundPredListBuilder built: " + builder.getPredLists());
  
-     ConstraintElement model = in == null ? null : toConstraintElement(in.getElement());
+     ConstraintElement model = (in == null) ? null : toConstraintElement(in.getElement());
  
      // forall predicates in list forall objects in pred's obj-list
      //    add new constraint(s,p,o) to argList.
-     List argList = new ArrayList();
+     List<ConstraintExpression> argList = new ArrayList<ConstraintExpression>();
  
-     Iterator p = builder.getPredLists().iterator();
-     while (p.hasNext()) {
-       CompoundPredicate plist = (CompoundPredicate)p.next();
- 
+     for (CompoundPredicate plist: builder.getPredLists()) {
        ConstraintElement predicate = toConstraintElement(plist.getPredicate());
  
-       Iterator o = plist.getObjectList().iterator();
-       while (o.hasNext()) {
-         PElement oelem = (PElement)o.next();
- 
+       for (PElement oelem: plist.getObjectList()) {
          ConstraintElement object = toConstraintElement(oelem);
  
          if (model == null) {
@@ -413,40 +333,36 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
        }
      }
  
-     if (logger.isDebugEnabled()) {
-       logger.debug("Existential term = and(" + argList + ")");
-     }
+     if (logger.isDebugEnabled()) logger.debug("Existential term = and(" + argList + ")");
  
      return new ConstraintConjunction(argList);
    }
-                
-  /**
+
+
+   /**
    * Handle a walk constraint.
    *
    * @param rawConstraintFactor a walk constraint.
    */
-  public void caseAWalkConstraintFactor(AWalkConstraintFactor
-      rawConstraintFactor) {
+  public void caseAWalkConstraintFactor(AWalkConstraintFactor rawConstraintFactor) {
 
     try {
-
       // Build the walk constraint
-      AWalk1WalkClause embeddedWalkConstraint = (AWalk1WalkClause)
-          ((AWalkConstraintFactor) rawConstraintFactor).getWalkClause();
+      AWalk1WalkClause embeddedWalkConstraint =
+          (AWalk1WalkClause)((AWalkConstraintFactor)rawConstraintFactor).getWalkClause();
 
       ConstraintExpression tmpConstraintExpression = new WalkConstraint(
           buildConstraint(embeddedWalkConstraint.getConstraint1()),
           buildConstraint(embeddedWalkConstraint.getConstraint2()));
 
       setConstraintExpression(tmpConstraintExpression);
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Handle an OR constraint.  Will set URIException or QueryException if
@@ -454,44 +370,31 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param rawConstraintExpression an OR constraint.
    */
-  public void caseAOrConstraintExpression(
-      AOrConstraintExpression rawConstraintExpression) {
+  public void caseAOrConstraintExpression(AOrConstraintExpression rawConstraintExpression) {
 
     try {
-
-      // log that we've found a OR constraint expression
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found OR constraint expression " +
-            rawConstraintExpression);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found OR constraint expression " +rawConstraintExpression);
 
       // get the OR constraint expression
       PConstraintExpression orConstraintExpression =
-          ((AOrConstraintExpression) rawConstraintExpression).
-          getConstraintExpression();
+          ((AOrConstraintExpression)rawConstraintExpression).getConstraintExpression();
 
       // get the constraint term
       PConstraintTerm constraintTerm =
-          ((AOrConstraintExpression) rawConstraintExpression).getConstraintTerm();
+          ((AOrConstraintExpression)rawConstraintExpression).getConstraintTerm();
 
-      // log that we've found the operands of the disjunction
-      if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with constraint expression " +
-            orConstraintExpression + " & constraint term " +
-            constraintTerm);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Recursing with constraint expression " +
+            orConstraintExpression + " & constraint term " + constraintTerm);
 
       // Construct a builder to process the constraints.
-      ConstraintExpressionBuilder builder =
-          new ConstraintExpressionBuilder(interpreter);
+      ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
 
       // get the LHS and RHS operands of the disjunction
-      orConstraintExpression.apply((Switch) builder);
+      orConstraintExpression.apply((Switch)builder);
       ConstraintExpression lhs = builder.getConstraintExpression();
-      constraintTerm.apply((Switch) builder);
+      constraintTerm.apply((Switch)builder);
       ConstraintExpression rhs = builder.getConstraintExpression();
 
-      // log that we've resolved the operands
       if (logger.isDebugEnabled()) {
         logger.debug("Resolved LHS disjunction operand " + lhs);
         logger.debug("Resolved RHS disjunction operand " + rhs);
@@ -499,11 +402,9 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
       // apply the disjunction
       setConstraintExpression(new ConstraintDisjunction(lhs, rhs));
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
@@ -514,42 +415,30 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param rawConstraintExpression a term constraint.
    */
-  public void caseATermConstraintExpression(
-      ATermConstraintExpression rawConstraintExpression) {
+  public void caseATermConstraintExpression(ATermConstraintExpression rawConstraintExpression) {
 
     try {
-
-      // log that we've got a term constraint expression
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found term constraint expression " +
-            rawConstraintExpression);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found term constraint expression " + rawConstraintExpression);
 
       // get the constraint term
       PConstraintTerm constraintTerm =
-          ((ATermConstraintExpression) rawConstraintExpression).
-          getConstraintTerm();
+          ((ATermConstraintExpression) rawConstraintExpression).getConstraintTerm();
 
-      // log that we're about to resolve the term into an expression
-      if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with constraint term " + constraintTerm);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Recursing with constraint term " + constraintTerm);
 
       // Create a new builder.
-      ConstraintExpressionBuilder builder =
-          new ConstraintExpressionBuilder(interpreter);
-      constraintTerm.apply((Switch) builder);
+      ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
+      constraintTerm.apply((Switch)builder);
 
       // drill down into the constraint term
       setConstraintExpression(builder.getConstraintExpression());
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Handle a dterm constraint term.  Will set URIException or QueryException
@@ -557,42 +446,34 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param rawConstraintTerm a dterm constraint term.
    */
-  public void caseADtermConstraintTerm(
-      ADtermConstraintTerm rawConstraintTerm) {
+  public void caseADtermConstraintTerm(ADtermConstraintTerm rawConstraintTerm) {
 
     try {
-
-      // log that we've got a dterm constraint term
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found dterm contraint term " + rawConstraintTerm);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found dterm contraint term " + rawConstraintTerm);
 
       // get the constraint factor
       PConstraintDterm constraintDterm =
-          ((ADtermConstraintTerm) rawConstraintTerm).getConstraintDterm();
+          ((ADtermConstraintTerm)rawConstraintTerm).getConstraintDterm();
 
       ConstraintExpression tmpConstraintExpression = null;
 
       // drill down into the constraint factor
-      ConstraintExpressionBuilder builder =
-          new ConstraintExpressionBuilder(interpreter);
-      constraintDterm.apply((Switch) builder);
+      ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
+      constraintDterm.apply((Switch)builder);
       tmpConstraintExpression = builder.getConstraintExpression();
       setConstraintExpression(tmpConstraintExpression);
 
-      // log that we're recursing with a constraint factor
       if (logger.isDebugEnabled()) {
         logger.debug("Recursing with constraint factor " + constraintDterm);
         logger.debug("Got: " + tmpConstraintExpression);
       }
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Handle a AND constraint term.  Will set URIException or QueryException if
@@ -604,10 +485,7 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
     try {
 
-      // log that we've got a AND constraint term
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found AND contraint term " + rawConstraintTerm);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found AND contraint term " + rawConstraintTerm);
 
       // get the constraint term
       PConstraintTerm constraintTerm =
@@ -617,24 +495,19 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       PConstraintDterm constraintDterm =
           ((AAndConstraintTerm) rawConstraintTerm).getConstraintDterm();
 
-      // log that we've found the operands of the disjunction
-      if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with constraint term " + constraintTerm +
+      if (logger.isDebugEnabled()) logger.debug("Recursing with constraint term " + constraintTerm +
             " & constraint factor " + constraintDterm);
-      }
 
-      ConstraintExpressionBuilder builder =
-          new ConstraintExpressionBuilder(interpreter);
+      ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
 
       // get the LHS and RHS operands of the conjunction
-      constraintTerm.apply((Switch) builder);
+      constraintTerm.apply((Switch)builder);
       ConstraintExpression lhs = builder.getConstraintExpression();
 
       // Create another constraint builder and assign to RHS.
       constraintDterm.apply((Switch) builder);
       ConstraintExpression rhs = builder.getConstraintExpression();
 
-      // log that we've resolved the operands
       if (logger.isDebugEnabled()) {
         logger.debug("Resolved LHS conjunction operand " + lhs);
         logger.debug("Resolved RHS conjunction operand " + rhs);
@@ -642,14 +515,14 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
       // apply the conjunction
       setConstraintExpression(new ConstraintConjunction(lhs, rhs));
-    }
-    catch (URISyntaxException use) {
+
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Handle a factor constraint dterm.  Will set URIException or QueryException
@@ -657,12 +530,9 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *
    * @param rawConstraintTerm a factor constraint dterm.
    */
-  public void caseAFactorConstraintDterm(
-      AFactorConstraintDterm rawConstraintTerm) {
+  public void caseAFactorConstraintDterm(AFactorConstraintDterm rawConstraintTerm) {
 
     try {
-
-      // log that we've got a factor constraint term
       logger.debug("Found factor contraint term " + rawConstraintTerm);
 
       // get the constraint factor
@@ -678,16 +548,13 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       tmpConstraintExpression = builder.getConstraintExpression();
       setConstraintExpression(tmpConstraintExpression);
 
-      // log that we're recursing with a constraint factor
       if (logger.isDebugEnabled()) {
         logger.debug("Recursing with constraint factor " + constraintFactor);
         logger.debug("Got: " + tmpConstraintExpression);
       }
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
@@ -699,14 +566,10 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    * @param rawConstraintTerm a MINUS constraint dterm.
    */
   public void caseAMinusConstraintDterm(AMinusConstraintDterm rawConstraintTerm) {
-    // TODO
 
     try {
 
-      // log that we've got a MINUS constraint dterm
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found MINUS contraint dterm " + rawConstraintTerm);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Found MINUS contraint dterm " + rawConstraintTerm);
 
       // get the minuend expression
       PConstraintDterm minuendExpr =
@@ -716,24 +579,20 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       PConstraintFactor subtrahendExpr =
           ((AMinusConstraintDterm) rawConstraintTerm).getSubtrahend();
 
-      // log that we've found the operands of the subtraction
       if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with minuend " + minuendExpr +
-            " & subtrahend " + subtrahendExpr);
+        logger.debug("Recursing with minuend " + minuendExpr + " & subtrahend " + subtrahendExpr);
       }
 
-      ConstraintExpressionBuilder builder =
-          new ConstraintExpressionBuilder(interpreter);
+      ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
 
       // get the LHS and RHS operands of the conjunction
-      minuendExpr.apply((Switch) builder);
+      minuendExpr.apply((Switch)builder);
       ConstraintExpression minuend = builder.getConstraintExpression();
 
       // Create another constraint builder and assign to RHS.
-      subtrahendExpr.apply((Switch) builder);
+      subtrahendExpr.apply((Switch)builder);
       ConstraintExpression subtrahend = builder.getConstraintExpression();
 
-      // log that we've resolved the operands
       if (logger.isDebugEnabled()) {
         logger.debug("Resolved minuend operand " + minuend);
         logger.debug("Resolved subtrahend operand " + subtrahend);
@@ -741,14 +600,13 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
       // apply the conjunction
       setConstraintExpression(new ConstraintDifference(minuend, subtrahend));
-    }
-    catch (URISyntaxException use) {
+    } catch (URISyntaxException use) {
       uriException = use;
-    }
-    catch (QueryException qe) {
+    } catch (QueryException qe) {
       queryException = qe;
     }
   }
+
 
   /**
    * Helper method used to build up a Constraint object from a SableCC
@@ -761,10 +619,7 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
   Constraint buildConstraint(PConstraint pconstraint) throws QueryException,
       URISyntaxException {
 
-    // log that we've found a constraint
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found constraint " + pconstraint + ", resolving components");
-    }
+    if (logger.isDebugEnabled()) logger.debug("Found constraint " + pconstraint + ", resolving components");
 
     // get the constraint's components
     ConstraintElement subject =
@@ -774,7 +629,6 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
     ConstraintElement object =
         toConstraintElement(((AConstraint) pconstraint).getObject());
 
-    // log the components we've found
     if (logger.isDebugEnabled()) {
       logger.debug("Found subject " + subject);
       logger.debug("Found predicate " + predicate);
@@ -782,13 +636,14 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
     }
 
     // check for an IN - this is illegal
-    if (((AConstraint) pconstraint).getInClause() != null) {
+    if (((AConstraint)pconstraint).getInClause() != null) {
       throw new QueryException("Illegal in clause on transitive constraint.");
     }
 
     // bundle them into a constraint (order is probably important here...?)
     return ConstraintFactory.newConstraint(subject, predicate, object);
   }
+
 
   /**
    * Constructs a {@link org.mulgara.query.ConstraintElement} from a
@@ -805,18 +660,12 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
    *      conform to
    *      <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC 2396</a>
    */
-  private ConstraintElement toConstraintElement(PElement element) throws
-      QueryException, URISyntaxException {
+  private ConstraintElement toConstraintElement(PElement element) throws QueryException, URISyntaxException {
 
     // validate the element parameter
-    if (element == null) {
-      throw new IllegalArgumentException("Null \"element\" parameter");
-    }
+    if (element == null) throw new IllegalArgumentException("Null \"element\" parameter");
 
-    // log what we're doing
-    if (logger.isDebugEnabled()) {
-      logger.debug("Resolving " + element + "to a constraint element");
-    }
+    if (logger.isDebugEnabled()) logger.debug("Resolving " + element + "to a constraint element");
 
     // create a constraint element to return
     ConstraintElement constraintElement = null;
@@ -828,21 +677,18 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       PVariable rawVariable = ((AVariableElement) element).getVariable();
       String variableName = ((AVariable) rawVariable).getIdentifier().getText();
 
-      // log what we're doing
-      if (logger.isDebugEnabled()) {
-        logger.debug("Resolved " + element + " to variable " + variableName);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Resolved " + element + " to variable " + variableName);
 
       // create a new variable
       constraintElement = new Variable(variableName);
-    }
-    else if (element instanceof AResourceElement) {
+
+    } else if (element instanceof AResourceElement) {
 
       // create a new resource
       constraintElement = new URIReferenceImpl(interpreter.toURI(
           ((AResourceElement) element).getResource()));
-    }
-    else if (element instanceof ALiteralElement) {
+
+    } else if (element instanceof ALiteralElement) {
 
       // create a new literal
       constraintElement = interpreter.toLiteralImpl(((ALiteralElement) element).

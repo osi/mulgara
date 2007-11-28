@@ -74,6 +74,7 @@ public class CameraPhoneOntologyApp {
    * @param onto Ontology
    * @throws Exception
    */
+  @SuppressWarnings("unchecked")
   public void loadCameraOntology(Ontology onto) throws Exception {
 
     System.out.println("Loading Camera Ontology");
@@ -90,7 +91,7 @@ public class CameraPhoneOntologyApp {
     Concept phone = onto.createConcept("Phone");
     // give it a property/relation of GSM or CDMA
     Relation standard = onto.createRelation("standard");
-    Set standards = new HashSet();
+    Set<String> standards = new HashSet<String>();
     standards.add("GSM");
     standards.add("CDMA");
     phone.setRestrictionOn(standard, standards, 1, 2); // 1=minCard, 2=maxCard
@@ -106,30 +107,24 @@ public class CameraPhoneOntologyApp {
 
     // Show super classes
     System.out.println("SUPER CLASSES");
-    Concept superConcept = null;
-    Collection superConcepts = cameraPhone.getSuperConcepts(true);
+    Collection<Concept> superConcepts = cameraPhone.getSuperConcepts(true);
 
     // show number of superclasses
-    System.out
-        .println("Number of superConcepts found: " + superConcepts.size());
+    System.out.println("Number of superConcepts found: " + superConcepts.size());
 
     // test a phone is our superclass
     System.out.println("Found phone concept in list of super concepts: "
         + superConcepts.contains(phone));
 
-    for (Iterator sc = superConcepts.iterator(); sc.hasNext();) {
-      superConcept = (Concept) sc.next();
-
-      System.out.println(superConcept.getId());
+    for (Concept sc: superConcepts) {
+      System.out.println(sc.getId());
     }
 
     // show properties, including super properties 'true'
     System.out.println("PROPERTIES");
 
-    for (Iterator ri = cameraPhone.definedRelations(true); ri.hasNext();) {
-      Relation relation = (Relation) ri.next();
-
-      System.out.println(relation.getId());
+    for (Iterator<Relation> ri = cameraPhone.definedRelations(true); ri.hasNext();) {
+      System.out.println(ri.next().getId());
     }
 
     // test camera phones have 'standard'
@@ -146,6 +141,7 @@ public class CameraPhoneOntologyApp {
    * @param ontology Ontology
    * @throws Exception
    */
+  @SuppressWarnings("unchecked")
   public void populateOntology(Ontology ontology) throws Exception {
 
     // Retrieve the CameraPhone concept
@@ -176,39 +172,32 @@ public class CameraPhoneOntologyApp {
     System.out.println("Listing standards for mobile phone:");
 
     // Iterate through the standards of the phone
-    for (Iterator iterator = mobile.list(standardRelation).iterator(); iterator
-        .hasNext();) {
-
+    for (Object obj: mobile.list(standardRelation)) {
       // Print the next standard
-      System.out.println(iterator.next());
+      System.out.println(obj);
     }
 
     System.out.println("Listing lenses for mobile phone:");
 
     // Iterate through the lenses of the phone
-    for (Iterator iterator = mobile.list(lensRelation).iterator(); iterator
-        .hasNext();) {
-
+    for (Object obj: mobile.list(lensRelation)) {
       // Print the next lens
-      System.out.println(iterator.next());
+      System.out.println(obj);
     }
 
     System.out.println("Listing lenses for camera:");
 
     // Iterate through the lenses of the camera
-    for (Iterator iterator = camera.list(lensRelation).iterator(); iterator
-        .hasNext();) {
-
+    for (Object obj: camera.list(lensRelation)) {
       // Print the next lens
-      System.out.println(iterator.next());
+      System.out.println(obj);
     }
 
     System.out.println("All Things:");
 
     // Iterate through all 'Things' in the ontology framework
-    for (Iterator iterator = ontology.things(); iterator.hasNext();) {
-
-      System.out.println("\t" + ((Thing) iterator.next()).getId());
+    for (Iterator<Thing> thing = ontology.things(); thing.hasNext();) {
+      System.out.println("\t" + (thing.next()).getId());
     }
   }
 
@@ -267,7 +256,7 @@ public class CameraPhoneOntologyApp {
     if (session.modelExists(graph)) {
       session.removeModel(graph);
     }
-    session.createModel(graph, new URI(Mulgara.NAMESPACE + "Model"));
+    session.createModel(graph, URI.create(Mulgara.NAMESPACE + "Model"));
     return JRDFGraphFactory.newClientGraph(getServerURI(), graph);
   }
 

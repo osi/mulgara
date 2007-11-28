@@ -51,7 +51,7 @@ import java.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ConstraintConjunction extends ConstraintOperation {
+public class ConstraintConjunction extends ConstraintFilteredOperation {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -71,27 +71,24 @@ public class ConstraintConjunction extends ConstraintOperation {
    * @param lhs a non-<code>null</code> constraint expression
    * @param rhs another non-<code>null</code> constraint expression
    */
-  public ConstraintConjunction(ConstraintExpression lhs,
-      ConstraintExpression rhs) {
+  public ConstraintConjunction(ConstraintExpression lhs, ConstraintExpression rhs) {
     super(lhs, rhs);
   }
 
   /**
-   * CONSTRUCTOR ConstraintConjunction TO DO
-   *
-   * @param elements PARAMETER TO DO
+   * Build a conjunction with a {@link List} of several children constraint expressions
+   * @param elements a {@link List} of constraint expressions.
    */
-  public ConstraintConjunction(List elements) {
+  public ConstraintConjunction(List<ConstraintExpression> elements) {
     super(elements);
   }
 
   /**
-   * CONSTRUCTOR ConstraintConjunction TO DO
-   *
-   * @param elements PARAMETER TO DO
+   * Build a conjunction with a {@link Collection} of several children constraint expressions
+   * @param elements a {@link Collection} of {@link ConstraintExpression}s.
    */
-  public ConstraintConjunction(Collection elements) {
-    super(new ArrayList(elements));
+  public ConstraintConjunction(Collection<ConstraintExpression> elements) {
+    super(new ArrayList<ConstraintExpression>(elements));
   }
 
 
@@ -102,7 +99,7 @@ public class ConstraintConjunction extends ConstraintOperation {
    */
   public ConstraintConjunction getFiltered() {
 
-    List elements = new ArrayList(this.getElements());
+    List<ConstraintExpression> elements = new ArrayList<ConstraintExpression>(this.getElements());
     filter(elements);
 
     return new ConstraintConjunction(elements);
@@ -115,45 +112,6 @@ public class ConstraintConjunction extends ConstraintOperation {
    * @return The Name value
    */
   String getName() {
-
     return " and ";
-  }
-
-
-  /**
-   * METHOD TO DO
-   *
-   * @param product PARAMETER TO DO
-   */
-  private void filter(List product) {
-
-    Set o1 = new HashSet();
-
-    // Variables which occur at least once.
-    Set o2 = new HashSet();
-
-    // Variables which occur two or more times.
-    // Get a set of variables which occur two or more times.
-    for (Iterator pIt = product.iterator(); pIt.hasNext(); ) {
-
-      ConstraintExpression oc = (ConstraintExpression) pIt.next();
-      Set ocVars = oc.getVariables();
-      Set vars = new HashSet(ocVars);
-      vars.retainAll(o1);
-      o2.addAll(vars);
-      o1.addAll(ocVars);
-    }
-
-    for (Iterator pIt = product.iterator(); pIt.hasNext(); ) {
-
-      ConstraintExpression oc = (ConstraintExpression) pIt.next();
-      Set vars = new HashSet(oc.getVariables());
-      vars.retainAll(o2);
-
-      if (vars.isEmpty()) {
-
-        pIt.remove();
-      }
-    }
   }
 }

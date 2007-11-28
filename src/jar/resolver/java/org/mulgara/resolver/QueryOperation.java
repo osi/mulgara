@@ -29,11 +29,10 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 // Third party packages
-import org.apache.log4j.Logger;
+// import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.*;
@@ -47,12 +46,6 @@ import org.mulgara.server.Session;
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:24 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
  *   Technology, Inc</a>
  *
@@ -60,17 +53,11 @@ import org.mulgara.server.Session;
  */
 class QueryOperation implements Operation
 {
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(QueryOperation.class.getName());
+  /** Logger. */
+  // private static final Logger logger = Logger.getLogger(QueryOperation.class.getName());
 
   private final Query query;
-  private final List queryList;
-  private final DatabaseSession databaseSession;
+  private final List<Query> queryList;
 
   /**
    * Answer to the query, or <code>null</code> if the {@link #execute} method
@@ -82,7 +69,7 @@ class QueryOperation implements Operation
    * List of {@link Answer}s to a list of queries, or <code>null</code> if the
    * {@link #execute} method hasn't yet been invoked.
    */
-  private List answerList = null;
+  private List<Answer> answerList = null;
 
   //
   // Constructor
@@ -111,7 +98,6 @@ class QueryOperation implements Operation
     // Initialize fields
     this.query           = query;
     this.queryList       = null;
-    this.databaseSession = databaseSession;
   }
 
   /**
@@ -123,7 +109,7 @@ class QueryOperation implements Operation
    * @throws IllegalArgumentException if <var>queryList</var> or
    *   <var>databaseSession</var> are <code>null</code>
    */
-  QueryOperation(List queryList, DatabaseSession databaseSession)
+  QueryOperation(List<Query> queryList, DatabaseSession databaseSession)
   {
     // Validate "query" parameter
     if (queryList == null) {
@@ -138,7 +124,6 @@ class QueryOperation implements Operation
     // Initialize fields
     this.query           = null;
     this.queryList       = queryList;
-    this.databaseSession = databaseSession;
   }
 
   //
@@ -158,9 +143,9 @@ class QueryOperation implements Operation
     else {
       assert queryList != null;
 
-      answerList = new ArrayList(queryList.size());
-      for (Iterator i = queryList.iterator(); i.hasNext();) {
-        answerList.add(operationContext.doQuery((Query) i.next()));
+      answerList = new ArrayList<Answer>(queryList.size());
+      for (Query query: queryList) {
+        answerList.add(operationContext.doQuery(query));
       }
     }
   }
@@ -181,8 +166,7 @@ class QueryOperation implements Operation
    * @return the answer to the query, never <code>null</code>
    * @throws IllegalStateException  if {@link #execute} hasn't yet been called
    */
-  Answer getAnswer()
-  {
+  Answer getAnswer() {
     if (answer == null) {
       throw new IllegalStateException("Answer not available before execution.");
     }
@@ -195,8 +179,7 @@ class QueryOperation implements Operation
    *   <code>null</code>
    * @throws IllegalStateException  if {@link #execute} hasn't yet been called
    */
-  List getAnswerList()
-  {
+  List<Answer> getAnswerList() {
     if (answerList == null) {
       throw new IllegalStateException("Answers not available before execution.");
     }

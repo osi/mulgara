@@ -43,7 +43,6 @@ package org.mulgara.resolver.relational;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.net.URISyntaxException;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -52,7 +51,6 @@ import org.jrdf.vocabulary.RDF;
 // Locally written packages
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.resolver.spi.*;
 
 /**
@@ -83,22 +81,9 @@ public class RelationalResolverFactory implements ResolverFactory {
   /** Node id for the relational model type */
   private long relationalModelTypeNode;
 
-  /** The preallocated local node representing FileSystems */
-  private long modelType;
-
   /** The URL associated with the Relational Model type.  */
-  private static final URI modelTypeURI;
+  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "RelationalModel");
 
-  static {
-    // Attempt to create the URI which represents our file system model type
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "RelationalModel");
-    } catch (URISyntaxException e) {
-
-      // We should never get this
-      throw new Error("Bad hardcoded Relational Model URI", e);
-    }
-  }
 
   /**
    * The preallocated local node representing the system model and it's type(<code>#</code>).
@@ -120,9 +105,6 @@ public class RelationalResolverFactory implements ResolverFactory {
     if (initializer == null) {
       throw new IllegalArgumentException("Null 'initializer' parameter");
     }
-
-    // Set the model type
-    modelType = initializer.getSystemModelType();
 
     // Set the system model and its type
     systemModel = initializer.getSystemModel();

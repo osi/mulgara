@@ -46,8 +46,10 @@ import java.net.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Logger;
-import junit.framework.*;          // JUnit
+// import org.apache.log4j.Logger;
+import junit.framework.Test;
+import junit.framework.TestCase;          // JUnit
+import junit.framework.TestSuite;
 
 // Local packages
 import org.mulgara.query.ConstraintElement;
@@ -63,8 +65,8 @@ import org.mulgara.util.NVPair;
 
 public class ConjunctiveTransformerUnitTest extends TestCase {
 
-  /** Logger */
-  private static final Logger logger = Logger.getLogger(ConjunctiveTransformerUnitTest.class.getName());
+  // /** Logger */
+  // private static final Logger logger = Logger.getLogger(ConjunctiveTransformerUnitTest.class.getName());
 
   private static final URI matchModelType;
   private static final URI nomatchModelType;
@@ -125,11 +127,12 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
   private static final ConjunctiveTransformer transformer = 
       new TestConjunctiveTransformer(matchModelType);
 
+  @SuppressWarnings("unchecked")
   private static final SymbolicTransformationContext context = 
       new TestSymbolicTransformationContext(NVPair.nvPairsToMap(new NVPair[] {
-          new NVPair(matchModel1, matchModelType),
-          new NVPair(matchModel2, matchModelType),
-          new NVPair(nomatchModel, nomatchModelType),
+          new NVPair<URI,URI>(matchModel1, matchModelType),
+          new NVPair<URI,URI>(matchModel2, matchModelType),
+          new NVPair<URI,URI>(nomatchModel, nomatchModelType),
       }));
 
 
@@ -181,7 +184,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
   public void testSingleMatch() throws Exception {
     ConstraintExpression initial = new ConstraintImpl(v1, u1, u2, mm1);
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2]}}|C{}"),
       }));
 
@@ -193,7 +196,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testStraightConj() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new ConstraintImpl(v1, u1, u2, nm1),
       }));
@@ -207,11 +210,11 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testPartialConj() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new ConstraintImpl(v1, u1, u2, mm1),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2]}}|C{}"),
       }));
@@ -224,11 +227,11 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testFullConj() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u1, u3, mm1),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}}|C{}"),
       }));
 
@@ -240,12 +243,12 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testExtendedConj() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u1, u3, mm1),
         new ConstraintImpl(v1, u1, u2, nm1),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}}|C{}"),
       }));
@@ -258,13 +261,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testNestedConj() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintConjunction(
           new ConstraintImpl(v1, u1, u3, mm1),
           new ConstraintImpl(v1, u1, u2, nm1)),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}}|C{}"),
       }));
@@ -277,7 +280,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testStraightDisj() throws Exception {
-    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new ConstraintImpl(v1, u1, u2, nm1),
       }));
@@ -291,13 +294,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testPartialDisj() throws Exception {
-    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
         new ConstraintImpl(v1, u1, u2, mm1),
       }));
-    ConstraintExpression expected = new ConstraintDisjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, nm1),
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2]}}|C{}"),
         })),
       }));
@@ -309,15 +312,15 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testFullDisj() throws Exception {
-    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u1, u3, mm1),
       }));
-    ConstraintExpression expected = new ConstraintDisjunction(Arrays.asList(new Object[] {
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2]}}|C{}"),
         })),
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:3]}}|C{}"),
         })),
       }));
@@ -330,9 +333,9 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testPartialProdSum() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
-        new ConstraintDisjunction(Arrays.asList(new Object[] {
-          new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
+        new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
             new ConstraintImpl(v1, u1, u2, mm1),
             new ConstraintImpl(v1, u1, u2, nm1),
           })),
@@ -342,13 +345,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
         new ConstraintImpl(v1, u1, u4, mm1),
       }));
 
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
-        new ConstraintDisjunction(Arrays.asList(new Object[] {
-          new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
+        new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
             new ConstraintImpl(v1, u1, u2, nm1),
             new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2]}}|C{}"),
           })),
-          new ConstraintConjunction(Arrays.asList(new Object[] {
+          new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
             new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:3]}}|C{}"),
           })),
         })),
@@ -363,25 +366,25 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testFullSumProd() throws Exception {
-    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new Object[] {
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new ConstraintImpl(v1, u2, u1, mm1),
           new ConstraintImpl(v1, u2, u3, mm1),
           new ConstraintImpl(v1, u2, u4, nm1),
         })),
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new ConstraintImpl(v1, u1, u2, mm1),
           new ConstraintImpl(v1, u1, u3, mm1),
           new ConstraintImpl(v1, u1, u4, nm1),
         })),
       }));
 
-    ConstraintExpression expected = new ConstraintDisjunction(Arrays.asList(new Object[] {
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintDisjunction(Arrays.asList(new ConstraintExpression[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new ConstraintImpl(v1, u2, u4, nm1),
           new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:1, test:uri:3]}}|C{}"),
         })),
-        new ConstraintConjunction(Arrays.asList(new Object[] {
+        new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
           new ConstraintImpl(v1, u1, u4, nm1),
           new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}}|C{}"),
         })),
@@ -395,13 +398,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testMultipleVariables() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u1, u3, mm1),
         new ConstraintImpl(v2, u4, u5, mm1),
         new ConstraintImpl(v2, u4, u6, mm1),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}, $v2={test:uri:4=[test:uri:5, test:uri:6]}}|C{}"),
       }));
 
@@ -413,7 +416,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testMultVarPlusConst() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u1, u3, mm1),
         new ConstraintImpl(v2, u4, u5, mm1),
@@ -422,7 +425,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
         new ConstraintImpl(u8, u3, u4, mm1),
         new ConstraintImpl(u8, u3, u5, mm1),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}, $v2={test:uri:4=[test:uri:5, test:uri:6]}}|C{test:uri:8={test:uri:3=[test:uri:4, test:uri:5]}, test:uri:7={test:uri:2=[test:uri:1]}}"),
       }));
 
@@ -434,7 +437,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testMultVarMultPred() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u1, mm1),
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u2, u3, mm1),
@@ -444,7 +447,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
         new ConstraintImpl(v2, u4, u7, mm1),
         new ConstraintImpl(v2, u4, u8, mm1),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:1, test:uri:2], test:uri:2=[test:uri:3, test:uri:4]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{}"),
       }));
 
@@ -456,7 +459,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testMultVarMultPredMultModel() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u1, mm1),
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u2, u3, mm1),
@@ -474,7 +477,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
         new ConstraintImpl(v2, u8, u7, mm2),
         new ConstraintImpl(v2, u8, u8, mm2),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:1, test:uri:2], test:uri:2=[test:uri:3, test:uri:4]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{}"),
         new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:8=[test:uri:7, test:uri:8], test:uri:7=[test:uri:5, test:uri:6]}}|C{}"),
       }));
@@ -487,7 +490,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   public void testMultVarMultPredMultModelPlusConst() throws Exception {
-    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression initial = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new ConstraintImpl(v1, u1, u1, mm1),
         new ConstraintImpl(v1, u1, u2, mm1),
         new ConstraintImpl(v1, u2, u3, mm1),
@@ -507,7 +510,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
         new ConstraintImpl(v2, u8, u8, mm2),
         new ConstraintImpl(u2, u4, u6, mm2),
       }));
-    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new Object[] {
+    ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:1, test:uri:2], test:uri:2=[test:uri:3, test:uri:4]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{test:uri:1={test:uri:3=[test:uri:5]}}"),
         new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:8=[test:uri:7, test:uri:8], test:uri:7=[test:uri:5, test:uri:6]}}|C{test:uri:2={test:uri:4=[test:uri:6]}}"),
       }));
@@ -526,13 +529,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     if (result instanceof ConstraintImpl) {
       assertEquals(expected, result);
     } else if (result instanceof ConstraintOperation) {
-      Collection ce = ((ConstraintOperation)expected).getElements();
-      Collection cr = ((ConstraintOperation)result).getElements();
+      Collection<ConstraintExpression> ce = ((ConstraintOperation)expected).getElements();
+      Collection<ConstraintExpression> cr = ((ConstraintOperation)result).getElements();
       assertEquals("Operation cardinality: " + result, ce.size(), cr.size());
-      Iterator ie = ce.iterator();
-      Iterator ir = cr.iterator();
+      Iterator<ConstraintExpression> ie = ce.iterator();
+      Iterator<ConstraintExpression> ir = cr.iterator();
       while (ie.hasNext()) {
-        compareResult((ConstraintExpression)ie.next(), (ConstraintExpression)ir.next());
+        compareResult(ie.next(), ir.next());
       }
     } else if (result instanceof TestConstraint) {
       assertEquals(expected, result);
@@ -544,9 +547,9 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
 
   static class TestSymbolicTransformationContext implements SymbolicTransformationContext {
-    private Map mappings;
+    private Map<URI,URI> mappings;
 
-    public TestSymbolicTransformationContext(Map mappings) {
+    public TestSymbolicTransformationContext(Map<URI,URI> mappings) {
       this.mappings = mappings;
     }
 
@@ -599,6 +602,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     }
   }
 
+  @SuppressWarnings("serial")
   static class TestConstraint implements ConstraintExpression {
     private String id;
 
@@ -606,7 +610,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
       this.id = id;
     }
 
-    public Set getVariables() {
+    public Set<Variable> getVariables() {
       return null;
     }
 

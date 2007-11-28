@@ -39,11 +39,7 @@ package org.mulgara.query.rdf;
  *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface Mulgara {
-  // FIXME: THis should not be an interface.
-
-  /**
-   * Mulgara RDF namespace.
-   */
+public class Mulgara {
+  /** Mulgara RDF namespace. */
   public final static String NAMESPACE = "http://mulgara.org/mulgara#";
 }

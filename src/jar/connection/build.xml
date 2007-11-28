@@ -19,10 +19,6 @@
   <!-- =================================================================== -->
   <path id="connection-classpath">
     <path refid="common-classpath"/>
-    <!-- FIXME: Remove iTQL JAR once the iTQL classes are moved into the iTQL package. -->
-    <fileset file="${itql.dist.dir}/${itql.jar}"/>
-    <fileset file="${query.dist.dir}/${query.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
   </path>
   <path id="connection-test-classpath">
     <path refid="connection-classpath"/>
@@ -38,7 +34,7 @@
     <delete dir="${connection.dist.dir}"/>
   </target>
 
-  <target name="connection-compile" depends="-prepare-build, server-jar" description="Compiles connection classes">
+  <target name="connection-compile" depends="-prepare-build" description="Compiles connection classes">
     <mkdir dir="${connection.obj.dir}"/>
     <mkdir dir="${connection.test.dir}"/>
     <mkdir dir="${connection.dist.dir}"/>

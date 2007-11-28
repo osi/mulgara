@@ -69,7 +69,7 @@ public class KruleLoader implements RuleLoader {
   private Session session;
 
   /** The interpreter for parsing queries. */
-  private ItqlInterpreter interpreter;
+  private TqlInterpreter interpreter;
 
   /** The rules. */
   private RuleStructure rules;
@@ -87,19 +87,19 @@ public class KruleLoader implements RuleLoader {
   private String prefixModel;
 
   /** A map of namespace names to the URIs. */
-  private Map aliases;
+  private Map<String,URI> aliases;
 
   /** Map of krule:URIReference nodes to their associated URIs. */
-  private Map uriReferences;
+  private Map<URIReference,URIReference> uriReferences;
 
   /** Map of krule:Variable nodes to their associated nodes. */
-  private Map varReferences;
+  private Map<URIReference,Variable> varReferences;
 
   /** Map of krule:Literal nodes to their associated strings. */
-  private Map literalReferences;
+  private Map<Node,Literal> literalReferences;
 
   /** Map of Constraint nodes to the associated constraint object. */
-  private Map constraintMap;
+  private Map<Node,ConstraintExpression> constraintMap;
 
   /** URI for the Krule namespace. */
   private static final String KRULE = "http://mulgara.org/owl/krule/#";
@@ -211,7 +211,7 @@ public class KruleLoader implements RuleLoader {
     newAliases();
 
     // initialize the constriant map
-    constraintMap = new HashMap();
+    constraintMap = new HashMap<Node,ConstraintExpression>();
   }
 
 
@@ -241,7 +241,7 @@ public class KruleLoader implements RuleLoader {
     this.systemModel = systemModel;
 
     // get a new interpreter
-    interpreter = new ItqlInterpreter(session, aliases);
+    interpreter = new TqlInterpreter(aliases);
 
     rules = null;
     try {
@@ -400,9 +400,9 @@ public class KruleLoader implements RuleLoader {
   private void loadQueries() throws TuplesException, QueryException, KruleStructureException, InitializerException {
     logger.debug("Loading Queries");
     // go through the rules to set their queries
-    Iterator ri = rules.getRuleIterator();
+    Iterator<Rule> ri = rules.getRuleIterator();
     while (ri.hasNext()) {
-      Rule rule = (Rule)ri.next();
+      Rule rule = ri.next();
 
       logger.debug("Reading query for rule: " + rule.getName());
       Query query;
@@ -498,7 +498,7 @@ public class KruleLoader implements RuleLoader {
    * @throws KruleStructureException When there is an error in the RDF data structure.
    * @throws InitializerException When there is an intialization error.
    */
-  private Set findAxioms() throws TuplesException, QueryException, KruleStructureException, InitializerException {
+  private Set<org.jrdf.graph.Triple> findAxioms() throws TuplesException, QueryException, KruleStructureException, InitializerException {
     logger.debug("Loading Axioms");
 
     Query query;
@@ -513,7 +513,7 @@ public class KruleLoader implements RuleLoader {
     Answer answer = session.query(query);
 
     // prepare the set of axioms
-    Set axioms = new HashSet();
+    Set<org.jrdf.graph.Triple> axioms = new HashSet<org.jrdf.graph.Triple>();
 
     try {
       Node sn = null;
@@ -557,8 +557,8 @@ public class KruleLoader implements RuleLoader {
    *
    * @return A map of aliases to their fully qualified names
    */
-  private Map newAliases() {
-    aliases = new HashMap();
+  private Map<String,URI> newAliases() {
+    aliases = new HashMap<String,URI>();
     try {
       aliases.put("rdf", new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
       aliases.put("rdfs", new URI("http://www.w3.org/2000/01/rdf-schema#"));
@@ -631,7 +631,7 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Found all URI references.");
 
     // create the mapping
-    uriReferences = new HashMap();
+    uriReferences = new HashMap<URIReference,URIReference>();
     // map each reference to the associated URI
     try {
       while (answer.next()) {
@@ -670,7 +670,7 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Found all variable references.");
 
     // create the mapping
-    varReferences = new HashMap();
+    varReferences = new HashMap<URIReference,Variable>();
     try {
       // map each reference to the associated variable
       while (answer.next()) {
@@ -709,7 +709,7 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Found all Literals.");
 
     // create the mapping
-    literalReferences = new HashMap();
+    literalReferences = new HashMap<Node,Literal>();
     try {
       // map each reference to the associated String
       while (answer.next()) {
@@ -750,7 +750,7 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Found all simple constraints.");
 
     // create a mapping of URIs to simple constraint structures
-    Map simpleConstraints = new HashMap();
+    Map<Node,Map<Node,Node>> simpleConstraints = new HashMap<Node,Map<Node,Node>>();
     try {
       // map each reference to the associated property/values
       while (answer.next()) {
@@ -767,19 +767,17 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Mapped all constraints to their property/values");
 
     // collect all property/values together into constraints
-    Iterator entries = simpleConstraints.entrySet().iterator();
-    while (entries.hasNext()) {
-      Map.Entry entry = (Map.Entry)entries.next();
+    for (Map.Entry<Node,Map<Node,Node>> entry: simpleConstraints.entrySet()) {
       // get the node in question
-      Node constraintNode = (Node)entry.getKey();
+      Node constraintNode = entry.getKey();
       // get its properties
-      Map pv = (Map)entry.getValue();
+      Map<Node,Node> pv = entry.getValue();
       // get the individual properties
-      ConstraintElement s = convertToElement((Node)pv.get(HAS_SUBJECT));
-      ConstraintElement p = convertToElement((Node)pv.get(HAS_PREDICATE));
-      ConstraintElement o = convertToElement((Node)pv.get(HAS_OBJECT));
+      ConstraintElement s = convertToElement(pv.get(HAS_SUBJECT));
+      ConstraintElement p = convertToElement(pv.get(HAS_PREDICATE));
+      ConstraintElement o = convertToElement(pv.get(HAS_OBJECT));
       // check if there is a "from" property
-      Node from = (Node)pv.get(HAS_MODEL);
+      Node from = pv.get(HAS_MODEL);
       // build the appropriate constraint
       // add it to the map
       if (from == null) {
@@ -820,10 +818,10 @@ public class KruleLoader implements RuleLoader {
     // accumulate all the constraint links and types
 
     // create a map of join constraints to the constraints that they join
-    Map constraintLinks = new HashMap();
+    Map<Node,Set<Node>> constraintLinks = new HashMap<Node,Set<Node>>();
 
     // map the join constraints to the type of join
-    Map joinTypes = new HashMap();
+    Map<Node,URIReference> joinTypes = new HashMap<Node,URIReference>();
 
     try {
       // map each reference to the associated argument and type
@@ -843,24 +841,21 @@ public class KruleLoader implements RuleLoader {
 
     logger.debug("mapping join constraint RDF nodes to join constraint objects");
     // collect all arguments together into constraints and map the node to the constraint
-    Iterator entries = constraintLinks.entrySet().iterator();
-    while (entries.hasNext()) {
-    	  // work with constraint/argument-set pair
-      Map.Entry entry = (Map.Entry)entries.next();
+    for (Map.Entry<Node,Set<Node>> entry: constraintLinks.entrySet()) {
       // get the constraint node in question
-      Node constraintNode = (Node)entry.getKey();
+      Node constraintNode = entry.getKey();
       // see if it maps to a constraint
       if (constraintMap.get(constraintNode) == null) {
         // the constraint does not exist
         // get the argument nodes
-        Set args = (Set)entry.getValue();
+        Set<Node> args = entry.getValue();
         // get the constraint's type
-        Node type = (Node)joinTypes.get(constraintNode);
+        Node type = joinTypes.get(constraintNode);
         if (type == null) {
         	  throw new KruleStructureException("No type available on join constraint");
         }
         // convert the RDF nodes to constraints
-        List constraintArgs = getConstraints(args, constraintLinks, joinTypes);
+        List<ConstraintExpression> constraintArgs = getConstraints(args, constraintLinks, joinTypes);
         ConstraintExpression joinConstraint = newJoinConstraint(type, constraintArgs);
         logger.debug("mapped " + constraintNode + " -> " + joinConstraint);
         // build the join constraint, and map the node to it
@@ -930,7 +925,7 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Retrieved all transitive constraints.");
 
     // set up a mapping of constraints to predicate/SimpleConstraint pairs
-    Map transMap = new HashMap();
+    Map<Node,Map<Node,Node>> transMap = new HashMap<Node,Map<Node,Node>>();
 
     try {
       // accumulate the transitive arguments
@@ -947,15 +942,13 @@ public class KruleLoader implements RuleLoader {
     logger.debug("Mapped all transitive properties");
 
     // build a new transconstraint for each transitive constraint node
-    Iterator it = transMap.entrySet().iterator();
-    while (it.hasNext()) {
-      Map.Entry tEntry = (Map.Entry)it.next();
-      Node constraintNode = (Node)tEntry.getKey();
-      Map arguments = (Map)tEntry.getValue();
+    for (Map.Entry<Node,Map<Node,Node>> tEntry: transMap.entrySet()) {
+      Node constraintNode = tEntry.getKey();
+      Map<Node,Node> arguments = tEntry.getValue();
       Constraint constraint;
       // build the constraint based on the arguments
       if (arguments.size() == 1) {
-        Node sc = (Node)arguments.get(TRANSITIVE_ARGUMENT);
+        Node sc = arguments.get(TRANSITIVE_ARGUMENT);
         if (sc == null) {
           throw new KruleStructureException("Transitive argument not correct");
         }
@@ -963,8 +956,8 @@ public class KruleLoader implements RuleLoader {
         // get the simple constraint and build the transitive constraint around it
         constraint = new SingleTransitiveConstraint((Constraint)constraintMap.get(sc));
       } else if (arguments.size() == 2) {
-        Node sc = (Node)arguments.get(TRANSITIVE_ARGUMENT);
-        Node anchor = (Node)arguments.get(ANCHOR_ARGUMENT);
+        Node sc = arguments.get(TRANSITIVE_ARGUMENT);
+        Node anchor = arguments.get(ANCHOR_ARGUMENT);
         if (sc == null || anchor == null) {
           throw new KruleStructureException("Transitive arguments not correct");
         }
@@ -994,24 +987,22 @@ public class KruleLoader implements RuleLoader {
    * @param typeMap Maps constraint nodes to their type.  Used to create a new constraint.
    * @throws KruleStructureException There was an error in the RDF data structure.
    */
-  private List getConstraints(Set constraints, Map constraintLinks, Map typeMap) throws KruleStructureException {
+  private List<ConstraintExpression> getConstraints(Set<Node> constraints, Map<Node,Set<Node>> constraintLinks, Map<Node,URIReference> typeMap) throws KruleStructureException {
     logger.debug("converting nodes to constraint list: " + constraints);
 
     // build the return list
-    List cList = new ArrayList();
+    List<ConstraintExpression> cList = new ArrayList<ConstraintExpression>();
     // go through the arguments
-    Iterator cit = constraints.iterator();
-    while (cit.hasNext()) {
-      Node cNode = (Node)cit.next();
+    for (Node cNode: constraints) {
       logger.debug("converting: " + cNode);
       // get the constraint expression object
       ConstraintExpression constraintExpr = (ConstraintExpression)constraintMap.get(cNode);
       if (constraintExpr == null) {
         logger.debug(cNode.toString() + " not yet mapped to constraint");
         // constraint expression object does not yet exist, get its arguments
-        Set constraintArgNodes = (Set)constraintLinks.get(cNode);
+        Set<Node> constraintArgNodes = constraintLinks.get(cNode);
         // build the constraint expression - get the arguments as a list of constraints
-        List constraintArgs = getConstraints(constraintArgNodes, constraintLinks, typeMap);
+        List<ConstraintExpression> constraintArgs = getConstraints(constraintArgNodes, constraintLinks, typeMap);
         constraintExpr = newJoinConstraint((Node)typeMap.get(cNode), constraintArgs);
       }
       // add the constraint argument to the list
@@ -1028,7 +1019,7 @@ public class KruleLoader implements RuleLoader {
    * @param args The list of arguments for the constraint.
    * @return a new join constraint of the correct type.
    */
-  private ConstraintExpression newJoinConstraint(Node type, List args) throws KruleStructureException {
+  private ConstraintExpression newJoinConstraint(Node type, List<ConstraintExpression> args) throws KruleStructureException {
     logger.debug("Building join constraint of type <" + type + ">: " + args);
 
     if (type.equals(CONSTRAINT_CONJUNCTION)) {
@@ -1037,31 +1028,6 @@ public class KruleLoader implements RuleLoader {
       return new ConstraintDisjunction(args);
     }
     throw new KruleStructureException("Unknown constraint type: " + type);
-  }
-
-
-  /**
-   * Sets a property for a node, creating the entry if it does not exist yet.
-   *
-   * @param map The mapping of nodes to property/values.
-   * @param node The node to set the property for.
-   * @param predicate The property to set.
-   * @param object The value to set the property to.
-   */
-  private static void addProperty(Map map, Node node, URIReference predicate, URIReference object) {
-    // get the current set of properties
-    Map pv = (Map)map.get(node);
-    // check that the map exists
-    if (pv == null) {
-      // no, so create
-      pv = new HashMap();
-      pv.put(predicate, object);
-      // add to the map
-      map.put(node, pv);
-    } else {
-      // update the map to hold the new value
-      pv.put(predicate, object);
-    }
   }
 
 
@@ -1104,13 +1070,13 @@ public class KruleLoader implements RuleLoader {
    * @param predicate The property to set.
    * @param object The value to set the property to.
    */
-  private static void addProperty(Map map, Node node, URIReference predicate, Node object) {
+  private static void addProperty(Map<Node,Map<Node,Node>> map, Node node, URIReference predicate, Node object) {
     // get the current set of properties
-    Map pv = (Map)map.get(node);
+    Map<Node,Node> pv = map.get(node);
     // check that the map exists
     if (pv == null) {
       // no, so create
-      pv = new HashMap();
+      pv = new HashMap<Node,Node>();
       pv.put(predicate, object);
       // add to the map
       map.put(node, pv);
@@ -1128,13 +1094,13 @@ public class KruleLoader implements RuleLoader {
    * @param node1 The node to map.
    * @param node2 The node to map it to.
    */
-  private static void addLink(Map map, Node node1, Node node2) {
+  private static void addLink(Map<Node,Set<Node>> map, Node node1, Node node2) {
     // get the current set of properties
-    Set links = (Set)map.get(node1);
+    Set<Node> links = map.get(node1);
     // check that the set exists
     if (links == null) {
       // no, so create
-      links = new HashSet();
+      links = new HashSet<Node>();
       links.add(node2);
       // add to the map
       map.put(node1, links);
