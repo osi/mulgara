@@ -244,8 +244,5 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
   /**
    * {@inheritDoc RemoteSessionFactory}
    */
-  public void close() throws QueryException {
-
-    sessionFactory.close();
-  }
+  public void close() throws QueryException { }
 }
