@@ -273,13 +273,13 @@ public final class Block {
    * @param offset The location of the required buffer within the data block.
    * @param byteBuffer The buffer to fill.
    */
+  
   public void get(int offset, ByteBuffer byteBuffer) {
-    assert offset + byteBuffer.remaining() <= blockSize;
-
-    int start = byteOffset + offset;
-    while (byteBuffer.hasRemaining()) {
-      byteBuffer.put(bb.get(start++));
-    }
+	  ByteBuffer src = bb.asReadOnlyBuffer();
+	  int start = byteOffset + offset;
+	  src.position(start);
+	  src.limit(Math.min(start + byteBuffer.limit() - byteBuffer.position(), src.limit()));
+	  byteBuffer.put(src);
   }
 
   /**
