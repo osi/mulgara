@@ -30,7 +30,6 @@ package org.mulgara.store.xa;
 // Java 2 standard packages
 import java.io.*;
 import java.nio.*;
-import java.nio.channels.*;
 
 // Third party packages
 import org.apache.log4j.Category;
@@ -63,6 +62,7 @@ public final class Block {
 
   public static final long INVALID_BLOCK_ID = -1;
 
+  @SuppressWarnings("unused")
   private final static Category logger =
       Category.getInstance(Block.class.getName());
 
@@ -273,13 +273,30 @@ public final class Block {
    * @param offset The location of the required buffer within the data block.
    * @param byteBuffer The buffer to fill.
    */
-  
   public void get(int offset, ByteBuffer byteBuffer) {
-	  ByteBuffer src = bb.asReadOnlyBuffer();
-	  int start = byteOffset + offset;
-	  src.position(start);
-	  src.limit(Math.min(start + byteBuffer.limit() - byteBuffer.position(), src.limit()));
-	  byteBuffer.put(src);
+    assert offset + byteBuffer.remaining() <= blockSize;
+
+    ByteBuffer src = bb.asReadOnlyBuffer();
+    int pos = byteOffset + offset;
+    src.position(pos);
+    src.limit(pos + byteBuffer.remaining());
+    byteBuffer.put(src);
+  }
+
+  /**
+   * Gets a read-only portion of the buffer.
+   *
+   * @param offset The location of the required buffer within the data block.
+   * @param size The size of the slice to retrieve.
+   * @return The read only portion of the buffer desired.
+   */
+  public ByteBuffer getSlice(int offset, int size) {
+    assert offset + size <= blockSize;
+
+    ByteBuffer data = bb.asReadOnlyBuffer();
+    data.position(byteOffset + offset);
+    data.limit(byteOffset + offset + size);
+    return data.slice();
   }
 
   /**
