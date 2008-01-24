@@ -396,7 +396,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // execute the load remotely
     long statements = bean.load(null, sourceURI, modelURI);
 
-    assertEquals("Incorrect number of statements inserted", 146, statements);
+    assertEquals("Incorrect number of statements inserted", 154, statements);
   }
 
   // testLoadApi1()
@@ -427,7 +427,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     long statements = bean.load(inputStream,
         sourceURI, modelURI);
 
-    assertEquals("Incorrect number of statements inserted", 146, statements);
+    assertEquals("Incorrect number of statements inserted", 154, statements);
 
     inputStream.close();
 
@@ -454,7 +454,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     long statements = bean.load(sourceURI.toURL().openStream(),
         dummyURI, modelURI);
 
-    assertEquals("Incorrect number of statements inserted", 146, statements);
+    assertEquals("Incorrect number of statements inserted", 154, statements);
 
   }
 
@@ -475,7 +475,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     long statements = bean.load(sourceURI.toURL().openStream(),
         modelURI);
 
-    assertEquals("Incorrect number of statements inserted", 146, statements);
+    assertEquals("Incorrect number of statements inserted", 154, statements);
 
   }
 
