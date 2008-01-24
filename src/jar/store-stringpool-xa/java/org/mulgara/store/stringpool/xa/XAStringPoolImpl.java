@@ -2238,15 +2238,14 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
 
         // Retrieve bytes from the AVLNode.
-        ByteBuffer data = ByteBuffer.allocate(dataSize);
-        data.limit(directDataSize);
-        avlNode.getBlock().get(
-            (AVLNode.HEADER_SIZE + IDX_DATA) * Constants.SIZEOF_LONG, data
-        );
+        ByteBuffer data = avlNode.getBlock().getSlice((AVLNode.HEADER_SIZE + IDX_DATA) * Constants.SIZEOF_LONG, directDataSize);
 
         // Retrieve the remaining bytes if any.
         if (dataSize > MAX_DIRECT_DATA_BYTES) {
-          data.limit(dataSize);
+          // need a bigger buffer
+          ByteBuffer newData = ByteBuffer.allocate(dataSize);
+          newData.put(data);
+          data = newData;
           retrieveRemainingBytes(objectPool, data, blockId);
         }
         data.rewind();
