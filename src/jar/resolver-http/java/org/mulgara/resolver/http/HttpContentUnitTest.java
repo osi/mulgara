@@ -233,7 +233,7 @@ public class HttpContentUnitTest extends TestCase {
     content = new HttpContent(new URL("http://purl.org/dc/elements/1.1"));
     stream = content.newInputStream();
     assertTrue("Expecting an input stream ", stream != null);
-    assertTrue("Expecting 14054 bytes from inputstream ", dumpAndCheck(stream) == 14054);
+    assertEquals("Expecting 14054 bytes from inputstream ", 17564, dumpAndCheck(stream));
     stream.close();
     
   }
