@@ -104,15 +104,16 @@ public class ModelResource implements Model {
 
   /**
    * @return an immutable singleton {@link Set} containing the {@link URL} of
-   *   the server if this is a Java RMI or BEEP model, or the empty {@link Set}
-   *   otherwise
+   *   the server if this is a Java RMI, BEEP, or local model, or the empty
+   *   {@link Set} otherwise
    */
   @SuppressWarnings("unchecked")
   public Set<URI> getDatabaseURIs() {
 
     try {
 
-      if ("beep".equals(uri.getScheme()) || "rmi".equals(uri.getScheme())) {
+      if ("beep".equals(uri.getScheme()) || "rmi".equals(uri.getScheme()) ||
+          "local".equals(uri.getScheme())) {
 
         // In Java RMI models, the database is the URI without
         // the fragment identifier
