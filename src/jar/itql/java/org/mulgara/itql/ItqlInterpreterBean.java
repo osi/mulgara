@@ -623,12 +623,9 @@ public class ItqlInterpreterBean {
 
 
   /**
-   * Returns true if a quit command has been entered, simply calls the
-   * interpreter.isQuitRequested.
+   * Returns true if a quit command has been entered.
    *
    * @return true if a quit command has been entered
-   *
-   * @see ItqlInterpreter#isQuitRequested()
    */
   public boolean isQuitRequested() {
     return quit;
@@ -636,13 +633,13 @@ public class ItqlInterpreterBean {
 
 
   /**
-   * Returns the {@linkplain ItqlInterpreter#getLastMessage last message} of
+   * Returns the {@linkplain TqlAutoInterpreter#getLastMessage last message} of
    * the interpreter.
    *
    * @return the results of the last command execution, null if the command did
    *      not set any message
    *
-   * @see ItqlInterpreter#getLastMessage()
+   * @see TqlAutoInterpreter#getLastMessage()
    */
   public String getLastMessage() {
     return interpreter.getLastMessage();
@@ -650,13 +647,13 @@ public class ItqlInterpreterBean {
 
 
   /**
-   * Returns the {@linkplain TqlInterpreter#getLastException last error} of the
-   * interpreter.
+   * Returns the {@linkplain TqlAutoInterpreter#getLastException last error} of
+   * the interpreter.
    *
    * @return the results of the last command execution, null if the command did
    *      not set any message
    *
-   * @see TqlInterpreter#getLastException()
+   * @see TqlAutoInterpreter#getLastException()
    */
   public ItqlInterpreterException getLastError() {
     return new ItqlInterpreterException(interpreter.getLastException());
