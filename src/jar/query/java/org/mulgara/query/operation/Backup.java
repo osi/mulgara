@@ -62,7 +62,7 @@ public class Backup extends DataTx {
   /**
    * @return The URI of the destination graph.
    */
-  public URI getServerURI() throws UnsupportedOperationException {
+  public URI getServerURI() {
     return serverUri;
   }
 

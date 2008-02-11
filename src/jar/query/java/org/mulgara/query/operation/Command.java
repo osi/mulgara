@@ -49,10 +49,10 @@ public interface Command {
   /**
    * Gets the associated server for a non-local operation.
    * @return the server URI if one can be determined,
-   *  or <code>null</code> if not a valid operation.
-   * @throws UnsupportedOperationException If this command is local only.
+   *  or <code>null</code> if this command is local or the uri
+   *  is unknown for some other reason.
    */
-  URI getServerURI() throws UnsupportedOperationException;
+  URI getServerURI();
 
   /**
    * Executes the operation. This is highly specific to each operation.

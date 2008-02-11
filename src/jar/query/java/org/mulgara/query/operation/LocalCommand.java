@@ -63,9 +63,9 @@ public abstract class LocalCommand implements Command {
 
   /**
    * Gets the associated server for a non-local operation.
-   * @throws UnsupportedOperationException Always thrown for local commands.
+   * @return <code>null</code>
    */
-  public URI getServerURI() throws UnsupportedOperationException {
+  public URI getServerURI() {
     return null;
   }
   
