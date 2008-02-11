@@ -650,15 +650,15 @@ public class ItqlInterpreterBean {
 
 
   /**
-   * Returns the {@linkplain ItqlInterpreter#getLastException last error} of the
+   * Returns the {@linkplain TqlInterpreter#getLastException last error} of the
    * interpreter.
    *
    * @return the results of the last command execution, null if the command did
    *      not set any message
    *
-   * @see ItqlInterpreter#getLastException()
+   * @see TqlInterpreter#getLastException()
    */
-  public ItqlInterpreterException getLastException() {
+  public ItqlInterpreterException getLastError() {
     return new ItqlInterpreterException(interpreter.getLastException());
   }
 
