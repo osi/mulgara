@@ -278,7 +278,6 @@ public class ItqlInterpreterBean {
 
     if (log.isDebugEnabled()) log.debug("Begin transaction for :" + name);
 
-    if (legacySession != null) legacySession.setAutoCommit(false);
     SetAutoCommit autocommitCmd = new SetAutoCommit(false);
     try {
       // do what the autointerpreter does, but don't worry about the result
@@ -303,8 +302,6 @@ public class ItqlInterpreterBean {
 
     if (log.isDebugEnabled()) log.debug("Commit transaction for :" + name);
 
-    // this is the same as a commit call
-    if (legacySession != null) legacySession.setAutoCommit(true);
     interpreter.commitAll();
   }
 
@@ -320,10 +317,6 @@ public class ItqlInterpreterBean {
 
     log.warn("Rollback transaction for :" + name);
 
-    if (legacySession != null) {
-      legacySession.rollback();
-      legacySession.setAutoCommit(true);
-    }
     interpreter.rollbackAll();
   }
 

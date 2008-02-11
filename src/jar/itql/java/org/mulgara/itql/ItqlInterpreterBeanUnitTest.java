@@ -29,6 +29,8 @@ package org.mulgara.itql;
 
 import org.mulgara.query.Answer;
 import org.mulgara.query.QueryException;
+import org.mulgara.server.SessionFactory;
+import org.mulgara.server.driver.SessionFactoryFinder;
 import org.mulgara.util.TempDir;
 
 // third party packages
@@ -159,6 +161,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     suite.addTest(new ItqlInterpreterBeanUnitTest("testRestoreApi1"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testRoundTrip1"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testMultipleBeanTest"));
+    suite.addTest(new ItqlInterpreterBeanUnitTest("testExplicitSession"));
 
     return suite;
   }
@@ -824,6 +827,76 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
                endNumberOfSessionDirs == initNumberOfSessionDirs);
      */
   }
+
+  /**
+   * Test giving ItqlInterpreterBean an explicit session.
+   *
+   * @throws Exception if the test fails
+   */
+  public void testExplicitSession() throws Exception {
+
+    // log that we're executing the test
+    log.debug("Starting explicit session test");
+
+    URI serverURI = new URI("rmi://" + hostName + "/server1");
+    SessionFactory sessionFactory =
+                      SessionFactoryFinder.newSessionFactory(serverURI, true);
+
+    bean.close();
+    bean = new ItqlInterpreterBean(sessionFactory.newSession(),
+                                   sessionFactory.getSecurityDomain());
+
+    // auto-commit = true
+    bean.executeQuery(
+        "insert <es:foo1> <es:bar1> 'foo' into <" + testModel + ">;");
+
+    Answer answer = bean.executeQuery(
+        "select $p $o from <" + testModel + "> " + "where <es:foo1> $p $o;");
+    assertEquals("Expecting a single result", 1, answer.getRowCount());
+
+    bean.executeQuery(
+        "delete <es:foo1> <es:bar1> 'foo' from <" + testModel + ">;");
+
+    answer = bean.executeQuery(
+        "select $p $o from <" + testModel + "> " + "where <es:foo1> $p $o;");
+    assertEquals("Expecting no results", 0, answer.getRowCount());
+
+    // explicit tx with commit
+    bean.beginTransaction("explicit-session-test-commit");
+
+    bean.executeQuery(
+        "insert <es:foo1> <es:bar1> 'foo' into <" + testModel + ">;");
+
+    answer = bean.executeQuery(
+        "select $p $o from <" + testModel + "> " + "where <es:foo1> $p $o;");
+    assertEquals("Expecting a single result", 1, answer.getRowCount());
+
+    bean.executeQuery(
+        "delete <es:foo1> <es:bar1> 'foo' from <" + testModel + ">;");
+
+    bean.commit("explicit-session-test-commit");
+
+    answer = bean.executeQuery(
+        "select $p $o from <" + testModel + "> " + "where <es:foo1> $p $o;");
+    assertEquals("Expecting no results", 0, answer.getRowCount());
+
+    // explicit tx with rollback
+    bean.beginTransaction("explicit-session-test-rollback");
+
+    bean.executeQuery(
+        "insert <es:foo1> <es:bar1> 'foo' into <" + testModel + ">;");
+
+    answer = bean.executeQuery(
+        "select $p $o from <" + testModel + "> " + "where <es:foo1> $p $o;");
+    assertEquals("Expecting a single result", 1, answer.getRowCount());
+
+    bean.rollback("explicit-session-test-rollback");
+
+    answer = bean.executeQuery(
+        "select $p $o from <" + testModel + "> " + "where <es:foo1> $p $o;");
+    assertEquals("Expecting no results", 0, answer.getRowCount());
+  }
+
 
   // ItqlInt
 
