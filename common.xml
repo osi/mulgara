@@ -64,7 +64,7 @@
         <fileset dir="${lib.dir}" includes="**/axis-1.1.jar"/>
         <fileset dir="${lib.dir}" includes="**/axis-ant-1.1.jar"/>
         <fileset dir="${lib.dir}" includes="**/wsdl4j-1.4.jar"/>
-        <fileset dir="${lib.dir}" includes="**/log4j-1.2.8.jar"/>
+        <fileset dir="${lib.dir}" includes="**/log4j-1.2.15.jar"/>
         <fileset dir="${lib.dir}" includes="**/commons-logging-1.0.3.jar"/>
         <fileset dir="${lib.dir}" includes="**/commons-discovery-1.2.jar"/>
         <fileset dir="${lib.dir}" includes="**/jaxrpc-1.1.jar"/>

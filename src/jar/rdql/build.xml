@@ -159,7 +159,7 @@
       <zipfileset src="${lib.dir}/beepcore-0.9.08.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/jargs-0.2.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/log4j-1.2.8.jar" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/log4j-1.2.15.jar" excludes="META-INF/**"/>
     </jar>
   </target>
 

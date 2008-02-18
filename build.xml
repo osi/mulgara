@@ -175,7 +175,7 @@
        <pathelement path="${dist.dir}/${driver.jar}"/>
        <pathelement path="${dist.dir}/${ant-task.jar}"/>
        <pathelement path="${lib.dir}/apache-soap-2.2.jar"/>
-       <pathelement path="${lib.dir}/log4j-1.2.8.jar"/>
+       <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
      </classpath>
     </taskdef>
 
@@ -193,7 +193,7 @@
        <pathelement path="${dist.dir}/${driver.jar}"/>
        <pathelement path="${dist.dir}/${ant-task.jar}"/>
        <pathelement path="${lib.dir}/apache-soap-2.2.jar"/>
-       <pathelement path="${lib.dir}/log4j-1.2.8.jar"/>
+       <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
      </classpath>
     </taskdef>
 
@@ -491,7 +491,7 @@
           lib/${resolver-distributed.jar},
           lib/${resolver-jar.jar}, lib/${dtd.jar}, lib/${jrdf.base.jar}
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
-          lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.8.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
+          lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/castor-0.9.3.9-xml.jar, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.carol.jar}, lib/${jotm.iiop.jar},
@@ -1910,7 +1910,7 @@ lib/${store-stringpool.jar}
 lib/${store-stringpool-memory.jar}, lib/${store-stringpool-xa.jar}, lib/${tuples.jar},lib/${tuples-hybrid.jar},
 lib/${util.jar}, lib/${util-xa.jar}, lib/activation-1.0.2.jar,lib/icu4j.jar, lib/jena-2.1.jar, lib/${jid3.jar},
 lib/antlr.jar, lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar,lib/connector-1_5.jar,
-lib/${jotm.jar}, lib/${jotm_carol.jar}, lib/${jotm_iiop_stubs.jar},lib/jta-spec1_0_1.jar, lib/log4j-1.2.8.jar, lib/${lucene.jar},
+lib/${jotm.jar}, lib/${jotm_carol.jar}, lib/${jotm_iiop_stubs.jar},lib/jta-spec1_0_1.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar},
 lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${jasper.compiler.jar},
 lib/${servlet.jar},lib/jargs-0.2.jar, lib/castor-0.9.3.9-xml.jar, lib/xercesImpl.jar, lib/xmlParserAPIs.jar,
 lib/trove-1.0.2.jar,lib/${jrdf.jar}, lib/${sofa.jar}, lib/${rules.jar}, lib/${krule.jar}, lib/${saaj.jar}, lib/${axis.jar}, lib/${commons-discovery.jar},
