@@ -9,7 +9,7 @@
   <!-- =================================================================== -->
   <!-- Builds the base Mulgara configuration JAR                            -->
   <!-- =================================================================== -->
-  <target name="config-generate-uptodate">
+  <target name="-config-generate-uptodate">
 
     <condition property="config-generate-uptodate">
       <and>
@@ -21,8 +21,8 @@
     </condition>
   </target>
 
-  <target name="config-generate"
-     description="Generates the Mulgara config code" unless="config-generate-uptodate">
+  <target name="config-generate" description="Generates the Mulgara config code"
+      depends="-config-generate-uptodate" unless="config-generate-uptodate">
 
     <delete dir="${obj.dir}/jar/config/java"/>
 
