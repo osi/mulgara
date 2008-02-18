@@ -11,8 +11,15 @@
     <echo message="help:  This message."/>
   </target>
 
+  <target name="-webpage-includes-uptodate">
+    <uptodate property="webpage-includes-uptodate">
+      <srcfiles dir="${template.src.docs.dir}"/>
+      <globmapper from="*" to="${src.docs.dir}/*"/>
+    </uptodate>
+  </target>
 
-  <target name="webpage-includes" description="Creates the webpages directory and does the includes">
+  <target name="webpage-includes" description="Creates the webpages directory and does the includes"
+      depends="-webpage-includes-uptodate" unless="webpage-includes-uptodate">
     <copy todir="${src.docs.dir}">
       <fileset dir="${template.src.docs.dir}"/>
     </copy>
