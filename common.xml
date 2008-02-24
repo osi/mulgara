@@ -530,6 +530,7 @@
 
       <arg value="-a"/>
       <arg value="${test.dir}"/>
+      <arg line="${test.server.args}"/>
     </exec>
 
     <exec os="SunOS" executable="${scripts.dir}/bg.sh" failonerror="yes">
@@ -547,6 +548,7 @@
       <arg value="${dist.dir}/${mulgara.jar}"/> -->
       <arg value="-a"/>
       <arg value="${test.dir}"/>
+      <arg line="${test.server.args}"/>
     </exec>
 
     <exec os="Mac OS X" executable="${scripts.dir}/bg.sh" failonerror="yes">
@@ -563,6 +565,7 @@
       <arg value="${dist.dir}/${mulgara.jar}"/> -->
       <arg value="-a"/>
       <arg value="${test.dir}"/>
+      <arg line="${test.server.args}"/>
     </exec>
 
     <exec os="Windows NT,Windows 2000,Windows XP, Windows 2003"
@@ -580,6 +583,7 @@
       <arg value="${dist.dir}\${mulgara.jar}"/> -->
       <arg value="-a"/>
       <arg value="${test.dir}"/>
+      <arg line="${test.server.args}"/>
     </exec>
 
     <!-- wait for the server to start -->
