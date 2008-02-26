@@ -61,14 +61,14 @@
 
       <classpath>
 
-        <fileset dir="${lib.dir}" includes="**/axis-1.1.jar"/>
-        <fileset dir="${lib.dir}" includes="**/axis-ant-1.1.jar"/>
-        <fileset dir="${lib.dir}" includes="**/wsdl4j-1.4.jar"/>
+        <fileset dir="${lib.dir}" includes="**/axis-1.4.jar"/>
+        <fileset dir="${lib.dir}" includes="**/axis-ant-1.4.jar"/>
+        <fileset dir="${lib.dir}" includes="**/wsdl4j-1.5.1.jar"/>
         <fileset dir="${lib.dir}" includes="**/log4j-1.2.15.jar"/>
         <fileset dir="${lib.dir}" includes="**/commons-logging-1.0.3.jar"/>
         <fileset dir="${lib.dir}" includes="**/commons-discovery-1.2.jar"/>
-        <fileset dir="${lib.dir}" includes="**/jaxrpc-1.1.jar"/>
-        <fileset dir="${lib.dir}" includes="**/saaj-1.1.jar"/>
+        <fileset dir="${lib.dir}" includes="**/jaxrpc-1.4.jar"/>
+        <fileset dir="${lib.dir}" includes="**/saaj-1.4.jar"/>
       </classpath>
     </taskdef>
   </target>
@@ -151,7 +151,7 @@
                        jargs-*.jar, org.mortbay.jetty*.jar, jta-spec*.jar,
                        jotm*.jar, commons-logging-*.jar, Quick4rt.jar,
                        commons-discovery-*.jar, commons-httpclient-*.jar,
-                       commons-codec-*.jar, connector-*.jar,
+                       commons-codec-*.jar, connector-*.jar, jaxrpc-*.jar,
                        ${date-utils.jar}"
              excludes="jboss-j2ee.jar"/>
   </path>

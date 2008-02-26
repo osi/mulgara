@@ -59,10 +59,10 @@ I.  Open Source Components
               http://www.eclipse.org/legal/cpl-v10.html
 
     AXIS
-    JARs:     axis-1.1.jar
-              axis-ant-1.1.jar
-              saaj-1.1
-              jaxrpc-1.1.jar
+    JARs:     axis-1.4.jar
+              axis-ant-1.4.jar
+              saaj-1.4
+              jaxrpc-1.4.jar
     URL:      http://ws.apache.org/axis/index.html
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
@@ -268,7 +268,7 @@ I.  Open Source Components
               http://www.opensource.org/licenses/lgpl-license.php
     
     WSDL4J
-    JARs:     wsdl4j-1.4.jar
+    JARs:     wsdl4j-1.5.1.jar
     URL:      http://sourceforge.net/projects/wsdl4j
     LICENSE:  Common Public License
               http://oss.software.ibm.com/developerworks/opensource/CPLv1.0.htm

@@ -8,6 +8,7 @@
   <parameter name="sendMultiRefs" value="true"/>
   <parameter name="sendXMLDeclaration" value="true"/>
   <parameter name="axis.sendMinimizedElements" value="true"/>
+  <parameter name="dotNetSoapEncFix" value="true"/>
   <requestFlow>
    <handler type="java:org.apache.axis.handlers.JWSHandler">
     <parameter name="scope" value="session"/>
