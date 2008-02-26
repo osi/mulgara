@@ -39,7 +39,7 @@ public class Quit extends LocalCommand {
    * No specific action to be taken here.  The client needs to know that this message
    * requires exiting of the main process.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) {
     return finalMessage;
   }
 

@@ -53,7 +53,7 @@ public class Load extends DataTx {
    * @param conn The connection to load the data over.
    * @return The number of statements that were inserted.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) throws QueryException {
     URI src = getSource();
     URI dest = getDestination();
     try {

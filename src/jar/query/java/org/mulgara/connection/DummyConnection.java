@@ -25,7 +25,7 @@ import org.mulgara.server.Session;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class DummyConnection implements Connection {
+public class DummyConnection extends CommandExecutor implements Connection {
 
   /** Logger. */
   private static final Logger logger = Logger.getLogger(DummyConnection.class.getName());

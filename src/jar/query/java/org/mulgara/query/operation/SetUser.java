@@ -90,7 +90,7 @@ public class SetUser extends LocalCommand {
   /**
    * Does nothing at the client, except to indicate that a user record has been created
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) {
     return setResultMessage(MESSAGE);
   }
 

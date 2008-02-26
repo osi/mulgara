@@ -14,6 +14,7 @@ package org.mulgara.query.operation;
 import java.net.URI;
 
 import org.mulgara.connection.Connection;
+import org.mulgara.query.QueryException;
 
 /**
  * Represents a command to drop a graph.
@@ -45,9 +46,9 @@ public class DropGraph extends ServerCommand {
    * @param conn the session to delete the graph in.
    * @return Text describing the action.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) throws QueryException {
     conn.getSession().removeModel(graphUri);
-    return setResultMessage("Successfully dropped model " + graphUri);
+    return setResultMessage("Successfully dropped graph " + graphUri);
   }
 
 }

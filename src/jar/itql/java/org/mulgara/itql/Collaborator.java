@@ -803,7 +803,7 @@ public class Collaborator {
   public synchronized boolean createModel() throws SOAPException {
 
     log.warn("creating model " + SERVER + MODEL);
-    return executeCommand(CREATE_MODEL, "Successfully created model", false);
+    return executeCommand(CREATE_MODEL, "Successfully created graph", false);
   }
 
   /**
@@ -815,7 +815,7 @@ public class Collaborator {
   public synchronized boolean dropModel() throws SOAPException {
 
     log.warn("dropping model " + SERVER + MODEL);
-    return executeCommand(DROP_MODEL, "Successfully dropped model", false);
+    return executeCommand(DROP_MODEL, "Successfully dropped graph", false);
   }
 
   /**

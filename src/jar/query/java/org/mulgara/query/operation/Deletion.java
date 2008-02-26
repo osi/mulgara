@@ -17,6 +17,7 @@ import java.util.Set;
 import org.jrdf.graph.Triple;
 import org.mulgara.connection.Connection;
 import org.mulgara.query.Query;
+import org.mulgara.query.QueryException;
 
 /**
  * An AST element for deleting from a graph.
@@ -50,7 +51,7 @@ public class Deletion extends Modification {
    * @param conn the session to delete the data from the graph in.
    * @return Text describing the action.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) throws QueryException {
     if (isSelectBased()) conn.getSession().delete(graph, getSelectQuery());
     else conn.getSession().delete(graph, getStatements());
     return setResultMessage("Successfully deleted statements from " + graph);

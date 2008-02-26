@@ -68,7 +68,7 @@ public class AddAlias extends LocalCommand {
    * @param conn ignored.
    * @return The text of the help request.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) {
     return setResultMessage(SUCCESS_MSG_PREFIX + aliasTarget + SUCCESS_MSG_AS + aliasPrefix);
   }
 

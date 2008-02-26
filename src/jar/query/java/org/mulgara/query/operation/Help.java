@@ -53,7 +53,7 @@ public class Help extends LocalCommand {
    * @param conn ignored.
    * @return The text of the help request.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) {
     return setResultMessage(helpText);
   }
 

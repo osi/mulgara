@@ -33,7 +33,7 @@ public class NullOp extends LocalCommand {
   /**
    * Do nothing.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) {
     return null;
   }
 

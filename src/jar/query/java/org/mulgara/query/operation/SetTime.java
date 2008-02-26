@@ -35,7 +35,7 @@ public class SetTime extends BooleanSetCommand {
   /**
    * Does nothing at the client, except to indicate that time keeping records are required.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) {
     return setResultMessage(SET_TIME + (isOn() ? ON : OFF));
   }
 }

@@ -18,6 +18,7 @@ import java.util.Set;
 import org.jrdf.graph.Triple;
 import org.mulgara.connection.Connection;
 import org.mulgara.query.Query;
+import org.mulgara.query.QueryException;
 
 /**
  * An AST element for inserting into a graph.
@@ -60,7 +61,7 @@ public class Insertion extends Modification {
    * @param conn the session for the graph to insert the data into.
    * @return Text describing the action.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) throws QueryException {
     if (isSelectBased()) conn.getSession().insert(graph, getSelectQuery());
     else conn.getSession().insert(graph, getStatements());
     return setResultMessage("Successfully inserted statements into " + graph);

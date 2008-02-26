@@ -517,7 +517,7 @@ public class RDFLoad extends Task {
    */
   protected void createModel() throws BuildException {
     executeQuery("create <" + modelURI + "> ;", "create model",
-                 "Successfully created model ");
+                 "Successfully created graph ");
   }
 
   /**
@@ -527,7 +527,7 @@ public class RDFLoad extends Task {
    */
   protected void dropModel() throws BuildException {
     executeQuery("drop <" + modelURI + "> ;", "drop model",
-                 "Successfully dropped model ");
+                 "Successfully dropped graph ");
   }
 
   /**

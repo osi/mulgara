@@ -29,7 +29,7 @@ import org.mulgara.server.driver.SessionFactoryFinderException;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class SessionConnection implements Connection {
+public class SessionConnection extends CommandExecutor implements Connection {
 
   /** Logger. */
   private static final Logger logger = Logger.getLogger(SessionConnection.class.getName());

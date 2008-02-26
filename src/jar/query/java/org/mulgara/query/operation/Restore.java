@@ -45,7 +45,7 @@ public class Restore extends DataTx {
    * @param conn The connection to restore the data over.
    * @return A text string describing the operation.
    */
-  public Object execute(Connection conn) throws Exception {
+  public Object execute(Connection conn) throws QueryException {
     URI src = getSource();
     URI dest = getDestination();
     try {

@@ -15,6 +15,8 @@ import java.net.URI;
 
 import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
+import org.mulgara.query.QueryException;
+
 
 /**
  * Represents a command to create a new graph.
@@ -33,11 +35,26 @@ public class CreateGraph extends ServerCommand {
   
   /** The URI for the type of the graph. */
   private final URI type;
-  
+
+  /**
+   * Create a new create graph command
+   * @param graphUri The identifier for the graph
+   * @param type The identifier for the graph type
+   */
   public CreateGraph(URI graphUri, URI type) {
     super(graphUri);
     this.graphUri = graphUri;
     this.type = type;
+  }
+  
+  /**
+   * Create a new create graph command, using the default graph type.
+   * @param graphUri The identifier for the graph
+   */
+  public CreateGraph(URI graphUri) {
+    super(graphUri);
+    this.graphUri = graphUri;
+    this.type = null;
   }
   
   /**
@@ -61,10 +78,10 @@ public class CreateGraph extends ServerCommand {
    * @param The connection to a session to create the graph in.
    * @return Text describing the outcome.
    */
-  public Object execute(Connection conn) throws Exception {
-    if (logger.isDebugEnabled()) logger.debug("Creating new model " + graphUri);
+  public Object execute(Connection conn) throws QueryException {
+    if (logger.isDebugEnabled()) logger.debug("Creating new graph " + graphUri);
     conn.getSession().createModel(graphUri, type);
-    return setResultMessage("Successfully created model " + graphUri);
+    return setResultMessage("Successfully created graph " + graphUri);
   }
 
 }
