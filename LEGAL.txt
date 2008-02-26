@@ -232,7 +232,7 @@ I.  Open Source Components
               http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jtidy/jtidy/LICENSE.
     
     Log4J
-    JARs:     log4j-1.2.8.jar
+    JARs:     log4j-1.2.15.jar
     URL:      http://jakarta.apache.org
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
