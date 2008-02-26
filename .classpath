@@ -67,18 +67,18 @@
 	<classpathentry kind="lib" path="lib/xmlc-taskdef-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/xmlc-all-runtime-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/wsdl4j-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/trove-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/sofa-1.0-alpha.jar"/>
 	<classpathentry kind="lib" path="lib/sablecc-2.18.2.jar"/>
-	<classpathentry kind="lib" path="lib/saaj-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/saaj-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/Quick4util.jar"/>
 	<classpathentry kind="lib" path="lib/Quick4rt.jar"/>
 	<classpathentry kind="lib" path="lib/plankton-1.2.6.jar"/>
 	<classpathentry kind="lib" path="lib/org.mortbay.jetty-4.2.19.jar"/>
 	<classpathentry kind="lib" path="lib/org.mortbay.jetty.plus-4.2.19.jar"/>
 	<classpathentry kind="lib" path="lib/mail-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/jxunit3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/jtidy-r7-xmlc-2.2.jar"/>
@@ -92,7 +92,7 @@
 	<classpathentry kind="lib" path="lib/jl1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jid3-0.34.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-j2ee.jar"/>
-	<classpathentry kind="lib" path="lib/jaxrpc-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrpc-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/javax.servlet-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/javacc.jar"/>
 	<classpathentry kind="lib" path="lib/jasper-runtime-4.2.29.jar"/>
@@ -112,8 +112,8 @@
 	<classpathentry kind="lib" path="lib/beepcore-0.9.08.jar"/>
 	<classpathentry kind="lib" path="lib/barracuda-ant-1.2.6.jar"/>
 	<classpathentry kind="lib" path="lib/barracuda-1.2.6.jar"/>
-	<classpathentry kind="lib" path="lib/axis-ant-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/axis-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/axis-ant-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/aspectjrt-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/apache-soap-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
