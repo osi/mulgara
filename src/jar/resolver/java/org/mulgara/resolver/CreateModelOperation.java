@@ -28,105 +28,62 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-
-// Java 2 enterprise packages
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.InvalidTransactionException;
 
 // Third party packages
 import org.apache.log4j.Logger;
 import org.jrdf.graph.*;
 
 // Local packages
-import org.mulgara.content.Content;
-import org.mulgara.content.ContentHandler;
-import org.mulgara.content.ContentHandlerManager;
-import org.mulgara.content.ContentLoader;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.resolver.url.URLResolver;
 import org.mulgara.server.Session;
 import org.mulgara.store.nodepool.NodePool;
 
 /**
  * An {@link Operation} that implements the {@link Session#createModel} method.
+ * TODO: Rename to CreateGraphOperation.
  *
  * @created 2004-11-24
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
  * @version $Revision: 1.9 $
- *
  * @modified $Date: 2005/02/22 08:16:08 $ by $Author: newmana $
- *
  * @maintenanceAuthor $Author: newmana $
- *
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
- *
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana  Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class CreateModelOperation implements Operation
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(CreateModelOperation.class.getName());
+class CreateModelOperation implements Operation {
+  /** Logger. This is named after the class. */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(CreateModelOperation.class.getName());
 
-  /**
-   * The URI of the model to be created.
-   */
-  private final URI modelURI;
+  /** The URI of the model to be created. */
+  private final URI graphURI;
 
-  /**
-   * The URI of the type of the model to be created.
-   */
-  private URI modelTypeURI;
+  /** The URI of the type of the model to be created. */
+  private URI graphTypeURI;
 
-  //
-  // Constructor
-  //
 
   /**
    * Sole constructor.
    *
-   * @param modelURI  the {@link URI} of the model to be created, never
-   *   <code>null</code>
-   * @param modelTypeURI  thie {@link URI} of the type of model to create, or
-   *   <code>null</code> for the same type as the system model (<code>#</code>)
-   * @throws IllegalArgumentException if <var>modelURI</var> is
-   *   <code>null</code>
+   * @param graphURI  the {@link URI} of the graph to be created, never <code>null</code>
+   * @param graphTypeURI  thie {@link URI} of the type of graph to create, or
+   *       <code>null</code> for the same type as the system graph (<code>#</code>)
+   * @throws IllegalArgumentException if <var>graphURI</var> is <code>null</code>
    */
-  CreateModelOperation(URI modelURI, URI modelTypeURI) throws QueryException
-  {
-    // Validate "modelURI" parameter
-    if (modelURI == null) {
-      throw new IllegalArgumentException("Null \"modelURI\" parameter");
-    }
-    if (modelURI.getFragment() == null) {
-      throw new QueryException(
-          "Model URI does not have a fragment (modelURI:\"" + modelURI + "\")"
-      );
+  CreateModelOperation(URI graphURI, URI graphTypeURI) throws QueryException {
+    // Validate "graphURI" parameter
+    if (graphURI == null) throw new IllegalArgumentException("Null \"graphURI\" parameter");
+    if (!graphURI.isOpaque() && graphURI.getFragment() == null) {
+      throw new QueryException("Graph URI does not have a fragment (graphURI:\"" + graphURI + "\")");
     }
 
     // Initialize fields
-    this.modelURI     = modelURI;
-    this.modelTypeURI = modelTypeURI;
+    this.graphURI     = graphURI;
+    this.graphTypeURI = graphTypeURI;
   }
 
   //
@@ -136,75 +93,16 @@ class CreateModelOperation implements Operation
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
                       ResolverSessionFactory resolverSessionFactory,
-                      DatabaseMetadata       metadata) throws Exception
-  {
-    // Default to the system model type
-    if (modelTypeURI == null) {
-      modelTypeURI = metadata.getSystemModelTypeURI();
-    }
+                      DatabaseMetadata       metadata) throws Exception {
+    // Default to the system graph type
+    if (graphTypeURI == null) graphTypeURI = metadata.getSystemModelTypeURI();
 
-    // Verify that the model URI is relative to the database URI.  The model
-    // URI can use one of the hostname aliases instead of the canonical
-    // hostname of the database URI.  No checking of the scheme specific part
-    // of the model URI is performed if the database URI is opaque.
-    boolean badModelURI = true;
-    URI databaseURI = metadata.getURI();
-    String scheme = modelURI.getScheme();
-    String fragment = modelURI.getFragment();
-    if (scheme != null && scheme.equals(databaseURI.getScheme()) &&
-        fragment != null) {
-      if (databaseURI.isOpaque()) {
-        // databaseURI is opaque.
-        if (modelURI.isOpaque()) {
-          // Strip out the query string.
-          String ssp = modelURI.getSchemeSpecificPart();
-          int qIndex = ssp.indexOf('?');
-          if (qIndex >= 0) {
-            ssp = ssp.substring(0, qIndex);
-          }
-
-          if (ssp.equals(databaseURI.getSchemeSpecificPart())) {
-            // modelURI is relative to databaseURI.
-            badModelURI = false;
-          }
-        }
-      } else {
-        // databaseURI is hierarchial.
-        String path;
-        String host;
-
-        if (
-            !modelURI.isOpaque() && (
-                modelURI.getSchemeSpecificPart().equals(
-                    databaseURI.getSchemeSpecificPart()
-                ) || (
-                    (host = modelURI.getHost()) != null &&
-                    modelURI.getPort() == databaseURI.getPort() &&
-                    (path = modelURI.getPath()) != null &&
-                    path.equals(databaseURI.getPath()) &&
-                    metadata.getHostnameAliases().contains(host.toLowerCase())
-                )
-            )
-        ) {
-          // modelURI is relative to databaseURI.
-          badModelURI = false;
-        }
-      }
-    }
-    if (badModelURI) {
-      throw new QueryException(
-          "Model URI is not relative to the database URI (modelURI:\"" +
-          modelURI + "\", databaseURI:\"" + databaseURI + "\")"
-      );
-    }
-
+    verifyGraphUriIsRelative(graphURI, metadata);
+    
     // Look up the resolver factory for the model type
-    ResolverFactory resolverFactory =
-      operationContext.findModelTypeResolverFactory(modelTypeURI);
+    ResolverFactory resolverFactory = operationContext.findModelTypeResolverFactory(graphTypeURI);
     if (resolverFactory == null) {
-      throw new QueryException(
-          "Couldn't find resolver factory in internal resolver map " +
-          modelTypeURI);
+      throw new QueryException("Couldn't find resolver factory in internal resolver map " + graphTypeURI);
     }
 
     // PREVIOUSLY WITHIN TRANSACTION
@@ -214,14 +112,13 @@ class CreateModelOperation implements Operation
     assert resolver != null;
 
     // Find the local node identifying the model
-    long model = systemResolver.localizePersistent(new URIReferenceImpl(
-        modelURI));
-    assert model != NodePool.NONE;
+    long graph = systemResolver.localizePersistent(new URIReferenceImpl(graphURI));
+    assert graph != NodePool.NONE;
 
     // Check model does not already exist with a different model type.
     // TODO: there's a node leak here, if the model has already been created.
     Resolution resolution = systemResolver.resolve(new ConstraintImpl(
-        new LocalNode(model),
+        new LocalNode(graph),
         new LocalNode(metadata.getRdfTypeNode()),
         new Variable("x"),
         new LocalNode(metadata.getSystemModelNode())));
@@ -232,12 +129,12 @@ class CreateModelOperation implements Operation
         Node eNode = systemResolver.globalize(resolution.getColumnValue(0));
         try {
           URIReferenceImpl existing = (URIReferenceImpl)eNode;
-          if (!new URIReferenceImpl(modelTypeURI).equals(existing)) {
-            throw new QueryException(modelURI + " already exists with model type " + existing +
-                " in attempt to create it with type " + modelTypeURI);
+          if (!new URIReferenceImpl(graphTypeURI).equals(existing)) {
+            throw new QueryException(graphURI + " already exists with model type " + existing +
+                " in attempt to create it with type " + graphTypeURI);
           }
         } catch (ClassCastException ec) {
-          throw new QueryException("Invalid model type entry in system model: " + modelURI + " <rdf:type> " + eNode);
+          throw new QueryException("Invalid model type entry in system model: " + graphURI + " <rdf:type> " + eNode);
         }
       }
     } finally {
@@ -250,28 +147,86 @@ class CreateModelOperation implements Operation
     //       following security check doesn't succeed
 
     // Make sure security adapters are satisfied
-    for (Iterator i = operationContext.getSecurityAdapterList().iterator();
-         i.hasNext();)
-    {
-      SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+    for (Iterator<SecurityAdapter> i = operationContext.getSecurityAdapterList().iterator(); i.hasNext();) {
+      SecurityAdapter securityAdapter = i.next();
 
       // Tell the truth to the user
-      if (!securityAdapter.canCreateModel(model, systemResolver) ||
-          !securityAdapter.canSeeModel(model, systemResolver))
-      {
-        throw new QueryException("You aren't allowed to create " + modelURI);
+      if (!securityAdapter.canCreateModel(graph, systemResolver) || !securityAdapter.canSeeModel(graph, systemResolver)) {
+        throw new QueryException("You aren't allowed to create " + graphURI);
       }
     }
 
     // Use the session to create the model
-    resolver.createModel(model, modelTypeURI);
+    resolver.createModel(graph, graphTypeURI);
   }
 
   /**
    * @return <code>true</code>
    */
-  public boolean isWriteOperation()
-  {
+  public boolean isWriteOperation() {
     return true;
+  }
+
+  /**
+   * Verify that the graph URI is relative to the database URI.  The graph
+   * URI can use one of the hostname aliases instead of the canonical
+   * hostname of the database URI.  No checking of the scheme specific part
+   * of the graph URI is performed if the database URI is opaque.
+   * @param graphURI
+   * @param metadata
+   * @throws QueryException
+   */
+  private void verifyGraphUriIsRelative(URI graphURI, DatabaseMetadata metadata) throws QueryException {
+    boolean badModelURI = true;
+    URI databaseURI = metadata.getURI();
+    String scheme = graphURI.getScheme();
+    String fragment = graphURI.getFragment();
+
+    if (scheme != null && scheme.equals(databaseURI.getScheme()) && fragment != null) {
+      if (databaseURI.isOpaque()) {
+        // databaseURI is opaque.
+        if (graphURI.isOpaque()) {
+          // Strip out the query string.
+          String ssp = graphURI.getSchemeSpecificPart();
+          int qIndex = ssp.indexOf('?');
+          if (qIndex >= 0) ssp = ssp.substring(0, qIndex);
+
+          if (ssp.equals(databaseURI.getSchemeSpecificPart())) {
+            // graphURI is relative to databaseURI.
+            badModelURI = false;
+          }
+        }
+      } else {
+        // databaseURI is hierarchial.
+        String path;
+        String host;
+
+        if (
+            !graphURI.isOpaque() && (
+                graphURI.getSchemeSpecificPart().equals(
+                    databaseURI.getSchemeSpecificPart()
+                ) || (
+                    (host = graphURI.getHost()) != null &&
+                    graphURI.getPort() == databaseURI.getPort() &&
+                    (path = graphURI.getPath()) != null &&
+                    path.equals(databaseURI.getPath()) &&
+                    metadata.getHostnameAliases().contains(host.toLowerCase())
+                )
+            )
+        ) {
+          // graphURI is relative to databaseURI.
+          badModelURI = false;
+        }
+      }
+    } else {
+      badModelURI = !graphURI.isOpaque();
+    }
+
+    if (badModelURI) {
+      throw new QueryException(
+          "Model URI is not relative to the database URI (graphURI:\"" +
+          graphURI + "\", databaseURI:\"" + databaseURI + "\")"
+      );
+    }
   }
 }
