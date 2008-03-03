@@ -34,21 +34,44 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-// Third party packages
-import junit.framework.*;        // JUnit
-import org.apache.log4j.Logger;  // Log4J
-import org.jrdf.graph.SubjectNode;  // JRDF
-import org.jrdf.graph.PredicateNode;  // JRDF
-import org.jrdf.graph.ObjectNode;  // JRDF
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.log4j.Logger;
+import org.jrdf.graph.BlankNode;
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
-
-// Locally written packages
-import org.mulgara.query.*;
+import org.jrdf.graph.URIReference;
+import org.mulgara.query.Answer;
+import org.mulgara.query.ConstraintConjunction;
+import org.mulgara.query.ConstraintDisjunction;
+import org.mulgara.query.ConstraintExpression;
+import org.mulgara.query.ConstraintImpl;
+import org.mulgara.query.ConstraintIs;
+import org.mulgara.query.ModelResource;
+import org.mulgara.query.Order;
+import org.mulgara.query.Query;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.Subquery;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.UnconstrainedAnswer;
+import org.mulgara.query.Variable;
+import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
-import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.TripleImpl;
+import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.query.rdf.VariableNodeImpl;
 import org.mulgara.server.Session;
 import org.mulgara.util.FileUtil;
 
@@ -102,6 +125,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     suite.addTest(new AdvDatabaseSessionUnitTest("testPrefixingWithUnbound"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testDatabaseDelete"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testCreateModel"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testInsertionBlankNodes"));
 
     return suite;
   }
@@ -1096,6 +1120,72 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     }
   }
 
+  /**
+   * Test two insertions in the same transaction using the same variable name.
+   * The variable blank node should map to different internal node ID's in each
+   * insert operation.
+   */
+  public void testInsertionBlankNodes()
+  {
+    logger.info("testInsertionBlankNodes");
+    
+    try {
+      Session session = database.newSession();
+      try {
+        session.createModel(model2URI, null);
+        session.setAutoCommit(false);
+        
+        URIReference refA = new URIReferenceImpl(URI.create("test:a"));
+        URIReference refP1 = new URIReferenceImpl(URI.create("test:p1"));
+        URIReference refP2 = new URIReferenceImpl(URI.create("test:p2"));
+        Literal o1 = new LiteralImpl("o1");
+        Literal o2 = new LiteralImpl("o2");
+        BlankNode bn = new VariableNodeImpl("bn");
+        
+        Set<Triple> insert1 = new HashSet<Triple>();
+        insert1.add(new TripleImpl(refA, refP1, bn));
+        insert1.add(new TripleImpl(bn, refP2, o1));
+        
+        Set<Triple> insert2 = new HashSet<Triple>();
+        insert2.add(new TripleImpl(refA, refP1, bn));
+        insert2.add(new TripleImpl(bn, refP2, o2));
+        
+        session.insert(model2URI, insert1);
+        session.insert(model2URI, insert2);
+        session.setAutoCommit(true);
+        
+        Variable subjectVariable   = new Variable("subject");
+        Variable predicateVariable = new Variable("predicate");
+        Variable objectVariable    = new Variable("object");
+
+        List<Object> selectList = new ArrayList<Object>(3);
+        selectList.add(subjectVariable);
+        selectList.add(predicateVariable);
+        selectList.add(objectVariable);
+        
+        Answer answer = session.query(new Query(
+              selectList,                                       // SELECT
+              new ModelResource(model2URI),                     // FROM
+              new ConstraintImpl(subjectVariable,               // WHERE
+                             predicateVariable,
+                             objectVariable),
+              null,                                             // HAVING
+              new ArrayList<Order>(),                           // ORDER BY
+              null,                                             // LIMIT
+              0,                                                // OFFSET
+              new UnconstrainedAnswer()                         // GIVEN
+            ));
+        
+        assertEquals(4, answer.getRowCount());
+      }
+      finally {
+        session.close();
+      }
+    }
+    catch (Exception e) {
+      fail(e);
+    }
+  }
 
   /**
    * Test two simultaneous, explicit transactions, in two threads. The second one should block
