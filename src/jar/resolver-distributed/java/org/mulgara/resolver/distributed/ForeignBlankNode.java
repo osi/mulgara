@@ -49,7 +49,7 @@ public class ForeignBlankNode extends AbstractBlankNode {
    * @return A string containing all the unique features of the node.
    */
   public String toString() {
-    return serverUri.toString() + ":_" + nodeId;
+    return "_:" + serverUri.toString() + ":" + nodeId;
   }
 
 
@@ -75,7 +75,7 @@ public class ForeignBlankNode extends AbstractBlankNode {
    * @return Hashcode of the nodeid.
    */
   public int hashCode() {
-    return serverHashCode ^ (int)(nodeId ^ (nodeId >>>32));
+    return serverHashCode ^ (int)(nodeId ^ (nodeId >>> 16));
   }
 
 }
