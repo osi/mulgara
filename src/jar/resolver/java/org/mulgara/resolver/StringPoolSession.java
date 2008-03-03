@@ -31,12 +31,6 @@ package org.mulgara.resolver;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import javax.transaction.xa.XAResource;
-
-// Java 2 enterprise packages
-import javax.transaction.RollbackException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -46,7 +40,6 @@ import org.jrdf.graph.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.SessionFactory;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.stringpool.SPObject;
@@ -86,13 +79,6 @@ public class StringPoolSession implements XAResolverSession
    */
   private static final long NONE = NodePool.NONE;
 
-  /**
-   * Whether transactionality is enabled.
-   *
-   * Disabling transactionality can be useful for debugging.
-   */
-  private static final boolean TRANSACTIONAL = true;
-
   private static final int OBTAIN   = 0;
   private static final int PREPARE  = 1;
   private static final int COMMIT   = 2;
@@ -116,7 +102,7 @@ public class StringPoolSession implements XAResolverSession
   private final URI databaseURI;
 
   /** The set of alternative hostnames for the current host. */
-  private final Set hostnameAliases;
+  private final Set<String> hostnameAliases;
 
   /** Where to store literals for this phase.  */
   private XAStringPool persistentStringPool;
@@ -130,9 +116,6 @@ public class StringPoolSession implements XAResolverSession
   /** Where to store literals which won't outlive this session.  */
   private final StringPool temporaryStringPool;
   
-  /** Maps blank nodes into remembered IDs. */
-  Map<BlankNode,Long> blankNodeCache = new HashMap<BlankNode,Long>();
-
   private int state;
 
   private SimpleXAResource[] resources;
@@ -140,13 +123,14 @@ public class StringPoolSession implements XAResolverSession
   private Object globalLock;
 
   StringPoolSession(URI          databaseURI,
-                    Set          hostnameAliases,
+                    Set<String>  hostnameAliases,
                     XAStringPool persistentStringPool,
                     XANodePool   persistentNodePool,
                     StringPool   temporaryStringPool,
                     NodePool     temporaryNodePool,
-                    Object globalLock)
-  {
+                    Object globalLock
+  ) {
+
     if (logger.isDebugEnabled()) {
       logger.debug("Constructing StringPoolSession " + System.identityHashCode(this), new Throwable());
     }
@@ -168,8 +152,8 @@ public class StringPoolSession implements XAResolverSession
   // Globalize/Localize methods.
   //
 
-  public Node globalize(long localNode) throws GlobalizeException
-  {
+  public Node globalize(long localNode) throws GlobalizeException {
+
     if (state == ROLLBACK || state == RELEASE) {
       throw new GlobalizeException(localNode, "Attempting to globalize outside transaction.");
     }
@@ -200,23 +184,19 @@ public class StringPoolSession implements XAResolverSession
   }
 
 
-  public long lookup(Node node) throws LocalizeException
-  {
+  public long lookup(Node node) throws LocalizeException {
     return localize(node, READ | TEMP);
   }
 
-  public long lookupPersistent(Node node) throws LocalizeException
-  {
+  public long lookupPersistent(Node node) throws LocalizeException {
     return localize(node, READ | PERSIST);
   }
 
-  public long localize(Node node) throws LocalizeException
-  {
+  public long localize(Node node) throws LocalizeException {
     return localize(node, WRITE | TEMP);
   }
 
-  public long localizePersistent(Node node) throws LocalizeException
-  {
+  public long localizePersistent(Node node) throws LocalizeException {
     return localize(node, WRITE | PERSIST);
   }
 
@@ -233,7 +213,6 @@ public class StringPoolSession implements XAResolverSession
     synchronized (this.globalLock) {
       this.persistentStringPool.refresh();
       this.persistentNodePool.refresh();
-      blankNodeCache.clear();
       // !!Review: Call rollback on temporary? NB. Can't rollback non XA-SP/NP.
       //this.temporaryStringPool.refresh();
       //this.temporaryNodePool.refresh();
@@ -245,8 +224,7 @@ public class StringPoolSession implements XAResolverSession
   }
 
 
-  public void prepare() throws SimpleXAResourceException
-  {
+  public void prepare() throws SimpleXAResourceException {
     if (logger.isDebugEnabled()) {
       logger.debug("Preparing phase on StringPoolSession " + System.identityHashCode(this) + " SP=" + System.identityHashCode(persistentStringPool));
     }
@@ -266,8 +244,7 @@ public class StringPoolSession implements XAResolverSession
   }
 
 
-  public void commit() throws SimpleXAResourceException
-  {
+  public void commit() throws SimpleXAResourceException {
     if (logger.isDebugEnabled()) {
       logger.debug("Committing phase on StringPoolSession " + System.identityHashCode(this));
     }
@@ -282,7 +259,6 @@ public class StringPoolSession implements XAResolverSession
     synchronized (globalLock) {
       persistentStringPool.commit();
       persistentNodePool.commit();
-      blankNodeCache.clear();
       for (int i = 0; i < resources.length; i++) {
         resources[i].commit();
       }
@@ -290,8 +266,7 @@ public class StringPoolSession implements XAResolverSession
   }
 
 
-  public void rollback() throws SimpleXAResourceException
-  {
+  public void rollback() throws SimpleXAResourceException {
     if (logger.isDebugEnabled()) {
       logger.debug("Rollback phase on StringPoolSession " + System.identityHashCode(this));
     }
@@ -301,15 +276,13 @@ public class StringPoolSession implements XAResolverSession
     state = ROLLBACK;
     persistentStringPool.rollback();
     persistentNodePool.rollback();
-    blankNodeCache.clear();
     for (int i = 0; i < resources.length; i++) {
       resources[i].rollback();
     }
   }
 
 
-  public void release() throws SimpleXAResourceException
-  {
+  public void release() throws SimpleXAResourceException {
     if (logger.isDebugEnabled()) {
       logger.debug("Release phase on StringPoolSession " + System.identityHashCode(this));
     }
@@ -323,7 +296,6 @@ public class StringPoolSession implements XAResolverSession
 
     persistentStringPool.release();
     persistentNodePool.release();
-    blankNodeCache.clear();
 
     // TODO determine if release() should be called for the temp components.
     //temporaryStringPool.release();
@@ -437,9 +409,7 @@ public class StringPoolSession implements XAResolverSession
     try {
       spObject = spoFactory.newSPObject(node);
     } catch (RuntimeException ex) {
-      throw new LocalizeException(
-          node, "Couldn't convert Node to SPObject", ex
-      );
+      throw new LocalizeException(node, "Couldn't convert Node to SPObject", ex);
     }
     assert spObject != null;
 
@@ -453,8 +423,7 @@ public class StringPoolSession implements XAResolverSession
   }
 
 
-  protected long localizeBlankNode(BlankNode node, int flags)
-      throws LocalizeException {
+  protected long localizeBlankNode(BlankNode node, int flags) throws LocalizeException {
     try {
 
       // Check to see that it's a blank node impl (a Mulgara blank node)
@@ -464,15 +433,12 @@ public class StringPoolSession implements XAResolverSession
         // If the blank node id is greater then zero return it.
         // FIXME: we should be checking that the BlankNodeImpl came from the
         //        correct phase, otherwise it is invalid to extract the NodeId.
-        if (bi.getNodeId() > 0) {
-          return bi.getNodeId();
-        }
+        if (bi.getNodeId() > 0) return bi.getNodeId();
 
         // If the blank node does not have a blank node id and we are in a read
         // phase then throw an exception.
         if ((bi.getNodeId() == 0) && ((flags & WRITE_MASK) == READ)) {
-          throw new LocalizeException(node, "Attempt to get a node ID from " +
-              "a non-allocated BlankNodeImpl in a read phase");
+          throw new LocalizeException(node, "Attempt to get a node ID from a non-allocated BlankNodeImpl in a read phase");
         }
 
         // If we are in a write phase.
@@ -485,8 +451,7 @@ public class StringPoolSession implements XAResolverSession
           } else if (bi.getNodeId() == 0) {
             if ((flags & STORE_MASK) == TEMP) {
               bi.setNodeId(-temporaryNodePool.newNode());
-            }
-            else {
+            } else {
               bi.setNodeId(persistentNodePool.newNode());
             }
           }
@@ -494,13 +459,11 @@ public class StringPoolSession implements XAResolverSession
         }
         // Throw an exception here if we're in a read phase and the blank node
         // id is negative.
-        throw new LocalizeException(node, "Attempt to persist a local blank " +
-           "node in a read phase");
+        throw new LocalizeException(node, "Attempt to persist a local blank node in a read phase");
       } else if ((flags & WRITE_MASK) == WRITE) {
       // Some other implementation of BlankNode, so we can't access internal
       // node ID and we can only create one - we must be in the WRITE phase.
         return getAllocatedNodeId(node, flags);
-
       } else {
         // If it's a read phase and not the local BlankNode then throw an
         // exception.
@@ -520,7 +483,6 @@ public class StringPoolSession implements XAResolverSession
    */
   protected long getAllocatedNodeId(BlankNode bn, int flags) throws NodePoolException {
     assert !(bn instanceof BlankNodeImpl);
-    if (blankNodeCache.containsKey(bn)) return blankNodeCache.get(bn);
 
     long nodeId;
     if ((flags & STORE_MASK) == TEMP) {
@@ -528,28 +490,17 @@ public class StringPoolSession implements XAResolverSession
     } else {
       nodeId = persistentNodePool.newNode();
     }
-    blankNodeCache.put(bn, nodeId);
     return nodeId;
   }
 
-  protected Node globalizeBlankNode(long localNode, SPObject spObject) throws
-      GlobalizeException {
+  protected Node globalizeBlankNode(long localNode, SPObject spObject) throws GlobalizeException {
 
-    Node node = null;
-
-    if (spObject == null) {
-      node = new BlankNodeImpl(localNode);
-    } else {
-      node = spObject.getRDFNode();
-    }
-
-    return node;
+    return (spObject == null) ? new BlankNodeImpl(localNode) : spObject.getRDFNode();
   }
 
 
-  private long localizeSPObject(SPObject spObject, int flags)
-      throws StringPoolException, NodePoolException
-  {
+  private long localizeSPObject(SPObject spObject, int flags) throws StringPoolException, NodePoolException {
+
     boolean persistent = true;
     SPObject relativeSPObject = mapRelative(spObject);
     long localNode = persistentStringPool.findGNode(relativeSPObject);
@@ -630,9 +581,7 @@ public class StringPoolSession implements XAResolverSession
           String query = uri.getQuery();
           String ssp = databaseURI.getSchemeSpecificPart();
           if (query != null) ssp += '?' + query;
-          spObject = spObjectFactory.newSPURI(new URI(
-              databaseURI.getScheme(), ssp, uri.getFragment()
-          ));
+          spObject = spObjectFactory.newSPURI(new URI(databaseURI.getScheme(), ssp, uri.getFragment()));
         } catch (URISyntaxException ex) {
           logger.warn(
               "Cannot create absolute URI with base:\"" + databaseURI +
@@ -659,10 +608,7 @@ public class StringPoolSession implements XAResolverSession
       String scheme = uri.getScheme();
       String fragment = uri.getFragment();
 
-      if (
-          scheme != null && scheme.equals(databaseURI.getScheme()) &&
-          fragment != null
-      ) {
+      if (scheme != null && scheme.equals(databaseURI.getScheme()) && fragment != null ) {
         if (databaseURI.isOpaque()) {
           // databaseURI is opaque.
           if (uri.isOpaque()) {
@@ -681,17 +627,11 @@ public class StringPoolSession implements XAResolverSession
             if (ssp.equals(databaseURI.getSchemeSpecificPart())) {
               // Construct a new relative uri with just the fragment and
               // optional query string.
-              SPObjectFactory spObjectFactory =
-                  persistentStringPool.getSPObjectFactory();
+              SPObjectFactory spObjectFactory = persistentStringPool.getSPObjectFactory();
               try {
-                spObject = spObjectFactory.newSPURI(new URI(
-                    null, null, null, query, fragment
-                ));
+                spObject = spObjectFactory.newSPURI(new URI(null, null, null, query, fragment));
               } catch (URISyntaxException ex) {
-                logger.warn(
-                    "Cannot create relative URI with fragment:\"" + fragment +
-                    "\"", ex
-                );
+                logger.warn("Cannot create relative URI with fragment:\"" + fragment + "\"", ex);
               }
             }
           }
@@ -715,17 +655,11 @@ public class StringPoolSession implements XAResolverSession
           ) {
             // Construct a new relative uri with just the fragment and
             // optional query string.
-            SPObjectFactory spObjectFactory =
-                persistentStringPool.getSPObjectFactory();
+            SPObjectFactory spObjectFactory = persistentStringPool.getSPObjectFactory();
             try {
-              spObject = spObjectFactory.newSPURI(new URI(
-                  null, null, null, uri.getQuery(), fragment
-              ));
+              spObject = spObjectFactory.newSPURI(new URI(null, null, null, uri.getQuery(), fragment));
             } catch (URISyntaxException ex) {
-              logger.warn(
-                  "Cannot create relative URI with fragment:\"" + fragment +
-                  "\"", ex
-              );
+              logger.warn("Cannot create relative URI with fragment:\"" + fragment + "\"", ex);
             }
           }
         }
