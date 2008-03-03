@@ -517,9 +517,11 @@ class Parser extends Thread implements N3ParserEventHandler
    */
   private BlankNodeImpl createBlankNode() {
     try {
-      return new BlankNodeImpl(resolverSession.newBlankNode());
-    } catch (NodePoolException npe) {
-      throw new RuntimeException("Unable to create blank node", npe);
+      BlankNodeImpl bn = new BlankNodeImpl();
+      resolverSession.localize(bn);  // This sets and returns the node ID
+      return bn;
+    } catch (LocalizeException le) {
+      throw new RuntimeException("Unable to create blank node", le);
     }
   }
 
