@@ -75,7 +75,7 @@ public class ForeignBlankNode extends AbstractBlankNode {
    * @return Hashcode of the nodeid.
    */
   public int hashCode() {
-    return serverHashCode ^ (int)(nodeId ^ (nodeId >>> 16));
+    return serverHashCode ^ (int)(nodeId ^ (nodeId >>> 32));
   }
 
 }
