@@ -201,6 +201,7 @@ class DefaultConstraintHandlers
             }
           }
         }),
+/*
         new NVPair(ConstraintNegation.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             if (((ConstraintNegation)constraintExpr).getModel().equals(Variable.FROM)) {
@@ -215,6 +216,7 @@ class DefaultConstraintHandlers
             }
           }
         }),
+*/
         new NVPair(WalkConstraint.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             return WalkFunction.walk(context, (WalkConstraint)constraintExpr, modelExpr, context.getResolverSession());
@@ -280,11 +282,13 @@ class DefaultConstraintHandlers
                                       ConstraintOperations.replace(bindings, wc.getUnanchoredConstraint()));
           }
         }),
+/*
         new NVPair(ConstraintNegation.class, new ConstraintBindingHandler() {
           public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
             return new ConstraintNegation(ConstraintOperations.replace(bindings, (Constraint)constraintExpr));
           }
         }),
+*/
         new NVPair(ConstraintConjunction.class, new ConstraintBindingHandler() {
           public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
             return new ConstraintConjunction(ConstraintOperations.replaceOperationArgs(bindings, (ConstraintOperation)constraintExpr));
@@ -312,11 +316,13 @@ class DefaultConstraintHandlers
             return new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel);
           }
         }),
+/*
         new NVPair(ConstraintNegation.class, new ConstraintModelRewrite() {
           public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
             return new ConstraintNegation(new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel));
           }
         }),
+*/
       });
   }
 
@@ -331,6 +337,7 @@ class DefaultConstraintHandlers
                 context.localize(constraint.getElement(3)));
           }
         }),
+/*
         new NVPair(ConstraintNegation.class, new ConstraintLocalization() {
           public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception {
             return new ConstraintNegation(new ConstraintImpl(
@@ -340,6 +347,7 @@ class DefaultConstraintHandlers
                 context.localize(constraint.getElement(3))));
           }
         }),
+*/
       });
   }
 }
