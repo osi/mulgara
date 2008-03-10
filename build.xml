@@ -1909,6 +1909,15 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
           depends="dist, client-test, session-test, resolver-api-test, store-xa-test,
                    utils-test, jxtest, store-stringpool-xa-loadtest, publish-summary"
           description="Runs all tests (updates source first)">
+
+    <loadfile property="test.status.success" srcfile="${test.dir}/junit-summary.txt">
+      <filterchain>
+        <linecontainsregexp>
+          <regexp pattern="Success rate *100\.?0?0?%"/>
+        </linecontainsregexp>
+      </filterchain>
+    </loadfile>
+    <fail unless="test.status.success"/>
   </target>
 
   <target name="client-test"
