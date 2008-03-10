@@ -35,7 +35,7 @@ import java.util.GregorianCalendar;
 
 // Third party packages
 import junit.framework.*;          // JUnit
-import org.apache.log4j.Category;  // Log4J
+import org.apache.log4j.Logger;    // Log4J
 
 /**
  * Test case for {@link LiteralImpl}.
@@ -62,8 +62,7 @@ public class LiteralImplUnitTest extends TestCase {
    *
    * This is named after the class.
    */
-  private Category logger =
-      Category.getInstance(LiteralImplUnitTest.class.getName());
+  private static final Logger logger = Logger.getLogger(LiteralImplUnitTest.class);
 
   /**
    * Constructs a new test with the given name.

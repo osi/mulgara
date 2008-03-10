@@ -31,7 +31,7 @@ package org.mulgara.store.xa;
 import java.io.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.util.Constants;
@@ -92,8 +92,7 @@ public final class AVLNode {
   final static long NULL_NODE = Block.INVALID_BLOCK_ID;
 
   /** The logger. */
-  private final static Category logger =
-      Category.getInstance(AVLNode.class.getName());
+  private final static Logger logger = Logger.getLogger(AVLNode.class);
 
   /** The most recent phase that this node belongs to. */
   private AVLFile.Phase phase;

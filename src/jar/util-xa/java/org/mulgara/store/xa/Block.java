@@ -32,7 +32,7 @@ import java.io.*;
 import java.nio.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.util.Constants;
@@ -63,8 +63,7 @@ public final class Block {
   public static final long INVALID_BLOCK_ID = -1;
 
   @SuppressWarnings("unused")
-  private final static Category logger =
-      Category.getInstance(Block.class.getName());
+  private final static Logger logger = Logger.getLogger(Block.class);
 
   /**
    * The pool of currently unused blocks.  Blocks come from here where possible,

@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 // Third party packages
-import org.apache.log4j.Category;    // Log4J
+import org.apache.log4j.Logger;    // Log4J
 import org.beepcore.beep.core.*;     // BEEP
 
 // Local packages
@@ -22,7 +22,7 @@ public class CommandRequestHandler implements RequestHandler
   /**
   * Logger.
   */
-  private final Category logger = Category.getInstance(getClass().getName());
+  private final static Logger logger = Logger.getLogger(CommandRequestHandler.class);
 
   /**
   * The Mulgara session wrapped by this BEEP session.

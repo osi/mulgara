@@ -66,8 +66,7 @@ public class SPBase64BinaryImpl
     implements SPTypedLiteral {
 
   /** Logger */
-  private static final Category logger =
-      Category.getInstance(SPBase64BinaryImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(SPBase64BinaryImpl.class);
 
   /** Type code that identifies this type */
   static final int TYPE_ID = 13;

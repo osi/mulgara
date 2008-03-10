@@ -28,7 +28,7 @@
 package org.mulgara.store.tuples;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -54,7 +54,7 @@ import org.mulgara.query.TuplesException;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 class RestrictionTuples extends WrappedTuples {
-  private final static Category logger = Category.getInstance(RestrictionTuples.class.getName());
+  private final static Logger logger = Logger.getLogger(RestrictionTuples.class);
 
   protected RestrictPredicate pred;
 

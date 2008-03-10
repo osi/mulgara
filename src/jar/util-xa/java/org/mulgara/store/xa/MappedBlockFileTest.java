@@ -34,7 +34,7 @@ import java.nio.*;
 
 // Third party packages
 import junit.framework.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.util.TempDir;
 
@@ -65,8 +65,7 @@ public class MappedBlockFileTest extends BlockFileTest {
    * Logger.
    *
    */
-  private final static Category logger =
-      Category.getInstance(MappedBlockFileTest.class.getName());
+  private final static Logger logger = Logger.getLogger(MappedBlockFileTest.class);
 
   /**
    * Named constructor.

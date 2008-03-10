@@ -32,7 +32,6 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 // Third party packages
-import org.apache.log4j.Category;
 
 // Locally written packages
 import org.mulgara.store.stringpool.*;

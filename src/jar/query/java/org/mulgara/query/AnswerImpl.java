@@ -33,7 +33,7 @@ import java.sql.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.mulgara.util.ResultSetRow;
 import org.mulgara.util.TestResultSet;
 
@@ -81,8 +81,7 @@ public class AnswerImpl implements Answer, Serializable {
   /**
    * Logger. This is named after the class.
    */
-  private final static Category logger =
-      Category.getInstance(AnswerImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(AnswerImpl.class);
 
   static {
 

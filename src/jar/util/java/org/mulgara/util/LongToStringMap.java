@@ -31,7 +31,7 @@ package org.mulgara.util;
 import java.io.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.util.TempDir;
 
@@ -58,8 +58,7 @@ import org.mulgara.util.TempDir;
 public final class LongToStringMap {
 
   /** Logger for this class */
-  private static Category logger =
-      Category.getInstance(LongToStringMap.class.getName());
+  private static final Logger logger = Logger.getLogger(LongToStringMap.class);
 
   /** File used to store mappings */
   private File stringFileName = null;

@@ -30,7 +30,7 @@
 package org.mulgara.resolver.store;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Standard Java packages
 import java.util.*;
@@ -80,8 +80,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  */
 class StatementStoreDuplicateResolution extends AbstractTuples implements Resolution {
 
-  protected static Category logger =
-      Category.getInstance(StatementStoreDuplicateResolution.class.getName());
+  protected static Logger logger = Logger.getLogger(StatementStoreDuplicateResolution.class);
 
   /**
    * The constraint these tuples were generated to satisfy.

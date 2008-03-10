@@ -28,7 +28,7 @@
 package org.mulgara.store.tuples;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -58,8 +58,7 @@ class OffsetTuples extends WrappedTuples {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(OffsetTuples.class.getName());
+  private final static Logger logger = Logger.getLogger(OffsetTuples.class);
 
   /**
    * The maximum number of minterms (rows) to allow through.

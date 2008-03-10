@@ -1,6 +1,6 @@
 package org.mulgara.store.xa;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.query.TuplesException;
 import org.mulgara.store.tuples.DenseLongMatrix;
@@ -36,8 +36,7 @@ public class MemoryCacheLine extends CacheLine {
   protected int    width;
   private   long[] pivotTuple;
 
-  private final static Category logger =
-      Category.getInstance(MemoryCacheLine.class.getName());
+  private final static Logger logger = Logger.getLogger(MemoryCacheLine.class);
 
 
   public MemoryCacheLine(DenseLongMatrix buffer, int size) {

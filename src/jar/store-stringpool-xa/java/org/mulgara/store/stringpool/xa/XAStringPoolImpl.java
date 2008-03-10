@@ -79,8 +79,7 @@ import org.mulgara.util.*;
 public final class XAStringPoolImpl implements XAStringPool {
 
   /** Logger. */
-  private static final Category logger =
-      Category.getInstance(XAStringPoolImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(XAStringPoolImpl.class);
 
   /** Single setting to enable the cache. */
   private static final boolean CACHE_ENABLED = true;

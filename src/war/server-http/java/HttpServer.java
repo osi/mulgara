@@ -30,7 +30,7 @@ import java.lang.reflect.Constructor;
 import java.net.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -62,8 +62,7 @@ public class HttpServer extends AbstractServer {
   /**
    * Logger. This is named after the classname.
    */
-  private final static Category logger =
-    Category.getInstance(HttpServer.class.getName());
+  private final static Logger logger = Logger.getLogger(HttpServer.class);
 
   //
   // Constructor

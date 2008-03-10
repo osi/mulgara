@@ -36,7 +36,7 @@ import java.nio.*;
 // Java 2 standard packages
 import java.util.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages.
 import org.mulgara.query.TuplesException;
@@ -73,8 +73,7 @@ public class HybridTuplesTest extends TestCase {
   private final static int ODD_LOAD_SIZE = 200000;
   private final static int BF_SMALL_LOAD_SIZE = 10;
   private final static int BF_LARGE_LOAD_SIZE = 100;
-  private final static Category logger =
-      Category.getInstance(HybridTuplesTest.class.getName());
+  private final static Logger logger = Logger.getLogger(HybridTuplesTest.class);
   private final static int WIDTH = 3;
   private HybridTuples hybridTuples;
   private RowComparator rowComparator;

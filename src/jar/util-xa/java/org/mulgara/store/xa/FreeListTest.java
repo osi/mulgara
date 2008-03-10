@@ -34,7 +34,7 @@ import java.nio.*;
 
 // Third party packages
 import junit.framework.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.util.Constants;
@@ -73,8 +73,7 @@ public class FreeListTest extends TestCase {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(FreeListTest.class.getName());
+  private final static Logger logger = Logger.getLogger(FreeListTest.class);
 
   /**
    * Description of the Field

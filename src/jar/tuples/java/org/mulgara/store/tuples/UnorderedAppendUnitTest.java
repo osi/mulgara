@@ -31,7 +31,7 @@ package org.mulgara.store.tuples;
 import junit.framework.*;
 
 // Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // locally written packages
 import org.mulgara.query.Variable;
@@ -62,8 +62,7 @@ public class UnorderedAppendUnitTest extends TestCase {
    * Logger.
    *
    */
-  private Category logger =
-      Category.getInstance(UnorderedAppendUnitTest.class.getName());
+  private static final Logger logger = Logger.getLogger(UnorderedAppendUnitTest.class);
 
   /**
    * Constructs a new test with the given name.

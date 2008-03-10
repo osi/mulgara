@@ -30,7 +30,7 @@
 package org.mulgara.store.tuples;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Standard Java packages
 import java.util.*;
@@ -66,8 +66,7 @@ import org.mulgara.store.statement.StatementStoreException;
  */
 class ConstrainedNegationTuples extends AbstractTuples {
 
-  protected static Category logger =
-      Category.getInstance(ConstrainedNegationTuples.class.getName());
+  protected static final Logger logger = Logger.getLogger(ConstrainedNegationTuples.class);
 
   /**
    * The constraint these tuples were generated to satisfy.

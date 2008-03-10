@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.LinkedList;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.store.statement.*;
@@ -42,8 +42,7 @@ final class TripleWriteThread extends Thread {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(TripleWriteThread.class.getName());
+  private final static Logger logger = Logger.getLogger(TripleWriteThread.class);
 
   private static final int BUFFER_SIZE = 50000;
 

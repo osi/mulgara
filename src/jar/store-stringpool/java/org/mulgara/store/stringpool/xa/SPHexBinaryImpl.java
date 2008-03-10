@@ -66,8 +66,7 @@ public class SPHexBinaryImpl
     implements SPTypedLiteral {
 
   /** Logger */
-  private static final Category logger =
-      Category.getInstance(SPHexBinaryImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(SPHexBinaryImpl.class);
 
   /** Type code that identifies this type */
   static final int TYPE_ID = 14;

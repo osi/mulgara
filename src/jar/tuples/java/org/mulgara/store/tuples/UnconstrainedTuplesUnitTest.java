@@ -31,7 +31,7 @@ package org.mulgara.store.tuples;
 import junit.framework.*;
 
 // Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * Test case for {@link UnconstrainedTuplesUnitTest}.
@@ -58,8 +58,7 @@ public class UnconstrainedTuplesUnitTest extends TestCase {
   /**
    * Logger.
    */
-  private Category logger =
-      Category.getInstance(UnconstrainedTuplesUnitTest.class.getName());
+  private static final Logger logger = Logger.getLogger(UnconstrainedTuplesUnitTest.class);
 
   /**
    * Constructs a new test with the given name.

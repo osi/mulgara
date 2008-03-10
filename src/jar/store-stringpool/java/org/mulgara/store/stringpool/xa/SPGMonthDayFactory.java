@@ -32,7 +32,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.store.stringpool.*;
@@ -61,8 +61,7 @@ import org.mulgara.store.stringpool.*;
 public final class SPGMonthDayFactory implements SPTypedLiteralFactory {
 
   /** Logging for the class */
-  private final static Category logger =
-                                     Category.getInstance(SPGMonthDayFactory.class);
+  private final static Logger logger = Logger.getLogger(SPGMonthDayFactory.class);
 
   /**
    * Retrieves the type id for this data type.

@@ -33,7 +33,7 @@ import java.nio.*;
 import java.nio.channels.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.util.Constants;
@@ -68,8 +68,7 @@ import org.mulgara.util.Constants;
 public final class AVLFile {
 
   /** Logger.  */
-  private final static Category logger =
-      Category.getInstance(AVLFile.class.getName());
+  private final static Logger logger = Logger.getLogger(AVLFile.class);
 
   /** The underlying block file */
   private ManagedBlockFile avlBlockFile;

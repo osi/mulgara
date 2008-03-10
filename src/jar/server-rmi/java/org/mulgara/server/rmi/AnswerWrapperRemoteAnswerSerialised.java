@@ -33,7 +33,6 @@ import java.util.*;
 import java.io.Serializable;
 
 // Third party packages
-import org.apache.log4j.Category;
 import org.mulgara.query.Answer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;

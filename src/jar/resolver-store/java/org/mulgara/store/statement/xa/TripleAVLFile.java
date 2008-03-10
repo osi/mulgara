@@ -34,7 +34,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.Constraint;
@@ -70,8 +70,7 @@ public final class TripleAVLFile {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(TripleAVLFile.class.getName());
+  private final static Logger logger = Logger.getLogger(TripleAVLFile.class);
 
   /**
    * Get line separator.

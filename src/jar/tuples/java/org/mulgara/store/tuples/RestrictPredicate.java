@@ -30,9 +30,6 @@ package org.mulgara.store.tuples;
 // Java 2 standard packages
 import java.util.*;
 
-// Third party packages
-import org.apache.log4j.Category;    // Apache Log4J
-
 // Local packages
 import org.mulgara.query.TuplesException;
 import org.mulgara.resolver.spi.ResolverSession;

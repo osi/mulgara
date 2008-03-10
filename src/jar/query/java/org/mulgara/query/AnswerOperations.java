@@ -28,7 +28,7 @@
 package org.mulgara.query;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
 * Operations permitted on {@link Answer}s.
@@ -57,8 +57,7 @@ public abstract class AnswerOperations {
   *
   * This is named after the class.
   */
-  private final static Category logger =
-    Category.getInstance(AnswerOperations.class.getName());
+  private final static Logger logger = Logger.getLogger(AnswerOperations.class);
 
   /**
   * Equality is by value, with both row and column order significant.

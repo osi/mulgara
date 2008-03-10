@@ -1,6 +1,6 @@
 package org.mulgara.store.xa;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -47,8 +47,7 @@ public class BlockCacheLine extends CacheLine {
   protected int nextTuple;
   protected int tuplesPerBlock;
 
-  private final static Category logger =
-      Category.getInstance(BlockCacheLine.class.getName());
+  private final static Logger logger = Logger.getLogger(BlockCacheLine.class);
 
 
   public BlockCacheLine(BlockFile file,

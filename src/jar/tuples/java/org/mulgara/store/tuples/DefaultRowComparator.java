@@ -31,7 +31,7 @@ package org.mulgara.store.tuples;
 import java.util.Arrays;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.TuplesException;
@@ -62,8 +62,7 @@ public class DefaultRowComparator implements RowComparator {
   /**
    * Description of the Field
    */
-  static Category logger =
-    Category.getInstance(DefaultRowComparator.class.getName());
+  private static final Logger logger = Logger.getLogger(DefaultRowComparator.class);
 
   /**
    * Description of the Field

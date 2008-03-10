@@ -203,7 +203,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       }
       else {
 
-        if (logger.isEnabledFor(Priority.ERROR)) {
+        if (logger.isEnabledFor(Level.ERROR)) {
 
           logger.error("The retrieved node and the given node were unequal " +
               "when removing node: " + gNode);

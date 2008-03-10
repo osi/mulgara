@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.Locale;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Date utils
 import com.mousepushers.date.DateParser;
@@ -69,8 +69,7 @@ import org.mulgara.util.Constants;
  */
 public final class SPDateImpl extends AbstractSPTypedLiteral {
 
-  private final static Category logger =
-      Category.getInstance(SPDateImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(SPDateImpl.class);
 
   static final int TYPE_ID = 5; // Unique ID
 

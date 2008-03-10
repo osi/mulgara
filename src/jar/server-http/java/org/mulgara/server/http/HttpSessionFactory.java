@@ -185,8 +185,7 @@ public class HttpSessionFactory implements SessionFactory {
      * Logger.
      *
      */
-    final static Category logger =
-        Category.getInstance(InvocationHandlerImpl.class.getName());
+    final static Logger logger = Logger.getLogger(InvocationHandlerImpl.class);
 
     private URL serverURL;
 

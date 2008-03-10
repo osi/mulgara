@@ -64,8 +64,7 @@ public class SPBooleanImpl
     implements SPTypedLiteral {
 
   /** Logger */
-  private static final Category logger =
-      Category.getInstance(SPBooleanImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(SPBooleanImpl.class);
 
   /** Type code that identifies this type */
   static final int TYPE_ID = 12;

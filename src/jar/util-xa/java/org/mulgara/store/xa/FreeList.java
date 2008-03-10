@@ -36,7 +36,7 @@ import java.nio.channels.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.mulgara.util.IntFile;
 
 /**
@@ -66,8 +66,7 @@ import org.mulgara.util.IntFile;
 public final class FreeList {
 
   /** Logger. */
-  private final static Category logger =
-      Category.getInstance(FreeList.class.getName());
+  private final static Logger logger = Logger.getLogger(FreeList.class);
 
   /** Flag used to indicate that the runtime is in debug mode. */
   private final static boolean DEBUG = false;

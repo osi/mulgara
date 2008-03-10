@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 // JUnit
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Log4J
 
@@ -58,8 +58,7 @@ public class TestResultSetTest extends TestCase {
    * Logger. Named after the class.
    *
    */
-  private Category logger =
-      Category.getInstance(TestResultSetTest.class.getName());
+  private static final Logger logger = Logger.getLogger(TestResultSetTest.class);
 
   /**
    * Test object.

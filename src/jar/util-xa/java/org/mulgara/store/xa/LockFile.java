@@ -34,7 +34,7 @@ import java.util.HashSet;
 
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * A lock file abstraction.
@@ -61,8 +61,7 @@ public class LockFile {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(LockFile.class.getName());
+  private final static Logger logger = Logger.getLogger(LockFile.class);
 
   /** The set of lock files that are in use by this JVM. */
   private static final Set internalLocks = new HashSet();

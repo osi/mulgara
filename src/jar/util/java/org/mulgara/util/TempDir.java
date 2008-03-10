@@ -31,7 +31,7 @@ package org.mulgara.util;
 import java.io.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -58,8 +58,7 @@ public final class TempDir {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(TempDir.class.getName());
+  private final static Logger logger = Logger.getLogger(TempDir.class);
 
   private static final File systemTempDir =
       new File(System.getProperty("java.io.tmpdir"));

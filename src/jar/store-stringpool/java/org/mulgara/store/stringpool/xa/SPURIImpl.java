@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
 import java.net.URI;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.URIReferenceImpl;
@@ -64,8 +64,7 @@ public final class SPURIImpl extends AbstractSPObject implements SPURI {
   /**
    * Description of the Field
    */
-  private final static Category logger =
-      Category.getInstance(SPURIImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(SPURIImpl.class);
 
   private URI uri;
 

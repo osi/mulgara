@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 import org.jrdf.graph.*;
 
 
@@ -61,7 +61,7 @@ import org.jrdf.graph.*;
 public abstract class ConstraintHaving extends AbstractConstraintExpression implements Constraint {
 
   // /** Logger. */
-  // private final static Category logger = Category.getInstance(ConstraintHaving.class.getName());
+  // private final static Logger logger = Logger.getLogger(ConstraintHaving.class);
 
   /**
     * The 4-tuple of elements (either nodes or variables)

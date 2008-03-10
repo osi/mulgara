@@ -34,7 +34,6 @@ import java.util.*;
 
 // third party packages
 import junit.framework.*;
-import org.apache.log4j.Category;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;

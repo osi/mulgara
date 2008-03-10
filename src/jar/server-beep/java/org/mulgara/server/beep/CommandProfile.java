@@ -4,7 +4,7 @@ package org.mulgara.server.beep;
 import java.io.*;
 
 // Third party packages
-import org.apache.log4j.Category;    // Log4J
+import org.apache.log4j.Logger;    // Log4J
 import org.beepcore.beep.core.*;     // BEEP
 import org.beepcore.beep.profile.*;
 
@@ -30,7 +30,7 @@ public class CommandProfile implements Profile, StartChannelListener
   /**
   * Logger.
   */
-  private final Category logger = Category.getInstance(getClass().getName());
+  private final static Logger logger = Logger.getLogger(CommandProfile.class);
 
   /**
   * The Mulgara session wrapped by this BEEP session.

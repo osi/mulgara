@@ -33,7 +33,7 @@ import java.nio.*;
 import java.nio.channels.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * A class that implements efficient copy-on-write semantics for a BlockFile.
@@ -60,8 +60,7 @@ import org.apache.log4j.Category;
 public final class ManagedBlockFile {
 
   /** Logger. */
-  private final static Category logger =
-      Category.getInstance(ManagedBlockFile.class.getName()); // Logger.
+  private final static Logger logger = Logger.getLogger(ManagedBlockFile.class);
 
   /** File extension for the FreeList file. */
   private final static String FREELIST_EXT = "_fl";

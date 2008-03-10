@@ -76,8 +76,7 @@ import org.mulgara.util.*;
 public class TestResolverUnitTest extends TestCase {
 
   /** Logger.  */
-  private final static Category logger =
-      Category.getInstance(TestResolverUnitTest.class.getName());
+  private final static Logger logger = Logger.getLogger(TestResolverUnitTest.class);
 
   /**
    * Test {@link Database} used to generate

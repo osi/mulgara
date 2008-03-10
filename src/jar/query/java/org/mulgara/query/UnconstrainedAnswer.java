@@ -31,7 +31,7 @@ package org.mulgara.query;
 import java.io.Serializable;
 
 // Third party packages
-import org.apache.log4j.Category;  // Apache Log4J
+import org.apache.log4j.Logger;  // Apache Log4J
 
 /**
  * An {@link Answer} which is true no matter what value any variable takes.
@@ -68,8 +68,7 @@ public class UnconstrainedAnswer implements Answer, Serializable {
    *
    * This is named after the class.
    */
-  private static final Category logger =
-      Category.getInstance(UnconstrainedAnswer.class.getName());
+  private static final Logger logger = Logger.getLogger(UnconstrainedAnswer.class);
 
   /**
    * The current row number.

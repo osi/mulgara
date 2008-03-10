@@ -28,7 +28,7 @@
 package org.mulgara.itql;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Automatically generated packages (SableCC)
 import org.mulgara.itql.analysis.DepthFirstAdapter;
@@ -63,8 +63,7 @@ public class HelpPrinter {
   /**
    * the category to log to
    */
-  private final static Category log =
-      Category.getInstance(HelpPrinter.class.getName());
+  private final static Logger log = Logger.getLogger(HelpPrinter.class);
 
   /**
    * Get line separator.

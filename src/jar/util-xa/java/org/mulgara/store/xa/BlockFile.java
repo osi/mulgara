@@ -33,7 +33,7 @@ import java.nio.*;
 import java.nio.channels.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * This interface provides access to files using {@link Block}s of data which are
@@ -224,8 +224,7 @@ public interface BlockFile {
     /**
      * Logger.
      */
-    private final static Category logger =
-        Category.getInstance(IOType.class.getName());
+    private final static Logger logger = Logger.getLogger(IOType.class);
 
     /** Calculate the automatic and default IO types. */
     static {

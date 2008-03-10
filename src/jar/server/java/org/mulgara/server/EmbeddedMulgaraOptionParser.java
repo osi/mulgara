@@ -31,7 +31,7 @@ package org.mulgara.server;
 import jargs.gnu.CmdLineParser;
 
 // third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * Command line option parser for the Mulgara server.
@@ -126,8 +126,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   /**
    * the category to log to
    */
-  private final static Category log =
-      Category.getInstance(EmbeddedMulgaraOptionParser.class.getName());
+  private final static Logger log = Logger.getLogger(EmbeddedMulgaraOptionParser.class);
 
   //
   // members

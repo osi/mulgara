@@ -33,7 +33,7 @@ import java.nio.*;
 import java.nio.channels.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * An implementation of BlockFile which uses memory mapped file IO.
@@ -66,8 +66,7 @@ public final class MappedBlockFile extends AbstractBlockFile {
   public final static long REGION_SIZE = 8 * 1024 * 1024;
 
   /** The logger. */
-  private final static Category logger =
-      Category.getInstance(MappedBlockFile.class.getName());
+  private final static Logger logger = Logger.getLogger(MappedBlockFile.class);
 
   /**
    * The system page size. The offset into a file that a mapped region starts

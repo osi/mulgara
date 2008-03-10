@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.util.TempDir;
 
@@ -64,8 +64,7 @@ import org.mulgara.util.TempDir;
  */
 public final class StringToLongMap {
 
-  private static Category logger =
-      Category.getInstance(StringToLongMap.class.getName());
+  private static final Logger logger = Logger.getLogger(StringToLongMap.class);
 
   // Hash bucket format (16 bytes):
   // [ hash code (4)      ][ string offset (4)  ]

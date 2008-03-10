@@ -36,7 +36,7 @@ import java.util.*;
 import java.sql.*;
 
 // Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -67,7 +67,7 @@ public class AnswerPageImplUnitTest extends TestCase {
   /**
    * Logger.
    */
-  private Category logger = Category.getInstance(AnswerPageImplUnitTest.class.getName());
+  private static final Logger logger = Logger.getLogger(AnswerPageImplUnitTest.class);
 
   /**
    * Constructs a new answer test with the given name.

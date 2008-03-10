@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 
 import javax.xml.transform.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.xml.sax.*;
 import org.xml.sax.helpers.LocatorImpl;
 
@@ -68,7 +68,7 @@ public class PIErrorHandler implements ErrorHandler, ErrorListener {
   /**
    * Description of the Field
    */
-  private static Category log = Category.getInstance("XALAN");
+  private static final Logger log = Logger.getLogger("XALAN");
 
   /**
    * Description of the Field

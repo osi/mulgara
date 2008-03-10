@@ -31,7 +31,6 @@ package org.mulgara.store.tuples;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;    // Apache Log4J
 import org.jrdf.graph.Node;
 
 // Local packages

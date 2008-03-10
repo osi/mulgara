@@ -36,7 +36,7 @@ import javax.xml.parsers.*;
 
 // Third party packages
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 // Automatically generated packages (SableCC)
@@ -103,8 +103,7 @@ public class ItqlSession {
   /**
    * the logging category to log to
    */
-  private final static Category log =
-      Category.getInstance(ItqlSession.class.getName());
+  private final static Logger log = Logger.getLogger(ItqlSession.class);
 
   /**
    * the default path to the pre-loading script

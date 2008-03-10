@@ -31,7 +31,7 @@ package org.mulgara.itql;
 import jargs.gnu.CmdLineParser;
 
 // third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * Command line option parser for the iTQL interpreter.
@@ -114,8 +114,7 @@ public class ItqlOptionParser extends CmdLineParser {
   /**
    * the category to log to
    */
-  private final static Category log =
-      Category.getInstance(ItqlOptionParser.class.getName());
+  private final static Logger log = Logger.getLogger(ItqlOptionParser.class);
 
   //
   // members

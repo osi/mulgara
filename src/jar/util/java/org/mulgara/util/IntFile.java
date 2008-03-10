@@ -33,7 +33,7 @@ import java.nio.*;
 import java.nio.channels.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * A file consisting of longs, ints or bytes that can be accessed concurrently
@@ -64,8 +64,7 @@ public abstract class IntFile {
   protected final static long MASK32 = 0xffffffffL;
   protected final static ByteOrder byteOrder; // The byte order to use.
 
-  private static Category logger =
-      Category.getInstance(IntFile.class.getName());
+  private static final Logger logger = Logger.getLogger(IntFile.class);
 
   static {
     String useByteOrderProp = System.getProperty("mulgara.xa.useByteOrder");

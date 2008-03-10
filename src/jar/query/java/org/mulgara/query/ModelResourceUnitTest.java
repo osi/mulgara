@@ -34,7 +34,7 @@ import java.net.URI;
 import junit.framework.*;
 
 // Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * Tests the functionality of ModelResource.
@@ -59,8 +59,7 @@ public class ModelResourceUnitTest extends TestCase {
   /**
    * Logger.
    */
-  private Category logger =
-      Category.getInstance(ModelResourceUnitTest.class.getName());
+  private static final Logger logger = Logger.getLogger(ModelResourceUnitTest.class);
 
   /**
    * Construct a new unit test.

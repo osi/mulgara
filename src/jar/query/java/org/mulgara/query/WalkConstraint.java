@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 
 /**
  * A walk constraint. The constraint must take the form of an anchored
@@ -68,7 +68,7 @@ public class WalkConstraint implements Constraint {
   static final long serialVersionUID = 1054509776341736706L;
 
   // /** Logger. */
-  // private final static Category logger = Category.getInstance(Constraint.class.getName());
+  // private final static Logger logger = Logger.getLogger(Constraint.class);
 
   /**
    * The constraint containing the anchored constraint.

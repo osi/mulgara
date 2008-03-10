@@ -31,7 +31,6 @@ package org.mulgara.store.stringpool.xa;
 import java.nio.ByteBuffer;
 
 // Third party packages
-import org.apache.log4j.Category;
 
 // Locally written packages
 import org.mulgara.store.stringpool.SPComparator;

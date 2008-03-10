@@ -33,7 +33,7 @@ import java.nio.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -78,8 +78,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(XAStatementStoreImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(XAStatementStoreImpl.class);
 
   final static boolean RELEASE_NODE_LISTENERS_ENABLED = false;
 

@@ -31,7 +31,7 @@ package org.mulgara.store.tuples;
 import java.util.*;
 
 // Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -64,8 +64,7 @@ class UnorderedAppend extends AbstractTuples {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(UnorderedAppend.class.getName());
+  private final static Logger logger = Logger.getLogger(UnorderedAppend.class);
 
   /**
    * The propositions to conjoin.

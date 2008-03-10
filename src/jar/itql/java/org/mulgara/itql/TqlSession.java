@@ -27,7 +27,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 
 // Third party packages
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import org.mulgara.query.Answer;
@@ -65,7 +65,7 @@ public class TqlSession {
   private final static String LOG4J_CONFIG_PATH = "log4j-tql.xml";
 
   /** The logging category to use */
-  private final static Category log = Category.getInstance(TqlSession.class.getName());
+  private final static Logger log = Logger.getLogger(TqlSession.class);
 
   /** The default path to the pre-loading script */
   private final static String PRE_LOADING_SCRIPT_PATH = "default-pre.tql";

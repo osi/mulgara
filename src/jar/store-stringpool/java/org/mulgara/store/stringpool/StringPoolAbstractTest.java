@@ -35,7 +35,7 @@ import junit.framework.*;
 import java.util.*;
 
 // Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.store.nodepool.NodePool;
@@ -65,8 +65,7 @@ public abstract class StringPoolAbstractTest extends TestCase {
   /**
    * The category to log to.
    */
-  private static Category log =
-    Category.getInstance(StringPoolAbstractTest.class.getName());
+  private static final Logger log = Logger.getLogger(StringPoolAbstractTest.class);
 
   /**
    * Subclasses must initialize this field.

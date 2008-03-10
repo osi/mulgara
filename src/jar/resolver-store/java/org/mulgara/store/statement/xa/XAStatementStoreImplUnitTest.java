@@ -69,8 +69,7 @@ public class XAStatementStoreImplUnitTest
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(XAStatementStoreImplUnitTest.class.getName());
+  private final static Logger logger = Logger.getLogger(XAStatementStoreImplUnitTest.class);
 
   /**
    * start of filenames to build the graph with.

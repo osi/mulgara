@@ -33,7 +33,7 @@ import java.nio.*;
 import java.util.*;
 
 // Third-party packages
-import org.apache.log4j.Category;  // log4j classes
+import org.apache.log4j.Logger;  // log4j classes
 
 // Locally written packages
 import org.mulgara.store.nodepool.*;
@@ -62,8 +62,7 @@ public final class XANodePoolImpl implements XANodePool {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(XANodePoolImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(XANodePoolImpl.class);
 
   /**
    * Description of the Field

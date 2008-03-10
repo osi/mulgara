@@ -34,7 +34,7 @@ import java.util.*;
 
 // Third party packages
 import junit.framework.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.util.Constants;
@@ -115,8 +115,7 @@ public abstract class ManagedBlockFileTest extends TestCase {
    * Logger.
    *
    */
-  private final static Category logger =
-      Category.getInstance(ManagedBlockFileTest.class.getName());
+  private final static Logger logger = Logger.getLogger(ManagedBlockFileTest.class);
 
   /**
    * Description of the Field

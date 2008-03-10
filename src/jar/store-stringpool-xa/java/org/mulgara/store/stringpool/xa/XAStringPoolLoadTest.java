@@ -34,7 +34,7 @@ import java.util.*;
 
 // third party packages
 import junit.framework.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // locally written packages
 import org.mulgara.store.stringpool.*;
@@ -66,8 +66,7 @@ public class XAStringPoolLoadTest extends StringPoolLoadTest {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(XAStringPoolLoadTest.class.getName());
+  private final static Logger logger = Logger.getLogger(XAStringPoolLoadTest.class);
 
   /**
    * Description of the Field

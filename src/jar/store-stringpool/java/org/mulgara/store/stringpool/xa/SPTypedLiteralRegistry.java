@@ -33,7 +33,7 @@ import java.net.URI;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.LiteralImpl;
@@ -62,8 +62,7 @@ import org.mulgara.store.stringpool.*;
  */
 public abstract class SPTypedLiteralRegistry {
 
-  private static final Category logger =
-      Category.getInstance(SPTypedLiteralRegistry.class.getName());
+  private static final Logger logger = Logger.getLogger(SPTypedLiteralRegistry.class);
 
   // TODO the class names of these factories should be in a configuration file.
   private static final SPTypedLiteralFactory[] DATATYPE_HANDLERS = {

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Collections;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -62,8 +62,7 @@ class DistinctTuples extends AbstractTuples {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(DistinctTuples.class.getName());
+  private static final Logger logger = Logger.getLogger(DistinctTuples.class);
 
   /**
    * The proposition to filter.

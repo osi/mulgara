@@ -32,7 +32,7 @@
 package org.mulgara.resolver.store;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Standard Java packages
 import java.util.*;
@@ -72,8 +72,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
   private final static long ROWCOUNT_UNCALCULATED = -1;
   private final static int ROWCARD_UNCALCULATED = -1;
 
-  private final static Category logger =
-      Category.getInstance(StatementStoreResolution.class.getName());
+  private final static Logger logger = Logger.getLogger(StatementStoreResolution.class);
 
   /** The constraint these tuples were generated to satisfy. */
   private Constraint constraint;

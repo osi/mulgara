@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 
 /**
  * A transitive constraint.  The constraint must take the form of an anchored
@@ -69,7 +69,7 @@ public class TransitiveConstraint implements Constraint {
   static final long serialVersionUID = -3828723182891026790L;
 
   // /** Logger. */
-  // private final static Category logger = Category.getInstance(Constraint.class.getName());
+  // private final static Logger logger = Logger.getLogger(Constraint.class);
 
   /**
    * The constraint containing the anchored transitive predicate.

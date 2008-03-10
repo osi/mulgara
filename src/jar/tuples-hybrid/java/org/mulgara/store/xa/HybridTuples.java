@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.query.Constraint;
 import org.mulgara.query.Cursor;
@@ -114,8 +114,7 @@ public final class HybridTuples implements Tuples {
   protected int[] varLookupList;
 
   // Debugging.
-  private final static Category logger =
-      Category.getInstance(HybridTuples.class.getName());
+  private final static Logger logger = Logger.getLogger(HybridTuples.class);
   private Throwable allocated;
   private Throwable closed;
 

@@ -36,7 +36,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
 /**
@@ -70,8 +70,7 @@ public class ModelLiteral implements Model {
   /**
    * Logger. This is named after the class.
    */
-  private final static Category logger =
-      Category.getInstance(ModelLiteral.class.getName());
+  private final static Logger logger = Logger.getLogger(ModelLiteral.class);
 
   /**
    * The content of the model, an RDF syntax byte sequence.

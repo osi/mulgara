@@ -4,7 +4,7 @@ package org.mulgara.server.beep;
 import java.io.*;
 
 // Third party packages
-import org.apache.log4j.Category;    // Log4J
+import org.apache.log4j.Logger;    // Log4J
 import org.beepcore.beep.core.*;     // BEEP
 
 // Local packages
@@ -22,9 +22,9 @@ import org.mulgara.sparql.protocol.StreamAnswer;
 public class QueryRequestHandler implements RequestHandler
 {
   /**
-  * Logger.
-  */
-  private final Category logger = Category.getInstance(getClass().getName());
+   * Logger.
+   */
+  private final static Logger logger = Logger.getLogger(QueryRequestHandler.class);
 
   /**
   * The Mulgara session wrapped by this BEEP session.

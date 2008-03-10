@@ -27,7 +27,7 @@
 
 package org.mulgara.store.tuples;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.query.TuplesException;
 
@@ -44,8 +44,7 @@ import org.mulgara.query.TuplesException;
  */
 public class DenseLongMatrix {
 
-  private final static Category logger =
-      Category.getInstance(DenseLongMatrix.class.getName());
+  private final static Logger logger = Logger.getLogger(DenseLongMatrix.class);
 
   private long[] matrix;
   private int rows;

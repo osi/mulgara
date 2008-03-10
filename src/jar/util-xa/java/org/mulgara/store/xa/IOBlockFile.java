@@ -35,7 +35,7 @@ import java.nio.channels.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * An implementation of BlockFile which uses regular (position/read/write) file
@@ -61,8 +61,7 @@ import org.apache.log4j.Category;
 public final class IOBlockFile extends AbstractBlockFile {
 
   /** Logger. */
-  private final static Category logger =
-      Category.getInstance(IOBlockFile.class.getName());
+  private final static Logger logger = Logger.getLogger(IOBlockFile.class);
 
   private static final int NOMINAL_ALLOCATION_SIZE = 1048576; // in bytes
 

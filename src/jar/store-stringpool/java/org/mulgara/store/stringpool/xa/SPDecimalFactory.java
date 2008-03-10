@@ -32,7 +32,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
@@ -61,8 +61,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPDecimalFactory implements SPTypedLiteralFactory {
 
-  private final static Category logger =
-      Category.getInstance(SPDecimalFactory.class.getName());
+  private final static Logger logger = Logger.getLogger(SPDecimalFactory.class);
 
   private final static URI[] TYPE_URIS = {
       URI.create(XSD.NAMESPACE + "decimal"),

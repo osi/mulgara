@@ -36,7 +36,7 @@ import java.nio.*;
 // Java 2 standard packages
 import java.util.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * Test cases for BlockFile.
@@ -88,8 +88,7 @@ public abstract class BlockFileTest extends TestCase {
   /**
    * Logger.
    */
-  private final static Category logger =
-      Category.getInstance(BlockFileTest.class.getName());
+  private final static Logger logger = Logger.getLogger(BlockFileTest.class);
 
   /**
    * Description of the Field

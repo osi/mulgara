@@ -29,7 +29,7 @@ package org.mulgara.store.xa;
 
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * @created 2001-09-20
@@ -54,8 +54,7 @@ public class SimpleXAResourceException extends Exception {
   /**
    * Logger.
    */
-  private final static Category logger =
-    Category.getInstance(SimpleXAResourceException.class.getName());
+  private final static Logger logger = Logger.getLogger(SimpleXAResourceException.class);
 
   public SimpleXAResourceException(String message) {
     super(message);

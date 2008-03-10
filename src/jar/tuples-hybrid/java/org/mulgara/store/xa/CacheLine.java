@@ -1,6 +1,6 @@
 package org.mulgara.store.xa;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.query.TuplesException;
 
@@ -52,8 +52,7 @@ public abstract class CacheLine implements Cloneable {
   public abstract void advance() throws TuplesException;
 
 
-  private final static Category logger =
-      Category.getInstance(CacheLine.class.getName());
+  private final static Logger logger = Logger.getLogger(CacheLine.class);
 
 
   public int getSegmentSize() {

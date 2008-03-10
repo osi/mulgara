@@ -71,8 +71,7 @@ public class SPXMLLiteralImpl extends AbstractSPTypedLiteral
   /**
    * Logger
    */
-  private static final Category logger =
-      Category.getInstance(SPXMLLiteralImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(SPXMLLiteralImpl.class);
 
   /**
    * Type code that identifies this type

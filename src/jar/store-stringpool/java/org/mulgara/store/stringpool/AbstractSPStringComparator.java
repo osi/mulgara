@@ -32,7 +32,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 // Third party packages
-import org.apache.log4j.Category;
 
 // Locally written packages
 

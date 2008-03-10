@@ -35,7 +35,7 @@ import junit.framework.*;
 // Third party packages
 import java.io.IOException;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.soap.SOAPException;
 
 /**
@@ -62,7 +62,7 @@ public class CollaboratorUnitTest extends TestCase {
 
   /** Logger. */
   @SuppressWarnings("unused")
-  private final static Category logger = Category.getInstance(CollaboratorUnitTest.class.getName());
+  private final static Logger logger = Logger.getLogger(CollaboratorUnitTest.class);
 
   /**
    * a flag to indicate if the collorator requires closing

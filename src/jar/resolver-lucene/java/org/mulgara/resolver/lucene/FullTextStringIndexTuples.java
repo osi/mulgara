@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
 
@@ -79,8 +79,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
     Cloneable {
 
   /** Logger.  */
-  private final static Category logger =
-      Category.getInstance(FullTextStringIndexTuples.class.getName());
+  private final static Logger logger = Logger.getLogger(FullTextStringIndexTuples.class);
 
   /** Description of the Field */
   private final static String SCORE_COLUMN = "score";

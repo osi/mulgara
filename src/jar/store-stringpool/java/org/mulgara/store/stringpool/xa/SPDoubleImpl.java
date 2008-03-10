@@ -31,7 +31,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
@@ -62,8 +62,7 @@ import org.mulgara.util.Constants;
 public final class SPDoubleImpl extends AbstractSPTypedLiteral
       implements SPDouble {
 
-  private final static Category logger =
-      Category.getInstance(SPDoubleImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(SPDoubleImpl.class);
 
   private double d;
 

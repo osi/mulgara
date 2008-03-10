@@ -34,7 +34,7 @@ import java.util.*;
 
 // Third party packages
 import junit.framework.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.mulgara.util.TempDir;
 
@@ -64,8 +64,7 @@ public class IOBlockFileTest extends BlockFileTest {
   /**
    * Logger.
    */
-  private final static Category logger =
-    Category.getInstance(IOBlockFileTest.class.getName());
+  private final static Logger logger = Logger.getLogger(IOBlockFileTest.class);
 
   private File file;
 

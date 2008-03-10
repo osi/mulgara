@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category; // Apache Log4J
+import org.apache.log4j.Logger; // Apache Log4J
 import org.beepcore.beep.core.BEEPException; // BEEP
 import org.beepcore.beep.core.ByteOutputDataStream;
 import org.beepcore.beep.core.Channel;
@@ -91,8 +91,7 @@ class BEEPSession implements Session {
    *
    * This is named after the class.
    */
-  private static final Category logger =
-      Category.getInstance(BEEPSession.class.getName());
+  private static final Logger logger = Logger.getLogger(BEEPSession.class);
 
   /**
    * The wrapped BEEP session.

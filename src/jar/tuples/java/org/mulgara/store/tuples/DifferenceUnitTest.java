@@ -29,7 +29,7 @@ package org.mulgara.store.tuples;
 
 // Third party packages
 import junit.framework.*; // JUnit
-import org.apache.log4j.Category; // Log4J
+import org.apache.log4j.Logger; // Log4J
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -55,6 +55,11 @@ import org.mulgara.query.Variable;
  */
 public class DifferenceUnitTest extends TestCase {
 
+  /**
+   * Logger.
+   */
+  private static final Logger logger = Logger.getLogger(DifferenceUnitTest.class);
+
   /** Test variable. */
   final Variable x = new Variable("x");
 
@@ -72,12 +77,6 @@ public class DifferenceUnitTest extends TestCase {
 
   /** Test variable. */
   final Variable v = new Variable("v");
-
-  /**
-   * Logger.
-   */
-  private Category logger =
-      Category.getInstance(DifferenceUnitTest.class.getName());
 
   /**
    * Constructs a new test with the given name.

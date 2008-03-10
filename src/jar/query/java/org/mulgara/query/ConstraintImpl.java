@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 
 /**
  * A constraint. The elements within the constraint can be either variables or
@@ -67,7 +67,7 @@ public class ConstraintImpl extends AbstractConstraintExpression implements Cons
   static final long serialVersionUID = -3127160729187334757L;
 
   // /** Logger. */
-  // private final static Category logger = Category.getInstance(ConstraintImpl.class.getName());
+  // private final static Logger logger = Logger.getLogger(ConstraintImpl.class);
 
   /**
    * The 4-tuple of elements (either nodes or variables)

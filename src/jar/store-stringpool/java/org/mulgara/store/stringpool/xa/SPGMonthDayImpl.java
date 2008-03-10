@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.Calendar;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.hp.hpl.jena.datatypes.xsd.impl.XSDMonthDayType;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
@@ -68,8 +68,7 @@ import org.mulgara.util.Constants;
  */
 public final class SPGMonthDayImpl extends AbstractSPTypedLiteral {
 
-  private final static Category logger =
-      Category.getInstance(SPGMonthDayImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(SPGMonthDayImpl.class);
 
   /** The date representation for the monthDay */
   private Calendar monthDay;

@@ -31,7 +31,7 @@ package org.mulgara.store.tuples;
 import java.util.*;
 
 // Locally written packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 
@@ -63,8 +63,7 @@ class OrderedProjection extends AbstractTuples {
    * Logger.
    *
    */
-  private final static Category logger =
-      Category.getInstance(OrderedProjection.class.getName());
+  private final static Logger logger = Logger.getLogger(OrderedProjection.class);
 
   /**
    * The proposition to project.

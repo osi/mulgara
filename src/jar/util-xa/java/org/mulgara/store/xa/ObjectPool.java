@@ -31,7 +31,7 @@ package org.mulgara.store.xa;
 import java.util.*; // Third party packages
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * A pool of objects to avoid calling constructors unnecessarily.
@@ -94,8 +94,7 @@ public final class ObjectPool {
   public final static int TYPE_S_BLOCK = 0;
 
   /** Logger */
-  private final static Category logger =
-      Category.getInstance(ObjectPool.class.getName());
+  private final static Logger logger = Logger.getLogger(ObjectPool.class);
 
   /** The next cascaded object pool (the root pool) */
   private ObjectPool nextPool;

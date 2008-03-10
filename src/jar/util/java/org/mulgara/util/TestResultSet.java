@@ -35,7 +35,7 @@ import java.sql.*;
 import java.util.*;
 
 // third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Log4J
 
@@ -75,8 +75,7 @@ public class TestResultSet extends AbstractMulgaraResultSet
   /**
    * Logger.
    */
-  private static Category logger =
-      Category.getInstance(TestResultSet.class.getName());
+  private static final Logger logger = Logger.getLogger(TestResultSet.class);
 
   /**
    * The metadata for this result set.

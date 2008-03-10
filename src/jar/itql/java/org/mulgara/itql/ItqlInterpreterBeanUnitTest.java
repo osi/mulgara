@@ -48,7 +48,7 @@ import java.io.FileOutputStream;
 // third party packages
 import javax.xml.parsers.FactoryConfigurationError;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator; // Soap packages
 
 // Soap packages
@@ -85,7 +85,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   //
 
   /** The category to send logging info to */
-  private static Category log = Category.getInstance(ItqlInterpreterBeanUnitTest.class.getName());
+  private static final Logger log = Logger.getLogger(ItqlInterpreterBeanUnitTest.class);
 
   /** Description of the Field */
   private ItqlInterpreterBean bean = null;

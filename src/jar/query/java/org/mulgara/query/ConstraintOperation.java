@@ -31,7 +31,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 
 /**
  * A constraint expression composed of two subexpressions and a dyadic operator.
@@ -65,7 +65,7 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
   static final long serialVersionUID = -236847137057853871L;
 
   // /** Logger. */
-  // private static Category logger = Category.getInstance(ConstraintOperation.class.getName());
+  // private static Logger logger = Logger.getLogger(ConstraintOperation.class);
 
   //
   // Constructor

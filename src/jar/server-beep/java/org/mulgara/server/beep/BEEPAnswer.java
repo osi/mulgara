@@ -31,7 +31,7 @@ package org.mulgara.server.beep;
 import java.io.*;
 
 // Third party packages
-import org.apache.log4j.Category;             // Apache Log4J
+import org.apache.log4j.Logger;             // Apache Log4J
 import org.beepcore.beep.core.BEEPException;  // BEEP
 import org.beepcore.beep.core.Channel;
 import org.beepcore.beep.core.Message;
@@ -62,8 +62,7 @@ class BEEPAnswer extends StreamAnswer
   /**
   * Logger.
   */
-  private static final Category logger =
-    Category.getInstance(BEEPAnswer.class.getName());
+  private static final Logger logger = Logger.getLogger(BEEPAnswer.class);
 
   /**
   * The BEEP channel to close once this instance is closed.

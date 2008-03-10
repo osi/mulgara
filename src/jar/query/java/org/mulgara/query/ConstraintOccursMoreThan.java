@@ -28,7 +28,7 @@
 package org.mulgara.query;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.rdf.URIReferenceImpl;
@@ -57,7 +57,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 public class ConstraintOccursMoreThan extends ConstraintHaving {
 
   // /** Logger. */
-  // private final static Category logger = Category.getInstance(ConstraintOccursMoreThan.class.getName());
+  // private final static Logger logger = Logger.getLogger(ConstraintOccursMoreThan.class);
 
   /**
    * Allow newer compiled version of the stub to operate when changes

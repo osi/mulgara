@@ -31,7 +31,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
@@ -63,8 +63,7 @@ import org.mulgara.store.stringpool.SPComparator;
  */
 public final class SPXSDStringImpl extends AbstractSPTypedLiteral {
 
-  private final static Category logger =
-      Category.getInstance(SPXSDStringImpl.class.getName());
+  private final static Logger logger = Logger.getLogger(SPXSDStringImpl.class);
 
   private String str;
 

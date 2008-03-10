@@ -30,7 +30,7 @@
 package org.mulgara.resolver.store;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Standard Java packages
 import java.util.*;
@@ -71,8 +71,7 @@ import org.mulgara.store.tuples.Tuples;
  */
 class StatementStoreInverseResolution extends AbstractTuples implements Resolution {
 
-  protected static Category logger =
-      Category.getInstance(StatementStoreInverseResolution.class.getName());
+  protected static final Logger logger = Logger.getLogger(StatementStoreInverseResolution.class);
 
   /**
    * The constraint these tuples were generated to satisfy.

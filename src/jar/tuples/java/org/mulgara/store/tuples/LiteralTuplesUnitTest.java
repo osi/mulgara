@@ -32,7 +32,7 @@ import java.net.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;  // Apache Log4J
+import org.apache.log4j.Logger;    // Apache Log4J
 import junit.framework.*;          // JUnit
 
 // Local packages
@@ -65,8 +65,7 @@ public class LiteralTuplesUnitTest extends TestCase {
   /**
    * Logger.
    */
-  private Category logger =
-      Category.getInstance(LiteralTuplesUnitTest.class.getName());
+  private static final Logger logger = Logger.getLogger(LiteralTuplesUnitTest.class);
 
   /**
    * Constructs a new test with the given name.

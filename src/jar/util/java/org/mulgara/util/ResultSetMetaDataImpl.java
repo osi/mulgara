@@ -31,7 +31,7 @@ package org.mulgara.util;
 import java.io.Serializable;
 import java.sql.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Log4J
 
@@ -73,8 +73,7 @@ public class ResultSetMetaDataImpl implements ResultSetMetaData, Serializable {
    * Logger.
    *
    */
-  private static Category logger =
-      Category.getInstance(ResultSetMetaDataImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(ResultSetMetaDataImpl.class);
 
   /**
    * The names of the columns.

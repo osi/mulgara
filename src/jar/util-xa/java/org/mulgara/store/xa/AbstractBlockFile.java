@@ -35,7 +35,7 @@ import java.nio.channels.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * An abstract class that represents a file which consists of a number of
@@ -67,8 +67,7 @@ public abstract class AbstractBlockFile implements BlockFile {
   public final static ByteOrder byteOrder;
 
   /** The logger. */
-  private final static Category logger =
-      Category.getInstance(AbstractBlockFile.class.getName());
+  private final static Logger logger = Logger.getLogger(AbstractBlockFile.class);
 
   /** All the open files accessed as block files. */
   private static Set openFiles = new HashSet();

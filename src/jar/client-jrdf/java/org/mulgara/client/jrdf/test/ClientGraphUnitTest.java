@@ -36,7 +36,7 @@ import java.net.*;
 import junit.framework.*;
 
 //Log4J
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // JRDF
 import org.jrdf.graph.*;
@@ -75,8 +75,7 @@ public class ClientGraphUnitTest extends TestCase {
   /**
    * the category to send logging info to
    */
-  private static Category log =
-      Category.getInstance(ClientGraphUnitTest.class.getName());
+  private static Logger log = Logger.getLogger(ClientGraphUnitTest.class);
 
   /**
    * Server to query against.

@@ -499,7 +499,7 @@ public class Mp3Application extends JFrame {
     try {
       // Just use the basic Log configurator
       BasicConfigurator.configure();
-      Category.getRoot().setLevel(Level.WARN);
+      Logger.getRootLogger().setLevel(Level.WARN);
       // create an Application
       String config = Mp3Application.DEFAULT_CONFIG_FILE;
       if (args.length > 0) {

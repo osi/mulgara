@@ -27,7 +27,7 @@ package org.mulgara.store.tuples;
 
 // Java 2 standard packages
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 
@@ -57,7 +57,7 @@ public abstract class JoinTuples extends AbstractTuples {
     /**
      * Logger.
      */
-    protected static Category logger;
+    protected static Logger logger;
 
     /**
      * Version of {@link #operandBinding}} including only columns to the left of

@@ -29,7 +29,7 @@ package org.mulgara.store.tuples;
 
 // Third party packages
 import junit.framework.*; // JUnit
-import org.apache.log4j.Category; // Log4J
+import org.apache.log4j.Logger; // Log4J
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -56,6 +56,11 @@ import org.mulgara.query.Variable;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class UnboundJoinUnitTest extends TestCase {
+
+  /**
+   * Logger.
+   */
+  private static final Logger logger = Logger.getLogger(UnboundJoinUnitTest.class);
 
   /**
    * Description of the Field
@@ -86,12 +91,6 @@ public class UnboundJoinUnitTest extends TestCase {
    * Description of the Field
    */
   final Variable v = new Variable("v");
-
-  /**
-   * Logger.
-   */
-  private Category logger =
-      Category.getInstance(UnboundJoinUnitTest.class.getName());
 
   /**
    * Constructs a new test with the given name.

@@ -33,7 +33,7 @@ package org.mulgara.query;
 import java.util.*;
 
 // Third party packages
-// import org.apache.log4j.Category;
+// import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.rdf.URIReferenceImpl;
@@ -65,7 +65,7 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
   private static final long serialVersionUID = 7952821738407976852L;
 
   // /** Logger. */
-  // private final static Category logger = Category.getInstance(ConstraintIs.class.getName());
+  // private final static Logger logger = Logger.getLogger(ConstraintIs.class);
 
   /** Create the predicate to be used to indicate equality. */
   public static final URIReferenceImpl MULGARA_IS = new URIReferenceImpl(SpecialPredicates.MULGARA_IS);

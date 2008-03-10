@@ -35,7 +35,7 @@ import java.util.*;
 // Third party packages
 import junit.framework.*;          // JUnit
 import junit.textui.TestRunner;
-import org.apache.log4j.Category;  // Log4J
+import org.apache.log4j.Logger;    // Log4J
 import org.jrdf.graph.Literal;     // JRDF
 import org.jrdf.graph.URIReference;
 
@@ -64,7 +64,7 @@ public class StreamAnswerTest extends TestCase
   /**
   * Logger.
   */
-  private Category logger = Category.getInstance(getClass().getName());
+  private static final Logger logger = Logger.getLogger(StreamAnswerTest.class);
 
   /**
   * Constructs a new answer test with the given name.

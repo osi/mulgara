@@ -29,7 +29,7 @@ package org.mulgara.query;
 
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * A model expression composed of the union of two subexpressions.
@@ -65,8 +65,7 @@ public class ModelPartition extends ModelOperation {
   /**
    * Logger.
    */
-  private final static Category logger =
-    Category.getInstance(ModelPartition.class.getName());
+  private final static Logger logger = Logger.getLogger(ModelPartition.class);
 
   //
   // Constructor

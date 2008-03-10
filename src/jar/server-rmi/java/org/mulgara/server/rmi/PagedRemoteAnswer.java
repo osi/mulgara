@@ -32,7 +32,6 @@ import java.rmi.*;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.util.MulgaraResultSet;

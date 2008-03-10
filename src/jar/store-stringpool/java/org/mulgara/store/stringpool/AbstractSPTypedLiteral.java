@@ -33,7 +33,7 @@ import java.net.URI;
 import java.util.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.LiteralImpl;
@@ -63,8 +63,7 @@ import org.mulgara.store.stringpool.*;
 public abstract class AbstractSPTypedLiteral extends AbstractSPObject
       implements SPTypedLiteral {
 
-  private static final Category logger =
-      Category.getInstance(AbstractSPTypedLiteral.class.getName());
+  private static final Logger logger = Logger.getLogger(AbstractSPTypedLiteral.class);
 
   protected int typeId;
   protected int subtypeId;

@@ -33,7 +33,7 @@ import java.nio.*;
 import java.nio.channels.*;
 
 // Third party packages
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * @created 2003-01-09
@@ -55,8 +55,7 @@ import org.apache.log4j.Category;
  */
 public final class MappedIntFile extends IntFile {
 
-  private static Category logger =
-      Category.getInstance(MappedIntFile.class.getName());
+  private static final Logger logger = Logger.getLogger(MappedIntFile.class);
 
   private final static long REGION_SIZE_B = 8 * 1024 * 1024;
   private final static long REGION_SIZE_I = REGION_SIZE_B / SIZEOF_INT;
