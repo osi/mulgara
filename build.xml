@@ -1679,28 +1679,9 @@
        <param name="output.dir" expression="${test.dir}"/>
     </xslt>
 
-    <script language="javascript">
-      <![CDATA[
-      try {
-        // read the first line of the version file
-        var summaryFile = project.getProperty("test.dir") + "/junit-summary.txt";
-        var bufferedReader =
-               new java.io.BufferedReader(new java.io.FileReader(summaryFile));
-
-        var line = bufferedReader.readLine();
-        while ( line != null ) {
-           java.lang.System.out.println( line );
-           line = bufferedReader.readLine();
-        }
-        bufferedReader.close();
-
-      } catch (ex) {
-        java.lang.System.out.println("Unable to JUnit summary file "+ ex.getMessage());
-      }
-
-      ]]>
-    </script>
-
+    <concat>
+      <fileset file="${test.dir}/junit-summary.txt"/>
+    </concat>
   </target>
 
   <!-- =================================================================== -->
