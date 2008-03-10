@@ -619,34 +619,15 @@
     <echo>Waiting for server to start on shutdown hook
           ${shutdownhook.port}</echo>
 
-    <script language="javascript">
+    <waitfor maxwait="120000" checkevery="1000" timeoutproperty="start.failed">
+      <socket server="localhost" port="${shutdownhook.port}"/>
+    </waitfor>
+    <sleep seconds="5"/>
 
-      <![CDATA[
-
-      var socket;
-      for (i=5; i<=120; i+=5) {
-        java.lang.Thread.sleep(5000);
-        try {
-          // Create a connection to the shut-down port.
-          socket = java.net.Socket("localhost",
-            project.getProperty("shutdownhook.port"));
-          socket.close();
-          break;
-        }
-        catch (ex) {
-         java.lang.System.out.println(ex+" after "+i+" seconds");
-        }
-      }
-      if (socket) {
-        java.lang.System.out.println("Mulgara started");
-        java.lang.Thread.sleep(5000);
-      }
-      else {
-        java.lang.System.out.println("Mulgara not started");
-      }
-
-      ]]>
-    </script>
+    <condition property="msg" value="Mulgara not started" else="Mulgara started">
+      <isset property="start.failed"/>
+    </condition>
+    <echo>${msg}</echo>
   </target>
 
   <!-- =================================================================== -->
