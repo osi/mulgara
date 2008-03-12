@@ -23,7 +23,8 @@ States
   com,  /* comment */
   esc,  /* escaping character in quoted literal with '\' */
   lit,  /* quoted literal */
-  res,  /* tagged resource */
+  begres,  /* start of tagged resource */
+  endres,  /* end of tagged resource */
   var,  /* escaping variable name with '$' */
   lng;  /* language code */
 
@@ -89,8 +90,8 @@ Tokens
   {def}                terminator = ';';
   {def}                lpar       = '(';
   {def}                rpar       = ')';
-  {def->res}           url        = '<';
-  {res->def}           endurl     = '>';
+  {def->begres}        url        = '<';
+  {endres->def}        endurl     = '>';
   {def}                datatypeprefix = '^^';
   {def->lng}           languageprefix = '@';
   {def->var}           variableprefix = ('$' | '?');
@@ -98,7 +99,7 @@ Tokens
   {def}                float      = digit+ ('.' digit*) | ('.' digit+);
   {lng->def}           langid      = letter letter | letter letter '-' letter letter;
 
-  {res}                resource    = urlchar*;
+  {begres->endres}     resource    = urlchar*;
   {def->lit, lit->def} quote       = 39;  /* ' */
   {lit->esc}           escape      = '\';
   {esc->lit}           escapedtext = character;
