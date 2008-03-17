@@ -49,6 +49,7 @@ import java.util.Set;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Variable;
+import org.mulgara.query.filter.Filter;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.jrdf.graph.URIReference;
 
@@ -110,7 +111,10 @@ public class IntervalConstraint implements Constraint {
    */
    private final URIReference model;
 
-  /**
+   /** The filter to use on resolutions */
+   protected Filter filter = Filter.NULL;
+
+   /**
    * Sole constructor.
    *
    * @param variable  the variable to constrain, never <code>null</code>
@@ -161,7 +165,7 @@ public class IntervalConstraint implements Constraint {
   }
 
 
-  public ConstraintElement getModel() {
+  public ConstraintElement getGraph() {
     return new URIReferenceImpl(model.getURI());
   }
 
@@ -327,4 +331,21 @@ public class IntervalConstraint implements Constraint {
     buffer.append("]");
     return buffer.toString();
   }
+
+  /**
+   * Adds a filter to this constraint.
+   * @param filter The filter for this constraint.
+   */
+  public void setFilter(Filter filter) {
+    this.filter = filter;
+  }
+
+  /**
+   * Gets the filter for this constraint.
+   * @return Always null.
+   */
+  public Filter getFilter() {
+    return filter;
+  }
+
 }

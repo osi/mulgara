@@ -29,6 +29,8 @@ package org.mulgara.query;
 
 import java.util.*;
 
+import org.mulgara.query.filter.Filter;
+
 /**
  * A constraint expression with zero rows.
  *
@@ -142,4 +144,20 @@ public class ConstraintFalse implements ConstraintExpression {
   public String toString() {
     return "no";
   }
+
+  /**
+   * Sets the filter for this constraint. Since this constraint returns nothing, then this is irrelevant.
+   * @param filter Ignored.
+   */
+  public void setFilter(Filter filter) {
+  }
+
+  /**
+   * Gets the filter for this constraint.
+   * @return Always null.
+   */
+  public Filter getFilter() {
+    return Filter.NULL;
+  }
+
 }

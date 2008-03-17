@@ -321,7 +321,7 @@ public class LuceneResolver implements Resolver {
       logger.debug("Resolve " + constraint);
     }
 
-    ConstraintElement modelElement = constraint.getModel();
+    ConstraintElement modelElement = constraint.getGraph();
     if (modelElement instanceof Variable) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);

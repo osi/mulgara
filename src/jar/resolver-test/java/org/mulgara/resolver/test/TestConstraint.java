@@ -39,6 +39,7 @@
 package org.mulgara.resolver.test;
 
 // Java packages
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +50,7 @@ import java.util.Set;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Variable;
+import org.mulgara.query.filter.Filter;
 import org.mulgara.query.rdf.LiteralImpl;
 
 
@@ -63,14 +65,12 @@ import org.mulgara.query.rdf.LiteralImpl;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class TestConstraint implements Constraint {
+public class TestConstraint implements Constraint, Serializable {
   // /** Logger */
   // private static Logger logger = Logger.getLogger(TestConstraint.class);
 
-  /**
-   * Fixme, generate proper version UID
-   */
-  static final long serialVersionUID = 0000000000000000001L;
+  /** ID for serializing */
+  private static final long serialVersionUID = -171274827754305623L;
 
   private Variable var1;
   private Variable var2;
@@ -132,7 +132,7 @@ public class TestConstraint implements Constraint {
     return vars;
   }
 
-  public ConstraintElement getModel() {
+  public ConstraintElement getGraph() {
     throw new IllegalStateException("TestConstraint is of fixed extent, no model available");
   }
 
@@ -158,5 +158,12 @@ public class TestConstraint implements Constraint {
         var2.equals(rhs.var2) &&
         testSelection.equals(rhs.testSelection) &&
         testParam.equals(rhs.testParam);
+  }
+
+  public Filter getFilter() {
+    return Filter.NULL;
+  }
+
+  public void setFilter(Filter filter) {
   }
 }

@@ -49,7 +49,7 @@ package org.mulgara.query;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class LocalNode implements Comparable, Value {
+public class LocalNode implements Comparable<LocalNode>, Value {
 
   /**
    * The <var>value</var> property.
@@ -101,22 +101,13 @@ public class LocalNode implements Comparable, Value {
   /**
    * Nodes compare based on their node number.
    *
-   * @param object the object to compare against.
+   * @param ln the object to compare against.
    * @return RETURNED VALUE TO DO
    * @throws IllegalArgumentException if the object is not the correct type.
    */
-  public int compareTo(Object object) throws IllegalArgumentException {
-
-    if (object instanceof LocalNode) {
-
-      long ov = ( (LocalNode) object).getValue();
-
-      return (ov == value) ? 0 : ( (ov < value) ? ( -1) : 1);
-    }
-    else {
-
-      throw new IllegalArgumentException("Can't compare to " + object);
-    }
+  public int compareTo(LocalNode ln) throws IllegalArgumentException {
+    long ov = ln.getValue();
+    return (ov == value) ? 0 : ( (ov < value) ? ( -1) : 1);
   }
 
   //

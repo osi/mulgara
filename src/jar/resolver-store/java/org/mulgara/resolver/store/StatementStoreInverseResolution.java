@@ -172,7 +172,7 @@ class StatementStoreInverseResolution extends AbstractTuples implements Resoluti
     subject = toGraphTuplesIndex(constraint.getElement(0));
     predicate = toGraphTuplesIndex(constraint.getElement(1));
     object = toGraphTuplesIndex(constraint.getElement(2));
-    metanode = toGraphTuplesIndex(constraint.getModel());
+    metanode = toGraphTuplesIndex(constraint.getGraph());
 
     allFixedConstraints = (subject != NodePool.NONE) &&
         (predicate != NodePool.NONE) && (object != NodePool.NONE);

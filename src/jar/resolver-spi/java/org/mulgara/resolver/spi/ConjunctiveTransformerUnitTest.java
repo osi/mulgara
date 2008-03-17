@@ -60,6 +60,7 @@ import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.ConstraintOperation;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
+import org.mulgara.query.filter.Filter;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.util.NVPair;
 
@@ -624,6 +625,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
 
     public String toString() {
       return "[TC:" + id + "]";
+    }
+
+    public void setFilter(Filter filter) {
+    }
+
+    public Filter getFilter() {
+      return Filter.NULL;
     }
   }
 }

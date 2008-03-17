@@ -13,9 +13,7 @@
 package org.mulgara.resolver.prefix;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
-import java.util.*;
 import javax.transaction.xa.XAResource;
 
 // Third party packages
@@ -24,16 +22,12 @@ import org.jrdf.graph.*;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.stringpool.SPURI;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.stringpool.xa.SPObjectFactoryImpl;
-import org.mulgara.store.tuples.LiteralTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 
@@ -54,9 +48,6 @@ public class PrefixResolver implements Resolver
 
   /** The session that this resolver is associated with.  */
   private final ResolverSession resolverSession;
-
-  /** A map of servers to sessions.  This acts as a cache, and also so we may close the sessions.  */
-  private Map sessions;
 
   /** The URI of the type describing node type models.  */
   private URI modelTypeURI;
@@ -96,7 +87,6 @@ public class PrefixResolver implements Resolver
     this.resolverSession = resolverSession;
     this.modelTypeURI = modelTypeURI;
     this.mulgaraPrefix = mulgaraPrefix;
-    sessions = new Hashtable();
   }
 
   //
@@ -188,7 +178,7 @@ public class PrefixResolver implements Resolver
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
 
-    if (!(constraint.getModel() instanceof LocalNode)) {
+    if (!(constraint.getGraph() instanceof LocalNode)) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
@@ -241,8 +231,7 @@ public class PrefixResolver implements Resolver
       Tuples tuples;
 
       if (node instanceof Variable) {
-        // extract the variable from the constraint
-        Variable variable = (Variable)node;
+        // Bind a query on a range in the String pool to the variable
 
         // convert the prefix into a string pool object
         SPObjectFactory spoFact = SPObjectFactoryImpl.getInstance();

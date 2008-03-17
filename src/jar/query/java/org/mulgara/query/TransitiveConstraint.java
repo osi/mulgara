@@ -32,6 +32,8 @@ package org.mulgara.query;
 // Java 2 standard packages
 import java.util.*;
 
+import org.mulgara.query.filter.Filter;
+
 // Third party packages
 // import org.apache.log4j.Logger;
 
@@ -71,15 +73,14 @@ public class TransitiveConstraint implements Constraint {
   // /** Logger. */
   // private final static Logger logger = Logger.getLogger(Constraint.class);
 
-  /**
-   * The constraint containing the anchored transitive predicate.
-   */
+  /** The constraint containing the anchored transitive predicate. */
   private final Constraint anchoredConstraint;
 
-  /**
-   * The constraint containing the unanchored transitive predicate.
-   */
+  /** The constraint containing the unanchored transitive predicate. */
   private final Constraint unanchoredConstraint;
+
+  /** The filter to use on resolutions */
+  protected Filter filter = Filter.NULL;
 
   /**
    * Constructor.
@@ -189,8 +190,8 @@ public class TransitiveConstraint implements Constraint {
     return unanchoredConstraint.getElement(index);
   }
 
-  public ConstraintElement getModel() {
-    return unanchoredConstraint.getModel();
+  public ConstraintElement getGraph() {
+    return unanchoredConstraint.getGraph();
   }
 
   /**
@@ -207,5 +208,21 @@ public class TransitiveConstraint implements Constraint {
     buffer.append(this.unanchoredConstraint);
     buffer.append("]");
     return buffer.toString();
+  }
+
+  /**
+   * Adds a filter to this constraint.
+   * @param filter The filter for this constraint.
+   */
+  public void setFilter(Filter filter) {
+    this.filter = filter;
+  }
+
+  /**
+   * Gets the filter for this constraint.
+   * @return Always null.
+   */
+  public Filter getFilter() {
+    return filter;
   }
 }

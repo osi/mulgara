@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;  // Apache Log4J
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.tuples.Annotation;
 import org.mulgara.store.tuples.RowComparator;
@@ -43,8 +42,8 @@ class TuplesWrapperResolution implements Resolution {
    *
    * This is named after the class.
    */
-  private static final Logger logger =
-    Logger.getLogger(TuplesWrapperResolution.class.getName());
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(TuplesWrapperResolution.class.getName());
 
   /** The constraint.  */
   private final Constraint constraint;
@@ -254,7 +253,7 @@ class TuplesWrapperResolution implements Resolution {
    * Be aware that the tuples returned from this method are not cloned, and should
    * be considered immutable.
    */
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return tuples.getOperands();
   }
 
@@ -351,7 +350,7 @@ class TuplesWrapperResolution implements Resolution {
   /**
    * Copied from AbstractTuples
    */
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
     return null;
   }
 }

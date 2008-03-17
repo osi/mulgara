@@ -183,7 +183,7 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
       long subject = toGraphTuplesIndex(constraint.getElement(0));
       long predicate = toGraphTuplesIndex(constraint.getElement(1));
       long object = toGraphTuplesIndex(constraint.getElement(2));
-      long meta = toGraphTuplesIndex(constraint.getModel());
+      long meta = toGraphTuplesIndex(constraint.getGraph());
 
       // Return the tuples using the s, p, o hints.
       baseTuples = store.findTuples(subject, predicate, object, meta);

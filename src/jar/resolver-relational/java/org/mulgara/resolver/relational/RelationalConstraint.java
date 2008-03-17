@@ -61,6 +61,7 @@ import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.Value;
 import org.mulgara.query.Variable;
+import org.mulgara.query.filter.Filter;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 
@@ -105,6 +106,8 @@ public class RelationalConstraint implements Constraint {
   private Set<Variable> variables;
 
   private static final URIReference rdftype;
+  
+  private Filter filter = Filter.NULL;
 
   static {
     try {
@@ -163,8 +166,8 @@ public class RelationalConstraint implements Constraint {
 
   public void preliminaries(Constraint constraint) {
     if (model == null) {
-      model = constraint.getModel();
-    } else if (!model.equals(constraint.getModel())) {
+      model = constraint.getGraph();
+    } else if (!model.equals(constraint.getGraph())) {
       throw new IllegalStateException("Can't combine relational constraints against different models");
     }
 
@@ -180,7 +183,7 @@ public class RelationalConstraint implements Constraint {
     return list != null ? list : new ArrayList<Constraint>();
   }
 
-  public ConstraintElement getModel() {
+  public ConstraintElement getGraph() {
     return model;
   }
 
@@ -245,5 +248,13 @@ public class RelationalConstraint implements Constraint {
 
   public String toString() {
     return "RC{" + variables + "} | " + rdfTypeConstraints + " # " + predConstraints;
+  }
+
+  public Filter getFilter() {
+    return filter;
+  }
+
+  public void setFilter(Filter filter) {
+    this.filter = filter;
   }
 }

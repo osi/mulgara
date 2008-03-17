@@ -30,24 +30,18 @@
 package org.mulgara.resolver.nodetype;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.StringPoolException;
-import org.mulgara.store.tuples.LiteralTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 
@@ -71,14 +65,8 @@ public class NodeTypeResolver implements Resolver
   /** The session that this resolver is associated with.  */
   private final ResolverSession resolverSession;
 
-  /** A map of servers to sessions.  This acts as a cache, and also so we may close the sessions.  */
-  private Map sessions;
-
   /** The URI of the type describing node type models.  */
   private URI modelTypeURI;
-
-  /** The node for the type describing node type models.  */
-  private long modelType;
 
   /** The preallocated local node representing the rdf:type property. */
   private long rdfType;
@@ -125,11 +113,9 @@ public class NodeTypeResolver implements Resolver
     // Initialize fields
     this.resolverSession = resolverSession;
     this.modelTypeURI = modelTypeURI;
-    this.modelType = modelType;
     this.rdfType = rdfType;
     this.rdfsLiteral = rdfsLiteral;
     this.mulgaraUriReference = mulgaraUriReference;
-    sessions = new Hashtable();
   }
 
   //
@@ -220,7 +206,7 @@ public class NodeTypeResolver implements Resolver
     if (constraint == null) {
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
-    if (!(constraint.getModel() instanceof LocalNode)) {
+    if (!(constraint.getGraph() instanceof LocalNode)) {
       logger.warn("Ignoring solutions for non-local model " + constraint);
       return new EmptyResolution(constraint, false);
     }
@@ -259,9 +245,6 @@ public class NodeTypeResolver implements Resolver
       Tuples tuples;
 
       if (node instanceof Variable) {
-        // extract the variable from the constraint
-        Variable variable = (Variable)node;
-
         // select the type being extracted from the string pool
         if (type == rdfsLiteral) {
           // literals currently fall into 2 categories: typed and untyped

@@ -268,7 +268,7 @@ public class ConstraintOperations
     return ConstraintFactory.newConstraint(replace(bindings, constraint.getElement(0)),
                                            replace(bindings, constraint.getElement(1)),
                                            replace(bindings, constraint.getElement(2)),
-                                           replace(bindings, constraint.getModel()));
+                                           replace(bindings, constraint.getGraph()));
   }
 
 

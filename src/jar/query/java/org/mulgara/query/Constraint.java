@@ -38,12 +38,6 @@ package org.mulgara.query;
  * @author <a href="http://staff.pisoftware.com/david">David Makepeace</a>
  * @author <a href="http://staff.pisoftware.com/pag">Paul Gearon</a>
  *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @copyright &copy;2001-2004
  *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  *
@@ -61,23 +55,21 @@ public interface Constraint extends ConstraintExpression {
 
   /**
    * Get a constraint element by index.
-   *
    * @param index The constraint element to retrieve, from 0 to 3.
    * @return The constraint element referred to by index.
    */
   public ConstraintElement getElement(int index);
 
   /**
-   * Get the model element of this constraint.
+   * Get the graph element of this constraint.
    */
-  public ConstraintElement getModel();
+  public ConstraintElement getGraph();
 
   /**
    * Returns true if there is are repeating constraint elements.
-   *
    * For example, <code>$s $p $s</code>.
-   *
    * @return true if there is are repeating constraint elements
    */
   public boolean isRepeating();
+
 }

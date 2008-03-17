@@ -27,24 +27,16 @@
 
 package org.mulgara.query;
 
-import java.util.Set;
+import org.mulgara.query.filter.Filter;
+
 
 /**
  * An abstract class to be used by implementations of GIVEN clauses.
  *
  * @created 2004-08-03
- *
  * @author Andrew Newman
- *
- * @version $Revision: 1.9 $
- *
- * @modified $Date: 2005/05/29 08:32:40 $ by $Author: raboczi $
- *
- * @maintenanceAuthor $Author: raboczi $
- *
  * @copyright &copy;2004
  *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
- *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public abstract class GivenConstraint implements Constraint {
@@ -56,4 +48,24 @@ public abstract class GivenConstraint implements Constraint {
    * deleted.
    */
   static final long serialVersionUID = 965560040170826878L;
+  
+  /** The filter to use on resolutions */
+  protected Filter filter = Filter.NULL;
+
+  /**
+   * Adds a filter to this constraint.
+   * @param filter The filter for this constraint.
+   */
+  public void setFilter(Filter filter) {
+    this.filter = filter;
+  }
+
+  /**
+   * Gets the filter for this constraint.
+   * @return Always null.
+   */
+  public Filter getFilter() {
+    return filter;
+  }
+
 }

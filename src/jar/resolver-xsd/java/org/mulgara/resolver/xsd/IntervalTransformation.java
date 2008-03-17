@@ -268,7 +268,7 @@ class IntervalTransformation implements SymbolicTransformation
 
     // Confirm model is of type XSDModel.
     try {
-      ConstraintElement modelElement = constraintImpl.getModel();
+      ConstraintElement modelElement = constraintImpl.getGraph();
       if (!(modelElement instanceof URIReference)) {
         logger.debug("model not URIReference; cannot participate in transform returning null");
         return null;
@@ -331,7 +331,7 @@ class IntervalTransformation implements SymbolicTransformation
       variable,
       boundedBelow ? bound : null,
       boundedBelow ? null : bound,
-      (URIReference)constraintImpl.getModel()
+      (URIReference)constraintImpl.getGraph()
     );
   }
 }

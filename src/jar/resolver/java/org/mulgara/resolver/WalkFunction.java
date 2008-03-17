@@ -192,7 +192,7 @@ public abstract class WalkFunction {
           // build the constraint with the temporary variable name
           openConstraint = new ConstraintImpl(anchoredConstraintVariable,
               anchoredConstraint.getElement(1), tmpVariable,
-              anchoredConstraint.getModel());
+              anchoredConstraint.getGraph());
           // set up the final result built from the second constraint
           inferredResult = new LiteralTuples(new Variable[] {
               (Variable) predConstraint.getUnanchoredConstraint().getElement(2),
@@ -214,7 +214,7 @@ public abstract class WalkFunction {
           // build the constraint with the temporary variable name
           openConstraint = new ConstraintImpl(tmpVariable,
               anchoredConstraint.getElement(1), anchoredConstraintVariable,
-              anchoredConstraint.getModel());
+              anchoredConstraint.getGraph());
 
           // set up the final result built from the second constraint
           inferredResult = new LiteralTuples(new Variable[] {

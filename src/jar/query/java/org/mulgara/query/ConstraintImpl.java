@@ -159,7 +159,7 @@ public class ConstraintImpl extends AbstractConstraintExpression implements Cons
   }
 
 
-  public ConstraintElement getModel() {
+  public ConstraintElement getGraph() {
     return element[3];
   }
   

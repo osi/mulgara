@@ -246,7 +246,7 @@ public class RelationalResolver implements Resolver {
     }
     
     // Obtain the model of the constraint
-    ConstraintElement modelElem = constraint.getModel();
+    ConstraintElement modelElem = constraint.getGraph();
 
     // Verify our model node is a local node
     if (!(modelElem instanceof LocalNode)) {

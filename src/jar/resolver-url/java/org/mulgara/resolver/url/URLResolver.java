@@ -295,7 +295,7 @@ public class URLResolver implements Resolver {
     if (constraint == null) {
       throw new IllegalArgumentException("constraint null");
     }
-    else if (!(constraint.getModel() instanceof LocalNode)) {
+    else if (!(constraint.getGraph() instanceof LocalNode)) {
       throw new QueryException("Constraint model can't be variable");
     }
 

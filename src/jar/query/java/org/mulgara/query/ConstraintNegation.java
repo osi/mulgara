@@ -31,6 +31,8 @@ package org.mulgara.query;
 
 import java.util.*;
 
+import org.mulgara.query.filter.Filter;
+
 // Third party packages
 // import org.apache.log4j.Logger;
 
@@ -68,10 +70,11 @@ public class ConstraintNegation implements Constraint {
    */
   private static final long serialVersionUID = 9147228997817064907L;
 
-  /**
-   * The negated expression.
-   */
+  /** The negated expression. */
   private Constraint constraint;
+
+  /** The filter to use on resolutions */
+  protected Filter filter = Filter.NULL;
 
   //
   // Constructor
@@ -111,8 +114,8 @@ public class ConstraintNegation implements Constraint {
     return constraint.getElement(index);
   }
 
-  public ConstraintElement getModel() {
-    return constraint.getModel();
+  public ConstraintElement getGraph() {
+    return constraint.getGraph();
   }
 
 
@@ -182,4 +185,21 @@ public class ConstraintNegation implements Constraint {
 
     return returnValue;
   }
+
+  /**
+   * Adds a filter to this constraint.
+   * @param filter The filter for this constraint.
+   */
+  public void setFilter(Filter filter) {
+    this.filter = filter;
+  }
+
+  /**
+   * Gets the filter for this constraint.
+   * @return Always null.
+   */
+  public Filter getFilter() {
+    return filter;
+  }
+
 }
