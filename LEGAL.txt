@@ -228,7 +228,7 @@ I.  Open Source Components
 
     JavaEE Connector Architecture (JCA)
     JARs:     connector-1_5.jar (J2EE spec from Sun)
-    URL:      http://java.sun.com/products/jta
+    URL:      http://java.sun.com/j2ee/connector/
     License:  Common Development and Distribution License (CDDL) v1.0
               http://www.sun.com/cddl/cddl.html
 
