@@ -814,7 +814,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
     // build the variable list: collection of Variable, ConstantValue, Count, Subquery
     if (logger.isDebugEnabled()) logger.debug("Building query variable list from " + variables);
-    List<Object> variableList = this.buildVariableList(variables);
+    List<SelectElement> variableList = this.buildVariableList(variables);
     if (logger.isDebugEnabled()) logger.debug("Built variable list " + variableList);
   
     // get the model expression from the parser
@@ -999,11 +999,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    *      into a list of {@link org.mulgara.query.Variable}s
    */
   @SuppressWarnings("unchecked")
-  List<Object> buildVariableList(LinkedList<PElement> rawVariableList) throws
+  List<SelectElement> buildVariableList(LinkedList<PElement> rawVariableList) throws
       QueryException, URISyntaxException {
   
     // Empty variable list.
-    if (rawVariableList == null) return (List<Object>)Collections.EMPTY_LIST;
+    if (rawVariableList == null) return Collections.emptyList();
   
     // validate rawVariableList parameter
     if (rawVariableList.size() == 0) throw new IllegalArgumentException("Empty \"rawVariableList\" parameter");
@@ -1019,7 +1019,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     for (PElement element: rawVariableList) element.apply((Switch)variableBuilder);
   
     // Get the variable list
-    List<Object> variableList = variableBuilder.getVariableList();
+    List<SelectElement> variableList = variableBuilder.getVariableList();
   
     // make sure that we return a list with something in it
     if (variableList.size() == 0) {

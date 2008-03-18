@@ -126,6 +126,14 @@ class InternalResolver implements Resolver, ViewMarker
                    Resolver        systemResolver)
     throws ResolverFactoryException
   {
+    if (resolver == null) {
+      throw new IllegalArgumentException("Resolver 'null'");
+    } else if (resolverSession == null) {
+      throw new IllegalArgumentException("ResolverSession 'null'");
+    } else if (systemResolver == null) {
+      throw new IllegalArgumentException("SystemResolver 'null'");
+    }
+
     // Initialize fields
     this.resolver        = resolver;
     this.rdfType         = rdfType;

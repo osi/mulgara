@@ -71,8 +71,8 @@ public class TripleSetWrapperStatements implements Statements
   
   TObjectLongHashMap nodeMap;
 
-  Set<Triple> triples;
-  Iterator<Triple> iter;
+  Set<? extends Triple> triples;
+  Iterator<? extends Triple> iter;
   Triple currentTriple;
   boolean persistent;
 
@@ -80,7 +80,7 @@ public class TripleSetWrapperStatements implements Statements
   // Constructors
   //
 
-  public TripleSetWrapperStatements(Set<Triple> triples, ResolverSession resolverSession, int persistent)
+  public TripleSetWrapperStatements(Set<? extends Triple> triples, ResolverSession resolverSession, int persistent)
       throws TuplesException {
     this.triples = triples;
     this.resolverSession = resolverSession;

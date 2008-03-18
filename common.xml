@@ -152,7 +152,7 @@
                        jotm*.jar, commons-logging-*.jar, Quick4rt.jar,
                        commons-discovery-*.jar, commons-httpclient-*.jar,
                        commons-codec-*.jar, connector-*.jar, jaxrpc-*.jar,
-                       ${date-utils.jar}"
+                       carol*.jar, howl-logger*.jar, ${date-utils.jar}"
              excludes="jboss-j2ee.jar"/>
   </path>
 
@@ -280,9 +280,73 @@
       <batchtest todir="${junit.results.tmpdir}">
         <fileset dir="${dir}/java" includes="**/*Test.java"
                  excludes="**/*AbstractTest.java, **/*LoadTest.java,
-                           **/*StressTest.java"/>
+                           **/*StressTest.java, **/*StandaloneTest.java"/>
       </batchtest>
     </junit>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run JUnit regression tests requiring a standalone instance          -->
+  <!--                                                                     -->
+  <!-- Required parameters: $classpath.id, $dir, $jar                      -->
+  <!-- =================================================================== -->
+  <target name="standalone-test"
+          depends="uri, dtd-jar, host.name, dist"
+          description="run regression tests requiring a standalone instance">
+
+    <copy file="${conf.dir}/log4j-template.xml"
+          tofile="${basedir}/log4j-conf.xml"/>
+
+    <mkdir dir="${junit.results.tmpdir}"/>
+
+    <!-- stop and start the server -->
+    <ant target="stop"/>
+    <ant target="start"/>
+
+    <junit fork="yes" haltonfailure="no" printsummary="on"
+           jvm="${java.home}/bin/java" dir="${basedir}">
+
+      <jvmarg value="${arch.bits}"/>
+      <jvmarg value="-ea"/>
+      <jvmarg value="${jvm.args}"/>
+
+      <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="admin" value=""/>
+      <sysproperty key="itql.command.log" value="${tmp.dir}/itql.log"/>
+      <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
+                   value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+      <sysproperty key="java.naming.factory.initial"
+                   value="com.sun.jndi.rmi.registry.RegistryContextFactory"/>
+      <sysproperty key="java.naming.provider.url" value="rmi://localhost"/>
+      <sysproperty key="java.rmi.server.codebase"
+                   value="${bin.uri}/${rmi.base.jar}"/>
+      <sysproperty key="java.security.manager" value=""/>
+      <sysproperty key="java.security.policy"
+                   value="${basedir}/conf/mulgara-test.policy"/>
+      <sysproperty key="host.name" value="${host.name}"/>
+
+      <!-- The cvs.root property allows tests to find CVS'ed test data -->
+      <sysproperty key="cvs.root" value="${basedir}"/>
+      <sysproperty key="mulgara.jar" value="${mulgara.jar}"/>
+      <sysproperty key="log4j.configuration" value="${baseuri}/log4j-conf.xml"/>
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="org.mulgara.test" value="${org.mulgara.test}"/>
+
+      <classpath>
+        <fileset dir="${dist.dir}" includes="${mulgara.jar}"/>
+      </classpath>
+
+      <formatter type="xml"/>
+
+      <batchtest todir="${junit.results.tmpdir}">
+        <fileset dir="${dir}/java" includes="**/*StandaloneTest.java"/>
+      </batchtest>
+    </junit>
+
+    <!-- stop the server -->
+    <ant target="stop"/>
+
   </target>
 
   <!-- =================================================================== -->

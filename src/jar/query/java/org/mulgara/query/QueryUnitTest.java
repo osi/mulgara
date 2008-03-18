@@ -45,18 +45,8 @@ import org.mulgara.query.rdf.URIReferenceImpl;
  * Purpose: Test case for {@link Query}.
  *
  * @created 2001-10-23
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @copyright &copy;2001-2004
- *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
- *
+ * @copyright &copy;2001-2004 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class QueryUnitTest extends TestCase {
@@ -84,7 +74,6 @@ public class QueryUnitTest extends TestCase {
    * @return The test suite
    */
   public static Test suite() {
-
     TestSuite suite = new TestSuite();
 
     suite.addTest(new QueryUnitTest("test1Equals"));
@@ -100,7 +89,6 @@ public class QueryUnitTest extends TestCase {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-
     junit.textui.TestRunner.run(suite());
   }
 
@@ -111,9 +99,8 @@ public class QueryUnitTest extends TestCase {
    */
   @SuppressWarnings("unchecked")
   public void setUp() throws Exception {
-
     query = new Query(
-        Arrays.asList(new Object[] {new Variable("x")}), // variable list
+        Arrays.asList(new SelectElement[] { new Variable("x") }), // variable list
         new ModelResource(new URI("x:m")),      // model expression
         new ConstraintImpl(new Variable("x"),   // constraint expression
         new URIReferenceImpl(new URI("x:p")),
@@ -135,7 +122,6 @@ public class QueryUnitTest extends TestCase {
    * @throws Exception if query fails when it should have succeeded
    */
   public void testClone() throws Exception {
-
     Query copied = (Query) query.clone();
     assertTrue(copied != query);
     assertEquals(copied, query);
@@ -147,9 +133,7 @@ public class QueryUnitTest extends TestCase {
    * @throws Exception if query fails when it should have succeeded
    */
   public void test1Equals() throws Exception {
-
     Query query2 = query;
-
     assertTrue(query.equals(query2));
   }
 
@@ -160,16 +144,15 @@ public class QueryUnitTest extends TestCase {
    */
   @SuppressWarnings("unchecked")
   public void test2Equals() throws Exception {
-
     // Compose test instances
     Query query2 = new Query(
-        Arrays.asList(new Object[] {new Variable("x")}),                    // variable list
+        Arrays.asList(new SelectElement[] { new Variable("x") }), // variable list
         new ModelResource(new URI("x:m")),      // model expression
         new ConstraintImpl(new Variable("x"),   // constraint expression
         new URIReferenceImpl(new URI("x:p")),
         new LiteralImpl("o")),
         null,                                  // no having
-        (List<Order>)Collections.EMPTY_LIST,                // no ordering
+        (List<Order>)Collections.EMPTY_LIST,   // no ordering
         null,                                  // no limit
         0,                                     // zero offset
         new UnconstrainedAnswer());
@@ -186,7 +169,6 @@ public class QueryUnitTest extends TestCase {
    * @throws Exception if query fails when it should have succeeded
    */
   public void test3Equals() throws Exception {
-
     assertTrue(!query.equals(null));
   }
 }

@@ -54,15 +54,14 @@ import org.apache.log4j.Logger;
 public class DummyXAResource implements XAResource
 {
   /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(DummyXAResource.class.getName());
+  private static final Logger logger = Logger.getLogger(DummyXAResource.class.getName());
 
   /**
    * Map from keyed from the {@link Integer} value of the various flags
    * defined in {@link XAResource} and mapping to the formatted name for that
    * flag.
    */
-  private final static Map flagMap = new HashMap();
+  protected final static Map<Integer,String> flagMap = new HashMap<Integer,String>();
 
   static {
     flagMap.put(new Integer(XAResource.TMENDRSCAN),   "TMENDRSCAN");
@@ -76,20 +75,28 @@ public class DummyXAResource implements XAResource
   }
 
   /** The transaction timeout value in seconds.  */
-  private int transactionTimeout = 0;
+  protected int transactionTimeout = 0;
 
   //
   // Constructor
   //
 
   /**
+   * Construct a {@link DummyXAResource} with a default 10 second transaction timeout.
+   */
+  public DummyXAResource() {
+    this(10);
+  }
+
+  /**
    * Construct a {@link DummyXAResource} with a specified transaction timeout.
    *
    * @param transactionTimeout  transaction timeout period, in seconds
    */
-  public DummyXAResource(int transactionTimeout)
-  {
-    logger.debug("Creating DummyXAResource with timeout " + transactionTimeout);
+  public DummyXAResource(int transactionTimeout) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Creating " + getClass().getName() + " with timeout " + transactionTimeout);
+    }
     this.transactionTimeout = transactionTimeout;
   }
 
@@ -97,61 +104,70 @@ public class DummyXAResource implements XAResource
   // Methods implementing XAResource
   //
 
-  public void commit(Xid xid, boolean onePhase) throws XAException
-  {
-    logger.debug("Commit xid=" + System.identityHashCode(xid) + " onePhase=" + onePhase);
+  public void commit(Xid xid, boolean onePhase) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Commit xid=" + System.identityHashCode(xid) + " onePhase=" + onePhase);
+    }
   }
 
-  public void end(Xid xid, int flags) throws XAException
-  {
-    logger.debug("End xid=" + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+  public void end(Xid xid, int flags) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("End xid=" + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+    }
   }
 
-  public void forget(Xid xid) throws XAException
-  {
-    logger.debug("Forget xid=" + System.identityHashCode(xid));
+  public void forget(Xid xid) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Forget xid=" + System.identityHashCode(xid));
+    }
   }
 
-  public int getTransactionTimeout() throws XAException
-  {
-    logger.debug("Get transaction timeout: " + transactionTimeout);
+  public int getTransactionTimeout() throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Get transaction timeout: " + transactionTimeout);
+    }
     return transactionTimeout;
   }
 
-  public boolean isSameRM(XAResource xaResource) throws XAException
-  {
-    logger.debug("Is same resource manager? " + (xaResource == this));
+  public boolean isSameRM(XAResource xaResource) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Is same resource manager? " + (xaResource == this));
+    }
     return xaResource == this;
   }
 
-  public int prepare(Xid xid) throws XAException
-  {
-    logger.debug("Prepare " + System.identityHashCode(xid));
+  public int prepare(Xid xid) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Prepare " + System.identityHashCode(xid));
+    }
     return XA_OK;
   }
 
-  public Xid[] recover(int flag) throws XAException
-  {
-    logger.debug("Recover flag=" + formatFlags(flag));
+  public Xid[] recover(int flag) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Recover flag=" + formatFlags(flag));
+    }
     throw new XAException(XAException.XAER_RMERR);
   }
 
-  public void rollback(Xid xid) throws XAException
-  {
-    logger.debug("Rollback " + System.identityHashCode(xid));
+  public void rollback(Xid xid) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Rollback " + System.identityHashCode(xid));
+    }
   }
 
-  public boolean setTransactionTimeout(int transactionTimeout)
-    throws XAException
-  {
-    logger.debug("Set transaction timeout: " + transactionTimeout);
+  public boolean setTransactionTimeout(int transactionTimeout) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Set transaction timeout: " + transactionTimeout);
+    }
     this.transactionTimeout = transactionTimeout;
     return true;
   }
 
-  public void start(Xid xid, int flags) throws XAException
-  {
-    logger.debug("Start " + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+  public void start(Xid xid, int flags) throws XAException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Start " + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+    }
   }
 
   //
@@ -161,23 +177,20 @@ public class DummyXAResource implements XAResource
   /**
    * Format bitmasks defined by {@link XAResource}.
    *
-   * @param flags  a bitmask composed from the constants defined in
-   *   {@link XAResource}
+   * @param flags  a bitmask composed from the constants defined in {@link XAResource}
    * @return a formatted representation of the <var>flags</var>
    */
-  private static String formatFlags(int flags)
-  {
+  protected static final String formatFlags(int flags) {
     // Short-circuit evaluation if we've been explicitly passed no flags
     if (flags == XAResource.TMNOFLAGS) {
       return "TMNOFLAGS";
     }
 
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
 
     // Add any flags that are present
-    for (Iterator i = flagMap.entrySet().iterator(); i.hasNext(); ) {
-      Map.Entry entry = (Map.Entry)i.next();
-      int entryFlag = ((Integer)entry.getKey()).intValue();
+    for (Map.Entry<Integer,String> entry : flagMap.entrySet()) {
+      int entryFlag = entry.getKey().intValue();
 
       // If this flag is present, add it to the formatted output and remove
       // from the bitmask

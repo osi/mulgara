@@ -49,7 +49,7 @@ import java.io.Serializable;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public abstract class AggregateFunction implements Serializable {
+public abstract class AggregateFunction implements SelectElement, Serializable {
 
   /**
    * Allow newer compiled version of the stub to operate when changes

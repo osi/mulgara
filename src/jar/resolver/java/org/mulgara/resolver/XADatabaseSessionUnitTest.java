@@ -611,7 +611,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
 
         // Evaluate the query
         Answer answer = new ArrayAnswer(session.query(new Query(
-          (List<Object>)(List)test.selectList,          // SELECT
+          test.selectList,          // SELECT
           test.model,               // FROM
           test.query,               // WHERE
           null,                     // HAVING

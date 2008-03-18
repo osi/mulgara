@@ -191,7 +191,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
       constraint = appendMulgaraIsConstraint(vars[2], toValue(object), constraint);
 
       Query query = new Query(
-          Arrays.asList((Object[])vars),   // variable list
+          Arrays.asList(vars),             // variable list
           new ModelResource(modelURI),     // model expression
           constraint,                      // constraint expr
           null,                            // no having

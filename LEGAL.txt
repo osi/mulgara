@@ -202,14 +202,35 @@ I.  Open Source Components
               http://www.gnu.org/copyleft/lesser.html
     
     JOTM (Java Open Transaction Manager)
-    JARs:     jotm-1.5.3.jar (locally patched)
-              jotm_carol-1.5.3.jar
-              jotm_iiop_stubs-1.5.3.jar
-              connector-1_5.jar (J2EE spec from Sun)
-              jta-spec1_0_1.jar (J2EE spec from Sun)
+    JARs:     jotm-2.0.10.jar
+              jotm_jrmp_stubs-2.0.10.jar
     URL:      http://jotm.objectweb.org/ 
     LICENSE:  BSD-style
               http://jotm.objectweb.org/bsd_license.html
+    
+    CAROL (Common Architecture for RMI ObjectWeb Layer)
+    JARs:     carol-2.0.5.jar
+    URL:      http://carol.objectweb.org/ 
+    LICENSE:  LGPL
+              http://www.gnu.org/copyleft/lesser.html
+
+    HOWL (High-speed ObjectWeb Logger)
+    JARs:     howl-logger-0.1.11.jar
+    URL:      http://howl.objectweb.org/ 
+    LICENSE:  Bull S.A.
+              http://howl.objectweb.org/license.html
+
+    Java Transaction API
+    JARs:     jta-spec1_0_1.jar
+    URL:      http://java.sun.com/products/jta
+    License:  Common Development and Distribution License (CDDL) v1.0
+              http://www.sun.com/cddl/cddl.html
+
+    JavaEE Connector Architecture (JCA)
+    JARs:     connector-1_5.jar (J2EE spec from Sun)
+    URL:      http://java.sun.com/products/jta
+    License:  Common Development and Distribution License (CDDL) v1.0
+              http://www.sun.com/cddl/cddl.html
 
     JRDF
     JARs:     jrdf-0.3.4.3.jar

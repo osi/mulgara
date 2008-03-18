@@ -116,7 +116,7 @@ if [ "$OSNAME" = "solaris" ] ; then
 fi
 
 # Call Ant
-${JAVABIN} ${ARCH} -Xms64m -Xmx192m -Dant.home=${ANT_HOME} -DJAVAC=${JAVAC} \
+${JAVABIN} ${ARCH} -Xms64m -Xmx256m -Dant.home=${ANT_HOME} -DJAVAC=${JAVAC} \
            -Darch.bits=${ARCH} \
            -Ddir.base=${BASEDIR} \
            -classpath "${CLASSPATH}" org.apache.tools.ant.Main \

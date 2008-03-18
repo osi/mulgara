@@ -86,9 +86,10 @@
 	<classpathentry kind="lib" path="lib/jsr173_07_ri.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_07_api.jar"/>
 	<classpathentry kind="lib" path="lib/js-1.5r3.jar"/>
-	<classpathentry kind="lib" path="lib/jotm-1.5.3-patched.jar"/>
-	<classpathentry kind="lib" path="lib/jotm_iiop_stubs-1.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/jotm_carol-1.5.3.jar"/>
+	<classpathentry kind="lib" path="lib/jotm-2.0.10.jar"/>
+	<classpathentry kind="lib" path="lib/jotm_jrmp_stubs-2.0.10.jar"/>
+	<classpathentry kind="lib" path="lib/carol-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/howl-logger-0.1.11.jar"/>
 	<classpathentry kind="lib" path="lib/jl1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jid3-0.34.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-j2ee.jar"/>

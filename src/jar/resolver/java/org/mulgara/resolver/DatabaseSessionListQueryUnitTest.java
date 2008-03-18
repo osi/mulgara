@@ -282,7 +282,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
   private Query selectAll(URI modelURI) throws Exception {
 
     //select $s $p $o
-    ConstraintElement [] vars = new Variable[] {
+    Variable[] vars = new Variable[] {
         StatementStore.VARIABLES[0],
         StatementStore.VARIABLES[1],
         StatementStore.VARIABLES[2]
@@ -295,7 +295,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     ConstraintImpl varConstraint = new ConstraintImpl(vars[0], vars[1], vars[2]);
 
     return new Query(
-        Arrays.asList((Object[])vars), // variable list
+        Arrays.asList((SelectElement[])vars), // variable list
         model, // model expression
         varConstraint, // constraint expr
         null, // no having

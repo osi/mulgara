@@ -16,9 +16,11 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
  *   SymbolicTransformation refactor contributed by Netymon Pty Ltd on behalf of
  *   The Australian Commonwealth Government under contract 4500507038.
+ *   External XAResource contributed by Netymon Pty Ltd on behalf of Topaz
+ *   Foundation under contract.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -33,6 +35,9 @@ package org.mulgara.resolver;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+
+// Java 2 enterprise packages
+import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -112,6 +117,10 @@ class DatabaseSession implements Session {
 
   /** Source of transactions.  */
   private final MulgaraTransactionManager transactionManager;
+
+  private MulgaraTransactionFactory transactionFactory;
+  private MulgaraInternalTransactionFactory internalFactory;
+  private MulgaraExternalTransactionFactory externalFactory;
 
   /** The name of the rule loader to use */
   private String ruleLoaderClassName;
@@ -226,6 +235,9 @@ class DatabaseSession implements Session {
     this.temporaryModelTypeURI      = temporaryModelTypeURI;
     this.ruleLoaderClassName        = ruleLoaderClassName;
 
+    this.transactionFactory = null;
+    this.internalFactory = null;
+
     if (logger.isDebugEnabled()) {
       logger.debug("Constructed DatabaseSession");
     }
@@ -297,7 +309,7 @@ class DatabaseSession implements Session {
   // Methods implementing Session
   //
 
-  public void insert(URI modelURI, Set<Triple> statements) throws QueryException {
+  public void insert(URI modelURI, Set<? extends Triple> statements) throws QueryException {
     modify(modelURI, statements, ASSERT_STATEMENTS);
   }
 
@@ -305,7 +317,7 @@ class DatabaseSession implements Session {
     modify(modelURI, query, ASSERT_STATEMENTS);
   }
 
-  public void delete(URI modelURI, Set<Triple> statements) throws QueryException {
+  public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException {
     modify(modelURI, statements, DENY_STATEMENTS);
   }
 
@@ -510,8 +522,9 @@ class DatabaseSession implements Session {
     if (logger.isInfoEnabled()) {
       logger.info("setAutoCommit(" + autoCommit + ") called.");
     }
+    assertInternallyManagedXA();
     try {
-      transactionManager.setAutoCommit(this, autoCommit);
+      internalFactory.setAutoCommit(this, autoCommit);
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error setting autocommit", em);
     }
@@ -519,8 +532,9 @@ class DatabaseSession implements Session {
 
   public void commit() throws QueryException {
     logger.info("Committing transaction");
+    assertInternallyManagedXA();
     try {
-      transactionManager.commit(this);
+      internalFactory.commit(this);
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error performing commit", em);
     }
@@ -528,8 +542,9 @@ class DatabaseSession implements Session {
 
   public void rollback() throws QueryException {
     logger.info("Rollback transaction");
+    assertInternallyManagedXA();
     try {
-      transactionManager.rollback(this);
+      internalFactory.rollback(this);
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error performing rollback", em);
     }
@@ -538,9 +553,11 @@ class DatabaseSession implements Session {
   public void close() throws QueryException {
     logger.info("Closing session");
     try {
-      transactionManager.rollbackCurrentTransactions(this);
-    } catch (MulgaraTransactionException em) {
-      throw new QueryException("Error closing session. Forced close required", em);
+      transactionManager.closingSession(this);
+      transactionFactory = null;
+    } catch (MulgaraTransactionException em2) {
+      logger.error("Error force-closing session", em2);
+      throw new QueryException("Error force-closing session.", em2);
     }
   }
 
@@ -574,25 +591,23 @@ class DatabaseSession implements Session {
    */
   private synchronized void backup(OutputStream outputStream, URI serverURI, URI destinationURI)
       throws QueryException {
-    execute(
-        new BackupOperation(outputStream, serverURI, destinationURI),
+    execute(new BackupOperation(outputStream, serverURI, destinationURI),
         "Unable to backup to " + destinationURI);
   }
 
   //
   // Internal utility methods.
   //
-  protected void modify(URI modelURI, Set<Triple> statements, boolean insert) throws QueryException
+  protected void modify(URI modelURI, Set<? extends Triple> statements, boolean insert) throws QueryException
   {
     if (logger.isInfoEnabled()) {
-      logger.info("Inserting statements into " + modelURI);
+      logger.info("Modifying (ins:" + insert + ") : " + modelURI);
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("Inserting statements: " + statements);
+      logger.debug("Modifying statements: " + statements);
     }
 
-    execute(new ModifyModelOperation(modelURI, statements, insert),
-            "Could not commit insert");
+    execute(new ModifyModelOperation(modelURI, statements, insert), "Could not commit modify");
   }
 
   private void modify(URI modelURI, Query query, boolean insert) throws QueryException
@@ -602,7 +617,7 @@ class DatabaseSession implements Session {
     }
 
     execute(new ModifyModelOperation(modelURI, query, insert, this),
-            "Unable to modify " + modelURI);
+        "Unable to modify " + modelURI);
   }
 
   /**
@@ -613,9 +628,10 @@ class DatabaseSession implements Session {
    */
   private void execute(Operation operation, String errorString) throws QueryException
   {
+    ensureTransactionFactorySelected();
     try {
       MulgaraTransaction transaction =
-          transactionManager.getTransaction(this, operation.isWriteOperation());
+          transactionFactory.getTransaction(this, operation.isWriteOperation());
       transaction.execute(operation, resolverSessionFactory, metadata);
     } catch (MulgaraTransactionException em) {
       logger.info("Error executing operation: " + errorString, em);
@@ -635,5 +651,37 @@ class DatabaseSession implements Session {
         symbolicTransformationList,
         systemResolverFactory,
         writing);
+  }
+
+  private void ensureTransactionFactorySelected() throws QueryException {
+    if (transactionFactory == null) {
+      assertInternallyManagedXA();
+    }
+  }
+
+  private void assertInternallyManagedXA() throws QueryException {
+    if (transactionFactory == null) {
+      transactionFactory = internalFactory = transactionManager.getInternalFactory();
+    } else if (internalFactory == null) {
+      throw new QueryException("Attempt to use internal transaction control in externally managed session");
+    }
+  }
+
+  private void assertExternallyManagedXA() throws QueryException {
+    if (transactionFactory == null) {
+      transactionFactory = externalFactory = transactionManager.getExternalFactory();
+    } else if (externalFactory == null) {
+      throw new QueryException("Attempt to use external transaction control in internally managed session");
+    }
+  }
+
+  public XAResource getXAResource() throws QueryException {
+    assertExternallyManagedXA();
+    return externalFactory.getXAResource(this, true);
+  }
+
+  public XAResource getReadOnlyXAResource() throws QueryException {
+    assertExternallyManagedXA();
+    return externalFactory.getXAResource(this, false);
   }
 }

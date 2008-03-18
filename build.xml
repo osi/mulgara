@@ -494,7 +494,7 @@
           lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/castor-0.9.3.9-xml.jar, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
-          lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.carol.jar}, lib/${jotm.iiop.jar},
+          lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
           lib/connector-1_5.jar, lib/${httpclient.jar}, lib/${commons-codec.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
@@ -550,7 +550,7 @@
         ${lucene.jar}, ${mail.jar}, ${castor.jar}, ${trove.jar},
         ${date-utils.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
         ${commons-codec.jar}, ${emory-util.jar},
-        ${jotm.jar}, ${jotm.carol.jar}, ${jotm.iiop.jar}, ${jta.jar},
+        ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
         ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
         ${axis.jar}, ${commons-discovery.jar}, ${jaxrpc.jar}, ${wsdl4j.jar},
         ${jena.jar}, ${antlr.jar}, ${jakarta-oro.jar}, {jid3.jar}"/>
@@ -1750,8 +1750,9 @@
       <zipfileset src="${lib.dir}/${commons-codec.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jotm.carol.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jotm.iiop.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${carol.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${howl.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jsr.173.api.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jsr.173.ri.jar}" excludes="META-INF/**"/>

@@ -187,7 +187,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -276,7 +276,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);

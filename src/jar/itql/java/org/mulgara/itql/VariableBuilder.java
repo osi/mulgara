@@ -78,7 +78,7 @@ public class VariableBuilder extends AnalysisAdapter {
    * The list of variables - these are mixed object types:
    * ConstantValue, Variable, Count, SubQuery
    */
-  private List<Object> variableList;
+  private List<SelectElement> variableList;
 
   /** The TQL interpreter */
   private SableCCInterpreter interpreter;
@@ -90,7 +90,7 @@ public class VariableBuilder extends AnalysisAdapter {
    * @param newInterpreter the interpreter to use.
    */
   public VariableBuilder(SableCCInterpreter newInterpreter, VariableFactory newVariableFactory) {
-    variableList = new ArrayList<Object>();
+    variableList = new ArrayList<SelectElement>();
     interpreter = newInterpreter;
     variableFactory = newVariableFactory;
   }
@@ -182,9 +182,9 @@ public class VariableBuilder extends AnalysisAdapter {
    * @throws URISyntaxException if the variable contains a resource whose
    *   text violates <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  public List<Object> getVariableList() throws QueryException, URISyntaxException {
+  public List<SelectElement> getVariableList() throws QueryException, URISyntaxException {
     try {
-      List<Object> tmpVariableList = new ArrayList<Object>(variableList);
+      List<SelectElement> tmpVariableList = new ArrayList<SelectElement>(variableList);
 
       if (uriException != null) throw uriException;
       else if (queryException != null) throw queryException;

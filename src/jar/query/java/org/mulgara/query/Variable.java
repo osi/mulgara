@@ -45,7 +45,7 @@ package org.mulgara.query;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class Variable implements ConstraintElement {
+public class Variable implements SelectElement, ConstraintElement {
 
   /**
    * Allow newer compiled version of the stub to operate when changes

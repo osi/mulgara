@@ -85,7 +85,7 @@ class ModifyModelOperation implements Operation
    * If this field is not <code>null</code>, {@link #query} will be
    * <code>null</code>
    */
-  private final Set<Triple> tripleSet;
+  private final Set<? extends Triple> tripleSet;
 
   /**
    * The query generating the statements whose occurence is to be modified.
@@ -112,7 +112,7 @@ class ModifyModelOperation implements Operation
    * @throws IllegalArgumentException if <var>modelURI</var> or
    *   <var>tripleSet</var> are <code>null</code>
    */
-  ModifyModelOperation(URI modelURI, Set<Triple> tripleSet, boolean insert)
+  ModifyModelOperation(URI modelURI, Set<? extends Triple> tripleSet, boolean insert)
   {
     // Validate "modelURI" parameter
     if (modelURI == null) {

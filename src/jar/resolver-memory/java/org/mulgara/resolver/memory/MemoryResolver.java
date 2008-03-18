@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *    Migration to AbstractXAResource copyright 2008 The Topaz Foundation
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -84,7 +85,9 @@ public class MemoryResolver implements SystemResolver {
    */
   private final Set<Stating> statingSet;
 
-  private XAResolverSession xaResolverSession;
+  private final XAResource xares;
+
+  private final XAResolverSession xaResolverSession;
 
   //
   // Constructors
@@ -105,34 +108,30 @@ public class MemoryResolver implements SystemResolver {
    *   is {@link NodePool#NONE}
    */
   MemoryResolver(ResolverSession resolverSession,
-                 Resolver        systemResolver,
                  long            rdfType,
-                 long            systemModel,
                  URI             modelTypeURI,
                  Set<Stating>    statingSet)
       throws ResolverFactoryException {
-
-    // Validate "modelType" parameter
-    if (modelTypeURI == null) {
-      throw new IllegalArgumentException("Model type can't be null");
-    }
-
-    // Initialize fields
-    memoryModelTypeURI = modelTypeURI;
-    this.rdfType = rdfType;
-    this.resolverSession = resolverSession;
-    this.statingSet = statingSet;
-    this.xaResolverSession = null;
+    this(resolverSession, rdfType, modelTypeURI, statingSet, null, null);
   }
-
 
   MemoryResolver(long              rdfType,
-                 long              systemModel,
                  URI               modelTypeURI,
                  Set<Stating>      statingSet,
-                 XAResolverSession resolverSession)
+                 XAResolverSession resolverSession,
+                 ResolverFactory   resolverFactory)
       throws ResolverFactoryException {
-    
+    this(resolverSession, rdfType, modelTypeURI, statingSet, resolverSession,
+         resolverFactory);
+  }
+
+  private MemoryResolver(ResolverSession   resolverSession,
+                         long              rdfType,
+                         URI               modelTypeURI,
+                         Set<Stating>      statingSet,
+                         XAResolverSession xaResolverSession,
+                         ResolverFactory   resolverFactory)
+      throws ResolverFactoryException {
     // Validate "modelType" parameter
     if (modelTypeURI == null) {
       throw new IllegalArgumentException("Model type can't be null");
@@ -143,8 +142,13 @@ public class MemoryResolver implements SystemResolver {
     this.rdfType = rdfType;
     this.resolverSession = resolverSession;
     this.statingSet = statingSet;
-    this.xaResolverSession = resolverSession;
+    this.xaResolverSession = xaResolverSession;
+
+    this.xares = (xaResolverSession != null) ?
+          new MemoryXAResource(10, xaResolverSession, resolverFactory) :
+          new DummyXAResource(10);
   }
+
 
 
   //
@@ -152,11 +156,7 @@ public class MemoryResolver implements SystemResolver {
   //
 
   public XAResource getXAResource() {
-    if (xaResolverSession != null) {
-      return new MemoryXAResource(10, xaResolverSession);
-    } else {
-      return new DummyXAResource(10);
-    }
+    return xares;
   }
 
 

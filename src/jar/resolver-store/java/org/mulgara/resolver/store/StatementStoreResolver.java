@@ -16,7 +16,9 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *    Move to associate XAResource with Resolver Factory
+ *     copyright 2008 The Topaz Foundation
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -131,7 +133,8 @@ public class StatementStoreResolver implements SystemResolver
                          long systemModel,
                          URI modelTypeURI,
                          XAResolverSession resolverSession,
-                         XAStatementStore statementStore)
+                         XAStatementStore statementStore,
+                         ResolverFactory resolverFactory)
       throws IllegalArgumentException, ResolverFactoryException
   {
     // Validate parameters
@@ -153,7 +156,8 @@ public class StatementStoreResolver implements SystemResolver
     this.xaresource = new StatementStoreXAResource(
         10,  // transaction timeout in seconds
         resolverSession,
-        new SimpleXAResource[] { statementStore });
+        new SimpleXAResource[] { statementStore },
+        resolverFactory);
   }
 
   StatementStoreResolver(Resolver systemResolver,
@@ -161,7 +165,8 @@ public class StatementStoreResolver implements SystemResolver
                          long systemModel,
                          URI modelTypeURI,
                          XAResolverSession resolverSession,
-                         XAStatementStore statementStore)
+                         XAStatementStore statementStore,
+                         ResolverFactory resolverFactory)
       throws IllegalArgumentException, ResolverFactoryException
   {
     // Validate parameters
@@ -182,7 +187,8 @@ public class StatementStoreResolver implements SystemResolver
     this.xaresource = new StatementStoreXAResource(
         10,  // transaction timeout in seconds
         resolverSession,
-        new SimpleXAResource[] { statementStore });
+        new SimpleXAResource[] { statementStore },
+        resolverFactory);
   }
 
 
@@ -374,7 +380,7 @@ public class StatementStoreResolver implements SystemResolver
                                                + resolverSession.globalize(statements.getObject()) + " "
                                                + resolverSession.globalize(model) + "]", e);
       } catch (Exception eg) {
-	      throw new ResolverException("Failed to globalize in debug", eg);
+        throw new ResolverException("Failed to globalize in debug", eg);
       }
       throw new ResolverException("Couldn't make statement " + occurs + " in " + model, e);
     } catch (TuplesException e) {

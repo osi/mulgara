@@ -1,4 +1,4 @@
-ItqlInterpreter error - Could not commit insert
+ItqlInterpreter error - Could not commit modify
 Caused by: (QueryException) org.mulgara.query.MulgaraTransactionException: Transaction rollback triggered
 Caused by: (QueryException) org.mulgara.resolver.spi.ResolverException: Unable to read input statements
 Caused by: (QueryException) org.mulgara.query.TuplesException: Failed to localize node

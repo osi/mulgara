@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   Move to java-generics copyright Netymon Pty Ltd
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -72,13 +73,13 @@ public class Query implements Cloneable, Serializable, Command {
    * that there is no <code>select</code> clause and that no projection will be
    * performed.
    */
-  private List<Object> variableList;
+  private List<SelectElement> variableList;
 
   /**
    * Mutable version of the variable list. This isn't exposed via {@link
    * #getVariableList} the way {@link #variableList} is.
    */
-  private List<Object> mutableVariableList;
+  private List<SelectElement> mutableVariableList;
 
   /** The model expression. It corresponds to the <code>from</code> clause. */
   private ModelExpression modelExpression;
@@ -142,7 +143,7 @@ public class Query implements Cloneable, Serializable, Command {
    *     <var>constraintExpression</var>, <var>orderList<var> or
    *     <var>answer</var> are <code>null</code>
    */
-  public Query(List<Object> variableList, ModelExpression modelExpression,
+  public Query(List<? extends SelectElement> variableList, ModelExpression modelExpression,
       ConstraintExpression constraintExpression,
       ConstraintHaving havingExpression, List<Order> orderList, Integer limit,
       int offset, Answer answer) {
@@ -177,7 +178,7 @@ public class Query implements Cloneable, Serializable, Command {
     }
 
     // Initialize fields
-    this.mutableVariableList = (variableList == null) ? null : new ArrayList<Object>(variableList);
+    this.mutableVariableList = (variableList == null) ? null : new ArrayList<SelectElement>(variableList);
     this.variableList = (variableList == null) ? null : Collections.unmodifiableList(mutableVariableList);
     this.modelExpression = modelExpression;
     this.constraintExpression = constraintExpression;
@@ -233,10 +234,8 @@ public class Query implements Cloneable, Serializable, Command {
       cloned.mutableVariableList = null;
       cloned.variableList = null;
     } else {
-      cloned.variableList = new ArrayList<Object>();
-      Iterator<Object> i = variableList.iterator();
-      while (i.hasNext()) {
-        Object o = i.next();
+      cloned.variableList = new ArrayList<SelectElement>();
+      for (SelectElement o : variableList) {
         if (o instanceof Subquery) {
           Subquery s = (Subquery)o;
           cloned.variableList.add(new Subquery(s.getVariable(), (Query)s.getQuery().clone()));
@@ -270,7 +269,7 @@ public class Query implements Cloneable, Serializable, Command {
    * @return a {@link List} containing one or more {@link Variable}s, {@link ContantValue}s,
    * {@link Count}s or {@link Subquery}
    */
-  public List<Object> getVariableList() {
+  public List<SelectElement> getVariableList() {
     return variableList;
   }
 
@@ -407,8 +406,10 @@ public class Query implements Cloneable, Serializable, Command {
     answer = null;
 
     if (mutableVariableList != null) {
-      for (Object v: mutableVariableList) {
-        if (v instanceof AggregateFunction) ((AggregateFunction)v).getQuery().close();
+      for (SelectElement v: mutableVariableList) {
+        if (v instanceof AggregateFunction) {
+          ((AggregateFunction)v).getQuery().close();
+        }
       }
     }
   }

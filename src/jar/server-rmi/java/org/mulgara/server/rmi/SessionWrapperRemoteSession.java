@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   XAResource access copyright 2007 The Topaz Foundation.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -514,6 +515,24 @@ class SessionWrapperRemoteSession implements RemoteSession {
 
     session.login(securityDomain, username, password);
   }
+
+
+  public RemoteXAResource getXAResource() throws QueryException, RemoteException {
+    try {
+      return new XAResourceWrapperRemoteXAResource(session.getXAResource());
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+
+  public RemoteXAResource getReadOnlyXAResource() throws QueryException, RemoteException {
+    try {
+      return new XAResourceWrapperRemoteXAResource(session.getReadOnlyXAResource());
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+
 
   // Construct an exception chain that will pass over RMI.
   protected Throwable mapThrowable(Throwable t) {

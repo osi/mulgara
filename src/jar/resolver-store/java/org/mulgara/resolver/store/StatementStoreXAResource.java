@@ -17,6 +17,7 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s): N/A.
+ *   Migration to AbstractXAResource copyright 2008 The Topaz Foundation
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -28,22 +29,22 @@
 package org.mulgara.resolver.store;
 
 // Java 2 standard packages
-import java.util.*;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import java.util.HashSet;
+import java.util.Set;
 
 // Third party packages
 import org.apache.log4j.Logger;
 
-
+import org.mulgara.resolver.spi.AbstractXAResource;
+import org.mulgara.resolver.spi.AbstractXAResource.RMInfo;
+import org.mulgara.resolver.spi.AbstractXAResource.TxInfo;
+import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.store.xa.SimpleXAResource;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAResolverSession;
 
 /**
- * A dummy implementation of the {@link XAResource} interface which logs the
- * calls made to it, but otherwise ignores them.
+ * Implements the XAResource for the {@link StatementStoreResolver}.
  *
  * @created 2004-05-12
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
@@ -55,40 +56,15 @@ import org.mulgara.store.xa.XAResolverSession;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class StatementStoreXAResource implements XAResource
-{
+public class StatementStoreXAResource
+    extends AbstractXAResource<RMInfo<StatementStoreXAResource.StatementStoreTxInfo>, StatementStoreXAResource.StatementStoreTxInfo> {
   /** Logger.  */
   private static final Logger logger =
     Logger.getLogger(StatementStoreXAResource.class.getName());
 
-  /**
-   * Map from keyed from the {@link Integer} value of the various flags
-   * defined in {@link XAResource} and mapping to the formatted name for that
-   * flag.
-   */
-  private final static Map flagMap = new HashMap();
-
-  static {
-    flagMap.put(new Integer(XAResource.TMENDRSCAN),   "TMENDRSCAN");
-    flagMap.put(new Integer(XAResource.TMFAIL),       "TMFAIL");
-    flagMap.put(new Integer(XAResource.TMJOIN),       "TMJOIN");
-    flagMap.put(new Integer(XAResource.TMONEPHASE),   "TMONEPHASE");
-    flagMap.put(new Integer(XAResource.TMRESUME),     "TMRESUME");
-    flagMap.put(new Integer(XAResource.TMSTARTRSCAN), "TMSTARTRSCAN");
-    flagMap.put(new Integer(XAResource.TMSUCCESS),    "TMSUCCESS");
-    flagMap.put(new Integer(XAResource.TMSUSPEND),    "TMSUSPEND");
-  }
-
-  /** The transaction timeout value in seconds.  */
-  private int transactionTimeout = 0;
-
-  private SimpleXAResource[] resources;
-  private XAResolverSession session;
-  private boolean rollback;
-  private Xid xid;
   // Used to prevent multiple calls to prepare on the store layer.
   // Set of session's that have been prepared.
-  private static Set preparing = new HashSet();
+  public static Set<XAResolverSession> preparing = new HashSet<XAResolverSession>();
 
   //
   // Constructor
@@ -98,292 +74,127 @@ public class StatementStoreXAResource implements XAResource
    * Construct a {@link StatementStoreXAResource} with a specified transaction timeout.
    *
    * @param transactionTimeout  transaction timeout period, in seconds
+   * @param session             the underlying resolver-session to use
+   * @param resources           
+   * @param resolverFactory     the resolver-factory we belong to
    */
   public StatementStoreXAResource(int transactionTimeout,
                                   XAResolverSession session,
-                                  SimpleXAResource[] resources)
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("<init> Creating StatementStoreXAResource: " + this);
-    }
-    this.transactionTimeout = transactionTimeout * 100;
-    this.resources = resources;
-    this.session = session;
+                                  SimpleXAResource[] resources,
+                                  ResolverFactory resolverFactory) {
+    super(transactionTimeout, resolverFactory, newTxInfo(session, resources));
+  }
+
+  protected RMInfo<StatementStoreTxInfo> newResourceManager() {
+    return new RMInfo<StatementStoreTxInfo>();
+  }
+
+  private static StatementStoreTxInfo newTxInfo(XAResolverSession session,
+                                                SimpleXAResource[] resources) {
+    StatementStoreTxInfo ti = new StatementStoreTxInfo();
+    ti.session = session;
+    ti.resources = resources;
+    return ti;
   }
 
   //
   // Methods implementing XAResource
   //
 
-  public void start(Xid xid, int flags) throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Start " + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
-    } 
-    switch (flags) {
-      case XAResource.TMNOFLAGS:
-        try {
-          session.refresh(resources);
-          this.xid = xid;
-          this.rollback = false;
-        } catch (SimpleXAResourceException es) {
-          logger.error("Failed to obtain phases", es);
-          throw new XAException(XAException.XAER_RMFAIL);
-        }
-        break;
-      case XAResource.TMRESUME:
-        if (!xid.equals(this.xid)) {
-          logger.error("Attempt to resume resource in wrong transaction.");
-          throw new XAException(XAException.XAER_INVAL);
-        }
-        break;
-      case XAResource.TMJOIN:
-        if (!xid.equals(this.xid)) {
-          logger.error("Attempt to join with wrong transaction.");
-          throw new XAException(XAException.XAER_INVAL);
-        }
-        break;
-      default:  // Currently fall-through.
-        rollback = true;
-        logger.warn("Unrecognised flags in start: " + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
-        if (logger.isDebugEnabled()) {
-          logger.debug("This XAResource = " + System.identityHashCode(this.xid));
-        }
-        throw new XAException(XAException.XAER_INVAL);
+  protected void doStart(StatementStoreTxInfo tx, int flags, boolean isNew) throws Exception {
+    if (flags == TMNOFLAGS) {
+      tx.session.refresh(tx.resources);
     }
   }
 
-  public int prepare(Xid xid) throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("XAResource " + this + " Prepare " + System.identityHashCode(xid) + " With Session: " + System.identityHashCode(session));
-    }
+  protected void doEnd(StatementStoreTxInfo tx, int flags) {
+  }
 
-    if (rollback) {
-      logger.error("Attempting to prepare in failed transaction");
-      throw new XAException(XAException.XA_RBROLLBACK);
-    }
-    if (!xid.equals(this.xid)) {
-      logger.error("Attempting to prepare unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
-    synchronized(preparing) {
-      if (preparing.contains(session)) {
+  protected int doPrepare(StatementStoreTxInfo tx) throws Exception {
+    synchronized (preparing) {
+      if (preparing.contains(tx.session)) {
         return XA_OK;
       } else {
-        preparing.add(session);
+        preparing.add(tx.session);
       }
     }
 
     try {
-      session.prepare();
+      tx.session.prepare();
     } catch (SimpleXAResourceException es) {
-      logger.warn("Attempt to prepare store failed", es);
-      synchronized(preparing) {
-        preparing.remove(session);
+      synchronized (preparing) {
+        preparing.remove(tx.session);
       }
-      throw new XAException(XAException.XA_RBROLLBACK);
+      throw es;
     }
 
     return XA_OK;
   }
 
-  public void commit(Xid xid, boolean onePhase) throws XAException
-  {
+  protected void doCommit(StatementStoreTxInfo tx) throws Exception {
     try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("XAResource " + this + " Commit xid=" + System.identityHashCode(xid) + " onePhase=" + onePhase + " session=" + System.identityHashCode(session));
-      }
-      if (rollback) {
-        logger.error("Attempting to commit in failed transaction");
-        throw new XAException(XAException.XA_RBROLLBACK);
-      }
-      if (!xid.equals(this.xid)) {
-        logger.error("Attempting to commit unknown transaction.");
-        throw new XAException(XAException.XAER_NOTA);
-      }
-      try {
-        if (onePhase) {
-          // Currently prepare only returns XA_OK, and throws an exception on failure.
-          prepare(xid);
-        }
-      } catch (Throwable th) {
-        this.rollback = true;
-        logger.error("Attempt to prepare in onePhaseCommit failed.", th);
-        throw new XAException(XAException.XA_RBROLLBACK);
-      }
-
-      try {
-        session.commit();
-      } catch (Throwable th) {
-        // This is a serious problem since the database is now in an
-        // inconsistent state.
-        // Make sure the exception is logged.
-        logger.fatal("Failed to commit resource in transaction " + xid, th);
-        throw new XAException(XAException.XAER_RMERR);
-      }
+      tx.session.commit();
     } finally {
-      cleanup("commit");
-    }
-
-  }
-
-  public void end(Xid xid, int flags) throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("End xid=" + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+      cleanup("commit", tx);
     }
   }
 
-  public void forget(Xid xid) throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Forget xid=" + System.identityHashCode(xid));
-    }
+  protected void doForget(StatementStoreTxInfo tx) throws Exception {
     try {
-      synchronized(preparing) {
-        if (preparing.contains(session)) {
-          rollback(xid);
+      synchronized (preparing) {
+        if (preparing.contains(tx.session)) {
+          doRollback(tx);
         }
       }
     } finally {
-      cleanup("forget");
+      cleanup("forget", tx);
     }
   }
 
-  public int getTransactionTimeout() throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Get transaction timeout: " + transactionTimeout);
-    }
-    return transactionTimeout;
-  }
-
-  public boolean isSameRM(XAResource xaResource) throws XAException
-  {
-    return xaResource == this;
-  }
-
-  public Xid[] recover(int flag) throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Recover flag=" + formatFlags(flag));
-    }
-    throw new XAException(XAException.XAER_RMERR);
-  }
-
-  public void rollback(Xid xid) throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Rollback " + System.identityHashCode(xid));
-    }
-
-    boolean fatalError = false;
-
-    if (!xid.equals(this.xid)) {
-      logger.error("Attempting to rollback unknown transaction.");
-      fatalError = true;
-    }
-
+  protected void doRollback(StatementStoreTxInfo tx) throws Exception {
     try {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Rolling back phase");
-      }
-      session.rollback();
-    } catch (Throwable th) {
-      // This is a serious problem since the database is now in an
-      // inconsistent state.
-      // Make sure the exception is logged.
-      logger.fatal("Failed to rollback resource in transaction " + xid, th);
-      fatalError = true;
+      tx.session.rollback();
     } finally {
-      cleanup("rollback");
+      cleanup("rollback", tx);
     }
-
-    if (fatalError) {
-      logger.fatal("Fatal error occured while rolling back transaction " + xid + " in manager for " + this.xid);
-      throw new XAException(XAException.XAER_RMERR);
-    }
-  }
-
-  public boolean setTransactionTimeout(int transactionTimeout)
-    throws XAException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Set transaction timeout: " + transactionTimeout);
-    }
-    this.transactionTimeout = transactionTimeout;
-    return true;
   }
 
   //
   // Internal methods
   //
 
-  /**
-   * Format bitmasks defined by {@link XAResource}.
-   *
-   * @param flags  a bitmask composed from the constants defined in
-   *   {@link XAResource}
-   * @return a formatted representation of the <var>flags</var>
-   */
-  private static String formatFlags(int flags)
-  {
-    // Short-circuit evaluation if we've been explicitly passed no flags
-    if (flags == XAResource.TMNOFLAGS) {
-      return "TMNOFLAGS";
+  private void cleanup(String operation, StatementStoreTxInfo tx) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Performing cleanup from " + operation);
     }
-
-    StringBuffer buffer = new StringBuffer();
-
-    // Add any flags that are present
-    for (Iterator i = flagMap.entrySet().iterator(); i.hasNext(); ) {
-      Map.Entry entry = (Map.Entry)i.next();
-      int entryFlag = ((Integer)entry.getKey()).intValue();
-
-      // If this flag is present, add it to the formatted output and remove
-      // from the bitmask
-      if ((entryFlag & flags) == entryFlag) {
-        if (buffer.length() > 0) {
-          buffer.append(",");
-        }
-        buffer.append(entry.getValue());
-        flags &= ~entryFlag;
-      }
-    }
-
-    // We would expect to have removed all flags by this point
-    // If there's some unknown flag we've missed, format it as hexadecimal
-    if (flags != 0) {
-      if (buffer.length() > 0) {
-        buffer.append(",");
-      }
-      buffer.append("0x").append(Integer.toHexString(flags));
-    }
-
-    return buffer.toString();
-  }
-
-
-  private void cleanup(String operation) {
     try {
-      synchronized(preparing) {
-        if (preparing.contains(session)) {
-          preparing.remove(session);
+      synchronized (preparing) {
+        if (preparing.contains(tx.session)) {
+          preparing.remove(tx.session);
         } else {
-          logger.debug("Already committed/rolledback in this transaction");
+          if (logger.isDebugEnabled()) {
+            logger.debug("Already committed/rolledback in this transaction");
+          }
         }
       }
     } finally {
       try {
         if (logger.isDebugEnabled()) {
-          logger.debug("Releasing session after " + operation + " " + session);
+          logger.debug("Releasing session after " + operation + " " + tx.session);
         }
-        session.release();
-        session = null;
+        tx.session.release();
+        tx.session = null;
       } catch (SimpleXAResourceException es) {
         logger.error("Attempt to release store failed", es);
       }
     }
+  }
+
+  static class StatementStoreTxInfo extends TxInfo {
+    /** the underlying resolver-session to use */
+    public XAResolverSession session;
+
+    /** the underlying resources */
+    public SimpleXAResource[] resources;
   }
 }

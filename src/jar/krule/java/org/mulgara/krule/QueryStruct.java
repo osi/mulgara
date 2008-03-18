@@ -48,6 +48,7 @@ import org.mulgara.query.ModelResource;
 import org.mulgara.query.ModelUnion;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
+import org.mulgara.query.SelectElement;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
 import org.mulgara.query.VariableFactory;
@@ -76,7 +77,7 @@ public class QueryStruct implements Serializable {
   private ConstraintElement[] select = new ConstraintElement[3];
 
   /** List of elements which are variables, or ConstantValues. */
-  private List<Object> variables;
+  private List<SelectElement> variables;
 
   /** The model expresison for the query. */
   private ModelExpression models;
@@ -112,7 +113,7 @@ public class QueryStruct implements Serializable {
     VariableFactory variableFactory = new VariableFactoryImpl();
 
     // set up a list of variables
-    variables = new ArrayList<Object>();
+    variables = new ArrayList<SelectElement>();
 
     // convert the parameters to usable objects
     for (int i = 0; i < 3; i++) {
@@ -129,7 +130,7 @@ public class QueryStruct implements Serializable {
 
         // get the variable
         select[i] = (Variable)varReferences.get(element);
-        variables.add(select[i]);
+        variables.add((Variable)select[i]);
 
       } else if (types[i].equals(KruleLoader.LITERAL)) {
         

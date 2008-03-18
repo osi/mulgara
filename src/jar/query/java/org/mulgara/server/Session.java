@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *    XAResource addition copyright 2008 The Topaz Foundation
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -32,6 +33,7 @@ package org.mulgara.server;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import javax.transaction.xa.XAResource;
 
 // Locally written packages
 import org.jrdf.graph.Triple;
@@ -79,7 +81,7 @@ public interface Session {
    * @param statements The Set of statements to insert into the model.
    * @throws QueryException if the insert cannot be completed.
    */
-  public void insert(URI modelURI, Set<Triple> statements) throws QueryException;
+  public void insert(URI modelURI, Set<? extends Triple> statements) throws QueryException;
 
   /**
    * Insert statements from the results of a query into another model.
@@ -97,7 +99,7 @@ public interface Session {
    * @param statements The Set of statements to delete from the model.
    * @throws QueryException if the deletion cannot be completed.
    */
-  public void delete(URI modelURI, Set<Triple> statements) throws QueryException;
+  public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException;
 
   /**
    * Delete statements from a model using the results of query.
@@ -304,4 +306,30 @@ public interface Session {
    */
   public void login(URI securityDomain, String username, char[] password);
 
+  /**
+   * Obtain an XAResource for this Session.
+   *
+   * Use of this method is incompatible with any use of implicit or internally
+   * mediated transactions with this Session.
+   * Transactions initiated from the XAResource returned by the read-only
+   * version of this method will be read-only.
+   */
+  public XAResource getXAResource() throws QueryException;
+  public XAResource getReadOnlyXAResource() throws QueryException;
+
+  /**
+   * This class is just a devious way to get static initialization for the
+   * {@link Session} interface.
+   */
+  abstract class ConstantFactory {
+
+    static URI getMulgaraModelURI() {
+      try {
+        return new URI(Mulgara.NAMESPACE + "Model");
+      }
+       catch (URISyntaxException e) {
+        throw new Error("Bad hardcoded URI");
+      }
+    }
+  }
 }

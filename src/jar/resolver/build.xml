@@ -32,6 +32,7 @@
     <fileset file="${resolver-jar.dist.dir}/${resolver-jar.jar}"/>
     <fileset file="${resolver-url.dist.dir}/${resolver-url.jar}"/>
     <fileset file="${content-rdfxml.dist.dir}/${content-rdfxml.jar}"/>
+    <fileset file="${driver.dist.dir}/${driver.jar}"/>
   </path>
 
   <path id="resolver-test-classpath">
@@ -81,7 +82,7 @@
           depends="-resolver-prepare, resolver-spi-jar, rules-jar,
                    resolver-http-jar, resolver-file-jar, resolver-url-jar,
                    resolver-jar-jar, content-rdfxml-jar, content-rdfxml-jar,
-                   client-jrdf-jar, jrdf-jar, resolver-xsd-jar"
+                   client-jrdf-jar, jrdf-jar, resolver-xsd-jar, driver-jar"
           description="Compiles all resolver related files included generated
                        source code">
 
@@ -128,10 +129,17 @@
                    resolver-jar, resolver-memory-jar, resolver-xsd-jar,
                    store-nodepool-xa-jar, store-stringpool-xa-jar, resolver-store-jar,
                    resolver-url-jar, store-stringpool-memory-jar, tuples-hybrid-jar,
-                   util-jar, util-xa-jar">
+                   util-jar, util-xa-jar, driver-jar">
+
 
     <antcall target="component-test">
 
+      <param name="classpath.id" value="resolver-test-classpath"/>
+      <param name="dir" value="${resolver.src.dir}"/>
+      <param name="jar" value="${resolver.jar}"/>
+    </antcall>
+
+    <antcall target="standalone-test">
       <param name="classpath.id" value="resolver-test-classpath"/>
       <param name="dir" value="${resolver.src.dir}"/>
       <param name="jar" value="${resolver.jar}"/>

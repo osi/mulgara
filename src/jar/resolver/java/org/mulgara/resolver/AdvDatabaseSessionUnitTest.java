@@ -63,6 +63,7 @@ import org.mulgara.query.ModelResource;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
+import org.mulgara.query.SelectElement;
 import org.mulgara.query.Subquery;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.UnconstrainedAnswer;
@@ -243,7 +244,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -301,7 +302,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -361,10 +362,10 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
-          Collections.singletonList((Object)objectVariable),
+          Collections.singletonList(objectVariable),
           new ModelResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
@@ -436,10 +437,10 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
-          Collections.singletonList((Object)objectVariable),
+          Collections.singletonList(objectVariable),
           new ModelResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
@@ -525,7 +526,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -612,7 +613,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -688,7 +689,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List<Object> selectList = new ArrayList<Object>(3);
+          List<SelectElement> selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -716,7 +717,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
           session1.setAutoCommit(true);
 
-          selectList = new ArrayList<Object>(3);
+          selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -785,7 +786,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List<Object> selectList = new ArrayList<Object>(3);
+          List<SelectElement> selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -814,7 +815,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           session1.rollback();
           session1.setAutoCommit(true);
 
-          selectList = new ArrayList<Object>(3);
+          selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -869,7 +870,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List<Object> selectList = new ArrayList<Object>(3);
+          List<SelectElement> selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -897,7 +898,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
           session1.commit();
 
-          selectList = new ArrayList<Object>(3);
+          selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -940,7 +941,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           session1.removeModel(model3URI);
           session1.createModel(model3URI, null);
 
-          selectList = new ArrayList<Object>(3);
+          selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -982,7 +983,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
           session1.setAutoCommit(true);
 
-          selectList = new ArrayList<Object>(3);
+          selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -1035,7 +1036,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           Variable predicateVariable = new Variable("predicate");
           Variable objectVariable    = new Variable("object");
 
-          List<Object> selectList = new ArrayList<Object>(3);
+          List<SelectElement> selectList = new ArrayList<SelectElement>(3);
           selectList.add(subjectVariable);
           selectList.add(predicateVariable);
           selectList.add(objectVariable);
@@ -1158,7 +1159,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List<Object> selectList = new ArrayList<Object>(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(predicateVariable);
         selectList.add(objectVariable);
@@ -1220,7 +1221,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                 Variable predicateVariable = new Variable("predicate");
                 Variable objectVariable    = new Variable("object");
 
-                List<Object> selectList = new ArrayList<Object>(3);
+                List<SelectElement> selectList = new ArrayList<SelectElement>(3);
                 selectList.add(subjectVariable);
                 selectList.add(predicateVariable);
                 selectList.add(objectVariable);
@@ -1342,7 +1343,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                 Variable predicateVariable = new Variable("predicate");
                 Variable objectVariable    = new Variable("object");
 
-                List<Object> selectList = new ArrayList<Object>(3);
+                List<SelectElement> selectList = new ArrayList<SelectElement>(3);
                 selectList.add(subjectVariable);
                 selectList.add(predicateVariable);
                 selectList.add(objectVariable);
@@ -1398,7 +1399,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
                 Variable predicateVariable = new Variable("predicate");
                 Variable objectVariable    = new Variable("object");
 
-                List<Object> selectList = new ArrayList<Object>(3);
+                List<SelectElement> selectList = new ArrayList<SelectElement>(3);
                 selectList.add(subjectVariable);
                 selectList.add(predicateVariable);
                 selectList.add(objectVariable);
@@ -1482,7 +1483,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         Variable varB   = new Variable("b");
         Variable varT = new Variable("t");
 
-        List<Object> selectList = new ArrayList<Object>(2);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(2);
         selectList.add(varA);
         selectList.add(varT);
 

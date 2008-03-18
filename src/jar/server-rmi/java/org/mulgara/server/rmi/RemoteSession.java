@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   XAResource access copyright 2007 The Topaz Foundation.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -308,4 +309,9 @@ interface RemoteSession extends Remote {
   public void login(URI securityDomain, String username,
       char[] password) throws RemoteException;
 
+  /**
+   * Obtain an XAResource for this session.
+   */
+  public RemoteXAResource getXAResource() throws QueryException, RemoteException;
+  public RemoteXAResource getReadOnlyXAResource() throws QueryException, RemoteException;
 }

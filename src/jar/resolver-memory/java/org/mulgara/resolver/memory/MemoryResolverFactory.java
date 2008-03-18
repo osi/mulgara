@@ -74,11 +74,6 @@ public class MemoryResolverFactory implements SystemResolverFactory
 
 
   /**
-   * The preallocated local node representing the system model (<code>#</code>).
-   */
-  private long systemModel;
-
-  /**
    * The {@link Stating}s which occur in all models created by resolvers
    * created by this factory.
    */
@@ -104,8 +99,6 @@ public class MemoryResolverFactory implements SystemResolverFactory
     // Initialize fields
     rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
     initializer.preallocate(new URIReferenceImpl(modelTypeURI));
-
-    systemModel = initializer.getSystemModel();
 
     // Claim mulgara:MemoryModel
     initializer.addModelType(modelTypeURI, this);
@@ -136,7 +129,6 @@ public class MemoryResolverFactory implements SystemResolverFactory
 
   public void setDatabaseMetadata(DatabaseMetadata metadata) {
     rdfType = metadata.getRdfTypeNode();
-    systemModel = metadata.getSystemModelNode();
   }
 
 
@@ -222,9 +214,7 @@ public class MemoryResolverFactory implements SystemResolverFactory
   ) throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating memory resolver");
     return new MemoryResolver(resolverSession,
-                              systemResolver,
                               rdfType,
-                              systemModel,
                               modelTypeURI,
                               statingSet);
   }
@@ -234,8 +224,9 @@ public class MemoryResolverFactory implements SystemResolverFactory
     assert sessionFactory != null;
     if (logger.isDebugEnabled()) logger.debug("Creating memory resolver factory");
     try {
-      return new MemoryResolver(rdfType, systemModel, modelTypeURI, statingSet,
-                                (XAResolverSession) sessionFactory.newWritableResolverSession());
+      return new MemoryResolver(rdfType, modelTypeURI, statingSet,
+                                (XAResolverSession) sessionFactory.newWritableResolverSession(),
+                                this);
     } catch (ResolverSessionFactoryException er) {
       throw new ResolverFactoryException("Failed to obtain a new ResolverSession", er);
     }

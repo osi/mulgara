@@ -131,7 +131,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b") };
-    List<Object> variables = Arrays.asList((Object[])varArray);
+    List<Variable> variables = Arrays.asList((Variable[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -178,7 +178,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("c") };
-    List<Object> variables = Arrays.asList((Object[])varArray);
+    List<Variable> variables = Arrays.asList((Variable[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -223,7 +223,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b"), new Variable("c") };
-    List<Object> variables = Arrays.asList((Object[])varArray);
+    List<Variable> variables = Arrays.asList((Variable[])varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -274,7 +274,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b"), new Variable("c") };
-    List<Object> variables = Arrays.asList((Object[])varArray);
+    List<Variable> variables = Arrays.asList(varArray);
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
@@ -325,7 +325,7 @@ public class TestResolverUnitTest extends TestCase {
     Session session = database.newSession();
 
     Variable[] varArray = new Variable[] { new Variable("a"), new Variable("b"), new Variable("c") };
-    List<Object> variables = Arrays.asList((Object[])varArray);
+    List<Variable> variables = Arrays.asList(varArray);
 
 		try {
 			session.query(new Query(

@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *    XAResource addition copyright 2008 The Topaz Foundation
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -32,6 +33,7 @@ import java.io.*;
 import java.net.*;
 import java.rmi.RemoteException;
 import java.util.*;
+import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger; // Apache Log4J
@@ -537,4 +539,11 @@ class BEEPSession implements Session {
    throw new UnsupportedOperationException("This operation is only supported on local sessions.");
  }
 
+ public XAResource getXAResource() throws QueryException {
+   throw new QueryException("External transactions not implemented under Beep");
+ }
+
+ public XAResource getReadOnlyXAResource() throws QueryException {
+   throw new QueryException("External transactions not implemented under Beep");
+ }
 }

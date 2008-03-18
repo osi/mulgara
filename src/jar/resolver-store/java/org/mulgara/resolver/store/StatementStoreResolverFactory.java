@@ -195,7 +195,8 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
               : (XAResolverSession) resolverSessionFactory.newReadOnlyResolverSession(),
           allowWrites
               ? statementStore.newWritableStatementStore()
-              : statementStore.newReadOnlyStatementStore());
+              : statementStore.newReadOnlyStatementStore(),
+          this);
     } catch (ResolverSessionFactoryException er) {
       throw new ResolverFactoryException(
           "Failed to obtain a new ResolverSession", er);
@@ -216,7 +217,8 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
           :
           (XAResolverSession) resolverSessionFactory.newReadOnlyResolverSession(),
           allowWrites ? statementStore.newWritableStatementStore()
-          : statementStore.newReadOnlyStatementStore());
+          : statementStore.newReadOnlyStatementStore(),
+          this);
     } catch (ResolverSessionFactoryException er) {
       throw new ResolverFactoryException(
           "Failed to obtain a new ResolverSession", er);

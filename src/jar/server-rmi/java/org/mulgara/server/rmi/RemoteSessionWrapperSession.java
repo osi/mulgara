@@ -16,7 +16,8 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s):
+ *   XAResource access copyright 2007 The Topaz Foundation.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -34,6 +35,7 @@ import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.io.*;
+import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -210,7 +212,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   /**
    * {@inheritDoc}
    */
-  public void insert(URI modelURI, Set<Triple> statements) throws QueryException {
+  public void insert(URI modelURI, Set<? extends Triple> statements) throws QueryException {
 
     try {
       remoteSession.insert(modelURI, statements);
@@ -240,7 +242,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   /**
    * {@inheritDoc}
    */
-  public void delete(URI modelURI, Set<Triple> statements) throws QueryException {
+  public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException {
 
     try {
       remoteSession.delete(modelURI, statements);
@@ -610,4 +612,19 @@ class RemoteSessionWrapperSession implements Serializable, Session {
     }
   }
 
+  public XAResource getXAResource() throws QueryException {
+    try {
+      return new RemoteXAResourceWrapperXAResource(remoteSession.getXAResource());
+    } catch (RemoteException re){
+      throw new QueryException("Java RMI failure", re);
+    }
+  }
+
+  public XAResource getReadOnlyXAResource() throws QueryException {
+    try {
+      return new RemoteXAResourceWrapperXAResource(remoteSession.getReadOnlyXAResource());
+    } catch (RemoteException re){
+      throw new QueryException("Java RMI failure", re);
+    }
+  }
 }
