@@ -209,7 +209,7 @@ public abstract class ContentResolver implements Resolver {
     if (constraint == null) {
       throw new IllegalArgumentException("constraint null");
     }
-    else if (!(constraint.getGraph() instanceof LocalNode)) {
+    else if (!(constraint.getModel() instanceof LocalNode)) {
       throw new QueryException("Constraint model can't be variable");
     }
 
@@ -217,7 +217,7 @@ public abstract class ContentResolver implements Resolver {
     URIReference modelURIReference;
     long modelNode;
     try {
-      modelNode = ((LocalNode) constraint.getGraph()).getValue();
+      modelNode = ((LocalNode) constraint.getModel()).getValue();
       Node node = resolverSession.globalize(modelNode);
 
       if (!(node instanceof URIReference)) {

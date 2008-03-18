@@ -245,7 +245,7 @@ public class ViewResolver implements Resolver, ViewMarker
     if (logger.isDebugEnabled()) {
       logger.debug("Resolve " + constraint);
     }
-    ConstraintElement modelElem = constraint.getGraph();
+    ConstraintElement modelElem = constraint.getModel();
     if (!(modelElem instanceof LocalNode)) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);

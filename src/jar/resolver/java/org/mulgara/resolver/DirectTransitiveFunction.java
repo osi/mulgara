@@ -166,7 +166,7 @@ public abstract class DirectTransitiveFunction extends TransitiveFunction {
             variable,
             predConstraint.getElement(1),
             tmpVariable,
-            predConstraint.getGraph());
+            predConstraint.getModel());
       } else {
         // forward anchor  [anchor predicate $x]
         value = new Long(session.lookup((Node)predConstraint.getElement(0)));

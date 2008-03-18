@@ -103,7 +103,7 @@ public abstract class ConstraintHaving extends AbstractConstraintExpression impl
   }
 
 
-  public ConstraintElement getGraph() {
+  public ConstraintElement getModel() {
     return element[3];
   }
 

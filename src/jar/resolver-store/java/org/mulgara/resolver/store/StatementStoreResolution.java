@@ -147,7 +147,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
         toGraphTuplesIndex(constraint.getElement(0)) < 0 ||
         toGraphTuplesIndex(constraint.getElement(1)) < 0 ||
         toGraphTuplesIndex(constraint.getElement(2)) < 0 ||
-        toGraphTuplesIndex(constraint.getGraph()) < 0;
+        toGraphTuplesIndex(constraint.getModel()) < 0;
 
     baseDefinition = calculateBaseDefinition(constraint);
     fixedLength = calculatePrefixLength(baseDefinition);
@@ -162,7 +162,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
       Tuples countTuples = store.findTuples(toGraphTuplesIndex(constraint.getElement(0)),
                                             toGraphTuplesIndex(constraint.getElement(1)),
                                             toGraphTuplesIndex(constraint.getElement(2)),
-                                            toGraphTuplesIndex(constraint.getGraph()));
+                                            toGraphTuplesIndex(constraint.getModel()));
       long rowCount = countTuples.getRowCount();
       countTuples.close();
 
@@ -180,7 +180,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
       countTuples = store.findTuples(toGraphTuplesIndex(constraint.getElement(0)),
                                      toGraphTuplesIndex(constraint.getElement(1)),
                                      toGraphTuplesIndex(constraint.getElement(2)),
-                                     toGraphTuplesIndex(constraint.getGraph()));
+                                     toGraphTuplesIndex(constraint.getModel()));
       int rowCount = 0;
       countTuples.beforeFirst();
       while (countTuples.next()) {
@@ -222,7 +222,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
         constraint.getElement(0) instanceof LocalNode,
         constraint.getElement(1) instanceof LocalNode,
         constraint.getElement(2) instanceof LocalNode,
-        constraint.getGraph() instanceof LocalNode
+        constraint.getModel() instanceof LocalNode
     };
   }
 

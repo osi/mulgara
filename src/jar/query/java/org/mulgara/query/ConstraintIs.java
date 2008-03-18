@@ -148,7 +148,7 @@ public class ConstraintIs extends AbstractConstraintExpression implements Constr
     element = null;
   }
 
-  public ConstraintElement getGraph() {
+  public ConstraintElement getModel() {
     return element[3];
   }
 

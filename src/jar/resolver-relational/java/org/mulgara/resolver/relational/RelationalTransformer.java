@@ -100,7 +100,7 @@ public class RelationalTransformer implements SymbolicTransformation {
 
   public ConstraintExpression transformMatch(SymbolicTransformationContext context, ConstraintImpl c) throws SymbolicTransformationException {
     try {
-      ConstraintElement ce = c.getGraph();
+      ConstraintElement ce = c.getModel();
       if (ce instanceof URIReference) {
         URIReference cu = (URIReference)ce;
         URI constraintModelType = context.mapToModelTypeURI(cu.getURI());
@@ -125,10 +125,10 @@ public class RelationalTransformer implements SymbolicTransformation {
       ConstraintExpression arg = (ConstraintExpression)args.next();
       if (arg instanceof RelationalConstraint) {
         RelationalConstraint rc = (RelationalConstraint)arg;
-        List rcArgs = (List)relationalArgs.get(rc.getGraph());
+        List rcArgs = (List)relationalArgs.get(rc.getModel());
         if (rcArgs == null) {
           rcArgs = new ArrayList();
-          relationalArgs.put(rc.getGraph(), rcArgs);
+          relationalArgs.put(rc.getModel(), rcArgs);
         }
         rcArgs.add(rc);
       } else {

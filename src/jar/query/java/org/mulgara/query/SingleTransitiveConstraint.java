@@ -32,8 +32,6 @@ package org.mulgara.query;
 // Java 2 standard packages
 import java.util.*;
 
-import org.mulgara.query.filter.Filter;
-
 // Third party packages
 // import org.apache.log4j.Logger;
 
@@ -73,13 +71,14 @@ public class SingleTransitiveConstraint implements Constraint {
   // /** Logger. */
   // private final static Logger logger = Logger.getLogger(Constraint.class);
 
-  /** The filter to use on resolutions */
-  protected Filter filter = Filter.NULL;
-
-  /** The constraint containing the transitive predicate. */
+  /**
+   * The constraint containing the transitive predicate.
+   */
   private final Constraint transConstraint;
 
-  /** The anchor to be applied if this anchor is to be used for a chain. */
+  /**
+   * The anchor to be applied if this anchor is to be used for a chain.
+   */
   private final boolean anchored;
 
   /**
@@ -189,8 +188,8 @@ public class SingleTransitiveConstraint implements Constraint {
     return transConstraint.getElement(index);
   }
 
-  public ConstraintElement getGraph() {
-    return transConstraint.getGraph();
+  public ConstraintElement getModel() {
+    return transConstraint.getModel();
   }
 
   /**
@@ -208,21 +207,5 @@ public class SingleTransitiveConstraint implements Constraint {
       buffer.append(":{anchored}");
     }
     return buffer.toString();
-  }
-
-  /**
-   * Adds a filter to this constraint.
-   * @param filter The filter for this constraint.
-   */
-  public void setFilter(Filter filter) {
-    this.filter = filter;
-  }
-
-  /**
-   * Gets the filter for this constraint.
-   * @return Always null.
-   */
-  public Filter getFilter() {
-    return filter;
   }
 }

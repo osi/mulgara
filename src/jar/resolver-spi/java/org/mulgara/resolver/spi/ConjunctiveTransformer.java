@@ -225,7 +225,7 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
 
     private void accumulateConstraint(ConstraintImpl arg) throws SymbolicTransformationException {
       try {
-        ConstraintElement model = arg.getGraph();
+        ConstraintElement model = arg.getModel();
         if (model instanceof URIReference) {
           URIReference cu = (URIReference)model;
           URI constraintModelType = context.mapToModelTypeURI(cu.getURI());

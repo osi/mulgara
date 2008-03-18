@@ -31,8 +31,6 @@ import java.util.Set;
 
 import java.io.Serializable;
 
-import org.mulgara.query.filter.Filter;
-
 /**
  * An expression whose leaves are {@link Constraint}s.
  *
@@ -68,17 +66,4 @@ public interface ConstraintExpression extends Serializable {
    * @return A set containing all variable constraints.
    */
   public Set<Variable> getVariables();
-
-  /**
-   * Sets a filter on this constraint.
-   * @param filter A filter to reduce the resolution of this constraint.
-   */
-  public void setFilter(Filter filter);
-
-  /**
-   * Retrieve filter for this constraint.
-   * @return The filter that is used for this constraint.
-   */
-  public Filter getFilter();
-
 }

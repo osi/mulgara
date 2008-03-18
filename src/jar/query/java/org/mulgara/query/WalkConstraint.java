@@ -32,8 +32,6 @@ package org.mulgara.query;
 // Java 2 standard packages
 import java.util.*;
 
-import org.mulgara.query.filter.Filter;
-
 // Third party packages
 // import org.apache.log4j.Logger;
 
@@ -72,14 +70,15 @@ public class WalkConstraint implements Constraint {
   // /** Logger. */
   // private final static Logger logger = Logger.getLogger(Constraint.class);
 
-  /** The constraint containing the anchored constraint. */
+  /**
+   * The constraint containing the anchored constraint.
+   */
   private final Constraint anchoredConstraint;
 
-  /** The constraint containing the unanchored constraint. */
+  /**
+   * The constraint containing the unanchored constraint.
+   */
   private final Constraint unanchoredConstraint;
-
-  /** The filter to use on resolutions */
-  protected Filter filter = Filter.NULL;
 
   /**
    * Constructor.
@@ -163,8 +162,8 @@ public class WalkConstraint implements Constraint {
     return unanchoredConstraint.getElement(index);
   }
 
-  public ConstraintElement getGraph() {
-    return unanchoredConstraint.getGraph();
+  public ConstraintElement getModel() {
+    return unanchoredConstraint.getModel();
   }
 
   /**
@@ -221,21 +220,5 @@ public class WalkConstraint implements Constraint {
     buffer.append(this.unanchoredConstraint);
     buffer.append("]");
     return buffer.toString();
-  }
-
-  /**
-   * Adds a filter to this constraint.
-   * @param filter The filter for this constraint.
-   */
-  public void setFilter(Filter filter) {
-    this.filter = filter;
-  }
-
-  /**
-   * Gets the filter for this constraint.
-   * @return Always null.
-   */
-  public Filter getFilter() {
-    return filter;
   }
 }

@@ -140,14 +140,14 @@ class CacheResolver implements Resolver {
     if (constraint == null) {
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
-    if (!(constraint.getGraph() instanceof LocalNode)) {
+    if (!(constraint.getModel() instanceof LocalNode)) {
       throw new QueryException(
           "Unable to resolve constraint with unbound model: " + constraint
           );
     }
-    assert constraint.getGraph() instanceof LocalNode;
+    assert constraint.getModel() instanceof LocalNode;
 
-    LocalNode modelLocalNode = (LocalNode)constraint.getGraph();
+    LocalNode modelLocalNode = (LocalNode)constraint.getModel();
 
     // Obtain the resolver against the cached version
     Resolver temporaryResolver;

@@ -178,14 +178,14 @@ class LocalQueryResolver implements QueryEvaluationContext {
    */
   public Tuples resolve(ModelResource modelResource, Constraint constraint) throws QueryException
   {
-    assert modelResource != null || !constraint.getGraph().equals(Variable.FROM);
+    assert modelResource != null || !constraint.getModel().equals(Variable.FROM);
     assert constraint != null;
 
     // Delegate constraint resolution back to the database session
     try {
       Constraint localized = ConstraintOperations.localize(this, constraint);
 
-      if (localized.getGraph().equals(Variable.FROM)) {
+      if (localized.getModel().equals(Variable.FROM)) {
         localized = ConstraintOperations.rewriteConstraintModel(
             localize(new URIReferenceImpl(modelResource.getURI())), localized);
       }

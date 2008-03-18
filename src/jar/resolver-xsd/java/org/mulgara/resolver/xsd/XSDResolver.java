@@ -208,7 +208,7 @@ public class XSDResolver implements Resolver {
       logger.debug("!! Resolving " + constraint);
     }
 
-    if (constraint.getGraph() instanceof Variable) {
+    if (constraint.getModel() instanceof Variable) {
       logger.warn("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
@@ -224,7 +224,7 @@ public class XSDResolver implements Resolver {
                                         (LocalNode) oppositePropertyMap.get(
             constraint.getElement(1)),
                                         constraint.getElement(0),
-                                        constraint.getGraph());
+                                        constraint.getModel());
       }
 
       long property = ((LocalNode) constraint.getElement(1)).getValue();

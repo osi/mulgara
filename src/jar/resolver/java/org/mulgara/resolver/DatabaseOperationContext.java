@@ -619,7 +619,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
 
-    ConstraintElement modelElem = constraint.getGraph();
+    ConstraintElement modelElem = constraint.getModel();
     if (modelElem instanceof Variable) {
       return resolveVariableModel(constraint);
     } else if (modelElem instanceof LocalNode) {

@@ -29,8 +29,6 @@ package org.mulgara.query;
 
 import java.util.*;
 
-import org.mulgara.query.filter.Filter;
-
 /**
  * An expression whose leaves are {@link Constraint}s.
  *
@@ -61,13 +59,14 @@ public abstract class AbstractConstraintExpression implements ConstraintExpressi
    */
   static final long serialVersionUID = -8835851673635062642L;
 
-  /** A set of all variables the compose the constraint. */
+  /**
+   * A set of all variables the compose the constraint.
+   */
   protected Set<Variable> variables = null;
 
-  /** The filter to use on resolutions */
-  protected Filter filter = Filter.NULL;
-
-  /** The operands. */
+  /**
+   * The operands.
+   */
   protected ArrayList<ConstraintExpression> elements;
 
   public boolean equals(Object o) {
@@ -79,21 +78,5 @@ public abstract class AbstractConstraintExpression implements ConstraintExpressi
     } else {
       return false;
     }
-  }
-
-  /**
-   * Adds a filter to this constraint.
-   * @param filter The filter for this constraint.
-   */
-  public void setFilter(Filter filter) {
-    this.filter = filter;
-  }
-
-  /**
-   * Gets the filter for this constraint.
-   * @return Always null.
-   */
-  public Filter getFilter() {
-    return filter;
   }
 }
