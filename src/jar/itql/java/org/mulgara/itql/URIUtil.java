@@ -44,7 +44,7 @@ public class URIUtil {
       }
       return uri;
     } catch (URISyntaxException e) {
-      throw new Error("Bad URI syntax in resource: " + e);
+      throw new RuntimeException("Bad URI syntax in resource", e);
     }
   }
   

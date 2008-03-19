@@ -76,7 +76,7 @@ public interface SableCCInterpreter extends Interpreter {
    *
    * @param token  the token to be converted, which should actually be a
    *   {@link TResource}
-   * @throws Error if the <var>token</var> text isn't syntactically
+   * @throws RuntimeException if the <var>token</var> text isn't syntactically
    *   a {@link URI}; this shouldn't ever occur, assuming the <var>token</var>
    *   is a {@link TResource}
    */
