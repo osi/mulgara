@@ -1003,7 +1003,7 @@
 
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
       <sysproperty key="log4j.configuration"
-                   value="${baseuri}/conf/log4j-itql.xml"/>
+                   value="${baseuri}/conf/log4j-tql.xml"/>
 
       <classpath>
 
