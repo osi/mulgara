@@ -61,7 +61,7 @@ import org.mulgara.store.xa.SimpleXAResourceException;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface ResolverSession
+public interface ResolverSession extends BackupRestoreSession
 {
   /**
    * Convert session-local node numbers to globally valid RDF nodes.

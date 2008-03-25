@@ -67,7 +67,7 @@ import org.mulgara.store.xa.XAStringPool;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class StringPoolSession implements XAResolverSession
+public class StringPoolSession implements XAResolverSession, BackupRestoreSession
 {
   /** Logger.  */
   private static final Logger logger =
@@ -705,6 +705,19 @@ public class StringPoolSession implements XAResolverSession
     }
 
     return result;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * NB: This method does not perform any absolute/relative URI mapping.
+   */
+  public SPObject findSPObject(long gNode) throws StringPoolException {
+    if (gNode < NodePool.MIN_NODE) {
+      throw new IllegalArgumentException("Attempt to resolve temporary gNode in BackupRestoreSession");
+    }
+
+    return persistentStringPool.findSPObject(gNode);
   }
 
 }

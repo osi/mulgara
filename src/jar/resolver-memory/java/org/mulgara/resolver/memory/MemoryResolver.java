@@ -330,8 +330,11 @@ public class MemoryResolver implements SystemResolver {
    * @return The factory to allow for creation of SPObjects
    */
   public SPObjectFactory getSPObjectFactory() {
-
     return resolverSession.getSPObjectFactory();
+  }
+
+  public SPObject findSPObject(long gNode) throws StringPoolException {
+    return resolverSession.findSPObject(gNode);
   }
 
   //

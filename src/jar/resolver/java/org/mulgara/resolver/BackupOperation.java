@@ -140,9 +140,7 @@ class BackupOperation implements BackupConstants, Operation {
             new GZIPOutputStream(os), "UTF-8"
         ));
 
-        StringPool stringPool =
-            resolverSessionFactory.getPersistentStringPool();
-        backupDatabase(stringPool, systemResolver, metadata, writer);
+        backupDatabase(systemResolver, metadata, writer);
       }
     } finally {
       // Clean up.
@@ -167,10 +165,8 @@ class BackupOperation implements BackupConstants, Operation {
    * @param writer Writer
    * @throws Exception
    */
-  private void backupDatabase(
-      StringPool stringPool, Resolver resolver,
-      DatabaseMetadata metadata, Writer writer
-  ) throws Exception {
+  private void backupDatabase(SystemResolver systemResolver, DatabaseMetadata metadata, Writer writer)
+      throws Exception {
     // Write the backup
     writer.write(BACKUP_FILE_HEADER + BACKUP_VERSION + '\n');
     writer.write(new Date().toString());
@@ -179,7 +175,7 @@ class BackupOperation implements BackupConstants, Operation {
     // Dump the strings.
     writer.write("RDFNODES\n");
 
-    Tuples t = stringPool.findGNodes(null, null);
+    Tuples t = systemResolver.findStringPoolType(null, null);
     assert t != null;
     try {
       t.beforeFirst();
@@ -188,7 +184,7 @@ class BackupOperation implements BackupConstants, Operation {
         writer.write(Long.toString(localNode));
         writer.write(' ');
 
-        SPObject spObject = stringPool.findSPObject(localNode);
+        SPObject spObject = systemResolver.findSPObject(localNode);
         writer.write(spObject.getEncodedString());
         writer.write('\n');
       }
@@ -197,7 +193,7 @@ class BackupOperation implements BackupConstants, Operation {
     }
 
     // Dump the triples.
-    Tuples tuples = resolver.resolve(new ConstraintImpl(
+    Tuples tuples = systemResolver.resolve(new ConstraintImpl(
         StatementStore.VARIABLES[0],
         StatementStore.VARIABLES[1],
         StatementStore.VARIABLES[2],

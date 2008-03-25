@@ -172,7 +172,10 @@ public class TestResolverSession implements ResolverSession
    * @return The factory to allow for creation of SPObjects
    */
   public SPObjectFactory getSPObjectFactory() {
+    throw new UnsupportedOperationException("Not Implemented on test class");
+  }
 
+  public SPObject findSPObject(long gNode) {
     throw new UnsupportedOperationException("Not Implemented on test class");
   }
 }

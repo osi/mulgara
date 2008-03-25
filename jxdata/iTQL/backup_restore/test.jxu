@@ -238,8 +238,6 @@
 <!--  BACKUP 3 - backup and restore the server locally  -->
 <!-- ================================================== -->
 
-<!--
-
   <set name="query" value="backup &lt;@server@&gt; to local &lt;@baseuri@/tmp/server.gz&gt;;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -248,6 +246,7 @@
     <fail>Output failed.  Check badQuery6Result.xml for output.</fail>
   </ifEqual>
 
+<!--
   <set name="query" value="restore &lt;@server@&gt; from local &lt;@baseuri@/tmp/server.gz&gt;;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />

@@ -144,7 +144,10 @@ public class PersistentResolverSession implements ResolverSession
    * @return The factory to allow for creation of SPObjects
    */
   public SPObjectFactory getSPObjectFactory() {
-
     return resolverSession.getSPObjectFactory();
+  }
+
+  public SPObject findSPObject(long gNode) {
+    throw new UnsupportedOperationException("Not Implemented on test class");
   }
 }

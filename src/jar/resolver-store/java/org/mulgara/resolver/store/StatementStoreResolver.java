@@ -484,7 +484,7 @@ public class StatementStoreResolver implements SystemResolver
    * @throws StringPoolException
    */
   public SPObject findStringPoolObject(long gNode) throws StringPoolException {
-    return xaResolverSession.findStringPoolObject(gNode);
+    return resolverSession.findStringPoolObject(gNode);
   }
 
   /**
@@ -494,8 +494,11 @@ public class StatementStoreResolver implements SystemResolver
    * @return The factory to allow for creation of SPObjects
    */
   public SPObjectFactory getSPObjectFactory() {
-
     return resolverSession.getSPObjectFactory();
+  }
+
+  public SPObject findSPObject(long gNode) throws StringPoolException {
+    return resolverSession.findSPObject(gNode);
   }
 
   //

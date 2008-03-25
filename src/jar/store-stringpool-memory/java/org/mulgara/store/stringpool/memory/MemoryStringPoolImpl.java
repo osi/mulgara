@@ -135,7 +135,6 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       smallestSPObjects[s] = new SPLimit(s, true);
       largestSPObjects[s] = new SPLimit(s, false);
     }
-
   }
 
   //
@@ -355,7 +354,10 @@ public final class MemoryStringPoolImpl implements XAStringPool {
           "Finding typed literal nodes on the in memory string pool is not supported"
       );
     }
-    SortedSet subset = stringIndex.subSet(smallestSPObjects[typeCategory.ID], largestSPObjects[typeCategory.ID]);
+
+    SortedSet subset = typeCategory != null ?
+        stringIndex.subSet(smallestSPObjects[typeCategory.ID], largestSPObjects[typeCategory.ID]) : stringIndex;
+
     return new SetWrapperTuples(subset);
   }
 
