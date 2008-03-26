@@ -150,4 +150,8 @@ class TestResolverSession implements ResolverSession
   public SPObject findSPObject(long gNode) {
     throw new UnsupportedOperationException("Not Implemented on test class");
   }
+
+  public long findGNode(SPObject spObject) {
+    throw new UnsupportedOperationException("Not Implemented on test class");
+  }
 }

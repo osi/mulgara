@@ -569,16 +569,13 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     }
   }
 
-  public void execute(Operation operation,
-               ResolverSessionFactory resolverSessionFactory, // FIXME: We shouldn't need this. - only used for backup and restore operations.
-               DatabaseMetadata metadata) throws MulgaraTransactionException {
+  public void execute(Operation operation, DatabaseMetadata metadata) throws MulgaraTransactionException {
     report("Executing Operation");
     try {
       activate();
       try {
         operation.execute(context,
                           context.getSystemResolver(),
-                          resolverSessionFactory,
                           metadata);
       } catch (Throwable th) {
         throw implicitRollback(th);

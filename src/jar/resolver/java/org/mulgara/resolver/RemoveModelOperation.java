@@ -121,7 +121,6 @@ class RemoveModelOperation implements Operation
 
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
-                      ResolverSessionFactory resolverSessionFactory,
                       DatabaseMetadata       metadata) throws Exception
   {
     long model = systemResolver.localize(new URIReferenceImpl(modelURI));

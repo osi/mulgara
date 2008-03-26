@@ -63,7 +63,6 @@ class ModelExistsOperation implements Operation
 
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
-                      ResolverSessionFactory resolverSessionFactory,
                       DatabaseMetadata       metadata) throws Exception
   {
     try {

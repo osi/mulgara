@@ -19,6 +19,7 @@ package org.mulgara.resolver.spi;
 // Third party packages
 
 // Local packages
+import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.StringPoolException;
 
@@ -37,6 +38,7 @@ import org.mulgara.store.stringpool.StringPoolException;
 
 public interface BackupRestoreSession
 {
+  public static final long NONE = NodePool.NONE;
   /**
    * Find a single object in the persistent string pool.
    *

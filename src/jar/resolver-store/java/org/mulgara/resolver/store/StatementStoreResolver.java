@@ -501,6 +501,10 @@ public class StatementStoreResolver implements SystemResolver
     return resolverSession.findSPObject(gNode);
   }
 
+  public long findGNode(SPObject spObject) throws StringPoolException {
+    return resolverSession.findGNode(spObject);
+  }
+
   //
   // Internal methods
   //

@@ -632,7 +632,7 @@ class DatabaseSession implements Session {
     try {
       MulgaraTransaction transaction =
           transactionFactory.getTransaction(this, operation.isWriteOperation());
-      transaction.execute(operation, resolverSessionFactory, metadata);
+      transaction.execute(operation, metadata);
     } catch (MulgaraTransactionException em) {
       logger.info("Error executing operation: " + errorString, em);
       throw new QueryException(errorString, em);

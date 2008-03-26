@@ -69,11 +69,8 @@ public interface MulgaraTransaction {
 
   /**
    * Execute the specified operation.
-   *
-   * FIXME: We shouldn't need resolverSessionFactory as this is only used for backup and restore operations.
    */
   void execute(Operation operation,
-               ResolverSessionFactory resolverSessionFactory,
                DatabaseMetadata metadata) throws MulgaraTransactionException;
 
   /**

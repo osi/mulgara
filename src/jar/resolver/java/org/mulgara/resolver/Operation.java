@@ -54,13 +54,11 @@ interface Operation
    * Perform a transactional operation.
    *
    * @param systemResolver
-   * @param resolverSessionFactory
    * @param metadata
    * @throws Exception if the operation cannot be completed
    */
   public void execute(OperationContext         operationContext,
                       SystemResolver           systemResolver,
-                      ResolverSessionFactory   resolverSessionFactory,
                       DatabaseMetadata         metadata) throws Exception;
 
   /**

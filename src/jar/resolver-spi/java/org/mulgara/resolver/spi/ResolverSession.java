@@ -196,4 +196,11 @@ public interface ResolverSession extends BackupRestoreSession
    * @return The factory to allow for creation of SPObjects
    */
   public SPObjectFactory getSPObjectFactory();
+
+  /**
+   * DO NOT USE: This is solely for the use of RestoreOperation.
+   * Will be removed from this interface as soon as RestoreOperation can be
+   * refactored to no longer require it.
+   */
+  public long findGNode(SPObject spObject) throws StringPoolException;
 }

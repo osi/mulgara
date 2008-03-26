@@ -53,11 +53,9 @@ import org.jrdf.graph.*;
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.util.IntFile;
 import org.mulgara.util.TempDir;
@@ -123,7 +121,6 @@ class RestoreOperation implements BackupConstants, Operation
 
   public void execute(OperationContext         operationContext,
                       SystemResolver           systemResolver,
-                      ResolverSessionFactory   resolverSessionFactory,
                       DatabaseMetadata         metadata) throws Exception
   {
     InputStream is = inputStream;
@@ -142,7 +139,7 @@ class RestoreOperation implements BackupConstants, Operation
           "UTF-8"
       ));
 
-      restoreDatabase(systemResolver, resolverSessionFactory, metadata, br);
+      restoreDatabase(systemResolver, systemResolver, metadata, br);
     } finally {
       if (br != null) {
         // Close the BufferedReader if it exists.  This will also close the
@@ -160,12 +157,11 @@ class RestoreOperation implements BackupConstants, Operation
    * Restore the entire database.
    *
    * @param resolver Resolver
-   * @param resolverSessionFactory ResolverSessionFactory
    * @param metadata DatabaseMetadata
    * @param br BufferedReader
    */
   private void restoreDatabase(
-      Resolver resolver, ResolverSessionFactory resolverSessionFactory,
+      Resolver resolver, ResolverSession resolverSession,
       DatabaseMetadata metadata, BufferedReader br
   ) throws Exception {
     // Check the header of the backup file.
@@ -177,9 +173,9 @@ class RestoreOperation implements BackupConstants, Operation
 
     if (versionString.equals(BACKUP_VERSION)) {
       assert BACKUP_VERSION.equals("6");
-      restoreDatabaseV6(resolver, resolverSessionFactory, metadata, br);
+      restoreDatabaseV6(resolver, resolverSession, metadata, br);
     } else if (versionString.equals("4")) {
-      restoreDatabaseV4(resolver, resolverSessionFactory, metadata, br);
+      restoreDatabaseV4(resolver, resolverSession, metadata, br);
     } else {
       throw new QueryException(
           "Unsupported backup file version: V" + versionString
@@ -197,12 +193,12 @@ class RestoreOperation implements BackupConstants, Operation
    * Restore the entire database from a V4 backup file.
    *
    * @param resolver Resolver
-   * @param resolverSessionFactory ResolverSessionFactory
+   * @param resolverSession resolverSession
    * @param metadata DatabaseMetadata
    * @param br BufferedReader
    */
   private void restoreDatabaseV4(
-      Resolver resolver, ResolverSessionFactory resolverSessionFactory,
+      Resolver resolver, ResolverSession resolverSession,
       DatabaseMetadata metadata, BufferedReader br
   ) throws Exception {
     if (logger.isInfoEnabled()) {
@@ -263,14 +259,12 @@ class RestoreOperation implements BackupConstants, Operation
     try {
       n2nMap = IntFile.open(n2nFile);
 
-      StringPool stringPool = resolverSessionFactory.getPersistentStringPool();
-      SPObjectFactory spof = stringPool.getSPObjectFactory();
-      NodePool nodePool = resolverSessionFactory.getPersistentNodePool();
+      SPObjectFactory spof = resolverSession.getSPObjectFactory();
 
       // Nodes in the backup file's coordinate space.
-      long systemModelNode = NodePool.NONE;
-      long emptyGroupNode = NodePool.NONE;
-      long tksIntModelNode = NodePool.NONE;
+      long systemModelNode = BackupRestoreSession.NONE;
+      long emptyGroupNode = BackupRestoreSession.NONE;
+      long tksIntModelNode = BackupRestoreSession.NONE;
 
       // Load the strings.
       while (((line = br.readLine()) != null) && !line.equals("TRIPLES")) {
@@ -304,7 +298,7 @@ class RestoreOperation implements BackupConstants, Operation
         // If the SPObject is already in the string pool then use the
         // existing node ID, otherwise allocate a new node and put the
         // SPObject into the string pool.
-        long newGNode = stringPool.findGNode(spObject, nodePool);
+        long newGNode = resolverSession.findGNode(spObject);
 
         n2nMap.putLong(gNode, newGNode);
       }
@@ -318,19 +312,19 @@ class RestoreOperation implements BackupConstants, Operation
 
       // Check that the systemModel, emptyGroup and tksIntModel nodes were
       // found.
-      if (systemModelNode == NodePool.NONE) {
+      if (systemModelNode == BackupRestoreSession.NONE) {
         throw new QueryException(
             "The system model node \"<#>\" was not found in the RDFNODES " +
             "section of the backup file: " + sourceURI
         );
       }
-      if (emptyGroupNode == NodePool.NONE) {
+      if (emptyGroupNode == BackupRestoreSession.NONE) {
         throw new QueryException(
             "The node for EMPTY_GROUP was not found in the RDFNODES " +
             "section of the backup file: " + sourceURI
         );
       }
-      if (tksIntModelNode == NodePool.NONE) {
+      if (tksIntModelNode == BackupRestoreSession.NONE) {
         throw new QueryException(
             "The node for \"" + TKS_INT_MODEL_URI +
             "\" was not found in the RDFNODES section of the backup file: " +
@@ -393,12 +387,12 @@ class RestoreOperation implements BackupConstants, Operation
             Long groupL = new Long(node0);
             Set modelSet = (Set)g2mMap.get(groupL);
             if (modelSet == null) {
-              assert n2nMap.getLong(node0) == NodePool.NONE;
+              assert n2nMap.getLong(node0) == BackupRestoreSession.NONE;
               modelSet = new HashSet();
               g2mMap.put(groupL, modelSet);
             }
-            assert n2nMap.getLong(node2) != NodePool.NONE;
-            modelSet.add(new Long(getNode(n2nMap, node2, nodePool)));
+            assert n2nMap.getLong(node2) != BackupRestoreSession.NONE;
+            modelSet.add(new Long(getNode(n2nMap, node2, resolverSession)));
 
             // Mark this node as a group.  This indicates that a lookup must
             // be performed on g2mMap.
@@ -461,11 +455,11 @@ class RestoreOperation implements BackupConstants, Operation
             }
           } while (buffer.hasRemaining());
         }
-        long node0 = getNode(n2nMap, tripleBuffer.get(), nodePool);
-        long node1 = getNode(n2nMap, tripleBuffer.get(), nodePool);
-        long node2 = getNode(n2nMap, tripleBuffer.get(), nodePool);
+        long node0 = getNode(n2nMap, tripleBuffer.get(), resolverSession);
+        long node1 = getNode(n2nMap, tripleBuffer.get(), resolverSession);
+        long node2 = getNode(n2nMap, tripleBuffer.get(), resolverSession);
         long meta = tripleBuffer.get();
-        long node3 = getNode(n2nMap, meta, nodePool);
+        long node3 = getNode(n2nMap, meta, resolverSession);
 
         // TODO Write a class that implements Statements to restore the
         // entire TRIPLES section with one call to modifyModel().
@@ -519,12 +513,12 @@ class RestoreOperation implements BackupConstants, Operation
    * Restore the entire database from a V6 backup file.
    *
    * @param resolver Resolver
-   * @param resolverSessionFactory ResolverSessionFactory
+   * @param resolverSession resolverSession
    * @param metadata DatabaseMetadata
    * @param br BufferedReader
    */
   private void restoreDatabaseV6(
-      Resolver resolver, ResolverSessionFactory resolverSessionFactory,
+      Resolver resolver, ResolverSession resolverSession,
       DatabaseMetadata metadata, BufferedReader br
   ) throws Exception {
     if (logger.isInfoEnabled()) {
@@ -582,9 +576,7 @@ class RestoreOperation implements BackupConstants, Operation
     try {
       n2nMap = IntFile.open(n2nFile);
 
-      StringPool stringPool = resolverSessionFactory.getPersistentStringPool();
-      SPObjectFactory spof = stringPool.getSPObjectFactory();
-      NodePool nodePool = resolverSessionFactory.getPersistentNodePool();
+      SPObjectFactory spof = resolverSession.getSPObjectFactory();
 
       // Load the strings.
       while (((line = br.readLine()) != null) && !line.equals("TRIPLES")) {
@@ -597,7 +589,7 @@ class RestoreOperation implements BackupConstants, Operation
         // If the SPObject is already in the string pool then use the
         // existing node ID, otherwise allocate a new node and put the
         // SPObject into the string pool.
-        long newGNode = stringPool.findGNode(spObject, nodePool);
+        long newGNode = resolverSession.findGNode(spObject);
 
         n2nMap.putLong(gNode, newGNode);
       }
@@ -646,10 +638,10 @@ class RestoreOperation implements BackupConstants, Operation
         // TODO Write a class that implements Statements to restore the
         // entire TRIPLES section with one call to modifyModel().
         resolver.modifyModel(
-          getNode(n2nMap, node3, nodePool),
-          new SingletonStatements(getNode(n2nMap, node0, nodePool),
-                                  getNode(n2nMap, node1, nodePool),
-                                  getNode(n2nMap, node2, nodePool)),
+          getNode(n2nMap, node3, resolverSession),
+          new SingletonStatements(getNode(n2nMap, node0, resolverSession),
+                                  getNode(n2nMap, node1, resolverSession),
+                                  getNode(n2nMap, node2, resolverSession)),
           DatabaseSession.ASSERT_STATEMENTS
         );
       }
@@ -673,19 +665,17 @@ class RestoreOperation implements BackupConstants, Operation
    * @param n2nMap the IntFile that maps from backup file node IDs to current
    *      store node IDs.
    * @param oldNode the backup file node ID.
-   * @param nodePool the NodePool to allocate blank nodes from.
+   * @param ResolverSession Used to allocate new nodes.
    * @return the new node ID that the specified backup file node ID maps to.
    * @throws Exception EXCEPTION TO DO
    */
-  private static long getNode(
-      IntFile n2nMap, long oldNode, NodePool nodePool
-  ) throws Exception {
+  private static long getNode(IntFile n2nMap, long oldNode, ResolverSession resolverSession) throws Exception {
     long newNode = n2nMap.getLong(oldNode);
 
     // IntFile.getLong() returns zero for entries that have never been
     // written to.
     if (newNode == 0) {
-      newNode = nodePool.newNode();
+      newNode = resolverSession.newBlankNode();
       n2nMap.putLong(oldNode, newNode);
     }
 

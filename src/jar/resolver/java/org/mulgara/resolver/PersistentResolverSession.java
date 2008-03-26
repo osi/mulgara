@@ -147,7 +147,11 @@ public class PersistentResolverSession implements ResolverSession
     return resolverSession.getSPObjectFactory();
   }
 
-  public SPObject findSPObject(long gNode) {
-    throw new UnsupportedOperationException("Not Implemented on test class");
+  public SPObject findSPObject(long gNode) throws StringPoolException {
+    return resolverSession.findSPObject(gNode);
+  }
+
+  public long findGNode(SPObject spObject) throws StringPoolException {
+    return resolverSession.findGNode(spObject);
   }
 }

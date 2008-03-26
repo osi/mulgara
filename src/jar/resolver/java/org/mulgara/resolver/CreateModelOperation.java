@@ -92,7 +92,6 @@ class CreateModelOperation implements Operation {
 
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
-                      ResolverSessionFactory resolverSessionFactory,
                       DatabaseMetadata       metadata) throws Exception {
     // Default to the system graph type
     if (graphTypeURI == null) graphTypeURI = metadata.getSystemModelTypeURI();

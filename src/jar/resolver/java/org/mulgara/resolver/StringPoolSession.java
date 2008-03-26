@@ -720,4 +720,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     return persistentStringPool.findSPObject(gNode);
   }
 
+  public long findGNode(SPObject spObject) throws StringPoolException {
+    return persistentStringPool.findGNode(spObject, persistentNodePool);
+  }
 }

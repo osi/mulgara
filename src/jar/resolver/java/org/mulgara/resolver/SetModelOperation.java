@@ -133,7 +133,6 @@ class SetModelOperation implements Operation
 
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
-                      ResolverSessionFactory resolverSessionFactory,
                       DatabaseMetadata       metadata) throws Exception
   {
     // A prior call to execute will have set statementCount >= 0.

@@ -126,14 +126,10 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     }
   }
 
-  public void execute(Operation operation,
-               ResolverSessionFactory resolverSessionFactory,
-               DatabaseMetadata metadata) throws MulgaraTransactionException {
-    // FIXME: Do I need to check that this transaction is 'active' ?
+  public void execute(Operation operation, DatabaseMetadata metadata) throws MulgaraTransactionException {
     try {
       operation.execute(context,
                         context.getSystemResolver(),
-                        resolverSessionFactory,
                         metadata);
     } catch (Throwable th) {
       try {
