@@ -441,7 +441,15 @@ public class KruleLoader implements RuleLoader {
       }
       for (int select = 0; select < elements.length; select++) {
         if (elements[select] == null || types[select] == null) {
-          throw new KruleStructureException("Rule " + rule.getName() + " does not have enough insertion elements");
+          // one element was set. Get a descriptive error message
+          StringBuffer errorMsg = new StringBuffer();
+          for (int s = 0; s < elements.length; s++) {
+            if (elements[s] == null) errorMsg.append(" <null>");
+            else errorMsg.append(" ").append(elements[s]);
+            if (types[s] == null) errorMsg.append("^^<null>");
+            else errorMsg.append("^^<").append(types[s]).append(">");
+          }
+          throw new KruleStructureException("Rule " + rule.getName() + " does not have enough insertion elements. Got: " + errorMsg);
         }
       }
       // convert these elements into ConstraintElements for the query
@@ -807,7 +815,7 @@ public class KruleLoader implements RuleLoader {
       // find the URI references and the referred URIs.
       query = interpreter.parseQuery("select $constraint $constraint2 $type from <" + ruleModel +
           "> where $constraint <krule:argument> $constraint2 and $constraint <rdf:type> $type and " +
-          "($type <mulgara:is> <krule:ConstraintConjunction> or $type <mulgara:is> <krule:ConstraintDisjuntion>);");
+          "($type <mulgara:is> <krule:ConstraintConjunction> or $type <mulgara:is> <krule:ConstraintDisjunction>);");
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }
@@ -992,6 +1000,11 @@ public class KruleLoader implements RuleLoader {
 
     // build the return list
     List<ConstraintExpression> cList = new ArrayList<ConstraintExpression>();
+    // check argument validity
+    if (constraints == null) {
+      logger.warn("Empty constraint found in data. Ignored.");
+      return cList;
+    }
     // go through the arguments
     for (Node cNode: constraints) {
       logger.debug("converting: " + cNode);
@@ -1006,7 +1019,8 @@ public class KruleLoader implements RuleLoader {
         constraintExpr = newJoinConstraint((Node)typeMap.get(cNode), constraintArgs);
       }
       // add the constraint argument to the list
-      cList.add(constraintExpr);
+      if (constraintExpr != null) cList.add(constraintExpr);
+      else logger.warn("Missing constraint expression. Ignoring.");
     }
     return cList;
   }
@@ -1015,12 +1029,14 @@ public class KruleLoader implements RuleLoader {
   /**
    * Create a new join constraint.
    *
-   * @param type The URI for the type to create.
+   * @param type The URI for the type to create. <code>null</code> is a handled error.
    * @param args The list of arguments for the constraint.
-   * @return a new join constraint of the correct type.
+   * @return a new join constraint of the correct type, or <code>null</code> if the type is null.
    */
   private ConstraintExpression newJoinConstraint(Node type, List<ConstraintExpression> args) throws KruleStructureException {
     logger.debug("Building join constraint of type <" + type + ">: " + args);
+    // confirm arguments
+    if (type == null) return null;
 
     if (type.equals(CONSTRAINT_CONJUNCTION)) {
       return new ConstraintConjunction(args);
