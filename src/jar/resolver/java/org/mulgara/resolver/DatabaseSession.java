@@ -504,7 +504,7 @@ class DatabaseSession implements Session {
   /**
    * {@inheritDoc}
    */
-  public void applyRules(RulesRef rulesRef) throws QueryException, java.rmi.RemoteException {
+  public void applyRules(RulesRef rulesRef) throws QueryException {
     execute(new ApplyRulesOperation(rulesRef), "Unable to apply rules");
   }
 

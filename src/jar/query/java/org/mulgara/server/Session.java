@@ -249,7 +249,7 @@ public interface Session {
    * @throws QueryException An error was encountered executing the rules.
    * @throws QueryException An error was encountered accessing the rules accross a network.
    */
-  public void applyRules(RulesRef rules) throws QueryException, java.rmi.RemoteException;
+  public void applyRules(RulesRef rules) throws QueryException;
 
   /**
    * Sets whether permanent changes made to the database in this session

@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 import org.apache.log4j.Logger;
 
 // Local packages
+import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.DatabaseMetadata;
 import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.rules.Rules;
@@ -47,11 +48,15 @@ class ApplyRulesOperation implements Operation {
    *
    * @param rulesRef A reference to the rules that this operation will execute.
    * @throws IllegalArgumentException if the rules are null.
-   * @throws RemoteException if the rules reference could not be accessed over a network.
+   * @throws QueryException if the rules reference could not be accessed over a network.
    */
-  public ApplyRulesOperation(RulesRef rulesRef) throws RemoteException {
+  public ApplyRulesOperation(RulesRef rulesRef) throws QueryException {
     if (rulesRef == null) throw new IllegalArgumentException("Illegal to use a null set of rules");
-    rules = rulesRef.getRules();
+    try {
+      rules = rulesRef.getRules();
+    } catch (RemoteException e) {
+      throw new QueryException("Unable to read rules from server", e);
+    }
   }
 
   /**
