@@ -120,7 +120,7 @@
     <jar jarfile="${dist.dir}/${itql.jar}"
          manifest="${obj.dir}/META-INF/itql-MANIFEST.MF">
 
-      <fileset dir="${conf.dir}" includes="log4j-itql.xml"/>
+      <fileset dir="${conf.dir}" includes="log4j-tql.xml"/>
       <fileset dir="${itql.src.dir}/itql"
                includes="default-pre.itql, default-post.itql"/>
 
