@@ -47,13 +47,6 @@ public interface Rules extends Serializable {
   static final long serialVersionUID = -4614382685160461725L;
 
   /**
-   * Set the base model for the rules.
-   *
-   * @param base The URI of the base data to apply rules to.
-   */
-  public void setBaseModel(URI base);
-
-  /**
    * Set the target model for the rules.
    *
    * @param base The URI of the target model to insert the inferences into.

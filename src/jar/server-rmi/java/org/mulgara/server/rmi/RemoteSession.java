@@ -34,20 +34,13 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
-// JRDF
-import org.jrdf.graph.*;
-
-// emory util package
-import edu.emory.mathcs.util.remote.io.*;
-
 // Locally written packages
-import org.mulgara.query.Answer;
+import org.jrdf.graph.Triple;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.rules.InitializerException;
 import org.mulgara.rules.Rules;  // Required only for Javadoc
-import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
 
 
@@ -81,7 +74,7 @@ interface RemoteSession extends Remote {
    * @throws QueryException if the insert cannot be completed.
    * @throws RemoteException EXCEPTION TO DO
    */
-  public void insert(URI modelURI, Set statements) throws QueryException,
+  public void insert(URI modelURI, Set<? extends Triple> statements) throws QueryException,
       RemoteException;
 
   /**
@@ -103,7 +96,7 @@ interface RemoteSession extends Remote {
    * @throws QueryException if the deletion cannot be completed.
    * @throws RemoteException EXCEPTION TO DO
    */
-  public void delete(URI modelURI, Set statements) throws QueryException,
+  public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException,
       RemoteException;
 
   /**
@@ -260,13 +253,14 @@ interface RemoteSession extends Remote {
    * Make a list of TQL query.
    *
    * @param queries A list of queries
-       * @return A List of non-<code>null</code> answers to the <var>queries</var> .
+   * @return A List of non-<code>null</code> answers to the <var>queries</var>.
    *      The position of the answer corresponds to the position of the
-   *      parameter query.
+   *      parameter query. Each element of the list is either an Answer, or a RemoteAnswer,
+   *      which do not share a common parent class, hence the list of Objects.
    * @throws QueryException if <var>query</var> can't be answered
    * @throws RemoteException if the remote connection fails
    */
-  public List query(List queries) throws QueryException, RemoteException;
+  public List<Object> query(List<Query> queries) throws QueryException, RemoteException;
 
   /**
    * Extract {@link Rules} from the data found in a model.
@@ -284,9 +278,9 @@ interface RemoteSession extends Remote {
    * Rules a set of {@link Rules} on its defined model.
    *
    * @param rules The rules to be run.
-   * @throws RulesException An error was encountered executing the rules.
+   * @throws QueryException An error was encountered executing the rules.
    */
-  public void applyRules(RulesRef rules) throws RulesException, RemoteException;
+  public void applyRules(RulesRef rules) throws QueryException, RemoteException;
 
   /**
    * Release resources associated with this session. The session won't be usable

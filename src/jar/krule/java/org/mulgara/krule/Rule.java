@@ -29,7 +29,6 @@ package org.mulgara.krule;
 
 // Java 2 standard packages
 import java.io.Serializable;
-import java.net.*;
 import java.util.*;
 
 // Third party packages
@@ -37,7 +36,13 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.server.Session;
+import org.mulgara.resolver.OperationContext;
+import org.mulgara.resolver.spi.LocalizedTuples;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.SystemResolver;
+import org.mulgara.resolver.spi.TuplesWrapperStatements;
+import static org.mulgara.krule.RuleStructure.UNINITIALIZED;
 
 /**
  * Represents a single executable rule.
@@ -52,8 +57,8 @@ import org.mulgara.server.Session;
  */
 public class Rule implements Serializable {
 
-  static final long serialVersionUID = -3762458306756060166L;
-  
+  private static final long serialVersionUID = 3080424724378196982L;
+
   /** Logger.  */
   private static Logger logger = Logger.getLogger(Rule.class.getName());
 
@@ -61,16 +66,13 @@ public class Rule implements Serializable {
   private String name;
 
   /** The rules to be triggered when this rule generates statements.*/
-  private Set triggerSet;
+  private Set<Rule> triggerSet;
 
   /** The query for this rule. */
   private Query query;
 
-  /** The model containing the base data. */
-  private URI baseModel;
-  
-  /** The model containing the inferred data. */
-  private URI targetModel;
+  /** The graph receiving the inferred data. */
+  private long targetGraph = UNINITIALIZED;
 
   /** The most recent size of the data matching this rule. */
   private long lastCount;
@@ -86,7 +88,7 @@ public class Rule implements Serializable {
    * @param name The name of the rule.
    */
   public Rule(String name) {
-    triggerSet = new HashSet();
+    triggerSet = new HashSet<Rule>();
     this.name = name;
   }
 
@@ -112,22 +114,12 @@ public class Rule implements Serializable {
 
 
   /**
-   * Set the base model for the rule.
-   *
-   * @param base The URI of the base data to apply rules to.
-   */
-  public void setBaseModel(URI base) {
-    baseModel = base;
-  }
-
-
-  /**
-   * Set the target model for the rule.
+   * Set the target graph for the rule.
    *
    * @param target The URI of the model to insert inferences into.
    */
-  public void setTargetModel(URI target) {
-    targetModel = target;
+  public void setTargetGraph(long target) {
+    targetGraph = target;
   }
 
 
@@ -156,7 +148,7 @@ public class Rule implements Serializable {
    *
    * @return an immutable set of the subordinate rules.
    */
-  public Set getTriggerTargets() {
+  public Set<Rule> getTriggerTargets() {
     return Collections.unmodifiableSet(triggerSet);
   }
 
@@ -174,36 +166,49 @@ public class Rule implements Serializable {
   /**
    * Runs this rule.
    * TODO: count the size of each individual constraint
+   * TODO: Go back to using a Session once they have been properly refactored for transactions
    * 
-   * @param session The session to execute the rule against.
+   * @param context The context to query against.
+   * @param resolver The resolver to add data with.
+   * @param sysResolver The resolver to localize data with.
    */
-  public void execute(Session session) throws QueryException, TuplesException {
+  public void execute(OperationContext context, Resolver resolver, SystemResolver sysResolver) throws QueryException, TuplesException, ResolverException {
+    if (targetGraph == UNINITIALIZED) throw new IllegalStateException("Target graph has not been set");
     // see if this rule needs to be run
-  	Answer answer = session.query(query);
-  	// compare the size of the result data  	
-  	long newCount = answer.getRowCount(); 
-  	if (newCount == lastCount) {
-  	  logger.debug("Rule <" + name + "> is up to date.");
-  	  // this rule does not need to be run
-  	  return;
-  	}
-  	logger.debug("Rule <" + name + "> has increased by " + (newCount - lastCount) + " entries");
-    logger.debug("Inserting results of: " + query);
-    if (answer instanceof AnswerImpl) {
-      AnswerImpl a = (AnswerImpl)answer;
-      String list = "[ ";
-      Variable[] v = a.getVariables();
-      for (int i = 0; i < v.length; i++) {
-        list += v[i] + " ";
+  	Answer answer = null;
+  	try {
+    	try {
+        answer = context.doQuery(query);
+      } catch (Exception e) {
+        throw new QueryException("Unable to access data in rule.", e);
       }
-      list += "]";
-      logger.debug("query has " + a.getNumberOfVariables() + " variables: " + list);
-    }
-  	// insert the resulting data
-  	session.insert(targetModel, query);
-  	// update the count
-  	lastCount = newCount;
-  	logger.debug("Insertion complete, triggering rules for scheduling.");
+    	// compare the size of the result data  	
+    	long newCount = answer.getRowCount(); 
+    	if (newCount == lastCount) {
+    	  logger.debug("Rule <" + name + "> is up to date.");
+    	  // this rule does not need to be run
+    	  return;
+    	}
+    	logger.debug("Rule <" + name + "> has increased by " + (newCount - lastCount) + " entries");
+      logger.debug("Inserting results of: " + query);
+      if (answer instanceof AnswerImpl) {
+        AnswerImpl a = (AnswerImpl)answer;
+        String list = "[ ";
+        Variable[] v = a.getVariables();
+        for (int i = 0; i < v.length; i++) {
+          list += v[i] + " ";
+        }
+        list += "]";
+        logger.debug("query has " + a.getNumberOfVariables() + " variables: " + list);
+      }
+    	// insert the resulting data
+      insertData(answer, resolver, sysResolver);
+      // update the count
+      lastCount = newCount;
+      logger.debug("Insertion complete, triggering rules for scheduling.");
+  	} finally {
+  	  answer.close();
+  	}
   	// trigger subsequent rules
   	scheduleTriggeredRules();
   }
@@ -213,11 +218,43 @@ public class Rule implements Serializable {
    * Schedule subsequent rules.
    */
   private void scheduleTriggeredRules() {
-  	Iterator it = triggerSet.iterator();
+  	Iterator<Rule> it = triggerSet.iterator();
   	while (it.hasNext()) {
-  	  Rule rule = (Rule)it.next();
-  	  ruleStruct.schedule(rule);
+  	  ruleStruct.schedule(it.next());
   	}
   }
 
+
+  /**
+   * Inserts an Answer into the data store on the current transaction.
+   * @param answer The data to be inserted.
+   * @param resolver The mechanism for adding data in the current transaction.
+   * @param sysResolver Used for localizing the globalized data in the answer parameter.
+   *        TODO: use a localized Tuples instead of Answer when src and dest are on the same server.
+   * @throws TuplesException There was an error localizing the answer.
+   * @throws ResolverException There was an error inserting the data.
+   */
+  private void insertData(Answer answer, Resolver resolver, SystemResolver sysResolver) throws TuplesException, ResolverException {
+    TuplesWrapperStatements statements = convertToStatements(answer, sysResolver);
+    try {
+      resolver.modifyModel(targetGraph, statements, true);
+    } finally {
+      statements.close();
+    }
+  }
+
+
+  /**
+   * Converts an Answer with 3 selection values to a set of statements for insertion.
+   * @param answer The answer to convert.
+   * @param resolver The resolver used for localizing the results, since Answers are globalized.
+   *        TODO: remove this round trip of local->global->local.
+   * @return A set of Statements.
+   * @throws TuplesException The statements could not be instantiated.
+   */
+  private TuplesWrapperStatements convertToStatements(Answer answer, SystemResolver resolver) throws TuplesException {
+    Variable[] vars = answer.getVariables();
+    assert vars.length == 3;
+    return new TuplesWrapperStatements(new LocalizedTuples(resolver, answer, true), vars[0], vars[1], vars[2]);
+  }
 }

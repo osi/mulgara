@@ -493,28 +493,19 @@ class DatabaseSession implements Session {
   /**
    * {@inheritDoc}
    */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, java.rmi.RemoteException {
-    if (logger.isInfoEnabled()) {
-      logger.info("BUILD RULES: " + ruleModel);
-    }
+  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
+    if (logger.isInfoEnabled()) logger.info("BUILD RULES: " + ruleModel);
 
-    // Set up the rule parser
-    RuleLoader ruleLoader = RuleLoaderFactory.newRuleLoader(ruleLoaderClassName, ruleModel, baseModel, destModel);
-    if (ruleLoader == null) {
-      throw new org.mulgara.rules.InitializerException("No rule loader available");
-    }
-
-    // read in the rules
-    Rules rules =  ruleLoader.readRules(this, metadata.getSystemModelURI());
-    return new RulesRefImpl(rules);
+    BuildRulesOperation operation = new BuildRulesOperation(ruleLoaderClassName, ruleModel, baseModel, destModel);
+    execute(operation, "Failed to create rules");
+    return operation.getResult();
   }
 
   /**
    * {@inheritDoc}
    */
-  public void applyRules(RulesRef rulesRef) throws RulesException, java.rmi.RemoteException {
-    Rules rules = rulesRef.getRules();
-    rules.run(this);
+  public void applyRules(RulesRef rulesRef) throws QueryException, java.rmi.RemoteException {
+    execute(new ApplyRulesOperation(rulesRef), "Unable to apply rules");
   }
 
 
@@ -626,8 +617,7 @@ class DatabaseSession implements Session {
    * @param operation  the {@link Operation} to execute
    * @throws QueryException if the <var>operation</var> fails
    */
-  private void execute(Operation operation, String errorString) throws QueryException
-  {
+  private void execute(Operation operation, String errorString) throws QueryException {
     ensureTransactionFactorySelected();
     try {
       MulgaraTransaction transaction =

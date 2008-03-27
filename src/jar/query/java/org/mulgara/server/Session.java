@@ -44,7 +44,6 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.rules.InitializerException;
 import org.mulgara.rules.Rules;  // Required only for Javadoc
-import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
 
 /**
@@ -241,15 +240,16 @@ public interface Session {
    * @throws InitializerException If there was a problem accessing the rule loading module.
    * @throws QueryException If there was a problem loading the rule structure.
    */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, java.rmi.RemoteException;
+  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException;
 
   /**
    * Rules a set of {@link Rules} on its defined model.
    *
    * @param rules The rules to be run.
-   * @throws RulesException An error was encountered executing the rules.
+   * @throws QueryException An error was encountered executing the rules.
+   * @throws QueryException An error was encountered accessing the rules accross a network.
    */
-  public void applyRules(RulesRef rules) throws RulesException, java.rmi.RemoteException;
+  public void applyRules(RulesRef rules) throws QueryException, java.rmi.RemoteException;
 
   /**
    * Sets whether permanent changes made to the database in this session

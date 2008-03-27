@@ -535,7 +535,7 @@ class BEEPSession implements Session {
  /**
   * {@inheritDoc}
   */
- public void applyRules(RulesRef rules) throws RulesException {
+ public void applyRules(RulesRef rules) {
    throw new UnsupportedOperationException("This operation is only supported on local sessions.");
  }
 

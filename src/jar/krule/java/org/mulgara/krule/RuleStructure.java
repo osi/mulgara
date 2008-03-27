@@ -39,8 +39,17 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
+import org.mulgara.resolver.OperationContext;
+import org.mulgara.resolver.spi.LocalizeException;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.Statements;
+import org.mulgara.resolver.spi.SystemResolver;
+import org.mulgara.resolver.spi.TripleSetWrapperStatements;
 import org.mulgara.rules.InitializerException;
 import org.mulgara.rules.Rules;
 import org.mulgara.rules.RulesException;
@@ -59,7 +68,10 @@ import org.mulgara.server.Session;
  */
 public class RuleStructure implements Rules, Serializable {
 
-  static final long serialVersionUID = 452741614702661812L;
+  private static final long serialVersionUID = 7891222973611830607L;
+
+  /** Used to indicate that a gNode is not configured */
+  static final long UNINITIALIZED = -1;
 
   /** Logger.  */
   private static Logger logger = Logger.getLogger(RuleStructure.class.getName());
@@ -70,11 +82,11 @@ public class RuleStructure implements Rules, Serializable {
   /** Map of rule names to the rule. */
   private Map<String,Rule> ruleMap;
 
-  /** The model containing the base data.  Current unused. */
-  private URI baseModel;
+  /** The URI of the target graph to contain the entailments. */
+  private URI targetGraphURI;
 
-  /** The terget model to contain the entailments. */
-  private URI targetModel;
+  /** The target graph to contain the entailments. */
+  private long targetGraph = UNINITIALIZED;
 
   /** The current list of rules that have to be run. */
   private LinkedHashSet<Rule> runQueue;
@@ -181,34 +193,12 @@ public class RuleStructure implements Rules, Serializable {
 
 
   /**
-   * Set the base model for the rules.
+   * Set the target model for the rules. This will get localized when the rules are run.
    *
-   * @param base The URI of the base data to apply rules to.
-   */
-  public void setBaseModel(URI base) {
-    baseModel = base;
-    for (Rule rule: rules) rule.setBaseModel(base);
-  }
-
-
-  /**
-   * Get the base model for the rules.  Currently unused.
-   *
-   * @param base The URI of the base data to apply rules to.
-   */
-  public URI setBaseModel() {
-    return baseModel;
-  }
-
-
-  /**
-   * Set the target model for the rules.
-   *
-   * @param target The URI of the target model to insert inferences into.
+   * @param target The URI of the target graph to insert inferences into.
    */
   public void setTargetModel(URI target) {
-    targetModel = target;
-    for (Rule rule: rules) rule.setTargetModel(target);
+    targetGraphURI = target;
   }
 
 
@@ -217,56 +207,46 @@ public class RuleStructure implements Rules, Serializable {
    * This means that any triggered rules are scheduled for evaluation,
    * and are not run immediately.
    *
-   * @param params the session to use.
+   * @param params An array containing the transactionally controlled {@link OperationContext}
+   *        and {@link SystemResolver} to use. This is not a structured parameter as it will
+   *        eventually drop back to a single {@link Session} parameter like it used to be. 
    */
   public void run(Object params) throws RulesException {
     logger.debug("Run called");
-    if (!(params instanceof Session)) {
-      throw new IllegalArgumentException("Rules must be run with a session");
-    }
-    Session session = (Session)params;
+    validateParams(params);
+    // set up the operating parameters
+    OperationContext context = (OperationContext)((Object[])params)[0];
+    SystemResolver systemResolver = (SystemResolver)((Object[])params)[1];
+
+    // determine the graph to insert into, and the resolver for that graph
+    localizeRuleTarget(context, systemResolver);
+    Resolver resolver = extractTargetResolver(context);
+
     // set up the run queue
     runQueue = new LinkedHashSet<Rule>(rules);
     // fill the run queue
     runQueue.addAll(rules);
     Rule currentRule = null;
     try {
-      // use a single transaction
-      session.setAutoCommit(false);
       // start by inserting the axioms
-      insertAxioms(session);
+      insertAxioms(resolver, systemResolver);
       // process the queue
       while (runQueue.size() > 0) {
         // get the first rule from the queue
         currentRule = popRunQueue();
         logger.debug("Executing rule: " + currentRule);
         // execute the rule
-        currentRule.execute(session);
+        currentRule.execute(context, resolver, systemResolver);
       }
     } catch (TuplesException te) {
       logger.error("Error getting data within rule: " + currentRule);
-      try {
-        session.rollback();
-      } catch (QueryException e) {
-        logger.error("Error during rollback: " + currentRule);
-      }
       throw new RulesException("Error getting data within rule: " + currentRule, te);
+    } catch (ResolverException re) {
+      logger.error("Error inserting data from rule: " + currentRule);
+      throw new RulesException("Error inserting data from rule: " + currentRule, re);
     } catch (QueryException qe) {
       logger.error("Error executing rule: " + currentRule, qe);
-      try {
-        session.rollback();
-      } catch (QueryException e) {
-        logger.error("Error during rollback: " + currentRule);
-      }
       throw new RulesException("Error executing rule: " + currentRule, qe);
-    } finally {
-      try {
-        // this will commit the current phase, or do nothing if we rolled back
-        session.setAutoCommit(true);
-      } catch (QueryException e) {
-        logger.error("Unable to close transaction.", e);
-        throw new RulesException("Unable to close transaction", e);
-      }
     }
     logger.debug("All rules complete");
   }
@@ -303,17 +283,79 @@ public class RuleStructure implements Rules, Serializable {
   /**
    * Inserts all axioms into the output model in the current session.
    *
-   * @param session The session to use for writing.
+   * @param resolver The resolver to use for writing.
    */
-  private void insertAxioms(Session session) throws QueryException {
+  private void insertAxioms(Resolver resolver, ResolverSession resolverSession) throws QueryException {
     logger.debug("Inserting axioms");
     // check if axioms were provided
     if (axioms == null) {
       logger.debug("No axioms provided");
       return;
     }
-    // insert the statements
-    session.insert(targetModel, axioms);
+    try {
+      // Create the statements
+      Statements stmts = new TripleSetWrapperStatements(axioms, resolverSession, TripleSetWrapperStatements.PERSIST);
+      // insert the statements
+      resolver.modifyModel(targetGraph, stmts, true);
+    } catch (TuplesException te) {
+      throw new QueryException("Unable to convert axioms for storage", te);
+    } catch (ResolverException re) {
+      throw new QueryException("Unable to store axioms", re);
+    }
   }
 
+
+  /**
+   * Calculate the localized gNode for the target graph, and update all rules with this info.
+   * @param context The context to query for the canonical form of the graph.
+   * @param sysResolver The resolver to localize the graph info on.
+   * @throws RulesException If the graph URI could not be localized.
+   */
+  private void localizeRuleTarget(OperationContext context, SystemResolver sysResolver) throws RulesException {
+    try {
+      targetGraph = sysResolver.localize(new URIReferenceImpl(targetGraphURI));
+    } catch (LocalizeException e) {
+      throw new RulesException("Unable to make a determination on the destination graph: " + targetGraphURI, e);
+    }
+    targetGraph = context.getCanonicalModel(targetGraph);
+    // tell the rules which graph they need to modify
+    for (Rule rule: rules) rule.setTargetGraph(targetGraph);
+  }
+
+
+  /**
+   * Determine the resolver to use for modifications to the target graph.
+   * @param context The context to extract the resolver from.
+   * @return A resolver associated with the current transactional context.
+   * @throws RulesException If a resolver could not be obtained.
+   */
+  private Resolver extractTargetResolver(OperationContext context) throws RulesException {
+    if (targetGraph == UNINITIALIZED) throw new IllegalStateException("Target graph has not been resolved");
+    try {
+      return context.obtainResolver(context.findModelResolverFactory(targetGraph));
+    } catch (QueryException e) {
+      throw new RulesException("Unable to get access to modify the target graph: " + targetGraphURI);
+    }
+  }
+
+
+  /**
+   * Confirm that the parameters for {@link #run(Object)} are the expected type, since
+   * they are not subject to static type checking. The complexity of this object will be
+   * reduced when it is replaced by a {@link Session} again.
+   * @param params The parameters to {@link #run(Object)}. For the moment this is a 2 element
+   *        array of Object, with elements of {@link OperationContext} and {@link SystemResolver}.
+   * @throws IllegalArgumentException If the parameters are not of the expected form.
+   */
+  private void validateParams(Object params) {
+    if (!(params instanceof Object[])) {
+      throw new IllegalArgumentException("Rules must be run with parameters of OperationContext/SystemResolver");
+    }
+    if (!(((Object[])params)[0] instanceof OperationContext)) {
+      throw new IllegalArgumentException("Rules must be run with an OperationContext");
+    }
+    if (!(((Object[])params)[1] instanceof SystemResolver)) {
+      throw new IllegalArgumentException("Rules must be run with a SystemResolver");
+    }
+  }
 }

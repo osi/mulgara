@@ -52,8 +52,8 @@ import org.mulgara.resolver.spi.SystemResolver;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-interface OperationContext
-{
+public interface OperationContext {
+
   /**
    * Find a {@link ResolverFactory} capable of generating a {#link Resolver} to
    * manipulate a specified model.

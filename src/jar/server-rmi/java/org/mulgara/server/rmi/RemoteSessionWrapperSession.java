@@ -46,7 +46,6 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
-import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
 import org.mulgara.server.NonRemoteSessionException;
 import org.mulgara.server.Session;
@@ -437,15 +436,16 @@ class RemoteSessionWrapperSession implements Serializable, Session {
 
     try {
 
-      List<Object> remoteAnswers = (List<Object>)remoteSession.query(queries);
+      List<Object> remoteAnswers = remoteSession.query(queries);
       resetRetries();
       List<Answer> localAnswers = new ArrayList<Answer>(remoteAnswers.size());
 
       for (Object ans: remoteAnswers) {
-        if (!(ans instanceof RemoteAnswer)) {
+        if (!(ans instanceof RemoteAnswer) && !(ans instanceof Answer)) {
           throw new QueryException("Non-answer returned from query.");
         }
-        localAnswers.add(new RemoteAnswerWrapperAnswer((RemoteAnswer)ans));
+        if (ans instanceof RemoteAnswer) localAnswers.add(new RemoteAnswerWrapperAnswer((RemoteAnswer)ans));
+        else localAnswers.add((Answer)ans);
       }
 
       return localAnswers;
@@ -604,11 +604,11 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   /**
    * {@inheritDoc}
    */
-  public void applyRules(RulesRef rules) throws RulesException {
+  public void applyRules(RulesRef rules) throws QueryException {
     try {
       remoteSession.applyRules(rules);
     } catch (RemoteException re) {
-      throw new RulesException("Java RMI reconnection failure", re);
+      throw new QueryException("Java RMI reconnection failure", re);
     }
   }
 

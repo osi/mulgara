@@ -42,8 +42,8 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.resolver.OperationContext;
 import org.mulgara.rules.*;
-import org.mulgara.server.*;
 
 /**
  * This object is used for parsing an RDF graph and building a rules structure
@@ -66,7 +66,7 @@ public class KruleLoader implements RuleLoader {
   private URI systemModel;
 
   /** The database session for querying. */
-  private Session session;
+  private OperationContext operationContext;
 
   /** The interpreter for parsing queries. */
   private TqlInterpreter interpreter;
@@ -204,7 +204,7 @@ public class KruleLoader implements RuleLoader {
     this.destModel = destModel;
 
     // set the query objects to null
-    session = null;
+    operationContext = null;
     interpreter = null;
 
     // initialize the aliases
@@ -231,13 +231,13 @@ public class KruleLoader implements RuleLoader {
   /**
    * Reads the ruleModel in the database and constructs the rules from it.
    *
-   * @param sessionParam The session for querying on.
+   * @param opContextParam The operationContext for querying on.
    * @param systemModel The system model.
    * @return A new rule structure.
    * @throws InitializerException There was a problem reading and creating the rules.
    */
-  public Rules readRules(Object sessionParam, URI systemModel) throws InitializerException, RemoteException {
-    this.session = (Session)sessionParam;
+  public Rules readRules(Object opContextParam, URI systemModel) throws InitializerException, RemoteException {
+    this.operationContext = (OperationContext)opContextParam;
     this.systemModel = systemModel;
 
     // get a new interpreter
@@ -245,7 +245,6 @@ public class KruleLoader implements RuleLoader {
 
     rules = null;
     try {
-      session.setAutoCommit(false);
       logger.debug("Initializing for rule queries.");
       // initialise the utility models
       initializeUtilityModels();
@@ -255,8 +254,7 @@ public class KruleLoader implements RuleLoader {
 
       logger.debug("Querying for rules");
       rules = findRules();
-      // set the base and target models
-      rules.setBaseModel(baseModel);
+      // set the target model
       rules.setTargetModel(destModel);
 
       // find the triggers
@@ -284,13 +282,6 @@ public class KruleLoader implements RuleLoader {
     } catch (Throwable t) {
       logger.error("Unexpected error during loading: " + t.getMessage(), t);
       throw new InitializerException("Unexpected error loading rules", t);
-    } finally {
-      try {
-        session.setAutoCommit(true);
-      } catch (QueryException e) {
-        logger.error("Unable to close transaction.", e);
-        throw new InitializerException("Unable to close transaction", e);
-      }
     }
 
     return rules;
@@ -337,7 +328,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
     
-    Answer ruleAnswer = session.query(query);
+    Answer ruleAnswer = query(query);
     logger.debug("Got response for rule query");
 
     // create the rule structure for all the rules
@@ -372,7 +363,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
 
-    Answer answer = session.query(query);
+    Answer answer = query(query);
 
     try {
       // link all the rules together
@@ -415,7 +406,7 @@ public class KruleLoader implements RuleLoader {
       } catch (Exception e) {
         throw new QueryException("Invalid query.", e);
       }
-      Answer answer = session.query(query);
+      Answer answer = query(query);
 
       // get the length of the sequence prefix
       int prefixLength = ((URI)aliases.get("rdf")).toString().length() + 1;
@@ -463,7 +454,7 @@ public class KruleLoader implements RuleLoader {
       } catch (Exception e) {
         throw new QueryException("Invalid query.", e);
       }
-      answer = session.query(query);
+      answer = query(query);
 
       try {
         // attach the correct constraint tree to the query structure
@@ -518,7 +509,7 @@ public class KruleLoader implements RuleLoader {
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }
-    Answer answer = session.query(query);
+    Answer answer = query(query);
 
     // prepare the set of axioms
     Set<org.jrdf.graph.Triple> axioms = new HashSet<org.jrdf.graph.Triple>();
@@ -599,7 +590,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
     
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found prefix models");
 
     try {
@@ -635,7 +626,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
     
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found all URI references.");
 
     // create the mapping
@@ -674,7 +665,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
     
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found all variable references.");
 
     // create the mapping
@@ -713,7 +704,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
     
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found all Literals.");
 
     // create the mapping
@@ -754,7 +745,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
 
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found all simple constraints.");
 
     // create a mapping of URIs to simple constraint structures
@@ -820,7 +811,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
 
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found all join constraints.");
 
     // accumulate all the constraint links and types
@@ -896,7 +887,7 @@ public class KruleLoader implements RuleLoader {
       throw new QueryException("Invalid query.", e);
     }
 
-    Answer answer = session.query(query);
+    Answer answer = query(query);
     logger.debug("Found all having constraints.");
 
     try {
@@ -928,7 +919,7 @@ public class KruleLoader implements RuleLoader {
     } catch (Exception e) {
       throw new QueryException("Invalid query.", e);
     }
-    Answer answer = session.query(query);
+    Answer answer = query(query);
 
     logger.debug("Retrieved all transitive constraints.");
 
@@ -1126,4 +1117,19 @@ public class KruleLoader implements RuleLoader {
     }
   }
 
+  /**
+   * Local wrapper for querying on an OperationContext. Since {@link OperationContext#doQuery(Query)}
+   * throws an {@link Exception}, this is captured and wrapped in or cast to a {@link QueryException}.
+   * @param q The query to execute.
+   * @return The Answer to the query.
+   * @throws QueryException If the query fails.
+   */
+  private Answer query(Query q) throws QueryException {
+    try {
+      return operationContext.doQuery(q);
+    } catch (Exception e) {
+      if (e instanceof QueryException) throw (QueryException)e;
+      throw new QueryException("Unable to execute query", e);
+    }
+  }
 }

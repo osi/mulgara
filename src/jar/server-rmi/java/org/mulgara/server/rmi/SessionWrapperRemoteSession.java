@@ -32,14 +32,13 @@ package org.mulgara.server.rmi;
 import java.io.*;
 import java.net.URI;
 import java.rmi.*;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 // Third party packages
-import org.jrdf.graph.*;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ArrayAnswer;
 import org.mulgara.query.ModelExpression;
@@ -58,28 +57,19 @@ import org.mulgara.server.Session;
  * {@link RemoteSession}.
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
  * @created 2002-01-03
- *
- * @version $Revision: 1.11 $
- *
- * @modified $Date: 2005/06/26 12:48:16 $ by $Author: pgearon $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
  * @copyright &copy; 2002-2003 <A href="http://www.PIsoftware.com/">Plugged In
  *      Software Pty Ltd</A>
- *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 class SessionWrapperRemoteSession implements RemoteSession {
 
+  @SuppressWarnings("unused")
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(SessionWrapperRemoteSession.class.getName());
 
-  /**
-   * The wrapped {@link Session}
-   */
+  /** The wrapped {@link Session} */
   private final Session session;
 
   //
@@ -93,10 +83,7 @@ class SessionWrapperRemoteSession implements RemoteSession {
   protected SessionWrapperRemoteSession(Session session) {
 
     // Validate "session" parameter
-    if (session == null) {
-
-      throw new IllegalArgumentException("Null \"session\" parameter");
-    }
+    if (session == null) throw new IllegalArgumentException("Null \"session\" parameter");
 
     // Initialize fields
     this.session = session;
@@ -111,12 +98,10 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @throws QueryException EXCEPTION TO DO
    * @throws RemoteException EXCEPTION TO DO
    */
-  public long setModel(URI uri,
-      ModelExpression modelExpression) throws QueryException, RemoteException {
+  public long setModel(URI uri, ModelExpression modelExpression) throws QueryException, RemoteException {
     try {
       return session.setModel(uri, modelExpression);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -130,14 +115,10 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
-  public long setModel(InputStream inputStream, URI uri,
-                       ModelExpression modelExpression)
-    throws QueryException {
-
+  public long setModel(InputStream inputStream, URI uri, ModelExpression modelExpression) throws QueryException {
     try {
       return session.setModel(inputStream, uri, modelExpression);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -150,13 +131,10 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @throws QueryException EXCEPTION TO DO
    * @throws RemoteException EXCEPTION TO DO
    */
-  public void setAutoCommit(boolean autoCommit) throws QueryException,
-      RemoteException {
-
+  public void setAutoCommit(boolean autoCommit) throws QueryException, RemoteException {
     try {
       session.setAutoCommit(autoCommit);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -165,46 +143,34 @@ class SessionWrapperRemoteSession implements RemoteSession {
   // Methods implementing the RemoteSession interface
   //
 
-  public void insert(URI modelURI, Set statements) throws QueryException,
-      RemoteException {
-
+  public void insert(URI modelURI, Set<? extends Triple> statements) throws QueryException, RemoteException {
     try {
       session.insert(modelURI, statements);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
-  public void insert(URI modelURI, Query query) throws QueryException,
-      RemoteException {
-
+  public void insert(URI modelURI, Query query) throws QueryException, RemoteException {
     try {
       session.insert(modelURI, query);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
-  public void delete(URI modelURI, Set statements) throws QueryException,
-      RemoteException {
-
+  public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException, RemoteException {
     try {
       session.delete(modelURI, statements);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
-  public void delete(URI modelURI, Query query) throws QueryException,
-      RemoteException {
-
+  public void delete(URI modelURI, Query query) throws QueryException, RemoteException {
     try {
       session.delete(modelURI, query);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -217,13 +183,10 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @param destinationURI The URI of the file to backup into.
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, URI destinationURI) throws QueryException,
-      RemoteException {
-
+  public void backup(URI sourceURI, URI destinationURI) throws QueryException, RemoteException {
     try {
       session.backup(sourceURI, destinationURI);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -236,13 +199,10 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, OutputStream outputStream)
-    throws QueryException, RemoteException {
-
+  public void backup(URI sourceURI, OutputStream outputStream) throws QueryException, RemoteException {
     try {
       session.backup(sourceURI, outputStream);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -256,13 +216,10 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(URI serverURI, URI sourceURI) throws QueryException,
-      RemoteException {
-
+  public void restore(URI serverURI, URI sourceURI) throws QueryException, RemoteException {
     try {
       session.restore(serverURI, sourceURI);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -278,92 +235,85 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(InputStream inputStream, URI serverURI, URI sourceURI)
-      throws QueryException, RemoteException {
-
+  public void restore(InputStream inputStream, URI serverURI, URI sourceURI) throws QueryException, RemoteException {
     try {
       session.restore(inputStream, serverURI, sourceURI);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
-
   }
 
 
   /**
-   * METHOD TO DO
+   * Adds a new graph to the SystemGraph set.
    *
-   * @param modelURI PARAMETER TO DO
-   * @param modelTypeURI PARAMETER TO DO
-   * @throws QueryException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @param graphURI The URI of the graph to create.
+   * @param graphTypeURI The URI of the type for the new graph.
+   * @throws QueryException Unable to create the new graph.
+   * @throws RemoteException Network error attempting to create the new graph.
    */
-  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException,
-      RemoteException {
-
+  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException, RemoteException {
     try {
       session.createModel(modelURI, modelTypeURI);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
   /**
-   * METHOD TO DO
+   * Remove a graph and all its statements.
    *
-   * @param uri PARAMETER TO DO
-   * @throws QueryException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @param uri The URI of the graph.
+   * @throws QueryException Unable to remove the graph.
+   * @throws RemoteException Network error attempting to remove the new graph.
    */
   public void removeModel(URI uri) throws QueryException, RemoteException {
-
     try {
       session.removeModel(uri);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
+  /**
+   * Tests if a graph exists.
+   * @param uri the URI of the graph.
+   * @see org.mulgara.server.rmi.RemoteSession#modelExists(java.net.URI)
+   */
   public boolean modelExists(URI uri) throws QueryException, RemoteException {
     try {
       return session.modelExists(uri);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
   /**
-   * METHOD TO DO
+   * Commits a transaction on this session.
+   * NOTE: This is not for general use. Use the transaction API.
    *
-   * @throws QueryException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws QueryException Unable to commit the transaction.
+   * @throws RemoteException There was a network error.
    */
   public void commit() throws QueryException, RemoteException {
-
     try {
       session.commit();
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
 
   /**
-   * METHOD TO DO
+   * Rolls back a transaction on this session.
+   * NOTE: This is not for general use. Use the transaction API.
    *
-   * @throws QueryException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws QueryException Unable to roll back the transaction.
+   * @throws RemoteException There was a network error.
    */
   public void rollback() throws QueryException, RemoteException {
-
     try {
       session.rollback();
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -386,16 +336,13 @@ class SessionWrapperRemoteSession implements RemoteSession {
               ArrayAnswer(ans));
           ans.close();
           return serialAnswer;
-        }
-        else {
+        } else {
           return new AnswerWrapperRemoteAnswer(ans);
         }
-      }
-      catch (TuplesException e) {
+      } catch (TuplesException e) {
         throw new QueryException("Error getting information for answer", e);
       }
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw convertToQueryException(t);
     }
   }
@@ -409,31 +356,27 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @throws QueryException There was an exception on one of the queries, or a query returned a non-Answer.
    * @throws RemoteException Thrown when there is a network error.
    */
-  public List query(List queries) throws QueryException, RemoteException {
+  public List<Object> query(List<Query> queries) throws QueryException, RemoteException {
 
     try {
-      List localAnswers = session.query(queries);
-      List servedAnswers = new ArrayList(localAnswers.size());
+      List<Answer> localAnswers = session.query(queries);
+      List<Object> servedAnswers = new ArrayList<Object>(localAnswers.size());
 
-      Iterator i = localAnswers.iterator();
+      Iterator<Answer> i = localAnswers.iterator();
       while (i.hasNext()) {
         Object servedAnswer = null;
-        Object ans = i.next();
-        if (!(ans instanceof Answer))
-          throw new QueryException("Non-answer returned from query.");
+        Answer ans = i.next();
         try {
-          if (((Answer) ans).getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+          if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
             // don't need to wrap this in an
             // AnswerWrapperRemoteAnswerSerialised as the other end can handle
             // any kind of object as it comes out of the list
-            servedAnswer = new ArrayAnswer((Answer) ans);
+            servedAnswer = new ArrayAnswer(ans);
+          } else {
+            servedAnswer = new AnswerWrapperRemoteAnswer(ans);
           }
-          else {
-            servedAnswer = new AnswerWrapperRemoteAnswer((Answer) ans);
-          }
-          ((Answer) ans).close();
-        }
-        catch (TuplesException e) {
+          ans.close();
+        } catch (TuplesException e) {
           throw new QueryException("Error getting information for answer", e);
         }
         servedAnswers.add(servedAnswer);
@@ -476,13 +419,13 @@ class SessionWrapperRemoteSession implements RemoteSession {
    * @param rules The rules to be run.
    * @throws RulesException An error was encountered executing the rules.
    */ 
-  public void applyRules(RulesRef rules) throws RulesException, RemoteException {
+  public void applyRules(RulesRef rules) throws QueryException, RemoteException {
     try {
       session.applyRules(rules);
-    } catch (RulesException re) {
+    } catch (QueryException re) {
       throw re;
     } catch (Throwable t) {
-      throw new RulesException(t.toString(), t);
+      throw new QueryException(t.toString(), t);
     }
   }
 
@@ -538,7 +481,7 @@ class SessionWrapperRemoteSession implements RemoteSession {
   protected Throwable mapThrowable(Throwable t) {
     Throwable cause = t.getCause();
     Throwable mappedCause = cause != null ? mapThrowable(cause) : null;
-    Class tClass = t.getClass();
+    Class<? extends Throwable> tClass = t.getClass();
     String tClassName = tClass.getName();
 
     if (
