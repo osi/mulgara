@@ -45,21 +45,9 @@ import java.io.IOException;
 /**
  * Contains a serializable page of answers retrieved from an {@link org.mulgara.query.Answer} object.
  *
- * @author <a href="http://staff.pisoftware.com/pag">Paul Gearon</a>
- *
+ * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @created 2004-03-26
- *
- * @version $Revision: 1.10 $
- *
- * @modified $Date: 2005/01/27 11:57:08 $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
- *
+ * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class AnswerPageImpl implements AnswerPage, Externalizable {
@@ -81,17 +69,14 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
   /** Size of compression/decompression buffer */
   static final int CLIENT_BUFFER_SIZE = 4096;
 
-  /**
-   * The logging category to log to.
-   */
+  /** The logging category to log to. */
   private final static Logger log = Logger.getLogger(AnswerPageImpl.class.getName());
-
 
   /** The number of rows used in this page */
   private int pageSize = 0;
 
   /** The data held in the page. */
-  private List rows;
+  private List<Object[]> rows;
 
   /** The current row number. */
   private int currentRow;
@@ -105,6 +90,7 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
   public AnswerPageImpl() throws TuplesException {
     // nothing
   }
+
   /**
    * Main Constructor.  Copies rows from an Answer into internal serializable data.
    * @param answer The Answer to get data from.  This Answer gets moved on by up to pageSize rows.
@@ -112,7 +98,7 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
    * @throws TuplesException Can be thrown while accessing the answer parameter.
    */
   public AnswerPageImpl(Answer answer, int pageSize) throws TuplesException {
-    rows = new ArrayList(pageSize);
+    rows = new ArrayList<Object[]>(pageSize);
 
     int width = answer.getNumberOfVariables();
 
@@ -212,7 +198,6 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
 
   /**
    * Indicates that this is the last page constructable for the current answer.
-   *
    * @return true if there are no more pages after this one.
    */
   public boolean isLastPage() {
@@ -221,20 +206,16 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
 
   /**
    * Reads the entire page to the input stream, decompressing if requested.
-   *
    * @param in The data stream to read from.
    */
-  public void readExternal(ObjectInput in)
-      throws IOException, ClassNotFoundException {
+  public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
     // read the flag to see if the remaining stream is compressed
     boolean compression = in.readBoolean();
 
     // determine the uncompressed size of a compressed stream
     int uncompressedSize = 0;
-    if (compression) {
-      uncompressedSize = in.readInt();
-    }
+    if (compression) uncompressedSize = in.readInt();
 
     // read in the bytes which make up the rest of the object
     byte[] byteArray = (byte[])in.readObject();
@@ -293,7 +274,6 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
 
   /**
    * Writes the entire page to the output stream, compressing if requested.
-   *
    * @param out The data stream to write to.
    */
   public void writeExternal(ObjectOutput out) throws IOException {
@@ -344,7 +324,6 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
 
   /**
    * Helper method for writeExternal to write the rows object.
-   *
    * @param output The object output stream to write rows into.
    */
   protected void writeRows(ObjectOutputStream output) throws IOException {
@@ -353,13 +332,11 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
       output.writeInt(rows.size());
 
       // The data in each row
-      Iterator ri = rows.iterator();
+      Iterator<Object[]> ri = rows.iterator();
       while (ri.hasNext()) {
-        Object[] line = (Object[])ri.next();
+        Object[] line = ri.next();
         // now write each element in the line
-        for (int c = 0; c < columnNames.length; c++) {
-          output.writeObject(line[c]);
-        }
+        for (int c = 0; c < columnNames.length; c++) output.writeObject(line[c]);
       }
     } catch (IOException ei) {
       log.warn("IOException thrown", ei);
@@ -379,7 +356,7 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
   protected void readRows(ObjectInputStream input) throws IOException, ClassNotFoundException {
     // the number of rows
     int rowCount = input.readInt();
-    rows = new ArrayList(pageSize);
+    rows = new ArrayList<Object[]>(pageSize);
 
     // iterate over each row and add
     for (int r = 0; r < rowCount; r++) {
@@ -391,14 +368,12 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
       // add the row to the page
       rows.add(line);
     }
-
   }
 
 
   /**
    * Helper method for writeExternal to test if compression is needed,
    * and compresses the data if applicable.
-   *
    * @param outStream The output stream to set the compression on.
    * @param data The data to compress for the stream.
    * @return The new data for the stream.
@@ -407,9 +382,7 @@ public class AnswerPageImpl implements AnswerPage, Externalizable {
     // test if compression should be used
     int clevel = Integer.getInteger(COMPRESSION_LEVEL, 1).intValue();
     if (clevel > 0) {
-      if (clevel > Deflater.BEST_COMPRESSION) {
-        clevel = Deflater.BEST_COMPRESSION;
-      }
+      if (clevel > Deflater.BEST_COMPRESSION) clevel = Deflater.BEST_COMPRESSION;
       // store the length of the buffer
       int datalength = data.length;
 
