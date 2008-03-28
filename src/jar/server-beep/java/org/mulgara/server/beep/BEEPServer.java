@@ -40,8 +40,6 @@ import org.beepcore.beep.transport.tcp.*;
 
 // Locally written packages
 import org.mulgara.server.AbstractServer;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
 
 /**
 * Mulgara server using a BEEP-based ITQL application protocol.
@@ -49,59 +47,36 @@ import org.mulgara.server.SessionFactory;
 * @created 2004-03-21
 * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
 * @author <a href="http://staff.pisoftware.com/david">David Makepeace</a>
-* @version $Revision: 1.9 $
-* @modified $Date: 2005/01/05 04:59:00 $ by $Author: newmana $
-* @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
-* @copyright &copy;2004 <a href="http://www.pisoftware.com/">Plugged In
-*      Software Pty Ltd</a>
+* @copyright &copy;2004 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
 * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
 */
-public class BEEPServer extends AbstractServer
-{
-  /**
-  * Logger.
-  */
-  private static final Logger logger =
-    Logger.getLogger(BEEPServer.class.getName());
+public class BEEPServer extends AbstractServer {
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(BEEPServer.class.getName());
 
-  /**
-  * The server port.
-  *
-  * BEEP's default port is 10288.
-  */
-  final int port = 10288;
+  /** BEEP's default port is 10288. */
+  static final int DEFAULT_PORT = 10228;
 
-  /**
-  * Socket accepting session requests from clients.
-  */
+  /** The server port. BEEP's default port is 10288. */
+  final int port = DEFAULT_PORT;
+
+  /** Socket accepting session requests from clients. */
   private ServerSocket serverSocket = null;
 
-  /**
-  * The collection of supported BEEP profiles.
-  *
-  * We add only the ITQL profile.
-  */
+  /** The collection of supported BEEP profiles. We add only the ITQL profile. */
   private ProfileRegistry profileRegistry = null;
 
   /**
-  * The thread which accepts session requests on the {@link #serverSocket}.
-  *
-  * This field is <code>null</code> whenever the server isn't {@link #STARTED}.
-  */
+   * The thread which accepts session requests on the {@link #serverSocket}.
+   * This field is <code>null</code> whenever the server isn't {@link #STARTED}.
+   */
   private Thread thread;
 
-  //
-  // Constructor
-  //
-
   /**
-  * Create a BEEP server MBean.
-  *
-  * @throws UnknownHostException  if the DNS name of the local host can't be
-  *                               determined
-  */
-  public BEEPServer() throws UnknownHostException
-  {
+   * Create a BEEP server MBean.
+   * @throws UnknownHostException if the DNS name of the local host can't be determined
+   */
+  public BEEPServer() throws UnknownHostException {
     // Generate server URI
     try {
       setURI(new URI("beep",                                    // scheme
@@ -111,8 +86,7 @@ public class BEEPServer extends AbstractServer
                      null,                                      // path
                      null,                                      // query
                      null));
-    }
-    catch (URISyntaxException e) {
+    } catch (URISyntaxException e) {
       throw new Error("Bad generated URI", e);
     }
   }
@@ -122,19 +96,15 @@ public class BEEPServer extends AbstractServer
   //
 
   /**
-  * Sets the hostname of the server.
-  *
-  * @param hostname  the hostname of the server; if <code>null</code>, the
-  *   local host name of the machine will be used if it can be found,
-  *   otherwise <code>localhost</code> will be used.
-  */
-  public void setHostname(String hostname)
-  {
+   * Sets the hostname of the server.
+   * @param hostname  the hostname of the server; if <code>null</code>, the
+   *   local host name of the machine will be used if it can be found,
+   *   otherwise <code>localhost</code> will be used.
+   */
+  public void setHostname(String hostname) {
     // prevent the hostname from being changed while the server is up
     if (this.getState() == STARTED) {
-      throw new IllegalStateException(
-        "Can't change hostname without first stopping the server"
-      );
+      throw new IllegalStateException("Can't change hostname without first stopping the server");
     }
 
     // get the hostname
@@ -142,8 +112,7 @@ public class BEEPServer extends AbstractServer
       // try to use the local host name
       try {
         hostname = InetAddress.getLocalHost().getHostName();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.warn("Problem getting host name! - using localhost");
         hostname = "localhost";
       }
@@ -161,8 +130,7 @@ public class BEEPServer extends AbstractServer
                      null,                            // path
                      null,                            // query
                      null));
-    }
-    catch (URISyntaxException e) {
+    } catch (URISyntaxException e) {
       throw new Error("Bad generated URI", e);
     }
   }
@@ -172,22 +140,18 @@ public class BEEPServer extends AbstractServer
   //
 
   /**
-  * Returns the hostname of the server.
-  *
-  * @return the hostname of the server
-  */
-  public String getHostname()
-  {
+   * Returns the hostname of the server.
+   * @return the hostname of the server
+   */
+  public String getHostname() {
     return hostname;
   }
 
   /**
-  * Start the server.
-  *
-  * @throws Exception EXCEPTION TO DO
-  */
-  protected void startService() throws Exception
-  {
+   * Start the server.
+   * @throws Exception EXCEPTION TO DO
+   */
+  protected void startService() throws Exception {
     if (thread == null) {
       serverSocket = new ServerSocket(port);
 
@@ -210,28 +174,22 @@ public class BEEPServer extends AbstractServer
       );
 
       // Launch the server thread
-      thread = new Thread()
-      {
-        public void run()
-        {
+      thread = new Thread() {
+        public void run() {
           try {
             while (true) {
               Socket socket = serverSocket.accept();
               TCPSession.createListener(socket, profileRegistry);
             }
-          }
-          catch (InterruptedIOException ex) {
+          } catch (InterruptedIOException ex) {
             // Stop the thread.
-          }
-          catch (Exception ex) {
+          } catch (Exception ex) {
             logger.error("Exception in ServerThread: " + ex);
-          }
-          finally {
+          } finally {
             if (serverSocket != null) {
               try {
                 serverSocket.close();
-              }
-              catch (IOException ex) {
+              } catch (IOException ex) {
                 // ignore failures
               }
             }
@@ -246,12 +204,10 @@ public class BEEPServer extends AbstractServer
   }
 
   /**
-  * Stop the server.
-  *
-  * @throws Exception EXCEPTION TO DO
-  */
-  protected void stopService() throws Exception
-  {
+   * Stop the server.
+   * @throws IOException I/O error closing the server socket.
+   */
+  protected void stopService() throws IOException {
     if (thread != null) {
       thread.interrupt();
       thread          = null;
@@ -261,10 +217,17 @@ public class BEEPServer extends AbstractServer
     if (serverSocket != null) {
       try {
         serverSocket.close();
-      }
-      finally {
+      } finally {
         serverSocket = null;
       }
     }
+  }
+
+  /**
+   * Informs the base class what the default port for this protocol is.
+   * @see org.mulgara.server.AbstractServer#getDefaultPort()
+   */
+  protected int getDefaultPort() {
+    return DEFAULT_PORT;
   }
 }
