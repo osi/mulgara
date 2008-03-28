@@ -55,6 +55,18 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
   /** Logger. This is named after the classname. */
   private final static Logger logger = Logger.getLogger(RmiServer.class.getName());
 
+  /** The name of the URL protocol handler package property. */
+  private static final String PROTOCOL_HANDLER = "java.protocol.handler.pkgs";
+
+  // Initialize the system to know about RMI URLs
+  static {
+    String handler = System.getProperty(PROTOCOL_HANDLER);
+    String thisPackage = RmiServer.class.getPackage().getName();
+    assert thisPackage.endsWith(".rmi");
+    String parentPackage = thisPackage.substring(0, thisPackage.lastIndexOf('.'));
+    System.setProperty(PROTOCOL_HANDLER, (handler == null) ? parentPackage : handler + "|" + parentPackage);
+  }
+
   /** The default port used for RMI. */
   public static final int DEFAULT_PORT = 1099;
 
