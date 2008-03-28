@@ -121,6 +121,7 @@ Productions
 
   command =
     {alias}     alias [target]:resource as [prefix]:identifier               |
+    {aliasl}    alias                                                        |
     {apply}     apply [rules]:resource to [base]:resource [destination]:resource? |
     {backup}    backup [source]:resource to [locality]:locality? [destination]:resource |
     {commit}    commit                                                       |

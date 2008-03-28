@@ -159,6 +159,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     aliases.put(MULGARA, URI.create(MULGARA_NS));
     aliases.put(KRULE, URI.create(KRULE_NS));
     aliases.put(DC, URI.create(DC_NS));
+    aliases.put(SKOS, URI.create(SKOS_NS));
+    aliases.put(FOAF, URI.create(FOAF_NS));
     return aliases;
   }  
 
@@ -481,6 +483,21 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     }
   }
 
+
+  /**
+   * Requests a list of current aliases.
+   *
+   * @param node the alias command
+   */
+  public void outAAliaslCommand(AAliaslCommand node) {
+
+    // log the command
+    if (logger.isDebugEnabled()) logger.debug("Processing alias list command " + node);
+
+    // Return an AST element, for reporting on what happened.
+    // Use a Help command, with the alias listing as the help text.
+    lastCommand = new Help(buildAliasList());
+  }
 
   /**
    * Applies a set of rules in a model to data in another model.
@@ -1302,6 +1319,19 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
     // add the pair to the map
     getAliasMap().put(aliasPrefix, aliasTarget);
+  }
+
+
+  /**
+   * Writes the alias map as a set of URI/namespace pairs to a string for printing.
+   * @return A String containing all the alias mappings.
+   */
+  private String buildAliasList() {
+    StringBuilder buffer = new StringBuilder();
+    for (Map.Entry<String,URI> alias: getAliasMap().entrySet()) {
+      buffer.append(alias.getKey()).append(":  <").append(alias.getValue()).append(">\n");
+    }
+    return buffer.toString();
   }
 
 

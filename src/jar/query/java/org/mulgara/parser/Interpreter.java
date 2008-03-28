@@ -36,6 +36,12 @@ public interface Interpreter {
   /** The Dublin Core namespace prefix. */
   public static final String DC = "dc";
 
+  /** The Simple Knowledge Organization System namespace prefix. */
+  public static final String SKOS = "skos";
+
+  /** The Friend Of A Friend namespace prefix. */
+  public static final String FOAF = "foaf";
+
   /** The URI of the rdf namespace. */
   public static final String RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
@@ -53,6 +59,12 @@ public interface Interpreter {
 
   /** The URI of the dc namespace. */
   public static final String DC_NS = "http://purl.org/dc/elements/1.1/";
+
+  /** The URI of the skos namespace. */
+  public static final String SKOS_NS = "http://www.w3.org/2004/02/skos/core#";
+
+  /** The URI of the foaf namespace. */
+  public static final String FOAF_NS = "http://xmlns.com/foaf/0.1/";
 
   /**
   * Parses the given TQL command.
