@@ -14,6 +14,8 @@ package org.mulgara.query.operation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
@@ -48,8 +50,9 @@ public class Restore extends DataTx {
   public Object execute(Connection conn) throws QueryException {
     URI src = getSource();
     URI dest = getDestination();
+    if (serverTest(dest)) throw new QueryException("Cannot restore to a graph. Must be a server URI.");
     try {
-      if (isLocal()) sendMarshalledData(conn);
+      if (isLocal()) sendMarshalledData(conn, false);
       else conn.getSession().restore(dest, src);
 
       if (logger.isDebugEnabled()) logger.debug("Completed restoring " + dest + " from " + src);
@@ -72,4 +75,23 @@ public class Restore extends DataTx {
     return 0L;
   }
 
+  /** The known set of schemas describing servers. */
+  private static Set<String> knownSchemas = new HashSet<String>();
+  static {
+    knownSchemas.add("rmi");
+    knownSchemas.add("local");
+    knownSchemas.add("beep");
+  }
+
+
+  /**
+   * Tests if a URI can potentially refer to a server. This will only apply for known schemas.
+   * @param serverURI The URI to check.
+   * @return <code>false</code> if the URI refers to a known graph. <code>true</code> if we can't
+   *   tell or it is known to refer to a server.
+   */
+  protected boolean serverTest(URI serverURI) {
+    if (knownSchemas.contains(serverURI.getScheme())) return serverURI.getFragment() != null;
+    return true;
+  }
 }

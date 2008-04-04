@@ -125,7 +125,7 @@ public abstract class DataTx extends ServerCommand {
    * @throws QueryException There was an error working with data at the server end.
    * @throws IOException There was an error transferring data over the network.
    */
-  protected long sendMarshalledData(Connection conn) throws QueryException, IOException {
+  protected long sendMarshalledData(Connection conn, boolean compressable) throws QueryException, IOException {
     if (logger.isInfoEnabled()) logger.info("loading local resource : " + source);
 
     RemoteInputStreamSrvImpl srv = null;
@@ -133,7 +133,9 @@ public abstract class DataTx extends ServerCommand {
     try {
 
       // is the file/stream compressed?
-      InputStream inputStream = adjustForCompression(source.toURL());
+      InputStream inputStream;
+      if (compressable) inputStream = adjustForCompression(source.toURL());
+      else inputStream = (overrideStream != null) ? overrideStream : source.toURL().openStream();
 
       // open and wrap the inputstream
       srv = new RemoteInputStreamSrvImpl(inputStream);

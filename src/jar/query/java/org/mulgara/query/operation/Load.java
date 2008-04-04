@@ -57,7 +57,7 @@ public class Load extends DataTx {
     URI src = getSource();
     URI dest = getDestination();
     try {
-      long stmtCount = isLocal() ? sendMarshalledData(conn) : conn.getSession().setModel(dest, srcRsc);
+      long stmtCount = isLocal() ? sendMarshalledData(conn, true) : conn.getSession().setModel(dest, srcRsc);
       if (logger.isDebugEnabled()) logger.debug("Loaded " + stmtCount + " statements from " + src + " into " + dest);
   
       if (stmtCount > 0L) setResultMessage("Successfully loaded " + stmtCount + " statements from " + src + " into " + dest);
