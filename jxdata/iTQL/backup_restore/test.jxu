@@ -246,7 +246,6 @@
     <fail>Output failed.  Check badQuery6Result.xml for output.</fail>
   </ifEqual>
 
-<!--
   <set name="query" value="restore &lt;@server@&gt; from local &lt;@baseuri@/tmp/server.gz&gt;;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -263,7 +262,21 @@
     <fail>Output failed.  Check BadQuery3Result.xml for output.</fail>
   </ifEqual>
 
--->
+  <set name="query" value="restore &lt;@server@&gt; from &lt;@baseuri@/tmp/server.gz&gt;;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
+    <save name="queryResult" file="badQuery7-bResult.xml"/>
+    <fail>Output failed.  Check badQuery7-bResult.xml for output.</fail>
+  </ifEqual>
+
+  <set name="query" value="select $p from &lt;@server@#backup2&gt; where $s $p $o order by $p;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult3.txt" name="queryResult">
+    <save name="queryResult" file="badQuery3-bResult.xml"/>
+    <fail>Output failed.  Check BadQuery3-bResult.xml for output.</fail>
+  </ifEqual>
 
 <!-- ================================== -->
 <!--  BACKUP 4                          -->
