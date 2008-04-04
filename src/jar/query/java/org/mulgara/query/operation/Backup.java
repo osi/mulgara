@@ -76,7 +76,7 @@ public class Backup extends DataTx {
    */
   public Object execute(Connection conn) throws QueryException, MalformedURLException {
     // test if the server can do all the work, or if data needs to be streamed
-    if (isLocal()) {
+    if (!isLocal()) {
       // server does all the work
       conn.getSession().backup(getSource(), getDestination());
     } else {
