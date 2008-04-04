@@ -56,7 +56,7 @@ public class TqlSession {
   private static final String EOL = System.getProperty("line.separator");
 
   /** The prompt. */
-  public final static String PS1 = "iTQL> ";
+  public final static String PS1 = "TQL> ";
 
   /** The secondary prompt, indicating an incomplete command. */
   public final static String PS2 = "      ";
