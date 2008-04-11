@@ -22,7 +22,6 @@
     <path refid="common-classpath"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
-    <fileset file="${connection.dist.dir}/${rules.jar}"/>
   </path>
 
   <path id="query-test-classpath">
@@ -31,7 +30,6 @@
 
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
-    <fileset file="${connection.dist.dir}/${rules.jar}"/>
   </path>
 
   <target name="query-clean"
@@ -71,7 +69,7 @@
   </target>
 
   <target name="query-compile"
-          depends="-query-prepare, util-jar, rules-jar, connection-jar, config-jar, -query-unjar-config"
+          depends="-query-prepare, util-jar, rules-jar, config-jar, -query-unjar-config"
           description="Compiles all query related files included generated
                        source code"
           unless="query.classes.uptodate">

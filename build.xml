@@ -17,8 +17,6 @@
   <property file="${jar.src.dir}/config/config-build.properties"/>
   <property file="${jar.src.dir}/demo/demo-build.properties"/>
   <property file="${jar.src.dir}/demo-mp3/demo-mp3-build.properties"/>
-  <property file="${jar.src.dir}/connector/connector-build.properties"/>
-  <property file="${jar.src.dir}/connection/connection-build.properties"/>
   <property file="${jar.src.dir}/content-mbox/content-mbox-build.properties"/>
   <property file="${jar.src.dir}/content-mp3/content-mp3-build.properties"/>
   <property file="${jar.src.dir}/content-n3/content-n3-build.properties"/>
@@ -88,8 +86,6 @@
   <import file="${jar.src.dir}/demo/build.xml"/>
   <import file="${jar.src.dir}/demo-mp3/build.xml"/>
   <import file="${jar.src.dir}/config/build.xml"/>
-  <import file="${jar.src.dir}/connector/build.xml"/>
-  <import file="${jar.src.dir}/connection/build.xml"/>
   <import file="${jar.src.dir}/content-mbox/build.xml"/>
   <import file="${jar.src.dir}/content-mp3/build.xml"/>
   <import file="${jar.src.dir}/content-n3/build.xml"/>
@@ -313,7 +309,7 @@
 
   <target name="base-dist"
           depends="ant-task-dist,
-                   client-jrdf-dist, connector-dist, connection-dist, content-mbox-dist,
+                   client-jrdf-dist, content-mbox-dist,
                    content-mp3-dist, content-rdfxml-dist, content-rio-dist,
                    descriptor-dist, driver-dist, dtd-dist, itql-dist, jrdf-dist,
                    store-dist, store-xa-dist, store-nodepool-dist,
@@ -495,7 +491,7 @@
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/castor-0.9.3.9-xml.jar, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
-          lib/connector-1_5.jar, lib/${httpclient.jar}, lib/${commons-codec.jar}"/>
+          lib/${httpclient.jar}, lib/${commons-codec.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
@@ -730,10 +726,10 @@
   <target name="javadoc"
     depends="javadoc-uptodate, javadoc-overview.html,
              ant-task-jar, client-jrdf-jar, config-jar,
-             connection-jar, content-mbox-jar, content-mp3-jar,
+             content-mbox-jar, content-mp3-jar,
              content-n3-jar, content-rdfxml-jar, content-rio-jar,
              doclet.jar, itql-jar, jrdf-jar, store-jar,
-             store-xa-jar, connection-jar,
+             store-xa-jar,
              store-nodepool-jar, store-nodepool-memory-jar,
              store-nodepool-xa-jar, query-jar,
              resolver-jar, resolver-file-jar, resolver-filesystem-jar,
@@ -821,7 +817,6 @@
       <classpath path="${lib.dir}/xom-1.0d21.jar"/>
       <sourcepath path="${ant-task.src.dir}/java"/>
       <sourcepath path="${client-jrdf.src.dir}/java"/>
-      <sourcepath path="${connection.src.dir}/java"/>
       <sourcepath path="${content-mp3.src.dir}/java"/>
       <sourcepath path="${content-n3.src.dir}/java"/>
       <sourcepath path="${content-rdfxml.src.dir}/java"/>
@@ -888,8 +883,8 @@
   <target name="create-javadoc"
           depends="javadoc-uptodate, javadoc-overview.html, doclet.jar,
                    ant-task-javadoc,
-                   client-jrdf-javadoc, connector-javadoc,
-                   connection-javadoc, content-mbox-javadoc,
+                   client-jrdf-javadoc,
+                   content-mbox-javadoc,
                    content-mp3-javadoc, content-n3-javadoc,
                    content-rdfxml-javadoc, content-rio-javadoc,
                    descriptor-javadoc, driver-javadoc, dtd-javadoc,
@@ -1554,14 +1549,13 @@
   <!-- =================================================================== -->
   <!-- J2EE resource adapter                                               -->
   <!-- =================================================================== -->
-  <target name="mulgara-rar" depends="connector-jar, driver-jar, query-jar">
+  <target name="mulgara-rar" depends="driver-jar, query-jar">
 
     <jar jarfile="${bin.dir}/mulgara.rar">
 
       <fileset dir="${src.dir}/rar/mulgara" includes="META-INF/ra.xml"/>
       <fileset dir="${src.dir}/rar/mulgara/content"/>
-      <fileset dir="${bin.dir}" includes="${connector.jar},
-        ${driver.jar}, ${query.jar}"/>
+      <fileset dir="${bin.dir}" includes="${driver.jar}, ${query.jar}"/>
       <fileset dir="${lib.dir}" includes="beepcore-*.jar"/>
     </jar>
   </target>
@@ -1891,7 +1885,7 @@ lib/${server-rmi.jar}, lib/${sofa.base.jar}, lib/${rules.base.jar}, lib/${krule.
 lib/${store-stringpool.jar}
 lib/${store-stringpool-memory.jar}, lib/${store-stringpool-xa.jar}, lib/${tuples.jar},lib/${tuples-hybrid.jar},
 lib/${util.jar}, lib/${util-xa.jar}, lib/activation-1.0.2.jar,lib/icu4j.jar, lib/jena-2.1.jar, lib/${jid3.jar},
-lib/antlr.jar, lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar,lib/connector-1_5.jar,
+lib/antlr.jar, lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar,
 lib/${jotm.jar}, lib/${jotm_carol.jar}, lib/${jotm_iiop_stubs.jar},lib/jta-spec1_0_1.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar},
 lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${jasper.compiler.jar},
 lib/${servlet.jar},lib/jargs-0.2.jar, lib/castor-0.9.3.9-xml.jar, lib/xercesImpl.jar, lib/xmlParserAPIs.jar,
@@ -1924,7 +1918,7 @@ lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar
   <target name="client-test"
           depends="client-jrdf-test,
                    demo-mp3-test, driver-test, itql-test, query-test,
-                   connector-test, connection-test, descriptor-test"
+                   descriptor-test"
           description="Runs client side tests">
   </target>
 

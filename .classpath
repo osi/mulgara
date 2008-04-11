@@ -2,12 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src/jar/ant-task/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-distributed/java"/>
-	<classpathentry kind="src" path="src/jar/connector/java"/>
 	<classpathentry kind="src" path="src/war/webui/java"/>
 	<classpathentry kind="src" path="src/jar/doclet/java"/>
 	<classpathentry kind="src" path="src/jar/descriptor/src/java"/>
 	<classpathentry kind="src" path="src/jar/client-jrdf/java"/>
-	<classpathentry kind="src" path="src/jar/connection/java"/>
 	<classpathentry kind="src" path="src/jar/content-mbox/java"/>
 	<classpathentry kind="src" path="src/jar/content-mp3/java"/>
 	<classpathentry kind="src" path="src/jar/content-n3/java"/>
