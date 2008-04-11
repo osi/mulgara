@@ -69,7 +69,7 @@ public interface MulgaraResultSet extends ResultSet {
    * @return the entire rows underlying the result set.
    * @throws SQLException EXCEPTION TO DO
    */
-  public List getAllRows() throws SQLException;
+  public List<ResultSetRow> getAllRows() throws SQLException;
 
   /**
    * Overwrites the existing set of rows available.
@@ -77,7 +77,7 @@ public interface MulgaraResultSet extends ResultSet {
    * @param newRows the new rows to set.
    * @throws SQLException EXCEPTION TO DO
    */
-  public void setAllRows(List newRows) throws SQLException;
+  public void setAllRows(List<ResultSetRow> newRows) throws SQLException;
 
   /**
    * Returns the total size of the number of rows.

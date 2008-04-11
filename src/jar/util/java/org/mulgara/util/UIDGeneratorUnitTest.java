@@ -59,7 +59,7 @@ import java.util.*;
 public class UIDGeneratorUnitTest extends TestCase {
 
   /** Set of UIDs that have been generated */
-  private Set uids = null;
+  private Set<String> uids = null;
 
   /** Number of UIDs generated */
   private static final int NUM_UIDS = 10000;
@@ -143,7 +143,7 @@ public class UIDGeneratorUnitTest extends TestCase {
   public void testConcurrency() throws Exception {
 
     //threads that have to complete before the test finished
-    List threadList = new ArrayList();
+    List<Thread> threadList = new ArrayList<Thread>();
     Thread currentThread = null;
 
     //start threads that generate UIDs
@@ -167,8 +167,7 @@ public class UIDGeneratorUnitTest extends TestCase {
                 uids.add(currentUID);
               }
             }
-          }
-          catch (Exception exception) {
+          } catch (Exception exception) {
             throw new RuntimeException(
                 "Error occurred while testing concurrency.",
                 exception);
@@ -187,7 +186,7 @@ public class UIDGeneratorUnitTest extends TestCase {
     //must wait for all threads to finish
     for (int i = 0; i < NUM_THREADS; i++) {
 
-      ((Thread) threadList.get(i)).join();
+      threadList.get(i).join();
     }
   }
 
@@ -201,7 +200,7 @@ public class UIDGeneratorUnitTest extends TestCase {
 
     //load UIDGenerator from multiple classes
     URLClassLoader currentLoader = null;
-    Class currentUIDGeneratorClass = null;
+    Class<?> currentUIDGeneratorClass = null;
 
     //get an URL to the UIDGenerator class file
     URL[] uidClass = new URL[] {
@@ -222,12 +221,12 @@ public class UIDGeneratorUnitTest extends TestCase {
    * @param uidGenerator
    * @throws Exception
    */
-  private void testUIDGeneratorClass(Class uidGenerator) throws Exception {
+  private void testUIDGeneratorClass(Class<?> uidGenerator) throws Exception {
     //get the UIDGenerator's generateUID method
-    Method generateUID = uidGenerator.getMethod("generateUID", null);
+    Method generateUID = uidGenerator.getMethod("generateUID", (Class[])null);
     String currentUID = "";
     for (int i = 0; i < NUM_UIDS; i++) {
-      currentUID = (String) generateUID.invoke(null, null);
+      currentUID = (String) generateUID.invoke(null, (Object[])null);
       //is it unique??
       if (uids.contains(currentUID)) {
         fail("UID set already contains UID [" + i + "]: " + currentUID);
@@ -248,11 +247,10 @@ public class UIDGeneratorUnitTest extends TestCase {
 
     try {
 
-      uids = new HashSet();
+      uids = new HashSet<String>();
 
       super.setUp();
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
 
       //try to tear down first
       tearDown();

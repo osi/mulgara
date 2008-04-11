@@ -69,6 +69,7 @@ abstract class AbstractMulgaraResultSet
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger =
     Logger.getLogger(AbstractMulgaraResultSet.class.getName());
 
@@ -224,11 +225,13 @@ abstract class AbstractMulgaraResultSet
   }
 
   /**
-   * @param columnIndex PARAMETER TO DO
-   * @param scale PARAMETER TO DO
+   * @param columnIndex The column number to retrieve
+   * @param scale The number of digits to the right of the decimal point
    * @return The BigDecimal value
    * @throws SQLException on failure
+   * @deprecated Deprecated in {@link java.sql.ResultSet}
    */
+  @SuppressWarnings("deprecation")
   public BigDecimal getBigDecimal(int columnIndex, int scale)
     throws SQLException {
 
@@ -288,10 +291,12 @@ abstract class AbstractMulgaraResultSet
   }
 
   /**
-   * @param columnIndex PARAMETER TO DO
+   * @param columnIndex The column number to get data from
    * @return The UnicodeStream value
    * @throws SQLException on failure
+   * @deprecated Deprecated in the original {@link java.sql.ResultSet}
    */
+  @SuppressWarnings("deprecation")
   public java.io.InputStream getUnicodeStream(int columnIndex)
     throws SQLException {
 
@@ -436,11 +441,13 @@ abstract class AbstractMulgaraResultSet
   }
 
   /**
-   * @param columnName PARAMETER TO DO
-   * @param scale PARAMETER TO DO
+   * @param columnName The column containing a number
+   * @param scale Number of digits after the decimal point
    * @return The BigDecimal value
    * @throws SQLException on failure
+   * @deprecated Deprecated in the original {@link java.sql.ResultSet}
    */
+  @SuppressWarnings("deprecation")
   public BigDecimal getBigDecimal(String columnName, int scale)
     throws SQLException {
 
@@ -500,10 +507,12 @@ abstract class AbstractMulgaraResultSet
   }
 
   /**
-   * @param columnName PARAMETER TO DO
+   * @param columnName The name of the column with the data to retrieve
    * @return The UnicodeStream value
    * @throws SQLException on failure
+   * @deprecated This has been deprecated in the original {@link ResultSet#getUnicodeStream(String)}
    */
+  @SuppressWarnings("deprecation")
   public java.io.InputStream getUnicodeStream(String columnName)
     throws SQLException {
 
@@ -701,6 +710,7 @@ abstract class AbstractMulgaraResultSet
    * @return The Object value
    * @throws SQLException on failure
    */
+  @SuppressWarnings("unchecked")
   public Object getObject(int i, java.util.Map map) throws SQLException {
 
     throw new SQLException(NOT_IMPLEMENTED);
@@ -752,6 +762,7 @@ abstract class AbstractMulgaraResultSet
    * @return The Object value
    * @throws SQLException on failure
    */
+  @SuppressWarnings("unchecked")
   public Object getObject(String colName, java.util.Map map)
     throws SQLException {
 

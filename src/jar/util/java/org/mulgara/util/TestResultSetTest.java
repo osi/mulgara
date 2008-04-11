@@ -32,7 +32,7 @@ import junit.framework.*;
 
 // Java 2 standard packages
 import java.sql.SQLException;
-import java.util.*;
+// import java.util.*;
 
 // JUnit
 import org.apache.log4j.Logger;
@@ -54,17 +54,12 @@ import org.apache.log4j.Logger;
  */
 public class TestResultSetTest extends TestCase {
 
-  /**
-   * Logger. Named after the class.
-   *
-   */
+  /** Logger. Named after the class. */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(TestResultSetTest.class);
 
-  /**
-   * Test object.
-   *
-   */
-  private TestResultSet testResultSet;
+  /** Test object. */
+//  private TestResultSet testResultSet;
 
   /**
    * CONSTRUCTOR TestResultSetTest TO DO

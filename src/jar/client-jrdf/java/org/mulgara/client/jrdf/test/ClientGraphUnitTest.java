@@ -182,6 +182,7 @@ public class ClientGraphUnitTest extends TestCase {
    *
    * @throws Exception
    */
+  @SuppressWarnings("deprecation") // avoiding the use of a connection
   public void testCreate() throws Exception {
 
     // log that we're executing the test
@@ -192,7 +193,7 @@ public class ClientGraphUnitTest extends TestCase {
     log.debug("Testing Answer implementation");
 
     //get all statments from the graph
-    Answer answer = this.getEntireGraph(graphURI);
+    Answer answer = getEntireGraph(graphURI);
 
     //create a Client Graph from it.
     ClientGraph client = AbstractGraphFactory.createGraph(answer, answerBean.getSession(serverURI));
@@ -225,7 +226,7 @@ public class ClientGraphUnitTest extends TestCase {
 
       //Answer
       log.debug("Testing Answer implementation");
-      this.testAnswerFind();
+      testAnswerFind();
       log.debug("Testing Answer implementation successful");
     } catch (Exception exception) {
       exception.printStackTrace();
@@ -238,10 +239,11 @@ public class ClientGraphUnitTest extends TestCase {
    *
    * @throws Exception
    */
+  @SuppressWarnings("deprecation") // avoiding the use of a connection
   public void testAnswerFind() throws Exception {
 
     //create a Client Graph from it.
-    Answer answer = this.getEntireGraph(graphURI);
+    Answer answer = getEntireGraph(graphURI);
     ClientGraph client = AbstractGraphFactory.createGraph(answer, answerBean.getSession(serverURI));
     GraphElementFactory factory = client.getElementFactory();
 
@@ -252,19 +254,19 @@ public class ClientGraphUnitTest extends TestCase {
     ClosableIterator iter = client.find(triple);
 
     //compare with answer
-    this.compareAnswerToIterator(answer, iter, factory);
+    compareAnswerToIterator(answer, iter, factory);
 
     //close iterator
     iter.close();
 
     //-- FIND SUBJECT (S) --
-    this.testAnswerFindSubjects(client, factory);
+    testAnswerFindSubjects(client, factory);
 
     //-- FIND PREDICATE (S) --
-    this.testAnswerFindPredicates(client, factory);
+    testAnswerFindPredicates(client, factory);
 
     //-- FIND OBJECT (S) --
-    this.testAnswerFindObjects(client, factory);
+    testAnswerFindObjects(client, factory);
 
     //close graph
     client.close();
@@ -285,7 +287,7 @@ public class ClientGraphUnitTest extends TestCase {
         subject)),
                                          null, null);
     ClosableIterator iter = client.find(triple);
-    this.compareAnswerToIterator(this.getSubject("<" + subject + ">"), iter,
+    compareAnswerToIterator(getSubject("<" + subject + ">"), iter,
                                  factory);
     iter.close();
 
@@ -294,7 +296,7 @@ public class ClientGraphUnitTest extends TestCase {
     triple = factory.createTriple(factory.createResource(URI.create(subject)),
                                   null, null);
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getSubject("<" + subject + ">"), iter,
+    compareAnswerToIterator(getSubject("<" + subject + ">"), iter,
                                  factory);
     iter.close();
 
@@ -303,7 +305,7 @@ public class ClientGraphUnitTest extends TestCase {
     triple = factory.createTriple(factory.createResource(URI.create(subject)),
                                   null, null);
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getSubject("<" + subject + ">"), iter,
+    compareAnswerToIterator(getSubject("<" + subject + ">"), iter,
                                  factory);
     iter.close();
   }
@@ -324,7 +326,7 @@ public class ClientGraphUnitTest extends TestCase {
         predicate)),
                                          null);
     ClosableIterator iter = client.find(triple);
-    this.compareAnswerToIterator(this.getPredicate("<" + predicate + ">"), iter,
+    compareAnswerToIterator(getPredicate("<" + predicate + ">"), iter,
                                  factory);
     iter.close();
 
@@ -334,7 +336,7 @@ public class ClientGraphUnitTest extends TestCase {
                                   factory.createResource(URI.create(predicate)),
                                   null);
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getPredicate("<" + predicate + ">"), iter,
+    compareAnswerToIterator(getPredicate("<" + predicate + ">"), iter,
                                  factory);
     iter.close();
 
@@ -344,7 +346,7 @@ public class ClientGraphUnitTest extends TestCase {
                                   factory.createResource(URI.create(predicate)),
                                   null);
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getPredicate("<" + predicate + ">"), iter,
+    compareAnswerToIterator(getPredicate("<" + predicate + ">"), iter,
                                  factory);
     iter.close();
   }
@@ -364,7 +366,7 @@ public class ClientGraphUnitTest extends TestCase {
                                          factory.createResource(URI.
         create(object)));
     ClosableIterator iter = client.find(triple);
-    this.compareAnswerToIterator(this.getObject("<" + object + ">"), iter,
+    compareAnswerToIterator(getObject("<" + object + ">"), iter,
                                  factory);
     iter.close();
 
@@ -373,7 +375,7 @@ public class ClientGraphUnitTest extends TestCase {
     triple = factory.createTriple(null, null,
                                   factory.createResource(URI.create(object)));
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getObject("<" + object + ">"), iter,
+    compareAnswerToIterator(getObject("<" + object + ">"), iter,
                                  factory);
     iter.close();
 
@@ -382,7 +384,7 @@ public class ClientGraphUnitTest extends TestCase {
     triple = factory.createTriple(null, null,
                                   factory.createResource(URI.create(object)));
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getObject("<" + object + ">"), iter,
+    compareAnswerToIterator(getObject("<" + object + ">"), iter,
                                  factory);
     iter.close();
 
@@ -390,7 +392,7 @@ public class ClientGraphUnitTest extends TestCase {
     object = "Test1";
     triple = factory.createTriple(null, null, factory.createLiteral(object));
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getObject("'" + object + "'"), iter,
+    compareAnswerToIterator(getObject("'" + object + "'"), iter,
                                  factory);
     iter.close();
 
@@ -398,7 +400,7 @@ public class ClientGraphUnitTest extends TestCase {
     object = "Test2";
     triple = factory.createTriple(null, null, factory.createLiteral(object));
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getObject("'" + object + "'"), iter,
+    compareAnswerToIterator(getObject("'" + object + "'"), iter,
                                  factory);
     iter.close();
 
@@ -406,7 +408,7 @@ public class ClientGraphUnitTest extends TestCase {
     object = "Test3";
     triple = factory.createTriple(null, null, factory.createLiteral(object));
     iter = client.find(triple);
-    this.compareAnswerToIterator(this.getObject("'" + object + "'"), iter,
+    compareAnswerToIterator(getObject("'" + object + "'"), iter,
                                  factory);
     iter.close();
   }
@@ -469,7 +471,7 @@ public class ClientGraphUnitTest extends TestCase {
         //needed for comparision
         "order by $s $p $o ;";
 
-    return this.answerBean.executeQuery(query);
+    return answerBean.executeQuery(query);
   }
 
   /**
@@ -481,13 +483,13 @@ public class ClientGraphUnitTest extends TestCase {
 
     //select ALL query
     String query = "select $s $p $o " +
-        "from <" + this.graphURI + "> " +
+        "from <" + graphURI + "> " +
         "where " + variable + "<http://mulgara.org/mulgara#is> " + uri + " " +
         "and $s $p $o " +
         //needed for comparision
         "order by $s $p $o ;";
 
-    return this.interpreterBean.executeQuery(query);
+    return interpreterBean.executeQuery(query);
   }
 
   /**
@@ -497,7 +499,7 @@ public class ClientGraphUnitTest extends TestCase {
    */
   private Answer getSubject(String subject) throws Exception {
 
-    return this.getColumn(subject, "$s");
+    return getColumn(subject, "$s");
   }
 
   /**
@@ -507,7 +509,7 @@ public class ClientGraphUnitTest extends TestCase {
    */
   private Answer getPredicate(String predicate) throws Exception {
 
-    return this.getColumn(predicate, "$p");
+    return getColumn(predicate, "$p");
   }
 
   /**
@@ -517,7 +519,7 @@ public class ClientGraphUnitTest extends TestCase {
    */
   private Answer getObject(String object) throws Exception {
 
-    return this.getColumn(object, "$o");
+    return getColumn(object, "$o");
   }
 
   /**
@@ -526,31 +528,32 @@ public class ClientGraphUnitTest extends TestCase {
    *
    * @throws Exception
    */
+  @SuppressWarnings("deprecation") // avoiding the use of a Connection
   public void testAnswerOutputRDF() throws Exception {
 
     //create a Client Graph containing all statments
-    ClientGraph client1 = AbstractGraphFactory.createGraph(this.getEntireGraph(graphURI), answerBean.getSession(serverURI));
+    ClientGraph client1 = AbstractGraphFactory.createGraph(getEntireGraph(graphURI), answerBean.getSession(serverURI));
     File rdfOutput1 = new File(CLIENT_TEST_FILE1);
-    this.outputRDF(rdfOutput1, client1);
+    outputRDF(rdfOutput1, client1);
 
     //reload file into new model
-    URI graph2 = new URI("" + this.graphURI + "2");
-    this.createModel(graph2);
-    this.interpreterBean.load(rdfOutput1, graph2);
+    URI graph2 = new URI("" + graphURI + "2");
+    createModel(graph2);
+    interpreterBean.load(rdfOutput1, graph2);
 
     //output new model
-    ClientGraph client2 = AbstractGraphFactory.createGraph(this.getEntireGraph(graph2), answerBean.getSession(serverURI));
+    ClientGraph client2 = AbstractGraphFactory.createGraph(getEntireGraph(graph2), answerBean.getSession(serverURI));
     File rdfOutput2 = new File(CLIENT_TEST_FILE2);
-    this.outputRDF(rdfOutput2, client2);
+    outputRDF(rdfOutput2, client2);
 
     //compare files
     assertTrue("RDF output file is not equal to file that was loaded.",
-               this.compareFiles(rdfOutput1, rdfOutput2));
+               compareFiles(rdfOutput1, rdfOutput2));
 
     //tidy up
     client1.close();
     client2.close();
-    this.dropModel(graph2);
+    dropModel(graph2);
   }
 
   /**
@@ -566,8 +569,8 @@ public class ClientGraphUnitTest extends TestCase {
     //value to be returned
     boolean compare = false;
 
-    byte[] digest1 = this.digest(file1);
-    byte[] digest2 = this.digest(file2);
+    byte[] digest1 = digest(file1);
+    byte[] digest2 = digest(file2);
 
     //compare the bytes
     if (digest1.length == digest2.length) {
@@ -608,8 +611,7 @@ public class ClientGraphUnitTest extends TestCase {
     do {
 
       read = digestIn.read(buffer);
-    }
-    while (read != -1);
+    } while (read != -1);
 
     //digest
     return digestIn.getMessageDigest().digest();
@@ -644,7 +646,7 @@ public class ClientGraphUnitTest extends TestCase {
     //select ALL query
     String query = "create <" + modelURI + "> ;";
 
-    return this.interpreterBean.executeQuery(query);
+    return interpreterBean.executeQuery(query);
   }
 
   /**
@@ -657,7 +659,7 @@ public class ClientGraphUnitTest extends TestCase {
     //select ALL query
     String query = "drop <" + modelURI + "> ;";
 
-    return this.interpreterBean.executeQuery(query);
+    return interpreterBean.executeQuery(query);
   }
 
   /**
@@ -668,10 +670,9 @@ public class ClientGraphUnitTest extends TestCase {
   private Answer populateModel() throws Exception {
 
     //select ALL query
-    String query = "insert " + this.testStatements +
-        "into <" + this.graphURI + "> ;";
+    String query = "insert " + testStatements + "into <" + graphURI + "> ;";
 
-    return this.interpreterBean.executeQuery(query);
+    return interpreterBean.executeQuery(query);
   }
 
   //set up and tear down
@@ -691,27 +692,20 @@ public class ClientGraphUnitTest extends TestCase {
       graphURI = new URI("rmi", hostname, "/" + SERVER_NAME, "clientJenaTest");
 
       //create an iTQLInterpreterBean for executing queries with
-      this.interpreterBean = new ItqlInterpreterBean();
-      this.answerBean = new ItqlInterpreterBean();
-
-      //initialize with server
-      this.interpreterBean.setServerURI(this.serverURI.toString());
+      interpreterBean = new ItqlInterpreterBean();
+      answerBean = new ItqlInterpreterBean();
 
       //initialize model
-      this.createModel(this.graphURI);
-      this.populateModel();
-    }
-    catch (Exception exception) {
-
+      createModel(graphURI);
+      populateModel();
+    } catch (Exception exception) {
       //try to tear down first
       try {
-
         tearDown();
+      } catch (Throwable t) {
+        // going to throw the original
       }
-      finally {
-
-        throw exception;
-      }
+      throw exception;
     }
   }
 
@@ -722,9 +716,9 @@ public class ClientGraphUnitTest extends TestCase {
    */
   public void tearDown() throws Exception {
 
-    this.dropModel(this.graphURI);
+    dropModel(graphURI);
 
-    this.interpreterBean.close();
-    this.answerBean.close();
+    interpreterBean.close();
+    answerBean.close();
   }
 }

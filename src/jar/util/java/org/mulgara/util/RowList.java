@@ -51,7 +51,7 @@ import java.util.ArrayList;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class RowList extends ArrayList {
+public class RowList<T> extends ArrayList<T> {
 
   /**
    * Allow newer compiled version of the stub to operate when changes

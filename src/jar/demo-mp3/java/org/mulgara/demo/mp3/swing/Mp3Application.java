@@ -33,7 +33,6 @@ import java.awt.*;
 import java.util.List;
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 // Logging
 import org.apache.log4j.*;
@@ -69,13 +68,12 @@ import org.mulgara.demo.mp3.swing.search.SearchPanel;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
+@SuppressWarnings("serial")
 public class Mp3Application extends JFrame {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger log = Logger.getLogger(Mp3Application.class.
-      getName());
+  /** Logger. This is named after the class. */
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(Mp3Application.class.getName());
 
   /** Name of the Application */
   private static final String DEFAULT_APPLICATION_NAME = "Mulgara Mp3 Player";
@@ -240,6 +238,7 @@ public class Mp3Application extends JFrame {
    * Initializes the Models and data
    * @throws Exception
    */
+  @SuppressWarnings("unchecked")  // cannot add types to generated code
   private void init() throws Exception {
     //getConfig from the file
     config = (config != null) ? config :
@@ -248,16 +247,13 @@ public class Mp3Application extends JFrame {
     //Create the Models (may not exist yet)
     getController().createModels();
     //load schemas
-    List schemas = config.getSchemaFiles();
+    List<URIReference> schemas = (List<URIReference>)config.getSchemaFiles();
     SchemaModel schemaModel = getController().getSchemaModel();
     if (schemas == null) {
       throw new IllegalStateException("Mp3ConfigFile returned a null " +
           "Schema File List.");
     }
-    Iterator iter = schemas.iterator();
-    while (iter.hasNext()) {
-      schemaModel.loadSchema((URIReference) iter.next());
-    }
+    for (URIReference schema: schemas) schemaModel.loadSchema(schema);
   }
 
   /**
@@ -495,6 +491,7 @@ public class Mp3Application extends JFrame {
    * Run the application.
    * @param args String[]
    */
+  @SuppressWarnings("deprecation")
   public static void main(String[] args) {
     try {
       // Just use the basic Log configurator
