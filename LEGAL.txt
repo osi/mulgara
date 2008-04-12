@@ -95,10 +95,12 @@ I.  Open Source Components
               http://opensource.org/licenses/bsd-license.php
     
     Castor
-    JARs:     castor-0.9.3.9-xml.jar
-    URL:      http://castor.org
-    LICENSE:  The Intalio License (BSD-style)
-              http://www.castor.org/license.html
+    JARs:     castor-1.2-codegen.jar
+              castor-1.2-xml.jar
+              castor-1.2-schema.jar
+    URL:      http://castor.org/
+    LICENSE:  Apache License Version 2.0
+              http://castor.org/new-license.txt
     
     Commons Discovery
     JARs:     commons-discovery-1.2.jar
@@ -288,6 +290,12 @@ I.  Open Source Components
     License   GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
     
+    Velocity
+    JARs:     velocity-1.5.jar
+    URL:      http://velocity.apache.org/
+    License   Apache License Version 2.0
+              http://www.apache.org/licenses/LICENSE-2.0.txt
+
     WSDL4J
     JARs:     wsdl4j-1.5.1.jar
     URL:      http://sourceforge.net/projects/wsdl4j

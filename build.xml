@@ -489,7 +489,7 @@
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
           lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
-          lib/castor-0.9.3.9-xml.jar, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
+          lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
           lib/${httpclient.jar}, lib/${commons-codec.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
@@ -543,7 +543,7 @@
         ${log4j.jar}, ${icu4j.jar}, ${activation.jar}, ${beep.jar},
         ${jargs.jar}, ${jrdf.jar}, ${jetty.jar}, ${jetty.plus.jar},
         ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
-        ${lucene.jar}, ${mail.jar}, ${castor.jar}, ${trove.jar},
+        ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
         ${date-utils.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
         ${commons-codec.jar}, ${emory-util.jar},
         ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
@@ -1736,7 +1736,9 @@
       <zipfileset src="${lib.dir}/${jasper.compiler.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${castor.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-xml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-codegen.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${date-utils.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
@@ -1872,26 +1874,6 @@
     <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_BOOTSTRAP.MF">
 
       <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
-<!--
-<attribute name="Embedded-Jar" value="lib/${client-jrdf.jar}, lib/${client-jena.jar}, lib/${config.jar},
-lib/${content-n3.jar}, lib/${content-rdfxml.jar}, lib/${content-rio.jar}, lib/${descriptor.jar},lib/${driver.jar},
-lib/${itql.jar}, lib/${jrdf.base.jar}, lib${store-nodepool.jar},
-lib/${store-nodepool-memory.jar}, lib/${store-nodepool-xa.jar},lib/${query.jar}, lib/${resolver.jar},
-lib/${resolver-file.jar}, lib/${resolver-filesystem.jar}, lib/${resolver-http.jar}, lib/${resolver-memory.jar},
-lib/${resolver-nodetype.jar}, lib/${resolver-prefix.jar}, lib/${resolver-spi.jar}, lib/${resolver-store.jar}, lib/${resolver-jar.jar},
-lib/${resolver-view.jar}, lib/${resolver-xsd.jar}, lib/${resolver-test.jar}, lib/${resolver-url.jar}, lib/${resolver-lucene.jar}, lib/${content-mp3.jar},
-lib/${content-mbox.jar}, lib/${rmi.jar}, lib/${server.jar}, lib/${server-beep.jar},
-lib/${server-rmi.jar}, lib/${sofa.base.jar}, lib/${rules.base.jar}, lib/${krule.base.jar}, lib/${store.jar},
-lib/${store-stringpool.jar}
-lib/${store-stringpool-memory.jar}, lib/${store-stringpool-xa.jar}, lib/${tuples.jar},lib/${tuples-hybrid.jar},
-lib/${util.jar}, lib/${util-xa.jar}, lib/activation-1.0.2.jar,lib/icu4j.jar, lib/jena-2.1.jar, lib/${jid3.jar},
-lib/antlr.jar, lib/${date-utils.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar,
-lib/${jotm.jar}, lib/${jotm_carol.jar}, lib/${jotm_iiop_stubs.jar},lib/jta-spec1_0_1.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar},
-lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${jasper.compiler.jar},
-lib/${servlet.jar},lib/jargs-0.2.jar, lib/castor-0.9.3.9-xml.jar, lib/xercesImpl.jar, lib/xmlParserAPIs.jar,
-lib/trove-1.0.2.jar,lib/${jrdf.jar}, lib/${sofa.jar}, lib/${rules.jar}, lib/${krule.jar}, lib/${saaj.jar}, lib/${axis.jar}, lib/${commons-discovery.jar},
-lib/${jaxrpc.jar},lib/${wsdl4j.jar}, lib/${emory-util.jar}, lib/${httpclient.jar}"/>
--->
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>

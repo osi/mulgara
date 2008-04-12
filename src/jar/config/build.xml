@@ -28,7 +28,7 @@
 
     <mkdir dir="${obj.dir}/jar/config/java"/>
 
-    <java fork="true" jvm="${java.home}/bin/java" classname="org.exolab.castor.builder.SourceGenerator" failonerror="yes">
+    <java fork="true" jvm="${java.home}/bin/java" classname="org.exolab.castor.builder.SourceGeneratorMain" failonerror="yes">
 
       <jvmarg value="${arch.bits}"/>
 
@@ -42,7 +42,7 @@
       <arg value="${obj.dir}/jar/config/java"/>
 
       <classpath>
-        <fileset dir="${lib.dir}" includes="xerces*.jar, xmlParserAPIs.jar, castor*.jar"/>
+        <fileset dir="${lib.dir}" includes="xerces*.jar, xmlParserAPIs.jar, castor*.jar, commons-logging*.jar, velocity*.jar"/>
       </classpath>
     </java>
   </target>

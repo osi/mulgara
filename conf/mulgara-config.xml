@@ -70,7 +70,7 @@ Mulgara Semantic Store configuration file.
     org.mulgara.resolver.RelatedHandler.
   -->
   <RelatedQueryHandler
-    class="org.mulgara.resolver.RelatedQueryHandlerImpl"/>
+    type="org.mulgara.resolver.RelatedQueryHandlerImpl"/>
 
   <!--
     Security adapter implementation.  If this element is omitted, the only
@@ -86,44 +86,44 @@ Mulgara Semantic Store configuration file.
     and resolvers.  The persistent resolver is used to manipulate the system
     model.
   -->
-  <PersistentNodePoolFactory class="org.mulgara.store.nodepool.xa.XANodePoolFactory" dir="xaNodePool"/>
-  <TemporaryNodePoolFactory  class="org.mulgara.store.nodepool.memory.MemoryNodePoolFactory"/>
-  <PersistentStringPoolFactory class="org.mulgara.store.stringpool.xa.XAStringPoolFactory" dir="xaStringPool"/>
-  <TemporaryStringPoolFactory class="org.mulgara.store.stringpool.memory.MemoryStringPoolFactory"/>
-  <PersistentResolverFactory class="org.mulgara.resolver.store.StatementStoreResolverFactory" dir="xaStatementStore"/>
-  <TemporaryResolverFactory class="org.mulgara.resolver.memory.MemoryResolverFactory" dir="tempStatementStore"/>
+  <PersistentNodePoolFactory type="org.mulgara.store.nodepool.xa.XANodePoolFactory" dir="xaNodePool"/>
+  <TemporaryNodePoolFactory  type="org.mulgara.store.nodepool.memory.MemoryNodePoolFactory"/>
+  <PersistentStringPoolFactory type="org.mulgara.store.stringpool.xa.XAStringPoolFactory" dir="xaStringPool"/>
+  <TemporaryStringPoolFactory type="org.mulgara.store.stringpool.memory.MemoryStringPoolFactory"/>
+  <PersistentResolverFactory type="org.mulgara.resolver.store.StatementStoreResolverFactory" dir="xaStatementStore"/>
+  <TemporaryResolverFactory type="org.mulgara.resolver.memory.MemoryResolverFactory" dir="tempStatementStore"/>
 
   <!--
     Implementations of a rule engine.
   -->
-  <RuleLoader class="org.mulgara.krule.KruleLoader"/>
+  <RuleLoader type="org.mulgara.krule.KruleLoader"/>
 
   <!--
     Implementations of the ContentHandler interface to use for resolving MIME
     types.
   -->
-  <DefaultContentHandler class="org.mulgara.content.rdfxml.RDFXMLContentHandler"/>
+  <DefaultContentHandler type="org.mulgara.content.rdfxml.RDFXMLContentHandler"/>
   <!--
-  <DefaultContentHandler class="org.mulgara.content.rio.RDFXMLContentHandler"/>
+  <DefaultContentHandler type="org.mulgara.content.rio.RDFXMLContentHandler"/>
   -->
-  <ContentHandler class="org.mulgara.content.mp3.MP3ContentHandler"/>
-  <ContentHandler class="org.mulgara.content.mbox.MBoxContentHandler"/>
-  <ContentHandler class="org.mulgara.content.n3.N3ContentHandler"/>
+  <ContentHandler type="org.mulgara.content.mp3.MP3ContentHandler"/>
+  <ContentHandler type="org.mulgara.content.mbox.MBoxContentHandler"/>
+  <ContentHandler type="org.mulgara.content.n3.N3ContentHandler"/>
 
   <!--
     Additional resolvers
   -->
-  <ResolverFactory class="org.mulgara.resolver.file.FileResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.lucene.LuceneResolverFactory" dir="lucene"/>
-  <ResolverFactory class="org.mulgara.resolver.xsd.XSDResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.http.HttpResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.nodetype.NodeTypeResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.jar.JarResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.view.ViewResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.filesystem.FileSystemResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.prefix.PrefixResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.relational.RelationalResolverFactory"/>
-  <ResolverFactory class="org.mulgara.resolver.distributed.DistributedResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.file.FileResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.lucene.LuceneResolverFactory" dir="lucene"/>
+  <ResolverFactory type="org.mulgara.resolver.xsd.XSDResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.http.HttpResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.nodetype.NodeTypeResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.jar.JarResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.view.ViewResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.filesystem.FileSystemResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.prefix.PrefixResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.relational.RelationalResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.distributed.DistributedResolverFactory"/>
 
   <!-- iTQL script to run on startup -->
   <StartupScript>foo.itql</StartupScript>

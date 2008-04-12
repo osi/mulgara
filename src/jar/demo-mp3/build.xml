@@ -69,7 +69,8 @@
       <fileset file="${demo-mp3.conf.dir}/${demo-mp3.conf.default}"/>
       <fileset file="${demo-mp3.conf.dir}/${demo-mp3.schema.default}"/>
       <zipfileset src="${lib.dir}/${jlayer.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${castor.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-xml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${xerces.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
@@ -143,7 +144,7 @@
     <delete dir="${demo-mp3.obj.src.dir}/java"/>
     <mkdir dir="${demo-mp3.obj.src.dir}/java"/>
     <java fork="true" jvm="${java.home}/bin/java"
-      classname="org.exolab.castor.builder.SourceGenerator" failonerror="yes">
+      classname="org.exolab.castor.builder.SourceGeneratorMain" failonerror="yes">
       <jvmarg value="${arch.bits}"/>
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
       <arg value="-i"/>
@@ -154,7 +155,7 @@
       <arg value="${demo-mp3.obj.src.dir}/java"/>
       <classpath>
         <fileset dir="${lib.dir}"
-          includes="xerces*.jar, xmlParserAPIs.jar, castor*.jar"/>
+          includes="xerces*.jar, xmlParserAPIs.jar, castor*.jar, commons-logging*.jar, velocity*.jar"/>
       </classpath>
     </java>
   </target>

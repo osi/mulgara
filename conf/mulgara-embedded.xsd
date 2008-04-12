@@ -42,69 +42,69 @@
   <xs:element name="Smtp" type="xs:string"/>
   <xs:element name="RelatedQueryHandler">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="SecurityAdapterFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="PersistentNodePoolFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="PersistentStringPoolFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="PersistentResolverFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="TemporaryNodePoolFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="TemporaryStringPoolFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="TemporaryResolverFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="RuleLoader">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="TransactionTimeout" type="xs:int"/>
   <xs:element name="DefaultContentHandler">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="ContentHandler">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="ResolverFactory">
     <xs:complexType>
-      <xs:attribute name="class" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string" use="required"/>
       <xs:attribute name="dir" type="xs:string"/>
     </xs:complexType>
   </xs:element>
@@ -122,17 +122,17 @@
         <xs:element ref="RelatedQueryHandler"/>
         <xs:element ref="SecurityAdapterFactory" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="PersistentNodePoolFactory"/>
-        <xs:element ref="PersistentStringPoolFactory"/>
-        <xs:element ref="PersistentResolverFactory"/>
         <xs:element ref="TemporaryNodePoolFactory"/>
+        <xs:element ref="PersistentStringPoolFactory"/>
         <xs:element ref="TemporaryStringPoolFactory"/>
+        <xs:element ref="PersistentResolverFactory"/>
         <xs:element ref="TemporaryResolverFactory"/>
-        <xs:element ref="ResolverFactory" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="RuleLoader"/>
         <xs:element ref="DefaultContentHandler" minOccurs="1"/>
         <xs:element ref="ContentHandler" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="ResolverFactory" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="StartupScript" minOccurs="0"/>
         <xs:element ref="Smtp"/>
-        <xs:element ref="RuleLoader"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
