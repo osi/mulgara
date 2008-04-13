@@ -324,11 +324,11 @@ I.  Open Source Components
               http://opensource.org/licenses/lgpl-license.php
 
     EMORY UTILs
-    JARs:     emory-util.jar
-    URL:      http://dcl.mathcs.emory.edu/util/
+    JARs:     emory-util-2.1-remote.jar
+    URL:      http://dcl.mathcs.emory.edu/php/loadPage.php?content=/util/overview.html
     LICENSE:  Public domain
               http://creativecommons.org/licenses/publicdomain
-              
+
     XOM 1.0
     JARs:     xom-1.0d21.jar
     URL:      http://www.xom.nu/
