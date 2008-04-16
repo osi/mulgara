@@ -29,11 +29,16 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.*;
 import java.nio.channels.*;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 // Third party packages
 import org.apache.log4j.Logger;
+
+import sun.misc.Cleaner;
 
 /**
  * An implementation of BlockFile which uses memory mapped file IO.
@@ -334,6 +339,12 @@ public final class MappedBlockFile extends AbstractBlockFile {
    */
   public synchronized void unmap() {
     // Discard the file mappings.
+    if (mappedByteBuffers != null) {
+      for (MappedByteBuffer buffer : mappedByteBuffers) {
+        clean(buffer);
+      }
+    }
+    
     mappedByteBuffers = null;
     srcByteBuffers = null;
     intBuffers = null;
@@ -460,6 +471,24 @@ public final class MappedBlockFile extends AbstractBlockFile {
     }
 
     nrMappedRegions = nrRegions;
+  }
+  
+  private static void clean(final Object buffer) {
+    if (buffer != null) {
+      AccessController.doPrivileged(new PrivilegedAction<Object>() {
+        public Object run() {
+          try {
+            Method getCleanerMethod = buffer.getClass().getMethod("cleaner", new Class[0]);
+            getCleanerMethod.setAccessible(true);
+            Cleaner cleaner = (Cleaner)getCleanerMethod.invoke(buffer, new Object[0]);
+            cleaner.clean();
+          } catch (Exception e) {
+            logger.warn("Error cleaning buffer", e);
+          }
+          return null;
+        }
+      });
+    }
   }
 
 }

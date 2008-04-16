@@ -28,12 +28,19 @@
 package org.mulgara.util;
 
 // Java 2 standard packages
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
-// Third party packages
 import org.apache.log4j.Logger;
+
+import sun.misc.Cleaner;
 
 /**
  * @created 2003-01-09
@@ -299,6 +306,11 @@ public final class MappedIntFile extends IntFile {
    */
   public synchronized void unmap() {
     // Discard the file mappings.
+    if (mappedByteBuffers != null) {
+      for (MappedByteBuffer buffer : mappedByteBuffers) {
+        clean(buffer);
+      }
+    }
     mappedByteBuffers = null;
     intBuffers = null;
     longBuffers = null;
@@ -378,6 +390,24 @@ public final class MappedIntFile extends IntFile {
     }
 
     nrMappedRegions = nrRegions;
+  }
+  
+  private static void clean(final Object buffer) {
+    if (buffer != null) {
+      AccessController.doPrivileged(new PrivilegedAction<Object>() {
+        public Object run() {
+          try {
+            Method getCleanerMethod = buffer.getClass().getMethod("cleaner", new Class[0]);
+            getCleanerMethod.setAccessible(true);
+            Cleaner cleaner = (Cleaner)getCleanerMethod.invoke(buffer, new Object[0]);
+            cleaner.clean();
+          } catch (Exception e) {
+            logger.warn("Error cleaning buffer", e);
+          }
+          return null;
+        }
+      });
+    }
   }
 
 }
