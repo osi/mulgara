@@ -117,6 +117,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
     suite.addTest(new AdvDatabaseSessionUnitTest("testConcurrentSubqueryQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testConcurrentReadWrite"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitBasicQuery"));
+    suite.addTest(new AdvDatabaseSessionUnitTest("testAnswerWriteCloseIsolation"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitRollbackIsolationQuery"));
     suite.addTest(new AdvDatabaseSessionUnitTest("testExplicitCommitIsolationQuery"));
@@ -663,6 +664,69 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           assertTrue("Answer failed to throw exception, should be closed by commit",
               thrown);
         }
+      } finally {
+        session.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+  
+  public void testAnswerWriteCloseIsolation() throws URISyntaxException {
+    logger.info("Testing AnswerWriteCloseIsolation");
+
+    try {
+      Session session = database.newSession();
+      try {
+        Variable subjectVariable   = new Variable("subject");
+        Variable predicateVariable = new Variable("predicate");
+        Variable objectVariable    = new Variable("object");
+
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
+        selectList.add(subjectVariable);
+        selectList.add(predicateVariable);
+        selectList.add(objectVariable);
+
+        // Evaluate the query
+        Answer answer = session.query(new Query(
+          selectList,                                       // SELECT
+          new ModelResource(modelURI),                      // FROM
+          new ConstraintImpl(subjectVariable,               // WHERE
+                         predicateVariable,
+                         objectVariable),
+          null,                                             // HAVING
+          Arrays.asList(new Order[] {                       // ORDER BY
+            new Order(subjectVariable, true),
+            new Order(predicateVariable, true),
+            new Order(objectVariable, true)
+          }),
+          null,                                             // LIMIT
+          0,                                                // OFFSET
+          new UnconstrainedAnswer()                         // GIVEN
+        ));
+        String[][] results = {
+          { "test:s01", "test:p01", "test:o01" },
+          { "test:s01", "test:p02", "test:o01" },
+          { "test:s01", "test:p02", "test:o02" },
+          { "test:s01", "test:p03", "test:o02" },
+          { "test:s02", "test:p03", "test:o02" },
+          { "test:s02", "test:p04", "test:o02" },
+          { "test:s02", "test:p04", "test:o03" },
+          { "test:s02", "test:p05", "test:o03" },
+          { "test:s03", "test:p01", "test:o01" },
+          { "test:s03", "test:p05", "test:o03" },
+          { "test:s03", "test:p06", "test:o01" },
+          { "test:s03", "test:p06", "test:o03" },
+        };
+        compareResults(results, answer);
+
+        session.setAutoCommit(false);
+
+        answer.close();
+
+        session.commit();
+        session.setAutoCommit(true);
       } finally {
         session.close();
       }
