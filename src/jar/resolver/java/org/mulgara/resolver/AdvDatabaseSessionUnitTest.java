@@ -94,6 +94,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
 
   private static final URI databaseURI = URI.create("local:database");
 
+  private static final URI systemModelURI = URI.create("local:database#");
   private static final URI modelURI = URI.create("local:database#model");
   private static final URI model2URI = URI.create("local:database#model2");
   private static final URI model3URI = URI.create("local:database#model3");
@@ -691,7 +692,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new ModelResource(systemModelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -705,21 +706,6 @@ public class AdvDatabaseSessionUnitTest extends TestCase
           0,                                                // OFFSET
           new UnconstrainedAnswer()                         // GIVEN
         ));
-        String[][] results = {
-          { "test:s01", "test:p01", "test:o01" },
-          { "test:s01", "test:p02", "test:o01" },
-          { "test:s01", "test:p02", "test:o02" },
-          { "test:s01", "test:p03", "test:o02" },
-          { "test:s02", "test:p03", "test:o02" },
-          { "test:s02", "test:p04", "test:o02" },
-          { "test:s02", "test:p04", "test:o03" },
-          { "test:s02", "test:p05", "test:o03" },
-          { "test:s03", "test:p01", "test:o01" },
-          { "test:s03", "test:p05", "test:o03" },
-          { "test:s03", "test:p06", "test:o01" },
-          { "test:s03", "test:p06", "test:o03" },
-        };
-        compareResults(results, answer);
 
         session.setAutoCommit(false);
 

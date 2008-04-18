@@ -365,13 +365,15 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     acquireMutex();
     try {
       logger.debug("Transaction Complete");
-      DatabaseSession session = sessionXAMap.get1(transaction);
-      if (session == null) {
-        throw new MulgaraTransactionException("No associated session found for transaction");
-      }
-      if (manager.isHoldingWriteLock(session)) {
-        manager.releaseWriteLock(session);
-        writeTransaction = null;
+      if (transaction == writeTransaction) {
+        DatabaseSession session = sessionXAMap.get1(transaction);
+        if (session == null) {
+          throw new MulgaraTransactionException("No associated session found for write transaction");
+        }
+        if (manager.isHoldingWriteLock(session)) {
+          manager.releaseWriteLock(session);
+          writeTransaction = null;
+        }
       }
 
       sessionXAMap.removeN(transaction);
