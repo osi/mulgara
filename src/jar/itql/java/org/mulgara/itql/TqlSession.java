@@ -108,6 +108,9 @@ public class TqlSession {
   /** A flag to indicate that an executed command was complete */
   private boolean incomplete = false;
 
+  /** The last command that was run. */
+  private String lastCommand = "";
+
   /**
    * Start an interactive TQL session from the command prompt.
    * @param args command line parameters
@@ -218,13 +221,22 @@ public class TqlSession {
     answers.clear();
     messages.clear();
 
-    // presume complete commands
+    boolean previouslyIncomplete = incomplete;
+
+    // presume ensuing commands are complete
     incomplete = false;
     for (String query: commandSplitter.split(command)) {
       // clear out empty commands
       if (incomplete) incomplete = false;
 
-      if (log.isDebugEnabled()) log.debug("Starting execution of command \"" + command + "\"");
+      // check if we need to follow on
+      if (previouslyIncomplete) {
+        query = lastCommand + query;
+        previouslyIncomplete = false;
+      }
+      lastCommand = query + " ";
+
+      if (log.isDebugEnabled()) log.debug("Starting execution of command \"" + query + "\"");
 
       // execute the command
       if (!autoTql.executeCommand(query)) {

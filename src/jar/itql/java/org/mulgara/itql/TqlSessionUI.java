@@ -100,9 +100,6 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
   /** Whether we are running a command still. */
   private volatile boolean runningCommand = false;
   
-  /** The last command that was run. */
-  private String lastCommand = "";
-
   /**
    * Create a new UI representation.
    * @param newItqlSession the itql session to call when we receive commands and
@@ -409,10 +406,6 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
     if (command.length() != 0) {
       // Put the command at the end of the array.
       history.add(command);
-
-      // check if we need to follow on
-      if (tqlSession.isCommandIncomplete()) command = lastCommand + command;
-      lastCommand = command + " ";
 
       command = command + NEWLINE;
 
