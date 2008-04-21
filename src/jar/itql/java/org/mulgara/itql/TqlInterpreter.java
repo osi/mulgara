@@ -191,6 +191,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
     // Reset the variable incrementer in the query.
     variableFactory.reset();
+    resetInterpreter();
 
     // log the iTQL command - system property itql.command.log must be set
 
@@ -215,7 +216,6 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
         commandTree = parser.parse();
 
         // Build the command. This populates lastCommand
-        resetInterpreter();
         commandTree.apply(this);
 
         if (logger.isDebugEnabled()) logger.debug("Successfully parsed command " + command);

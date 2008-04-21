@@ -59,7 +59,7 @@ public class TqlSession {
   public final static String PS1 = "TQL> ";
 
   /** The secondary prompt, indicating an incomplete command. */
-  public final static String PS2 = "      ";
+  public final static String PS2 = "---> ";
 
   /** The log4j configuration file path (within the JAR file) */
   private final static String LOG4J_CONFIG_PATH = "log4j-tql.xml";
@@ -104,7 +104,9 @@ public class TqlSession {
 
   /** A functor for splitting commands apart. */
   private CommandSplitter commandSplitter = null;
-
+  
+  /** A flag to indicate that an executed command was complete */
+  private boolean incomplete = false;
 
   /**
    * Start an interactive TQL session from the command prompt.
@@ -197,6 +199,16 @@ public class TqlSession {
 
 
   /**
+   * Indicates if the last issued command was complete. If not, then a semicolon was not found
+   * to terminate the command.
+   * @return <code>false</code> only if the last command was complete. <code>true</code> if it completed.
+   */
+  boolean isCommandIncomplete() {
+    return incomplete;
+  }
+
+
+  /**
    * Executes a series of commands the given command.  Accumulates all the
    * results of these commands into the answers and messages lists.
    * @param command The command to execute
@@ -206,7 +218,11 @@ public class TqlSession {
     answers.clear();
     messages.clear();
 
+    // presume complete commands
+    incomplete = false;
     for (String query: commandSplitter.split(command)) {
+      // clear out empty commands
+      if (incomplete) incomplete = false;
 
       if (log.isDebugEnabled()) log.debug("Starting execution of command \"" + command + "\"");
 
@@ -215,6 +231,13 @@ public class TqlSession {
         close();
         return;
       }
+      
+      String msg = autoTql.getLastMessage();
+      if (msg == null) {
+        if (log.isDebugEnabled()) log.debug("Need to follow on for an incomplete command.");
+        incomplete = true;
+        continue;
+      }
 
       if (log.isDebugEnabled()) log.debug("Completed execution of commmand \"" + command + "\"");
 
@@ -222,7 +245,7 @@ public class TqlSession {
       if (e != null) log.warn("Couldn't execute command", e);
 
       // Add the message and answer
-      messages.add(autoTql.getLastMessage());
+      messages.add(msg);
 
       Answer answer = autoTql.getLastAnswer();
       if (answer != null) answers.add(answer);

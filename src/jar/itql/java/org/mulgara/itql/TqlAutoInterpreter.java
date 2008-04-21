@@ -104,7 +104,7 @@ public class TqlAutoInterpreter {
       return true;
     }
     if (cmd == null) {
-      lastMessage = "";
+      lastMessage = null;
       return true;
     }
 
@@ -119,6 +119,8 @@ public class TqlAutoInterpreter {
       lastException = e;
       lastMessage = "Error: " + e.getMessage();
     }
+
+    assert lastMessage != null;
 
     // test if the command wants the user to quit - return false if it does
     return !(cmd.isLocalOperation() && ((LocalCommand)cmd).isQuitCommand());

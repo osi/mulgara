@@ -99,6 +99,9 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
 
   /** Whether we are running a command still. */
   private volatile boolean runningCommand = false;
+  
+  /** The last command that was run. */
+  private String lastCommand = "";
 
   /**
    * Create a new UI representation.
@@ -303,7 +306,7 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
         }
 
         // Handle back space - don't let it go too far back.
-        if (e.paramString().indexOf("Backspace") != -1) {
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.paramString().indexOf("Backspace") != -1) {
 
           if (text.getCaretPosition() <= cursorPosition) {
 
@@ -406,6 +409,11 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
     if (command.length() != 0) {
       // Put the command at the end of the array.
       history.add(command);
+
+      // check if we need to follow on
+      if (tqlSession.isCommandIncomplete()) command = lastCommand + command;
+      lastCommand = command + " ";
+
       command = command + NEWLINE;
 
       // If the array gets too large remove the last entry.
@@ -427,7 +435,7 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
    * Prints out the prompt.
    */
   public void printPrompt() {
-    print(NEWLINE + TqlSession.PROMPT);
+    print(NEWLINE + (tqlSession.isCommandIncomplete() ? TqlSession.PS2 : TqlSession.PROMPT));
     historyIndex = 0;
     text.repaint();
   }
