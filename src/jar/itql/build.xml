@@ -107,7 +107,7 @@
   </target>
 
   <target name="itql-dist"
-          depends="itql-uptodate, itql-jar, server-beep-jar, server-rmi-jar"
+          depends="itql-uptodate, itql-jar, server-beep-jar, server-rmi-jar, sparql-int-jar"
           unless="itql.uptodate"
           description="Performs all tasks related to finalising this itql and readying it for distribution">
 
@@ -131,6 +131,7 @@
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${util.dist.dir}/${util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${sparql-int.dist.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/beepcore-0.9.08.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/concurrent-1.3.4.jar" excludes="META-INF/**"/>
@@ -143,6 +144,7 @@
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${mulgara-sparql.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
 
@@ -154,6 +156,7 @@
       <srcfiles dir="${itql.dist.dir}" includes="${itql.jar}"/>
       <srcfiles dir="${driver.dist.dir}" includes="${driver.jar}"/>
       <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
+      <srcfiles dir="${sparql-int.dist.dir}" includes="${query.jar}"/>
       <srcfiles dir="${server-beep.dist.dir}" includes="${server-beep.jar}"/>
       <srcfiles dir="${server-rmi.dist.dir}" includes="${server-rmi.jar}"/>
       <srcfiles dir="${util.dist.dir}" includes="${util.jar}"/>

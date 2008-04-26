@@ -54,6 +54,7 @@ import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.*;
+import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.ConstraintModelRewrite;
@@ -70,13 +71,12 @@ import org.mulgara.util.NVPair;
  * @created 2007-11-09
  * @author <a href="mailto:andrae@netymon.com">Andrae Muys</a>
  * @company <a href="http://www.netymon.com">Netymon Pty Ltd</a>
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 class DefaultConstraintHandlers
 {
   /** Logger.  */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(DefaultConstraintHandlers.class.getName());
 
   static void initializeHandlers() {
@@ -87,6 +87,7 @@ class DefaultConstraintHandlers
     initializeConstraintLocalizations();
   }
 
+  @SuppressWarnings("unchecked")
   static void initializeModelResolutionHandlers() {
     ConstraintOperations.addModelResolutionHandlers(new NVPair[]
       {
@@ -125,10 +126,17 @@ class DefaultConstraintHandlers
                                 Constraint constraint) throws Exception {
             return context.resolve((ModelResource)modelExpr, (Constraint)constraint);
           }
+        }),
+        new NVPair(ModelVariable.class, new ModelResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
+                                Constraint constraint) throws Exception {
+            return context.resolve(null, ConstraintOperations.rewriteConstraintModel(((ModelVariable)modelExpr).getVariable(), constraint));
+          }
         })
       });
   }
 
+  @SuppressWarnings("unchecked")
   static void initializeConstraintResolutionHandlers() {
     ConstraintOperations.addConstraintResolutionHandlers(new NVPair[]
       {
@@ -172,6 +180,20 @@ class DefaultConstraintHandlers
             }
           }
         }),
+        new NVPair(ConstraintOptionalJoin.class, new ConstraintResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+            List<Tuples> args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
+            LinkedList<Tuples> stackedArgs;
+            // we know this is a linked list, but test just in case it is ever changed.
+            if (args instanceof LinkedList) stackedArgs = (LinkedList<Tuples>)args;
+            else stackedArgs = new LinkedList<Tuples>(args);
+            try {
+              return TuplesOperations.optionalJoin(stackedArgs);
+            } finally {
+              for (Tuples t: stackedArgs) t.close();
+            }
+          }
+        }),
         new NVPair(ConstraintIs.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             ConstraintIs constraint = (ConstraintIs)constraintExpr;
@@ -186,14 +208,11 @@ class DefaultConstraintHandlers
             assert constraintElem != null;
             if (constraintElem.equals(Variable.FROM)) {
               return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
-            }
-            else if (constraintElem instanceof URIReference) {
+            } else if (constraintElem instanceof URIReference) {
               return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), (Constraint)constraintExpr);
-            }
-            else if (constraintElem instanceof LocalNode) {
+            } else if (constraintElem instanceof LocalNode) {
               return context.resolve(null, (ConstraintImpl)constraintExpr);
-            }
-            else if (constraintElem instanceof Variable) {
+            } else if (constraintElem instanceof Variable) {
               return context.resolve(null, (ConstraintImpl)constraintExpr);
             }
             else {
@@ -201,22 +220,6 @@ class DefaultConstraintHandlers
             }
           }
         }),
-/*
-        new NVPair(ConstraintNegation.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            if (((ConstraintNegation)constraintExpr).getModel().equals(Variable.FROM)) {
-              return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
-            } else {
-              ConstraintElement constraintElem = ((ConstraintNegation)constraintExpr).getElement(3);
-              if (constraintElem instanceof URIReference) {
-                return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), (Constraint)constraintExpr);
-              } else {
-                throw new QueryException("Specified model not a URIReference: " + constraintElem +" is a " + constraintElem.getClass().getName() );
-              }
-            }
-          }
-        }),
-*/
         new NVPair(WalkConstraint.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             return WalkFunction.walk(context, (WalkConstraint)constraintExpr, modelExpr, context.getResolverSession());
@@ -237,9 +240,33 @@ class DefaultConstraintHandlers
             return ExhaustiveTransitiveFunction.infer(context, (TransitiveConstraint)constraintExpr, modelExpr, context.getResolverSession());
           }
         }),
+        new NVPair(ConstraintFilter.class, new ConstraintResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+            Tuples unfiltered = ConstraintOperations.resolveConstraintExpression(context, modelExpr, ((ConstraintFilter)constraintExpr).getUnfilteredConstraint());
+            try {
+              return TuplesOperations.filter(unfiltered, ((ConstraintFilter)constraintExpr).getFilter(), context);
+            } finally {
+              unfiltered.close();
+            }
+          }
+        }),
+        new NVPair(ConstraintIn.class, new ConstraintResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+            ConstraintIn constraint = (ConstraintIn)constraintExpr;
+            ModelExpression graph;
+            if (constraint.getGraph() instanceof URIReferenceImpl) {
+              graph = new ModelResource(((URIReferenceImpl)constraint.getGraph()).getURI());
+            } else {
+              assert constraint.getGraph() instanceof Variable;
+              graph = new ModelVariable((Variable)constraint.getGraph());
+            }
+            return ConstraintOperations.resolveConstraintExpression(context, graph, constraint.getConstraintParam());
+          }
+        }),
       });
   }
 
+  @SuppressWarnings("unchecked")
   static void initializeConstraintBindingHandlers() {
     ConstraintOperations.addConstraintBindingHandlers(new NVPair[]
       {
@@ -282,13 +309,11 @@ class DefaultConstraintHandlers
                                       ConstraintOperations.replace(bindings, wc.getUnanchoredConstraint()));
           }
         }),
-/*
-        new NVPair(ConstraintNegation.class, new ConstraintBindingHandler() {
+        new NVPair(ConstraintFilter.class, new ConstraintBindingHandler() {
           public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
-            return new ConstraintNegation(ConstraintOperations.replace(bindings, (Constraint)constraintExpr));
+            return new ConstraintFilter(ConstraintOperations.replace(bindings, (Constraint)constraintExpr), ((ConstraintFilter)constraintExpr).getFilter());
           }
         }),
-*/
         new NVPair(ConstraintConjunction.class, new ConstraintBindingHandler() {
           public ConstraintExpression bindVariables(Map bindings, ConstraintExpression constraintExpr) throws Exception {
             return new ConstraintConjunction(ConstraintOperations.replaceOperationArgs(bindings, (ConstraintOperation)constraintExpr));
@@ -308,6 +333,7 @@ class DefaultConstraintHandlers
       });
   }
 
+  @SuppressWarnings("unchecked")
   static void initializeConstraintModelRewrites() {
     ConstraintOperations.addConstraintModelRewrites(new NVPair[]
       {
@@ -316,16 +342,10 @@ class DefaultConstraintHandlers
             return new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel);
           }
         }),
-/*
-        new NVPair(ConstraintNegation.class, new ConstraintModelRewrite() {
-          public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
-            return new ConstraintNegation(new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel));
-          }
-        }),
-*/
       });
   }
 
+  @SuppressWarnings("unchecked")
   static void initializeConstraintLocalizations() {
     ConstraintOperations.addConstraintLocalizations(new NVPair[]
       {
@@ -337,17 +357,6 @@ class DefaultConstraintHandlers
                 context.localize(constraint.getElement(3)));
           }
         }),
-/*
-        new NVPair(ConstraintNegation.class, new ConstraintLocalization() {
-          public Constraint localize(QueryEvaluationContext context, Constraint constraint) throws Exception {
-            return new ConstraintNegation(new ConstraintImpl(
-                context.localize(constraint.getElement(0)),
-                context.localize(constraint.getElement(1)),
-                context.localize(constraint.getElement(2)),
-                context.localize(constraint.getElement(3))));
-          }
-        }),
-*/
       });
   }
 }

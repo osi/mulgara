@@ -148,7 +148,7 @@ public class ConstraintOperations
       if (op == null) {
         throw new QueryException("Unknown ModelExpression type: " + modelExpr.getClass() + " known types: " + modelResolutionHandlers.keySet());
       }
-        Tuples result = op.resolve(context, modelExpr, constraint);
+      Tuples result = op.resolve(context, modelExpr, constraint);
 
       if (logger.isDebugEnabled()) {
         logger.debug("Resolved " + constraint + " against ModelExpression[" + modelExpr.getClass() + "] to: " + result);

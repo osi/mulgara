@@ -33,7 +33,7 @@ public abstract class CommandExecutor implements Connection {
    * @see org.mulgara.connection.Connection#execute(org.mulgara.query.operation.Command)
    */
   public String execute(Command cmd) throws Exception {
-    return (String)cmd.execute(this);
+    return cmd.execute(this).toString();
   }
 
   /**

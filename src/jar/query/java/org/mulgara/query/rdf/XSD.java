@@ -31,7 +31,6 @@ package org.mulgara.query.rdf;
 import java.net.URI;
 import java.util.Date;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 // Date utils
@@ -85,6 +84,11 @@ public abstract class XSD {
    * URI for the XML Schema <code>xsd:decimal</code> datatype.
    */
   public final static URI DECIMAL_URI = URI.create(NAMESPACE + "decimal");
+
+  /**
+   * URI for the XML Schema <code>xsd:decimal</code> datatype.
+   */
+  public final static URI INT_URI = URI.create(NAMESPACE + "int");
 
   /**
    * URI for the XML Schema <code>xsd:float</code> datatype;

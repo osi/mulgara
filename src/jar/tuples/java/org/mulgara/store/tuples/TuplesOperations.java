@@ -37,6 +37,7 @@ import org.apache.log4j.*;
 
 // Local packages
 import org.mulgara.query.*;
+import org.mulgara.query.filter.Filter;
 import org.mulgara.resolver.spi.*;
 
 /**
@@ -281,7 +282,7 @@ public abstract class TuplesOperations {
   /**
    * This is approximately a subtraction.  The subtrahend is matched against the minuend in the same
    * way as a conjunction, and the matching lines removed from the minuend.  The remaining lines in
-   * the minuend are the result.
+   * the minuend are the result. Parameters are not closed during this operation.
    * @param minuend The tuples to subtract from.
    * @param subtrahend The tuples to match against the minuend for removal.
    * @return The contents from the minuend, excluding those rows which match against the subtrahend.
@@ -334,11 +335,90 @@ public abstract class TuplesOperations {
       logger.warn("RuntimeException thrown in subtraction", re);
       throw re;
     } catch (TuplesException te) {
-      logger.warn("TuplesException thrown in substraction", te);
+      logger.warn("TuplesException thrown in subtraction", te);
       throw te;
     }
   }
 
+  /**
+   * Does a left-associative optionalJoin along a list of arguments.
+   * @param args The arguments to operate on.
+   * @return A tuples containing all of the entries from args.get(0) and matching
+   *   entries from the remainder of the list. All variables from the entire list
+   *   will be present in the result.
+   * @throws TuplesException On error accessing elements in any argument.
+   */
+  public static Tuples optionalJoin(LinkedList<Tuples> args) throws TuplesException {
+    // check for termination. The first couple are for <NIL> syntax elements in the query
+    if (args.size() == 0) return empty();
+    if (args.size() == 1) return args.get(0);
+    if (args.size() == 2) return optionalJoin(args.get(0), args.get(1));
+    // join the head of the list, and then iterate
+    args.addFirst(optionalJoin(args.removeFirst(), args.removeFirst()));
+    return optionalJoin(args);
+  }
+
+  /**
+   * Does a left-outer-join between two tuples. Parameters are not closed during this
+   * operation.
+   * @param standard The standard pattern that appears in all results.
+   * @param optional The optional pattern that may or may not be bound in each result
+   * @return A Tuples containing variables from both parameters. All variables from
+   *   <em>standard</em> will be bound at all times. Variables from <em>optional</em>
+   *   may or may not be bound.
+   */
+  public static Tuples optionalJoin(Tuples standard, Tuples optional) throws TuplesException {
+    try {
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("optional join of " + standard + " optional { " + optional + " }");
+      }
+      // get the matching columns
+      Set<Variable> matchingVars = getMatchingVars(standard, optional);
+      // check for empty parameters
+      if (standard.getRowCardinality() == Cursor.ZERO) {
+        logger.debug("Nothing to the left of an optional");
+        return (Tuples)standard.clone();
+      }
+      if (optional.getRowCardinality() == Cursor.ZERO) {
+        // need to return standard, projected out to the extra variables
+        if (optional.getNumberOfVariables() == 0) {
+          logger.warn("Lost variables on empty optional");
+          // TODO: This may be a problem. Throw an exception? A fix may require variables
+          // to be attached to empty tuples
+          return (Tuples)standard.clone();
+        }
+      }
+
+      // check if there are variables which should not be considered when sorting
+      if (!checkForExtraVariables(optional, matchingVars)) {
+        // there were no extra variables in the optional
+        logger.debug("All variables needed");
+        // if all variables match, then this is an inner join
+        return join(standard, optional);
+      }
+
+      // yes, there are extra variables
+      logger.debug("sorting on the common variables");
+      // re-sort the optional according to the matching variables
+      // reorder the optional as necessary
+      Tuples sortedOptional = reSort(optional, new ArrayList<Variable>(matchingVars));
+
+      // return the difference
+      try {
+        return new LeftJoin(standard, sortedOptional);
+      } finally {
+        if (sortedOptional != optional) sortedOptional.close();
+      }
+
+    } catch (RuntimeException re) {
+      logger.warn("RuntimeException thrown in optional", re);
+      throw re;
+    } catch (TuplesException te) {
+      logger.warn("TuplesException thrown in optional", te);
+      throw te;
+    }
+  }
 
   /**
    * Flattens any nested joins to allow polyadic join operations.
@@ -741,6 +821,21 @@ public abstract class TuplesOperations {
 
 
   /**
+   * Filter a Tuples according to a {@link org.mulgara.query.filter.Filter} test.
+   * @param tuples The Tuples to be filtered.
+   * @param filter The Filter to apply to the tuples.
+   * @param context The context in which the Filter is to be resolved. This can go beyond
+   *        what has already been determined for the tuples parameter.
+   * @return A new Tuples which is a subset of the provided Tuples.
+   * @throws IllegalArgumentException If tuples is <code>null</code>
+   */
+  public static Tuples filter(Tuples tuples, Filter filter, QueryEvaluationContext context) {
+    // The incoming context needs to be updated for the tuples, so that clones are not inadvertantly used
+    return new FilteredTuples(tuples, filter, context);
+  }
+
+
+  /**
    * Sort into default order, based on the columns and local node numbers.
    *
    * @param tuples the tuples to sort
@@ -798,6 +893,76 @@ public abstract class TuplesOperations {
       return (Tuples) tuples.clone();
     }
   }
+
+  /**
+   * Sort into an order given by the list of variables
+   *
+   * @param tuples The parameter to sort. This will be closed if a new tuples is created.
+   * @param variableList the list of {@link Variable}s to sort by
+   * @return A {@link Tuples} that meets the sort criteria. This may be the original tuples parameter.
+   * @throws TuplesException if the sort operation fails
+   */
+  public static Tuples reSort(Tuples tuples, List<Variable> variableList) throws TuplesException {
+    try {
+      // if there is nothing to sort on, then tuples meets the criteria
+      if ((variableList == null) || (variableList.size() == 0)) return tuples;
+
+      // if there is nothing to sort, then just return that nothing
+      if (tuples.isUnconstrained()) {
+        if (logger.isDebugEnabled()) logger.debug("Returning Unconstrained Tuples.");
+        return TuplesOperations.unconstrained();
+      } else if (tuples.getRowCardinality() == Cursor.ZERO) {
+        return empty();
+      }
+
+      // initialise the mapping of column names to tuples columns.
+      int[] varMap = new int[variableList.size()];
+
+      boolean sortNeeded = false;
+      // iterate over the variables to do the mapping
+      for (int varCol = 0; varCol < variableList.size(); varCol++) {
+        Variable var = variableList.get(varCol);
+        // get the index of the variable in the tuples
+        int ti = tuples.getColumnIndex(var);
+        if (ti == Tuples.UNBOUND) throw new IllegalArgumentException("Variables to sort by not found in Tuples");
+        // check that it is within the prefix columns. If not, then sorting is needed
+        if (ti >= varMap.length) sortNeeded = true;
+        // map the tuples index of the variable to the column index
+        varMap[varCol++] = ti;
+      }
+
+      if (!sortNeeded) {
+        if (logger.isDebugEnabled()) logger.debug("No sort needed on tuples.");
+        return tuples;
+      }
+      
+      if (logger.isDebugEnabled()) logger.debug("Sorting on " + variableList);
+
+      // append the remaining variables to the list of variables to sort on
+      List<Variable> fullVarList = new ArrayList<Variable>(variableList);
+      for (Variable v: tuples.getVariables()) {
+        if (!variableList.contains(v)) fullVarList.add(v);
+      }
+      assert fullVarList.containsAll(Arrays.asList(tuples.getVariables()));
+
+      // Reorder the columns - the projection here does not remove any columns
+      Tuples oldTuples = tuples;
+      tuples = new UnorderedProjection(tuples, fullVarList);
+      assert tuples != oldTuples;
+      oldTuples.close();
+
+      // Perform the actual sort
+      oldTuples = tuples;
+      tuples = tuplesFactory.newTuples(tuples);
+      assert tuples != oldTuples;
+      oldTuples.close();
+
+      return tuples;
+    } catch (TuplesException e) {
+      throw new TuplesException("Couldn't perform projection", e);
+    }
+  }
+
 
   /**
    * Truncate a tuples to have no more than a specified number of rows. This

@@ -1,35 +1,19 @@
 /*
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
+ * The contents of this file are subject to the Open Software License
+ * Version 3.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * http://www.opensource.org/licenses/osl-3.0.txt
  *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
  * the License for the specific language governing rights and limitations
  * under the License.
- *
- * The Original Code is the Kowari Metadata Store.
- *
- * The Initial Developer of the Original Code is Plugged In Software Pty
- * Ltd (http://www.pisoftware.com, mailto:info@pisoftware.com). Portions
- * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
- * Plugged In Software Pty Ltd. All Rights Reserved.
- *
- * Contributor(s): N/A.
- *
- * [NOTE: The text of this Exhibit A may differ slightly from the text
- * of the notices in the Source Code files of the Original Code. You
- * should use the text of this Exhibit A rather than the text found in the
- * Original Code Source Code for Your Modifications.]
- *
  */
 
 package org.mulgara.store.tuples;
 
 // Java 2 standard packages
 import java.util.*;
-import java.math.BigInteger;
 
 // Third party packages
 import org.apache.log4j.*;
@@ -53,22 +37,14 @@ import org.mulgara.store.tuples.AbstractTuples;
  * ensuring the sort order of the subtrahend; that responsibility falls to
  * {@link TuplesOperations#subtract}.
  *
- * @created 2003-09-01
- *
+ * @created 2005-03
  * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
- *
- * @version $Revision: 1.2 $
- *
- * @modified $Date: 2005/05/02 20:08:00 $
- *
- * @maintenanceAuthor $Author: raboczi $
- *
- * @copyright &copy; 2005 <A href="mailto:pgearon@users.sourceforge.net">Paul Gearon</A>
- *
- * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ * @copyright &copy; 2008 <A href="http://www.topazproject.org/">The Topaz Project</A>
+ * @licence <a href="{@docRoot}/../../LICENCE">Open Software License v3.0</a>
  */
 public class Difference extends AbstractTuples {
 
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(Difference.class.getName());
 
   /** The set of tuples to subtract from. */
@@ -78,7 +54,7 @@ public class Difference extends AbstractTuples {
   protected Tuples subtrahend;
 
   /** The set of variables common to both the minuend and the subtrahend. */
-  protected Set commonVars;
+  protected Set<Variable> commonVars;
 
   /** An array of the matching variables' columns within the minuend, indexed by the subtrahend position. */
   protected int[] varMap;
@@ -91,13 +67,14 @@ public class Difference extends AbstractTuples {
    * @throws IllegalArgumentException If the <var>minuend</var> and  <var>subtrahend</var>
    *         contain no variables in common.
    */
+  @SuppressWarnings("unchecked")
   Difference(Tuples minuend, Tuples subtrahend) throws TuplesException, IllegalArgumentException {
     // store the operands
     this.minuend = (Tuples)minuend.clone();
     this.subtrahend = (Tuples)subtrahend.clone();
 
-    // get the variables to subtract with
-    commonVars = Collections.unmodifiableSet(TuplesOperations.getMatchingVars(minuend, subtrahend));
+    // get the variables to subtract with. TODO: get the correct type back from getMatchingVars
+    commonVars = Collections.unmodifiableSet((Set<Variable>)TuplesOperations.getMatchingVars(minuend, subtrahend));
 
     if (commonVars.isEmpty()) {
       throw new IllegalArgumentException("tuples must have variables in common for subtraction to occur");
@@ -106,9 +83,7 @@ public class Difference extends AbstractTuples {
     // initialise the mapping of minuend columns to subtrahend columns
     varMap = new int[commonVars.size()];
     // iterate over the variables to do the mapping
-    Iterator iVar = commonVars.iterator();
-    while (iVar.hasNext()) {
-      Variable var = (Variable)iVar.next();
+    for (Variable var: commonVars) {
       // get the index of the variable in the subtrahend
       int si = subtrahend.getColumnIndex(var);
       // check that it is within the prefix columns. If not, then the subtrahend is not properly sorted.
@@ -206,7 +181,7 @@ public class Difference extends AbstractTuples {
   /**
    * {@inheritDoc}
    */
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.unmodifiableList(Arrays.asList(new Tuples[] {minuend, subtrahend}));
   }
 

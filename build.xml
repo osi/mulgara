@@ -56,6 +56,7 @@
   <property file="${jar.src.dir}/krule/krule-build.properties"/>
   <property file="${jar.src.dir}/rules/rules-build.properties"/>
   <property file="${jar.src.dir}/sparql-protocol/sparql-protocol-build.properties"/>
+  <property file="${jar.src.dir}/sparql-interpreter/sparql-interpreter-build.properties"/>
   <property file="${jar.src.dir}/store/store-build.properties"/>
   <property file="${jar.src.dir}/store-xa/store-xa-build.properties"/>
   <property file="${jar.src.dir}/store-nodepool/store-nodepool-build.properties"/>
@@ -125,6 +126,7 @@
   <import file="${jar.src.dir}/krule/build.xml"/>
   <import file="${jar.src.dir}/rules/build.xml"/>
   <import file="${jar.src.dir}/sparql-protocol/build.xml"/>
+  <import file="${jar.src.dir}/sparql-interpreter/build.xml"/>
   <import file="${jar.src.dir}/store/build.xml"/>
   <import file="${jar.src.dir}/store-xa/build.xml"/>
   <import file="${jar.src.dir}/store-nodepool/build.xml"/>
@@ -322,7 +324,7 @@
                    resolver-url-dist, resolver-view-dist, resolver-xsd-dist,
                    resolver-jar-dist, resolver-test-dist,
                    server-dist, server-beep-dist, server-http-dist, server-local-dist,
-                   server-rmi-dist, sofa-dist, krule-dist, rules-dist,
+                   server-rmi-dist, sofa-dist, sparql-int-dist, krule-dist, rules-dist,
                    store-stringpool-dist, store-stringpool-memory-dist,
                    store-stringpool-xa-dist, tag-dist,
                    tuples-dist, tuples-hybrid-dist,
@@ -469,7 +471,8 @@
 
       <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="
-          lib/${query.jar}, lib/${driver.jar}, lib/${itql.jar}, lib/${rmi.jar},
+          lib/${query.jar}, lib/${driver.jar}, lib/${itql.jar}, lib/${sparql-int.jar},
+          lib/${rmi.jar},
           lib/${server.jar}, lib/${server-beep.jar}, lib/${server-rmi.jar},
           lib/${util.jar}, lib/${config.jar}, lib/${descriptor.jar}, lib/${server-local.jar},
           lib/${resolver.jar}, lib/${resolver-spi.jar}, lib/${resolver-filesystem.jar},
@@ -491,7 +494,7 @@
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
-          lib/${httpclient.jar}, lib/${commons-codec.jar}"/>
+          lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${mulgara-sparql.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
@@ -500,7 +503,7 @@
   <!-- Creates the lite distribution file for the Embedded Mulgara server   -->
   <!-- =================================================================== -->
   <target name="lite-dist"
-          depends="driver-jar, itql-jar, query-jar, rmi-jar,
+          depends="driver-jar, itql-jar, sparql-int-jar, rules-jar, query-jar, rmi-jar,
                    server-jar, server-local-jar, server-beep-jar,
                    server-rmi-jar, util-jar, config-jar, dtd-jar, jrdf-jar, ant-task-jar,
                    store-dist, store-xa-dist, store-nodepool-dist,
@@ -545,7 +548,7 @@
         ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
         ${date-utils.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
-        ${commons-codec.jar}, ${emory-util.jar},
+        ${commons-codec.jar}, ${emory-util.jar}, ${mulgara-sparql.jar}
         ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
         ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
         ${axis.jar}, ${commons-discovery.jar}, ${jaxrpc.jar}, ${wsdl4j.jar},
@@ -554,7 +557,8 @@
                        ${axis.jar}, ${commons-discovery.jar},
                        ${jaxrpc.jar}, ${wsdl4j.jar}"/>
       <zipfileset dir="${bin.dir}" prefix="lib" includes="
-        ${query.jar}, ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
+          ${query.jar}, ${driver.jar}, ${itql.jar}, ${sparql-int.jar},
+          ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}, ${server-local.jar},
           ${resolver.jar}, ${resolver-spi.jar}, ${resolver-filesystem.jar},
@@ -728,7 +732,8 @@
              ant-task-jar, client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar,
              content-n3-jar, content-rdfxml-jar, content-rio-jar,
-             doclet.jar, itql-jar, jrdf-jar, store-jar,
+             itql-jar, sparql-int-jar,
+             doclet.jar, jrdf-jar, store-jar,
              store-xa-jar,
              store-nodepool-jar, store-nodepool-memory-jar,
              store-nodepool-xa-jar, query-jar,
@@ -738,7 +743,8 @@
              resolver-url-jar, resolver-view-jar, resolver-xsd-jar,
              resolver-test-jar,
              server-jar, server-beep-jar, server-rmi-jar,
-             sofa-jar, krule-jar, rules-jar, sparql-protocol-jar, store-stringpool-jar,
+             sofa-jar, krule-jar, rules-jar, sparql-protocol-jar,
+             store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar,
              tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war"
     unless="javadoc-uptodate"
@@ -810,8 +816,6 @@
       <classpath path="${lib.dir}/${jid3.jar}"/>
       <classpath path="${lib.dir}/jsr173_07_api.jar"/>
       <classpath path="${lib.dir}/${lucene.jar}"/>
-      <classpath path="${lib.dir}/krule-1.0-alpha.jar"/>
-      <classpath path="${lib.dir}/rules-1.0-alpha.jar"/>
       <classpath path="${lib.dir}/${sofa.jar}"/>
       <classpath path="${lib.dir}/xmlc-all-runtime-2.2.jar"/>
       <classpath path="${lib.dir}/xom-1.0d21.jar"/>
@@ -847,6 +851,7 @@
       <sourcepath path="${server-rmi.src.dir}/java"/>
       <sourcepath path="${sofa.src.dir}/java"/>
       <sourcepath path="${sparql-protocol.src.dir}/java"/>
+      <sourcepath path="${sparql-int.src.dir}/java"/>
       <sourcepath path="${store.src.dir}/java"/>
       <sourcepath path="${store-xa.src.dir}/java"/>
       <sourcepath path="${store-nodepool.src.dir}/java"/>
@@ -888,7 +893,8 @@
                    content-mp3-javadoc, content-n3-javadoc,
                    content-rdfxml-javadoc, content-rio-javadoc,
                    descriptor-javadoc, driver-javadoc, dtd-javadoc,
-                   itql-javadoc, store-javadoc, store-xa-javadoc,
+                   itql-javadoc, sparql-int-javadoc,
+                   store-javadoc, store-xa-javadoc,
                    store-nodepool-javadoc,
                    store-nodepool-memory-javadoc, jrdf-javadoc,
                    store-nodepool-xa-javadoc, query-javadoc,
@@ -901,7 +907,8 @@
                    resolver-test-javadoc, resolver-javadoc, resolver-relational-javadoc,
                    server-beep-javadoc, server-http-javadoc,
                    server-local-javadoc, server-rmi-javadoc, server-javadoc,
-                   sofa-javadoc, rules-javadoc, krule-javadoc, store-stringpool-javadoc,
+                   sofa-javadoc, rules-javadoc, krule-javadoc,
+                   store-stringpool-javadoc,
                    store-stringpool-memory-javadoc, store-stringpool-xa-javadoc,
                    tag-javadoc, tuples-hybrid-javadoc, tuples-javadoc,
                    util-xa-javadoc, util-javadoc"
@@ -1370,7 +1377,7 @@
   <!-- =================================================================== -->
   <target name="mulgara-war"
       description="Builds the Mulgara Semantic Store (Mulgara) WAR"
-      depends="driver-jar, itql-jar, query-jar, rmi-jar, server-jar,
+      depends="driver-jar, itql-jar, sparql-int-jar, query-jar, rmi-jar, server-jar,
       server-beep-jar, server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
       set.host.name, mulgara.war-uptodate"
       unless="mulgara.war-uptodate">
@@ -1396,7 +1403,7 @@
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
           lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${date-utils.jar}, ${commons-logging.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
-        ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
+        ${driver.jar}, ${itql.jar}, ${sparql-int.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>
@@ -1410,6 +1417,7 @@
 
       <srcfiles dir="${bin.dir}" includes="${query.jar},
           ${driver.jar}, ${itql.jar}, ${rules.jar}, ${rmi.jar},
+          ${sparql-int.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}"/>
       <srcfiles dir="${dist.dir}" includes="expires.txt"/>
@@ -1685,7 +1693,8 @@
           depends="client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar, content-n3-jar,
              content-rdfxml-jar, content-rio-jar,
-             create-manifest, demo-jar, dtd-jar, driver-jar, dtd-jar, itql-jar,
+             create-manifest, demo-jar, dtd-jar, driver-jar, dtd-jar,
+             itql-jar, sparql-int-jar,
              javadoc-dist, jrdf-jar, store-jar, store-xa-jar,
              store-nodepool-jar,
              store-nodepool-memory-jar, store-nodepool-xa-jar,
@@ -1736,6 +1745,7 @@
       <zipfileset src="${lib.dir}/${jasper.compiler.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${mulgara-sparql.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-xml.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-codegen.jar}" excludes="META-INF/**"/>
@@ -1766,6 +1776,7 @@
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${itql.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-beep.jar}" excludes="META-INF/**"/>
@@ -1933,8 +1944,7 @@
   </target>
 
   <target name="utils-test"
-    depends="ant-task-test, dtd-test, sofa-test, rules-test, krule-test, tag-test, util-test,
-             util-xa-test"
+    depends="ant-task-test, dtd-test, sofa-test, rules-test, krule-test, tag-test, util-test, util-xa-test"
     description="Runs miscellaneous utility tests">
   </target>
 

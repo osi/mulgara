@@ -68,7 +68,7 @@ public class Rule implements Serializable {
   /** The rules to be triggered when this rule generates statements.*/
   private Set<Rule> triggerSet;
 
-  /** The query for this rule. */
+  /** The query for this rule. This contains the information for the base model. */
   private Query query;
 
   /** The graph receiving the inferred data. */
@@ -219,9 +219,7 @@ public class Rule implements Serializable {
    */
   private void scheduleTriggeredRules() {
   	Iterator<Rule> it = triggerSet.iterator();
-  	while (it.hasNext()) {
-  	  ruleStruct.schedule(it.next());
-  	}
+  	while (it.hasNext()) ruleStruct.schedule(it.next());
   }
 
 

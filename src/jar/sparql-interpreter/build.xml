@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project>
+
+<!-- =================================================================== -->
+<!--                       Project definition                            -->
+<!-- =================================================================== -->
+<project name="sparql-interpreter" default="sparql-int-jar" basedir="../../..">
+
+  <!-- =================================================================== -->
+  <!--                      Property Definitions                           -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                              Imports                                -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!--                          Path Definitions                           -->
+  <!-- =================================================================== -->
+  <path id="sparql-int-classpath">
+
+    <path refid="common-classpath"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
+  </path>
+
+  <path id="sparql-int-test-classpath">
+
+    <path refid="sparql-int-classpath"/>
+
+    <fileset file="${sparql-int.dist.dir}/${sparql-int.jar}"/>
+  </path>
+
+  <target name="sparql-int-clean"
+          description="Removes all compile generated files for the rules">
+
+    <tstamp/>
+
+    <delete dir="${sparql-int.obj.dir}"/>
+    <delete dir="${sparql-int.test.dir}"/>
+    <delete dir="${sparql-int.dist.dir}"/>
+  </target>
+
+  <target name="-sparql-int-prepare"
+          description="Creates all directories associated with the SPARQL interpreter compilation"
+          depends="-prepare-build">
+
+    <mkdir dir="${sparql-int.obj.dir}"/>
+    <mkdir dir="${sparql-int.test.dir}"/>
+    <mkdir dir="${sparql-int.dist.dir}"/>
+    <mkdir dir="${sparql-int.obj.dir}/classes"/>
+    <mkdir dir="${sparql-int.obj.dir}/classes/conf"/>
+    <mkdir dir="${sparql-int.obj.dir}/java"/>
+  </target>
+
+  <target name="-sparql-int-unjar-config"
+          depends="-sparql-int-unjar-config-uptodate"
+          unless="sparql-int.unjar.config.uptodate">
+
+    <unjar src="${bin.dir}/${config.jar}" dest="${sparql-int.obj.dir}/classes"/>
+  </target>
+
+  <target name="-sparql-int-unjar-config-uptodate">
+
+    <available file="${sparql-int.obj.dir}/classes/org/mulgara/config/MulgaraConfig.class"
+               property="sparql-int.unjar.config.uptodate"/>
+  </target>
+
+  <target name="sparql-int-compile"
+          depends="-sparql-int-prepare, util-jar, config-jar, -sparql-int-unjar-config"
+          description="Compiles all SPARQL interpreter related files"
+          unless="sparql-int.classes.uptodate">
+
+    <javac destdir="${sparql-int.obj.dir}/classes" debug="on"
+           deprecation="on" source="1.5">
+
+      <classpath refid="sparql-int-classpath"/>
+
+      <src path="${sparql-int.src.dir}/java"/>
+    </javac>
+
+  </target>
+
+  <target name="sparql-int-jar"
+          depends="sparql-int-compile, config-database, -sparql-int-jar-uptodate"
+          unless="sparql-int.jar.uptodate"
+          description="Creates the SPARQL interpreter's jar">
+
+    <jar jarfile="${sparql-int.dist.dir}/${sparql-int.jar}">
+
+      <fileset dir="${sparql-int.obj.dir}/classes"/>
+      <fileset dir="${sparql-int.obj.dir}/java" includes="**/*.dat"/>
+    </jar>
+  </target>
+
+  <target name="-sparql-int-jar-uptodate">
+
+    <uptodate property="sparql-int.jar.uptodate"
+              targetfile="${sparql-int.dist.dir}/${sparql-int.jar}">
+      <srcfiles dir="${sparql-int.obj.dir}" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <target name="sparql-int-dist"
+          depends="sparql-int-jar"
+          unless="sparql-int.uptodate"
+          description="Performs all tasks related to finalising this SPARQL Interpreter and readying it for distribution">
+
+    <!-- All that's involved in the final version of the rules library
+         is the jar so we don't need to do anything because the dependencies
+         take care of the work. -->
+  </target>
+
+  <target name="sparql-int-test"
+          depends="sparql-int-jar"
+          description="Carries out unit testing for this rules">
+
+    <antcall target="component-test">
+
+      <param name="classpath.id" value="sparql-int-test-classpath"/>
+      <param name="dir" value="${sparql-int.src.dir}"/>
+      <param name="jar" value="${sparql-int.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="sparql-int-javadoc"
+          depends="sparql-int-jar"
+          description="Creates the javadoc for this SPARQL Interpreter module">
+
+    <antcall target="javadoc">
+
+      <param name="javadoc.package" value="org.mulgara.sparql.*"/>
+      <param name="javadoc.classpath" value="sparql-int-classpath"/>
+      <param name="javadoc.sourcepath" value="${sparql-int.src.dir}/java"/>
+    </antcall>
+  </target>
+
+  <target name="sparql-int-help"
+          description="Displays the help information for this SPARQL Interpreter module">
+
+    <!-- This is similar to the main project's help except the information
+         is specific to this module -->
+
+    <echo message="Welcome to the build script for ${name}."/>
+    <echo message=""/>
+    <echo message="These targets can be invoked as follows:"/>
+    <echo message="  ./build.sh &lt;target&gt;"/>
+    <echo message=""/>
+
+    <java fork="false" classname="org.apache.tools.ant.Main" newenvironment="false">
+      <jvmarg value="${arch.bits}"/>
+      <arg line="-buildfile ${sparql-int.src.dir}/build.xml -projecthelp"/>
+    </java>
+
+  </target>
+</project>

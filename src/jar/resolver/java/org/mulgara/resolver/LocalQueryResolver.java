@@ -51,26 +51,19 @@ import java.util.*;
 // Third party packages
 import org.apache.log4j.Logger;
 import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.spi.ConstraintBindingHandler;
-import org.mulgara.resolver.spi.ConstraintLocalization;
-import org.mulgara.resolver.spi.ConstraintModelRewrite;
-import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
-import org.mulgara.resolver.spi.ModelResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.RestrictPredicateFactory;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
-import org.mulgara.util.NVPair;
 
 /**
  * Localized version of a global {@link Query}.
@@ -109,14 +102,13 @@ class LocalQueryResolver implements QueryEvaluationContext {
     this.resolverSession = resolverSession;
   }
 
-  public List resolveConstraintOperation(ModelExpression modelExpr,
+  public List<Tuples> resolveConstraintOperation(ModelExpression modelExpr,
                                          ConstraintOperation constraintOper)
-      throws QueryException
-  {
-    List result = new ArrayList();
-    Iterator i = constraintOper.getElements().iterator();
-    while (i.hasNext()) {
-      result.add(ConstraintOperations.resolveConstraintExpression(this, modelExpr, (ConstraintExpression)i.next()));
+      throws QueryException {
+
+    LinkedList<Tuples> result = new LinkedList<Tuples>();
+    for (ConstraintExpression constraintExpr: constraintOper.getElements()) {
+      result.add(ConstraintOperations.resolveConstraintExpression(this, modelExpr, constraintExpr));
     }
 
     return result;

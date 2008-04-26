@@ -152,7 +152,8 @@
                        jotm*.jar, commons-logging-*.jar, Quick4rt.jar,
                        commons-discovery-*.jar, commons-httpclient-*.jar,
                        commons-codec-*.jar, connector-*.jar, jaxrpc-*.jar,
-                       carol*.jar, howl-logger*.jar, ${date-utils.jar}"
+                       carol*.jar, howl-logger*.jar, ${date-utils.jar},
+                       mulgara-sparql*.jar"
              excludes="jboss-j2ee.jar"/>
   </path>
 
