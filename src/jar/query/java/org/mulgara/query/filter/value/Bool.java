@@ -15,6 +15,7 @@ import java.net.URI;
 
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
+import static org.mulgara.query.rdf.XSD.BOOLEAN_URI;
 
 /**
  * A boolean value.
@@ -30,10 +31,10 @@ public class Bool extends TypedLiteral {
   private static final long serialVersionUID = -1139308134744630943L;
 
   /** xsd:boolean */
-  public static final URI TYPE = URI.create(XSD_NS + "boolean");
+  public static final URI TYPE = BOOLEAN_URI;
 
   /** xsd:boolean as an IRI */
-  public static final IRI IRI_TYPE = new IRI(URI.create(XSD_NS + "boolean"));
+  public static final IRI IRI_TYPE = new IRI(BOOLEAN_URI);
 
   /** A single boolean value for true */
   public static final Bool TRUE = new Bool(Boolean.TRUE);

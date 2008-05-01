@@ -18,6 +18,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import static org.mulgara.query.rdf.XSD.DATE_TIME_URI;
+
 /**
  * A date value.
  *
@@ -32,7 +34,7 @@ public class DateTime extends TypedLiteral {
   private static final long serialVersionUID = 7517437419033492738L;
 
   /** xsd:dateTime */
-  public static final URI TYPE = URI.create(XSD_NS + "dateTime");
+  public static final URI TYPE = DATE_TIME_URI;
 
   /** Singleton reference to the datatype factory for date parsers */
   private static DatatypeFactory factory;

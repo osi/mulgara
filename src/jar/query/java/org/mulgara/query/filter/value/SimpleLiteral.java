@@ -15,6 +15,7 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
 import org.mulgara.query.filter.RDFTerm;
+import static org.mulgara.query.rdf.XSD.STRING_URI;
 
 
 /**
@@ -37,7 +38,7 @@ public class SimpleLiteral extends AbstractComparableLiteral {
   private SimpleLiteral lang = EMPTY;
 
   /** The type used for strings */
-  public static final IRI STRING_TYPE = new IRI(new TypedLiteral.XSDString().getTypeURI());
+  public static final IRI STRING_TYPE = new IRI(STRING_URI);
 
   /**
    * Creates the value to wrap the string
