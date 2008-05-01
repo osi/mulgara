@@ -146,7 +146,7 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
     return cmpFn.compare(left, right);
   }
 
-  /** Map of types to the functions used to compare those types */
+  /** Map of class types to the functions used to compare those types */
   protected static Map<Class<? extends Comparable<?>>,DataCompare> typeMap = new HashMap<Class<? extends Comparable<?>>,DataCompare>();
 
   static {
