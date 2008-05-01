@@ -63,7 +63,7 @@ public interface SPTypedLiteralFactory {
    * Returns a Set containing the type URIs of all primitive and built-in
    * derrived types supported by this datatype handler.
    */
-  public Set getTypeURIs();
+  public Set<URI> getTypeURIs();
 
   public SPTypedLiteral newSPTypedLiteral(URI typeURI, String lexicalForm);
   public SPTypedLiteral newSPTypedLiteral(int subtypeId, ByteBuffer data);
