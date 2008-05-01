@@ -11,12 +11,11 @@
  */
 package org.mulgara.query.filter;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
-
 import java.net.URI;
 
 import org.mulgara.query.filter.value.Bool;
 import org.mulgara.query.filter.value.SimpleLiteral;
+import static org.mulgara.query.rdf.XSD.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -32,8 +31,8 @@ import junit.framework.TestSuite;
  */
 public abstract class AbstractLogicUnitTest extends TestCase {
 
-  protected URI xsdInt = URI.create(XSD_NS + "int");
-  protected URI xsdBool = URI.create(XSD_NS + "boolean");
+  protected URI xsdInt = INT_URI;
+  protected URI xsdBool = BOOLEAN_URI;
 
   public AbstractLogicUnitTest(String name) {
     super(name);

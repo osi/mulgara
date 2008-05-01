@@ -17,7 +17,7 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.TestContext;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
+import static org.mulgara.query.rdf.XSD.NAMESPACE;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -58,7 +58,7 @@ public class TypedLiteralUnitTest extends TestCase {
 
   public void testValues() throws Exception {
     String str = "test";
-    TypedLiteral l = (TypedLiteral)TypedLiteral.newLiteral(str, URI.create(XSD_NS + "string"), null);
+    TypedLiteral l = (TypedLiteral)TypedLiteral.newLiteral(str, URI.create(NAMESPACE + "string"), null);
     assertEquals(str, l.getValue());
 
     l = (TypedLiteral)TypedLiteral.newLiteral(str);
@@ -75,7 +75,7 @@ public class TypedLiteralUnitTest extends TestCase {
 
   public void testFilter() throws Exception {
     Context c = new TestContext();
-    TypedLiteral l = (TypedLiteral)TypedLiteral.newLiteral("test", URI.create(XSD_NS + "string"), null);
+    TypedLiteral l = (TypedLiteral)TypedLiteral.newLiteral("test", URI.create(NAMESPACE + "string"), null);
     assertTrue(l.test(c));
 
     l = (TypedLiteral)TypedLiteral.newLiteral("test");
@@ -99,7 +99,7 @@ public class TypedLiteralUnitTest extends TestCase {
 
   public void testType() throws Exception {
     String str = "test";
-    URI t = URI.create(XSD_NS + "string");
+    URI t = URI.create(NAMESPACE + "string");
     TypedLiteral l = (TypedLiteral) TypedLiteral.newLiteral(str, t, null);
     assertTrue(l.getType().isIRI());
     assertEquals(t, l.getType().getValue());
@@ -108,17 +108,17 @@ public class TypedLiteralUnitTest extends TestCase {
     assertEquals(t, l.getType().getValue());
 
     String s2 = "foobar";
-    URI t2 = URI.create(XSD_NS + "foo:bar");
+    URI t2 = URI.create(NAMESPACE + "foo:bar");
     l = (TypedLiteral)TypedLiteral.newLiteral(s2, t2, null);
     assertEquals(t2, l.getType().getValue());
 
     Long v = Long.valueOf(5);
     l = (TypedLiteral)TypedLiteral.newLiteral(v);
-    assertEquals(URI.create(XSD_NS + "long"), l.getType().getValue());
+    assertEquals(URI.create(NAMESPACE + "long"), l.getType().getValue());
   }
 
   public void testProperties() throws Exception {
-    TypedLiteral l = (TypedLiteral) TypedLiteral.newLiteral("test", URI.create(XSD_NS + "string"), null);
+    TypedLiteral l = (TypedLiteral) TypedLiteral.newLiteral("test", URI.create(NAMESPACE + "string"), null);
     assertFalse(l.isBlank());
     assertFalse(l.isIRI());
     assertTrue(l.isLiteral());

@@ -25,7 +25,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.filter.value.Bool;
 import org.mulgara.query.filter.value.Var;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
+import static org.mulgara.query.rdf.XSD.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -42,7 +42,7 @@ import junit.framework.TestSuite;
  */
 public class IsLiteralFnUnitTest extends TestCase {
 
-  protected URI xsdInt = URI.create(XSD_NS + "int");
+  protected URI xsdInt = INT_URI;
   Bool t = Bool.TRUE;
   Bool f = Bool.FALSE;
 

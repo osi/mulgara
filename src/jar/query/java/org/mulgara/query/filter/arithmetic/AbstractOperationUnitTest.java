@@ -28,7 +28,7 @@ import org.mulgara.query.filter.value.SimpleLiteral;
 import org.mulgara.query.filter.value.TypedLiteral;
 import org.mulgara.query.filter.value.ValueLiteral;
 import org.mulgara.query.filter.value.Var;
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
+import static org.mulgara.query.rdf.XSD.NAMESPACE;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -47,10 +47,10 @@ import junit.framework.TestSuite;
  */
 public abstract class AbstractOperationUnitTest extends TestCase {
 
-  URI xsdInt = URI.create(XSD_NS + "int");
-  URI xsdLong = URI.create(XSD_NS + "long");
-  URI xsdFloat = URI.create(XSD_NS + "float");
-  URI xsdDouble = URI.create(XSD_NS + "double");
+  URI xsdInt = URI.create(NAMESPACE + "int");
+  URI xsdLong = URI.create(NAMESPACE + "long");
+  URI xsdFloat = URI.create(NAMESPACE + "float");
+  URI xsdDouble = URI.create(NAMESPACE + "double");
 
   /** The first operand to use for this test */
   abstract Number op1();

@@ -1,7 +1,5 @@
 package org.mulgara.query.filter;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
-
 import java.net.URI;
 
 import org.jrdf.graph.Literal;
@@ -12,6 +10,7 @@ import org.mulgara.query.filter.value.IRI;
 import org.mulgara.query.filter.value.Var;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
+import static org.mulgara.query.rdf.XSD.INT_URI;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -27,7 +26,7 @@ import junit.framework.TestSuite;
  */
 public abstract class AbstractIsIriFnUnitTest extends TestCase {
 
-  protected URI xsdInt = URI.create(XSD_NS + "int");
+  protected URI xsdInt = INT_URI;
   Bool t = Bool.TRUE;
   Bool f = Bool.FALSE;
 

@@ -11,8 +11,6 @@
  */
 package org.mulgara.query.filter.value;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
-
 import java.net.URI;
 
 import org.jrdf.graph.Node;
@@ -22,6 +20,7 @@ import org.mulgara.query.filter.TestContextOwner;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
+import static org.mulgara.query.rdf.XSD.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -61,7 +60,7 @@ public class StrFnUnitTest extends TestCase {
   public void testValues() throws Exception {
     String str = "test";
     SimpleLiteral strLiteral = new SimpleLiteral(str);
-    URI t = URI.create(XSD_NS + "string");
+    URI t = STRING_URI;
     ValueLiteral l = TypedLiteral.newLiteral(str, t, null);
     
     StrFn fn = new StrFn(l);
@@ -100,8 +99,8 @@ public class StrFnUnitTest extends TestCase {
     Var v = new Var(vName);
     StrFn fn = new StrFn(v);
     
-    URI xsdString = URI.create(XSD_NS + "string");
-    URI xsdDouble = URI.create(XSD_NS + "double");
+    URI xsdString = STRING_URI;
+    URI xsdDouble = DOUBLE_URI;
     URI fooBar = URI.create("foo:bar");
     Node[][] rows = {
       new Node[] {new LiteralImpl("foo")},

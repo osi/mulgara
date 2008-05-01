@@ -11,11 +11,9 @@
  */
 package org.mulgara.query.filter.value;
 
-import java.net.URI;
-
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.TestContext;
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
+import static org.mulgara.query.rdf.XSD.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -82,19 +80,19 @@ public class NumericLiteralUnitTest extends TestCase {
   public void testType() throws Exception {
     NumericLiteral n = new NumericLiteral(Integer.valueOf(5));
     assertTrue(n.getType().isIRI());
-    assertEquals(n.getType().getValue(), URI.create(XSD_NS + "int"));
+    assertEquals(n.getType().getValue(), INT_URI);
 
     n = new NumericLiteral(Long.valueOf(5));
     assertTrue(n.getType().isIRI());
-    assertEquals(n.getType().getValue(), URI.create(XSD_NS + "long"));
+    assertEquals(n.getType().getValue(), LONG_URI);
 
     n = new NumericLiteral(Double.valueOf(5));
     assertTrue(n.getType().isIRI());
-    assertEquals(n.getType().getValue(), URI.create(XSD_NS + "double"));
+    assertEquals(n.getType().getValue(), DOUBLE_URI);
 
     n = new NumericLiteral(Float.valueOf(5));
     assertTrue(n.getType().isIRI());
-    assertEquals(n.getType().getValue(), URI.create(XSD_NS + "float"));
+    assertEquals(n.getType().getValue(), FLOAT_URI);
   }
 
 

@@ -11,8 +11,6 @@
  */
 package org.mulgara.query.filter.value;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
-
 import java.net.URI;
 
 import org.jrdf.graph.Node;
@@ -22,6 +20,7 @@ import org.mulgara.query.filter.TestContextOwner;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
+import static org.mulgara.query.rdf.XSD.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -60,7 +59,7 @@ public class DataTypeFnUnitTest extends TestCase {
 
   public void testValues() throws Exception {
     String str = "test";
-    URI t = URI.create(XSD_NS + "string");
+    URI t = STRING_URI;
     TypedLiteral l = (TypedLiteral) TypedLiteral.newLiteral(str, t, null);
     DataTypeFn fn = new DataTypeFn(l);
     IRI i = new IRI(t);
@@ -88,7 +87,7 @@ public class DataTypeFnUnitTest extends TestCase {
     assertTrue(fn.isURI());
 
     String s2 = "foobar";
-    URI t2 = URI.create(XSD_NS + "foo:bar");
+    URI t2 = URI.create(NAMESPACE + "foo:bar");
     l = (TypedLiteral)TypedLiteral.newLiteral(s2, t2, null);
     fn = new DataTypeFn(l);
     i = new IRI(t2);
@@ -101,7 +100,7 @@ public class DataTypeFnUnitTest extends TestCase {
     Long v = Long.valueOf(5);
     l = (TypedLiteral)TypedLiteral.newLiteral(v);
     fn = new DataTypeFn(l);
-    i = new IRI(URI.create(XSD_NS + "long"));
+    i = new IRI(LONG_URI);
     assertTrue(fn.equals(i));
   }
 
@@ -110,8 +109,8 @@ public class DataTypeFnUnitTest extends TestCase {
     Var v = new Var(vName);
     DataTypeFn fn = new DataTypeFn(v);
     
-    URI xsdString = URI.create(XSD_NS + "string");
-    URI xsdDouble = URI.create(XSD_NS + "double");
+    URI xsdString = STRING_URI;
+    URI xsdDouble = DOUBLE_URI;
     URI fooBar = URI.create("foo:bar");
     Node[][] rows = {
       new Node[] {new LiteralImpl("foo")},
