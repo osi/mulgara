@@ -53,6 +53,7 @@ import org.mulgara.sparql.parser.cst.UnaryMinus;
 import org.mulgara.sparql.parser.cst.UnaryPlus;
 import org.mulgara.sparql.parser.cst.Variable;
 import org.mulgara.parser.MulgaraParserException;
+import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.And;
 import org.mulgara.query.filter.BoundFn;
 import org.mulgara.query.filter.Filter;
@@ -309,8 +310,12 @@ public class FilterMapper {
 
   private static class RDFLiteralMap extends AbstractExprToFilter<RDFLiteral> {
     public Class<RDFLiteral> getMapType() { return RDFLiteral.class; }
-    public RDFTerm typedMap(RDFLiteral expr) {
-      if (expr.isTyped()) return TypedLiteral.newLiteral(expr.getValue(), expr.getDatatype().getUri(), null);
+    public RDFTerm typedMap(RDFLiteral expr) throws MulgaraParserException {
+      try {
+        if (expr.isTyped()) return TypedLiteral.newLiteral(expr.getValue(), expr.getDatatype().getUri(), null);
+      } catch (QueryException qe) {
+        throw new MulgaraParserException(qe.getMessage());
+      }
       if (expr.isLanguageCoded()) return new SimpleLiteral(expr.getValue(), expr.getLanguage());
       return new SimpleLiteral(expr.getValue());
     }
