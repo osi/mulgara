@@ -11,12 +11,16 @@
  */
 package org.mulgara.query.filter.value;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.jrdf.vocabulary.RDF;
+import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.RDFTerm;
+import org.mulgara.query.rdf.XSD;
 
 /**
  * Executes a function that isn't defined in these packages.
@@ -33,20 +37,48 @@ public class ExternalFn extends AbstractAccessorFn {
 
   /** The logger */
   private final static Logger logger = Logger.getLogger(ExternalFn.class.getName());
+  
+  /** A URI containing the namespace for XSD */
+  private final static URI XSD_URI = URI.create(XSD.NAMESPACE);
+
+  /** The scheme for XSD */
+  private final static String XSD_SCHEME = XSD_URI.getScheme();
+
+  /** The scheme-specific part for XSD */
+  private final static String XSD_PART = XSD_URI.getSchemeSpecificPart();
 
   /** The function to be run. This will be mapped to a functor or reflection code. */
-  private IRI fn;
+  private URI fnUri;
 
-  /** The arguments of the function. */
-  private RDFTerm[] operands; 
+  /** This is a constructor function. */
+  private boolean isConstructor = false;
 
   /**
    * Create a new function instance.
    * @param fn The function to run.
    * @param operands The arguments of the function.
    */
-  public ExternalFn(IRI fn, RDFTerm... operands) {
+  public ExternalFn(IRI fn, RDFTerm... operands) throws MulgaraParserException {
     super(operands);
+    fnUri = fn.getValue();
+    if (isCast(fnUri)) {
+      if (operands.length != 1) throw new MulgaraParserException("Cast operation can only take a single parameter");
+      isConstructor = true;
+    } else {
+      logger.error("Unknown function URI: " + fn);
+    }
+  }
+
+  /**
+   * Tests if the URI is used for casting a literal. Anything that is in the XSD namespace,
+   * or the rdf:XMLLiteral type, is considered to be a construction operation.
+   * @param u The URI to test.
+   * @return <code>true</code> If the URI is a known type for casting.
+   */
+  private boolean isCast(URI u) {
+    if (XSD_SCHEME.equals(fnUri.getScheme()) && XSD_PART.equals(fnUri.getSchemeSpecificPart())) return true;
+    if (RDF.XML_LITERAL.equals(u)) return true;
+    return false;
   }
 
   // The ValueLiteral interface
@@ -58,7 +90,7 @@ public class ExternalFn extends AbstractAccessorFn {
   public String getLexical() throws QueryException {
     RDFTerm result = resolve();
     if (result.isLiteral()) return ((ValueLiteral)result).getLexical();
-    throw new QueryException("Not valid to ask the lexical form of a: " + result.getClass().getSimpleName());
+    throw new QueryException("Type Error: Not valid to ask the lexical form of a: " + result.getClass().getSimpleName());
   }
 
   /**
@@ -68,7 +100,7 @@ public class ExternalFn extends AbstractAccessorFn {
   public SimpleLiteral getLang() throws QueryException {
     RDFTerm result = resolve();
     if (result.isLiteral()) return ((ValueLiteral)result).getLang();
-    throw new QueryException("Not valid to ask the language of a: " + result.getClass().getSimpleName());
+    throw new QueryException("Type Error: Not valid to ask the language of a: " + result.getClass().getSimpleName());
   }
 
   /**
@@ -78,14 +110,14 @@ public class ExternalFn extends AbstractAccessorFn {
   public IRI getType() throws QueryException {
     RDFTerm result = resolve();
     if (result.isLiteral()) return ((ValueLiteral)result).getType();
-    throw new QueryException("Not valid to ask the type of a: " + result.getClass().getSimpleName());
+    throw new QueryException("Type Error: Not valid to ask the type of a: " + result.getClass().getSimpleName());
   }
 
   /** @see org.mulgara.query.filter.AbstractFilterValue#isSimple() */
   public boolean isSimple() throws QueryException {
     RDFTerm result = resolve();
     if (result.isLiteral()) return ((ValueLiteral)result).isSimple();
-    throw new QueryException("Not valid to check if a non-literal is a simple literal: " + result.getClass().getSimpleName());
+    throw new QueryException("Type Error: Not valid to check if a non-literal is a simple literal: " + result.getClass().getSimpleName());
   }
 
   // The RDFTerm interface
@@ -112,10 +144,18 @@ public class ExternalFn extends AbstractAccessorFn {
    * Resolve the value of the function.
    * @return The resolution of the function
    * @throws QueryException if the function does not resolve
-   * TODO: call the appropriate function. This just returns the boolean TRUE for the moment.
    */
   protected RDFTerm resolve() throws QueryException {
-    logger.warn("Attempting to execute an unsupported function: " + fn + "(" + resolveArgs() + ")");
+    if (isConstructor) {
+      List<Object> args = resolveArgs();
+      assert args.size() == 1;
+      Object value = args.get(0);
+      // being a cast we'll have to resort to the lowest common denominator of "string"
+      // and let the TypedLiteral work it out for us
+      if (XSD.isNumericType(fnUri) && value instanceof Number) return new NumericLiteral(NumericLiteral.getValueFor((Number)value, fnUri), fnUri);
+      return TypedLiteral.newLiteral(value.toString(), fnUri, null);
+    }
+    logger.warn("Attempting to execute an unsupported function: " + fnUri + "(" + resolveArgs() + ")");
     return Bool.TRUE;
   }
 
@@ -126,7 +166,11 @@ public class ExternalFn extends AbstractAccessorFn {
    */
   private List<Object> resolveArgs() throws QueryException {
     List<Object> result = new ArrayList<Object>(operands.length);
-    for (int i = 0; i < operands.length; i++) result.add(operands[i].getValue());
+    for (int i = 0; i < operands.length; i++) {
+      RDFTerm op = operands[i];
+      if (isConstructor && op.isBlank()) throw new QueryException("Type Error: Cannot cast a blank node.");
+      result.add(op.getValue());
+    }
     return result;
   }
 }
