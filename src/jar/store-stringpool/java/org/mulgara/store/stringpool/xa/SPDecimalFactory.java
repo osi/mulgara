@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
+import org.mulgara.query.rdf.XSDAbbrev;
 import org.mulgara.store.stringpool.*;
 
 
@@ -61,6 +62,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPDecimalFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalFactory.class);
 
   private final static URI[] TYPE_URIS = {
@@ -78,13 +80,28 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
       URI.create(XSD.NAMESPACE + "unsignedShort"),
       URI.create(XSD.NAMESPACE + "unsignedByte"),
       URI.create(XSD.NAMESPACE + "positiveInteger"),
+      // Hacks to pick up on missing namespaces
+      URI.create(XSDAbbrev.NAMESPACE + "decimal"),
+      URI.create(XSDAbbrev.NAMESPACE + "integer"),
+      URI.create(XSDAbbrev.NAMESPACE + "nonPositiveInteger"),
+      URI.create(XSDAbbrev.NAMESPACE + "negativeInteger"),
+      URI.create(XSDAbbrev.NAMESPACE + "long"),
+      URI.create(XSDAbbrev.NAMESPACE + "int"),
+      URI.create(XSDAbbrev.NAMESPACE + "short"),
+      URI.create(XSDAbbrev.NAMESPACE + "byte"),
+      URI.create(XSDAbbrev.NAMESPACE + "nonNegativeInteger"),
+      URI.create(XSDAbbrev.NAMESPACE + "unsignedLong"),
+      URI.create(XSDAbbrev.NAMESPACE + "unsignedInt"),
+      URI.create(XSDAbbrev.NAMESPACE + "unsignedShort"),
+      URI.create(XSDAbbrev.NAMESPACE + "unsignedByte"),
+      URI.create(XSDAbbrev.NAMESPACE + "positiveInteger"),
       // Always add new entries at the end of this array.
   };
 
-  private final static Map uriToSubtypeIdMap;
+  private final static Map<URI,Integer> uriToSubtypeIdMap;
   static {
     // Populate the uriToSubtypeIdMap.
-    uriToSubtypeIdMap = new HashMap();
+    uriToSubtypeIdMap = new HashMap<URI,Integer>();
     for (int i = 0; i < TYPE_URIS.length; ++i) {
       uriToSubtypeIdMap.put(TYPE_URIS[i], new Integer(i));
     }
@@ -99,7 +116,7 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
   /**
    * Returns the type URIs for the objects created by this factory.
    */
-  public Set getTypeURIs() {
+  public Set<URI> getTypeURIs() {
     return Collections.unmodifiableSet(uriToSubtypeIdMap.keySet());
   }
 

@@ -59,6 +59,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPBase64BinaryFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPBase64BinaryFactory.class);
 
 
@@ -74,8 +75,11 @@ public final class SPBase64BinaryFactory implements SPTypedLiteralFactory {
    * Returns the type URI for the objects created by this factory.
    * @return URI
    */
-  public Set getTypeURIs() {
-    return Collections.singleton(SPBase64BinaryImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPBase64BinaryImpl.TYPE_URI);
+    types.add(XSDAbbrev.BASE64_BINARY_URI);
+    return Collections.unmodifiableSet(types);
   }
 
   /**

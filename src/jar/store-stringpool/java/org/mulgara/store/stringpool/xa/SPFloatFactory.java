@@ -35,6 +35,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.mulgara.query.rdf.XSDAbbrev;
 import org.mulgara.store.stringpool.*;
 
 
@@ -60,6 +61,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPFloatFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPFloatFactory.class);
 
 
@@ -71,8 +73,11 @@ public final class SPFloatFactory implements SPTypedLiteralFactory {
   /**
    * Returns the type URI for the objects created by this factory.
    */
-  public Set getTypeURIs() {
-    return Collections.singleton(SPFloatImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPFloatImpl.TYPE_URI);
+    types.add(XSDAbbrev.FLOAT_URI);
+    return Collections.unmodifiableSet(types);
   }
 
 

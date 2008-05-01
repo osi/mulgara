@@ -57,14 +57,18 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPXMLLiteralFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPXMLLiteralFactory.class);
 
   public int getTypeId() {
     return SPXMLLiteralImpl.TYPE_ID;
   }
 
-  public Set getTypeURIs() {
-    return Collections.singleton(SPXMLLiteralImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPXMLLiteralImpl.TYPE_URI);
+    types.add(SPXMLLiteralImpl.TYPE_URI_ABBREV);
+    return Collections.unmodifiableSet(types);
   }
 
   public SPTypedLiteral newSPTypedLiteral(URI typeURI, String lexicalForm) {

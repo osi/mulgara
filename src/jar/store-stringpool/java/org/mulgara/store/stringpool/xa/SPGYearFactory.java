@@ -35,6 +35,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.mulgara.query.rdf.XSDAbbrev;
 import org.mulgara.store.stringpool.*;
 
 
@@ -61,6 +62,7 @@ import org.mulgara.store.stringpool.*;
 public final class SPGYearFactory implements SPTypedLiteralFactory {
 
   /** Logging for the class */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPGYearFactory.class);
 
   /**
@@ -79,9 +81,11 @@ public final class SPGYearFactory implements SPTypedLiteralFactory {
    *
    * @return The XSD type URI
    */
-  public Set getTypeURIs() {
-
-    return Collections.singleton(SPGYearImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPGYearImpl.TYPE_URI);
+    types.add(XSDAbbrev.GYEAR_URI);
+    return Collections.unmodifiableSet(types);
   }
 
   /**

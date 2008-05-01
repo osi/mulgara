@@ -35,6 +35,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.mulgara.query.rdf.XSDAbbrev;
 import org.mulgara.store.stringpool.*;
 
 
@@ -60,6 +61,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPDoubleFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDoubleFactory.class);
 
 
@@ -71,8 +73,11 @@ public final class SPDoubleFactory implements SPTypedLiteralFactory {
   /**
    * Returns the type URI for the objects created by this factory.
    */
-  public Set getTypeURIs() {
-    return Collections.singleton(SPDoubleImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPDoubleImpl.TYPE_URI);
+    types.add(XSDAbbrev.DOUBLE_URI);
+    return Collections.unmodifiableSet(types);
   }
 
 

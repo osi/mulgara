@@ -59,6 +59,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPBooleanFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPBooleanFactory.class);
 
 
@@ -74,8 +75,11 @@ public final class SPBooleanFactory implements SPTypedLiteralFactory {
    * Returns the type URI for the objects created by this factory.
    * @return URI
    */
-  public Set getTypeURIs() {
-    return Collections.singleton(SPBooleanImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPBooleanImpl.TYPE_URI);
+    types.add(XSDAbbrev.BOOLEAN_URI);
+    return Collections.unmodifiableSet(types);
   }
 
   /**

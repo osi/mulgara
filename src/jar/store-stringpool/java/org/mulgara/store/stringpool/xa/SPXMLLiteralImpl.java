@@ -65,27 +65,22 @@ import org.jrdf.parser.rdfxml.RdfXmlParser;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class SPXMLLiteralImpl extends AbstractSPTypedLiteral
-    implements SPTypedLiteral {
+public class SPXMLLiteralImpl extends AbstractSPTypedLiteral implements SPTypedLiteral {
 
-  /**
-   * Logger
-   */
+  /** Logger */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(SPXMLLiteralImpl.class);
 
-  /**
-   * Type code that identifies this type
-   */
+  /** Type code that identifies this type */
   static final int TYPE_ID = 15;
 
-  /**
-   * the XML Literal URI
-   */
+  /** the XML Literal URI */
   static final URI TYPE_URI = RDF.XML_LITERAL;
 
-  /**
-   * The lexical value of the XML Literal.
-   */
+  /** the abbreviated XML Literal URI. This is a hack to handle references to a missing namespace */
+  static final URI TYPE_URI_ABBREV = URI.create("rdf:XMLLiteral");
+
+  /** The lexical value of the XML Literal. */
   private String str;
 
   SPXMLLiteralImpl(String str) {

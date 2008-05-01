@@ -35,7 +35,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.query.rdf.*;
+import org.mulgara.query.rdf.XSDAbbrev;
 import org.mulgara.store.stringpool.*;
 
 
@@ -59,6 +59,7 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPHexBinaryFactory implements SPTypedLiteralFactory {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPHexBinaryFactory.class);
 
 
@@ -74,8 +75,11 @@ public final class SPHexBinaryFactory implements SPTypedLiteralFactory {
    * Returns the type URI for the objects created by this factory.
    * @return URI
    */
-  public Set getTypeURIs() {
-    return Collections.singleton(SPHexBinaryImpl.TYPE_URI);
+  public Set<URI> getTypeURIs() {
+    Set<URI> types = new HashSet<URI>();
+    types.add(SPHexBinaryImpl.TYPE_URI);
+    types.add(XSDAbbrev.HEX_BINARY_URI);
+    return Collections.unmodifiableSet(types);
   }
 
   /**
