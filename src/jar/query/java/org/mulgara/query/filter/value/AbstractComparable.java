@@ -12,6 +12,8 @@
 
 package org.mulgara.query.filter.value;
 
+import java.net.URI;
+
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.AbstractContextOwner;
 
@@ -64,7 +66,34 @@ public abstract class AbstractComparable extends AbstractContextOwner implements
    * @throws QueryException If the comparable expression resolves to a {@link SimpleLiteral}.
    */
   private void compatibilityTest(ComparableExpression v) throws QueryException {
-    if (v.isLiteral() && ((ValueLiteral)v).isSimple()) throw new QueryException("Type Error: cannot compare a simple literal with a: " + getClass().getSimpleName());
+    boolean lhsLiteral = isLiteral();
+    boolean rhsLiteral = v.isLiteral();
+    if (rhsLiteral && ((ValueLiteral)v).isSimple()) typeError(v);
+    // if one is literal and the other is not, then these cannot be compared
+    if (lhsLiteral ^ rhsLiteral) typeError(v);
+    // if neither are literal, then we can't test further
+    if (lhsLiteral && rhsLiteral) {
+      // both are literal
+      URI lhsType = ((ValueLiteral)this).getType().getValue();
+      URI rhsType = ((ValueLiteral)v).getType().getValue();
+      boolean lhsNumeric = NumericLiteral.isNumeric(lhsType);
+      boolean rhsNumeric = NumericLiteral.isNumeric(rhsType);
+      // if one is numeric and the other is not, then cannot continue
+      if (lhsNumeric ^ rhsNumeric) typeError(v);
+      // if neither are numeric, then the types must be identical
+      if (!lhsNumeric && !rhsNumeric) {
+        if (!lhsType.equals(rhsType)) typeError(v);
+      }
+    }
+  }
+
+  /**
+   * Throws an exception due to incompatible types.
+   * @param v The object with the incompatible type.
+   * @throws QueryException Always thrown, to indicate that v is incompatible with this object.
+   */
+  private void typeError(ComparableExpression v) throws QueryException {
+    throw new QueryException("Type Error: cannot compare a " + getClass().getSimpleName() + " with a " + v.getClass().getSimpleName());
   }
 
   /**
