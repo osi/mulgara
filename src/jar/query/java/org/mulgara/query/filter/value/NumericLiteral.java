@@ -15,6 +15,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mulgara.query.rdf.XSD;
+import org.mulgara.query.rdf.XSDAbbrev;
+
 /**
  * A numeric value.  Expect that this will be extended into Double, Integer, Long, etc.
  *
@@ -26,7 +29,7 @@ import java.util.Map;
 public class NumericLiteral extends TypedLiteral implements NumericExpression {
 
   /** Generated Serialization ID for RMI */
-  private static final long serialVersionUID = -2601769069462524423L;
+  private static final long serialVersionUID = -4609989082999517348L;
 
   /**
    * Creates the value to wrap the number
@@ -34,6 +37,15 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
    */
   public NumericLiteral(Number n) {
     super(n, typeMap.get(n.getClass()));
+  }
+
+  /**
+   * Creates the value to wrap a number. This is the same as the previous
+   * constructor, but allows the caller to provide a hint for the URI.
+   * @param n The number to wrap
+   */
+  public NumericLiteral(Number n, URI typeUri) {
+    super(getValueFor(n, typeUri), typeUri);
   }
 
   /** @see org.mulgara.query.filter.value.NumericExpression#getNumber() */
@@ -50,15 +62,35 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
     return new IRI(typeMap.get(n.getClass()));
   }
 
+  /**
+   * Tests if a URI represents a numeric type.
+   * @param The URI to test.
+   * @return <code>true</code> iff type represents a numeric type.
+   */
+  public static boolean isNumeric(URI type) {
+    return XSD.isNumericType(type) || XSDAbbrev.isNumericType(type);
+  }
+
+  /**
+   * Converts a Number to another Number type by using the type URI.
+   * @param n The number to convert.
+   * @param type The type to convert to.
+   * @return A new Number, defined by type.
+   */
+  public static Number getValueFor(Number n, URI type) {
+    return infoMap.get(type).valueOf(n);
+  }
+
   /** A mapping of numeric types to their URIs */
   private static final Map<Class<? extends Number>,URI> typeMap = new HashMap<Class<? extends Number>,URI>();
   
   static {
-    typeMap.put(Float.class, URI.create(XSD_NS + "float"));
-    typeMap.put(Double.class, URI.create(XSD_NS + "double"));
-    typeMap.put(Long.class, URI.create(XSD_NS + "long"));
-    typeMap.put(Integer.class, URI.create(XSD_NS + "int"));
-    typeMap.put(Short.class, URI.create(XSD_NS + "short"));
-    typeMap.put(Byte.class, URI.create(XSD_NS + "byte"));
+    typeMap.put(Float.class, XSD.FLOAT_URI);
+    typeMap.put(Double.class, XSD.DOUBLE_URI);
+    typeMap.put(Long.class, XSD.LONG_URI);
+    typeMap.put(Integer.class, XSD.INT_URI);
+    typeMap.put(Short.class, XSD.SHORT_URI);
+    typeMap.put(Byte.class, XSD.BYTE_URI);
   }
+
 }
