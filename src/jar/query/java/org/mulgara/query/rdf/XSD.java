@@ -30,7 +30,9 @@ package org.mulgara.query.rdf;
 // Java 2 standard packages
 import java.net.URI;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.text.ParseException;
 
 // Date utils
@@ -75,98 +77,139 @@ public abstract class XSD {
    */
   public final static String NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
-  /**
-   * URI for the XML Schema <code>xsd:string</code> datatype.
-   */
+  /** URI for the XML Schema <code>xsd:string</code> datatype. */
   public final static URI STRING_URI = URI.create(NAMESPACE + "string");
 
-  /**
-   * URI for the XML Schema <code>xsd:decimal</code> datatype.
-   */
-  public final static URI DECIMAL_URI = URI.create(NAMESPACE + "decimal");
+  ///////////////////////
+  // Start of Numeric types
+  ///////////////////////
 
-  /**
-   * URI for the XML Schema <code>xsd:decimal</code> datatype.
-   */
-  public final static URI INT_URI = URI.create(NAMESPACE + "int");
-
-  /**
-   * URI for the XML Schema <code>xsd:float</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:float</code> datatype; */
   public final static URI FLOAT_URI = URI.create(NAMESPACE + "float");
 
-  /**
-   * URI for the XML Schema <code>xsd:double</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:double</code> datatype; */
   public final static URI DOUBLE_URI = URI.create(NAMESPACE + "double");
 
+  /** URI for the XML Schema <code>xsd:decimal</code> datatype. */
+  public final static URI DECIMAL_URI = URI.create(NAMESPACE + "decimal");
+
+  /** URI for the XML Schema <code>integer</code> datatype. Subtype of {@link #DECIMAL_URI}. */
+  public final static URI INTEGER_URI = URI.create(NAMESPACE + "integer");
+
+  /** URI for the XML Schema <code>nonPositiveInteger</code> datatype. Subtype of {@link #INTEGER_URI}. */
+  public final static URI NON_POSITIVE_INTEGER_URI = URI.create(NAMESPACE + "nonPositiveInteger");
+
+  /** URI for the XML Schema <code>negativeInteger</code> datatype. Subtype of {@link #NON_POSITIVE_INTEGER_URI}. */
+  public final static URI NEGATIVE_INTEGER_URI = URI.create(NAMESPACE + "negativeInteger");
+
+  /** URI for the XML Schema <code>long</code> datatype. Subtype of {@link #INTEGER_URI}. */
+  public final static URI LONG_URI = URI.create(NAMESPACE + "long");
+
+  /** URI for the XML Schema <code>int</code> datatype. Subtype of {@link #LONG_URI}. */
+  public final static URI INT_URI = URI.create(NAMESPACE + "int");
+
+  /** URI for the XML Schema <code>short</code> datatype. Subtype of {@link #INT_URI}. */
+  public final static URI SHORT_URI = URI.create(NAMESPACE + "short");
+
+  /** URI for the XML Schema <code>byte</code> datatype. Subtype of {@link #SHORT_URI}. */
+  public final static URI BYTE_URI = URI.create(NAMESPACE + "byte");
+
+  /** URI for the XML Schema <code>nonNegativeInteger</code> datatype. Subtype of {@link #INTEGER_URI}. */
+  public final static URI NON_NEGATIVE_INTEGER_URI = URI.create(NAMESPACE + "nonNegativeInteger");
+
+  /** URI for the XML Schema <code>positiveInteger</code> datatype. Subtype of {@link #NON_NEGATIVE_INTEGER_URI}. */
+  public final static URI POSITIVE_INTEGER_URI = URI.create(NAMESPACE + "positiveInteger");
+
+  /** URI for the XML Schema <code>unsignedLong</code> datatype. Subtype of {@link #NON_NEGATIVE_INTEGER_URI}. */
+  public final static URI UNSIGNED_LONG_URI = URI.create(NAMESPACE + "unsignedLong");
+
+  /** URI for the XML Schema <code>unsignedInt</code> datatype. Subtype of {@link #UNSIGNED_LONG_URI}. */
+  public final static URI UNSIGNED_INT_URI = URI.create(NAMESPACE + "unsignedInt");
+
+  /** URI for the XML Schema <code>unsignedShort</code> datatype. Subtype of {@link #UNSIGNED_INT_URI}. */
+  public final static URI UNSIGNED_SHORT_URI = URI.create(NAMESPACE + "unsignedShort");
+
+  /** URI for the XML Schema <code>unsignedByte</code> datatype. Subtype of {@link #UNSIGNED_SHORT_URI}. */
+  public final static URI UNSIGNED_BYTE_URI = URI.create(NAMESPACE + "unsignedByte");
+
+  /** The set of all numeric types/ */
+  static final private Set<URI> numericTypes = new HashSet<URI>();
+
   /**
-   * URI for the XML Schema <code>xsd:date</code> datatype.
+   * Tests if a URI is for a numeric type.
+   * @param type The URI of the type to test.
+   * @return <code>true</code> iff the type is an XSD numeric type.
    */
+  public static final boolean isNumericType(URI type) {
+    return numericTypes.contains(type);
+  }
+
+  // Initialize the set of number types
+  static {
+    numericTypes.add(FLOAT_URI);
+    numericTypes.add(DOUBLE_URI);
+    numericTypes.add(DECIMAL_URI);
+    numericTypes.add(INTEGER_URI);
+    numericTypes.add(NON_POSITIVE_INTEGER_URI);
+    numericTypes.add(NEGATIVE_INTEGER_URI);
+    numericTypes.add(LONG_URI);
+    numericTypes.add(INT_URI);
+    numericTypes.add(SHORT_URI);
+    numericTypes.add(BYTE_URI);
+    numericTypes.add(NON_NEGATIVE_INTEGER_URI);
+    numericTypes.add(POSITIVE_INTEGER_URI);
+    numericTypes.add(UNSIGNED_LONG_URI);
+    numericTypes.add(UNSIGNED_INT_URI);
+    numericTypes.add(UNSIGNED_SHORT_URI);
+    numericTypes.add(UNSIGNED_BYTE_URI);
+  }
+  ///////////////////////
+  // End of Numeric types
+  ///////////////////////
+
+  /** URI for the XML Schema <code>xsd:date</code> datatype. */
   public final static URI DATE_URI = URI.create(NAMESPACE + "date");
 
-  /**
-   * URI for the XML Schema <code>xsd:dateTime</code> datatype.
-   */
+  /** URI for the XML Schema <code>xsd:dateTime</code> datatype. */
   public final static URI DATE_TIME_URI = URI.create(NAMESPACE + "dateTime");
 
-  /**
-   * URI for the XML Schema <code>xsd:gYearMonth</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:gYearMonth</code> datatype; */
   public final static URI GYEARMONTH_URI = URI.create(NAMESPACE + "gYearMonth");
 
-  /**
-   * URI for the XML Schema <code>xsd:gYear</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:gYear</code> datatype; */
   public final static URI GYEAR_URI = URI.create(NAMESPACE + "gYear");
 
-  /**
-   * URI for the XML Schema <code>xsd:gMonthDay</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:gMonthDay</code> datatype; */
   public final static URI GMONTHDAY_URI = URI.create(NAMESPACE + "gMonthDay");
 
-  /**
-   * URI for the XML Schema <code>xsd:gDay</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:gDay</code> datatype; */
   public final static URI GDAY_URI = URI.create(NAMESPACE + "gDay");
 
-  /**
-   * URI for the XML Schema <code>xsd:gMonth</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:gMonth</code> datatype; */
   public final static URI GMONTH_URI = URI.create(NAMESPACE + "gMonth");
 
-  /**
-   * URI for the XML Schema <code>xsd:boolean</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:boolean</code> datatype; */
   public final static URI BOOLEAN_URI = URI.create(NAMESPACE + "boolean");
 
-  /**
-   * URI for the XML Schema <code>xsd:hexBinary</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:hexBinary</code> datatype; */
   public final static URI HEX_BINARY_URI = URI.create(NAMESPACE + "hexBinary");
 
-  /**
-   * URI for the XML Schema <code>xsd:base64Binary</code> datatype;
-   */
+  /** URI for the XML Schema <code>xsd:base64Binary</code> datatype; */
   public final static URI BASE64_BINARY_URI = URI.create(NAMESPACE + "base64Binary");
 
   /**
    * Date format used by <code>xsd:date</code>.
-   *
    * This is a highly abbreviated version of ISO 8601.
    */
   public final static String DATE_FORMAT = DateFormats.yyyy_MM_dd_format;
 
   /**
    * Date format used by <code>xsd:dateTime</code>.
-   *
    * This is a highly abbreviated version of ISO 8601.
    */
   public final static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
-  /**
-   * Date format used by <code>xsd:gYear</code>.
-   */
+  /** Date format used by <code>xsd:gYear</code>. */
   public final static String YEAR_FORMAT = "yyyy";
 
 
@@ -178,8 +221,7 @@ public abstract class XSD {
     try {
       ONE_BCE = DateParser.parse("0000", YEAR_FORMAT, Locale.getDefault());
       ONE_CE = DateParser.parse("0001", YEAR_FORMAT, Locale.getDefault());
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       // Should never be thrown
       throw new IllegalArgumentException("Cannot parse date");
     }
@@ -199,33 +241,26 @@ public abstract class XSD {
    */
   public static String getLexicalForm(Date date) {
     StringBuffer lexicalForm;
-    String dateTime = DateFormatter.formatDate(date, XSD.DATE_TIME_FORMAT,
-        Locale.getDefault());
+    String dateTime = DateFormatter.formatDate(date, XSD.DATE_TIME_FORMAT, Locale.getDefault());
     int len = dateTime.length();
     if (dateTime.indexOf('.', len - 4) != -1) {
-      while (dateTime.charAt(len - 1) == '0') {
-        len--;
-      }
-      if (dateTime.charAt(len - 1) == '.') {
-        len--;
-      }
+      while (dateTime.charAt(len - 1) == '0') len--;
+      if (dateTime.charAt(len - 1) == '.') len--;
+
       lexicalForm = new StringBuffer(dateTime.substring(0, len));
-    }
-    else {
+    } else {
       lexicalForm = new StringBuffer(dateTime);
     }
 
     if (date.before(ONE_CE)) {
       StringBuffer year = new StringBuffer(String.valueOf(Integer.parseInt(
           DateFormatter.formatDate(date, YEAR_FORMAT, Locale.getDefault())) - 1));
-      while (year.length() < 4)
-          {
-        year.insert(0, '0');
-      }
+
+      while (year.length() < 4) year.insert(0, '0');
+
       lexicalForm.replace(0, lexicalForm.indexOf("-", 4), year.toString());
-      if (date.before(ONE_BCE)) {
-        lexicalForm.insert(0, "-");
-      }
+
+      if (date.before(ONE_BCE)) lexicalForm.insert(0, "-");
     }
     return lexicalForm.toString();
   }
