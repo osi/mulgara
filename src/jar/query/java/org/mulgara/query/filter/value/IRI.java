@@ -49,6 +49,15 @@ public class IRI implements RDFTerm {
   }
 
   /** {@inheritDoc} */
+  public boolean equals(Object o) {
+    try {
+      return (o instanceof RDFTerm) ? equals((RDFTerm)o) : false;
+    } catch (QueryException qe) {
+      return false;
+    }
+  }
+
+  /** {@inheritDoc} */
   public boolean equals(RDFTerm v) throws QueryException {
     return v.isIRI() && value.equals(v.getValue());
   }
