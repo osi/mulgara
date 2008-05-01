@@ -29,7 +29,7 @@ import org.mulgara.query.filter.value.DateTime;
 import org.mulgara.query.filter.value.TypedLiteral;
 import org.mulgara.query.filter.value.Var;
 
-import static org.mulgara.query.filter.value.TypedLiteral.XSD_NS;
+import static org.mulgara.query.rdf.XSD.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -46,10 +46,10 @@ import junit.framework.TestSuite;
  */
 public class BinaryComparisonUnitTest extends TestCase {
 
-  protected URI xsdInt = URI.create(XSD_NS + "int");
-  protected URI xsdFloat = URI.create(XSD_NS + "float");
-  protected URI xsdString = URI.create(XSD_NS + "string");
-  protected URI xsdDate = URI.create(XSD_NS + "dateTime");
+  protected URI xsdInt = INT_URI;
+  protected URI xsdFloat = FLOAT_URI;
+  protected URI xsdString = STRING_URI;
+  protected URI xsdDate = DATE_TIME_URI;
   Bool t = Bool.TRUE;
   Bool f = Bool.FALSE;
 
@@ -300,6 +300,7 @@ public class BinaryComparisonUnitTest extends TestCase {
     Literal foo = new LiteralImpl("foo", xsdString);
     Literal litTrue = new LiteralImpl("true", t.getType().getValue());
     Literal now = new LiteralImpl("2008-04-16T21:57:00Z", xsdDate);
+    Literal nowDt = new LiteralImpl("2008-04-16T21:57:00Z", DATE_URI);
     URIReferenceImpl intRef = new URIReferenceImpl(xsdInt);
     BlankNodeImpl bn = new BlankNodeImpl(101);
     Node[][] rows = {
@@ -321,8 +322,9 @@ public class BinaryComparisonUnitTest extends TestCase {
       new Node[] {simpleFooEn, now},
       new Node[] {foo, litTrue},
       new Node[] {foo, now},  // 17
+      new Node[] {foo, nowDt},
       new Node[] {litTrue, now},
-      new Node[] {seven, intRef},  //19
+      new Node[] {seven, intRef},  // 20
       new Node[] {sevenF, intRef},
       new Node[] {simpleFoo, intRef},
       new Node[] {simpleFooEn, intRef},
