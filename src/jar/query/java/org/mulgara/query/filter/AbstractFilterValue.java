@@ -30,7 +30,7 @@ import org.mulgara.query.filter.value.ValueLiteral;
 public abstract class AbstractFilterValue extends AbstractContextOwner implements Filter, ValueLiteral {
 
   /** The operands for the operation */
-  RDFTerm[] operands;
+  protected RDFTerm[] operands;
 
   /** The owner of the current context */
   private ContextOwner contextOwner = null;
