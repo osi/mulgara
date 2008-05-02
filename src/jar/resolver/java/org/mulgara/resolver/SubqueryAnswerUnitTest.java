@@ -29,7 +29,6 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 // Third party packages
@@ -166,8 +165,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
     variableList.add(varY);
 
     // Create subquery.
-    SubqueryAnswer answer = new SubqueryAnswer(testContext, testResolver,
-        tuples, variableList);
+    SubqueryAnswer answer = new SubqueryAnswer(testContext, testResolver, tuples, variableList);
 
     // Get column index of Z.
     int columnIndexZ = answer.getColumnIndex(varZ);
@@ -184,7 +182,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
     public ResolverFactory findModelTypeResolverFactory(URI modelTypeURI)
       throws QueryException { return null; }
 
-    public List getSecurityAdapterList() { return null; }
+    public List<SecurityAdapter> getSecurityAdapterList() { return null; }
 
     public Resolver obtainResolver(ResolverFactory resolverFactory)
       throws QueryException { return null; }

@@ -40,7 +40,6 @@ import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.Tuples;
-import org.mulgara.util.*;
 
 /**
  * This wrapper doesn't just globalize columns, it also evaluates subqueries
@@ -67,11 +66,10 @@ import org.mulgara.util.*;
 public class SubqueryAnswer extends GlobalizedAnswer {
 
   /** Logger. This is named after the class.  */
-  private final static Logger logger =
-      Logger.getLogger(SubqueryAnswer.class.getName());
+  private final static Logger logger = Logger.getLogger(SubqueryAnswer.class.getName());
 
   /** The target <code>SELECT</code> clause */
-  private List variableList;
+  private List<? extends SelectElement> variableList;
 
   private Variable[] variables;
 
@@ -100,13 +98,11 @@ public class SubqueryAnswer extends GlobalizedAnswer {
    *                subqueries
    * @param variableList  the <code>SELECT<code> clause, including
    *                      subquery-valued clauses to be resolved
-   * @throws IllegalArgumentException if <var>variableList</var> is
-   *   <code>null</code>
-   * @throws TuplesException if it fails to get the row cardinality of the
-   *   given tuples.
+   * @throws IllegalArgumentException if <var>variableList</var> is <code>null</code>
+   * @throws TuplesException if it fails to get the row cardinality of the given tuples.
    */
   SubqueryAnswer(OperationContext operationContext, ResolverSession resolverSession,
-      Tuples tuples, List variableList) throws TuplesException {
+      Tuples tuples, List<? extends SelectElement> variableList) throws TuplesException {
     super(tuples, resolverSession);
 
     this.operationContext = operationContext;
@@ -117,52 +113,37 @@ public class SubqueryAnswer extends GlobalizedAnswer {
    * Assigns the member variables based on the variables passed and the variable
    * bindings in the tuples.
    *
-   * @param tuples the tuples to test against the corret binding in the
-   *   variable list.
+   * @param tuples the tuples to test against the corret binding in the variable list.
    * @param variableList the list of variables from the SELECT clause.
-   * @throws IllegalArgumentException if <var>variableList</var> is
-   *   <code>null</code>
-   * @throws TuplesException if it fails to get the row cardinality of the
-   *   given tuples.
+   * @throws IllegalArgumentException if <var>variableList</var> is <code>null</code>
+   * @throws TuplesException if it fails to get the row cardinality of the given tuples.
    */
-  private void assignVariables(Tuples tuples, List variableList)
-      throws TuplesException, IllegalArgumentException {
+  private void assignVariables(Tuples tuples, List<? extends SelectElement> variableList) throws TuplesException, IllegalArgumentException {
     boolean empty = (tuples.getRowCardinality() == ZERO);
     this.variableList = variableList;
     this.variables = new Variable[variableList.size()];
     for (int i = 0; i < variableList.size(); i++) {
-      Object object = variableList.get(i);
-      if (object instanceof Variable) {
+      SelectElement element = variableList.get(i);
+      if (element instanceof Variable) {
 
-        variables[i] = (Variable) object;
+        variables[i] = (Variable)element;
 
         // Validate the variable
         try {
-          if (!empty) {
-            tuples.getColumnIndex(variables[i]);
-          }
+          if (!empty) tuples.getColumnIndex(variables[i]);
+        } catch (TuplesException e) {
+          throw new IllegalArgumentException(variables[i] + " does not appear in the \"tuples\" parameter");
         }
-        catch (TuplesException e) {
-          throw new IllegalArgumentException(
-              variables[i] + " does not appear in the \"tuples\" parameter"
-              );
-        }
-      }
-      else if (object instanceof ConstantValue) {
-        variables[i] = ((ConstantValue) object).getVariable();
-      }
-      else if (object instanceof AggregateFunction) {
-        variables[i] = ((AggregateFunction) object).getVariable();
-      }
-      else {
-        throw new IllegalArgumentException("Unknown type in SELECT clause: " +
-            object.getClass());
+      } else if (element instanceof ConstantValue) {
+        variables[i] = ((ConstantValue) element).getVariable();
+      } else if (element instanceof AggregateFunction) {
+        variables[i] = ((AggregateFunction) element).getVariable();
+      } else {
+        throw new IllegalArgumentException("Unknown type in SELECT clause: " + element.getClass());
       }
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Constructed for " + tuples + " around " + variableList);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Constructed for " + tuples + " around " + variableList);
   }
 
   /**
@@ -172,8 +153,7 @@ public class SubqueryAnswer extends GlobalizedAnswer {
     SubqueryAnswer cloned = (SubqueryAnswer)super.clone();
     cloned.variableList = this.variableList;
     cloned.variables = new Variable[this.variables.length];
-    System.arraycopy(this.variables, 0, cloned.variables, 0,
-        this.variables.length);
+    System.arraycopy(this.variables, 0, cloned.variables, 0, this.variables.length);
     return cloned;
   }
 
@@ -183,17 +163,13 @@ public class SubqueryAnswer extends GlobalizedAnswer {
 
 
   public int getColumnIndex(Variable variable) throws TuplesException {
-    if (variable == null) {
-      throw new IllegalArgumentException("Null \"variable\" parameter");
-    }
+    if (variable == null) throw new IllegalArgumentException("Null \"variable\" parameter");
 
     int index = variableList.indexOf(variable);
     if (index >= 0) {
       return index;
-    }
-    else {
-      throw new TuplesException("No such variable " + variable + " in tuples " +
-        variableList + " (" + getClass() + ")");
+    } else {
+      throw new TuplesException("No such variable " + variable + " in tuples " + variableList + " (" + getClass() + ")");
     }
   }
 
@@ -203,40 +179,30 @@ public class SubqueryAnswer extends GlobalizedAnswer {
 
   public Object getObject(int column) throws TuplesException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Getting object " + column + " from variableList " +
-          variableList);
+      logger.debug("Getting object " + column + " from variableList " + variableList);
     }
     Object object = variableList.get(column);
 
     if (object instanceof Variable) {
       return super.getObject(super.getColumnIndex((Variable) object));
-    }
-    else if (object instanceof ConstantValue) {
+    } else if (object instanceof ConstantValue) {
       return ((ConstantValue) object).getValue();
-    }
-    else if (object instanceof Count) {
+    } else if (object instanceof Count) {
       // Atomic aggregate, already resolved by SelectedTuples
       return super.getObject(super.getColumnIndex(((Count) object).getVariable()));
-    }
-    else if (object instanceof Subquery) {
+    } else if (object instanceof Subquery) {
       // Answer-valued aggregate, not yet resolved by SelectedTuples
       try {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Resolving Subquery in SubqueryAnswer: " + object);
-        }
+        if (logger.isDebugEnabled()) logger.debug("Resolving Subquery in SubqueryAnswer: " + object);
         return resolveSubquery((Subquery) object);
-      }
-      catch (QueryException e) {
+      } catch (QueryException e) {
         throw new TuplesException("Couldn't evaluate aggregate", e);
-      }
-      catch (RuntimeException t) {
+      } catch (RuntimeException t) {
         logger.error("RuntimeException thrown from resolveAggregate", t);
         throw t;
       }
-    }
-    else {
-      throw new TuplesException("Unknown type in SELECT clause: " +
-          object.getClass());
+    } else {
+      throw new TuplesException("Unknown type in SELECT clause: " + object.getClass());
     }
   }
 
@@ -265,14 +231,12 @@ public class SubqueryAnswer extends GlobalizedAnswer {
    *   query can't be resolved
    */
   private Object resolveSubquery(Subquery subquery) throws QueryException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Resolving subquery function " + subquery);
-    }
+    if (logger.isDebugEnabled())  logger.debug("Resolving subquery function " + subquery);
 
     try {
       Query query = subquery.getQuery();
 
-      Map bindings = createBindingMap(tuples, resolverSession);
+      Map<Variable,Value> bindings = createBindingMap(tuples, resolverSession);
 
       ConstraintExpression where = new ConstraintConjunction(
           ConstraintOperations.bindVariables(bindings, query.getConstraintExpression()),
@@ -280,43 +244,32 @@ public class SubqueryAnswer extends GlobalizedAnswer {
 
       query = new Query(query, where);
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("Generated subquery: " + query);
-      }
+      if (logger.isDebugEnabled()) logger.debug("Generated subquery: " + query);
 
       return operationContext.doQuery(query);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new QueryException("Failed to resolve subquery", e);
     }
   }
 
-  protected Map createBindingMap(Tuples tuples,
-      ResolverSession resolverSession) throws TuplesException,
-      GlobalizeException {
-    Map bindings = new HashMap();
-    Variable[] vars = tuples.getVariables();
-    for (int i = 0; i < vars.length; i++) {
-      int index = tuples.getColumnIndex(vars[i]);
+  protected Map<Variable,Value> createBindingMap(Tuples tuples, ResolverSession resolverSession)
+        throws TuplesException, GlobalizeException {
+    Map<Variable,Value> bindings = new HashMap<Variable,Value>();
+    for (Variable var: tuples.getVariables()) {
+      int index = tuples.getColumnIndex(var);
       if (tuples.getColumnValue(index) != Tuples.UNBOUND) {
-        bindings.put(vars[i],
-            resolverSession.globalize(tuples.getColumnValue(index)));
+        // globalize returns a Node, but all our node implementations also implement Value
+        bindings.put(var, (Value)resolverSession.globalize(tuples.getColumnValue(index)));
       }
     }
-
     return bindings;
   }
 
-  protected ConstraintExpression constrainBindings(Map bindings) throws
-      TuplesException {
-    List args = new ArrayList();
-    Iterator i = bindings.entrySet().iterator();
-    while (i.hasNext()) {
-      Map.Entry entry = (Map.Entry) i.next();
-      args.add(new ConstraintIs((Variable) entry.getKey(),
-          (Value) entry.getValue()));
+  protected ConstraintExpression constrainBindings(Map<Variable,Value> bindings) throws TuplesException {
+    List<ConstraintExpression> args = new ArrayList<ConstraintExpression>();
+    for (Map.Entry<Variable,Value> entry: bindings.entrySet()) {
+      args.add(new ConstraintIs(entry.getKey(), entry.getValue()));
     }
-
     return new ConstraintConjunction(args);
   }
 }
