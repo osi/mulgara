@@ -158,17 +158,13 @@ public class FilteredTuples extends AbstractTuples implements ContextOwner {
    * @throws TuplesException {@inheritDoc}
    */
   public boolean next() throws TuplesException {
-    try {
-      do {
-        // move to the next on the unfiltered
-        boolean currentNext = unfiltered.next();
-        // Short-circuit execution if this tuples' cursor is after the last row
-        if (!currentNext) return false;
-        // check if the filter passes the current row on the unfiltered
-      } while (!testFilter());
-    } catch (QueryException qe) {
-      throw new TuplesException("Unable to iterate to the next tuples element while filtering", qe);
-    }
+    do {
+      // move to the next on the unfiltered
+      boolean currentNext = unfiltered.next();
+      // Short-circuit execution if this tuples' cursor is after the last row
+      if (!currentNext) return false;
+      // check if the filter passes the current row on the unfiltered
+    } while (!testFilter());
 
     return true;
   }
@@ -214,9 +210,13 @@ public class FilteredTuples extends AbstractTuples implements ContextOwner {
    * @return The test result.
    * @throws QueryException If there was an error accessing data needed for the test.
    */
-  private boolean testFilter() throws QueryException {
+  private boolean testFilter() {
     // re-root the filter expression to this Tuples
     filter.setContextOwner(this);
-    return filter.test(context);
+    try {
+      return filter.test(context);
+    } catch (QueryException qe) {
+      return false;
+    }
   }
 }
