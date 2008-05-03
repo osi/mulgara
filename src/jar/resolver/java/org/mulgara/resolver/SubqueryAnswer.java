@@ -71,6 +71,10 @@ public class SubqueryAnswer extends GlobalizedAnswer {
   /** The target <code>SELECT</code> clause */
   private List<? extends SelectElement> variableList;
 
+  /** The variables which are not bound */
+  private List<Variable> unboundVars = new ArrayList<Variable>();
+
+  /** All selected variables */
   private Variable[] variables;
 
   /** The current database session for this query. */
@@ -132,7 +136,8 @@ public class SubqueryAnswer extends GlobalizedAnswer {
         try {
           if (!empty) tuples.getColumnIndex(variables[i]);
         } catch (TuplesException e) {
-          throw new IllegalArgumentException(variables[i] + " does not appear in the \"tuples\" parameter");
+          unboundVars.add(variables[i]);
+          if (logger.isDebugEnabled()) logger.debug(variables[i] + " does not appear in the \"tuples\" parameter");
         }
       } else if (element instanceof ConstantValue) {
         variables[i] = ((ConstantValue) element).getVariable();
@@ -181,20 +186,22 @@ public class SubqueryAnswer extends GlobalizedAnswer {
     if (logger.isDebugEnabled()) {
       logger.debug("Getting object " + column + " from variableList " + variableList);
     }
-    Object object = variableList.get(column);
+    SelectElement element = variableList.get(column);
 
-    if (object instanceof Variable) {
-      return super.getObject(super.getColumnIndex((Variable) object));
-    } else if (object instanceof ConstantValue) {
-      return ((ConstantValue) object).getValue();
-    } else if (object instanceof Count) {
+    if (element instanceof Variable) {
+      Variable var = (Variable)element;
+      if (unboundVars.contains(var)) return null;
+      return super.getObject(super.getColumnIndex(var));
+    } else if (element instanceof ConstantValue) {
+      return ((ConstantValue) element).getValue();
+    } else if (element instanceof Count) {
       // Atomic aggregate, already resolved by SelectedTuples
-      return super.getObject(super.getColumnIndex(((Count) object).getVariable()));
-    } else if (object instanceof Subquery) {
+      return super.getObject(super.getColumnIndex(((Count) element).getVariable()));
+    } else if (element instanceof Subquery) {
       // Answer-valued aggregate, not yet resolved by SelectedTuples
       try {
-        if (logger.isDebugEnabled()) logger.debug("Resolving Subquery in SubqueryAnswer: " + object);
-        return resolveSubquery((Subquery) object);
+        if (logger.isDebugEnabled()) logger.debug("Resolving Subquery in SubqueryAnswer: " + element);
+        return resolveSubquery((Subquery) element);
       } catch (QueryException e) {
         throw new TuplesException("Couldn't evaluate aggregate", e);
       } catch (RuntimeException t) {
@@ -202,12 +209,21 @@ public class SubqueryAnswer extends GlobalizedAnswer {
         throw t;
       }
     } else {
-      throw new TuplesException("Unknown type in SELECT clause: " + object.getClass());
+      throw new TuplesException("Unknown type in SELECT clause: " + element.getClass());
     }
   }
 
+  /**
+   * Return the column with a given name. This only applies to variables.
+   * @see org.mulgara.resolver.GlobalizedAnswer#getObject(java.lang.String)
+   * @return The bound value for the variable column with that name, or <code>null</code>
+   *         if that variable is unbound.
+   * @throws TuplesException If there is no variable with that name.
+   */
   public Object getObject(String columnName) throws TuplesException {
-    throw new TuplesException("Not implemented for " + getClass());
+    for (Variable v: unboundVars) if (v.getName().equals(columnName)) return null;
+    for (Variable v: variables) if (v.getName().equals(columnName)) return super.getObject(super.getColumnIndex(v));
+    throw new TuplesException("Variable not found");
   }
 
   public Variable getVariable(int column) {
@@ -215,7 +231,7 @@ public class SubqueryAnswer extends GlobalizedAnswer {
   }
 
   public Variable[] getVariables() {
-    return variables;
+    return (Variable[])variables.clone();
   }
 
   //
