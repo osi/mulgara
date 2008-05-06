@@ -51,6 +51,7 @@ import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.util.IntFile;
+import org.mulgara.util.NumberUtil;
 import org.mulgara.util.StringToLongMap;
 import org.mulgara.util.TempDir;
 
@@ -348,6 +349,10 @@ class Parser extends Thread implements N3ParserEventHandler {
         } else {
           return new LiteralImpl(ast.toString(), datatype);
         }
+
+      case N3Parser.NUMBER:
+        datatype = NumberUtil.getXSD(NumberUtil.parseNumber(ast.toString()));
+        return new LiteralImpl(ast.toString(), datatype);
 
       case N3Parser.ANON:
         return getBlankNode(ast);
