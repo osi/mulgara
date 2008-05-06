@@ -18,8 +18,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mulgara.query.rdf.XSD;
-
 /**
  * Provides utilities for parsing numbers, and determining types for numbers.
  *
@@ -147,50 +145,83 @@ public class NumberUtil {
   // Implementations of NumerStructtructor follow
 
   private static class ByteStruct implements NumberStructure<Byte> {
-    public URI getURI() { return XSD.BYTE_URI; }
+    public URI getURI() { return BYTE_URI; }
     public Class<Byte> getType() { return Byte.class; }
     public Number valueOf(String str) { return Byte.valueOf(str); }
   }
 
   private static class ShortStruct implements NumberStructure<Short> {
-    public URI getURI() { return XSD.SHORT_URI; }
+    public URI getURI() { return SHORT_URI; }
     public Class<Short> getType() { return Short.class; }
     public Number valueOf(String str) { return Short.valueOf(str); }
   }
 
   private static class IntegerStruct implements NumberStructure<Integer> {
-    public URI getURI() { return XSD.INT_URI; }
+    public URI getURI() { return INT_URI; }
     public Class<Integer> getType() { return Integer.class; }
     public Number valueOf(String str) { return Integer.valueOf(str); }
   }
 
   private static class LongStruct implements NumberStructure<Long> {
-    public URI getURI() { return XSD.LONG_URI; }
+    public URI getURI() { return LONG_URI; }
     public Class<Long> getType() { return Long.class; }
     public Number valueOf(String str) { return Long.valueOf(str); }
   }
 
   private static class BigIntegerStruct implements NumberStructure<BigInteger> {
-    public URI getURI() { return XSD.INTEGER_URI; }
+    public URI getURI() { return INTEGER_URI; }
     public Class<BigInteger> getType() { return BigInteger.class; }
     public Number valueOf(String str) { return new BigInteger(str); }
   }
 
   private static class FloatStruct implements NumberStructure<Float> {
-    public URI getURI() { return XSD.FLOAT_URI; }
+    public URI getURI() { return FLOAT_URI; }
     public Class<Float> getType() { return Float.class; }
     public Number valueOf(String str) { return Float.valueOf(str); }
   }
 
   private static class DoubleStruct implements NumberStructure<Double> {
-    public URI getURI() { return XSD.DOUBLE_URI; }
+    public URI getURI() { return DOUBLE_URI; }
     public Class<Double> getType() { return Double.class; }
     public Number valueOf(String str) { return Double.valueOf(str); }
   }
 
   private static class BigDecimalStruct implements NumberStructure<BigDecimal> {
-    public URI getURI() { return XSD.DECIMAL_URI; }
+    public URI getURI() { return DECIMAL_URI; }
     public Class<BigDecimal> getType() { return BigDecimal.class; }
     public Number valueOf(String str) { return new BigDecimal(str); }
   }
+
+  ////////////////////////
+  // The XSD numeric types
+  ////////////////////////
+
+  /** The namespace for XSD data. */
+  public final static String XSD_NS = "http://www.w3.org/2001/XMLSchema#";
+
+  /** URI for the XML Schema <code>xsd:float</code> datatype; */
+  public final static URI FLOAT_URI = URI.create(XSD_NS + "float");
+
+  /** URI for the XML Schema <code>xsd:double</code> datatype; */
+  public final static URI DOUBLE_URI = URI.create(XSD_NS + "double");
+
+  /** URI for the XML Schema <code>xsd:decimal</code> datatype. */
+  public final static URI DECIMAL_URI = URI.create(XSD_NS + "decimal");
+
+  /** URI for the XML Schema <code>integer</code> datatype. Subtype of {@link #DECIMAL_URI}. */
+  public final static URI INTEGER_URI = URI.create(XSD_NS + "integer");
+
+  /** URI for the XML Schema <code>long</code> datatype. Subtype of {@link #INTEGER_URI}. */
+  public final static URI LONG_URI = URI.create(XSD_NS + "long");
+
+  /** URI for the XML Schema <code>int</code> datatype. Subtype of {@link #LONG_URI}. */
+  public final static URI INT_URI = URI.create(XSD_NS + "int");
+
+  /** URI for the XML Schema <code>short</code> datatype. Subtype of {@link #INT_URI}. */
+  public final static URI SHORT_URI = URI.create(XSD_NS + "short");
+
+  /** URI for the XML Schema <code>byte</code> datatype. Subtype of {@link #SHORT_URI}. */
+  public final static URI BYTE_URI = URI.create(XSD_NS + "byte");
+
+
 }
