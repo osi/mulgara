@@ -21,8 +21,15 @@ import org.apache.log4j.*;
 
 // Locally written packages
 import org.mulgara.query.Constraint;
+import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
+import org.mulgara.query.filter.Context;
+import org.mulgara.query.filter.ContextOwner;
+import org.mulgara.query.filter.Filter;
+import org.mulgara.query.filter.value.Bool;
+import org.mulgara.resolver.spi.QueryEvaluationContext;
+import org.mulgara.resolver.spi.TuplesContext;
 import org.mulgara.store.tuples.AbstractTuples;
 
 /**
@@ -42,7 +49,7 @@ import org.mulgara.store.tuples.AbstractTuples;
  * @copyright &copy; 2005 <A href="mailto:pgearon@users.sourceforge.net">Paul Gearon</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Open Software License v3.0</a>
  */
-public class LeftJoin extends AbstractTuples {
+public class LeftJoin extends AbstractTuples implements ContextOwner {
 
   @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(LeftJoin.class.getName());
@@ -52,6 +59,12 @@ public class LeftJoin extends AbstractTuples {
 
   /** The set of tuples to add to the lhs. */
   protected Tuples rhs;
+
+  /** The filter to apply. */
+  private Filter filter;
+
+  /** The tuples context */
+  protected TuplesContext context = null;
 
   /** The set of variables common to both the lhs and the rhs. */
   protected Set<Variable> commonVars;
@@ -83,10 +96,17 @@ public class LeftJoin extends AbstractTuples {
    *         contain no variables in common.
    */
   @SuppressWarnings("unchecked")
-  LeftJoin(Tuples lhs, Tuples rhs) throws TuplesException, IllegalArgumentException {
+  LeftJoin(Tuples lhs, Tuples rhs, Filter filter, QueryEvaluationContext queryContext) throws TuplesException, IllegalArgumentException {
     // store the operands
     this.lhs = (Tuples)lhs.clone();
     this.rhs = (Tuples)rhs.clone();
+    this.filter = filter;
+    if (this.filter == null) this.filter = Bool.TRUE;
+    if (this.filter != Bool.TRUE) {
+      this.context = new TuplesContext(this, queryContext.getResolverSession());
+      this.filter.setContextOwner(this);
+    }
+    if (this.filter == null) throw new IllegalStateException("Null Filter");
 
     // get the variables to merge on
     commonVars = Collections.unmodifiableSet((Set<Variable>)TuplesOperations.getMatchingVars(lhs, rhs));
@@ -138,6 +158,15 @@ public class LeftJoin extends AbstractTuples {
     int nrLeftVars = lhs.getNumberOfVariables();
     if (column < nrLeftVars) return lhs.getColumnValue(column);
     // return the column minus the LHS columns, and then skip over the matching vars
+    return rightMatches && testFilter() ? rhs.getColumnValue(column - rhsOffset) : UNBOUND;
+  }
+
+  
+  /** {@inheritDoc} */
+  public long getRawColumnValue(int column) throws TuplesException {
+    int nrLeftVars = lhs.getNumberOfVariables();
+    if (column < nrLeftVars) return lhs.getColumnValue(column);
+    // return the column minus the LHS columns, and then skip over the matching vars
     return rightMatches ? rhs.getColumnValue(column - rhsOffset) : UNBOUND;
   }
 
@@ -179,9 +208,13 @@ public class LeftJoin extends AbstractTuples {
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   * If filtering, then this is necessarily false since there could be multiple matches
+   * on the right that all filter out.
+   */
   public boolean hasNoDuplicates() throws TuplesException {
-    return lhs.hasNoDuplicates();
+    return lhs.hasNoDuplicates() && filter == Bool.TRUE;
   }
 
 
@@ -309,6 +342,23 @@ public class LeftJoin extends AbstractTuples {
     return prefix;
   }
 
+
+  /**
+   * Tests a filter using the current context.
+   * @return The test result.
+   * @throws QueryException If there was an error accessing data needed for the test.
+   */
+  private boolean testFilter() {
+    // re-root the filter expression to this Tuples
+    filter.setContextOwner(this);
+    try {
+      return filter.test(context);
+    } catch (QueryException qe) {
+      return false;
+    }
+  }
+
+
   /**
    * Closes all the operands.
    * @throws TuplesException If either the lhs or the rhs can't be closed.
@@ -328,8 +378,28 @@ public class LeftJoin extends AbstractTuples {
     // Copy mutable fields by value
     cloned.lhs = (Tuples)lhs.clone();
     cloned.rhs = (Tuples)rhs.clone();
+    cloned.context = (context == null) ? null : new TuplesContext(cloned, context);
+    if (cloned.filter == null) throw new IllegalStateException("Unexpectedly lost a filter: " + filter);
 
     return cloned;
+  }
+
+  /**
+   * Tells a filter what the current context is.
+   * @see org.mulgara.query.filter.ContextOwner#getCurrentContext()
+   */
+  public Context getCurrentContext() {
+    return context;
+  }
+
+
+  /**
+   * Allows the context to be set manually. This is not expected.
+   * @see org.mulgara.query.filter.ContextOwner#setCurrentContext(org.mulgara.query.filter.Context)
+   */
+  public void setCurrentContext(Context context) {
+    if (!(context instanceof TuplesContext)) throw new IllegalArgumentException("LeftJoin can only accept a TuplesContext.");
+    this.context = (TuplesContext)context;
   }
 
 
@@ -521,6 +591,11 @@ public class LeftJoin extends AbstractTuples {
     public long getColumnValue(int column) throws TuplesException {
       if (column >= nrVars) throw new TuplesException("Invalid column: " + column);
       return wrapped.getColumnValue(column + offset);
+    }
+
+    /** @see org.mulgara.store.tuples.Tuples#getRawColumnValue(int) */
+    public long getRawColumnValue(int column) throws TuplesException {
+      return getColumnValue(column);
     }
 
     /** @see org.mulgara.store.tuples.Tuples#getComparator() */
