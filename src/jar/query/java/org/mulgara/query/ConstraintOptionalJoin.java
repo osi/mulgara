@@ -27,6 +27,12 @@
 
 package org.mulgara.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mulgara.query.filter.Filter;
+import org.mulgara.query.filter.value.Bool;
+
 /**
  * A constraint expression composed of a left-out-join conjunction of two subexpressions
  *
@@ -46,13 +52,68 @@ public class ConstraintOptionalJoin extends ConstraintOperation {
    */
   private static final long serialVersionUID = 4059489277371655516L;
 
+  private Filter filter = Bool.TRUE;
+
   /**
    * Construct a constraint left-outer-join.
    * @param lhs a non-<code>null</code> constraint expression
    * @param rhs another non-<code>null</code> constraint expression
    */
   public ConstraintOptionalJoin(ConstraintExpression lhs, ConstraintExpression rhs) {
-    super(lhs, rhs);
+    super(testedList(lhs, rhs));
+  }
+
+  /**
+   * Construct a constraint left-outer-join.
+   * @param lhs a non-<code>null</code> constraint expression
+   * @param rhs another non-<code>null</code> constraint expression
+   * @param filter Filters the join.
+   */
+  public ConstraintOptionalJoin(ConstraintExpression lhs, ConstraintExpression rhs, Filter filter) {
+    super(testedList(lhs, rhs));
+    if (filter == null) throw new IllegalArgumentException("Null \"filter\" parameter");
+    this.filter = filter;
+  }
+
+  /**
+   * Validate parameters and set them up as a list.
+   * @param lhs The main pattern
+   * @param rhs The optional pattern
+   * @return A 2 element list containing {lhs, rhs}
+   */
+  private static List<ConstraintExpression> testedList(ConstraintExpression lhs, ConstraintExpression rhs) {
+    // Validate "lhs" parameter
+    if (lhs == null) throw new IllegalArgumentException("Null \"lhs\" parameter");
+
+    // Validate "rhs" parameter
+    if (rhs == null) throw new IllegalArgumentException("Null \"optional\" parameter");
+
+    // Initialize fields
+    List<ConstraintExpression> ops = new ArrayList<ConstraintExpression>(2);
+    ops.add(lhs);
+    ops.add(rhs);
+    return ops;
+  }
+
+  /**
+   * @return Get the LHS "main" parameter
+   */
+  public ConstraintExpression getMain() {
+    return elements.get(0);
+  }
+
+  /**
+   * @return Get the RHS "optional" parameter
+   */
+  public ConstraintExpression getOptional() {
+    return elements.get(1);
+  }
+
+  /**
+   * @return Get the filter parameter
+   */
+  public Filter getFilter() {
+    return filter;
   }
 
   /**
