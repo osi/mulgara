@@ -301,6 +301,11 @@ public class TuplesWrapperResolution implements Resolution {
     return tuples.getColumnValue(column);
   }
 
+  /** @see org.mulgara.store.tuples.Tuples#getRawColumnValue(int) */
+  public long getRawColumnValue(int column) throws TuplesException {
+    return tuples.getColumnValue(column);
+  }
+
   /**
    * Renames the variables which label the tuples if they have the "magic" names
    * such as "Subject", "Predicate", "Object" and "Meta".

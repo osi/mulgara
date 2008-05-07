@@ -2524,6 +2524,10 @@ public final class XAStringPoolImpl implements XAStringPool {
         return avlNode.getPayloadLong(IDX_GRAPH_NODE);
       }
 
+      public long getRawColumnValue(int column) throws TuplesException {
+        return getColumnValue(column);
+      }
+
       public Variable[] getVariables() {
         // Clone the variables array in case the caller changes the returned
         // array.

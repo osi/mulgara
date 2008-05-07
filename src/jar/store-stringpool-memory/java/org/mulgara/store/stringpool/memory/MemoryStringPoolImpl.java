@@ -573,14 +573,17 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public long getColumnValue(int column) throws TuplesException {
       if (column != 0) {
         throw new TuplesException("Column does not exist");
       }
       return stringToNodePool.get(currentRow);
+    }
+
+    /** {@inheritDoc} */
+    public long getRawColumnValue(int column) throws TuplesException {
+      return getColumnValue(column);
     }
 
     /**

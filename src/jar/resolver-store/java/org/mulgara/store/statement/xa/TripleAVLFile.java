@@ -1959,6 +1959,10 @@ public final class TripleAVLFile {
       }
 
 
+      public long getRawColumnValue(int column) throws TuplesException {
+        return getColumnValue(column);
+      }
+
       public long getColumnValue(int column) throws TuplesException {
         try {
           return tripleBlock.getLong(

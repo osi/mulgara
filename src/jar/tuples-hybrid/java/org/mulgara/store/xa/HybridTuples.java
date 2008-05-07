@@ -357,6 +357,11 @@ public final class HybridTuples implements Tuples {
   }
 
 
+  /** {@inheritDoc} */
+  public long getRawColumnValue(int column) throws TuplesException {
+    return tuples.getColumnValue(column);
+  }
+
   /**
    * Required by Cursor.
    */

@@ -116,11 +116,11 @@ public class WrappedTuples implements Tuples {
   }
 
   /**
-   * Gets the ColumnValue attribute of the WrappedTuples object
+   * Get the binding of a variable (column) in the currect product term (row)
    *
-   * @param column PARAMETER TO DO
-   * @return The ColumnValue value
-   * @throws TuplesException EXCEPTION TO DO
+   * @param column the column number; columns are numbered starting from 0
+   * @return the value of the column, or {@link #UNBOUND}
+   * @throws TuplesException If there was a Tuples specific error accessing the data.
    */
   public long getColumnValue(int column) throws TuplesException {
 
@@ -128,6 +128,18 @@ public class WrappedTuples implements Tuples {
       logger.debug("Getting column "+column+" from wrapped "+tuples.getClass());
     }
     return tuples.getColumnValue(column);
+  }
+
+  /**
+   * Gets the raw (unfiltered) ColumnValue attribute of the AbstractTuples object.
+   * This is only useful for filtered tuples. By default will return the normal column value.
+   *
+   * @param column The column offset to get data from
+   * @return The column value as a gNode
+   * @throws TuplesException If there was a Tuples specific error accessing the data.
+   */
+  public long getRawColumnValue(int column) throws TuplesException {
+    return getColumnValue(column);
   }
 
   /**
@@ -201,7 +213,7 @@ public class WrappedTuples implements Tuples {
     return tuples.isMaterialized();
   }
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.singletonList(tuples);
   }
 
@@ -316,7 +328,7 @@ public class WrappedTuples implements Tuples {
   /**
    * Copied from AbstractTuples.
    */
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
     return null;
   }
 }

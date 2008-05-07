@@ -204,9 +204,19 @@ public interface Tuples extends Cursor, Cloneable {
    *
    * @param column the column number; columns are numbered starting from 0
    * @return the value of the column, or {@link #UNBOUND}
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException If there was a Tuples specific error accessing the data.
    */
   public long getColumnValue(int column) throws TuplesException;
+
+  /**
+   * Gets the raw (unfiltered) ColumnValue attribute of the AbstractTuples object.
+   * This is only useful for filtered tuples. By default will return the normal column value.
+   *
+   * @param column The column offset to get data from
+   * @return The column value as a gNode
+   * @throws TuplesException If there was a Tuples specific error accessing the data.
+   */
+  public long getRawColumnValue(int column) throws TuplesException;
 
   /**
    * Renames the variables which label the tuples if they have the "magic" names

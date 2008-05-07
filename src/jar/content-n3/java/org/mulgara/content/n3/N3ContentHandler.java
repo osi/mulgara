@@ -125,7 +125,8 @@ public class N3ContentHandler implements ContentHandler
     
     // We recognize a fixed set of extensions
     return path.endsWith(".n3") ||
-           path.endsWith(".nt");
+           path.endsWith(".nt") ||
+           path.endsWith(".ttl");
   }
 
     /**

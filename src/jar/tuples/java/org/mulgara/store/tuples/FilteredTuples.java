@@ -86,6 +86,12 @@ public class FilteredTuples extends AbstractTuples implements ContextOwner {
     return unfiltered.getColumnValue(column);
   }
 
+  
+  /** {@inheritDoc} */
+  public long getRawColumnValue(int column) throws TuplesException {
+    return unfiltered.getColumnValue(column);
+  }
+
 
   /** {@inheritDoc} */
   public long getRowUpperBound() throws TuplesException {

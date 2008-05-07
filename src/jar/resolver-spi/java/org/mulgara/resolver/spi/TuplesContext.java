@@ -77,7 +77,7 @@ public class TuplesContext implements Context {
    */
   public long getColumnValue(int columnNumber) throws QueryException {
     try {
-      return tuples.getColumnValue(columnNumber);
+      return tuples.getRawColumnValue(columnNumber);
     } catch (Exception te) {  // TuplesException
       throw new QueryException("Error resolving value", te);
     }
@@ -90,7 +90,7 @@ public class TuplesContext implements Context {
    */
   public boolean isBound(int columnNumber) throws QueryException {
     try {
-      return columnNumber != NOT_BOUND && tuples.getColumnValue(columnNumber) != Tuples.UNBOUND;
+      return columnNumber != NOT_BOUND && tuples.getRawColumnValue(columnNumber) != Tuples.UNBOUND;
     } catch (Exception te) {  // TuplesException
       throw new QueryException("Error resolving column", te);
     }

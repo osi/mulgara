@@ -218,11 +218,23 @@ public abstract class AbstractTuples implements Tuples {
   /**
    * Gets the ColumnValue attribute of the AbstractTuples object
    *
-   * @param column PARAMETER TO DO
+   * @param column The column offset to get data from
    * @return The ColumnValue value
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException If there was a Tuples specific error accessing the data.
    */
   public abstract long getColumnValue(int column) throws TuplesException;
+
+  /**
+   * Gets the raw (unfiltered) ColumnValue attribute of the AbstractTuples object.
+   * By default this returns the normal column value.
+   *
+   * @param column The column offset to get data from
+   * @return The column value as a gNode
+   * @throws TuplesException If there was a Tuples specific error accessing the data.
+   */
+  public long getRawColumnValue(int column) throws TuplesException {
+    return getColumnValue(column);
+  }
 
   /**
    * Returns a copy of the internal variables.
