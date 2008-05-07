@@ -183,14 +183,12 @@ class DefaultConstraintHandlers
         new NVPair(ConstraintOptionalJoin.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             List<Tuples> args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
-            LinkedList<Tuples> stackedArgs;
-            // we know this is a linked list, but test just in case it is ever changed.
-            if (args instanceof LinkedList) stackedArgs = (LinkedList<Tuples>)args;
-            else stackedArgs = new LinkedList<Tuples>(args);
+            assert args.size() == 2;
             try {
-              return TuplesOperations.optionalJoin(stackedArgs);
+              return TuplesOperations.optionalJoin((Tuples)args.get(0), (Tuples)args.get(1), ((ConstraintOptionalJoin)constraintExpr).getFilter(), context);
             } finally {
-              for (Tuples t: stackedArgs) t.close();
+              ((Tuples)args.get(0)).close();
+              ((Tuples)args.get(1)).close();
             }
           }
         }),

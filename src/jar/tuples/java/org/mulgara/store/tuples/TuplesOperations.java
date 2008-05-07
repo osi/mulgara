@@ -37,7 +37,9 @@ import org.apache.log4j.*;
 
 // Local packages
 import org.mulgara.query.*;
+import org.mulgara.query.filter.And;
 import org.mulgara.query.filter.Filter;
+import org.mulgara.query.filter.value.Bool;
 import org.mulgara.resolver.spi.*;
 
 /**
@@ -340,39 +342,24 @@ public abstract class TuplesOperations {
     }
   }
 
-  /**
-   * Does a left-associative optionalJoin along a list of arguments.
-   * @param args The arguments to operate on.
-   * @return A tuples containing all of the entries from args.get(0) and matching
-   *   entries from the remainder of the list. All variables from the entire list
-   *   will be present in the result.
-   * @throws TuplesException On error accessing elements in any argument.
-   */
-  public static Tuples optionalJoin(LinkedList<Tuples> args) throws TuplesException {
-    // check for termination. The first couple are for <NIL> syntax elements in the query
-    if (args.size() == 0) return empty();
-    if (args.size() == 1) return args.get(0);
-    if (args.size() == 2) return optionalJoin(args.get(0), args.get(1));
-    // join the head of the list, and then iterate
-    args.addFirst(optionalJoin(args.removeFirst(), args.removeFirst()));
-    return optionalJoin(args);
-  }
 
   /**
    * Does a left-outer-join between two tuples. Parameters are not closed during this
    * operation.
    * @param standard The standard pattern that appears in all results.
    * @param optional The optional pattern that may or may not be bound in each result
+   * @param context The query evaluation context to evaluate any nested fitlers in.
    * @return A Tuples containing variables from both parameters. All variables from
    *   <em>standard</em> will be bound at all times. Variables from <em>optional</em>
    *   may or may not be bound.
    */
-  public static Tuples optionalJoin(Tuples standard, Tuples optional) throws TuplesException {
+  public static Tuples optionalJoin(Tuples standard, Tuples optional, Filter filter, QueryEvaluationContext context) throws TuplesException {
     try {
 
       if (logger.isDebugEnabled()) {
         logger.debug("optional join of " + standard + " optional { " + optional + " }");
       }
+
       // get the matching columns
       Set<Variable> matchingVars = getMatchingVars(standard, optional);
       // check for empty parameters
@@ -406,7 +393,7 @@ public abstract class TuplesOperations {
 
       // return the difference
       try {
-        return new LeftJoin(standard, sortedOptional);
+        return new LeftJoin(standard, sortedOptional, filter, context);
       } finally {
         if (sortedOptional != optional) sortedOptional.close();
       }
@@ -419,6 +406,7 @@ public abstract class TuplesOperations {
       throw te;
     }
   }
+
 
   /**
    * Flattens any nested joins to allow polyadic join operations.
@@ -1114,11 +1102,11 @@ public abstract class TuplesOperations {
    * @param rhs The second tuples to check the variables of.
    * @return A set containing all of the shared variables from lhs and rhs.
    */
-  static Set getMatchingVars(Tuples lhs, Tuples rhs) {
+  static Set<Variable> getMatchingVars(Tuples lhs, Tuples rhs) {
     // get all the variables from the lhs
-    Set commonVarSet = new HashSet(Arrays.asList(lhs.getVariables()));
+    Set<Variable> commonVarSet = new HashSet<Variable>(Arrays.asList(lhs.getVariables()));
     // get all the variables from the rhs
-    Set rhsVars = new HashSet(Arrays.asList(rhs.getVariables()));
+    Set<Variable> rhsVars = new HashSet<Variable>(Arrays.asList(rhs.getVariables()));
 
     // find the intersecting set of variables
     commonVarSet.retainAll(rhsVars);
@@ -1133,7 +1121,7 @@ public abstract class TuplesOperations {
    * @param vars The variables to check for.
    * @return <code>true</code> when all of the tuples' variables are in <code>vars</code>.
    */
-  private static boolean checkForExtraVariables(Tuples tuples, Collection vars) {
+  private static boolean checkForExtraVariables(Tuples tuples, Collection<Variable> vars) {
     // get the variable list
     Variable[] sv = tuples.getVariables();
     for (int i = 0; i < sv.length; i++) {

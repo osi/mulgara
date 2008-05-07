@@ -18,6 +18,7 @@ import org.apache.log4j.Logger; // Log4J
 
 // Locally written packages
 import org.mulgara.query.Variable;
+import static org.mulgara.query.filter.value.Bool.TRUE;
 import static org.mulgara.store.tuples.Tuples.UNBOUND;
 
 /**
@@ -112,7 +113,7 @@ public class LeftJoinUnitTest extends TestCase {
     Tuples rhs = TuplesFactory.newInstance().newTuples(
             new TestTuples(z, 5).and(w, 6).or(z, 7).and(w, 8));
 
-    Tuples tuples = new LeftJoin(lhs, rhs);
+    Tuples tuples = new LeftJoin(lhs, rhs, TRUE, null);
     tuples.beforeFirst();
     assertTrue(tuples.next());
     assertTrue(tuples.next());
@@ -148,7 +149,7 @@ public class LeftJoinUnitTest extends TestCase {
     rhs.appendTuple(new long[] {12, 32});
     rhs.appendTuple(new long[] {15, 16});
 
-    Tuples actual = new LeftJoin(lhs, rhs);
+    Tuples actual = new LeftJoin(lhs, rhs, TRUE, null);
 //    Tuples actual = TuplesOperations.sort(opt);
 //
 //    // check the variables
@@ -212,7 +213,7 @@ public class LeftJoinUnitTest extends TestCase {
     lhs.appendTuple(new long[] {12, 11});
     lhs.appendTuple(new long[] {14, 13});
 
-    actual = new LeftJoin(rhs, lhs);
+    actual = new LeftJoin(rhs, lhs, TRUE, null);
 
     variables = actual.getVariables();
     assertEquals(3, variables.length);
@@ -258,7 +259,7 @@ public class LeftJoinUnitTest extends TestCase {
     rhs.appendTuple(new long[] {7, 14});
     rhs.appendTuple(new long[] {8, 9});
 
-    LeftJoin join = new LeftJoin(lhs, rhs);
+    LeftJoin join = new LeftJoin(lhs, rhs, TRUE, null);
     Tuples actual = TuplesOperations.sort(join);
 
     // check the variables
@@ -312,7 +313,7 @@ public class LeftJoinUnitTest extends TestCase {
     lhs.appendTuple(new long[] {16, 17, 15});
     lhs.appendTuple(new long[] {7, 14, 15});
 
-    actual = TuplesOperations.sort(new LeftJoin(rhs, lhs));
+    actual = TuplesOperations.sort(new LeftJoin(rhs, lhs, TRUE, null));
 
     actual.beforeFirst();
     TuplesTestingUtil.testTuplesRow(actual, new long[] {5, 6, 4});
@@ -332,7 +333,7 @@ public class LeftJoinUnitTest extends TestCase {
     rhs.appendTuple(new long[] {7, 14, 2});
     rhs.appendTuple(new long[] {8, 9, 11});
 
-    actual = TuplesOperations.sort(new LeftJoin(rhs, lhs));
+    actual = TuplesOperations.sort(new LeftJoin(rhs, lhs, TRUE, null));
 
     actual.beforeFirst();
     TuplesTestingUtil.testTuplesRow(actual, new long[] {5, 6, 3, 4});
