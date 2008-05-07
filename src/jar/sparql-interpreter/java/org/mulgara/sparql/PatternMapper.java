@@ -246,6 +246,7 @@ public class PatternMapper {
       List<GroupGraphPattern> list = pattern.getElements();
       List<ConstraintExpression> newList = new ArrayList<ConstraintExpression>(list.size());
       for (GroupGraphPattern p: list) newList.add(mapper.mapPattern(p));
+      if (newList.size() == 1) return newList.get(0);
       return new ConstraintConjunction(newList);
     }
   }
@@ -257,6 +258,7 @@ public class PatternMapper {
       List<GroupGraphPattern> list = pattern.getElements();
       List<ConstraintExpression> newList = new ArrayList<ConstraintExpression>(list.size());
       for (GroupGraphPattern p: list) newList.add(mapper.mapPattern(p));
+      if (newList.size() == 1) return newList.get(0);
       return new ConstraintDisjunction(newList);
     }
   }
@@ -265,7 +267,13 @@ public class PatternMapper {
   private static class GraphPatternOptionalToConstraint extends PatternToConstraintMapper<GraphPatternOptional> {
     public Class<GraphPatternOptional> getMapType() { return GraphPatternOptional.class; }
     ConstraintExpression typedMap(GraphPatternOptional pattern, PatternMapper mapper) throws MulgaraParserException {
-      return new ConstraintOptionalJoin(mapper.mapPattern(pattern.getMain()), mapper.mapPattern(pattern.getOptional()));
+      ConstraintExpression opt = mapper.mapPattern(pattern.getOptional());
+      if (opt instanceof ConstraintFilter) {
+        ConstraintFilter f = (ConstraintFilter)opt;
+        return new ConstraintOptionalJoin(mapper.mapPattern(pattern.getMain()), f.getUnfilteredConstraint(), f.getFilter());
+      } else {
+        return new ConstraintOptionalJoin(mapper.mapPattern(pattern.getMain()), opt);
+      }
     }
   }
 
