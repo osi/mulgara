@@ -30,7 +30,6 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import java.beans.Beans;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -56,23 +55,12 @@ import org.mulgara.store.stringpool.StringPoolException;
  *
  * @created 2004-10-07
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
- * @version $Revision: 1.11 $
- * @modified $Date: 2005/06/26 12:48:11 $
- * @maintenanceAuthor $Author: pgearon $
- * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public abstract class DatabaseFactory
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(DatabaseFactory.class.getName());
+public abstract class DatabaseFactory {
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(DatabaseFactory.class.getName());
 
   /**
    * Creates a Database in a similar fashion to the stopgap constructor,
@@ -99,48 +87,43 @@ public abstract class DatabaseFactory
    * @throws StringPoolException
    * @throws URISyntaxException
    */
-  public static Database newDatabase(URI          uri,
-                                     File         directory,
-                                     MulgaraConfig config)
+  public static Database newDatabase(URI uri, File directory, MulgaraConfig config)
     throws ConfigurationException, InitializerException, LocalizeException,
            NamingException, NodePoolException, QueryException,
            ResolverException, ResolverFactoryException,
            SecurityAdapterFactoryException, StringPoolException,
-           SystemException, URISyntaxException
-  {
-    Database database = new Database(
-      uri,        // database name
-      directory,  // persistence directory
-      uri,        // security domain
-      new JotmTransactionManagerFactory(),
-      config.getTransactionTimeout(),
-      config.getPersistentNodePoolFactory().getType(),
-      subdir(directory, config.getPersistentNodePoolFactory().getDir()),
-      config.getPersistentStringPoolFactory().getType(),
-      subdir(directory, config.getPersistentStringPoolFactory().getDir()),
-      config.getPersistentResolverFactory().getType(),
-      subdir(directory, config.getPersistentResolverFactory().getDir()),
-      config.getTemporaryNodePoolFactory().getType(),
-      subdir(directory, config.getTemporaryNodePoolFactory().getDir()),
-      config.getTemporaryStringPoolFactory().getType(),
-      subdir(directory, config.getTemporaryStringPoolFactory().getDir()),
-      config.getTemporaryResolverFactory().getType(),
-      subdir(directory, config.getTemporaryResolverFactory().getDir()),
-      config.getRuleLoader().getType(),
-      config.getDefaultContentHandler().getType());
+           SystemException, URISyntaxException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Constructed database.");
-    }
+    Database database = new Database(
+        uri,        // database name
+        directory,  // persistence directory
+        uri,        // security domain
+        new JotmTransactionManagerFactory(),
+        config.getTransactionTimeout(),
+        config.getPersistentNodePoolFactory().getType(),
+        subdir(directory, config.getPersistentNodePoolFactory().getDir()),
+        config.getPersistentStringPoolFactory().getType(),
+        subdir(directory, config.getPersistentStringPoolFactory().getDir()),
+        config.getPersistentResolverFactory().getType(),
+        subdir(directory, config.getPersistentResolverFactory().getDir()),
+        config.getTemporaryNodePoolFactory().getType(),
+        subdir(directory, config.getTemporaryNodePoolFactory().getDir()),
+        config.getTemporaryStringPoolFactory().getType(),
+        subdir(directory, config.getTemporaryStringPoolFactory().getDir()),
+        config.getTemporaryResolverFactory().getType(),
+        subdir(directory, config.getTemporaryResolverFactory().getDir()),
+        config.getRuleLoader().getType(),
+        config.getDefaultContentHandler().getType());
+
+    if (logger.isDebugEnabled()) logger.debug("Constructed database.");
 
     configure(database, config);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Configured database.");
-    }
+    if (logger.isDebugEnabled()) logger.debug("Configured database.");
 
     return database;
   }
+
 
   /**
    * @param parentDirectory  the absolute parent directory; this may be
@@ -153,27 +136,18 @@ public abstract class DatabaseFactory
    */
   // TODO: Make this private once the 3-arg constructor is removed from
   //       Database.
-  static File subdir(File parentDirectory, String childDirectory)
-    throws ConfigurationException
-  {
-    if (childDirectory == null) {
-      return null;
-    }
-
+  static File subdir(File parentDirectory, String childDirectory) throws ConfigurationException {
+    if (childDirectory == null) return null;
     if (parentDirectory == null) {
-      throw new ConfigurationException(
-        "Can't configure directory " + childDirectory +
-        "because there is no PersistencePath configured"
-      );
+      throw new ConfigurationException("Can't configure directory " + childDirectory + "because there is no PersistencePath configured");
     }
-
     return new File(parentDirectory, childDirectory);
   }
+
 
   /**
    * Add the additional resolver factories and content handlers specified in
    * a database's configuration file.
-   *
    * @param database  an existing {@link Database} to configure
    * @param config  the configuration specifying the additional
    *   {@link ContentHandler} and {@link ResolverFactory} instances to add
@@ -183,52 +157,37 @@ public abstract class DatabaseFactory
    * @throws SecurityAdapterFactoryException if a configured
    *   {@link SecurityAdapter} can't be created
    */
-  static void configure(Database database, MulgaraConfig config)
-    throws InitializerException, SecurityAdapterFactoryException
-  {
+  @SuppressWarnings("unchecked")
+  static void configure(Database database, MulgaraConfig config) throws InitializerException, SecurityAdapterFactoryException {
     // Retrieve the enumeration of content handler classes
-    Enumeration contentHandlers = config.enumerateContentHandler();
+    Enumeration<org.mulgara.config.ContentHandler> contentHandlers = config.enumerateContentHandler();
 
     // Iterate through the enumeration and add the class names to the content
     // handlers list
     while (contentHandlers.hasMoreElements()) {
-
       // Retrieve the next content handler class name
-      org.mulgara.config.ContentHandler contentHandler =
-        (org.mulgara.config.ContentHandler) contentHandlers.nextElement();
-
-      if (logger.isInfoEnabled()) {
-
-        logger.info("Loaded content handler: " + contentHandler.getType());
-      }
-
+      org.mulgara.config.ContentHandler contentHandler = contentHandlers.nextElement();
+      if (logger.isInfoEnabled()) logger.info("Loaded content handler: " + contentHandler.getType());
       // Add the next content handler class name
       database.addContentHandler(contentHandler.getType());
     }
 
     // Retrieve the enumeration of resolver factory classes
-    Enumeration resolverFactories = config.enumerateResolverFactory();
+    Enumeration<org.mulgara.config.ResolverFactory> resolverFactories = config.enumerateResolverFactory();
 
     // Iterate through the enumeration and add the class names to the resolver
     // factories list
     while (resolverFactories.hasMoreElements()) {
 
       // Retrieve the next resolver factory class name
-      org.mulgara.config.ResolverFactory resolverFactory =
-        (org.mulgara.config.ResolverFactory) resolverFactories.nextElement();
+      org.mulgara.config.ResolverFactory resolverFactory = resolverFactories.nextElement();
 
-      if (logger.isInfoEnabled()) {
-
-        logger.info("Loaded resolver factory: " + resolverFactory.getType());
-      }
+      if (logger.isInfoEnabled()) logger.info("Loaded resolver factory: " + resolverFactory.getType());
 
       // Determine the persistence directory
       File directory = null;
-      if (resolverFactory.getDir()    != null &&
-          database.getRootDirectory() != null)
-      {
-        directory = new File(database.getRootDirectory(),
-                             resolverFactory.getDir());
+      if (resolverFactory.getDir() != null && database.getRootDirectory() != null) {
+        directory = new File(database.getRootDirectory(), resolverFactory.getDir());
       }
 
       // Add the next resolver factory class name
@@ -236,28 +195,19 @@ public abstract class DatabaseFactory
     }
 
     // Add the security adapters, if configured
-    Enumeration securityAdapterFactories =
-      config.enumerateSecurityAdapterFactory();
+    Enumeration<org.mulgara.config.SecurityAdapterFactory> securityAdapterFactories = config.enumerateSecurityAdapterFactory();
 
     while (securityAdapterFactories.hasMoreElements()) {
 
-      org.mulgara.config.SecurityAdapterFactory configSecurityAdapterFactory =
-        (org.mulgara.config.SecurityAdapterFactory) securityAdapterFactories.nextElement();
+      org.mulgara.config.SecurityAdapterFactory configSecurityAdapterFactory = securityAdapterFactories.nextElement();
 
       // Instantiate the factory bean
       SecurityAdapterFactory securityAdapterFactory;
       try {
-        securityAdapterFactory = (SecurityAdapterFactory) Beans.instantiate(
-                                   database.getClass().getClassLoader(),
-                                   configSecurityAdapterFactory.getType()
-                                 );
-      }
-      catch (Exception e) {
-        throw new SecurityAdapterFactoryException(
-          "Unable to instantiate security adapter factory " +
-            configSecurityAdapterFactory.getType(),
-          e
-        );
+        securityAdapterFactory = (SecurityAdapterFactory)Beans.instantiate(
+              database.getClass().getClassLoader(), configSecurityAdapterFactory.getType());
+      } catch (Exception e) {
+        throw new SecurityAdapterFactoryException("Unable to instantiate security adapter factory " + configSecurityAdapterFactory.getType(), e);
       }
       assert securityAdapterFactory != null;
 
