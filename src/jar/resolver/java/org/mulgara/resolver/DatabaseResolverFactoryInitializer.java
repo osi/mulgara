@@ -59,20 +59,13 @@ import org.objectweb.transaction.jta.TransactionManager;
  *
  * @created 2004-04-26
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
- * @version $Revision: 1.14 $
- * @modified $Date: 2005/06/10 07:56:41 $
- * @maintenanceAuthor $Author: amuys $
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseResolverFactoryInitializer
-  extends DatabaseFactoryInitializer implements ResolverFactoryInitializer
-{
+class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer implements ResolverFactoryInitializer {
   /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(DatabaseResolverFactoryInitializer.class.getName());
+  private static final Logger logger = Logger.getLogger(DatabaseResolverFactoryInitializer.class.getName());
 
   private final Set cachedResolverFactorySet;
   private final Database database;
@@ -135,6 +128,11 @@ class DatabaseResolverFactoryInitializer
   public void addModelType(URI modelType, ResolverFactory resolverFactory)
       throws InitializerException {
     database.addModelType(modelType, resolverFactory);
+  }
+
+  public boolean addDefaultGraph(URI graphType, URI graph, ResolverFactory resolverFactory) throws InitializerException {
+    database.addModelType(graphType, resolverFactory);
+    return false;
   }
 
   public void addProtocol(String protocol, ResolverFactory resolverFactory)

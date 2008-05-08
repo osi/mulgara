@@ -60,86 +60,78 @@ import org.mulgara.store.stringpool.StringPool;
 
 public interface ResolverFactoryInitializer extends FactoryInitializer {
   /**
-   * Register this resolver factory as being able to create and drop models of
-   * a particular type.
-   *
-   * @param modelType  a preallocated node identifying models of the type
-   *   created by the {@link ResolverFactory}.
-   * @param resolverFactory  the resolver factory being registered as a handler
-   *   for the <var>modelType</var>
+   * Register this resolver factory as being able to create and drop models of a particular type.
+   * @param graphType a preallocated node identifying models of the type created by the {@link ResolverFactory}.
+   * @param resolverFactory  the resolver factory being registered as a handler for the <var>graphType</var>
    * @throws IllegalStateException if called outside of initialization
-   * @throws InitializerException if the <var>modelType</var> couldn't be
-   *   registered
+   * @throws InitializerException if the <var>graphType</var> couldn't be registered
    */
-  public void addModelType(URI modelType, ResolverFactory resolverFactory)
-    throws InitializerException;
+  public void addModelType(URI graphType, ResolverFactory resolverFactory) throws InitializerException;
 
   /**
-   * Register this resolver factory as being able to create and drop models
-   * external to the database via a specified URI protocol.
-   *
-   * @param protocol  a URL protocol
-   * @param resolverFactory  the resolver factory being registered as a handler
-   *   for the <var>protocol</var>
+   * Register this resolver factory as being able to create and drop models external to the database
+   * via a specified URI protocol.
+   * @param protocol a URL protocol
+   * @param resolverFactory the resolver factory being registered as a handler for the <var>protocol</var>
    * @throws IllegalStateException if called outside of initialization
-   * @throws InitializerException if the <var>protocol</var> couldn't be
-   *   registered
+   * @throws InitializerException if the <var>protocol</var> couldn't be registered
    */
-  public void addProtocol(String protocol, ResolverFactory resolverFactory)
-    throws InitializerException;
+  public void addProtocol(String protocol, ResolverFactory resolverFactory) throws InitializerException;
+
+  /**
+   * Register this resolver factory as requiring a graph to be created in the
+   * System Resolver to provide internal functionality. This is the default
+   * graph to be used for this resolver factory.
+   * @param graphType a preallocated node identifying graphs of the type created
+   *        by the {@link ResolverFactory}.
+   * @param graph a graphs to be created if it doesn't exist to provide a default
+   *        access point for the {@link ResolverFactory}.
+   * @param resolverFactory the resolver factory being registered as a handler
+   *        for the <var>graphType</var>
+   * @return <code>true</code> if the graph was successfully created,
+   *         <code>false</code> if registration occurred, but the graph was not created.
+   * @throws IllegalStateException if called outside of initialization
+   * @throws InitializerException if the <var>graphType</var> couldn't be registered
+   */
+  public boolean addDefaultGraph(URI graphType, URI graph, ResolverFactory resolverFactory) throws InitializerException;
 
   /**
    * Register a symbolic transformation rule.
-   *
-   * @param symbolicTransformation  the rule to register, never
-   *   <code>null</code>
+   * @param symbolicTransformation  the rule to register, never <code>null</code>
    * @throws IllegalStateException is called outside of initialization
-   * @throws InitializerException if the <var>symbolicTransformation</var>
-   *   couldn't be registered
+   * @throws InitializerException if the <var>symbolicTransformation</var> couldn't be registered
    */
-  public void addSymbolicTransformation(SymbolicTransformation symbolicTransformation)
-    throws InitializerException;
+  public void addSymbolicTransformation(SymbolicTransformation symbolicTransformation) throws InitializerException;
 
   /**
    * Register this resolver factory to have its models cached.
-   *
-   * @param resolverFactory  the resolver factory being registered to be
-   *   cached, never <code>null</code>
-   * @throws IllegalArgumentException if the <var>resolverFactory</var> is
-   *   <code>null</code>
+   * @param resolverFactory  the resolver factory being registered to be cached, never <code>null</code>
+   * @throws IllegalArgumentException if the <var>resolverFactory</var> is <code>null</code>
    * @throws IllegalStateException if called outside of initialization
-   * @throws InitializerException if the <var>resolverFactory</var> couldn't
-   *   be registerered
-   *   <code>null</code>
+   * @throws InitializerException if the <var>resolverFactory</var> couldn't be registerered <code>null</code>
    */
-  public void cacheModelAccess(ResolverFactory resolverFactory)
-    throws InitializerException;                                                                               
+  public void cacheModelAccess(ResolverFactory resolverFactory) throws InitializerException;
+
   /**
    * Obtain the registered {@link ContentHandler}s.
-   *
    * This list returned is immutable by the resolvers, but mutable by the
    * database should new content handlers be added.  Resolvers should retain
    * the original reference rather than copying it by value, otherwise they
    * won't see these changes.
-   *
-   * @return an unmodifiable list of {@link ContentHandler}s, never
-   *   <code>null</code>
+   * @return an unmodifiable list of {@link ContentHandler}s, never <code>null</code>
    */
   public ContentHandlerManager getContentHandlers();
 
   /**
    * Obtain the {@link ResolverFactory} for system models.
-   *
    * The system and security models will have been created by this factory.
    * It's appropriate to use this factory for temporary models.
-   *
    * @return the system {@link ResolverFactory}, never <code>null</code>
    * @throws IllegalStateException if called outside of initialization
-   * @throws NoSystemResolverFactoryException if the system
-   *   {@link ResolverFactory} hasn't yet been registered
+   * @throws NoSystemResolverFactoryException if the system {@link ResolverFactory} hasn't
+   *         yet been registered
    */
-  public ResolverFactory getSystemResolverFactory()
-    throws NoSystemResolverFactoryException;
+  public ResolverFactory getSystemResolverFactory() throws NoSystemResolverFactoryException;
 
   /**
    * Obtain the local coordinate for RDF.TYPE(<code>#</code>).
@@ -152,27 +144,21 @@ public interface ResolverFactoryInitializer extends FactoryInitializer {
   public long getSystemModel();
 
   /**
-   * Obtain a model type that can be created from the primary
-   * {@link ResolverFactory} returned by the {@link #getSystemResolverFactory}
-   * method.
-   *
+   * Obtain a model type that can be created from the primary {@link ResolverFactory} returned by the
+   * {@link #getSystemResolverFactory} method.
    * It's appropriate to use this model type for temporary models.
-   *
    * @return the system model type
    * @throws IllegalStateException if called outside of initialization
-   * @throws NoSystemResolverFactoryException if the system
-   *   {@link ResolverFactory} hasn't yet been registered
+   * @throws NoSystemResolverFactoryException if the system {@link ResolverFactory} hasn't yet been registered
    */
   public long getSystemModelType() throws NoSystemResolverFactoryException;
 
   /**
    * Preallocate an RDF {@link Node} to exist in all sessions.
-   *
    * Because they exist in all sessions and can never be reaped, they need not
    * be relocalized for every new {@link Session}.  This savings in speed and
    * hits on the {@link StringPool} is bought at the expense of cluttering up
    * the database with the preallocated nodes.
-   *
    * @param node  a global RDF node to preallocate
    * @return a preallocated local node 
    * @throws IllegalStateException if called outside of initialization
@@ -182,7 +168,6 @@ public interface ResolverFactoryInitializer extends FactoryInitializer {
 
   /**
    * Register new Constraint Type
-   * 
    * @throws InitializerException if the constraint class specified has already been registered
    */
    public void registerNewConstraint(ConstraintDescriptor descriptor) throws InitializerException;
