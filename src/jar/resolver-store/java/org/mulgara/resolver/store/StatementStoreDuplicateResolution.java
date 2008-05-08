@@ -57,9 +57,7 @@ import org.mulgara.store.tuples.TuplesOperations;
  * so that the graph index it's resolved against can be resolved anew as its
  * variables are bound.
  *
- * TO DO: Support <code>$p $x $x</code> - i.e. where we have two variables and
- * another variable not a constant.  Also, support <code>mulgara:is</code>
- * re-binding.
+ * TO DO: Support <code>mulgara:is</code> re-binding.
  *
  * @created 2004-08-26
  *
@@ -81,6 +79,18 @@ import org.mulgara.store.tuples.TuplesOperations;
 class StatementStoreDuplicateResolution extends AbstractTuples implements Resolution {
 
   protected static Logger logger = Logger.getLogger(StatementStoreDuplicateResolution.class);
+
+  /** Indicates ordering by subject */
+  private final static int MASK0 = 1;
+
+  /** Indicates ordering by predicate */
+  private final static int MASK1 = 2;
+
+  /** Indicates ordering by object */
+  private final static int MASK2 = 4;
+
+  /** Indicates ordering by graph */
+  private final static int MASK3 = 8;
 
   /**
    * The constraint these tuples were generated to satisfy.
@@ -114,6 +124,9 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
    */
   private int[] columnOrder;
 
+  /** A mapping between the virtual column numbers and the internal column numbers. */
+  private int[] columnMap;
+
   private boolean hasNext = false;
 
   private List variableList;
@@ -134,11 +147,13 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
 
     // Get variable list.
     variableList = new LinkedList();
+    Variable[] baseVars = baseTuples.getVariables();
     for (int index = 0; index < sameColumns.length; index++) {
-      if (sameColumns[index]) {
-        variableList.add(baseTuples.getVariables()[index]);
-      }
+      if (sameColumns[index]) variableList.add(baseVars[index]);
     }
+    // do 1:1 mapping as this is expected in the tests - variable names are not duplicated
+    columnMap = new int[baseVars.length];
+    for (int i = 0; i < columnMap.length; i++) columnMap[i] = i;
 
     // Project for unique variables.
     try {
@@ -185,8 +200,18 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
       long object = toGraphTuplesIndex(constraint.getElement(2));
       long meta = toGraphTuplesIndex(constraint.getModel());
 
-      // Return the tuples using the s, p, o hints.
-      baseTuples = store.findTuples(subject, predicate, object, meta);
+      final long VAR = NodePool.NONE;
+      if (meta != VAR && subject == VAR && predicate == VAR && object == VAR) {
+        // all variables except the graph. Select explicit ordering.
+        int mask = MASK3;
+        if (equalSubject) mask |= MASK0;
+        if (equalPredicate) mask |= MASK1;
+        if (equalObject) mask |= MASK2;
+        baseTuples = store.findTuples(mask, subject, predicate, object, meta);
+      } else {
+        // Return the tuples using the s, p, o hints.
+        baseTuples = store.findTuples(subject, predicate, object, meta);
+      }
 
       // Get the unique values for the multiply constrained column.
       variableList = new LinkedList();
@@ -197,24 +222,26 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
       }
       uniqueTuples = TuplesOperations.project(baseTuples, variableList);
 
-      // Set the variables.
-      Set uniqueVariables = new HashSet();
+      // Create column map.
+      columnOrder = new int[4];
+      int[] inverseColumnOrder = ((StoreTuples)baseTuples).getColumnOrder();
+      for (int index = 0; index < inverseColumnOrder.length; index++) {
+        columnOrder[inverseColumnOrder[index]] = index;
+      }
+
+      // Set the variables. Using an ordered set.
+      Set uniqueVariables = new LinkedHashSet();
+      columnMap = new int[2];
       for (int index = 0; index < baseTuples.getVariables().length; index++) {
         Object obj = constraint.getElement(index);
         if (obj instanceof Variable) {
           if (!((Variable) obj).equals(Variable.FROM)) {
+            if (!uniqueVariables.contains(obj)) columnMap[uniqueVariables.size()] = columnOrder[index];
             uniqueVariables.add(obj);
           }
         }
       }
-      setVariables((Variable[]) uniqueVariables.toArray(new Variable[] {}));
-
-      // Create column map.
-      int[] inverseColumnOrder = ((StoreTuples) baseTuples).getColumnOrder();
-      columnOrder = new int[4];
-      for (int index = 0; index < inverseColumnOrder.length; index++) {
-        columnOrder[inverseColumnOrder[index]] = index;
-      }
+      setVariables((Variable[]) uniqueVariables.toArray(new Variable[uniqueVariables.size()]));
 
       // Set up the tuples evaluator.
       setTuplesEvaluator();
@@ -308,11 +335,11 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
   }
 
   public long getColumnValue(int column) throws TuplesException {
-    return baseTuples.getColumnValue(column);
+    return baseTuples.getColumnValue(columnMap[column]);
   }
 
   public boolean isColumnEverUnbound(int column) throws TuplesException {
-    return baseTuples.isColumnEverUnbound(column);
+    return baseTuples.isColumnEverUnbound(columnMap[column]);
   }
 
   public boolean isUnconstrained() throws TuplesException {
@@ -404,21 +431,37 @@ class StatementStoreDuplicateResolution extends AbstractTuples implements Resolu
     public void beforeFirst(long[] prefix, int suffixTruncation)
         throws TuplesException {
 
+      // create a new prefix for uniqueTuples
+      // this only includes columns from the initial prefix that represented duplicate variables
+      // takes advantage of the fact that variables came out in the same order as the initial constraint
+      // also, sameColumns offsets are same as baseTuples offsets
+      long[] duplicatesPrefix = new long[] {};
+      for (int i = 0; i < prefix.length; i++) {
+        // i is an index into the virtual tuples. Map it to the original columns
+        if (sameColumns[columnMap[i]]) {
+          // only the first of the duplicated columns was mapped
+          duplicatesPrefix = new long[] { prefix[i], prefix[i] };
+          break;
+        }
+      }
+
       // Get the subject/predicate before first.
-     uniqueTuples.beforeFirst(prefix, suffixTruncation);
-     baseTuples.beforeFirst(prefix, suffixTruncation);
+      uniqueTuples.beforeFirst(duplicatesPrefix, suffixTruncation);
 
-     hasNext = uniqueTuples.next();
-     while (hasNext && (uniqueTuples.getColumnValue(0) !=
-         uniqueTuples.getColumnValue(1))) {
-       hasNext = uniqueTuples.next();
-     }
+      hasNext = uniqueTuples.next();
+      while (hasNext && (uniqueTuples.getColumnValue(0) != uniqueTuples.getColumnValue(1))) {
+        hasNext = uniqueTuples.next();
+      }
 
-     // Go to the first tuples.
-     if (hasNext) {
-       baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0),
-           uniqueTuples.getColumnValue(1) }, 0);
-     }
+      // Go to the first tuples. Ignoring suffix truncation.
+      if (hasNext) {
+        if (prefix.length <= 1) {
+          baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0), uniqueTuples.getColumnValue(1) }, 0);
+        } else {
+          assert prefix.length == 2;
+          baseTuples.beforeFirst(new long[] { uniqueTuples.getColumnValue(0), uniqueTuples.getColumnValue(1), prefix[1] }, 0);
+        }
+      }
    }
 
     public boolean next() throws TuplesException {
