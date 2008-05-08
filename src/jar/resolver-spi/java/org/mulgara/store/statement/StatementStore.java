@@ -114,6 +114,23 @@ public interface StatementStore {
   ) throws StatementStoreException;
 
   /**
+   * Locate all triples matching the given specification using the given ordering mask.
+   *
+   * @param mask the mask indicating the index to use. This MUST be compatible with the
+   *             following nodes.
+   * @param node0 the value for the first element of the triples
+   * @param node1 the value for the second element of the triples
+   * @param node2 the value for the third element of the triples
+   * @param node3 the value for the fourth element of the triples
+   * @return the {@link StoreTuples}
+   * @throws StatementStoreException if something exceptional happens
+   */
+  public StoreTuples findTuples(
+      int mask,
+      long node0, long node1, long node2, long node3
+  ) throws StatementStoreException;
+
+  /**
    * Returns a StoreTuples which contains all triples in the store.  The
    * parameters provide a hint about how the StoreTuples will be used.  This
    * information is used to select the index from which the StoreTuples will be

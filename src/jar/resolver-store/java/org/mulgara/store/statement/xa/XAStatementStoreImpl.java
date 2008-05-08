@@ -540,6 +540,44 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     return currentPhase.findTuples(objectPool, node0, node1, node2, node3);
   }
 
+  
+  /**
+   * Finds triples matching the given specification and index mask.
+   *
+   * @param mask The mask of the index to use. This is only allowable for 3 variables
+   *             and a given graph.
+   * @param node0 The 0 node of the triple to find.
+   * @param node1 The 1 node of the triple to find.
+   * @param node2 The 2 node of the triple to find.
+   * @param node3 The 3 node of the triple to find.
+   * @return A set of all the triples which match the search.
+   * @throws StatementStoreException EXCEPTION TO DO
+   */
+  public synchronized StoreTuples findTuples(
+      int mask, long node0, long node1, long node2, long node3
+  ) throws StatementStoreException {
+    checkInitialized();
+    dirty = false;
+    if (!checkMask(mask, node0, node1, node2, node3)) throw new StatementStoreException("Bad explicit index selection for given node pattern.");
+    return currentPhase.findTuples(objectPool, mask, node0, node1, node2, node3);
+  }
+
+  /**
+   * Tests a mask for consistency against the nodes it will be used to find.
+   * @param mask The mask to test.
+   * @param node0 The 0 node of the triple to find.
+   * @param node1 The 1 node of the triple to find.
+   * @param node2 The 2 node of the triple to find.
+   * @param node3 The 3 node of the triple to find.
+   * @return <code>true</code> if the mask is consistent with the given nodes.
+   */
+  private static boolean checkMask(int mask, long node0, long node1, long node2, long node3) {
+    if (node0 != NONE && 0 == (mask & MASK0)) return false;
+    if (node1 != NONE && 0 == (mask & MASK1)) return false;
+    if (node2 != NONE && 0 == (mask & MASK2)) return false;
+    if (node3 != NONE && 0 == (mask & MASK3)) return false;
+    return true;
+  }
 
   /**
    * Returns a StoreTuples which contains all triples in the store.  The
@@ -1305,6 +1343,25 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       return phase.findTuples(objectPool, node0, node1, node2, node3);
     }
 
+    /**
+     * Finds triples matching the given specification.
+     *
+     * @param mask The mask of the index to use. This is only allowable for 3 variables
+     *             and a given graph.
+     * @param node0 The 0 node of the triple to find.
+     * @param node1 The 1 node of the triple to find.
+     * @param node2 The 2 node of the triple to find.
+     * @param node3 The 3 node of the triple to find.
+     * @return A StoreTuples which contains the triples which match the search.
+     * @throws StatementStoreException EXCEPTION TO DO
+     */
+    public synchronized StoreTuples findTuples(
+        int mask, long node0, long node1, long node2, long node3
+    ) throws StatementStoreException {
+      if (!checkMask(mask, node0, node1, node2, node3)) throw new StatementStoreException("Bad explicit index selection for given node pattern.");
+      return phase.findTuples(objectPool, mask, node0, node1, node2, node3);
+    }
+
 
     /**
      * Returns a StoreTuples which contains all triples in the store.  The
@@ -1717,6 +1774,58 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       }
     }
 
+    /**
+     * Finds triples matching the given specification.
+     *
+     * @param objectPool PARAMETER TO DO
+     * @param variableMask the mask used to indicate the desired index.
+     * @param node0 The 0 node of the triple to find.
+     * @param node1 The 1 node of the triple to find.
+     * @param node2 The 2 node of the triple to find.
+     * @param node3 The 3 node of the triple to find.
+     * @return A StoreTuples containing all the triples which match the search.
+     * @throws StatementStoreException EXCEPTION TO DO
+     */
+    StoreTuples findTuples(
+        ObjectPool objectPool, int variableMask,
+        long node0, long node1, long node2, long node3
+    ) throws StatementStoreException {
+      if (
+          node0 < NodePool.NONE ||
+          node1 < NodePool.NONE ||
+          node2 < NodePool.NONE ||
+          node3 < NodePool.NONE
+      ) {
+        // There is at least one query node.  Return an empty StoreTuples.
+        return TuplesOperations.empty();
+      }
+
+      if (0 == (variableMask & MASK3)) throw new StatementStoreException("This version of find is for re-ordering graphs, base on a given mask.");
+      try {
+        switch (variableMask) {
+          case MASK3:
+            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+          case MASK0 | MASK3:
+            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+          case MASK1 | MASK3:
+            return tripleAVLFilePhases[TI_3120].findTuples(objectPool, node3);
+          case MASK0 | MASK1 | MASK3:
+            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+          case MASK2 | MASK3:
+            return tripleAVLFilePhases[TI_3201].findTuples(objectPool, node3);
+          case MASK0 | MASK2 | MASK3:
+            return tripleAVLFilePhases[TI_3201].findTuples(objectPool, node3);
+          case MASK1 | MASK2 | MASK3:
+            return tripleAVLFilePhases[TI_3120].findTuples(objectPool, node3);
+          case MASK0 | MASK1 | MASK2 | MASK3:
+            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+          default:
+            throw new AssertionError();
+        }
+      } catch (IOException ex) {
+        throw new StatementStoreException("I/O error", ex);
+      }
+    }
 
     /**
      * Finds triples matching the given specification.
@@ -1744,10 +1853,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       }
 
       int variableMask =
-          (node0 != NONE ? MASK0 : 0) |
-          (node1 != NONE ? MASK1 : 0) |
-          (node2 != NONE ? MASK2 : 0) |
-          (node3 != NONE ? MASK3 : 0);
+        (node0 != NONE ? MASK0 : 0) |
+        (node1 != NONE ? MASK1 : 0) |
+        (node2 != NONE ? MASK2 : 0) |
+        (node3 != NONE ? MASK3 : 0);
 
       try {
         switch (variableMask) {
