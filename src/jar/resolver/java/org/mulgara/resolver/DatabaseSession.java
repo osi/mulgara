@@ -56,12 +56,8 @@ import org.mulgara.store.nodepool.NodePool;
  * A database session.
  *
  * @created 2004-04-26
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
- *
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 class DatabaseSession implements Session {
@@ -69,12 +65,10 @@ class DatabaseSession implements Session {
   public static final boolean DENY_STATEMENTS = false;
 
   /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(DatabaseSession.class.getName());
+  private static final Logger logger = Logger.getLogger(DatabaseSession.class.getName());
 
   /**
    * Resolver factories that should be have access to their models cached.
-   *
    * This field is read-only.
    */
   private final Set<ResolverFactory> cachedResolverFactorySet;
@@ -106,7 +100,8 @@ class DatabaseSession implements Session {
   /** Symbolic transformations this instance should apply. */
   private final List<SymbolicTransformation> symbolicTransformationList;
 
-  /** Persistent string pool. */
+  /** Persistent string pool. Not used, but passed in as a parameter. */
+  @SuppressWarnings("unused")
   private final ResolverSessionFactory resolverSessionFactory;
 
   /** Factory used to obtain the SystemResolver */
@@ -182,8 +177,8 @@ class DatabaseSession implements Session {
       URI temporaryModelTypeURI,
       String ruleLoaderClassName) throws ResolverFactoryException {
 
-    if (logger.isInfoEnabled()) {
-      logger.info("Constructing DatabaseSession: externalResolverFactoryMap=" +
+    if (logger.isDebugEnabled()) {
+      logger.debug("Constructing DatabaseSession: externalResolverFactoryMap=" +
           externalResolverFactoryMap + " internalResolverFactoryMap=" +
           internalResolverFactoryMap + " metadata=" + metadata);
     }
@@ -238,9 +233,7 @@ class DatabaseSession implements Session {
     this.transactionFactory = null;
     this.internalFactory = null;
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Constructed DatabaseSession");
-    }
+    if (logger.isTraceEnabled()) logger.trace("Constructed DatabaseSession");
 
     // Set the transaction timeout to an hour
     transactionManager.setTransactionTimeout(3600);
@@ -277,15 +270,13 @@ class DatabaseSession implements Session {
    * Used by Database *only* to bootstrap the system model on DB startup.
    */
   long bootstrapSystemModel(DatabaseMetadataImpl metadata) throws QueryException {
-    logger.info("Bootstrapping System Model");
-
+    logger.debug("Bootstrapping System Model");
     BootstrapOperation operation = new BootstrapOperation(metadata);
     execute(operation, "Failed to bootstrap system-model");
-
     systemResolverFactory.setDatabaseMetadata(metadata);
-
     return operation.getResult();
   }
+
 
   /**
    * Preallocate a local node number for an RDF {@link Node}.
@@ -301,9 +292,9 @@ class DatabaseSession implements Session {
   long preallocate(Node node) throws QueryException {
     PreallocateOperation preOp = new PreallocateOperation(node);
     execute(preOp, "Failure to preallocated " + node);
-
     return preOp.getResult();
   }
+
 
   //
   // Methods implementing Session
@@ -313,22 +304,24 @@ class DatabaseSession implements Session {
     modify(modelURI, statements, ASSERT_STATEMENTS);
   }
 
+
   public void insert(URI modelURI, Query query) throws QueryException {
     modify(modelURI, query, ASSERT_STATEMENTS);
   }
+
 
   public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException {
     modify(modelURI, statements, DENY_STATEMENTS);
   }
 
+
   public void delete(URI modelURI, Query query) throws QueryException {
     modify(modelURI, query, DENY_STATEMENTS);
   }
 
+
   /**
-   * Backup all the data on the specified server. The database is not changed by
-   * this method.
-   *
+   * Backup all the data on the specified server. The database is not changed by this method.
    * @param sourceURI The URI of the server or model to backup.
    * @param destinationURI The URI of the file to backup into.
    * @throws QueryException if the backup cannot be completed.
@@ -337,10 +330,10 @@ class DatabaseSession implements Session {
     this.backup(null, sourceURI, destinationURI);
   }
 
+
   /**
    * Backup all the data on the specified server to an output stream.
    * The database is not changed by this method.
-   *
    * @param sourceURI The URI of the server or model to backup.
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
@@ -349,11 +342,11 @@ class DatabaseSession implements Session {
     this.backup(outputStream, sourceURI, null);
   }
 
+
   /**
    * Restore all the data on the specified server. If the database is not
    * currently empty then the database will contain the union of its current
    * content and the content of the backup file when this method returns.
-   *
    * @param serverURI The URI of the server to restore.
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
@@ -362,40 +355,36 @@ class DatabaseSession implements Session {
     this.restore(null, serverURI, sourceURI);
   }
 
+
   /**
    * Restore all the data on the specified server. If the database is not
    * currently empty then the database will contain the union of its current
    * content and the content of the backup file when this method returns.
-   *
    * @param inputStream a client supplied inputStream to obtain the restore
    *        content from. If null assume the sourceURI has been supplied.
    * @param serverURI The URI of the server to restore.
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(InputStream inputStream, URI serverURI,
-      URI sourceURI) throws QueryException {
-    execute(new RestoreOperation(inputStream, serverURI, sourceURI),
-            "Unable to restore from " + sourceURI);
+  public void restore(InputStream inputStream, URI serverURI, URI sourceURI) throws QueryException {
+    execute(new RestoreOperation(inputStream, serverURI, sourceURI), "Unable to restore from " + sourceURI);
   }
 
+
   public Answer query(Query query) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("QUERY: " + query);
-    }
+    if (logger.isDebugEnabled()) logger.debug("QUERY: " + query);
 
     QueryOperation queryOperation = new QueryOperation(query, this);
     execute(queryOperation, "Query failed");
     return queryOperation.getAnswer();
   }
 
+
   public List<Answer> query(List<Query> queryList) throws QueryException {
-    if (logger.isInfoEnabled()) {
+    if (logger.isDebugEnabled()) {
       StringBuffer log = new StringBuffer("QUERYING LIST: ");
-      for (int i = 0; i < queryList.size(); i++) {
-        log.append(queryList.get(i));
-      }
-      logger.info(log.toString());
+      for (int i = 0; i < queryList.size(); i++) log.append(queryList.get(i));
+      logger.debug(log.toString());
     }
 
     QueryOperation queryOperation = new QueryOperation(queryList, this);
@@ -404,51 +393,44 @@ class DatabaseSession implements Session {
   }
 
 
+
   public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("Creating Model " + modelURI + " with type " + modelTypeURI);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Creating Model " + modelURI + " with type " + modelTypeURI);
 
     execute(new CreateModelOperation(modelURI, modelTypeURI),
-            "Could not commit creation of model " + modelURI + " of type " +
-              modelTypeURI);
+            "Could not commit creation of model " + modelURI + " of type " + modelTypeURI);
   }
 
+
   public void removeModel(URI modelURI) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("REMOVE MODEL: " + modelURI);
-    }
-    if (modelURI == null) {
-      throw new IllegalArgumentException("Null 'modelURI' parameter");
-    }
+    if (logger.isDebugEnabled()) logger.debug("REMOVE MODEL: " + modelURI);
+    if (modelURI == null) throw new IllegalArgumentException("Null 'modelURI' parameter");
 
     execute(new RemoveModelOperation(modelURI), "Unable to remove " + modelURI);
   }
 
+
   public boolean modelExists(URI modelURI) throws QueryException {
     ModelExistsOperation operation = new ModelExistsOperation(modelURI);
-
     execute(operation, "Failed to determine model existence");
-
     return operation.getResult();
   }
 
+
   /**
    * Define the contents of a model.
-   *
    * @param uri the {@link URI} of the model to be redefined
    * @param modelExpression the new content for the model
    * @return RETURNED VALUE TO DO
    * @throws QueryException if the model can't be modified
    */
-  public synchronized long setModel(URI uri,
-      ModelExpression modelExpression) throws QueryException {
+  public synchronized long setModel(URI uri, ModelExpression modelExpression) throws QueryException {
     return this.setModel(null, uri, modelExpression);
   }
 
+
   /**
    * Define the contents of a model via an inputstream
-   *
    * @param inputStream a remote inputstream
    * @param destinationModelURI the {@link URI} of the model to be redefined
    * @param modelExpression the new content for the model
@@ -456,12 +438,11 @@ class DatabaseSession implements Session {
    * @throws QueryException if the model can't be modified
    */
   public synchronized long setModel(InputStream inputStream,
-      URI destinationModelURI,
-      ModelExpression modelExpression) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("SET-MODEL " + destinationModelURI + " to " + modelExpression +
-          " from " + inputStream);
+      URI destinationModelURI, ModelExpression modelExpression) throws QueryException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("SET-MODEL " + destinationModelURI + " to " + modelExpression + " from " + inputStream);
     }
+
     // Validate parameters
     if (destinationModelURI == null) {
       throw new IllegalArgumentException("Null 'destinationModelURI' parameter");
@@ -471,8 +452,7 @@ class DatabaseSession implements Session {
 
     // Convert the model expression into the source model URI
     if (!(modelExpression instanceof ModelResource)) {
-      throw new QueryException("Unsupported model expression " +
-          modelExpression + " (" + modelExpression.getClass() + ")");
+      throw new QueryException("Unsupported model expression " + modelExpression + " (" + modelExpression.getClass() + ")");
     }
     assert modelExpression instanceof ModelResource;
 
@@ -490,16 +470,18 @@ class DatabaseSession implements Session {
     return op.getStatementCount();
   }
 
+
   /**
    * {@inheritDoc}
    */
   public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
-    if (logger.isInfoEnabled()) logger.info("BUILD RULES: " + ruleModel);
+    if (logger.isDebugEnabled()) logger.debug("BUILD RULES: " + ruleModel);
 
     BuildRulesOperation operation = new BuildRulesOperation(ruleLoaderClassName, ruleModel, baseModel, destModel);
     execute(operation, "Failed to create rules");
     return operation.getResult();
   }
+
 
   /**
    * {@inheritDoc}
@@ -510,9 +492,7 @@ class DatabaseSession implements Session {
 
 
   public void setAutoCommit(boolean autoCommit) throws QueryException {
-    if (logger.isInfoEnabled()) {
-      logger.info("setAutoCommit(" + autoCommit + ") called.");
-    }
+    if (logger.isDebugEnabled()) logger.debug("setAutoCommit(" + autoCommit + ") called.");
     assertInternallyManagedXA();
     try {
       internalFactory.setAutoCommit(this, autoCommit);
@@ -521,8 +501,9 @@ class DatabaseSession implements Session {
     }
   }
 
+
   public void commit() throws QueryException {
-    logger.info("Committing transaction");
+    logger.debug("Committing transaction");
     assertInternallyManagedXA();
     try {
       internalFactory.commit(this);
@@ -531,8 +512,9 @@ class DatabaseSession implements Session {
     }
   }
 
+
   public void rollback() throws QueryException {
-    logger.info("Rollback transaction");
+    logger.debug("Rollback transaction");
     assertInternallyManagedXA();
     try {
       internalFactory.rollback(this);
@@ -541,8 +523,9 @@ class DatabaseSession implements Session {
     }
   }
 
+
   public void close() throws QueryException {
-    logger.info("Closing session");
+    logger.debug("Closing session");
     try {
       transactionManager.closingSession(this);
       transactionFactory = null;
@@ -552,14 +535,14 @@ class DatabaseSession implements Session {
     }
   }
 
+
   public boolean isLocal() {
     return true;
   }
 
+
   public void login(URI securityDomain, String user, char[] password) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Login of " + user + " to " + securityDomain);
-    }
+    if (logger.isTraceEnabled()) logger.trace("Login of " + user + " to " + securityDomain);
 
     if (securityDomain.equals(metadata.getSecurityDomainURI())) {
       // Propagate the login event to the security adapters
@@ -568,6 +551,7 @@ class DatabaseSession implements Session {
       }
     }
   }
+
 
   /**
    * Backup all the data on the specified server to a URI or an output stream.
@@ -581,35 +565,32 @@ class DatabaseSession implements Session {
    * @throws QueryException if the backup cannot be completed.
    */
   private synchronized void backup(OutputStream outputStream, URI serverURI, URI destinationURI)
-      throws QueryException {
+        throws QueryException {
     execute(new BackupOperation(outputStream, serverURI, destinationURI),
         "Unable to backup to " + destinationURI);
   }
+
 
   //
   // Internal utility methods.
   //
   protected void modify(URI modelURI, Set<? extends Triple> statements, boolean insert) throws QueryException
   {
-    if (logger.isInfoEnabled()) {
-      logger.info("Modifying (ins:" + insert + ") : " + modelURI);
-    }
-    if (logger.isDebugEnabled()) {
-      logger.debug("Modifying statements: " + statements);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Modifying (ins:" + insert + ") : " + modelURI);
+    if (logger.isTraceEnabled()) logger.trace("Modifying statements: " + statements);
 
     execute(new ModifyModelOperation(modelURI, statements, insert), "Could not commit modify");
   }
 
-  private void modify(URI modelURI, Query query, boolean insert) throws QueryException
-  {
-    if (logger.isInfoEnabled()) {
-      logger.info((insert ? "INSERT" : "DELETE") + " QUERY: " + query + " into " + modelURI);
+
+  private void modify(URI modelURI, Query query, boolean insert) throws QueryException {
+    if (logger.isDebugEnabled()) {
+      logger.debug((insert ? "INSERT" : "DELETE") + " QUERY: " + query + " into " + modelURI);
     }
 
-    execute(new ModifyModelOperation(modelURI, query, insert, this),
-        "Unable to modify " + modelURI);
+    execute(new ModifyModelOperation(modelURI, query, insert, this), "Unable to modify " + modelURI);
   }
+
 
   /**
    * Execute an {@link Operation}.
@@ -620,14 +601,14 @@ class DatabaseSession implements Session {
   private void execute(Operation operation, String errorString) throws QueryException {
     ensureTransactionFactorySelected();
     try {
-      MulgaraTransaction transaction =
-          transactionFactory.getTransaction(this, operation.isWriteOperation());
+      MulgaraTransaction transaction = transactionFactory.getTransaction(this, operation.isWriteOperation());
       transaction.execute(operation, metadata);
     } catch (MulgaraTransactionException em) {
-      logger.info("Error executing operation: " + errorString, em);
+      logger.debug("Error executing operation: " + errorString, em);
       throw new QueryException(errorString, em);
     }
   }
+
 
   public DatabaseOperationContext newOperationContext(boolean writing) throws QueryException {
     return new DatabaseOperationContext(
@@ -643,10 +624,9 @@ class DatabaseSession implements Session {
         writing);
   }
 
+
   private void ensureTransactionFactorySelected() throws QueryException {
-    if (transactionFactory == null) {
-      assertInternallyManagedXA();
-    }
+    if (transactionFactory == null) assertInternallyManagedXA();
   }
 
   private void assertInternallyManagedXA() throws QueryException {
@@ -657,6 +637,7 @@ class DatabaseSession implements Session {
     }
   }
 
+
   private void assertExternallyManagedXA() throws QueryException {
     if (transactionFactory == null) {
       transactionFactory = externalFactory = transactionManager.getExternalFactory();
@@ -665,10 +646,12 @@ class DatabaseSession implements Session {
     }
   }
 
+
   public XAResource getXAResource() throws QueryException {
     assertExternallyManagedXA();
     return externalFactory.getXAResource(this, true);
   }
+
 
   public XAResource getReadOnlyXAResource() throws QueryException {
     assertExternallyManagedXA();
