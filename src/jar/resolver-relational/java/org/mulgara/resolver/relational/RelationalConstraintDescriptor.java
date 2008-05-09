@@ -45,6 +45,7 @@ import java.util.Map;
 
 // import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintDescriptor;
 import org.mulgara.resolver.spi.ConstraintLocalization;
@@ -62,9 +63,10 @@ import org.mulgara.resolver.ConstraintOperations;
 
 public class RelationalConstraintDescriptor implements ConstraintDescriptor, ConstraintLocalization, ConstraintBindingHandler {
 
-  // private static final Logger logger = Logger.getLogger(RelationalConstraintDescriptor.class.getName());
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(RelationalConstraintDescriptor.class.getName());
 
-  public Class<? extends Constraint> getConstraintClass() {
+  public Class<RelationalConstraint> getConstraintClass() {
     return RelationalConstraint.class;
   }
 
@@ -76,8 +78,7 @@ public class RelationalConstraintDescriptor implements ConstraintDescriptor, Con
     return ConstraintOperations.resolveModelExpression(queryContext, modelExpr, (Constraint)constraintExpr);
   }
 
-  public Constraint rewrite(ConstraintElement newModel,
-                            Constraint constraint) throws Exception {
+  public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
     if (!(constraint instanceof RelationalConstraint)) {
       throw new IllegalArgumentException("RelationalConstraintDescriptor.rewrite must be a RelationalConstraint");
     }

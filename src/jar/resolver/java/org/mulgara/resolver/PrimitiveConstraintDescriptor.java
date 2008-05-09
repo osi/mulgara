@@ -63,13 +63,12 @@ import org.mulgara.store.tuples.Tuples;
  *      Australian Commonwealth Government, Department of Defence</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class PrimitiveConstraintDescriptor implements ConstraintDescriptor
-{
+class PrimitiveConstraintDescriptor implements ConstraintDescriptor {
   /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(PrimitiveConstraintDescriptor.class.getName());
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(PrimitiveConstraintDescriptor.class.getName());
 
-  private Class constraintClass;
+  private Class<? extends Constraint> constraintClass;
   private ConstraintResolutionHandler resolutionHandler;
   private ConstraintModelRewrite rewriteHandler;
 
@@ -81,10 +80,9 @@ class PrimitiveConstraintDescriptor implements ConstraintDescriptor
    *         null if rewriting is an error.
    * @throws IllegalArgumentException if <var>constraintClass</var> is <code>null</code>
    */
-  PrimitiveConstraintDescriptor(Class constraintClass,
-      ConstraintResolutionHandler resolutionHandler,
-      ConstraintModelRewrite rewriteHandler) 
-  {
+  PrimitiveConstraintDescriptor(Class<? extends Constraint> constraintClass,
+        ConstraintResolutionHandler resolutionHandler, ConstraintModelRewrite rewriteHandler) {
+
     // Validate parameters
     if (!ConstraintExpression.class.isAssignableFrom(constraintClass)) {
       throw new IllegalArgumentException("'constraintClass' not a ConstraintExpression");
@@ -93,26 +91,26 @@ class PrimitiveConstraintDescriptor implements ConstraintDescriptor
     this.constraintClass = constraintClass;
     this.resolutionHandler = resolutionHandler;
     this.rewriteHandler = rewriteHandler;
-
   }
 
-  public Class getConstraintClass() {
+
+  public Class<? extends Constraint> getConstraintClass() {
     return constraintClass;
   }
+
 
   public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
     if (rewriteHandler == null) {
       throw new IllegalStateException("Attempt to rewrite model for " + constraintClass + " no handler registered");
     }
-
     return rewriteHandler.rewrite(newModel, constraint);
   }
+
 
   public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
     if (rewriteHandler == null) {
       throw new IllegalStateException("Attempt to resolve model for " + constraintClass + " no handler registered");
     }
-
     return resolutionHandler.resolve(context, modelExpr, constraintExpr);
   }
 }

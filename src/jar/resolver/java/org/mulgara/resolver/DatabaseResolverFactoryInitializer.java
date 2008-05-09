@@ -31,26 +31,17 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.io.File;
-import java.lang.reflect.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-import javax.naming.NamingException;
 
 // Third party packages
 import org.apache.log4j.Logger;  // Apache Log4J
 import org.jrdf.graph.*;         // JRDF
-import org.jrdf.vocabulary.RDF;
-import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerManager;
+import org.mulgara.query.Constraint;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.rdf.Mulgara;
-import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.util.NVPair;
-import org.objectweb.jotm.Jotm;  // JOTM transaction manager
-import org.objectweb.transaction.jta.TMService;
-import org.objectweb.transaction.jta.TransactionManager;
 
 // Local packages
 
@@ -67,10 +58,9 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(DatabaseResolverFactoryInitializer.class.getName());
 
-  private final Set cachedResolverFactorySet;
+  private final Set<ResolverFactory> cachedResolverFactorySet;
   private final Database database;
   private final DatabaseMetadata metadata;
-  private final File persistenceDirectory;
   private final ContentHandlerManager contentHandlerManager;
   private final ResolverFactory systemResolverFactory;
 
@@ -82,40 +72,26 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
    *   <var>contentHandlerManager</var> arguments are <code>null</code>
    */
   public DatabaseResolverFactoryInitializer(
-           Set                   cachedResolverFactorySet,
+           Set<ResolverFactory>  cachedResolverFactorySet,
            Database              database,
            DatabaseMetadata      metadata,
            File                  persistenceDirectory,
            ContentHandlerManager contentHandlerManager,
            ResolverFactory       systemResolverFactory
-         )
-    throws InitializerException
-  {
-    super(metadata.getURI(),
-          metadata.getHostnameAliases(),
-          persistenceDirectory);
+  ) throws InitializerException {
+
+    super(metadata.getURI(), metadata.getHostnameAliases(), persistenceDirectory);
 
     // Validate parameters
-    if (cachedResolverFactorySet == null) {
-      throw new IllegalArgumentException(
-        "Null \"cachedResolverFactorySet\" parameter"
-      );
-    }
-    if (database == null) {
-      throw new IllegalArgumentException("database null");
-    }
-    if (metadata == null) {
-      throw new IllegalArgumentException("metadata null");
-    }
-    if (contentHandlerManager == null) {
-      throw new IllegalArgumentException("contentHandlerManager null");
-    }
+    if (cachedResolverFactorySet == null) throw new IllegalArgumentException("Null \"cachedResolverFactorySet\" parameter");
+    if (database == null) throw new IllegalArgumentException("database null");
+    if (metadata == null) throw new IllegalArgumentException("metadata null");
+    if (contentHandlerManager == null) throw new IllegalArgumentException("contentHandlerManager null");
 
     // Initialize fields
     this.cachedResolverFactorySet = cachedResolverFactorySet;
     this.database                 = database;
     this.metadata                 = metadata;
-    this.persistenceDirectory     = persistenceDirectory;
     this.contentHandlerManager    = contentHandlerManager;
     this.systemResolverFactory    = systemResolverFactory;
   }
@@ -125,8 +101,7 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
   // Methods implementing ResolverFactoryInitializer
   //
 
-  public void addModelType(URI modelType, ResolverFactory resolverFactory)
-      throws InitializerException {
+  public void addModelType(URI modelType, ResolverFactory resolverFactory) throws InitializerException {
     database.addModelType(modelType, resolverFactory);
   }
 
@@ -135,37 +110,25 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
     return false;
   }
 
-  public void addProtocol(String protocol, ResolverFactory resolverFactory)
-      throws InitializerException {
+  public void addProtocol(String protocol, ResolverFactory resolverFactory) throws InitializerException {
     database.addProtocol(protocol, resolverFactory);
   }
 
-  public void addSymbolicTransformation(SymbolicTransformation symbolicTransformation)
-      throws InitializerException {
+  public void addSymbolicTransformation(SymbolicTransformation symbolicTransformation) throws InitializerException {
     database.addSymbolicTransformation(symbolicTransformation);
   }
 
-  public void cacheModelAccess(ResolverFactory resolverFactory)
-    throws InitializerException
-  {
-    if (resolverFactory == null) {
-      throw new IllegalArgumentException("Null \"resolverFactory\" parameter");
-    }
-
+  public void cacheModelAccess(ResolverFactory resolverFactory) throws InitializerException {
+    if (resolverFactory == null) throw new IllegalArgumentException("Null \"resolverFactory\" parameter");
     cachedResolverFactorySet.add(resolverFactory);
   }
 
-  public ContentHandlerManager getContentHandlers()
-  {
+  public ContentHandlerManager getContentHandlers() {
     return contentHandlerManager;
   }
 
-  public ResolverFactory getSystemResolverFactory()
-    throws NoSystemResolverFactoryException
-  {
-    if (systemResolverFactory == null) {
-      throw new NoSystemResolverFactoryException();
-    }
+  public ResolverFactory getSystemResolverFactory() throws NoSystemResolverFactoryException {
+    if (systemResolverFactory == null) throw new NoSystemResolverFactoryException();
     return systemResolverFactory;
   }
 
@@ -175,23 +138,17 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
 
   public long getSystemModel() {
     checkState();
-
     return metadata.getSystemModelNode();
   }
 
   public long getSystemModelType() throws NoSystemResolverFactoryException {
     checkState();
-
     return metadata.getSystemModelTypeNode();
   }
 
   public long preallocate(Node node) throws InitializerException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Preallocating " + node);
-    }
-
+    if (logger.isDebugEnabled()) logger.debug("Preallocating " + node);
     checkState();
-
     try {
       //!!FIXME: Can't add preallocate to Session until we switch over.
       DatabaseSession session = (DatabaseSession)database.newSession();
@@ -202,9 +159,9 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
   }
 
 
+  @SuppressWarnings("unchecked")
   public void registerNewConstraint(ConstraintDescriptor descriptor) throws InitializerException {
-//    logger.warn("!!!!!!!!!!!!!!!!Registering new Constraint: " + descriptor, new Throwable());
-    Class constraintClass = descriptor.getConstraintClass();
+    Class<? extends Constraint> constraintClass = descriptor.getConstraintClass();
     if (!ConstraintOperations.constraintRegistered(constraintClass)) {
       // FIXME: This needs refactoring.  With the constraint registration in place, ConstraintOperations can be simplifed.
       ConstraintOperations.addConstraintResolutionHandlers(new NVPair[] { new NVPair(constraintClass, descriptor), });

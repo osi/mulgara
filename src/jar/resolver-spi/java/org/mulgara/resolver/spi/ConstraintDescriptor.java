@@ -37,10 +37,6 @@ package org.mulgara.resolver.spi;
 
 // Local packages
 import org.mulgara.query.Constraint;
-import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ModelExpression;
-import org.mulgara.store.tuples.Tuples;
 
 /**
  * Describes a Constraint object.
@@ -53,18 +49,14 @@ import org.mulgara.store.tuples.Tuples;
  *
  * @created 2005-05-02
  * @author <a href="http://netymon.com/people/staff/andrae">Andrae Muys</a>
- * @version $Revision: 1.4 $
- * @modified $Date: 2005/05/29 08:34:20 $ 
- * @maintenanceAuthor $Author: raboczi $
  * @copyright &copy;2005 <a href="http://www.defence.gov.au/">
  *      Australian Commonwealth Government, Department of Defence</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface ConstraintDescriptor extends ConstraintResolutionHandler,
-                                              ConstraintModelRewrite
-{
-  public Class getConstraintClass();
+public interface ConstraintDescriptor extends ConstraintResolutionHandler, ConstraintModelRewrite {
+
+  public Class<? extends Constraint> getConstraintClass();
 
   // NOTE: For convenient reference these are the signatures of the two
   // methods imported from the super-interfaces.

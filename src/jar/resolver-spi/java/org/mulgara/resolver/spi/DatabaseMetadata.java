@@ -48,8 +48,7 @@ import java.util.Set;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface DatabaseMetadata
-{
+public interface DatabaseMetadata {
   /**
    * Returns the server name typically server1, server2, etc. which is the path
    * part of the URI.
@@ -72,7 +71,7 @@ public interface DatabaseMetadata
   public URI getSystemModelURI();
   public URI getSystemModelTypeURI();
   public URI getRdfTypeURI();
-  public Set getHostnameAliases();
+  public Set<String> getHostnameAliases();
 
   public long getSystemModelNode();
   public long getSystemModelTypeNode();

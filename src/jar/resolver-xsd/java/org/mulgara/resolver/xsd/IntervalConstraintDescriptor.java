@@ -43,7 +43,6 @@ import org.mulgara.query.*;
 import org.mulgara.resolver.spi.ConstraintDescriptor;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.tuples.Tuples;
@@ -53,29 +52,20 @@ import org.mulgara.store.tuples.TuplesOperations;
  * {@link Resolution} from the Java heap for XSD related queries.
  *
  * @created 2005-05-02
- *
  * @author <a href="mailto:raboczi@itee.uq.edu.au">Simon Raboczi</a>
- *
- * @version $Revision: 1.3 $
- *
- * @modified $Date: 2005/06/09 09:26:20 $ @maintenanceAuthor $Author: raboczi $
- *
  * @copyright &copy;2005 <a href="http://www.defence.gov.au/">
  *      Australian Commonwealth Government, Department of Defence</a>
- *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class IntervalConstraintDescriptor implements ConstraintDescriptor {
 
   /** Logger */
-  private static Logger logger =
-    Logger.getLogger(IntervalConstraintDescriptor.class.getName());
+  private static Logger logger = Logger.getLogger(IntervalConstraintDescriptor.class.getName());
 
   /**
    * Sole constructor.
    */
   IntervalConstraintDescriptor() {
-
     // null implementation
   }
 
@@ -83,8 +73,7 @@ public class IntervalConstraintDescriptor implements ConstraintDescriptor {
   // Methods implementing ConstraintDescriptor
   //
 
-  public Class getConstraintClass() {
-
+  public Class<IntervalConstraint> getConstraintClass() {
     return IntervalConstraint.class;
   }
 
@@ -96,37 +85,28 @@ public class IntervalConstraintDescriptor implements ConstraintDescriptor {
   public Tuples resolve(QueryEvaluationContext queryEvaluationContext,
                         ModelExpression        modelExpression,
                         ConstraintExpression   constraintExpression)
-    throws Exception
-  {
+    throws Exception {
+
     // Validate "constraintExpression" parameter
     if (!constraintExpression.getClass().equals(IntervalConstraint.class)) {
-      throw new IllegalArgumentException(
-        "Bad \"constraintExpression\" type: " + constraintExpression +
-        " of class " + constraintExpression.getClass()
-      );
+      throw new IllegalArgumentException("Bad \"constraintExpression\" type: " + constraintExpression + " of class " + constraintExpression.getClass());
     }
 
-    IntervalConstraint intervalConstraint =
-      (IntervalConstraint) constraintExpression;
+    IntervalConstraint intervalConstraint = (IntervalConstraint) constraintExpression;
 
     // If unbounded in both directions, short-circuit execution
     if (intervalConstraint.isUnconstrained()) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Unconstrained interval");
-      }
+      if (logger.isDebugEnabled()) logger.debug("Unconstrained interval");
       return TuplesOperations.unconstrained();
     }
 
     // If empty, short-circuit execution
     if (intervalConstraint.isEmpty()) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Empty interval");
-      }
+      if (logger.isDebugEnabled()) logger.debug("Empty interval");
       return TuplesOperations.empty();
     }
 
-    ResolverSession resolverSession =
-      queryEvaluationContext.getResolverSession();
+    ResolverSession resolverSession = queryEvaluationContext.getResolverSession();
 
     SPObject lowValue = (intervalConstraint.getLowerBound() == null)
       ? resolverSession.getSPObjectFactory().newSPDouble(Double.MIN_VALUE)
@@ -164,9 +144,7 @@ public class IntervalConstraintDescriptor implements ConstraintDescriptor {
   /**
    * @throws Exception always (not implemented)
    */
-  public Constraint rewrite(ConstraintElement newModel, Constraint constaint)
-    throws Exception
-  {
+  public Constraint rewrite(ConstraintElement newModel, Constraint constaint) throws Exception {
     throw new Exception("Not implemented");
   }
 }

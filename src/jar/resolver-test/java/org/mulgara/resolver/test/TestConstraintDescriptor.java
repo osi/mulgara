@@ -60,13 +60,14 @@ import org.mulgara.store.tuples.Tuples;
 
 public class TestConstraintDescriptor implements ConstraintDescriptor {
   /** Logger */
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(TestConstraintDescriptor.class);
 
 
   public TestConstraintDescriptor() { }
 
 
-  public Class getConstraintClass() {
+  public Class<TestConstraint> getConstraintClass() {
     return TestConstraint.class;
   }
 

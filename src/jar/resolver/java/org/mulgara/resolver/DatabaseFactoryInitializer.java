@@ -49,17 +49,15 @@ import org.mulgara.store.stringpool.StringPool;
  *
  * @created 2004-04-26
  * @author <a href="http://www.pisoftware.com/andrae">Andrae Muys</a>
- * @version $Revision: 1.8 $
- * @modified $Date: 2005/01/05 04:58:23 $
- * @maintenanceAuthor $Author: newmana $
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseFactoryInitializer extends DatabaseInitializer
-  implements FactoryInitializer
-{
+class DatabaseFactoryInitializer extends DatabaseInitializer implements FactoryInitializer {
+  /** Logger */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(DatabaseFactoryInitializer.class.getName());
+
   /** The databases toplevel directory */
   private File directory;
 
@@ -67,7 +65,7 @@ class DatabaseFactoryInitializer extends DatabaseInitializer
   private final URI databaseURI;
 
   /** The set of alternative hostnames for the current host. */
-  private final Set hostnameAliases;
+  private final Set<String> hostnameAliases;
 
   /**
    * Sole constructor.
@@ -75,9 +73,7 @@ class DatabaseFactoryInitializer extends DatabaseInitializer
    * @param directory  the persistence directory to offer this component; if
    *   <code>null</code>, no persistence directory will be offered
    */
-  DatabaseFactoryInitializer(
-      URI databaseURI, Set hostnameAliases, File directory
-  ) {
+  DatabaseFactoryInitializer(URI databaseURI, Set<String> hostnameAliases, File directory) {
     this.databaseURI = databaseURI;
     this.hostnameAliases = hostnameAliases;
     this.directory = directory;
@@ -92,7 +88,7 @@ class DatabaseFactoryInitializer extends DatabaseInitializer
     return databaseURI;
   }
 
-  public Set getHostnameAliases() {
+  public Set<String> getHostnameAliases() {
     checkState();
     return hostnameAliases;
   }
@@ -104,9 +100,7 @@ class DatabaseFactoryInitializer extends DatabaseInitializer
     if (directory != null) {
       // Ensure that the directory exists
       if (!directory.isDirectory()) {
-        if (!directory.mkdirs()) {
-          throw new InitializerException("Couldn't create " + directory);
-        }
+        if (!directory.mkdirs()) throw new InitializerException("Couldn't create " + directory);
       }
       assert directory.isDirectory();
     }
