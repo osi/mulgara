@@ -35,8 +35,11 @@ public class PrefixResolverFactory implements ResolverFactory {
   /** Logger. */
   private static Logger logger = Logger.getLogger(PrefixResolverFactory.class.getName());
 
-  /** The URI for the modelType.  */
-  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "PrefixModel");
+  /** The URI for the graphType.  */
+  private static final URI graphTypeURI = URI.create(Mulgara.NAMESPACE + "PrefixGraph");
+
+  /** The URI for the default graph. */
+  private static final URI DEFAULT_GRAPH = URI.create(Mulgara.PREFIX_GRAPH);
 
   /** The URI for prefixes. */
   private static final URI mulgaraPrefixURI = URI.create(Mulgara.NAMESPACE + "prefix");
@@ -62,8 +65,7 @@ public class PrefixResolverFactory implements ResolverFactory {
     // intialize the fields
     mulgaraPrefix = initializer.preallocate(new URIReferenceImpl(mulgaraPrefixURI));
 
-    // Claim the type supported by the resolver
-    initializer.addModelType(modelTypeURI, this);
+    // no need to claim the types supported by this resolver, as this is detected in the default graphs
   }
 
   //
@@ -102,7 +104,7 @@ public class PrefixResolverFactory implements ResolverFactory {
    * Obtain a Node Type resolver.
    *
    * @param resolverSession  the session which this query is local to
-   * @param canWrite  {@inheritDoc}; ignored, as these models are read only
+   * @param canWrite  {@inheritDoc}; ignored, as these graphs are read only
    * @throws IllegalArgumentException if <var>resolverSession</var> is
    *   <code>null</code> or canWrite is <code>true</code>
    * @throws ResolverFactoryException {@inheritDoc}
@@ -111,6 +113,13 @@ public class PrefixResolverFactory implements ResolverFactory {
       boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
   ) throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating new Prefix resolver");
-    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, modelTypeURI);
+    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, graphTypeURI);
+  }
+
+  /**
+   * @return The default graph for this resolver.
+   */
+  public Graph[] getDefaultGraphs() {
+    return new Graph[] { new Graph(DEFAULT_GRAPH, graphTypeURI) };
   }
 }
