@@ -27,9 +27,6 @@
 
 package org.mulgara.resolver.gis;
 
-// Java 2 standard packages
-import java.net.*;
-
 // Third party packages
 import org.apache.log4j.Logger;
 
@@ -133,6 +130,12 @@ public class GISResolverFactory implements ResolverFactory {
   public void delete() {
     // null implementation
   }
+
+  /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
 
   /**
    * Register this resolver upon database startup.

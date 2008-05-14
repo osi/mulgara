@@ -144,6 +144,12 @@ public class RelationalResolverFactory implements ResolverFactory {
   public void delete() { }
 
   /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
+
+  /**
    * Register this resolver upon database startup.
    *
    * @param initializer  the database within which to find or

@@ -28,13 +28,8 @@
 package org.mulgara.resolver.spi;
 
 // Third party packages
-import org.jrdf.graph.URIReference;
+import java.net.URI;
 
-// Local packages
-import org.mulgara.query.Constraint;
-import org.mulgara.query.ModelResource;
-import org.mulgara.query.QueryException;
-import org.mulgara.store.tuples.Tuples;
 
 /**
  * Generates {@link Resolver} instances.
@@ -80,6 +75,13 @@ public interface ResolverFactory
 //  }
 
   /**
+   * Gets any default graphs established by this factory.
+   * @return An array of graphs provided by default by this resolver.
+   *         May be empty or <code>null</code>.
+   */
+  public Graph[] getDefaultGraphs();
+
+  /**
    * Flush any persistent resources associated with this factory so that
    * they can be recovered after the database closes and later restarts.
    *
@@ -113,4 +115,15 @@ public interface ResolverFactory
    */
   public abstract Resolver newResolver(boolean canWrite,
       ResolverSession resolverSession, Resolver systemResolver) throws ResolverFactoryException;
+
+  /**
+   * A class to manage pairs of URIs for graph identifiers and types.
+   */
+  public static class Graph {
+    URI graph;
+    URI type;
+    public Graph(URI graph, URI type) { this.graph = graph; this.type = type; }
+    public URI getGraph() { return graph; }
+    public URI getType() { return type; }
+  }
 }

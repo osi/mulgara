@@ -79,21 +79,16 @@ public interface ResolverFactoryInitializer extends FactoryInitializer {
   public void addProtocol(String protocol, ResolverFactory resolverFactory) throws InitializerException;
 
   /**
-   * Register this resolver factory as requiring a graph to be created in the
-   * System Resolver to provide internal functionality. This is the default
-   * graph to be used for this resolver factory.
-   * @param graphType a preallocated node identifying graphs of the type created
-   *        by the {@link ResolverFactory}.
-   * @param graph a graphs to be created if it doesn't exist to provide a default
-   *        access point for the {@link ResolverFactory}.
-   * @param resolverFactory the resolver factory being registered as a handler
-   *        for the <var>graphType</var>
+   * Register this resolver factory as handling graphs of a particular type, and creates
+   * a default graph of that type in the System Resolver to provide internal functionality.
+   * This is the default graph to be used for this resolver factory.
+   * @param resolverFactory the resolver factory being registered as a handler for its graph types.
    * @return <code>true</code> if the graph was successfully created,
    *         <code>false</code> if registration occurred, but the graph was not created.
    * @throws IllegalStateException if called outside of initialization
    * @throws InitializerException if the <var>graphType</var> couldn't be registered
    */
-  public boolean addDefaultGraph(URI graphType, URI graph, ResolverFactory resolverFactory) throws InitializerException;
+  public boolean addDefaultGraph(ResolverFactory resolverFactory) throws InitializerException;
 
   /**
    * Register a symbolic transformation rule.

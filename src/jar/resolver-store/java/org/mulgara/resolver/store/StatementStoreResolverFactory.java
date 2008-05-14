@@ -127,6 +127,12 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
   // Methods implementing ResolverFactory (excluding newResolver)
   //
 
+  /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
+
   public void close() throws ResolverFactoryException {
     try {
       statementStore.close();

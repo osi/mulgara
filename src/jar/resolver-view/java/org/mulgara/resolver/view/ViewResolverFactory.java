@@ -146,6 +146,12 @@ public class ViewResolverFactory implements ResolverFactory {
     // null implementation
   }
 
+  /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
+
 
   /**
    * Register this resolver upon database startup.

@@ -27,18 +27,11 @@
 
 package org.mulgara.resolver.file;
 
-// Java 2 standard packages
-import java.io.*;
-import java.net.*;
-import java.util.List;
-
 // Third party packages
 import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.content.ContentHandlerManager;
-import org.mulgara.query.rdf.Mulgara;
-import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
 /**
@@ -117,6 +110,12 @@ public class FileResolverFactory implements ResolverFactory
   {
     // null implementation
   }
+
+  /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
 
   /**
    * Register this resolver upon database startup.

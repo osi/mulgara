@@ -116,6 +116,12 @@ public class TestResolverFactory implements ResolverFactory {
   }
 
   /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
+
+  /**
    * Register this resolver upon database startup.
    *
    * @param resolverFactoryInitializer  the database within which to find or
