@@ -2,9 +2,8 @@ package org.mulgara.tools;
 
 import org.mulgara.sparql.*;
 import org.mulgara.connection.*;
-import org.mulgara.parser.Interpreter;
 import org.mulgara.query.*;
-import org.mulgara.query.operation.*;
+import org.mulgara.query.rdf.Mulgara;
 
 import java.net.URI;
 import java.io.BufferedReader;
@@ -35,6 +34,9 @@ public class Sparql {
    */
   private static final URI HOST = URI.create("rmi://localhost/server1");
 
+  /** A URI for the default graph in Mulgara. This one is always empty. */
+  private static final URI EMPTY_GRAPH = URI.create(Mulgara.NULL_GRAPH);
+
   /**
    * Run a set of SPARQL queries against a local server.
    * @param args A list of filenames containing the queries to run.
@@ -53,7 +55,9 @@ public class Sparql {
     // iterate over all the query strings
     while (queryStrings.hasNext()) {
       // parse the string into a Query object
-      Query query = new SparqlInterpreter().parseQuery(queryStrings.next());
+      SparqlInterpreter interpreter = new SparqlInterpreter();
+      interpreter.setDefaultGraphUri(EMPTY_GRAPH);
+      Query query = interpreter.parseQuery(queryStrings.next());
 
       // execute the query, and get back the answer
       Answer a = (Answer)conn.execute(query);
