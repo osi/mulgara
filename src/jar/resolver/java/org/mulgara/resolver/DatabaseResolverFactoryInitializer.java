@@ -105,9 +105,27 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
     database.addModelType(modelType, resolverFactory);
   }
 
-  public boolean addDefaultGraph(URI graphType, URI graph, ResolverFactory resolverFactory) throws InitializerException {
-    database.addModelType(graphType, resolverFactory);
-    return false;
+  public boolean addDefaultGraph(ResolverFactory resolverFactory) throws InitializerException {
+    ResolverFactory.Graph[] defaultGraphs = resolverFactory.getDefaultGraphs();
+    if (defaultGraphs == null) return false;
+
+    // initialize the types to be handled by the resolver
+    for (ResolverFactory.Graph graph: defaultGraphs) {
+      database.addModelType(graph.getType(), resolverFactory);
+    }
+    boolean result = false;
+    DatabaseSession session = null;
+    try {
+      session = (DatabaseSession)database.newSession();
+      result = session.createDefaultGraphs(defaultGraphs);
+      session.close();
+    } catch (QueryException e) {
+      try {
+        if (session != null) session.close();
+      } catch (QueryException e2) { /* report first exception */ }
+      throw new InitializerException("Failed to create a resolver default graph", e);
+    }
+    return result;
   }
 
   public void addProtocol(String protocol, ResolverFactory resolverFactory) throws InitializerException {
@@ -152,7 +170,9 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
     try {
       //!!FIXME: Can't add preallocate to Session until we switch over.
       DatabaseSession session = (DatabaseSession)database.newSession();
-      return session.preallocate(node);
+      long result = session.preallocate(node);
+      session.close();
+      return result;
     } catch (QueryException eq) {
       throw new InitializerException("Failed to preallocate node", eq);
     }

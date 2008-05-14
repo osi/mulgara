@@ -368,6 +368,9 @@ class DatabaseSession implements Session {
    */
   public void restore(InputStream inputStream, URI serverURI, URI sourceURI) throws QueryException {
     execute(new RestoreOperation(inputStream, serverURI, sourceURI), "Unable to restore from " + sourceURI);
+    for (ResolverFactory resFactory: resolverFactoryList) {
+      createDefaultGraphs(resFactory.getDefaultGraphs());
+    }
   }
 
 
@@ -399,6 +402,15 @@ class DatabaseSession implements Session {
 
     execute(new CreateModelOperation(modelURI, modelTypeURI),
             "Could not commit creation of model " + modelURI + " of type " + modelTypeURI);
+  }
+
+
+  public boolean createDefaultGraph(URI modelURI, URI modelTypeURI) throws QueryException {
+    if (logger.isDebugEnabled()) logger.debug("Creating Graph " + modelURI + " with type " + modelTypeURI + " in the system graph");
+
+    CreateDefaultGraphOperation op = new CreateDefaultGraphOperation(modelURI, modelTypeURI);
+    execute(op, "Could not commit creation of model " + modelURI + " of type " + modelTypeURI);
+    return op.getResult();
   }
 
 
@@ -622,6 +634,22 @@ class DatabaseSession implements Session {
         symbolicTransformationList,
         systemResolverFactory,
         writing);
+  }
+
+  /**
+   * Creates a series of default graphs for a resolver.
+   * @param graphs An array of the graph names and types to create. May be null.
+   * @return <code>true</code> if any graphs were created, <code>false</code> otherwise.
+   * @throws QueryException If it was not possible to detect if the graph already existed.
+   */
+  boolean createDefaultGraphs(ResolverFactory.Graph[] graphs) throws QueryException {
+    boolean result = false;
+    if (graphs != null) {
+      for (ResolverFactory.Graph graph: graphs) {
+        result = result || createDefaultGraph(graph.getGraph(), graph.getType());
+      }
+    }
+    return result;
   }
 
 

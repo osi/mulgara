@@ -771,9 +771,9 @@ public class Database implements SessionFactory
                                              contentHandlers,
                                              systemResolverFactory);
 
-    resolverFactoryList.add(
-      ResolverFactoryFactory.newResolverFactory(className, initializer)
-    );
+    ResolverFactory factory = ResolverFactoryFactory.newResolverFactory(className, initializer);
+    resolverFactoryList.add(factory);
+    initializer.addDefaultGraph(factory);
 
     initializer.close();  // ensure that no further initialization is provided
 
