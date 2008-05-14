@@ -3,9 +3,9 @@
 
   <!-- Configure the prefix model -->
   <set name="query" value="
-      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixModel&gt; ;
+      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixGraph&gt; ;
       drop &lt;@server@#prefix&gt; ;
-      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixModel&gt; ;
+      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixGraph&gt; ;
   "/>
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
 

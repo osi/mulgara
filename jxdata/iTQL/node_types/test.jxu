@@ -3,9 +3,9 @@
 
   <!-- Configure the data type model -->
   <set name="query" value="
-      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeModel&gt; ;
+      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeGraph&gt; ;
       drop &lt;@server@#type&gt; ;
-      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeModel&gt; ;
+      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeGraph&gt; ;
   "/>
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
 

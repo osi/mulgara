@@ -1,27 +1,6 @@
 <jxu>
   <set name="debug" value="false" />
 
-  <!-- Drop the node type and prefix models -->
-  <set name="query" value="
-      drop &lt;@server@#type&gt; ;
-      drop &lt;@server@#prefix&gt; ;
-  "/>
-  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <!-- Do not care about results -->
-
-  <!-- Create the prefix and type models -->
-  <set name="query" value="
-      create &lt;@server@#type&gt; &lt;http://mulgara.org/mulgara#TypeModel&gt; ;
-      create &lt;@server@#prefix&gt; &lt;http://mulgara.org/mulgara#PrefixModel&gt; ;
-  "/>
-  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-
-  <ifEqual converse="true" file="configResult.txt" name="queryResult">
-    <save name="queryResult" file="badConfigResult1.xml"/>
-    <fail>Output failed setting up resolver models.  Check badConfigResult1.xml for output.</fail>
-  </ifEqual>
-
-
   <!-- Load the RDFS rules -->
   <set name="modelName" value="@server@#krule" />
   <set name="loadCommand" value="load &lt;@baseuri@/rules/rdfs-krule.rdf&gt; into &lt;@server@#krule&gt; ;" />

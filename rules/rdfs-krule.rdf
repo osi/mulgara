@@ -136,16 +136,16 @@
     <rdf:value rdf:resource="&mulgara;uriReference"/>
   </krule:URIReference>
 
-  <krule:URIReference rdf:about="#ref_rdftypeModel">
-    <rdf:value rdf:resource="rmi://localhost/server1#type"/>
+  <krule:URIReference rdf:about="#ref_rdftypeGraph">
+    <rdf:value rdf:resource="sys:type"/>
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_prefix">
     <rdf:value rdf:resource="&mulgara;prefix"/>
   </krule:URIReference>
 
-  <krule:URIReference rdf:about="#ref_prefixModel">
-    <rdf:value rdf:resource="rmi://localhost/server1#prefix"/>
+  <krule:URIReference rdf:about="#ref_prefixGraph">
+    <rdf:value rdf:resource="sys:prefix"/>
   </krule:URIReference>
 
   <krule:Axiom>
@@ -798,7 +798,7 @@
                   <URIReference rdf:about="#ref_uriType"/>
                 </hasObject>
                 <hasModel>
-                  <URIReference rdf:about="#ref_rdftypeModel"/>
+                  <URIReference rdf:about="#ref_rdftypeGraph"/>
                 </hasModel>
               </SimpleConstraint>
             </argument>
@@ -1227,7 +1227,7 @@
                   </Literal>
                 </hasObject>
                 <hasModel>
-                  <URIReference rdf:about="#ref_prefixModel"/>
+                  <URIReference rdf:about="#ref_prefixGraph"/>
                 </hasModel>
               </SimpleConstraint>
             </argument>
