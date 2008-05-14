@@ -128,6 +128,12 @@ class CacheResolverFactory implements ResolverFactory
     // null implementation
   }
 
+  /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
+
   public Resolver newResolver(boolean         canWrite,
                               ResolverSession resolverSession,
                               Resolver        systemResolver)

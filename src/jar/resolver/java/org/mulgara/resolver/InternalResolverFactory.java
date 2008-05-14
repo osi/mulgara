@@ -29,9 +29,6 @@
 
 package org.mulgara.resolver;
 
-// Java 2 standard packages
-import java.util.Set;
-
 // Local packages
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverFactory;
@@ -111,6 +108,12 @@ class InternalResolverFactory implements ResolverFactory
   {
     // null implementation
   }
+
+  /**
+   * {@inheritDoc}
+   * @return <code>null</code> - no default graphs for this resolver
+   */
+  public Graph[] getDefaultGraphs() { return null; }
 
   public Resolver newResolver(boolean         canWrite,
                               ResolverSession resolverSession,
