@@ -30,24 +30,18 @@
 package org.mulgara.resolver.nodetype;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.StringPoolException;
-import org.mulgara.store.tuples.LiteralTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 
@@ -71,14 +65,12 @@ public class NodeTypeResolver implements Resolver
   /** The session that this resolver is associated with.  */
   private final ResolverSession resolverSession;
 
-  /** A map of servers to sessions.  This acts as a cache, and also so we may close the sessions.  */
-  private Map sessions;
+  /** The URI of the type describing node type graphs.  */
+  private URI graphTypeURI;
 
-  /** The URI of the type describing node type models.  */
-  private URI modelTypeURI;
-
-  /** The node for the type describing node type models.  */
-  private long modelType;
+  /** The node for the type describing node type graphs.  */
+  @SuppressWarnings("unused")
+  private long graphType;
 
   /** The preallocated local node representing the rdf:type property. */
   private long rdfType;
@@ -106,11 +98,11 @@ public class NodeTypeResolver implements Resolver
       ResolverSession resolverSession,
       Resolver systemResolver,
       long rdfType,
-      long systemModel,
+      long systemGraph,
       long rdfsLiteral,
       long mulgaraUriReference,
-      long  modelType,
-      URI modelTypeURI
+      long graphType,
+      URI graphTypeURI
   ) throws ResolverFactoryException {
 
     if (logger.isDebugEnabled()) {
@@ -124,12 +116,11 @@ public class NodeTypeResolver implements Resolver
 
     // Initialize fields
     this.resolverSession = resolverSession;
-    this.modelTypeURI = modelTypeURI;
-    this.modelType = modelType;
+    this.graphTypeURI = graphTypeURI;
+    this.graphType = graphType;
     this.rdfType = rdfType;
     this.rdfsLiteral = rdfsLiteral;
     this.mulgaraUriReference = mulgaraUriReference;
-    sessions = new Hashtable();
   }
 
   //
@@ -137,19 +128,16 @@ public class NodeTypeResolver implements Resolver
   //
 
   /**
-   * Create a model for node types.
+   * Create a graph for node types.
    *
-   * @param model  {@inheritDoc}.
-   * @param modelType  {@inheritDoc}.  This must be the URI for NodeType models.
+   * @param graph  {@inheritDoc}.
+   * @param graphType  {@inheritDoc}.  This must be the URI for NodeType graphs.
    */
-  public void createModel(long model, URI modelType) throws ResolverException {
+  public void createModel(long graph, URI graphType) throws ResolverException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Create type model " + model);
-    }
-
-    if (!this.modelTypeURI.equals(modelType)) {
-      throw new ResolverException("Wrong model type provided as a Node Type model");
+    if (logger.isDebugEnabled()) logger.debug("Create type graph " + graph);
+    if (!this.graphTypeURI.equals(graphType)) {
+      throw new ResolverException("Wrong graph type provided as a Node Type graph");
     }
   }
 
@@ -173,35 +161,35 @@ public class NodeTypeResolver implements Resolver
 
 
   /**
-   * Insert or delete RDF statements in an existing model.
-   * This is illegal for this model type.
+   * Insert or delete RDF statements in an existing graph.
+   * This is illegal for this graph type.
    *
-   * @param model  the local node identifying an existing model
+   * @param graph  the local node identifying an existing graph
    * @param statements  the {@link Statements} to insert into the
-   *   <var>model</var>
+   *   <var>graph</var>
    * @param occurs  whether to assert the <var>statements</var>, or (if
    *   <code>false</code>) to deny it
    * @throws ResolverException if the <var>statements</var> can't be
-   *   added to the <var>model</var>
+   *   added to the <var>graph</var>
    */
-  public void modifyModel(long model, Statements statements, boolean occurs)
+  public void modifyModel(long graph, Statements statements, boolean occurs)
     throws ResolverException
   {
     if (logger.isDebugEnabled()) {
-      logger.debug("Modify Node Type model " + model);
+      logger.debug("Modify Node Type graph " + graph);
     }
 
-    throw new ResolverException("Node Type models are read only");
+    throw new ResolverException("Node Type graphs are read only");
   }
 
 
   /**
-   * Remove the cached model containing the contents of a URL.
+   * Remove the cached graph containing the contents of a URL.
    */
-  public void removeModel(long model) throws ResolverException
+  public void removeModel(long graph) throws ResolverException
   {
     if (logger.isDebugEnabled()) {
-      logger.debug("Remove Node Type model " + model);
+      logger.debug("Remove Node Type graph " + graph);
     }
   }
 
@@ -221,16 +209,16 @@ public class NodeTypeResolver implements Resolver
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
     if (!(constraint.getModel() instanceof LocalNode)) {
-      logger.warn("Ignoring solutions for non-local model " + constraint);
+      logger.warn("Ignoring solutions for non-local graph " + constraint);
       return new EmptyResolution(constraint, false);
     }
 
     /*
-    // Convert the constraint's model to a URI reference
-    URIReference modelUriRef;
-    long model = ((LocalNode) constraint.getModel()).getValue();
-    if (findModelType(model) != modelType) {
-      throw new QueryException("TypeModel query was made on a model which is not a Type Model");
+    // Convert the constraint's graph to a URI reference
+    URIReference graphUriRef;
+    long graph = ((LocalNode) constraint.getModel()).getValue();
+    if (findModelType(graph) != graphType) {
+      throw new QueryException("TypeGraph query was made on a graph which is not a Type Graph");
     }
     */
 
@@ -259,8 +247,6 @@ public class NodeTypeResolver implements Resolver
       Tuples tuples;
 
       if (node instanceof Variable) {
-        // extract the variable from the constraint
-        Variable variable = (Variable)node;
 
         // select the type being extracted from the string pool
         if (type == rdfsLiteral) {
