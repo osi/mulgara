@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/jar/ant-task/java"/>
+	<classpathentry kind="src" path="tools/src"/>
 	<classpathentry kind="src" path="src/jar/resolver-distributed/java"/>
 	<classpathentry kind="src" path="src/war/webui/java"/>
 	<classpathentry kind="src" path="src/jar/descriptor/src/java"/>
@@ -57,7 +58,7 @@
 	<classpathentry kind="src" path="src/jar/util/java"/>
 	<classpathentry kind="src" path="src/jar/util-xa/java"/>
 	<classpathentry kind="src" path="src/jar/sparql-interpreter/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src/jar/resolver-null/java"/>
 	<classpathentry kind="lib" path="lib/xom-1.0d21.jar"/>
 	<classpathentry kind="lib" path="lib/xmlParserAPIs.jar"/>
 	<classpathentry kind="lib" path="lib/xmlc-xerces.jar"/>
@@ -135,5 +136,6 @@
 	<classpathentry kind="lib" path="lib/velocity-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/emory-util-2.1-remote.jar"/>
 	<classpathentry kind="lib" path="lib/mulgara-sparql-0.0.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="obj/jar"/>
 </classpath>
