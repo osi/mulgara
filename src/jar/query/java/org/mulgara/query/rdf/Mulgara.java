@@ -42,4 +42,13 @@ package org.mulgara.query.rdf;
 public class Mulgara {
   /** Mulgara RDF namespace. */
   public final static String NAMESPACE = "http://mulgara.org/mulgara#";
+  
+  /** A general identifier for an empty graph */
+  public final static String NULL_GRAPH = "sys:null";
+
+  /** An identifier for a prefix graph */
+  public final static String PREFIX_GRAPH = "sys:prefix";
+
+  /** An identifier for a nodetype graph */
+  public final static String NODE_TYPE_GRAPH = "sys:type";
 }
