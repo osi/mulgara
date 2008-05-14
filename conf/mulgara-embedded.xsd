@@ -34,6 +34,7 @@
   <xs:element name="MaxReadTimeMs" type="xs:int"/>
   <xs:element name="MaxThreads" type="xs:int"/>
   <xs:element name="MinThreads" type="xs:int"/>
+  <xs:element name="DefaultGraph" type="xs:string"/>
   <xs:element name="PersistencePath" type="xs:string"/>
   <xs:element name="Port" type="xs:int"/>
   <xs:element name="RMIPort" type="xs:int"/>
@@ -117,6 +118,7 @@
         <xs:element ref="ServerName"/>
         <xs:element ref="RMIPort" minOccurs="0"/>
         <xs:element ref="PersistencePath"/>
+        <xs:element ref="DefaultGraph" minOccurs="0"/>
         <xs:element ref="TransactionTimeout"/>
         <xs:element ref="TripleStoreImplementation"/>
         <xs:element ref="RelatedQueryHandler"/>

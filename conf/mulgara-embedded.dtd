@@ -1,4 +1,4 @@
-<!ELEMENT MulgaraConfig (ExternalConfigPaths?, MulgaraHost?, Jetty?, ServerName, RMIPort?, PersistencePath, TransactionTimeout? TripleStoreImplementation, StartupScript?)>
+<!ELEMENT MulgaraConfig (ExternalConfigPaths?, MulgaraHost?, Jetty?, ServerName, RMIPort?, PersistencePath, DefaultGraph?, TransactionTimeout? TripleStoreImplementation, StartupScript?)>
 
   <!ELEMENT ExternalConfigPaths (MulgaraLogging, WebDefault)>
 
