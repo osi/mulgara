@@ -30,6 +30,7 @@
   <property file="${jar.src.dir}/query/query-build.properties"/>
   <!--property file="${jar.src.dir}/rdql/rdql-build.properties"/-->
   <property file="${jar.src.dir}/resolver/resolver-build.properties"/>
+  <property file="${jar.src.dir}/resolver-null/resolver-null-build.properties"/>
   <property file="${jar.src.dir}/resolver-file/resolver-file-build.properties"/>
   <property file="${jar.src.dir}/resolver-filesystem/resolver-filesystem-build.properties"/>
   <property file="${jar.src.dir}/resolver-gis/resolver-gis-build.properties"/>
@@ -100,6 +101,7 @@
   <import file="${jar.src.dir}/query/build.xml"/>
   <!--import file="${jar.src.dir}/rdql/build.xml"/-->
   <import file="${jar.src.dir}/resolver/build.xml"/>
+  <import file="${jar.src.dir}/resolver-null/build.xml"/>
   <import file="${jar.src.dir}/resolver-file/build.xml"/>
   <import file="${jar.src.dir}/resolver-filesystem/build.xml"/>
   <import file="${jar.src.dir}/resolver-gis/build.xml"/>
@@ -317,7 +319,7 @@
                    store-dist, store-xa-dist, store-nodepool-dist,
                    store-nodepool-memory-dist,
                    store-nodepool-xa-dist, query-dist,
-                   resolver-dist, resolver-file-dist, resolver-filesystem-dist,
+                   resolver-dist, resolver-null-dist, resolver-file-dist, resolver-filesystem-dist,
                    resolver-http-dist, resolver-nodetype-dist, resolver-prefix-dist,
                    resolver-lucene-dist, resolver-memory-dist, resolver-relational-dist,
                    resolver-spi-dist, resolver-store-dist, resolver-distributed-dist,
@@ -480,7 +482,7 @@
           lib/${store-nodepool.jar}, lib/${store-nodepool-xa.jar},
           lib/${store-nodepool-memory.jar}, lib/${store-stringpool.jar}
           lib/${store-stringpool-xa.jar},
-          lib/${store-stringpool-memory.jar}, lib/${util-xa.jar}, lib/${resolver-file.jar},
+          lib/${store-stringpool-memory.jar}, lib/${util-xa.jar}, lib/${resolver-null.jar}, lib/${resolver-file.jar},
           lib/${resolver-http.jar}, lib/${resolver-lucene.jar}, lib/${resolver-memory.jar},
           lib/${resolver-store.jar}, lib/${resolver-url.jar}, lib/${resolver-view.jar},
           lib/${tuples.jar}, lib/${tuples-hybrid.jar}, lib/${content-mp3.jar},
@@ -511,7 +513,7 @@
                    store-nodepool-memory-dist,
                    store-stringpool-dist,
                    store-stringpool-xa-dist,
-                   store-stringpool-memory-dist, tuples-dist, tuples-hybrid-dist,
+                   store-stringpool-memory-dist, tuples-dist, tuples-hybrid-dist, resolver-null-dist,
                    resolver-file-dist, resolver-filesystem-dist, resolver-distributed-dist,
                    resolver-http-dist, resolver-lucene-dist, resolver-relational-dist,
                    resolver-memory-dist, resolver-nodetype-dist, resolver-prefix-dist,
@@ -564,7 +566,7 @@
           ${resolver.jar}, ${resolver-spi.jar}, ${resolver-filesystem.jar},
           ${store.jar}, ${store-xa.jar},
           ${store-nodepool.jar}, ${store-nodepool-xa.jar}, ${store-stringpool.jar},
-          ${store-stringpool-xa.jar}, ${store-nodepool-memory.jar},
+          ${store-stringpool-xa.jar}, ${store-nodepool-memory.jar}, ${resolver-null.jar},
           ${store-stringpool-memory.jar}, ${util-xa.jar}, ${resolver-file.jar},
           ${resolver-http.jar}, ${resolver-lucene.jar}, ${resolver-memory.jar},
           ${resolver-store.jar}, ${resolver-url.jar}, ${resolver-view.jar},
@@ -737,7 +739,7 @@
              store-xa-jar,
              store-nodepool-jar, store-nodepool-memory-jar,
              store-nodepool-xa-jar, query-jar,
-             resolver-jar, resolver-file-jar, resolver-filesystem-jar,
+             resolver-jar, resolver-null-jar, resolver-file-jar, resolver-filesystem-jar,
              resolver-http-jar, resolver-lucene-jar, resolver-memory-jar,
              resolver-spi-jar, resolver-store-jar,
              resolver-url-jar, resolver-view-jar, resolver-xsd-jar,
@@ -834,6 +836,7 @@
       <sourcepath path="${query.src.dir}/java"/>
       <!--sourcepath path="${rdql.src.dir}/java"/-->
       <sourcepath path="${resolver.src.dir}/java"/>
+      <sourcepath path="${resolver-null.src.dir}/java"/>
       <sourcepath path="${resolver-file.src.dir}/java"/>
       <sourcepath path="${resolver-filesystem.src.dir}/java"/>
       <sourcepath path="${resolver-jar.src.dir}/java"/>
@@ -898,7 +901,7 @@
                    store-nodepool-javadoc,
                    store-nodepool-memory-javadoc, jrdf-javadoc,
                    store-nodepool-xa-javadoc, query-javadoc,
-                   resolver-filesystem-javadoc,
+                   resolver-filesystem-javadoc, resolver-null-javadoc,
                    resolver-file-javadoc, resolver-http-javadoc,
                    resolver-lucene-javadoc, resolver-memory-javadoc,
                    resolver-spi-javadoc, resolver-distributed-javadoc,
@@ -1698,7 +1701,7 @@
              javadoc-dist, jrdf-jar, store-jar, store-xa-jar,
              store-nodepool-jar,
              store-nodepool-memory-jar, store-nodepool-xa-jar,
-             query-jar, resolver-jar, resolver-file-jar, resolver-filesystem-jar,
+             query-jar, resolver-jar, resolver-null-jar, resolver-file-jar, resolver-filesystem-jar,
              resolver-http-jar, resolver-memory-jar, resolver-spi-jar,
              resolver-store-jar, resolver-url-jar, resolver-lucene-jar,
              resolver-view-jar, resolver-nodetype-jar, resolver-prefix-jar, resolver-jar-jar,
@@ -1771,6 +1774,7 @@
       <zipfileset src="${lib.dir}/${jakarta-oro.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jena.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${antlr.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${serializer.jar}" excludes="META-INF/**"/>
 
       <!-- core libraries -->
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
@@ -1797,6 +1801,7 @@
       <zipfileset src="${bin.dir}/${store-stringpool-memory.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-http.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-lucene.jar}" excludes="META-INF/**"/>
@@ -1925,7 +1930,7 @@
   <target name="resolver-api-test"
     depends="content-mbox-test, content-mp3-test, content-n3-test,
              content-rdfxml-test, content-rio-test,
-             resolver-test, resolver-file-test,
+             resolver-test, resolver-null-test, resolver-file-test,
              resolver-filesystem-test, resolver-jar-test, resolver-gis-test,
              resolver-http-test, resolver-lucene-test,
              resolver-nodetype-test, resolver-prefix-test, resolver-memory-test,
