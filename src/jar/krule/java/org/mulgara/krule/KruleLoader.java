@@ -44,6 +44,7 @@ import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.OperationContext;
 import org.mulgara.rules.*;
+import static org.mulgara.query.rdf.Mulgara.PREFIX_GRAPH;
 
 /**
  * This object is used for parsing an RDF graph and building a rules structure
@@ -62,9 +63,6 @@ public class KruleLoader implements RuleLoader {
   /** Logger.  */
   private static Logger logger = Logger.getLogger(KruleLoader.class.getName());
 
-  /** The system model. */
-  private URI systemModel;
-
   /** The database session for querying. */
   private OperationContext operationContext;
 
@@ -82,9 +80,6 @@ public class KruleLoader implements RuleLoader {
 
   /** The URI of the model to receive the entailed data. */
   private URI destModel;
-
-  /** The string of the prefix model URI. */
-  private String prefixModel;
 
   /** A map of namespace names to the URIs. */
   private Map<String,URI> aliases;
@@ -238,7 +233,6 @@ public class KruleLoader implements RuleLoader {
    */
   public Rules readRules(Object opContextParam, URI systemModel) throws InitializerException, RemoteException {
     this.operationContext = (OperationContext)opContextParam;
-    this.systemModel = systemModel;
 
     // get a new interpreter
     interpreter = new TqlInterpreter(aliases);
@@ -246,9 +240,6 @@ public class KruleLoader implements RuleLoader {
     rules = null;
     try {
       logger.debug("Initializing for rule queries.");
-      // initialise the utility models
-      initializeUtilityModels();
-
       // load the objects
       loadRdfObjects();
 
@@ -401,7 +392,7 @@ public class KruleLoader implements RuleLoader {
         // get the query data for this rule
         query = interpreter.parseQuery("select $pre $v $t from <" + ruleModel +
             "> where <" + rule.getName() + "> <krule:hasQuery> $q and $q <krule:selectionVariables> $vs and" +
-            " $vs $pre $v and $pre <mulgara:prefix> <rdf:_> in <"+ prefixModel +
+            " $vs $pre $v and $pre <mulgara:prefix> <rdf:_> in <"+ PREFIX_GRAPH +
             "> and $v <rdf:type> $t ;");
       } catch (Exception e) {
         throw new QueryException("Invalid query.", e);
@@ -569,41 +560,6 @@ public class KruleLoader implements RuleLoader {
       logger.error("Error defining internal aliases: ", e);
     }
     return aliases;
-  }
-
-
-  /**
-   * Confirm that required model types exist, and get their names.
-   *
-   * @throws TuplesException There was an error accessing the data.
-   * @throws QueryException There was an error querying the model.
-   */
-  private void initializeUtilityModels() throws TuplesException, QueryException {
-    logger.debug("reading the system model");
-
-    Query query;
-    try {
-      // find the names of all prefix models
-      query = interpreter.parseQuery("select $model from <" + systemModel +
-          "> where $model <rdf:type> <mulgara:PrefixModel> ;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
-    }
-    
-    Answer answer = query(query);
-    logger.debug("Found prefix models");
-
-    try {
-      // create all the rules
-      if (answer.next()) {
-        // create the rule and add it to the set
-        prefixModel = answer.getObject(0).toString();
-      } else {
-        throw new QueryException("No prefix models available");
-      }
-    } finally {
-      answer.close();
-    }
   }
 
 
