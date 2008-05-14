@@ -69,7 +69,10 @@ public class NodeTypeResolverFactory implements ResolverFactory {
 
 
   /** The URI for the modelType.  */
-  private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "TypeModel");
+  private static final URI graphTypeURI = URI.create(Mulgara.NAMESPACE + "TypeGraph");
+
+  /** The URI for the default graph. */
+  private static final URI DEFAULT_GRAPH = URI.create(Mulgara.NODE_TYPE_GRAPH);
 
   /** The URI for the internal URI reference type. */
   private static final URI mulgaraUriReferenceURI = URI.create(Mulgara.NAMESPACE + "uriReference");
@@ -99,13 +102,12 @@ public class NodeTypeResolverFactory implements ResolverFactory {
 
     // intialize the fields
     rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
-    modelType = initializer.preallocate(new URIReferenceImpl(modelTypeURI));
+    modelType = initializer.preallocate(new URIReferenceImpl(graphTypeURI));
     rdfsLiteral = initializer.preallocate(new URIReferenceImpl(RDFS.LITERAL));
     mulgaraUriReference = initializer.preallocate(new URIReferenceImpl(mulgaraUriReferenceURI));
     systemModel = initializer.getSystemModel();
 
-    // Claim the type supported by the resolver
-    initializer.addModelType(modelTypeURI, this);
+    // No need to claim the type supported by the resolver as this is detected in the default graph
   }
 
   //
@@ -124,6 +126,13 @@ public class NodeTypeResolverFactory implements ResolverFactory {
    */
   public void delete() {
     // null implementation
+  }
+
+  /**
+   * @return The default graph for this resolver.
+   */
+  public Graph[] getDefaultGraphs() {
+    return new Graph[] { new Graph(DEFAULT_GRAPH, graphTypeURI) };
   }
 
   /**
@@ -157,7 +166,7 @@ public class NodeTypeResolverFactory implements ResolverFactory {
     if (logger.isDebugEnabled()) logger.debug("Creating new node type resolver");
     return new NodeTypeResolver(
         resolverSession, systemResolver, rdfType, systemModel,
-        rdfsLiteral, mulgaraUriReference, modelType, modelTypeURI
+        rdfsLiteral, mulgaraUriReference, modelType, graphTypeURI
     );
   }
 }
