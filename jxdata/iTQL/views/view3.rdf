@@ -12,7 +12,7 @@
   xmlns:rdfs="&rdfs;"
   xmlns:mulgarav="&mulgarav;">
 
-<mulgarav:Union rdf:about="http://mulgara.org/mulgara/view" mulgarav:enabled="true">
+<mulgarav:Union rdf:about="http://mulgara.org/mulgara/view">
   <mulgarav:expr>
     <mulgarav:Intersection>
       <mulgarav:model rdf:resource="&server;#sub-model1"/>

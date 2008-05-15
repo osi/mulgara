@@ -29,7 +29,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#binary&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'textfile.txt' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'textfile.txt'@en and
           $value &lt;http://mulgara.org/mulgara#content&gt; $value2 ;
   "/>
 

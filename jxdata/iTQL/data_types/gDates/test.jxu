@@ -29,7 +29,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#dates&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Year 2004' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Year 2004'@en and
           $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 ;
   "/>
 
@@ -105,7 +105,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#dates&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'March' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'March'@en and
           $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 ;
   "/>
 
@@ -181,7 +181,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#dates&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Day 01' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'Day 01'@en and
           $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 ;
   "/>
 
@@ -275,7 +275,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#dates&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'January 2004' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'January 2004'@en and
           $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 ;
   "/>
 
@@ -351,7 +351,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#dates&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'January 1st' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'January 1st'@en and
           $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 ;
   "/>
 

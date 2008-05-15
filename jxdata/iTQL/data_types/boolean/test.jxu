@@ -29,7 +29,7 @@
   <set name="query" value="
     select $value2
     from &lt;@server@#numbers&gt;
-    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'one' and
+    where $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; 'one'@en and
           $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 ;
   "/>
 
