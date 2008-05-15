@@ -290,6 +290,12 @@ I.  Open Source Components
     License   GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
     
+    Mulgara SPARQL Parser
+    JARs:     mulgara-sparql-0.0.1.jar
+    URL:      http://mulgara.org/svn/sparqlparser
+    License   Apache License Version 2.0
+              http://www.apache.org/licenses/LICENSE-2.0.txt
+
     Velocity
     JARs:     velocity-1.5.jar
     URL:      http://velocity.apache.org/
@@ -311,6 +317,7 @@ I.  Open Source Components
     
     Xalan
     JARs:    xalan-2.7.0.jar
+             serializer-2.7.0.jar
     URL:     http://xml.apache.org/xalan-j/
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
