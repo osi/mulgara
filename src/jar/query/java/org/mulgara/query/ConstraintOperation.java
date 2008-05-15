@@ -216,4 +216,40 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
    * @return The Name value
    */
   abstract String getName();
+
+
+  /**
+   * Remove the constraint expressions from the product that have non-intersecting variables.
+   *
+   * @param product The list of constraints to test and modify.
+   */
+  protected static void filter(List<ConstraintExpression> product) {
+  
+    Set<Variable> o1 = new HashSet<Variable>();
+  
+    // Variables which occur at least once.
+    Set<Variable> o2 = new HashSet<Variable>();
+  
+    // Variables which occur two or more times.
+    // Get a set of variables which occur two or more times.
+    for (ConstraintExpression oc: product) {
+  
+      Set<Variable> ocVars = oc.getVariables();
+      Set<Variable> vars = new HashSet<Variable>(ocVars);
+      vars.retainAll(o1);
+      o2.addAll(vars);
+      o1.addAll(ocVars);
+    }
+  
+    // remove the expressions which have non-intersecting variables
+    for (Iterator<ConstraintExpression> pIt = product.iterator(); pIt.hasNext(); ) {
+  
+      ConstraintExpression oc = pIt.next();
+      Set<Variable> vars = new HashSet<Variable>(oc.getVariables());
+      vars.retainAll(o2);
+  
+      if (vars.isEmpty()) pIt.remove();
+    }
+  }
+
 }

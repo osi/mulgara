@@ -51,7 +51,7 @@ import java.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ConstraintConjunction extends ConstraintFilteredOperation {
+public class ConstraintConjunction extends ConstraintOperation {
 
   /**
    * Allow newer compiled version of the stub to operate when changes

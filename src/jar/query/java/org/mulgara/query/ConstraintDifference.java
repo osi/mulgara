@@ -35,20 +35,11 @@ import java.util.*;
  * subexpressions.
  *
  * @created 2005-03-08
- *
  * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
- *
- * @version $Revision: 1.2 $
- *
- * @modified $Date: 2005/05/29 08:32:39 $
- *
- * @maintenanceAuthor $Author: raboczi $
- *
  * @copyright &copy; 2005 <A href="mailto:pgearon@users.sourceforge.net">Paul Gearon</A>
- *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ConstraintDifference extends ConstraintFilteredOperation {
+public class ConstraintDifference extends ConstraintBinaryOperation {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
