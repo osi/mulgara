@@ -29,7 +29,6 @@ package org.mulgara.store.stringpool.xa;
 // Java 2 standard packages
 import java.nio.ByteBuffer;
 import java.net.URI;
-import java.util.Date;
 
 // JRDF
 import org.jrdf.graph.Literal;
@@ -89,20 +88,22 @@ public class SPObjectFactoryImpl implements SPObjectFactory {
         );
       }
 
-      // This must be a typed literal.
+      // This is either a typed literal, or it is untyped with a language code.
+      // Check for the start of a type URI
       int index = encodedString.lastIndexOf("\"^^<");
       if (index == -1) {
-        throw new IllegalArgumentException(
-            "Could not parse encoded string (String?): \"" + encodedString +
-            "\""
+        // must be a language-coded untyped literal
+        index = encodedString.lastIndexOf("\"@");
+        if (index == -1) throw new IllegalArgumentException("Could not parse encoded string (String?): \"" + encodedString + "\"");
+        String lang = encodedString.substring(index + 2);  // 2 for the quote and @ characters
+        return SPStringImpl.newSPObject(
+            AbstractSPObject.unescapeString(encodedString.substring(1, index)), lang
         );
       }
 
+      // must be a typed literal
       if (encodedString.charAt(len - 1) != '>') {
-        throw new IllegalArgumentException(
-            "Bad encodedString format (Typed literal?): \"" + encodedString +
-            "\""
-        );
+        throw new IllegalArgumentException("Bad encodedString format (Typed literal?): \"" + encodedString + "\"");
       }
 
       return newSPTypedLiteral(
@@ -197,16 +198,6 @@ public class SPObjectFactoryImpl implements SPObjectFactory {
     if (rdfNode instanceof Literal) {
       Literal literal = (Literal)rdfNode;
 
-      // TODO language codes are currently ignored.
-      /*
-      if (literal.getLanguage() != null) {
-        throw new IllegalArgumentException(
-          "Language codes are not yet supported: \"" + literal.getLanguage() +
-          "\" (" + literal + ")"
-        );
-      }
-      */
-
       URI typeURI = literal.getDatatypeURI();
       String lexicalForm = literal.getLexicalForm();
 
@@ -216,7 +207,7 @@ public class SPObjectFactoryImpl implements SPObjectFactory {
       }
 
       // Create an SPObject representing an untyped literal.
-      return SPStringImpl.newSPObject(lexicalForm);
+      return SPStringImpl.newSPObject(lexicalForm, literal.getLanguage());
     }
 
     if (rdfNode instanceof URIReference) {
@@ -224,8 +215,7 @@ public class SPObjectFactoryImpl implements SPObjectFactory {
     }
 
     throw new IllegalArgumentException(
-        "Unsupported jrdf node type: " + rdfNode + " (" + rdfNode.getClass() +
-        ")"
+        "Unsupported jrdf node type: " + rdfNode + " (" + rdfNode.getClass() + ")"
     );
   }
 

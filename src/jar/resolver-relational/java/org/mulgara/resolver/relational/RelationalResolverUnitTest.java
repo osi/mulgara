@@ -974,13 +974,13 @@ public class RelationalResolverUnitTest extends TestCase {
       answer.beforeFirst();
       assertTrue(answer.next());
       assertEquals(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper1")), answer.getObject(0));
-      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends"), answer.getObject(1));
+      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends", "en"), answer.getObject(1));
       assertTrue(answer.next());
       assertEquals(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper2")), answer.getObject(0));
-      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too"), answer.getObject(1));
+      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too", "en"), answer.getObject(1));
       assertTrue(answer.next());
       assertEquals(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper3")), answer.getObject(0));
-      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?"), answer.getObject(1));
+      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
         
@@ -1062,7 +1062,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       answer.beforeFirst();
       assertTrue(answer.next());
-      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?"), answer.getObject(0));
+      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
         
@@ -1187,15 +1187,15 @@ public class RelationalResolverUnitTest extends TestCase {
       assertTrue(answer.next());
       assertEquals(new LiteralImpl("Apes and Bears"), answer.getObject(0));
       assertEquals(new LiteralImpl("Do we like Bears?"), answer.getObject(1));
-      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too"), answer.getObject(2));
+      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too", "en"), answer.getObject(2));
       assertTrue(answer.next());
       assertEquals(new LiteralImpl("Apes and Bears"), answer.getObject(0));
       assertEquals(new LiteralImpl("We like Apes"), answer.getObject(1));
-      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends"), answer.getObject(2));
+      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends", "en"), answer.getObject(2));
       assertTrue(answer.next());
       assertEquals(new LiteralImpl("Cats and Donkeys"), answer.getObject(0));
       assertEquals(new LiteralImpl("I prefer Donkeys"), answer.getObject(1));
-      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?"), answer.getObject(2));
+      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(2));
       assertFalse(answer.next());
       answer.close();
         
@@ -1244,13 +1244,13 @@ public class RelationalResolverUnitTest extends TestCase {
       answer.beforeFirst();
       assertTrue(answer.next());
       assertEquals(new LiteralImpl("Do we like Bears?"), answer.getObject(0));
-      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too"), answer.getObject(1));
+      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too", "en"), answer.getObject(1));
       assertTrue(answer.next());
       assertEquals(new LiteralImpl("I prefer Donkeys"), answer.getObject(0));
-      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?"), answer.getObject(1));
+      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(1));
       assertTrue(answer.next());
       assertEquals(new LiteralImpl("We like Apes"), answer.getObject(0));
-      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends"), answer.getObject(1));
+      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends", "en"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
         
@@ -1303,16 +1303,16 @@ public class RelationalResolverUnitTest extends TestCase {
 
       answer.beforeFirst();
       assertTrue(answer.next());
-      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends"), answer.getObject(0));
+      assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends", "en"), answer.getObject(0));
       assertEquals(new LiteralImpl("Smith"), answer.getObject(1));
       assertTrue(answer.next());
-      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too"), answer.getObject(0));
+      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too", "en"), answer.getObject(0));
       assertEquals(new LiteralImpl("Carson"), answer.getObject(1));
       assertTrue(answer.next());
-      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too"), answer.getObject(0));
+      assertEquals(new LiteralImpl("Titel of the Paper: Bears like us too", "en"), answer.getObject(0));
       assertEquals(new LiteralImpl("Smith"), answer.getObject(1));
       assertTrue(answer.next());
-      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?"), answer.getObject(0));
+      assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(0));
       assertEquals(new LiteralImpl("Carson"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
