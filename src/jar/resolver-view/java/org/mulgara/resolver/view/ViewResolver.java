@@ -76,8 +76,6 @@ public class ViewResolver implements Resolver, ViewMarker
   private URI modelTypeURI;
 
   private long viewNode;
-  private long enabledNode;
-  private long trueNode;
   private long typeNode;
   private long exprNode;
   private long modelNode;
@@ -107,7 +105,7 @@ public class ViewResolver implements Resolver, ViewMarker
    *   is {@link NodePool#NONE}
    */
   ViewResolver(ResolverSession resolverSession, Resolver systemResolver, long rdfType, long systemModel,
-      long systemModelType, URI modelTypeURI, long viewNode, long enabledNode, long trueNode,
+      long systemModelType, URI modelTypeURI, long viewNode,
       long typeNode, long exprNode, long modelNode, long unionNode, long intersectNode)
       throws ResolverFactoryException {
 
@@ -119,8 +117,6 @@ public class ViewResolver implements Resolver, ViewMarker
     this.systemResolver = systemResolver;
     this.modelTypeURI = modelTypeURI;
     this.viewNode = viewNode;
-    this.enabledNode = enabledNode;
-    this.trueNode = trueNode;
     this.typeNode = typeNode;
     this.exprNode = exprNode;
     this.modelNode = modelNode;
@@ -175,7 +171,6 @@ public class ViewResolver implements Resolver, ViewMarker
       URIReference defNode = new URIReferenceImpl(definitionURI(model));
       long defModel = resolverSession.localizePersistent(defNode);
       systemResolver.createModel(defModel, systemModelTypeURI);
-      systemResolver.modifyModel(defModel, new SingletonStatements(viewNode, enabledNode, trueNode), true);
 
     } catch (LocalizeException el) {
       throw new ResolverException("Error localizing uri", el);

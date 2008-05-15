@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
-import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
@@ -63,8 +62,6 @@ public class ViewResolverFactory implements ResolverFactory {
   private long rdfType;
 
   private long viewNode;
-  private long enabledNode;
-  private long trueNode;
   private long typeNode;
   private long exprNode;
   private long modelNode;
@@ -104,8 +101,6 @@ public class ViewResolverFactory implements ResolverFactory {
     try {
       rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
       viewNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view")));;
-      enabledNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#enabled")));
-      trueNode = initializer.preallocate(new LiteralImpl("true"));
       typeNode = initializer.preallocate(new URIReferenceImpl(new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")));
       exprNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#expr")));
       modelNode = initializer.preallocate(new URIReferenceImpl(new URI("http://mulgara.org/mulgara/view#model")));
@@ -185,8 +180,6 @@ public class ViewResolverFactory implements ResolverFactory {
                             systemModelType,
                             modelTypeURI,
                             viewNode,
-                            enabledNode,
-                            trueNode,
                             typeNode,
                             exprNode,
                             modelNode,
