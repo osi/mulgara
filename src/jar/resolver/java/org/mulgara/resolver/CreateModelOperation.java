@@ -77,7 +77,7 @@ class CreateModelOperation implements Operation {
   CreateModelOperation(URI graphURI, URI graphTypeURI) throws QueryException {
     // Validate "graphURI" parameter
     if (graphURI == null) throw new IllegalArgumentException("Null \"graphURI\" parameter");
-    if (!graphURI.isOpaque() && graphURI.getFragment() == null) {
+    if (!graphURI.isOpaque() && fragmentScheme(graphURI) && graphURI.getFragment() == null) {
       throw new QueryException("Graph URI does not have a fragment (graphURI:\"" + graphURI + "\")");
     }
 
@@ -176,6 +176,9 @@ class CreateModelOperation implements Operation {
    * @throws QueryException
    */
   private void verifyGraphUriIsRelative(URI graphURI, DatabaseMetadata metadata) throws QueryException {
+    // only both if this is a scheme which uses fragments - for the moment only RMI
+    if (!fragmentScheme(graphURI)) return;
+
     boolean badModelURI = true;
     URI databaseURI = metadata.getURI();
     String scheme = graphURI.getScheme();
@@ -227,5 +230,21 @@ class CreateModelOperation implements Operation {
           graphURI + "\", databaseURI:\"" + databaseURI + "\")"
       );
     }
+  }
+
+  /** Schemes with fragments are handled for backward compatibility */
+  private static final Set<String> fragmentSchemes = new HashSet<String>();
+  static {
+    fragmentSchemes.add("rmi");
+    fragmentSchemes.add("beep");
+  }
+
+  /**
+   * Test if the given URI is in a scheme which differentiates graphs based on fragments.
+   * @param graphUri The URI to test for the graph.
+   * @return <code>true</code> only of the URI is in the known graph schemes.
+   */
+  private static boolean fragmentScheme(URI graphUri) {
+    return fragmentSchemes.contains(graphUri.getScheme());
   }
 }
