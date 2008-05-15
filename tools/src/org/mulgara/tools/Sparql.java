@@ -5,6 +5,8 @@ import org.mulgara.connection.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.Mulgara;
 
+import org.apache.log4j.*;
+
 import java.net.URI;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -43,6 +45,9 @@ public class Sparql {
    * @throws Exception Any kind of exception is just displayed on stderr, without any handling.
    */
   public static void main(String[] args) throws Exception {
+    // set up basic logging
+    logConfig();
+
     // Connect to the server
     ConnectionFactory factory = new ConnectionFactory();
     Connection conn = factory.newConnection(HOST);
@@ -127,5 +132,15 @@ public class Sparql {
     while (null != (line = br.readLine())) data.append(line).append("\n");
     return data.toString();
   }
+
+  /**
+   * Sets up simple logging of WARN level and above to go to the console.
+   */
+  private static void logConfig() {
+    Logger rootLogger = Logger.getRootLogger();
+    rootLogger.setLevel(Level.WARN);
+    rootLogger.addAppender(new ConsoleAppender());
+  }
+
 }
 
