@@ -51,4 +51,7 @@ public class Mulgara {
 
   /** An identifier for a nodetype graph */
   public final static String NODE_TYPE_GRAPH = "sys:type";
+
+  /** An identifier for a XSD resolver graph */
+  public final static String XSD_GRAPH = "sys:xsd";
 }

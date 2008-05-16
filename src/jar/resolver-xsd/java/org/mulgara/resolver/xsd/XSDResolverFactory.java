@@ -59,45 +59,28 @@ import org.mulgara.resolver.spi.*;
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  * @author Mark Ludlow
- *
- * @version $Revision: 1.14 $
- *
- * @modified $Date: 2005/06/10 07:57:38 $ by $Author: amuys $
- *
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- *
- * @copyright &copy; 2004 <a href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</a>
- *
+ * @copyright &copy; 2004 <a href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class XSDResolverFactory implements ResolverFactory {
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-      Logger.getLogger(XSDResolverFactory.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(XSDResolverFactory.class.getName());
 
-  private static final URI modelTypeURI;
-  static {
-    try {
-      modelTypeURI = new URI(Mulgara.NAMESPACE + "XMLSchemaModel");
-      assert modelTypeURI != null;
-    } catch (URISyntaxException e) {
-      throw new Error("Bad hardcoded XSD model URI", e);
-    }
-  }
+  /** The URI for the default graph. */
+  private static final URI DEFAULT_GRAPH = URI.create(Mulgara.XSD_GRAPH);
+
+  private static final URI graphTypeURI = URI.create(Mulgara.NAMESPACE + "XMLSchemaModel");
 
   /** The preallocated local node representing the system model */
   private long systemModel;
 
-  /**
-   * The preallocated local node representing the <code>rdf:type</code>
-   * property.
-   */
+  /** The preallocated local node representing the <code>rdf:type</code> property. */
   private long rdfType;
 
   /** The preallocated local node representing models stored on the Java heap. */
+  @SuppressWarnings("unused")
   private long modelType;
 
   /**
@@ -107,80 +90,63 @@ public class XSDResolverFactory implements ResolverFactory {
    * @throws IllegalArgumentException {@inheritDoc}
    * @throws ResolverException {@inheritDoc}
    */
-  private XSDResolverFactory(ResolverFactoryInitializer
-                             resolverFactoryInitializer) throws
-      ResolverException, InitializerException {
+  private XSDResolverFactory(ResolverFactoryInitializer resolverFactoryInitializer)
+        throws ResolverException, InitializerException {
 
     // Validate "resolverFactoryInitializer" parameter
     if (resolverFactoryInitializer == null) {
-
-      throw new IllegalArgumentException(
-          "Null \"resolverInitializer\" parameter");
+      throw new IllegalArgumentException("Null \"resolverInitializer\" parameter");
     }
 
     // Initialize fields
-    rdfType = resolverFactoryInitializer.preallocate(
-                                                new URIReferenceImpl(RDF.TYPE));
-
-    modelType = resolverFactoryInitializer.preallocate(
-                                      new URIReferenceImpl(modelTypeURI));
-
+    rdfType = resolverFactoryInitializer.preallocate(new URIReferenceImpl(RDF.TYPE));
+    modelType = resolverFactoryInitializer.preallocate(new URIReferenceImpl(graphTypeURI));
     systemModel = resolverFactoryInitializer.getSystemModel();
 
-    // Claim mulgara:MemoryModel
-    resolverFactoryInitializer.addModelType(modelTypeURI, this);
+    // No need to Claim mulgara:MemoryModel, as this is done by the default graphs
+    // resolverFactoryInitializer.addModelType(graphTypeURI, this);
 
     try {
-
       // Create the after node ID
       XSDResolver.MULGARA_AFTER = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "after")));
+            new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "after")));
 
       // Create the before node ID
       XSDResolver.MULGARA_BEFORE = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "before")));
+            new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "before")));
 
       // Create the less than node ID
       XSDResolver.MULGARA_LT = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")));
+            new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")));
 
       // Create the greater than node ID
       XSDResolver.MULGARA_GT = resolverFactoryInitializer.preallocate(
-          new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt")));
-    } catch (URISyntaxException e) {
+            new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt")));
 
+    } catch (URISyntaxException e) {
       throw new ResolverException("Generated bad XML schema URI", e);
     } catch (InitializerException initializerException) {
-
-      throw new ResolverException("Failed to preallocate xsd node values.",
-                                  initializerException);
+      throw new ResolverException("Failed to preallocate xsd node values.", initializerException);
     }
 
     // Register XSD-specific constraint types
     try {
-      resolverFactoryInitializer.registerNewConstraint(
-        new IntervalConstraintDescriptor()
-      );
+      resolverFactoryInitializer.registerNewConstraint(new IntervalConstraintDescriptor());
     } catch (InitializerException initializerException) {
-      throw new ResolverException("Failed to register new constraint",
-                                  initializerException);
+      throw new ResolverException("Failed to register new constraint", initializerException);
     }
 
     // Register the rule that generates XSD-specific constraints
     try {
       resolverFactoryInitializer.addSymbolicTransformation(
-        new IntervalTransformation(modelTypeURI, 
+        new IntervalTransformation(graphTypeURI, 
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt")),
           new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt"))
         )
       );
-    }
-    catch (InitializerException initializerException) {
-
-      throw new ResolverException("Failed to register new transformation",
-                                  initializerException);
-    }
-    catch (URISyntaxException e) {
+    } catch (InitializerException initializerException) {
+      throw new ResolverException("Failed to register new transformation", initializerException);
+    } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded constant", e);
     }
 
@@ -223,22 +189,21 @@ public class XSDResolverFactory implements ResolverFactory {
 
   /**
    * {@inheritDoc}
-   * @return <code>null</code> - no default graphs for this resolver
+   * @return {sys:xsd, mulgara:XMLSchemaModel}
    */
-  public Graph[] getDefaultGraphs() { return null; }
+  public Graph[] getDefaultGraphs() {
+    return new Graph[] { new Graph(DEFAULT_GRAPH, graphTypeURI) };
+  }
 
   /**
    * Register this resolver upon database startup.
    *
    * @param resolverFactoryInitializer  the database within which to find or
    *                                    create the various XML Schema resources
-   * @throws ResolverException If the XML Schema resources can't be found or
-   *                           created
+   * @throws ResolverException If the XML Schema resources can't be found or created
    */
-  public static ResolverFactory newInstance(
-      ResolverFactoryInitializer resolverFactoryInitializer) throws
-      ResolverException, InitializerException {
-
+  public static ResolverFactory newInstance(ResolverFactoryInitializer resolverFactoryInitializer)
+        throws ResolverException, InitializerException {
     return new XSDResolverFactory(resolverFactoryInitializer);
   }
 
@@ -252,8 +217,7 @@ public class XSDResolverFactory implements ResolverFactory {
   public Resolver newResolver(boolean canWrite,
                               ResolverSession resolverSession,
                               Resolver systemResolver) throws
-                              ResolverFactoryException{
-
+                              ResolverFactoryException {
     return new XSDResolver(resolverSession, systemResolver, rdfType, systemModel);
   }
 }

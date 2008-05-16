@@ -36,8 +36,6 @@ import java.util.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.Literal;
-import org.jrdf.graph.Node;
 import javax.transaction.xa.XAResource;
 
 // Locally written packages
@@ -102,7 +100,7 @@ public class XSDResolver implements Resolver {
   static long MULGARA_IS;
 
   /** Description of the Field */
-  static final Map oppositePropertyMap = new HashMap();
+  static final Map<LocalNode,LocalNode> oppositePropertyMap = new HashMap<LocalNode,LocalNode>();
 
   /** The session that this resolver is associated with */
   private final ResolverSession resolverSession;
@@ -220,9 +218,9 @@ public class XSDResolver implements Resolver {
       if (!(constraint.getElement(0) instanceof Variable) &&
           oppositePropertyMap.keySet().contains(constraint.getElement(1)) &&
           constraint.getElement(2) instanceof Variable) {
+
         constraint = new ConstraintImpl(constraint.getElement(2),
-                                        (LocalNode) oppositePropertyMap.get(
-            constraint.getElement(1)),
+                                        oppositePropertyMap.get(constraint.getElement(1)),
                                         constraint.getElement(0),
                                         constraint.getModel());
       }
@@ -232,11 +230,8 @@ public class XSDResolver implements Resolver {
       if ((constraint.getElement(0) instanceof Variable) &&
           !(constraint.getElement(2) instanceof Variable)) {
         if (property == MULGARA_LT) {
-
           if (logger.isDebugEnabled()) {
-            logger.debug("Evaluating " + constraint.getElement(0) +
-                         " less than " +
-                         constraint.getElement(2));
+            logger.debug("Evaluating " + constraint.getElement(0) + " less than " + constraint.getElement(2));
           }
 
           // Evaluate "less than" for xsd:double
@@ -261,11 +256,8 @@ public class XSDResolver implements Resolver {
               true // include high value
               );
         } else if (property == MULGARA_BEFORE) {
-
           if (logger.isDebugEnabled()) {
-            logger.debug("Evaluating " + constraint.getElement(0) +
-                         " before " +
-                         constraint.getElement(2));
+            logger.debug("Evaluating " + constraint.getElement(0) + " before " + constraint.getElement(2));
           }
 
 
@@ -277,12 +269,9 @@ public class XSDResolver implements Resolver {
               false // exclude high value
               );
         } else if (property == MULGARA_AFTER) {
-
           // Evaluate "less than" for xsd:double
           if (logger.isDebugEnabled()) {
-            logger.debug("Evaluating " + constraint.getElement(0) +
-                         " after " +
-                         constraint.getElement(2));
+            logger.debug("Evaluating " + constraint.getElement(0) + " after " + constraint.getElement(2));
           }
 
           // Evaluate "after" for xsd:date
@@ -298,7 +287,6 @@ public class XSDResolver implements Resolver {
         assert gNodeTuples != null;
 
         if (logger.isDebugEnabled()) {
-
           logger.debug("-- Renaming tuples of type: " + gNodeTuples.getClass());
         }
 
@@ -306,15 +294,9 @@ public class XSDResolver implements Resolver {
         gNodeTuples.renameVariables(constraint);
 
         if (logger.isDebugEnabled()) {
-
           logger.debug("Finished renaming.");
-        }
-
-
-        if (logger.isDebugEnabled()) {
           logger.debug("Evaluated " + constraint.getElement(0) +
-                       " less than " + constraint.getElement(2) + ": " +
-                       gNodeTuples);
+                       " less than " + constraint.getElement(2) + ": " + gNodeTuples);
         }
 
         return new XSDResolution(constraint, gNodeTuples);
@@ -344,13 +326,11 @@ public class XSDResolver implements Resolver {
           throw new QueryException("Invalid property: " + constraint);
         }
 
-        return condition ?
-               new XSDResolution(constraint, TuplesOperations.unconstrained()) :
-               new XSDResolution(constraint, TuplesOperations.empty());
+        return condition ? new XSDResolution(constraint, TuplesOperations.unconstrained())
+                         : new XSDResolution(constraint, TuplesOperations.empty());
       } else if (constraint.getElement(0) instanceof Variable &&
                  constraint.getElement(2) instanceof Variable) {
-        throw new QueryException("Can't resolve constraint with 2 variables: " +
-                                 constraint);
+        throw new QueryException("Can't resolve constraint with 2 variables: " + constraint);
       } else {
         throw new Error("Don't know how to handle constraint: " + constraint);
       }
@@ -372,39 +352,25 @@ public class XSDResolver implements Resolver {
    * @throws QueryException EXCEPTION TO DO
    * @throws StringPoolException EXCEPTION TO DO
    */
-  private SPObject getBoundDate(ConstraintElement constraintElement) throws
-                                ParseException, QueryException,
-                                StringPoolException {
+  private SPObject getBoundDate(ConstraintElement constraintElement)
+                                throws ParseException, QueryException, StringPoolException {
 
     if (constraintElement instanceof LocalNode) {
-
-      SPObject spo = resolverSession.findStringPoolObject(
-                                    ((LocalNode) constraintElement).getValue());
-
-      if (PERMISSIVE_PARAMETER_KLUDGE &&
-          spo.getTypeCategory() == TypeCategory.UNTYPED_LITERAL) {
-
+      SPObject spo = resolverSession.findStringPoolObject(((LocalNode)constraintElement).getValue());
+      if (PERMISSIVE_PARAMETER_KLUDGE && spo.getTypeCategory() == TypeCategory.UNTYPED_LITERAL) {
         // Try to parse the string as a date or a dateTime.
         try {
-
-          return resolverSession.getSPObjectFactory().newSPTypedLiteral(
-              spo.getLexicalForm(), XSD.DATE_URI);
+          return resolverSession.getSPObjectFactory().newSPTypedLiteral(spo.getLexicalForm(), XSD.DATE_URI);
         } catch (IllegalArgumentException e) {
-
           try {
-
-            return resolverSession.getSPObjectFactory().newSPTypedLiteral(
-                spo.getLexicalForm(), XSD.DATE_TIME_URI);
+            return resolverSession.getSPObjectFactory().newSPTypedLiteral(spo.getLexicalForm(), XSD.DATE_TIME_URI);
           } catch (IllegalArgumentException e2) {
-
             // fall through and let the string be returned unchanged.
           }
         }
       }
-
       return spo;
     } else {
-
       throw new Error("Unsupported constraint element: " + constraintElement);
     }
   }
@@ -417,38 +383,25 @@ public class XSDResolver implements Resolver {
    * @throws QueryException EXCEPTION TO DO
    * @throws StringPoolException EXCEPTION TO DO
    */
-  private SPObject getBoundDouble(ConstraintElement constraintElement) throws
-                                  QueryException, StringPoolException {
-
+  private SPObject getBoundDouble(ConstraintElement constraintElement) throws QueryException, StringPoolException {
     if (constraintElement instanceof LocalNode) {
-
-      SPObject spo = resolverSession.findStringPoolObject(
-          ((LocalNode) constraintElement).getValue());
-
+      SPObject spo = resolverSession.findStringPoolObject(((LocalNode) constraintElement).getValue());
       if (logger.isDebugEnabled()) {
-
-        logger.debug("!! Local node constraint element: " +
-                    ((LocalNode) constraintElement).getValue());
+        logger.debug("!! Local node constraint element: " + ((LocalNode) constraintElement).getValue());
         logger.debug("!! SPObject returned: " + spo);
       }
 
-      if (PERMISSIVE_PARAMETER_KLUDGE &&
-          spo.getTypeCategory() == TypeCategory.UNTYPED_LITERAL) {
-
+      if (PERMISSIVE_PARAMETER_KLUDGE && spo.getTypeCategory() == TypeCategory.UNTYPED_LITERAL) {
         // Try to parse the string as a Double.
         try {
-
-          return resolverSession.getSPObjectFactory().newSPTypedLiteral(
-                                          spo.getLexicalForm(), XSD.DOUBLE_URI);
+          return resolverSession.getSPObjectFactory().newSPTypedLiteral(spo.getLexicalForm(), XSD.DOUBLE_URI);
         } catch (NumberFormatException e) {
-
           // fall through and let the string be returned unchanged.
         }
       }
 
       return spo;
     } else {
-
       throw new Error("Unsupported constraint element: " + constraintElement);
     }
   }

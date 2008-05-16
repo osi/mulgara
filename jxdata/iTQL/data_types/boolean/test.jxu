@@ -3,12 +3,7 @@
 
 
   <!-- Configure the data type model -->
-  <set name="query" value="
-    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
-    drop &lt;@server@#xsdmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
-    alias &lt;http://mulgara.org/mulgara#&gt; as exp ;
-  "/>
+  <set name="query" value="alias &lt;http://mulgara.org/mulgara#&gt; as exp ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result1.txt" name="queryResult">

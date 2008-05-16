@@ -2,13 +2,8 @@
   <set name="debug" value="false" />
 
 
-  <!-- Configure the data type model -->
-  <set name="query" value="
-    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
-    drop &lt;@server@#xsdmodel&gt; ;
-    create &lt;@server@#xsdmodel&gt; &lt;http://mulgara.org/mulgara#XMLSchemaModel&gt; ;
-    alias &lt;http://mulgara.org/mulgara#&gt; as exp ;
-  "/>
+  <!-- set up the Mulgara alias -->
+  <set name="query" value="alias &lt;http://mulgara.org/mulgara#&gt; as exp ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="result1.txt" name="queryResult">
@@ -78,7 +73,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#is&gt; '40'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#is&gt; '40'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -95,7 +90,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '4.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '4.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -112,7 +107,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '38.0' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '38.0' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -128,7 +123,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1.0' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1.0' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -144,7 +139,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '41.0' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '41.0' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -160,7 +155,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '0' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '0' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -176,7 +171,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '42' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '42' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -193,7 +188,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1.5' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1.5' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -210,7 +205,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '-1' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '-1' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -227,8 +222,8 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '1' in &lt;@server@#xsdmodel&gt; and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '10' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '1' in &lt;sys:xsd&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '10' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -244,8 +239,8 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '10' in &lt;@server@#xsdmodel&gt; and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '10' in &lt;sys:xsd&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -294,8 +289,8 @@ Day'@en and
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '30.0' in &lt;@server@#xsdmodel&gt; and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '40.0' in &lt;@server@#xsdmodel&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '30.0' in &lt;sys:xsd&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '40.0' in &lt;sys:xsd&gt; and
          $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label 
     order by $label ;
   "/>
