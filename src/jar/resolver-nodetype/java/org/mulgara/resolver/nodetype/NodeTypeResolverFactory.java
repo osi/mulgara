@@ -75,7 +75,7 @@ public class NodeTypeResolverFactory implements ResolverFactory {
   private static final URI DEFAULT_GRAPH = URI.create(Mulgara.NODE_TYPE_GRAPH);
 
   /** The URI for the internal URI reference type. */
-  private static final URI mulgaraUriReferenceURI = URI.create(Mulgara.NAMESPACE + "uriReference");
+  private static final URI mulgaraUriReferenceURI = URI.create(Mulgara.NAMESPACE + "UriReference");
 
 
   /**

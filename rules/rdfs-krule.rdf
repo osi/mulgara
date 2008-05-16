@@ -133,7 +133,7 @@
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_uriType">
-    <rdf:value rdf:resource="&mulgara;uriReference"/>
+    <rdf:value rdf:resource="&mulgara;UriReference"/>
   </krule:URIReference>
 
   <krule:URIReference rdf:about="#ref_rdftypeGraph">
