@@ -65,7 +65,7 @@ public class Sparql {
       Query query = interpreter.parseQuery(queryStrings.next());
 
       // execute the query, and get back the answer
-      Answer a = (Answer)conn.execute(query);
+      Answer a = conn.execute(query);
       // print the results
       System.out.println("Result: " + query.getResultMessage());
       printAnswer(a);
