@@ -489,9 +489,8 @@ public class EmbeddedMulgaraServer extends Thread {
           log.debug("Registering shutdown hook");
         }
 
-        // Remove the need for shutdownhook
-        // force exit when shutdown port is triggered 
-        // Runtime.getRuntime().addShutdownHook(server);
+        // shutdown cleanly on (normal) exit
+        Runtime.getRuntime().addShutdownHook(server);
 
         // tell the RMI server who we are
         // setRmiLocalURI(server.getServerURI());
