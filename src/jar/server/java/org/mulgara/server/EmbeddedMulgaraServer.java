@@ -270,13 +270,11 @@ public class EmbeddedMulgaraServer extends Thread {
 
   // Static block
   static {
-
     CONFIG_PATH = "conf/mulgara-x-config.xml";
     RMI_SECURITY_POLICY_PATH = "conf/mulgara-rmi.policy";
 
     // Configure the logger for this class
     log = Logger.getLogger(EmbeddedMulgaraServer.class.getName());
-
   }
 
   //
@@ -290,11 +288,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * and {@link #setHttpServer(Server)}. </p>
    */
   protected EmbeddedMulgaraServer() {
-
     // nothing
   }
-
-  // EmbeddedMulgaraServer()
 
   /**
    * Creates a new embedded Mulgara server.
@@ -303,7 +298,6 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param httpServer the SOAP server
    */
   private EmbeddedMulgaraServer(ServerMBean server, Server httpServer) {
-
     // set the members
     this.setServer(server);
     this.setHttpServer(httpServer);
@@ -311,8 +305,6 @@ public class EmbeddedMulgaraServer extends Thread {
     // log that we've created a new server
     //log.info("Created embedded Mulgara server");
   }
-
-  // setLocalSessionFactory()
 
   /**
    * Sets a static reference to the hostname this Mulgara server is bound to.
@@ -331,24 +323,17 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the hostname this Mulgara server is bound to
    */
   public static String getResolvedLocalHost() {
-
     String hostname = null;
 
     try {
-
       // attempt for the localhost canonical host name
       hostname = InetAddress.getLocalHost().getCanonicalHostName();
-
-    } catch ( UnknownHostException uhe ) {
-
+    } catch (UnknownHostException uhe) {
       try {
-
         // attempt to get the IP address for the localhost
         hostname = InetAddress.getByName("localhost").getHostAddress();
         log.info("Obtain localhost IP address of " + hostname);
-
       } catch (UnknownHostException uhe2 ) {
-
         // default to the localhost IP
         hostname = "127.0.0.1";
         log.info("Defaulting to 127.0.0.1 IP address");
@@ -356,10 +341,7 @@ public class EmbeddedMulgaraServer extends Thread {
     }
 
     return hostname;
-
   }
-
-  // getSessionFactory()
 
   /**
    * Returns a static reference to the local
@@ -380,9 +362,7 @@ public class EmbeddedMulgaraServer extends Thread {
    *      factory has been set
    */
   public static SessionFactory getLocalSessionFactory() {
-
     return EmbeddedMulgaraServer.localSessionFactory;
-
   } // getLocalSessionFactory()
 
 
@@ -394,7 +374,6 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return URI the canonical server URI.
    */
   public static URI getServerURI() {
-
     return serverURI;
   }
 
@@ -437,16 +416,13 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param args command line arguments
    */
   public static void main(String[] args) {
-
     // report the version and build number
     System.out.println("@@build.label@@");
 
     EmbeddedMulgaraServer server = new EmbeddedMulgaraServer();
-    EmbeddedMulgaraOptionParser optsParser =
-        new EmbeddedMulgaraOptionParser(args);
+    EmbeddedMulgaraOptionParser optsParser = new EmbeddedMulgaraOptionParser(args);
 
     try {
-
       // load up the basic logging configuration in case we get an error before
       // we've loaded the real logging configuration
 
@@ -461,11 +437,8 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // start the server if we're allowed to
       if (startServer) {
-
         // create the params need for a new Mulgara instance
-        File statePath =
-            new File(new File(server.getPersistencePath()),
-            server.getServerName());
+        File statePath = new File(new File(server.getPersistencePath()),server.getServerName());
         String tripleStore = server.getConfig().getTripleStoreImplementation();
         String hostname = server.getHost();
 
@@ -485,7 +458,6 @@ public class EmbeddedMulgaraServer extends Thread {
 
         // install a shutdown hook for System.exit(#);
         if (log.isDebugEnabled()) {
-
           log.debug("Registering shutdown hook");
         }
 
@@ -510,11 +482,10 @@ public class EmbeddedMulgaraServer extends Thread {
 
         // log that we've start a Mulgara server
         if (log.isInfoEnabled()) {
-
           log.info("Successfully started Mulgara server at " +
               EmbeddedMulgaraServer.getServerURI().toString() +
               " in directory " +
-              ( (AbstractServer) server.getServer()).getDir());
+              ((AbstractServer)server.getServer()).getDir());
 
           log.info(eol + eol + "Typing Ctrl-C in this console or killing " +
               "this process id will shutdown this server");
@@ -522,38 +493,26 @@ public class EmbeddedMulgaraServer extends Thread {
           //Launch a browser if specified by a 'browser' system property
           server.launchBrowser();
         }
-
-        // end if
       }
-
-      // end if
-    }
-    catch (MultiException me) {
-
+    } catch (MultiException me) {
       // get the list of exceptions
       List exceptions = me.getExceptions();
 
       // log each one
       for (Iterator ei = exceptions.iterator(); ei.hasNext(); ) {
-
         Exception e = (Exception)ei.next();
         log.error("MultiException", e);
         e.printStackTrace();
       }
 
-      // end for
       System.exit(2);
-    }
-    catch (EmbeddedMulgaraOptionParser.UnknownOptionException uoe) {
-
+    } catch (EmbeddedMulgaraOptionParser.UnknownOptionException uoe) {
       // let the user know
       System.err.println("ERROR: Unknown option(s): " + uoe.getOptionName());
       server.printUsage();
 
       System.exit(3);
-    }
-    catch (EmbeddedMulgaraOptionParser.IllegalOptionValueException iove) {
-
+    } catch (EmbeddedMulgaraOptionParser.IllegalOptionValueException iove) {
       // let the user know
       System.err.println("ERROR: Illegal value '" + iove.getValue() +
           "' for option " + iove.getOption().shortForm() + "/" +
@@ -561,17 +520,13 @@ public class EmbeddedMulgaraServer extends Thread {
       server.printUsage();
 
       System.exit(4);
-    }
-    catch (Exception e) {
-
+    } catch (Exception e) {
       // log the error
       log.error("Exception in main", e);
       e.printStackTrace();
 
       System.exit(5);
     }
-
-    // try-catch
   }
 
   /**
@@ -580,7 +535,6 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param args command line arguments
    */
   public static void shutdown(String[] args) {
-
     // create a basic Configurator for the shutdown
     BasicConfigurator.configure();
 
@@ -591,7 +545,6 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // create a socket to the local host and port
     try {
-
       clientSocket = new Socket(InetAddress.getByName("localhost"), port);
 
       PrintWriter toServer =
@@ -600,42 +553,25 @@ public class EmbeddedMulgaraServer extends Thread {
       toServer.println(EmbeddedMulgaraServer.SHUTDOWN_MSG);
       toServer.flush();
       toServer.close();
-    }
-    catch (ConnectException ioCon) {
-
+    } catch (ConnectException ioCon) {
       //log.warn("Unable to establish connection to server on port " + port +
       //". The server may not be running."  );
       System.out.println("Server is not currently running");
-    }
-    catch (IOException ioEx) {
-
-      log.error("Unable to establish connection to shutdown server " +
-          "on port " + port, ioEx);
-    }
-    catch (SecurityException secEx) {
-
+    } catch (IOException ioEx) {
+      log.error("Unable to establish connection to shutdown server on port " + port, ioEx);
+    } catch (SecurityException secEx) {
       log.error("Unable to establish connection shutdown server due to a " +
           "security exception. Check security policy", secEx);
-    }
-    catch (Exception ex) {
-
-      log.error("Unable to establish shutdown connection to shutdown server " +
-          "on port " + port, ex);
-    }
-    finally {
-
+    } catch (Exception ex) {
+      log.error("Unable to establish shutdown connection to shutdown server on port " + port, ex);
+    } finally {
       // attempt to close the socket
       try {
-
         clientSocket.close();
-      }
-      catch (Exception ex) {
-
+      } catch (Exception ex) {
         /* skip */
       }
     }
-
-    // finally
   }
 
   /**
@@ -644,10 +580,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param localSessionFactory The new LocalSessionFactory value
    */
   private static void setLocalSessionFactory(SessionFactory localSessionFactory) {
-
     EmbeddedMulgaraServer.localSessionFactory = localSessionFactory;
     ServerInfo.setLocalSessionFactory(localSessionFactory);
-
   }
 
   /**
@@ -656,13 +590,11 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param rmiPort the port the RMI registry is bound to
    */
   protected static void setRMIPort(int rmiPort) {
-
     EmbeddedMulgaraServer.rmiPort = rmiPort;
-    System.setProperty(Context.PROVIDER_URL, "rmi://" + getBoundHostname() + ":"
-        + rmiPort + "/");
+    System.setProperty(Context.PROVIDER_URL, "rmi://" + getBoundHostname() + ":" + rmiPort + "/");
     ServerInfo.setRMIPort(rmiPort);
 
-  } // setRMIPort()
+  }
 
   /**
    * Returns the port the RMI registry is bound to.
@@ -670,7 +602,6 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the port the RMI registry is bound to
    */
   public static int getRMIPort() {
-
     return EmbeddedMulgaraServer.rmiPort;
   }
 
@@ -682,26 +613,20 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the shutdown port for this server
    */
   private static int getShutdownHookPort() {
-
     int port = EmbeddedMulgaraServer.SHUTDOWN_PORT;
 
     // check if the default shutdown port has been
     // overrided by a system property.
     String portString = System.getProperty("shutdownhook.port");
 
-    if ( (portString != null) && (portString.length() > 0)) {
-
+    if ((portString != null) && (portString.length() > 0)) {
       try {
-
         port = Integer.parseInt(portString);
 
         if (log.isInfoEnabled()) {
-
           log.info("Override default shutdown hook port to " + port);
         }
-      }
-      catch (NumberFormatException ex) {
-
+      } catch (NumberFormatException ex) {
         log.error("Unable to convert supplied port " + portString + " to int " +
             " for shutdown hook. Defaulting to port :" + portString, ex);
       }
@@ -710,7 +635,6 @@ public class EmbeddedMulgaraServer extends Thread {
     return port;
   }
 
-  // getRMIPort()
   //
   // Helper class methods
   //
@@ -722,79 +646,57 @@ public class EmbeddedMulgaraServer extends Thread {
    *      found
    */
   protected void configureSystemProperties() throws IOException {
-
     boolean startedLocalRMIRegistry = false;
 
     // attempt to start a rmiregistry
     if (System.getProperty("no_rmi") == null) {
-
       try {
-
         // start the registry
         LocateRegistry.createRegistry(EmbeddedMulgaraServer.getRMIPort());
 
         if (log.isInfoEnabled()) {
-
           log.info("RMI Registry started automatically on port " +
               EmbeddedMulgaraServer.getRMIPort());
         }
 
-        // end if
         // set the flag
         startedLocalRMIRegistry = true;
-      }
-      catch (java.rmi.server.ExportException ex) {
-
-        log.info("Existing RMI registry found on port " +
-            EmbeddedMulgaraServer.getRMIPort());
-      }
-      catch (Exception ex) {
-
+      } catch (java.rmi.server.ExportException ex) {
+        log.info("Existing RMI registry found on port " + EmbeddedMulgaraServer.getRMIPort());
+      } catch (Exception ex) {
         log.error("Failed to start or detect RMI Registry", ex);
-      } // try-catch
-    } // end if
+      }
+    }
 
     // set system properties needed for RMI
     System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
         "com.sun.jndi.rmi.registry.RegistryContextFactory");
 
     if (log.isDebugEnabled()) {
-
       log.debug("No system security manager set");
     }
-    // end if
 
     // only set the security policy if a RMI registry has started
     if (startedLocalRMIRegistry) {
-
       if (System.getProperty("java.security.policy") == null) {
-
         // log that we're about to set a security policy
         if (log.isDebugEnabled()) {
-
           log.debug("Started local RMI registry -> setting security policy");
         }
-        // end if
 
-        URL mulgaraSecurityPolicyURL =
-            ClassLoader.getSystemResource(RMI_SECURITY_POLICY_PATH);
-        System.setProperty("java.security.policy",
-            mulgaraSecurityPolicyURL.toString());
+        URL mulgaraSecurityPolicyURL = ClassLoader.getSystemResource(RMI_SECURITY_POLICY_PATH);
+        System.setProperty("java.security.policy", mulgaraSecurityPolicyURL.toString());
 
         // log the policy we've just set
         if (log.isInfoEnabled()) {
-
-          log.info("java.security.policy set to " +
-              mulgaraSecurityPolicyURL.toString());
-        } // end if
-      } // end if
+          log.info("java.security.policy set to " + mulgaraSecurityPolicyURL.toString());
+        }
+      }
 
       // create a security manager
       System.setSecurityManager(new RMISecurityManager());
     }
   }
-
-  // configureSystemProperties()
 
   /**
    * Loads the embedded logging configuration (from the JAR file).
@@ -802,52 +704,33 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param loggingConfig the path to the logging configuration file
    */
   private static void loadLoggingConfig(String loggingConfig) {
-
     // get a URL from the classloader for the logging configuration
     URL log4jConfigURL = ClassLoader.getSystemResource(loggingConfig);
 
     // if we didn't get a URL, tell the user that something went wrong
     if (log4jConfigURL == null) {
-
       System.err.println("Unable to find logging configuration file in JAR " +
-          "with " + loggingConfig +
-          ", reverting to default configuration.");
+          "with " + loggingConfig + ", reverting to default configuration.");
       BasicConfigurator.configure();
-    }
-    else {
-
+    } else {
       try {
-
         // configure the logging service
         DOMConfigurator.configure(log4jConfigURL);
 
         if (log.isDebugEnabled()) {
-
           log.debug("Using logging configuration from " + log4jConfigURL);
         }
-
-        // end if
-      }
-      catch (FactoryConfigurationError e) {
-
+      } catch (FactoryConfigurationError e) {
+        System.err.println("Unable to configure logging service, reverting " +
+            "to default configuration");
+        BasicConfigurator.configure();
+      } catch (Exception e) {
         System.err.println("Unable to configure logging service, reverting " +
             "to default configuration");
         BasicConfigurator.configure();
       }
-      catch (Exception e) {
-
-        System.err.println("Unable to configure logging service, reverting " +
-            "to default configuration");
-        BasicConfigurator.configure();
-      }
-
-      // try-catch
     }
-
-    // end if
   }
-
-  // loadLoggingConfig()
 
   /**
    * Loads the embedded logging configuration from an external URL.
@@ -855,43 +738,26 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param loggingConfig the URL of the logging configuration file
    */
   private static void loadLoggingConfig(URL loggingConfig) {
-
     // validate the loggingConfig parameter
     if (loggingConfig == null) {
-
       throw new IllegalArgumentException("Null \"loggingConfig\" parameter");
     }
 
-    // end if
     try {
-
       // configure the logging service
       DOMConfigurator.configure(loggingConfig);
 
       if (log.isDebugEnabled()) {
-
         log.debug("Using logging configuration from " + loggingConfig);
       }
-
-      // end if
-    }
-    catch (FactoryConfigurationError e) {
-
-      System.err.println("Unable to configure logging service, reverting " +
-          "to default configuration");
+    } catch (FactoryConfigurationError e) {
+      System.err.println("Unable to configure logging service, reverting to default configuration");
+      BasicConfigurator.configure();
+    } catch (Exception e) {
+      System.err.println("Unable to configure logging service, reverting to default configuration");
       BasicConfigurator.configure();
     }
-    catch (Exception e) {
-
-      System.err.println("Unable to configure logging service, reverting " +
-          "to default configuration");
-      BasicConfigurator.configure();
-    }
-
-    // try-catch
   }
-
-  // loadLoggingConfig()
 
   /**
    * Copies a file to the system temp directory.
@@ -902,14 +768,11 @@ public class EmbeddedMulgaraServer extends Thread {
    *      , or writing it to the new location
    */
   private static String copyFileToTemp(URL fileURL) throws IOException {
-
     // validate fileURL parameter
     if (fileURL == null) {
-
       throw new IllegalArgumentException("Null \"fileURL\" parameter");
     }
 
-    // end if
     // log that we're dumping a file to the temp dir
     log.debug("Dumping " + fileURL + " to system temp directory");
 
@@ -918,11 +781,9 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // check that the file is valid
     if (in == null) {
-
       throw new IOException(fileURL + " does not exist");
     }
 
-    // end if
     // create a temporary file to write the file to
     File tmpFile = TempDir.createTempFile("mulgara", ".war");
     tmpFile.deleteOnExit();
@@ -937,12 +798,10 @@ public class EmbeddedMulgaraServer extends Thread {
     int n;
     byte[] buf = new byte[102400];
 
-    while ( (n = in.read(buf)) != -1) {
-
+    while ((n = in.read(buf)) != -1) {
       out.write(buf, 0, n);
     }
 
-    // end if
     // close the stream
     out.close();
 
@@ -953,7 +812,6 @@ public class EmbeddedMulgaraServer extends Thread {
     return tmpFile.toString();
   }
 
-  // run()
   //
   // Public API
   //
@@ -966,20 +824,15 @@ public class EmbeddedMulgaraServer extends Thread {
    *         from the underlying database
    */
   public SessionFactory getSessionFactory() {
-
     SessionFactory sessionFactory = null;
 
     if (this.getServer() != null) {
-
-      sessionFactory =
-          ( (AbstractServer)this.getServer()).getSessionFactory();
+      sessionFactory = ((AbstractServer)this.getServer()).getSessionFactory();
     }
 
-    // end if
     return sessionFactory;
   }
 
-  // main()
   //
   // Methods overriding Thread
   //
@@ -991,14 +844,10 @@ public class EmbeddedMulgaraServer extends Thread {
    *
    */
   public void run() {
-
     // log that we're sutting down the servers
     if (log.isInfoEnabled()) {
-
       log.info("Shutting down server, please wait...");
-    }
-    else {
-
+    } else {
       // regardless of the log level output this to stdout.
       // Note. "\n" Will give us a new line beneath a Ctrl-C
       System.out.println("\nShutting down server, please wait...");
@@ -1006,66 +855,44 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // stop RMI service
     if (this.getServer().getState() == 3) {
-
       // TODO: magic number 3 means "started"
       try {
-
         this.getServer().stop();
-      }
-      catch (Exception e) {
-
+      } catch (Exception e) {
         log.error("Couldn't stop server", e);
       }
-
-      // try-catch
     }
 
-    // end if
     // close the server
     if (this.getServer().getState() >= 2) {
-
       // TODO: magic number 2 means "stopped"
       try {
-
         this.getServer().destroy();
-      }
-      catch (Exception e) {
-
+      } catch (Exception e) {
         log.error("Couldn't destroy server", e);
-
-      } // try-catch
-
-    } // end if
+      }
+    }
 
     // shut down the SOAP server
     try {
-
       if (this.getHttpServer() != null) {
-
         this.getHttpServer().stop();
-
-      } // end if
-    }
-    catch (Exception e) {
-
+      }
+    } catch (Exception e) {
       log.error("Couldn't destroy http server", e);
     }
 
-    // try-catch
     // log that we've shut down the servers
     if (log.isInfoEnabled()) {
-
       log.info("Completed shutting down server");
-    }
-    else {
-
+    } else {
       // regardless of the log level out this to stdout.
       System.out.println("Completed shutting down server");
     }
 
     //Clean up any temporary directories and files
     this.cleanUpTemporaryFiles();
-  } // run()
+  }
 
   /**
    * Sets the server instance.
@@ -1073,9 +900,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param server the server instance
    */
   public void setServer(ServerMBean server) {
-
     this.server = server;
-  } // setMulgaraServer()
+  }
 
   /**
    * Sets the SOAP server instance.
@@ -1083,9 +909,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param httpServer the SOAP server instance
    */
   public void setHttpServer(Server httpServer) {
-
     this.httpServer = httpServer;
-  } // setHttpServer()
+  }
 
   /**
    * Sets the embedded Mulgara server configuration.
@@ -1093,9 +918,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param config the embedded Mulgara server configuration
    */
   public void setConfig(MulgaraConfig config) {
-
     this.config = config;
-  } // setConfig()
+  }
 
   /**
    * Sets the (RMI) name of the server.
@@ -1103,9 +927,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param serverName the (RMI) name of the server
    */
   public void setServerName(String serverName) {
-
     this.serverName = serverName;
-  } // setServerName()
+  }
 
   /**
    * Sets the path to persist server data to.
@@ -1113,9 +936,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param persistencePath the path to persist server data to
    */
   public void setPersistencePath(String persistencePath) {
-
     this.persistencePath = persistencePath;
-  } // setPersistencePath()
+  }
 
   /**
    * Sets the hostname to bind the Mulgara server to.
@@ -1123,9 +945,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param host the hostname to bind the server to
    */
   public void setHost(String host) {
-
     this.host = host;
-  } // setHost()
+  }
 
   /**
    * Sets the hostname to accept HTTP requests on.
@@ -1133,20 +954,17 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param httpHost the hostname to accept HTTP requests on
    */
   public void setHttpHost(String httpHost) {
-
     this.httpHost = httpHost;
-  } // setHttpHost()
+  }
 
   /**
    * Sets the port the server will accept HTTP requests on.
-   static reference to *
    * @param httpPort the port the server will accept HTTP requests on
    */
   public static void setHttpPort(int httpPort) {
-
     EmbeddedMulgaraServer.httpPort = httpPort;
     ServerInfo.setHttpPort(httpPort);
-  } // setHttpPort()
+  }
 
   /**
    * Sets the smtp server name for email notifications
@@ -1154,9 +972,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param smtp The new SMTP value
    */
   public void setSMTP(String smtp) {
-
     this.smtp = smtp;
-  } // setSMTP()
+  }
 
   /**
    * Returns the Mulgara server instance.
@@ -1164,9 +981,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the Mulgara server instance
    */
   public ServerMBean getServer() {
-
     return this.server;
-  } // getMulgaraServer()
+  }
 
   /**
    * Returns the SOAP server instance.
@@ -1174,9 +990,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the SOAP server instance
    */
   public Server getHttpServer() {
-
     return this.httpServer;
-  } // getHttpServer()
+  }
 
   /**
    * Returns the embedded Mulgara server configuration.
@@ -1184,9 +999,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the embedded Mulgara server configuration
    */
   public MulgaraConfig getConfig() {
-
     return this.config;
-  } // getConfig()
+  }
 
   /**
    * Returns the (RMI) name of the server.
@@ -1194,9 +1008,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the (RMI) name of the server
    */
   public String getServerName() {
-
     return this.serverName;
-  } // getServerName()
+  }
 
   /**
    * Returns the path to persist server data to.
@@ -1204,9 +1017,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the path to persist server data to
    */
   public String getPersistencePath() {
-
     return this.persistencePath;
-  } // getPersistencePath()
+  }
 
   /**
    * Returns the hostname to bind the Mulgara server to.
@@ -1214,9 +1026,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the hostname to bind the Mulgara server to
    */
   public String getHost() {
-
     return this.host;
-  } // getHost()
+  }
 
   /**
    * Returns the hostname to accept HTTP requests on.
@@ -1224,9 +1035,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the hostname to accept HTTP requests on
    */
   public String getHttpHost() {
-
     return this.httpHost;
-  } // getHttpHost()
+  }
 
   /**
    * Returns the port the server will accept HTTP requests on.
@@ -1234,9 +1044,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the port the server will accept HTTP requests on
    */
   public static int getHttpPort() {
-
     return EmbeddedMulgaraServer.httpPort;
-  } // getHttpPort()
+  }
 
   /**
    * Returns the smtp server for email noticiations
@@ -1244,9 +1053,8 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return the smtp server
    */
   public String getSMTP() {
-
     return this.smtp;
-  } // getSMTP()
+  }
 
   //
   // Internal methods
@@ -1260,89 +1068,66 @@ public class EmbeddedMulgaraServer extends Thread {
    * @return true if the server is allowed to start
    */
   public boolean configure(EmbeddedMulgaraOptionParser parser) {
-
     // flag to indicate whether we can start the server
     boolean startServer = true;
 
     try {
-
       // find out if the user wants help
       if (parser.getOptionValue(EmbeddedMulgaraOptionParser.HELP) != null) {
-
         // print the help
         printUsage();
 
         // don't start the server
         startServer = false;
-      }
-      else {
-
+      } else {
         // load the Mulgara configuration file
-        Object configURL =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_CONFIG);
+        Object configURL = parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_CONFIG);
 
         if (configURL == null) {
-
           // get a URL to the default server configuration file
-          URL defaultConfigURL =
-              ClassLoader.getSystemResource(CONFIG_PATH);
+          URL defaultConfigURL = ClassLoader.getSystemResource(CONFIG_PATH);
 
           if (defaultConfigURL == null) {
-
-            throw new IOException("Unable to locate embedded server " +
-                "configuration file");
+            throw new IOException("Unable to locate embedded server configuration file");
           }
 
-          // end if
           // use the fefault configuration file
           configURL = defaultConfigURL.toString();
         }
 
-        // end if
         // log what we're doing
         /*
         if (log.isInfoEnabled()) {
-
-          log.info("Configuring embedded server from " +
-              configURL);
+          log.info("Configuring embedded server from " + configURL);
         }
         */
 
-        // end if
         // configure the server
-        MulgaraConfig config =
-            MulgaraConfig.unmarshal(new InputStreamReader(
-            (new URL( (String) configURL)).openStream()));
+        MulgaraConfig config = MulgaraConfig.unmarshal(new InputStreamReader(
+            (new URL((String)configURL)).openStream()));
         config.validate();
         this.setConfig(config);
 
         // disable automatic starting of the RMI registry
         if (parser.getOptionValue(EmbeddedMulgaraOptionParser.NO_RMI) != null) {
-
           // disable automatic starting of the RMI Registry
           System.setProperty("no_rmi", "no_rmi");
         }
 
         // set the hostname to bind Mulgara to
-        Object host =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_HOST);
+        Object host = parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_HOST);
 
         if (host != null) {
-
-          this.setHost( (String) host);
-          setBoundHostname((String) host);
-        }
-        else {
-
+          this.setHost((String)host);
+          setBoundHostname((String)host);
+        } else {
           // get the hostname from configuration file
           String configHost = this.getConfig().getMulgaraHost();
 
-          if ( (configHost == null) || configHost.equals("")) {
-
+          if ((configHost == null) || configHost.equals("")) {
             // obtain the host name
             configHost = getResolvedLocalHost();
-
-          } // end if
+          }
 
           // set the host name
           this.setHost(configHost);
@@ -1350,128 +1135,92 @@ public class EmbeddedMulgaraServer extends Thread {
         }
 
         // set the port on which the RMI registry will be created
-        Object rmiPort =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_PORT);
+        Object rmiPort = parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_PORT);
 
         if (rmiPort != null) {
-
-          EmbeddedMulgaraServer.setRMIPort(Integer.parseInt((String) rmiPort));
-        }
-        else {
-
+          EmbeddedMulgaraServer.setRMIPort(Integer.parseInt((String)rmiPort));
+        } else {
           EmbeddedMulgaraServer.setRMIPort(this.getConfig().getRMIPort());
         }
 
         configureSystemProperties();
 
         // load an external logging configuration
-        Object loggingConfig =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.LOG_CONFIG);
+        Object loggingConfig = parser.getOptionValue(EmbeddedMulgaraOptionParser.LOG_CONFIG);
 
         if (loggingConfig != null) {
-
-          EmbeddedMulgaraServer.loadLoggingConfig(new URL( (String)
-              loggingConfig));
-        }
-        else {
-
+          EmbeddedMulgaraServer.loadLoggingConfig(new URL((String)loggingConfig));
+        } else {
           EmbeddedMulgaraServer.loadLoggingConfig(config.getExternalConfigPaths()
               .getMulgaraLogging());
-        } // end if
+        }
 
         EmbeddedMulgaraServer.setBoundHostname(this.getHost());
 
-        Object httpHost =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
+        Object httpHost = parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
 
         if (httpHost != null) {
-
-          this.setHttpHost( (String) httpHost);
-        }
-        else {
-
+          this.setHttpHost((String)httpHost);
+        } else {
           // use the hostname from configuration file
-          this.setHttpHost( ( (Listener)this.getConfig().getJetty().getListener()).
-              getHost());
+          this.setHttpHost(((Listener)this.getConfig().getJetty().getListener()).getHost());
         }
 
-        // end if
         // set the port on which to accept HTTP requests
-        Object httpPort =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.PORT);
+        Object httpPort = parser.getOptionValue(EmbeddedMulgaraOptionParser.PORT);
 
         if (httpPort != null) {
-
-          this.setHttpPort(Integer.parseInt( (String) httpPort));
-        }
-        else {
-
+          this.setHttpPort(Integer.parseInt((String)httpPort));
+        } else {
           // use the port from configuration file
-          this.setHttpPort( ( (Listener)this.getConfig().getJetty().getListener()).
-              getPort());
+          this.setHttpPort(((Listener)this.getConfig().getJetty().getListener()).getPort());
         }
 
-        // end if
         // set the (RMI) name of the server
-        Object serverName =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_NAME);
+        Object serverName = parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_NAME);
 
         if (serverName != null) {
-
           // use the server name specified on the command line
-          this.setServerName( (String) serverName);
-        }
-        else {
-
+          this.setServerName((String)serverName);
+        } else {
           // use the name specified in the configuration file
           this.setServerName(this.getConfig().getServerName());
         }
 
-        // end if
         // set the server's persistence path
         Object persistencePath =
             parser.getOptionValue(EmbeddedMulgaraOptionParser.PERSISTENCE_PATH);
 
         if (persistencePath == null) {
-
           // use the persistence path specified in the configuration file
           persistencePath = this.getConfig().getPersistencePath();
-        } // end if
+        }
 
         // if the persistence path was one we know about, substitute it
-        if ( ( (String) persistencePath).equalsIgnoreCase(".")) {
-
+        if (((String)persistencePath).equalsIgnoreCase(".")) {
           persistencePath = System.getProperty("user.dir");
-        }
-        else if ( ( (String) persistencePath).equalsIgnoreCase("temp")) {
-
+        } else if (((String)persistencePath).equalsIgnoreCase("temp")) {
           persistencePath = System.getProperty("java.io.tmpdir");
-        } // end if
+        }
 
         // set the persistence path
-        this.setPersistencePath( (String) persistencePath);
+        this.setPersistencePath((String)persistencePath);
 
         // set the smtp name of the server
-        Object smtpServer =
-            parser.getOptionValue(EmbeddedMulgaraOptionParser.SMTP_SERVER);
+        Object smtpServer = parser.getOptionValue(EmbeddedMulgaraOptionParser.SMTP_SERVER);
 
         if (smtpServer != null) {
-
           // use the smtp server name specified on the command line
-          this.setSMTP( (String) smtpServer);
-        }
-        else {
-
+          this.setSMTP((String)smtpServer);
+        } else {
           // use the smtp server name specified in the configuration file
           this.setSMTP(this.getConfig().getSmtp());
-        } // end if
+        }
 
         // set the property for mail package to pickup
         System.setProperty("mail.smtp.host", this.getSMTP());
-      } // end if
-    }
-    catch (MalformedURLException mue) {
-
+      }
+    } catch (MalformedURLException mue) {
       // log the error
       log.warn("Invalid URL on command line - " + mue.getMessage());
 
@@ -1481,9 +1230,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // don't start the server
       startServer = false;
-    }
-    catch (IOException ioe) {
-
+    } catch (IOException ioe) {
       // log the error
       log.error(ioe.getMessage(), ioe);
 
@@ -1493,9 +1240,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // don't start the server
       startServer = false;
-    }
-    catch (NumberFormatException nfe) {
-
+    } catch (NumberFormatException nfe) {
       // log the error
       log.warn("Invalid port specified on command line: " + nfe.getMessage());
 
@@ -1505,9 +1250,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // don't start the server
       startServer = false;
-    }
-    catch (org.exolab.castor.xml.MarshalException me) {
-
+    } catch (org.exolab.castor.xml.MarshalException me) {
       // log the error
       log.warn("Castor Marshal Exception: " + me.getMessage(), me);
 
@@ -1517,11 +1260,8 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // don't start the server
       startServer = false;
-    }
-    catch (org.exolab.castor.xml.ValidationException ve) {
-
+    } catch (org.exolab.castor.xml.ValidationException ve) {
       // log the error
-      //log.warn("Castor XML validation exception while loading configuration - " + ve.getMessage());
       log.warn("Unable to load configuration - " + ve.getMessage());
 
       // print the usage
@@ -1530,9 +1270,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // don't start the server
       startServer = false;
-    }
-    catch (Exception e) {
-
+    } catch (Exception e) {
       // log the error
       log.warn("Could not start embedded Mulgara server", e );
 
@@ -1541,11 +1279,11 @@ public class EmbeddedMulgaraServer extends Thread {
       //e.printStackTrace();
       // don't start the server
       startServer = false;
-    } // try-catch
+    }
 
     // return the server
     return startServer;
-  } // configure()
+  }
 
   /**
    * Starts the Mulgara server.
@@ -1565,14 +1303,11 @@ public class EmbeddedMulgaraServer extends Thread {
       MultiException, SimpleXAResourceException, StoreException, Exception {
 
     if (this.getServer() == null) {
-
-      throw new IllegalStateException("Servers must be created before they " +
-          "can be started");
-    } // end if
+      throw new IllegalStateException("Servers must be created before they can be started");
+    }
 
     // log that we're starting a Mulgara server
     if (log.isDebugEnabled()) {
-
       log.debug("Starting server");
     }
 
@@ -1582,11 +1317,10 @@ public class EmbeddedMulgaraServer extends Thread {
     EmbeddedMulgaraServer.setLocalSessionFactory(this.getSessionFactory());
 
     // set the server uri.
-    EmbeddedMulgaraServer.setServerURI(((AbstractServer) this.getServer()).getURI());
+    EmbeddedMulgaraServer.setServerURI(((AbstractServer)this.getServer()).getURI());
 
     // log that we're starting a SOAP server
     if (log.isDebugEnabled()) {
-
       log.debug("Starting HTTP server");
     }
   }
@@ -1615,18 +1349,13 @@ public class EmbeddedMulgaraServer extends Thread {
    * @throws MultiException if an error ocurrs while starting up the SOAP server
    * @throws Exception EXCEPTION TO DO
    */
-  public void startHttpServer() throws IOException, NamingException,
-      MultiException, Exception {
-
+  public void startHttpServer() throws IOException, NamingException, MultiException, Exception {
     if (this.getHttpServer() == null) {
-
-      throw new IllegalStateException("HTTP Server must be created before they " +
-          "can be started");
+      throw new IllegalStateException("HTTP Server must be created before they can be started");
     }
 
     // log that we're starting a SOAP server
     if (log.isDebugEnabled()) {
-
       log.debug("Starting HTTP server");
     }
 
@@ -1638,7 +1367,7 @@ public class EmbeddedMulgaraServer extends Thread {
       log.debug("Starting shutdown Hook server");
     }
 
-  } // startHttpServer()
+  }
 
   /**
    * Creates a Mulgara server.
@@ -1655,22 +1384,19 @@ public class EmbeddedMulgaraServer extends Thread {
    *      classpath
    * @throws IOException if the <var>statePath</var> is invalid
    */
-  public ServerMBean createServer(String serverName,
-      File statePath, String hostname, int portNumber, String providerClassName,
-      String serverClassName) throws ClassNotFoundException, IOException {
+  public ServerMBean createServer(String serverName, File statePath, String hostname,
+      int portNumber, String providerClassName, String serverClassName)
+      throws ClassNotFoundException, IOException {
 
     // log that we're createing a Mulgara server
     if (log.isDebugEnabled()) {
-
       log.debug("Creating server instance at rmi://" + hostname + "/" +
           serverName + " in directory " + statePath);
     }
 
-    // end if
     // Create the server
     ServerMBean server =
-        (ServerMBean) Beans.instantiate(getClass().getClassLoader(),
-        serverClassName);
+        (ServerMBean)Beans.instantiate(getClass().getClassLoader(),serverClassName);
 
     // Set ServerMBean properties
     server.setDir(statePath);
@@ -1678,16 +1404,14 @@ public class EmbeddedMulgaraServer extends Thread {
     server.setTempDir(tempDir);
     server.setConfig(getConfig());
 
-
     if (log.isDebugEnabled()) {
-
        log.debug("Set config to be: " + getConfig());
      }
 
     // set the directory that all temporary files will be created in.
     tempDir.mkdirs();
     TempDir.setTempDir(tempDir);
-    
+
     // remove any temporary files 
     cleanUpTemporaryFiles();
 
@@ -1695,40 +1419,28 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // Check to see if the port number is not 1099 and we're using the RMI
     // server.
-    if ((portNumber != 1099) &&
-        (serverClassName.equals("org.mulgara.server.rmi.RmiServer"))) {
+    if ((portNumber != 1099) && (serverClassName.equals("org.mulgara.server.rmi.RmiServer"))) {
       server.setPortNumber(portNumber);
     }
     server.setHostname(hostname);
 
     // Set protocol-specific properties (FIXME: hardcoded to do "name" only)
     try {
-
-      Method setter =
-          (new PropertyDescriptor("name", server.getClass())).getWriteMethod();
-
+      Method setter = new PropertyDescriptor("name", server.getClass()).getWriteMethod();
       try {
-
-        setter.invoke(server, new Object[] {
-            serverName});
-      }
-      catch (InvocationTargetException e) {
-
+        setter.invoke(server, new Object[] {serverName});
+      } catch (InvocationTargetException e) {
         log.warn(server + " doesn't have a name property", e);
       }
-    }
-    catch (IllegalAccessException e) {
-
+    } catch (IllegalAccessException e) {
       log.warn(serverClassName + " doesn't have a public name property", e);
-    }
-    catch (IntrospectionException e) {
-
+    } catch (IntrospectionException e) {
       log.warn(serverClassName + " doesn't have a name property", e);
     }
 
     // return the newly created server instance
     return server;
-  } // createServer()
+  }
 
   /**
    * Creates a HTTP  server.
@@ -1744,17 +1456,13 @@ public class EmbeddedMulgaraServer extends Thread {
    *      configure the HTTP server
    * @throws IllegalAccessException EXCEPTION TO DO
    */
-  public Server createHttpServer() throws IOException,
-      SAXException, ClassNotFoundException, NoSuchMethodException,
-      InvocationTargetException, IllegalAccessException {
+  public Server createHttpServer() throws IOException, SAXException, ClassNotFoundException,
+      NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
     // log that we're creating a HTTP server
     if (log.isDebugEnabled()) {
       log.debug("Creating HTTP server instance");
     }
-
-    // TODO remove
-    //org.mortbay.util.Code.setDebug(true);
 
     // Set the magic logging property for Jetty to use Log4j
     System.setProperty("LOG_CLASSES", "org.mortbay.util.log4j.Log4jSink");
@@ -1768,22 +1476,16 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // get the URL to the default webapp configuration
     URL webappDefaultURL =
-        ClassLoader.getSystemResource(this.getConfig().getExternalConfigPaths()
-        .getWebDefault());
+        ClassLoader.getSystemResource(this.getConfig().getExternalConfigPaths().getWebDefault());
 
     if (webappDefaultURL == null) {
-
       throw new IOException("Could not find default webapp configuration");
     }
-
-    // end if
-
 
     // add the static HTML contexts
     this.addDefaultContext();
     this.addDocsContext();
     this.addDataContext();
-
 
     // add the webapps
     this.addWebServicesWebAppContext();
@@ -1792,7 +1494,6 @@ public class EmbeddedMulgaraServer extends Thread {
     // add our class loader as the classloader of all contexts
     HttpContext contexts[] = httpServer.getContexts();
     for (int i = 0; i < contexts.length; i++) {
-    //  System.out.println("Setting classload on: " + contexts[i].toString(true));
       //contexts[i].setClassLoader(this.getClass().getClassLoader());
       contexts[i].setParentClassLoader(this.getClass().getClassLoader());
     }
@@ -1800,8 +1501,6 @@ public class EmbeddedMulgaraServer extends Thread {
     // return the server
     return httpServer;
   }
-
-  // createHttpServer()
 
   /**
    * Adds a listener to the <code>httpServer</code>.
@@ -1811,14 +1510,11 @@ public class EmbeddedMulgaraServer extends Thread {
    *      Mulgara server configuration
    */
   private void addListener(Server httpServer) throws UnknownHostException {
-
     // validate httpServer parameter
     if (httpServer == null) {
-
       throw new IllegalArgumentException("Null \"httpServer\" parameter");
     }
 
-    // end if
     // log that we're adding a listener
     log.debug("Adding socket listener");
 
@@ -1826,18 +1522,14 @@ public class EmbeddedMulgaraServer extends Thread {
     SocketListener listener = new SocketListener();
 
     // configure the listener
-    if ( (this.getHttpHost() != null) && !this.getHttpHost().equals("")) {
-
+    if ((this.getHttpHost() != null) && !this.getHttpHost().equals("")) {
       listener.setHost(this.getHttpHost());
       log.debug("Servlet container listening on host " + this.getHttpHost());
-    }
-    else {
-
+    } else {
       this.setHttpHost(this.getResolvedLocalHost());
       log.debug("Servlet container listening on all host interfaces");
     }
 
-    // end if
     // get the jetty configuration
     Listener jettyConfig = (Listener)this.getConfig().getJetty().getListener();
 
@@ -1846,12 +1538,11 @@ public class EmbeddedMulgaraServer extends Thread {
     listener.setMaxThreads(jettyConfig.getMaxThreads());
     listener.setMaxIdleTimeMs(jettyConfig.getMaxIdleTimeMs());
     // listener.setMaxReadTimeMs(jettyConfig.getMaxReadTimeMs());
-    listener.setLowResourcePersistTimeMs(jettyConfig.
-        getLowResourcePersistTimeMs());
+    listener.setLowResourcePersistTimeMs(jettyConfig. getLowResourcePersistTimeMs());
 
     // add it to the server
     httpServer.addListener(listener);
-  } // addListener()
+  }
 
 
   /**
@@ -1863,9 +1554,10 @@ public class EmbeddedMulgaraServer extends Thread {
    *      created
    */
   private void addDefaultContext() throws IOException {
-
     // log that we're adding the default context
-    log.debug("Adding default context");
+    if (log.isDebugEnabled()) {
+      log.debug("Adding default context");
+    }
 
     // create a static file handler for the documentation
     ResourceHandler defaultHandler = new ResourceHandler();
@@ -1873,12 +1565,11 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // create a documentation context
     HttpContext fileContext = getHttpServer().addContext("/");
-    fileContext.setBaseResource(Resource.newResource(
-        ClassLoader.getSystemResource(DOCS_PATH)));
+    fileContext.setBaseResource(Resource.newResource(ClassLoader.getSystemResource(DOCS_PATH)));
     fileContext.addHandler(defaultHandler);
     fileContext.addHandler(new NotFoundHandler());
     //fileContext.setServingResources(true);
-  } // addDefaultContext()
+  }
 
 
   /**
@@ -1888,9 +1579,10 @@ public class EmbeddedMulgaraServer extends Thread {
    *      created
    */
   private void addDocsContext() throws IOException {
-
     // log that we're adding the documentation context
-    log.debug("Adding documentation context");
+    if (log.isDebugEnabled()) {
+      log.debug("Adding documentation context");
+    }
 
     // create a static file handler for the documentation
     ResourceHandler docsHandler = new ResourceHandler();
@@ -1898,15 +1590,12 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // create a documentation context
     HttpContext fileContext = getHttpServer().addContext("/docs/*");
-    fileContext.setBaseResource(Resource.newResource(
-        ClassLoader.getSystemResource(DOCS_PATH)));
+    fileContext.setBaseResource(Resource.newResource(ClassLoader.getSystemResource(DOCS_PATH)));
     fileContext.addHandler(docsHandler);
     fileContext.addHandler(new NotFoundHandler());
     //fileContext.setServingResources(true);
     fileContext.addWelcomeFile("index.html");
   }
-
-  // addDocsContext()
 
   /**
    * Adds a sample data context to the <code>httpServer</code>.
@@ -1915,9 +1604,10 @@ public class EmbeddedMulgaraServer extends Thread {
    *      be created
    */
   private void addDataContext() throws IOException {
-
     // log that we're adding the documentation context
-    log.debug("Adding sample data context");
+    if (log.isDebugEnabled()) {
+      log.debug("Adding sample data context");
+    }
 
     // create a static file handler for the documentation
     ResourceHandler dataHandler = new ResourceHandler();
@@ -1925,14 +1615,11 @@ public class EmbeddedMulgaraServer extends Thread {
 
     // create a documentation context
     HttpContext fileContext = getHttpServer().addContext("/data/*");
-    fileContext.setBaseResource(Resource.newResource(
-        ClassLoader.getSystemResource(DATA_PATH)));
+    fileContext.setBaseResource(Resource.newResource(ClassLoader.getSystemResource(DATA_PATH)));
     fileContext.addHandler(dataHandler);
     fileContext.addHandler(new NotFoundHandler());
     //fileContext.setServingResources(true);
   }
-
-  // addDataContext()
 
   /**
    * Creates the Mulgara Descriptor UI
@@ -1940,7 +1627,6 @@ public class EmbeddedMulgaraServer extends Thread {
    * @throws IOException if the driver WAR file could not be found
    */
   private void addWebServicesWebAppContext() throws IOException {
-
     // Create a servlet handler for web services
     WebApplicationHandler descriptorServletHandler = new WebApplicationHandler();
 
@@ -1949,9 +1635,7 @@ public class EmbeddedMulgaraServer extends Thread {
         ClassLoader.getSystemResource(WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
 
     if (webServicesWebAppURL == null) {
-
-      log.warn("Couldn't find resource: " + WEBAPP_PATH +
-          "/" + WEBSERVICES_WEBAPP);
+      log.warn("Couldn't find resource: " + WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
       return;
     }
 
@@ -1973,7 +1657,9 @@ public class EmbeddedMulgaraServer extends Thread {
     descriptorWARContext.addHandler(descriptorServletHandler);
 
     // log that we're adding the test webapp context
-    log.debug("Adding Web Services webapp context");
+    if (log.isDebugEnabled()) {
+      log.debug("Adding Web Services webapp context");
+    }
   }
 
 
@@ -1983,25 +1669,22 @@ public class EmbeddedMulgaraServer extends Thread {
    * @throws IOException if the driver WAR file could not be found
    */
   private void addWebUIWebAppContext() throws IOException {
-
     // log that we're adding the WebUI webapp context
-    log.debug("Adding WebUI webapp context");
+    if (log.isDebugEnabled()) {
+      log.debug("Adding WebUI webapp context");
+    }
 
     // get the URL to the WebUI WAR file
-    URL webUIWebAppURL =
-        ClassLoader.getSystemResource(WEBAPP_PATH + "/" + WEBUI_WEBAPP);
+    URL webUIWebAppURL = ClassLoader.getSystemResource(WEBAPP_PATH + "/" + WEBUI_WEBAPP);
 
     // load the webapp if the WAR file exists
     if (webUIWebAppURL != null) {
-
       // dump the embedded war file into the temp directory
       String webUITestWebAppFile = webUIWebAppURL.toString();
 
       // create the test webapp handler context
       WebApplicationContext webUIWARContext =
-          getHttpServer().addWebApplication(
-            null, "/" + WEBUI_PATH + "/*",
-            webUITestWebAppFile);
+          getHttpServer().addWebApplication(null, "/" + WEBUI_PATH + "/*", webUITestWebAppFile);
 
       //webUIWARContext.setClassLoader(this.getClass().getClassLoader());
       //webUIWARContext.setParentClassLoader(URLClassLoader.newInstance(new URL[]{}));
@@ -2011,28 +1694,20 @@ public class EmbeddedMulgaraServer extends Thread {
       WebApplicationContext webUIWARContext =
           httpServer.addWebApplication("/webui/*", webUITestWebAppFile,
           defaultWebAppConf.toString(), true);
-          */
-    }
-    else {
-
+      */
+    } else {
       // log that we couldn't find the webapp
-      log.warn("Could not find WebUI webapp WAR file -> not adding to " +
-          "servlet container");
+      log.warn("Could not find WebUI webapp WAR file -> not adding to servlet container");
     }
-
-    // end if
   }
-
-  // addWebUIWebAppContext()
 
 
   /**
    * Prints the usage instructions for starting the server.
    */
   public void printUsage() {
-
     // build the usage message
-    StringBuffer usage = new StringBuffer();
+    StringBuilder usage = new StringBuilder();
     usage.append("Usage: java -jar <jarfile> ");
     usage.append("[-h] ");
     usage.append("[-n] ");
@@ -2082,8 +1757,6 @@ public class EmbeddedMulgaraServer extends Thread {
     System.out.println(usage.toString());
   }
 
-  // copyFileToTemp()
-
   /**
    * Launch a browser if specified by a 'browser.url/exe' system property.
    *
@@ -2091,24 +1764,20 @@ public class EmbeddedMulgaraServer extends Thread {
    * default Mulgara home page based on the Mulgara configuration settings.
    */
   public void launchBrowser() {
-
     // grab the system properties
     String url = System.getProperty("browser.url");
 
     // Check for a request to launch a browser
     if (url == null) {
-
       return;
     }
 
     // Automatically configure url for the Mulgara home page.
     if (url.equalsIgnoreCase("auto")) {
-
       url = "http://" + this.getHttpHost() + ":" + this.getHttpPort() + "/";
     } else {
-
       // check if the url is relative
-      if ( url.indexOf("http://") == -1 ) {
+      if (url.indexOf("http://") == -1) {
         // relative url requires a local host name prefix
         url = "http://"+this.getHttpHost()+":"+this.getHttpPort()+"/"+url ;
       }
@@ -2143,21 +1812,15 @@ public class EmbeddedMulgaraServer extends Thread {
     Process p = null;
 
     try {
-
       if (windows) {
-
         // cmd = 'rundll32 url.dll,FileProtocolHandler http://...'
         cmd = win_path + " " + win_flag + " " + url;
         p = Runtime.getRuntime().exec(cmd);
-      }
-      else if (macosx) {
-
+      } else if (macosx) {
         // cmd = 'open http://...'
         cmd = "open " + url;
         p = Runtime.getRuntime().exec(cmd);
-      }
-      else {
-
+      } else {
         // Under Unix, Netscape has to be running for the "-remote"
         // command to work.  So, we try sending the command and
         // check for an exit value.  If the exit command is 0,
@@ -2166,7 +1829,6 @@ public class EmbeddedMulgaraServer extends Thread {
         cmd = unix_path + " " + unix_flag + "(" + url + ")";
 
         try {
-
           p = Runtime.getRuntime().exec(cmd);
 
           // wait for exit code -- if it's 0, command worked,
@@ -2174,15 +1836,12 @@ public class EmbeddedMulgaraServer extends Thread {
           int exitCode = p.waitFor();
 
           if (exitCode != 0) {
-
             // Command failed, start up the browser
             // cmd = 'netscape http://www.javaworld.com'
             cmd = unix_path + " " + url;
             p = Runtime.getRuntime().exec(cmd);
           }
-        }
-        catch (Exception ex) {
-
+        } catch (Exception ex) {
           log.info("Unable open browser to URL " + url + " caused by " +
               ex.getMessage() + ". Trying Mozilla");
 
@@ -2197,18 +1856,12 @@ public class EmbeddedMulgaraServer extends Thread {
               p = Runtime.getRuntime().exec(cmd);
             }
           } catch(Exception ex2) {
-           log.error( "Unable open browser to URL "+url +
-                      " caused by "+ ex2.getMessage());
+           log.error("Unable open browser to URL "+url + " caused by "+ ex2.getMessage());
           }
-
-
         }
       }
-    }
-    catch (IOException ex) {
-
-      log.error("Unable open browser to URL " + url + " caused by " +
-          ex.getMessage());
+    } catch (IOException ex) {
+      log.error("Unable open browser to URL " + url + " caused by " + ex.getMessage());
     }
   }
 
@@ -2220,19 +1873,17 @@ public class EmbeddedMulgaraServer extends Thread {
    *
    */
   private void cleanUpTemporaryFiles() {
-
     // only perform this clean up on windows only.
     /*
     String os = System.getProperty("os.name");
-    boolean windows = ( (os != null) && os.startsWith("Windows"));
+    boolean windows = ((os != null) && os.startsWith("Windows"));
 
     // NOT running on windows then return
     if (!windows) {
-
       return;
     }
     */
-    
+
     File tempDirectory = TempDir.getTempDir();
 
     //Add a filter to ensure we only delete the correct files
@@ -2240,16 +1891,13 @@ public class EmbeddedMulgaraServer extends Thread {
 
     //nothing to be removed
     if (list == null) {
-
       return;
     }
 
     // Remove the top level files and
     // recursively remove all files in each directory.
     for (int i = 0; i < list.length; i++) {
-
       if (list[i].isDirectory()) {
-
         this.removeDirectory(list[i]);
       }
 
@@ -2263,7 +1911,6 @@ public class EmbeddedMulgaraServer extends Thread {
    * @param directory PARAMETER TO DO
    */
   private void removeDirectory(File directory) {
-
     File[] list = directory.listFiles();
 
     if (list == null) {
@@ -2272,9 +1919,7 @@ public class EmbeddedMulgaraServer extends Thread {
     }
 
     for (int i = 0; i < list.length; i++) {
-
       if (list[i].isDirectory()) {
-
         this.removeDirectory(list[i]);
       }
 
@@ -2285,15 +1930,14 @@ public class EmbeddedMulgaraServer extends Thread {
   /**
    * Filter class for detecting temporary files created by Mulgara
    */
-  private class TemporaryFileNameFilter implements java.io.FilenameFilter {
+  private class TemporaryFileNameFilter implements FilenameFilter {
 
     public boolean accept(File dir, String name) {
-
       // check for files and directories with
       // mulgara*.jar , Jetty-*.war and JettyContext*.tmp
-      return ( ( (name.indexOf("mulgara") == 0) && (name.indexOf(".jar") > 0)) ||
-          ( (name.indexOf("Jetty-") == 0) && (name.indexOf(".war") > 0)) ||
-          ( (name.indexOf("JettyContext") == 0) &&
+      return (((name.indexOf("mulgara") == 0) && (name.indexOf(".jar") > 0)) ||
+          ((name.indexOf("Jetty-") == 0) && (name.indexOf(".war") > 0)) ||
+          ((name.indexOf("JettyContext") == 0) &&
           (name.indexOf(".tmp") > 0)));
     }
   }
@@ -2308,14 +1952,12 @@ public class EmbeddedMulgaraServer extends Thread {
     private ServerSocket shutdownSocket;
 
     public void ShutdownHook() {
-
       // register a thread name
       this.setName("Server side shutdown hook");
       this.setDaemon(true);
     }
 
     public void run() {
-
       boolean stop = false;
 
       // get the current shutdownhook port
@@ -2323,88 +1965,61 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // bind to the specified socket on the local host
       try {
-
-        ServerSocket shutdownSocket =
-            new ServerSocket(port, 0, InetAddress.getByName("localhost"));
+        ServerSocket shutdownSocket = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
 
         // wait until a request to stop the server
         while (!stop) {
-
           //wait for a shutdown request
           Socket socket = shutdownSocket.accept();
 
           // read the response from the client
-          BufferedReader input =
-              new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
           // check if the require request is correct
           String message = input.readLine();
 
-          if ( (message != null) &&
-              message.equals(EmbeddedMulgaraServer.SHUTDOWN_MSG)) {
-
+          if ((message != null) && message.equals(EmbeddedMulgaraServer.SHUTDOWN_MSG)) {
             socket.close();
             stop = true;
-          }
-          else {
-
+          } else {
             socket.close();
 
             if (message != null) {
-
               log.error("Incorrect request to shutdown mulgara");
             }
           }
-        } // while
-      }
-      catch (IOException ioEx) {
-
+        }
+      } catch (IOException ioEx) {
         log.error("Unable to establish shutdown socket due to an I/O " +
             "exception on port " + port, ioEx);
-      }
-      catch (SecurityException secEx) {
-
+      } catch (SecurityException secEx) {
         log.error("Unable to establish shutdown socket " +
             "due to a security exception. Check security policy", secEx);
-      }
-      catch (Exception ex) {
-
+      } catch (Exception ex) {
         log.error("Unable to establish shutdown socket on port " + port, ex);
-      }
-      finally {
-
+      } finally {
         // attempt to close the socket
         try {
-
           shutdownSocket.close();
-        }
-        catch (Exception ex) {
-
+        } catch (Exception ex) {
           /* skip */
         }
       }
 
       // log that we're sutting down the servers
       if (log.isInfoEnabled()) {
-
         log.info("Shutting down server");
-      }
-      else {
-
+      } else {
         // regardless of the log level output this to stdout.
         // Note. "\n" Will give us a new line beneath a Ctrl-C
         System.out.println("\nShutting down server");
       }
 
-      
       // finally
       // issue the shutdown
       if (stop) {
-
         System.exit(0);
       }
     }
-
-    // run
   }
 }
