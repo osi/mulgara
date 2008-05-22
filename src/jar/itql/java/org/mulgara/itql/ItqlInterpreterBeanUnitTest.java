@@ -176,6 +176,17 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     junit.textui.TestRunner.run(suite());
   }
+  
+  /**
+   * Convert Windows line endings...
+   */
+  private static String convertLineEndings(String str) {
+    String converted = str;
+    if (System.getProperty("os.name").toLowerCase().indexOf("win") > -1) {
+      converted = converted.replaceAll("\r\n", "\n");
+    }
+    return converted;
+  }
 
   /**
    * Test the interpreter via a direct call and a SOAP call
@@ -189,6 +200,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         "/server1#> where $s $p $o ;";
 
     String directAnswer = bean.executeQueryToString(queryString);
+    directAnswer = convertLineEndings(directAnswer);
     String soapAnswer = this.executeSoapCall(queryString);
 
     assertEquals(
@@ -205,6 +217,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     String queryString = "create <rmi://" + hostName + "/server1#model> ;";
     String directAnswer = bean.executeQueryToString(queryString);
+    directAnswer = convertLineEndings(directAnswer);
     String soapAnswer = this.executeSoapCall(queryString);
 
     assertEquals("A CREATE SOAP iTQL result is not the same as a direct call",
@@ -222,13 +235,12 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         "insert <http://google.blogspace.com/archives/000999836> <http://purl.org/rss/1.0/description> 'Google needs to stop sending it\\'s cookie and promise to only store aggregate data, with no connection between users and search terms. ; This issue was publically raised almost a year ago that Google still hasnt dealt with its inexcusable....' into <rmi://" +
         hostName + "/server1#model>;";
 
-    String lineChar = System.getProperty("line.separator");
-
     String result =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + lineChar + "<answer xmlns=\"http://mulgara.org/tql#\"><query><message>Successfully inserted statements into rmi://" +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<answer xmlns=\"http://mulgara.org/tql#\"><query><message>Successfully inserted statements into rmi://" +
         hostName + "/server1#model</message></query></answer>";
 
     String directAnswer = bean.executeQueryToString(queryString);
+    directAnswer = convertLineEndings(directAnswer);
     String soapAnswer = this.executeSoapCall(queryString);
 
     if (log.isDebugEnabled()) {
@@ -688,6 +700,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @SuppressWarnings("deprecation")
   public void testRestoreApi1() throws Exception {
 
     // log that we're executing the test
@@ -708,6 +721,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @SuppressWarnings("deprecation")
   public void testRoundTrip1() throws Exception {
 
     // log that we're executing the test
@@ -833,6 +847,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @SuppressWarnings("deprecation")
   public void testExplicitSession() throws Exception {
 
     // log that we're executing the test

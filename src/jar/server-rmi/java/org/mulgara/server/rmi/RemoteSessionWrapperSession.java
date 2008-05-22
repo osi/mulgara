@@ -627,4 +627,15 @@ class RemoteSessionWrapperSession implements Serializable, Session {
       throw new QueryException("Java RMI failure", re);
     }
   }
+  
+  public boolean ping() throws QueryException {
+    try {
+      boolean ping = remoteSession.ping();
+      resetRetries();
+      return ping;
+    } catch (RemoteException re) {
+      testRetry(re);
+      return ping();
+    }
+  }
 }

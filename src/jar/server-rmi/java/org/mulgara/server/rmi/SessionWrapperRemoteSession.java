@@ -475,6 +475,14 @@ class SessionWrapperRemoteSession implements RemoteSession {
       throw convertToQueryException(t);
     }
   }
+  
+  public boolean ping() throws QueryException, RemoteException {
+    try {
+      return session.ping();
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
 
 
   // Construct an exception chain that will pass over RMI.

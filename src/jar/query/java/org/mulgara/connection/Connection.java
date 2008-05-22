@@ -21,15 +21,31 @@ import org.mulgara.server.Session;
 import org.mulgara.query.operation.*;
 
 /**
- * This class abstracts connections to a server, holding any information relevant to that
+ * This interface abstracts connections to a server, holding any information relevant to that
  * connection.  For those operations that are to be performed on a server, this interface
  * is used to send the operations.  Other operations can be kept local, but the mechanism
  * appears the same to the user, thereby abstracting away the interaction that each command
  * has with servers.
  *
- * While Connections can be created with the normal constructor, it may be preferable to use
- * an instance of {@link org.mulgara.connection.ConnectionFactory} in order to cache connections
- * based on the server URI.
+ * The preferred method for instantiating a Connection is using the {@link ConnectionFactory}
+ * class.  The ConnectionFactory allows for re-use of underlying resources when connecting to
+ * servers using the server URI.  It is synchronized for use by multiple clients in a 
+ * multi-threaded environment; connections obtained concurrently by separate clients from the 
+ * same factory will not interfere with each other.  Note that while the factory is synchronized
+ * for concurrent access, the connection itself is not and should only be accessed by a single
+ * thread.  When a client connection is no longer in use, its underlying resources are returned
+ * to the factory for re-use by other clients.
+ * 
+ * Connections which are no longer in use should be closed using the {@link #close()} method.
+ * Calling this method allows the underlying session backing the connection to be released back
+ * to the factory for re-use by other clients.  This will result in increased performance in an
+ * environment where there are many short-lived connections in use.  Since the session stores
+ * credentials that are passed to the connection, a factory should only be used to cache
+ * connections in a single-user environment.  Alternatively, the {@link #dispose()} method may
+ * be used to explicitly destroy the underlying session, in which case it will not be cached and
+ * re-used by the factory.  Calling either {@link #close()} or {@link #dispose()} will cause the
+ * connection to be invalidated, and any subsequent attempts to execute an operation on it will
+ * cause an exception to be thrown.
  *
  * {@link org.mulgara.query.operation.Command}s to be issued may be executed with a Connection
  * as a parameter, or can be passed to a Connection.  The appropriate use depends on the usage.
@@ -116,6 +132,12 @@ public interface Connection {
    * Closes the current connection.
    */
   public void close() throws QueryException;
+  
+  /**
+   * Closes the current connection, disposing of any underlying resources rather
+   * than returning them to the factory for re-use.
+   */
+  public void dispose() throws QueryException;
 
   // Central execution of Command operations
 

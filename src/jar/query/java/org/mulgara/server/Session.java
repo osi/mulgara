@@ -316,6 +316,14 @@ public interface Session {
    */
   public XAResource getXAResource() throws QueryException;
   public XAResource getReadOnlyXAResource() throws QueryException;
+  
+  /**
+   * Test the connectivity of a session.  All implementing classes should return
+   * <code>true</code>.  This method is intended for session proxies to establish
+   * connectivity on a remote session.
+   * @return <code>true</code> if connectivity with the session was established.
+   */
+  public boolean ping() throws QueryException;
 
   /**
    * This class is just a devious way to get static initialization for the

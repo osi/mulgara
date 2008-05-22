@@ -308,4 +308,10 @@ interface RemoteSession extends Remote {
    */
   public RemoteXAResource getXAResource() throws QueryException, RemoteException;
   public RemoteXAResource getReadOnlyXAResource() throws QueryException, RemoteException;
+  
+  /**
+   * Test the connectivity of the remote session.
+   * @return <code>true</code> if connectivity was established.
+   */
+  public boolean ping() throws QueryException, RemoteException;
 }

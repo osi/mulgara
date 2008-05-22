@@ -75,7 +75,7 @@ public class Sparql {
     }
 
     // clean up the server connection
-    conn.close();
+    conn.dispose();
   }
 
   /**

@@ -42,9 +42,15 @@ public class SessionConnection extends CommandExecutor implements Connection {
   
   /** The session to use for this connection. */
   private Session session;
-
+  
+  /** The factory used to create this connection */
+  private ConnectionFactory factory = null;
+  
   /** Indicates the current autocommit state */
   private boolean autoCommit = true;
+  
+  /** Indicates the connection has been closed */
+  private boolean closed = false;
 
   /**
    * Creates a new connection, given a URI to a server.
@@ -63,7 +69,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * @param isRemote <code>true</code> for a remote session, <code>false</code> for local.
    * @throws ConnectionException There was a problem establishing the details needed for a connection.
    */
-  SessionConnection(URI serverUri, boolean isRemote) throws ConnectionException {
+  public SessionConnection(URI serverUri, boolean isRemote) throws ConnectionException {
     setServerUri(serverUri, isRemote);
   }
 
@@ -71,21 +77,50 @@ public class SessionConnection extends CommandExecutor implements Connection {
   /**
    * Creates a new connection, given a preassigned session.
    * @param session The session to connect with.
-   * @throws ConnectionException There was a problem establishing the details needed for a connection.
    */
   public SessionConnection(Session session) {
-    this(session, null);
+    this(session, null, null);
   }
-  
   
   /**
    * Creates a new connection, given a preassigned session.
    * @param session The session to connect with.
-   * @throws ConnectionException There was a problem establishing the details needed for a connection.
+   * @param securityDomainUri The security domain URI for the session
    */
   public SessionConnection(Session session, URI securityDomainUri) {
+    this(session, securityDomainUri, null);
+  }
+  
+  
+  /**
+   * Creates a new connection, given a preassigned session
+   * @param session The session to connect with
+   * @param securityDomainUri The security domain URI for the session
+   * @param serverUri The server URI, needed for re-caching the session with the factory
+   */
+  public SessionConnection(Session session, URI securityDomainUri, URI serverUri) {
     if (session == null) throw new IllegalArgumentException("Cannot create a connection without a server.");
-    setSession(session, securityDomainUri);
+    setSession(session, securityDomainUri, serverUri);    
+  }
+  
+    
+  /**
+   * If a Connection was abandoned by the client without being closed first, attempt to
+   * reclaim the session for use by future clients.
+   */
+  protected void finalize() throws QueryException {
+    if (!closed) {
+      close();
+    }
+  }
+  
+  /**
+   * Used to set a reference back to the factory that created it.  If the factory
+   * reference is set, then the session will be re-cached when this connection is closed.
+   * @param factory The factory that created this connection.
+   */
+  void setFactory(ConnectionFactory factory) {
+    this.factory = factory;
   }
   
   
@@ -97,6 +132,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * @param password The password for the given username.
    */
   public void setCredentials(URI securityDomainUri, String user, char[] password) {
+    checkState();
     if (securityDomainUri == null) throw new IllegalArgumentException("Must have a security domain to yuse credentials");
     this.securityDomainUri = securityDomainUri;
     setCredentials(user, password);
@@ -111,6 +147,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * @param password The password for the given username.
    */
   public void setCredentials(String user, char[] password) {
+    checkState();
     if (securityDomainUri == null) throw new IllegalArgumentException("Must have a security domain to yuse credentials");
     session.login(securityDomainUri, user, password);
   }
@@ -120,6 +157,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * @return the session
    */
   public Session getSession() {
+    checkState();
     return session;
   }
 
@@ -131,6 +169,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * @throws QueryException The session could not change state.
    */
   public void setAutoCommit(boolean autoCommit) throws QueryException {
+    checkState();
     if (this.autoCommit != autoCommit) {
       this.autoCommit = autoCommit;
       session.setAutoCommit(autoCommit);
@@ -142,6 +181,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * @return the autoCommit value
    */
   public boolean getAutoCommit() {
+    checkState();
     return autoCommit;
   }
 
@@ -150,6 +190,26 @@ public class SessionConnection extends CommandExecutor implements Connection {
    * Closes the current connection.
    */
   public void close() throws QueryException {
+    checkState();
+    closed = true;
+    
+    if (factory != null) {
+      factory.releaseSession(serverUri, session);
+    }
+  }
+  
+  
+  /**
+   * Disposes of the current connection and any underlying resources.
+   */
+  public void dispose() throws QueryException {
+    checkState();
+    closed = true;
+    
+    if (factory != null) {
+      factory.disposeSession(session);
+    }
+    
     if (session != null) {
       session.close();
       session = null;
@@ -173,15 +233,26 @@ public class SessionConnection extends CommandExecutor implements Connection {
     return securityDomainUri;
   }
 
+  
+  /**
+   * Throws an IllegalStateException if the connection has already been closed.
+   */
+  private void checkState() {
+    if (closed) {
+      throw new IllegalStateException("Attempt to access a closed connection");
+    }
+  }
 
   /**
    * Sets the session information for this connection
    * @param session The session to set to.
    * @param securityDomainURI The security domain to use for the session.
    */
-  private void setSession(Session session, URI securityDomainUri) {
+  private void setSession(Session session, URI securityDomainUri, URI serverUri) {
     this.session = session;
     this.securityDomainUri = securityDomainUri;
+    this.serverUri = serverUri;
+    if (logger.isDebugEnabled()) logger.debug("Set server URI to: " + serverUri);
   }
 
 
@@ -196,21 +267,18 @@ public class SessionConnection extends CommandExecutor implements Connection {
     try {
       if (uri == null) {
         // no model given, and the factory didn't cache a connection, so make one up.
-        serverUri = SessionFactoryFinder.findServerURI();
-      } else {
-        serverUri = uri;
+        uri = SessionFactoryFinder.findServerURI();
       }
-      if (logger.isDebugEnabled()) logger.debug("Set server URI to: " + serverUri);
 
       if (logger.isDebugEnabled()) logger.debug("Finding session factory for " + uri);
       
-      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverUri, isRemote);
+      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(uri, isRemote);
       if (logger.isDebugEnabled()) logger.debug("Found " + sessionFactory.getClass() +
           " session factory, obtaining session with " + uri);
 
       // create a new session and set this connection to it
       if (securityDomainUri == null) securityDomainUri = sessionFactory.getSecurityDomain();
-      setSession(sessionFactory.newSession(), sessionFactory.getSecurityDomain());
+      setSession(sessionFactory.newSession(), sessionFactory.getSecurityDomain(), uri);
 
     } catch (SessionFactoryFinderException e) {
       throw new ConnectionException("Unable to connect to a server", e);

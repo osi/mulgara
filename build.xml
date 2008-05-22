@@ -1968,6 +1968,7 @@
       <zipfileset dir="${obj.dir}/jar/config/classes" includes="org/mulgara/config/**"/>
       <zipfileset dir="${obj.dir}/jar/util/classes" includes="org/mulgara/util/conversion/**"/>
       <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="org/mulgara/server/rmi/**"/>
+      <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="edu/emory/**"/>
 	  <zipfileset dir="${obj.dir}/jar/demo-mp3/classes" includes="org/mulgara/demo/mp3/**"/>
       <zipfileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/barracuda/**"/>
       <zipfileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/webui/**"/>

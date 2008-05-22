@@ -546,4 +546,8 @@ class BEEPSession implements Session {
  public XAResource getReadOnlyXAResource() throws QueryException {
    throw new QueryException("External transactions not implemented under Beep");
  }
+ 
+ public boolean ping() {
+   return true;
+ }
 }

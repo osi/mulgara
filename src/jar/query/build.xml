@@ -30,6 +30,8 @@
 
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
+    <fileset file="${server-rmi.dist.dir}/${server-rmi.jar}"/>
+    <fileset file="${server-local.dist.dir}/${server-local.jar}"/>
   </path>
 
   <target name="query-clean"
@@ -119,15 +121,17 @@
   </target>
 
   <target name="query-test"
-          depends="query-jar"
+          depends="query-jar, server-rmi-jar, server-local-jar"
           description="Carries out unit testing for this query">
 
+    <antcall target="start"/>
     <antcall target="component-test">
 
       <param name="classpath.id" value="query-test-classpath"/>
       <param name="dir" value="${query.src.dir}"/>
       <param name="jar" value="${query.jar}"/>
     </antcall>
+    <antcall target="stop"/>
   </target>
 
   <target name="query-javadoc"

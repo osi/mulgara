@@ -685,4 +685,8 @@ class DatabaseSession implements Session {
     assertExternallyManagedXA();
     return externalFactory.getXAResource(this, false);
   }
+  
+  public boolean ping() {
+    return true;
+  }
 }

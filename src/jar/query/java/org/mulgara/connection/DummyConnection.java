@@ -95,4 +95,11 @@ public class DummyConnection extends CommandExecutor implements Connection {
   public void close() throws QueryException {
   }
   
+  
+  /**
+   * Disposes of the current connection.  Does nothing for this class.
+   */
+  public void dispose() throws QueryException {
+  }
+  
 }

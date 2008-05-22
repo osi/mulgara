@@ -12,9 +12,8 @@
 package org.mulgara.itql;
 
 import java.net.URI;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -68,7 +67,7 @@ public class TqlAutoInterpreter {
   private boolean inTransaction;
 
   /** All the connections involved in the current transaction. */
-  private Collection<Connection> transConnections = new LinkedList<Connection>();
+  private Map<URI,Connection> transConnections = new HashMap<URI,Connection>();
   
   /**
    * Holds the client security domain. Need to connect this to URIs,
@@ -211,8 +210,11 @@ public class TqlAutoInterpreter {
     if (serverUri == null && !cmd.isLocalOperation()) {
       // no server URI, but not local. Get a connection for a null URI
       // eg. select .... from <file:///...>
-      Connection connection = connectionFactory.newConnection(serverUri);
-      configureForTransaction(connection);
+      Connection connection = transConnections.get(serverUri);
+      if (connection == null) {
+        connection = connectionFactory.newConnection(serverUri);
+        configureForTransaction(serverUri, connection);
+      }
       return connection;
     }
     
@@ -233,9 +235,18 @@ public class TqlAutoInterpreter {
    */
   Connection establishConnection(URI serverUri) throws ConnectionException, QueryException {
     // get a new connection, or use the local one for non-server operations
-    Connection connection = (serverUri == null) ? localStateConnection : connectionFactory.newConnection(serverUri);
-    // update the connection if it needs to enter a current transaction
-    configureForTransaction(connection);
+    Connection connection = null;
+    if (serverUri == null) {
+      connection = localStateConnection;
+    } else {
+      serverUri = ConnectionFactory.normalizeLocalUri(serverUri);
+      connection = transConnections.get(serverUri);
+      if (connection == null) {
+        connection = connectionFactory.newConnection(serverUri);
+        // update the connection if it needs to enter a current transaction
+        configureForTransaction(serverUri, connection);
+      }
+    }
     return connection;
   }
 
@@ -245,13 +256,13 @@ public class TqlAutoInterpreter {
    * @param connection The connection to configure. The dummy connection is not configured.
    * @throws QueryException An error while setting up the connection for the transaction.
    */
-  private void configureForTransaction(Connection connection) throws QueryException {
+  private void configureForTransaction(URI serverUri, Connection connection) throws QueryException {
     // If in a transaction, turn off autocommit - ignore the dummy connection
     if (inTransaction && connection.getAutoCommit() && connection != localStateConnection) {
       assert !(connection instanceof DummyConnection);
       connection.setAutoCommit(false);
-      assert !transConnections.contains(connection);
-      transConnections.add(connection);
+      assert !transConnections.containsValue(connection);
+      transConnections.put(serverUri, connection);
     }
   }
 
@@ -367,7 +378,7 @@ public class TqlAutoInterpreter {
     String errorMessage = null;
 
     // Operate on all outstanding transactions.
-    Iterator<Connection> c = transConnections.iterator();
+    Iterator<Connection> c = transConnections.values().iterator();
     while (c.hasNext()) {
       try {
         // do the work
