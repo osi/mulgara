@@ -66,8 +66,9 @@ public class SparqlInterpreter implements Interpreter {
    * Sets the default graph to use in parsed queries.
    * @param graph The graph URI to use as the default graph.
    */
-  public void setDefaultGraphUri(URI graphUri) {
+  public SparqlInterpreter setDefaultGraphUri(URI graphUri) {
     defaultGraphUri = graphUri;
+    return this;
   }
 
   /**
