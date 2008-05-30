@@ -135,9 +135,12 @@ class AppendAggregateTuples extends AbstractTuples {
 
     // Prep variable list
     Variable[] tupleVars = this.tuples.getVariables();
+    // the size of variableList may be larger due to repeated variables,
+    // while the size of the tuples may be larger due to aggregates
+    int uniqueTupleVarLen = Math.min(variableList.size(), tupleVars.length);
 
     Set newVariableList = new LinkedHashSet();
-    for (int i = 0; i < tupleVars.length; i++) {
+    for (int i = 0; i < uniqueTupleVarLen; i++) {
       assert variableList.contains(tupleVars[i]);
 
       newVariableList.add(tupleVars[i]);
@@ -148,7 +151,7 @@ class AppendAggregateTuples extends AbstractTuples {
       columnIsAggregate[i] = false;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("" + hashCode() + " tupleVars.length = " + tupleVars.length);
+      logger.debug("" + hashCode() + " tupleVars.length = " + tupleVars.length + " unique vars = " + uniqueTupleVarLen);
     }
 
     // Calculate the rest of the variable list
@@ -157,14 +160,13 @@ class AppendAggregateTuples extends AbstractTuples {
     for (int i = 0; i < variableList.size(); i++) {
       Object element = variableList.get(i);
       if (element instanceof Count) {
-        columnAggregateIndex[tupleVars.length +
-            aggregateIndex] = aggregateIndex;
+        columnAggregateIndex[uniqueTupleVarLen + aggregateIndex] = aggregateIndex;
         if (logger.isDebugEnabled()) {
           logger.debug("" + hashCode() + " columnAggregateIndex[" +
-              tupleVars.length + aggregateIndex + "] = " + aggregateIndex);
+              uniqueTupleVarLen + aggregateIndex + "] = " + aggregateIndex);
         }
-        newVariableList.add(((Count) element).getVariable());
-        columnIsAggregate[tupleVars.length + aggregateIndex] = true;
+        newVariableList.add(((Count)element).getVariable());
+        columnIsAggregate[uniqueTupleVarLen + aggregateIndex] = true;
         aggregateIndex++;
 
         Query query = ((Count)element).getQuery();
