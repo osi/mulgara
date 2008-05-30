@@ -242,6 +242,7 @@ public class RelationalResolver implements Resolver {
     }
 
     if (!(constraint instanceof RelationalConstraint)) {
+      if (constraint.getModel() instanceof Variable) return new EmptyResolution(constraint, false);
       throw new QueryException("Relational Resolver unable to resolve constraint: " + constraint);
     }
     
