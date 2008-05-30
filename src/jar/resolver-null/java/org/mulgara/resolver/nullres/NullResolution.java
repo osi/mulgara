@@ -53,9 +53,14 @@ public class NullResolution implements Resolution {
     return constraint;
   }
 
-  /** @see org.mulgara.resolver.spi.Resolution#isComplete() */
+  /**
+   * @see org.mulgara.resolver.spi.Resolution#isComplete()
+   * Complete means that no other resolvers can answer this resolution,
+   * so even if they return data they will be discarded. Hence, this is
+   * never complete, so that it can be appended to.
+   */
   public boolean isComplete() {
-    return true;
+    return false;
   }
 
   /** @see org.mulgara.store.tuples.Tuples#beforeFirst(long[], int) */
