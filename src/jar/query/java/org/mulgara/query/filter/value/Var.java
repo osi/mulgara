@@ -177,6 +177,7 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
 
   /** {@inheritDoc} */
   public boolean sameTerm(RDFTerm v) throws QueryException {
+    if (Var.class.equals(v.getClass())) return resolveLocal() == ((Var)v).resolveLocal();
     return resolve().sameTerm(v);
   }
 
@@ -214,7 +215,7 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
    * @throws QueryException Indicates an error getting data out of the context, or globalizing.
    */
   public RDFTerm resolve() throws QueryException {
-    long gNode = getLocalContext().getColumnValue(varIndex);
+    long gNode = resolveLocal();
 
     Node node;
     try {
@@ -224,6 +225,15 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
     }
 
     return convertToExpr(node);
+  }
+
+  /**
+   * Resolve this variable to the internal gNode.
+   * @return A gNode that this variable resolves to.
+   * @throws QueryException Indicates an error getting data out of the context.
+   */
+  public long resolveLocal() throws QueryException {
+    return getLocalContext().getColumnValue(varIndex);
   }
 
   /**
