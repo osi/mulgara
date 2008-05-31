@@ -235,8 +235,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
           // Ensure that the host name can be extracted - in case there's an
           // opaque hostname.
           if (tmpModelName.isOpaque()) {
-            throw new QueryException("Unable to extract hostname from: " +
-                tmpModelName);
+            throw new QueryException("Unknown graph, and no hostname: " + tmpModelName);
           }
 
           // Do not test for locality if jar or file protocol
