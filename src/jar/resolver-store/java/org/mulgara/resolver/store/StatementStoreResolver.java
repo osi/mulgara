@@ -33,21 +33,15 @@ package org.mulgara.resolver.store;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
-import java.util.Iterator;
-import java.util.Set;
 import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.GraphException;
 import org.jrdf.graph.Node;
-import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
-import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
@@ -57,7 +51,6 @@ import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.store.xa.SimpleXAResource;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAResolverSession;
@@ -117,6 +110,7 @@ public class StatementStoreResolver implements SystemResolver
 
   private final XAResource xaresource;
 
+  @SuppressWarnings("unused")
   private boolean isSystemResolver;
 
   private long systemModel;
@@ -405,7 +399,7 @@ public class StatementStoreResolver implements SystemResolver
             throw new QueryException("Unable to resolve constraint " + constraint + " unknown type");
           }
         } else {
-          return new StatementStoreDuplicateResolution(constraint, statementStore);
+          throw new QueryException("Duplicate variable found during resolution");
         }
       } else {
         return new EmptyResolution(constraint, true);
@@ -508,33 +502,6 @@ public class StatementStoreResolver implements SystemResolver
   //
   // Internal methods
   //
-
-  /**
-   * Convert {@link ConstraintElement} objects into node numbers suitable for
-   * invoking the {@link StatementStore#findTuples}.
-   *
-   * @param constraintElement  the element to convert
-   * @return {@link NodePool#NONE} if the <var>constraintElement</var> is
-   *  {@link Variable}, otherwise the node number if it's a {@link LocalNode}
-   * @throws QueryException if <var>constraintElement</var> is neither a
-   *  {@link Variable} nor a {@link LocalNode}
-   */
-  private static long toGraphTuplesIndex(ConstraintElement constraintElement)
-    throws QueryException
-  {
-    assert constraintElement != null;
-
-    if (constraintElement instanceof Variable) {
-      return NodePool.NONE;
-    } else if (constraintElement instanceof LocalNode) {
-      return ((LocalNode) constraintElement).getValue();
-    } else {
-      throw new QueryException("Unsupported constraint element: " +
-                               constraintElement + " (" +
-                               constraintElement.getClass() + ")");
-    }
-  }
-
 
   public void abort() {
     try {

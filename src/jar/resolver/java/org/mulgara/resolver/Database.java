@@ -60,6 +60,7 @@ import org.mulgara.query.LocalNode;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.DuplicateVariableTransformer;
 import org.mulgara.resolver.spi.FactoryInitializer;
 import org.mulgara.resolver.spi.InitializerException;
 import org.mulgara.resolver.spi.LocalizeException;
@@ -706,11 +707,15 @@ public class Database implements SessionFactory
                                         metadata.getSystemModelNode())
     );
 
+    addModelType(((SystemResolverFactory)temporaryResolverFactory).getSystemModelTypeURI(),
+          temporaryResolverFactory);
+
     // Add the mandatory security adapter that protects the system model
     securityAdapterList.add(
       new SystemModelSecurityAdapter(metadata.getSystemModelNode())
     );
 
+    addSymbolicTransformation(new DuplicateVariableTransformer());
     this.ruleLoaderClassName = ruleLoaderClassName;
 
     if (logger.isDebugEnabled()) {
@@ -951,9 +956,14 @@ public class Database implements SessionFactory
 
     // Make sure some other resolver factory hasn't claimed this model type
     if (internalResolverFactoryMap.containsKey(modelTypeURI)) {
-      throw new InitializerException(
-          "Model type " + modelTypeURI + " is already registered to " +
-          internalResolverFactoryMap.get(modelTypeURI));
+      // check if the other resolver factory is actually the current one
+      InternalResolverFactory rf = internalResolverFactoryMap.get(modelTypeURI);
+      if (!rf.resolverFactory.getClass().equals(resolverFactory.getClass())) {
+        throw new InitializerException("Model type " + modelTypeURI + " is already registered to " + rf.resolverFactory);
+      } else {
+        // already registered
+        return;
+      }
     }
 
     // Register this resolver factory as handling this model type

@@ -54,11 +54,14 @@ import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.*;
+import org.mulgara.query.filter.SameTerm;
+import org.mulgara.query.filter.value.Var;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.ConstraintModelRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
+import org.mulgara.resolver.spi.ConstraintVariableRewrite;
 import org.mulgara.resolver.spi.ModelResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
@@ -84,6 +87,7 @@ class DefaultConstraintHandlers
     initializeConstraintResolutionHandlers();
     initializeConstraintBindingHandlers();
     initializeConstraintModelRewrites();
+    initializeConstraintVariableRewrites();
     initializeConstraintLocalizations();
   }
 
@@ -130,10 +134,23 @@ class DefaultConstraintHandlers
         new NVPair(ModelVariable.class, new ModelResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
                                 Constraint constraint) throws Exception {
-            return context.resolve(null, ConstraintOperations.rewriteConstraintModel(((ModelVariable)modelExpr).getVariable(), constraint));
+            Variable modelVar = ((ModelVariable)modelExpr).getVariable();
+            if (constraint.getVariables().contains(modelVar)) {
+              // need to change the re-write and wrap the result in a filter
+              Variable newVar = new Variable("*" + modelVar.getName() + "0");
+              constraint = ConstraintOperations.rewriteConstraintVariable(modelVar, newVar, constraint);
+              Tuples result = context.resolve(null, constraint);
+              return TuplesOperations.filter(result, new SameTerm(convert(newVar), convert(modelVar)), context);
+            }
+            return context.resolve(null, ConstraintOperations.rewriteConstraintModel(modelVar, constraint));
           }
         })
       });
+  }
+
+  /** Utility for converting a Variable to a filterable Var */
+  static Var convert(Variable v) {
+    return new Var(v.getName());
   }
 
   @SuppressWarnings("unchecked")
@@ -201,16 +218,22 @@ class DefaultConstraintHandlers
         }),
         new NVPair(ConstraintImpl.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            ConstraintElement constraintElem =
-              ((ConstraintImpl) constraintExpr).getModel();
+            ConstraintImpl constraint = (ConstraintImpl)constraintExpr;
+            ConstraintElement constraintElem = constraint.getModel();
             assert constraintElem != null;
             if (constraintElem.equals(Variable.FROM)) {
-              return ConstraintOperations.resolveModelExpression(context, modelExpr, (Constraint)constraintExpr);
+              return ConstraintOperations.resolveModelExpression(context, modelExpr, constraint);
             } else if (constraintElem instanceof URIReference) {
-              return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), (Constraint)constraintExpr);
+              return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), constraint);
             } else if (constraintElem instanceof LocalNode) {
-              return context.resolve(null, (ConstraintImpl)constraintExpr);
+              return context.resolve(null, constraint);
             } else if (constraintElem instanceof Variable) {
+              for (int i = 0; i < 3; i++) {
+                if (constraintElem.equals(constraint.getElement(i))) {
+                  ModelVariable modelVar = new ModelVariable((Variable)constraintElem);
+                  return ConstraintOperations.resolveModelExpression(context, modelVar, constraint);
+                }
+              }
               return context.resolve(null, (ConstraintImpl)constraintExpr);
             }
             else {
@@ -338,6 +361,25 @@ class DefaultConstraintHandlers
         new NVPair(ConstraintImpl.class, new ConstraintModelRewrite() {
           public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
             return new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel);
+          }
+        }),
+      });
+  }
+
+  @SuppressWarnings("unchecked")
+  static void initializeConstraintVariableRewrites() {
+    ConstraintOperations.addConstraintVariableRewrites(new NVPair[]
+      {
+        new NVPair(ConstraintImpl.class, new ConstraintVariableRewrite() {
+          public Constraint rewrite(Variable modelVar, Variable newVar, Constraint constraint) throws Exception {
+            ConstraintElement[] ce = new ConstraintElement[3];
+            for (int e = 0; e < ce.length; e++) {
+              ce[e] = constraint.getElement(e);
+              if (ce[e] instanceof Variable && ((Variable)ce[e]).getName().equals(modelVar.getName())) {
+                ce[e] = newVar;
+              }
+            }
+            return new ConstraintImpl(ce[0], ce[1], ce[2], modelVar);
           }
         }),
       });

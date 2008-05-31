@@ -43,6 +43,7 @@ import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.ConstraintModelRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
+import org.mulgara.resolver.spi.ConstraintVariableRewrite;
 import org.mulgara.resolver.spi.ModelResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
@@ -79,6 +80,9 @@ public class ConstraintOperations
       new HashMap<Class<? extends ConstraintExpression>,Object>();
   static Map<Class<? extends ConstraintExpression>,Object> constraintModelRewrites =
       new HashMap<Class<? extends ConstraintExpression>,Object>();
+  static Map<Class<? extends ConstraintExpression>,Object> constraintVariableRewrites =
+    new HashMap<Class<? extends ConstraintExpression>,Object>();
+
 
   static {
     DefaultConstraintHandlers.initializeHandlers();
@@ -104,6 +108,11 @@ public class ConstraintOperations
   static void addConstraintModelRewrites(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, constraintModelRewrites,
              ConstraintExpression.class, ConstraintModelRewrite.class);
+  }
+
+  static void addConstraintVariableRewrites(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
+    addToMap(resolutionHandlers, constraintVariableRewrites,
+             ConstraintExpression.class, ConstraintVariableRewrite.class);
   }
 
   static void addConstraintLocalizations(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
@@ -253,6 +262,31 @@ public class ConstraintOperations
 
       if (logger.isDebugEnabled()) {
         logger.debug("Rewrote Model" + newModel + " in " + constraint + " to " + result);
+      }
+
+      return result;
+    } catch (QueryException eq) {
+      throw eq;
+    } catch (Exception e) {
+      throw new QueryException("Rewriting constraint failed", e);
+    }
+  }
+
+
+  public static Constraint rewriteConstraintVariable(Variable modelVar, Variable newVar, Constraint constraint) throws QueryException {
+    try {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Rewriting variable " + modelVar + " in " + constraint + " and setting graph");
+      }
+
+      ConstraintVariableRewrite op = (ConstraintVariableRewrite)constraintVariableRewrites.get(constraint.getClass());
+      if (op == null) {
+        throw new QueryException("Unknown Constraint type: " + constraint.getClass() + " known types: " + constraintVariableRewrites.keySet());
+      }
+      Constraint result = op.rewrite(modelVar, newVar, constraint);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Rewrote Graph " + modelVar + " in " + constraint + " to " + result);
       }
 
       return result;
