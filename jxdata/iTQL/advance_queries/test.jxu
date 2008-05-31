@@ -53,5 +53,33 @@
     <fail>Output failed.  Check badQuery5Result.xml for output.</fail>
   </ifEqual>
 
+  <!-- New data set. Test for multiple variables in constraints. data-02-ext.ttl -->
+  <set name="modelName" value="@server@#data-02" />
+  <set name="loadCommand" value="load &lt;@baseuri@/jxtest/iTQL/data-02-ext.ttl&gt; into &lt;@server@#data-02&gt; ;" />
+  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
+
+  <ifEqual converse="true" file="result2.txt" name="loadResult">
+    <save name="loadResult" file="badLoadResult2.xml"/>
+    <fail>Output failed.  Check badLoadResult2.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Test #6: Query for variable as both subject and graph -->
+  <set name="query" value="select $g $a $b from &lt;@server@#&gt; where $g $a $b in $g order by $g $a;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult6.txt" name="queryResult">
+    <save name="queryResult" file="badQuery6Result.xml"/>
+    <fail>Output failed.  Check badQuery6Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Test #7: Query for variable as all of subject, predicate, object and graph-->
+  <set name="query" value="select $g from &lt;@server@#&gt; where $g $g $g in $g;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
+    <save name="queryResult" file="badQuery7Result.xml"/>
+    <fail>Output failed.  Check badQuery7Result.xml for output.</fail>
+  </ifEqual>
+
 </jxu>
 
