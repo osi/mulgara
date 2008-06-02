@@ -166,7 +166,7 @@ public interface ResolverFactoryInitializer extends FactoryInitializer {
    * Register new Constraint Type
    * @throws InitializerException if the constraint class specified has already been registered
    */
-   public void registerNewConstraint(ConstraintDescriptor descriptor) throws InitializerException;
+  public void registerNewConstraint(ConstraintDescriptor descriptor) throws InitializerException;
 
   /**
    * Obtain the session-factory the resolver-factory is being loaded by.
