@@ -37,6 +37,7 @@ import org.jrdf.graph.Node;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.server.Session;
+import org.mulgara.server.SessionFactory;
 import org.mulgara.store.stringpool.StringPool;
 
 /**
@@ -166,4 +167,18 @@ public interface ResolverFactoryInitializer extends FactoryInitializer {
    * @throws InitializerException if the constraint class specified has already been registered
    */
    public void registerNewConstraint(ConstraintDescriptor descriptor) throws InitializerException;
+
+  /**
+   * Obtain the session-factory the resolver-factory is being loaded by.
+   *
+   * There are a couple restrictions on the returned session-factory. For one, the methods
+   * {@link SessionFactory#close close()} and {@link SessionFactory#delete delete()} may not
+   * be used and will throw an exception. The second restriction is that operations on different
+   * session's may not be nested, which means that if a resolver or resolver-factory creates any
+   * sessions using this session-factory then it must use a separate thread for operations on
+   * those sessions.
+   *
+   * @return the owning session-factory
+   */
+  public SessionFactory getSessionFactory();
 }

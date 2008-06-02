@@ -41,6 +41,8 @@ import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.*;
+import org.mulgara.server.Session;
+import org.mulgara.server.SessionFactory;
 import org.mulgara.util.NVPair;
 
 // Local packages
@@ -63,6 +65,7 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
   private final DatabaseMetadata metadata;
   private final ContentHandlerManager contentHandlerManager;
   private final ResolverFactory systemResolverFactory;
+  private final SessionFactory restrictedSessionFactory;
 
   /**
    * Sole constructor.
@@ -73,7 +76,7 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
    */
   public DatabaseResolverFactoryInitializer(
            Set<ResolverFactory>  cachedResolverFactorySet,
-           Database              database,
+           final Database        database,
            DatabaseMetadata      metadata,
            File                  persistenceDirectory,
            ContentHandlerManager contentHandlerManager,
@@ -94,6 +97,14 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
     this.metadata                 = metadata;
     this.contentHandlerManager    = contentHandlerManager;
     this.systemResolverFactory    = systemResolverFactory;
+
+    this.restrictedSessionFactory = new SessionFactory() {
+      public URI getSecurityDomain() throws QueryException  { return database.getSecurityDomain(); }
+      public Session newSession() throws QueryException     { return database.newSession(); }
+      public Session newJRDFSession() throws QueryException { return database.newJRDFSession(); }
+      public void close() throws QueryException  { throw new UnsupportedOperationException(); }
+      public void delete() throws QueryException { throw new UnsupportedOperationException(); }
+    };
   }
 
 
@@ -197,5 +208,9 @@ class DatabaseResolverFactoryInitializer extends DatabaseFactoryInitializer impl
       // FIXME: This will allow multiple database instances within the same JVM
       logger.warn("Attempted to register " + constraintClass + " twice");
     }
+  }
+
+  public SessionFactory getSessionFactory() {
+    return restrictedSessionFactory;
   }
 }
