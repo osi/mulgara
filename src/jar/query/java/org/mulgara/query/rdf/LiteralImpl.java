@@ -37,13 +37,8 @@ import java.util.*;
 // Third party packages
 import org.jrdf.graph.*;  // JRDF
 
-// Date utils
-import com.mousepushers.date.DateParser;
-import com.mousepushers.date.DateFormatter;
-
 
 // Locally written packages
-import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Value;
 
 /**
@@ -64,7 +59,7 @@ import org.mulgara.query.Value;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class LiteralImpl extends AbstractLiteral implements Comparable,
+public class LiteralImpl extends AbstractLiteral implements Comparable<Node>,
     Serializable, Value {
 
   /**
@@ -148,25 +143,18 @@ public class LiteralImpl extends AbstractLiteral implements Comparable,
    * @param object PARAMETER TO DO
    * @return RETURNED VALUE TO DO
    */
-  public int compareTo(java.lang.Object object) {
+  public int compareTo(Node object) {
 
     if (object instanceof BlankNode) {
-
       return 1;
     }
 
     if (object instanceof URIReference) {
-
       return 1;
-    }
-    else if (object instanceof Literal) {
-
+    } else if (object instanceof Literal) {
       Literal literal = (Literal) object;
-
       return getLexicalForm().compareTo(literal.getLexicalForm());
-    }
-    else {
-
+    } else {
       throw new ClassCastException("Not an RDF node");
     }
   }
