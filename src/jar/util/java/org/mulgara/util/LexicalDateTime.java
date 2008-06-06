@@ -19,6 +19,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import static org.joda.time.DateTimeZone.UTC;
+import static org.mulgara.util.Constants.SIZEOF_LONG;
 
 /**
  * This class represents a dateTime value, preserving its lexical representation exactly.
@@ -97,9 +98,6 @@ public class LexicalDateTime {
 
   /** The mask for the timezone bits */
   private static final byte TZ_MASK = (byte)0xFC;
-
-  /** Number of bytes in a Long */
-  private static final int SIZEOF_LONG = Long.SIZE / 8;
 
   /** The offset of the timezone data in an encoded buffer */
   private static final int TZ_OFFSET = SIZEOF_LONG;
@@ -208,9 +206,9 @@ public class LexicalDateTime {
     tzMinutes = (int)(offset % MILLIS_IN_HOUR) / MILLIS_IN_MINUTE;
     midnight = false;
     cachedDateTime = null;
-    milliPlaces = 0;
     localFlag = true;
     zuluFlag = false;
+    milliPlaces = minimumPlaces(millis);
   }
 
   /** Gets the number of milliseconds since the epoch. */
@@ -246,6 +244,11 @@ public class LexicalDateTime {
   /** Gets the number of decimal places to represent the fraction of a second. */
   public byte getDecimalPlaces() {
     return milliPlaces;
+  }
+
+  /** Get the size of buffer in bytes required to store this object */
+  public static int requiredBufferSize() {
+    return PLACES_OFFSET + 1;
   }
 
   /**
@@ -350,73 +353,94 @@ public class LexicalDateTime {
    */
   public static LexicalDateTime parseDateTime(String dt) throws ParseException {
     int pos = 0;
-    boolean negative = dt.charAt(pos) == '-';
-    if (negative) pos++;
-    int year = d(dt, pos++) * 1000 + d(dt, pos++) * 100 + d(dt, pos++) * 10 + d(dt, pos++);
-    while (dt.charAt(pos) != DATE_SEPARATOR) year = year * 10 + d(dt, pos++);
-    if (negative) year = -year;
-    if (dt.charAt(pos++) != DATE_SEPARATOR) throw new ParseException(BAD_FORMAT + "date: " + dt, pos - 1);
-    int month = d(dt, pos++) * 10 + d(dt, pos++);
-    if (dt.charAt(pos++) != DATE_SEPARATOR) throw new ParseException(BAD_FORMAT + "date: " + dt, pos - 1);
-    int day = d(dt, pos++) * 10 + d(dt, pos++);
-
-    if (dt.charAt(pos++) != DATE_TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "date/time: " + dt, pos - 1);
-
-    int hour = d(dt, pos++) * 10 + d(dt, pos++);
-    if (dt.charAt(pos++) != TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "time: " + dt, pos - 1);
-    int minute = d(dt, pos++) * 10 + d(dt, pos++);
-    if (dt.charAt(pos++) != TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "time: " + dt, pos - 1);
-    int second = d(dt, pos++) * 10 + d(dt, pos++);
-
-    int millisecs = 0;
-    byte milliPlaces = 0;
-    int lastPos = dt.length() - 1;
-    if (pos < lastPos) {
-      if (dt.charAt(pos) == MILLI_SEPARATOR) {
-        int place = MILLIS / 10;
-        int digit;
-        while (isDecimal((digit = dt.charAt(++pos) - '0'))) {
-          millisecs += digit * place;
-          if (milliPlaces++ > 3) throw new ParseException(BAD_FORMAT + "milliseconds: " + dt, pos);
-          place /= 10;
-          if (pos == lastPos) break;
+    try {
+      boolean negative = dt.charAt(pos) == '-';
+      if (negative) pos++;
+      int year = d(dt, pos++) * 1000 + d(dt, pos++) * 100 + d(dt, pos++) * 10 + d(dt, pos++);
+      while (dt.charAt(pos) != DATE_SEPARATOR) year = year * 10 + d(dt, pos++);
+      if (negative) year = -year;
+      if (dt.charAt(pos++) != DATE_SEPARATOR) throw new ParseException(BAD_FORMAT + "date: " + dt, pos - 1);
+      int month = d(dt, pos++) * 10 + d(dt, pos++);
+      if (dt.charAt(pos++) != DATE_SEPARATOR) throw new ParseException(BAD_FORMAT + "date: " + dt, pos - 1);
+      int day = d(dt, pos++) * 10 + d(dt, pos++);
+  
+      if (dt.charAt(pos++) != DATE_TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "date/time: " + dt, pos - 1);
+  
+      int hour = d(dt, pos++) * 10 + d(dt, pos++);
+      if (dt.charAt(pos++) != TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "time: " + dt, pos - 1);
+      int minute = d(dt, pos++) * 10 + d(dt, pos++);
+      if (dt.charAt(pos++) != TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "time: " + dt, pos - 1);
+      int second = d(dt, pos++) * 10 + d(dt, pos++);
+  
+      int millisecs = 0;
+      byte milliPlaces = 0;
+      int lastPos = dt.length() - 1;
+      if (pos < lastPos) {
+        if (dt.charAt(pos) == MILLI_SEPARATOR) {
+          int place = MILLIS / 10;
+          int digit;
+          while (isDecimal((digit = dt.charAt(++pos) - '0'))) {
+            millisecs += digit * place;
+            if (milliPlaces++ > 3) throw new ParseException(BAD_FORMAT + "milliseconds: " + dt, pos);
+            place /= 10;
+            if (pos == lastPos) {
+              pos++;
+              break;
+            }
+          }
         }
       }
-    }
-
-    boolean midnightFlag = false;
-    if (hour == MIDNIGHT) {
-      midnightFlag = true;
-      hour = 0;
-    }
-    if (midnightFlag && (minute > 0 || second > 0 || millisecs > 0)) throw new ParseException(BAD_FORMAT + "time: " + dt, pos);
-
-    boolean local = false;
-    int tzHour = 0;
-    int tzMinute = 0;
-    boolean zuluFlag = false;
-    DateTimeZone timezone = null;
-    if (pos <= lastPos) {
-      char tz = dt.charAt(pos++);
-      if (tz == ZULU) {
-        if (pos != lastPos + 1) throw new ParseException(BAD_FORMAT + "timezone: " + dt, pos);
-        timezone = UTC;
-        zuluFlag = true;
-      } else {
-        if (pos != lastPos - 4 || (tz != NEG_TZ && tz != POS_TZ)) throw new ParseException(BAD_FORMAT + "timezone: " + dt, pos);
-        tzHour = d(dt, pos++) * 10 + d(dt, pos++);
-        if (dt.charAt(pos++) != TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "timezone: " + dt, pos - 1);
-        tzMinute = d(dt, pos++) * 10 + d(dt, pos++);
-        if (tz == NEG_TZ) tzHour = -tzHour;
-        timezone = DateTimeZone.forOffsetHoursMinutes(tzHour, tzMinute);
+  
+      boolean midnightFlag = false;
+      if (hour == MIDNIGHT) {
+        midnightFlag = true;
+        hour = 0;
       }
-    } else {
-      local = true;
+      if (midnightFlag && (minute > 0 || second > 0 || millisecs > 0)) throw new ParseException(BAD_FORMAT + "time: " + dt, pos);
+  
+      boolean local = false;
+      int tzHour = 0;
+      int tzMinute = 0;
+      boolean zuluFlag = false;
+      DateTimeZone timezone = null;
+      if (pos <= lastPos) {
+        char tz = dt.charAt(pos++);
+        if (tz == ZULU) {
+          if (pos != lastPos + 1) throw new ParseException(BAD_FORMAT + "timezone: " + dt, pos);
+          timezone = UTC;
+          zuluFlag = true;
+        } else {
+          if (pos != lastPos - 4 || (tz != NEG_TZ && tz != POS_TZ)) throw new ParseException(BAD_FORMAT + "timezone: " + dt, pos);
+          tzHour = d(dt, pos++) * 10 + d(dt, pos++);
+          if (dt.charAt(pos++) != TIME_SEPARATOR) throw new ParseException(BAD_FORMAT + "timezone: " + dt, pos - 1);
+          tzMinute = d(dt, pos++) * 10 + d(dt, pos++);
+          if (tz == NEG_TZ) tzHour = -tzHour;
+          timezone = DateTimeZone.forOffsetHoursMinutes(tzHour, tzMinute);
+        }
+      } else {
+        local = true;
+      }
+  
+      DateTime dateTime = new DateTime(year, month, day, hour, minute, second, millisecs, timezone);
+      if (midnightFlag) dateTime = dateTime.plusDays(1);
+      return new LexicalDateTime(dateTime, tzHour, tzMinute, midnightFlag, milliPlaces, local, zuluFlag);
+    } catch (StringIndexOutOfBoundsException e) {
+      throw new IllegalArgumentException(BAD_FORMAT + "date: " + dt);
     }
+  }
 
-    DateTime dateTime = new DateTime(year, month, day, hour, minute, second, millisecs, timezone);
-    if (midnightFlag) dateTime = dateTime.plusDays(1);
-    return new LexicalDateTime(dateTime, tzHour, tzMinute, midnightFlag, milliPlaces, local, zuluFlag);
+  /** {@inheritDoc} */
+  public boolean equals(Object o) {
+    if (!(o instanceof LexicalDateTime)) return false;
+    LexicalDateTime other = (LexicalDateTime)o;
+    return millis == other.millis && tzHours == other.tzHours && tzMinutes == other.tzMinutes
+        && milliPlaces == other.milliPlaces && localFlag == other.localFlag
+        && zuluFlag == other.zuluFlag && midnight == other.midnight;
+  }
+
+  /** {@inheritDoc} */
+  public int hashCode() {
+    return Long.valueOf(millis).hashCode() + encodeTimezoneState() * 13;
   }
 
   /**
@@ -431,14 +455,42 @@ public class LexicalDateTime {
     assert (millis % (int)Math.pow(10, 3 - milliPlaces)) == 0;
   }
 
+  /**
+   * Extract a single decimal digit from a string.
+   * @param str The string to get the digit from.
+   * @param i The location in the string to extract the digit from
+   * @return The extracted digit.
+   * @throws ParseException If the character to be extracted is not a decimal digit.
+   */
   private static int d(String str, int i) throws ParseException {
     int d = str.charAt(i) - '0';
     if (d >= 10 || d < 0) throw new ParseException("Unexpected character: " + Character.toString(str.charAt(i)) + ". Expected numeric digit.", i);
     return d;
   }
 
+  /**
+   * Tests if a number represents a single decimal digit.
+   * @param i The number to test.
+   * @return <code>true</code> if the number represents a single decimal digit.
+   */
   private static boolean isDecimal(int i) {
     return i < 10 && i >= 0;
   }
 
+  /**
+   * Determine the minimum number of decimal places required to represent
+   * a millisecond value in seconds.
+   * @param mSec The number of milliseconds to represent.
+   * @return The minimum number of decimal places needed when representing mSec in seconds.
+   *         This result is always in the range 0-3.
+   */
+  private static byte minimumPlaces(long mSec) {
+    byte p = 3;
+    int precision = 1;
+    for (; p > 0; p--) {
+      precision *= 10;
+      if (mSec % precision != 0) break;
+    }
+    return p;
+  }
 }
