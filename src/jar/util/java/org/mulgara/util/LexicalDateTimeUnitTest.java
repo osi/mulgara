@@ -30,6 +30,7 @@ import junit.framework.TestSuite;
 public class LexicalDateTimeUnitTest extends TestCase {
 
   String[] dtStrings = new String[] {
+      "2005-01-19T20:40:17.001",
       "2002-10-10T12:00:12.34-05:00",
       "2002-10-10T12:00:12.34+05:00",
       "2002-10-10T12:00:12.34+00:00",
