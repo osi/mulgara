@@ -28,9 +28,7 @@
 package org.mulgara.store.stringpool.memory;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 // third party packages
 import junit.framework.*;
@@ -200,10 +198,10 @@ public class MemoryStringPoolImplTest extends StringPoolAbstractTest {
     stringPool.put(6, spoFactory.newSPDouble(42));
     stringPool.put(7, spoFactory.newSPDouble(123));
     stringPool.put(8, spoFactory.newSPTypedLiteral(
-        "1966-9-18T15:00:00", XSD.DATE_TIME_URI
+        "1966-09-18T15:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(9, spoFactory.newSPTypedLiteral(
-        "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+        "1971-12-20T00:20:00", XSD.DATE_TIME_URI
     ));
 
     assertEquals(2, stringPool.findGNode(spoFactory.newSPString("alpha")));
@@ -215,10 +213,10 @@ public class MemoryStringPoolImplTest extends StringPoolAbstractTest {
     assertEquals(6, stringPool.findGNode(spoFactory.newSPDouble(42)));
     assertEquals(7, stringPool.findGNode(spoFactory.newSPDouble(123)));
     assertEquals(8, stringPool.findGNode(spoFactory.newSPTypedLiteral(
-        "1966-9-18T15:00:00", XSD.DATE_TIME_URI
+        "1966-09-18T15:00:00", XSD.DATE_TIME_URI
     )));
     assertEquals(9, stringPool.findGNode(spoFactory.newSPTypedLiteral(
-        "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+        "1971-12-20T00:20:00", XSD.DATE_TIME_URI
     )));
 
     // Make sure that URIs don't appear as strings.
