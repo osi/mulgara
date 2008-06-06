@@ -32,6 +32,7 @@ package org.mulgara.server.rmi;
 import java.io.*;
 import java.net.URI;
 import java.rmi.*;
+import java.rmi.server.Unreferenced;
 import java.util.*;
 
 // Third party packages
@@ -63,7 +64,7 @@ import org.mulgara.server.Session;
  *      Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class SessionWrapperRemoteSession implements RemoteSession {
+class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
 
   @SuppressWarnings("unused")
   /** Logger.  */
@@ -484,6 +485,16 @@ class SessionWrapperRemoteSession implements RemoteSession {
     }
   }
 
+  public void unreferenced() {
+    if (logger.isDebugEnabled())
+      logger.debug("Closing unreferenced remote session " + session);
+
+    try {
+      close();
+    } catch (Exception e) {
+      logger.warn("Error closing unreferenced session " + session, e);
+    }
+  }
 
   // Construct an exception chain that will pass over RMI.
   protected Throwable mapThrowable(Throwable t) {
