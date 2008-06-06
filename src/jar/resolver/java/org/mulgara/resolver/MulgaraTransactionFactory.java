@@ -133,7 +133,8 @@ public abstract class MulgaraTransactionFactory {
               }
             }
           } finally {
-            manager.releaseWriteLock(session);
+            if (manager.isHoldingWriteLock(session))    // normally this will have been released
+              manager.releaseWriteLock(session);
           }
         } else {
           logger.debug("Session does not hold write-lock");
