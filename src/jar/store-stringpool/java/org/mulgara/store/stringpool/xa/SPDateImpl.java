@@ -30,18 +30,14 @@ package org.mulgara.store.stringpool.xa;
 // Java 2 standard packages
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
 
 // Third party packages
 import org.apache.log4j.Logger;
 
-// Date utils
-import com.mousepushers.date.DateParser;
-import com.mousepushers.date.DateFormatter;
-
 // Locally written packages
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.*;
 import org.mulgara.util.Constants;
@@ -69,6 +65,7 @@ import org.mulgara.util.Constants;
  */
 public final class SPDateImpl extends AbstractSPTypedLiteral {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDateImpl.class);
 
   static final int TYPE_ID = 5; // Unique ID
@@ -100,13 +97,9 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
 
 
   static SPDateImpl newInstance(String lexicalForm) {
-    try {
-      Date date = DateParser.parse(lexicalForm, XSD.DATE_FORMAT,
-          Locale.getDefault());
-      return new SPDateImpl(date);
-    } catch (ParseException ex) {
-      throw new IllegalArgumentException("Cannot parse date: " + lexicalForm);
-    }
+    DateTimeFormatter parser = ISODateTimeFormat.dateElementParser();
+    Date date = new Date(parser.parseDateTime(lexicalForm).getMillis());
+    return new SPDateImpl(date);
   }
 
 
@@ -126,9 +119,7 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
 
 
   public String getLexicalForm() {
-    String dateTime = DateFormatter.formatDate(date, XSD.DATE_FORMAT,
-        Locale.getDefault());
-    return dateTime;
+    return ISODateTimeFormat.date().print(date.getTime());
   }
 
 
