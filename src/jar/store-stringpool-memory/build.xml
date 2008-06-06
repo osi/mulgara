@@ -26,6 +26,7 @@
     <fileset file="${store-stringpool-xa.dist.dir}/${store-stringpool-xa.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${store-nodepool-memory.dist.dir}/${store-nodepool-memory.jar}"/>
   </path>
 
