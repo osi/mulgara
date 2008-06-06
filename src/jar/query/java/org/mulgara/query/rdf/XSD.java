@@ -31,14 +31,9 @@ package org.mulgara.query.rdf;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
-import java.text.ParseException;
 
-// Date utils
-import com.mousepushers.date.DateParser;
-import com.mousepushers.date.DateFormats;
-import com.mousepushers.date.DateFormatter;
+import org.mulgara.util.LexicalDateTime;
 
 /**
  * XML Schema datatype constants.
@@ -198,70 +193,14 @@ public abstract class XSD {
   public final static URI BASE64_BINARY_URI = URI.create(NAMESPACE + "base64Binary");
 
   /**
-   * Date format used by <code>xsd:date</code>.
-   * This is a highly abbreviated version of ISO 8601.
-   */
-  public final static String DATE_FORMAT = DateFormats.yyyy_MM_dd_format;
-
-  /**
-   * Date format used by <code>xsd:dateTime</code>.
-   * This is a highly abbreviated version of ISO 8601.
-   */
-  public final static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-
-  /** Date format used by <code>xsd:gYear</code>. */
-  public final static String YEAR_FORMAT = "yyyy";
-
-
-  // Set up dates for 0000 and 0001
-  public static Date ONE_BCE;
-  public static Date ONE_CE;
-
-  static {
-    try {
-      ONE_BCE = DateParser.parse("0000", YEAR_FORMAT, Locale.getDefault());
-      ONE_CE = DateParser.parse("0001", YEAR_FORMAT, Locale.getDefault());
-    } catch (ParseException e) {
-      // Should never be thrown
-      throw new IllegalArgumentException("Cannot parse date");
-    }
-  }
-
-  /**
    * Returns the lexical form of the XSD dateTime value according to
    * "3.2.7.2 Canonical representation" of
    * http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/
-   * with the following exceptions:
-   * - Timezones are not supported
-   * - Dates before 1 CE (i.e. 1 AD) are handled according to ISO 8601:2000
-   *   Second Edition:
-   *     "0000" is the lexical representation of 1 BCE
-   *     "-0001" is the lexical representation of 2 BCE
+   * with the following exception:
+   * - Timezones are not displayed, and are presumed to be default
    * @return the lexical form of the XSD dateTime value
    */
   public static String getLexicalForm(Date date) {
-    StringBuffer lexicalForm;
-    String dateTime = DateFormatter.formatDate(date, XSD.DATE_TIME_FORMAT, Locale.getDefault());
-    int len = dateTime.length();
-    if (dateTime.indexOf('.', len - 4) != -1) {
-      while (dateTime.charAt(len - 1) == '0') len--;
-      if (dateTime.charAt(len - 1) == '.') len--;
-
-      lexicalForm = new StringBuffer(dateTime.substring(0, len));
-    } else {
-      lexicalForm = new StringBuffer(dateTime);
-    }
-
-    if (date.before(ONE_CE)) {
-      StringBuffer year = new StringBuffer(String.valueOf(Integer.parseInt(
-          DateFormatter.formatDate(date, YEAR_FORMAT, Locale.getDefault())) - 1));
-
-      while (year.length() < 4) year.insert(0, '0');
-
-      lexicalForm.replace(0, lexicalForm.indexOf("-", 4), year.toString());
-
-      if (date.before(ONE_BCE)) lexicalForm.insert(0, "-");
-    }
-    return lexicalForm.toString();
+    return new LexicalDateTime(date.getTime()).toString();
   }
 }
