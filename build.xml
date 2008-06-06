@@ -492,7 +492,7 @@
           lib/${resolver-distributed.jar},
           lib/${resolver-jar.jar}, lib/${dtd.jar}, lib/${jrdf.base.jar}
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
-          lib/${date-utils.jar}, lib/${joda-time.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
+          lib/${joda-time.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
@@ -549,7 +549,7 @@
         ${jargs.jar}, ${jrdf.jar}, ${jetty.jar}, ${jetty.plus.jar},
         ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
-        ${date-utils.jar}, ${joda-time.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
+        ${joda-time.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
         ${commons-codec.jar}, ${emory-util.jar}, ${mulgara-sparql.jar}
         ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
         ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
@@ -1404,7 +1404,7 @@
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
-        lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${date-utils.jar}, ${joda-time.jar}, ${commons-logging.jar}"/>
+        lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${joda-time.jar}, ${commons-logging.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
         ${driver.jar}, ${itql.jar}, ${sparql-int.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
@@ -1753,7 +1753,6 @@
       <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-codegen.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${date-utils.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${joda-time.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-httpclient.jar}" excludes="META-INF/**"/>

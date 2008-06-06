@@ -126,7 +126,6 @@
 	<classpathentry kind="lib" path="lib/ant-junit-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ant-apache-bsf-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ant-1.7.0.jar"/>
-	<classpathentry kind="lib" path="lib/DateUtils1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/castor-1.2-codegen.jar"/>
