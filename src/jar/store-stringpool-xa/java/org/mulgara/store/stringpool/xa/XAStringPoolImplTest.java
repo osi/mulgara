@@ -402,10 +402,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
     stringPool.put(15, spoFactory.newSPDouble(42));
     stringPool.put(16, spoFactory.newSPDouble(123));
     stringPool.put(17, spoFactory.newSPTypedLiteral(
-        "1966-9-18T15:00:00", XSD.DATE_TIME_URI
+        "1966-09-18T15:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(18, spoFactory.newSPTypedLiteral(
-        "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+        "1971-12-20T00:20:00", XSD.DATE_TIME_URI
     ));
 
     assertEquals(11, stringPool.findGNode(spoFactory.newSPString("alpha")));
@@ -415,10 +415,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
     assertEquals(15, stringPool.findGNode(spoFactory.newSPDouble(42)));
     assertEquals(16, stringPool.findGNode(spoFactory.newSPDouble(123)));
     assertEquals(17, stringPool.findGNode(spoFactory.newSPTypedLiteral(
-        "1966-9-18T15:00:00", XSD.DATE_TIME_URI
+        "1966-09-18T15:00:00", XSD.DATE_TIME_URI
     )));
     assertEquals(18, stringPool.findGNode(spoFactory.newSPTypedLiteral(
-        "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+        "1971-12-20T00:20:00", XSD.DATE_TIME_URI
     )));
 
     // Make sure that URIs don't appear as strings.
@@ -480,10 +480,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
     stringPool.put(15, spoFactory.newSPDouble(42));
     stringPool.put(16, spoFactory.newSPDouble(123));
     stringPool.put(17, spoFactory.newSPTypedLiteral(
-        "1966-9-18T15:00:00", XSD.DATE_TIME_URI
+        "1966-09-18T15:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(18, spoFactory.newSPTypedLiteral(
-        "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+        "1971-12-20T00:20:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(19, spoFactory.newSPString("foxtrot"));
     stringPool.put(20, spoFactory.newSPString("golf"));
@@ -508,31 +508,31 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
     stringPool.put(39, spoFactory.newSPDouble(1003));
     stringPool.put(40, spoFactory.newSPDouble(90));
     stringPool.put(41, spoFactory.newSPTypedLiteral(
-        "1977-1-1T0:00:00", XSD.DATE_TIME_URI
+        "1977-01-01T00:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(42, spoFactory.newSPTypedLiteral(
-        "1968-7-5T0:00:00", XSD.DATE_TIME_URI
+        "1968-07-05T00:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(43, spoFactory.newSPTypedLiteral(
-        "1981-1-10T0:00:00", XSD.DATE_TIME_URI
+        "1981-01-10T00:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(44, spoFactory.newSPTypedLiteral(
-        "1999-9-9T0:00:00", XSD.DATE_TIME_URI
+        "1999-09-09T00:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(45, spoFactory.newSPTypedLiteral(
-        "1977-1-1T0:00:01", XSD.DATE_TIME_URI
+        "1977-01-01T00:00:01", XSD.DATE_TIME_URI
     ));
     stringPool.put(46, spoFactory.newSPTypedLiteral(
-        "2000-1-1T0:00:00", XSD.DATE_TIME_URI
+        "2000-01-01T00:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(47, spoFactory.newSPTypedLiteral(
         "1999-12-31T23:59:59", XSD.DATE_TIME_URI
     ));
     stringPool.put(48, spoFactory.newSPTypedLiteral(
-        "1977-1-1T0:00:02", XSD.DATE_TIME_URI
+        "1977-01-01T00:00:02", XSD.DATE_TIME_URI
     ));
     stringPool.put(49, spoFactory.newSPTypedLiteral(
-        "1970-1-1T0:00:00", XSD.DATE_TIME_URI
+        "1970-01-01T00:00:00", XSD.DATE_TIME_URI
     ));
     stringPool.put(50, spoFactory.newSPTypedLiteral(
         "1969-12-31T23:59:59", XSD.DATE_TIME_URI
@@ -710,10 +710,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+            "1971-12-20T00:20:00", XSD.DATE_TIME_URI
         ), true,
         spoFactory.newSPTypedLiteral(
-            "1999-9-9T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-09T00:00:00", XSD.DATE_TIME_URI
         ), true
     );
     assertEquals(allDates.subList(4, 10), asList(t));
@@ -721,10 +721,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-19T0:00:00", XSD.DATE_TIME_URI
+            "1971-12-19T00:00:00", XSD.DATE_TIME_URI
         ), true,
         spoFactory.newSPTypedLiteral(
-            "1999-9-10T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-10T00:00:00", XSD.DATE_TIME_URI
         ), true
     );
     assertEquals(allDates.subList(4, 10), asList(t));
@@ -732,10 +732,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-19T0:00:00", XSD.DATE_TIME_URI
+            "1971-12-19T00:00:00", XSD.DATE_TIME_URI
         ), false,
         spoFactory.newSPTypedLiteral(
-            "1999-9-10T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-10T00:00:00", XSD.DATE_TIME_URI
         ), false
     );
     assertEquals(allDates.subList(4, 10), asList(t));
@@ -743,10 +743,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+            "1971-12-20T00:20:00", XSD.DATE_TIME_URI
         ), false,
         spoFactory.newSPTypedLiteral(
-            "1999-9-9T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-09T00:00:00", XSD.DATE_TIME_URI
         ), true
     );
     assertEquals(allDates.subList(5, 10), asList(t));
@@ -754,10 +754,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-21T0:00:00", XSD.DATE_TIME_URI
+            "1971-12-21T00:00:00", XSD.DATE_TIME_URI
         ), true,
         spoFactory.newSPTypedLiteral(
-            "1999-9-9T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-09T00:00:00", XSD.DATE_TIME_URI
         ), true
     );
     assertEquals(allDates.subList(5, 10), asList(t));
@@ -765,10 +765,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+            "1971-12-20T00:20:00", XSD.DATE_TIME_URI
         ), true,
         spoFactory.newSPTypedLiteral(
-            "1999-9-9T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-09T00:00:00", XSD.DATE_TIME_URI
         ), false
     );
     assertEquals(allDates.subList(4, 9), asList(t));
@@ -776,10 +776,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
 
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1971-12-20T0:20:00", XSD.DATE_TIME_URI
+            "1971-12-20T00:20:00", XSD.DATE_TIME_URI
         ), false,
         spoFactory.newSPTypedLiteral(
-            "1999-9-9T0:00:00", XSD.DATE_TIME_URI
+            "1999-09-09T00:00:00", XSD.DATE_TIME_URI
         ), false
     );
     assertEquals(allDates.subList(5, 9), asList(t));
@@ -788,10 +788,10 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
     // Matching high value on last node in index (inclusive).
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "1977-1-1T0:00:01", XSD.DATE_TIME_URI
+            "1977-01-01T00:00:01", XSD.DATE_TIME_URI
         ), false,
         spoFactory.newSPTypedLiteral(
-            "2000-1-1T0:00:00", XSD.DATE_TIME_URI
+            "2000-01-01T00:00:00", XSD.DATE_TIME_URI
         ), true
     );
     assertEquals(allDates.subList(7, 12), asList(t));
@@ -801,7 +801,7 @@ public class XAStringPoolImplTest extends StringPoolAbstractTest {
     // last node in index.
     t = stringPool.findGNodes(
         spoFactory.newSPTypedLiteral(
-            "2000-1-1T0:00:00", XSD.DATE_TIME_URI
+            "2000-01-01T00:00:00", XSD.DATE_TIME_URI
         ), false, null, false
     );
     assertTrue(asList(t).isEmpty());
