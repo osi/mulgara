@@ -203,8 +203,7 @@ class BEEPSession implements Session {
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI serverURI, OutputStream outputStream)
-    throws QueryException {
+  public void backup(URI serverURI, OutputStream outputStream) throws QueryException {
     throw new QueryException("Backup not implemented");
   }
 
@@ -233,8 +232,7 @@ class BEEPSession implements Session {
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(InputStream inputStream, URI serverURI, URI sourceURI)
-      throws QueryException {
+  public void restore(InputStream inputStream, URI serverURI, URI sourceURI) throws QueryException {
     throw new QueryException("Restore not implemented");
   }
 
@@ -250,11 +248,8 @@ class BEEPSession implements Session {
     Channel queryChannel;
     try {
       queryChannel = beepSession.startChannel(QueryProfile.URI);
-    }
-    catch (BEEPException e) {
-      throw new QueryException(
-          "Couldn't open BEEP channel using Query profile", e
-          );
+    } catch (BEEPException e) {
+      throw new QueryException("Couldn't open BEEP channel using Query profile", e);
     }
     assert queryChannel != null;
 
@@ -287,8 +282,7 @@ class BEEPSession implements Session {
                 message.getDataStream().getInputStream()
                 ));
             throw new QueryException(reader.readLine());
-          }
-          catch (IOException e) {
+          } catch (IOException e) {
             throw new QueryException("Unidentified error on BEEP channel");
           }
 
@@ -297,257 +291,239 @@ class BEEPSession implements Session {
                 "Unexpected BEEP message type " + message.getMessageType()
                 );
       }
-    }
-
     // Only leave the BEEP channel unclosed if a BEEPAnswer capable of taking
     // responsibility for doing this was returned.  If exiting exceptionally,
     // the channel must be explicitly closed.
-    catch (BEEPException e) {
+    } catch (BEEPException e) {
       close(queryChannel);
       throw new QueryException("Couldn't communicate with BEEP server", e);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       close(queryChannel);
       throw new QueryException("Couldn't generate BEEP query", e);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
       close(queryChannel);
       throw e;
-    }
-    catch (StreamFormatException e) {
+    } catch (StreamFormatException e) {
       close(queryChannel);
       throw new QueryException("Couldn't interpret BEEP reply", e);
     }
   }
 
- /**
-  * Make a list of TQL queries.
-  *
-  * @param queries the list of queries
-  * @return a list of non-<code>null</code> answers to the <var>queries</var>
-  * @throws QueryException if <var>query</var> can't be answered
-  */
- public List query(List queries) throws QueryException {
-   throw new QueryException("Multiple queries not implemented");
- }
+  /**
+   * Make a list of TQL queries.
+   *
+   * @param queries the list of queries
+   * @return a list of non-<code>null</code> answers to the <var>queries</var>
+   * @throws QueryException if <var>query</var> can't be answered
+   */
+  public List query(List queries) throws QueryException {
+    throw new QueryException("Multiple queries not implemented");
+  }
 
- /**
-  * Test the model for the occurrence of the triple.  A null value for any
-  * of the parts of a triple are treated as unconstrained, any values will be
-  * returned.
-  *
-  * @param modelURI URI of the model to be checked
-  * @param triple Triple to be found
-  * @throws QueryException if the model cannot be checked
-  * @return boolean true if the model contains the triple.
-  */
- public boolean contains(URI modelURI, Triple triple) throws QueryException {
+  /**
+   * Test the model for the occurrence of the triple.  A null value for any
+   * of the parts of a triple are treated as unconstrained, any values will be
+   * returned.
+   *
+   * @param modelURI URI of the model to be checked
+   * @param triple Triple to be found
+   * @throws QueryException if the model cannot be checked
+   * @return boolean true if the model contains the triple.
+   */
+  public boolean contains(URI modelURI, Triple triple) throws QueryException {
+    throw new QueryException("Contains not implemented.");
+  }
 
-   throw new QueryException("Contains not implemented.");
- }
-
- /**
-  * Returns an answer containing a set of statements in the model that match a
-  * given triple. A null value for any of the parts of a triple are treated as
-  * unconstrained, any values will be returned.
-  *
-  * @param modelURI URI of the model to be searched
-  * @param triple Triple constraint used to match the triples
-  * @throws QueryException if the model cannot be searched
-  * @return Answer containing the triples that matcth the constraint
-  */
- public Answer find(URI modelURI, Triple triple) throws QueryException {
-
-   throw new QueryException("Find not implemented.");
- }
+  /**
+   * Returns an answer containing a set of statements in the model that match a
+   * given triple. A null value for any of the parts of a triple are treated as
+   * unconstrained, any values will be returned.
+   *
+   * @param modelURI URI of the model to be searched
+   * @param triple Triple constraint used to match the triples
+   * @throws QueryException if the model cannot be searched
+   * @return Answer containing the triples that matcth the constraint
+   */
+  public Answer find(URI modelURI, Triple triple) throws QueryException {
+    throw new QueryException("Find not implemented.");
+  }
 
 
- /**
-  * Create a new model.
-  *
-  * @param modelURI the {@link URI} of the new model
-  * @param modelTypeURI the {@link URI} identifying whether the new model is
-  *   backed by a triple store (<code>mulgara:Model</code>) or by a Lucene full
-  *   text index (<code>mulgara:LuceneModel</code>)
-  * @throws QueryException if the model can't be created
-  */
- public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
-   throw new QueryException("Create Model not implemented");
- }
+  /**
+   * Create a new model.
+   *
+   * @param modelURI the {@link URI} of the new model
+   * @param modelTypeURI the {@link URI} identifying whether the new model is
+   *   backed by a triple store (<code>mulgara:Model</code>) or by a Lucene full
+   *   text index (<code>mulgara:LuceneModel</code>)
+   * @throws QueryException if the model can't be created
+   */
+  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
+    throw new QueryException("Create Model not implemented");
+  }
 
- /**
-  * Remove an existing model.
-  *
-  * @param uri the {@link URI} of the doomed model
-  * @throws QueryException if the model can't be removed
-  */
- public void removeModel(URI uri) throws QueryException {
-   throw new QueryException("Remove model not implemented");
- }
+  /**
+   * Remove an existing model.
+   *
+   * @param uri the {@link URI} of the doomed model
+   * @throws QueryException if the model can't be removed
+   */
+  public void removeModel(URI uri) throws QueryException {
+    throw new QueryException("Remove model not implemented");
+  }
 
- public boolean modelExists(URI uri) throws QueryException {
-   throw new QueryException("Remove model not implemented");
- }
+  public boolean modelExists(URI uri) throws QueryException {
+    throw new QueryException("Remove model not implemented");
+  }
 
- /**
-  * Define the contents of a model.
-  *
-  * @param uri the {@link URI} of the model to be redefined
-  * @param modelExpression the new content for the model
-  * @return The number of statements inserted into the model
-  * @throws QueryException if the model can't be modified
-  */
- public long setModel(URI uri,
-     ModelExpression modelExpression) throws QueryException {
-   throw new QueryException("Set Model not implemented");
- }
+  /**
+   * Define the contents of a model.
+   *
+   * @param uri the {@link URI} of the model to be redefined
+   * @param modelExpression the new content for the model
+   * @return The number of statements inserted into the model
+   * @throws QueryException if the model can't be modified
+   */
+  public long setModel(URI uri, ModelExpression modelExpression) throws QueryException {
+    throw new QueryException("Set Model not implemented");
+  }
 
- /**
-  * Define the contents of a model.
-  *
-  * @param inputstream a remote inputstream
-  * @param uri the {@link URI} of the model to be redefined
-  * @param modelExpression the new content for the model
-  * @return The number of statements inserted into the model
-  * @throws QueryException if the model can't be modified
-  */
- public long setModel(InputStream inputstream, URI uri,
-     ModelExpression modelExpression) throws QueryException {
-   throw new QueryException("Set Model not implemented");
- }
+  /**
+   * Define the contents of a model.
+   *
+   * @param inputstream a remote inputstream
+   * @param uri the {@link URI} of the model to be redefined
+   * @param modelExpression the new content for the model
+   * @return The number of statements inserted into the model
+   * @throws QueryException if the model can't be modified
+   */
+  public long setModel(InputStream inputstream, URI uri, ModelExpression modelExpression) throws QueryException {
+    throw new QueryException("Set Model not implemented");
+  }
 
 
- /**
-  * Sets the AutoCommit attribute of the Session object
-  *
-  * @param autoCommit The new AutoCommit value
-  * @throws QueryException EXCEPTION TO DO
-  */
- public void setAutoCommit(boolean autoCommit) throws QueryException {
-   /*
-        try {
-     // Send the command message
-     Reply reply = new Reply();
-     commandChannel.sendMSG(
-       new StringOutputDataStream("autocommit "+autoCommit),
-       reply
-     );
+  /**
+   * Sets the AutoCommit attribute of the Session object
+   *
+   * @param autoCommit The new AutoCommit value
+   * @throws QueryException EXCEPTION TO DO
+   */
+  public void setAutoCommit(boolean autoCommit) throws QueryException {
+    /*
+    try {
+      // Send the command message
+      Reply reply = new Reply();
+      commandChannel.sendMSG(new StringOutputDataStream("autocommit "+autoCommit), reply);
 
-     // Process the reply to the query message
-     assert reply.hasNext();
-     Message message = reply.getNextReply();
-     switch (message.getMessageType()) {
-     case Message.MESSAGE_TYPE_NUL:
-       return;
+      // Process the reply to the query message
+      assert reply.hasNext();
+      Message message = reply.getNextReply();
+      switch (message.getMessageType()) {
+        case Message.MESSAGE_TYPE_NUL:
+          return;
 
-     case Message.MESSAGE_TYPE_ERR:
-       try {
-         BufferedReader reader = new BufferedReader(new InputStreamReader(
-                                   message.getDataStream().getInputStream()
-                                 ));
-         throw new QueryException(reader.readLine());
-       }
-       catch (IOException e) {
-         throw new QueryException("Unidentified error on BEEP channel");
-       }
+        case Message.MESSAGE_TYPE_ERR:
+          try {
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(message.getDataStream().getInputStream()));
+            throw new QueryException(reader.readLine());
+          } catch (IOException e) {
+            throw new QueryException("Unidentified error on BEEP channel");
+          }
 
-     default:
-       throw new QueryException(
-         "Unexpected BEEP message type "+message.getMessageType()
-       );
-     }
-        }
-        catch (BEEPException e) {
-     throw new QueryException("Couldn't communicate with BEEP server", e);
-        }
-    */
- }
+        default:
+          throw new QueryException("Unexpected BEEP message type "+message.getMessageType());
+      }
+    }
+    catch (BEEPException e) {
+      throw new QueryException("Couldn't communicate with BEEP server", e);
+    }
+     */
+  }
 
- /**
-  * METHOD TO DO
-  *
-  * @throws QueryException EXCEPTION TO DO
-  */
- public void commit() throws QueryException {
-   throw new QueryException("Commit not implemented");
- }
+  /**
+   * METHOD TO DO
+   *
+   * @throws QueryException EXCEPTION TO DO
+   */
+  public void commit() throws QueryException {
+    throw new QueryException("Commit not implemented");
+  }
 
- /**
-  * METHOD TO DO
-  *
-  * @throws QueryException EXCEPTION TO DO
-  */
- public void rollback() throws QueryException {
-   throw new QueryException("Rollback not implemented");
- }
+  /**
+   * METHOD TO DO
+   *
+   * @throws QueryException EXCEPTION TO DO
+   */
+  public void rollback() throws QueryException {
+    throw new QueryException("Rollback not implemented");
+  }
 
- /**
-  * Release resources associated with this session.
-  *
-  * The session won't be usable after this method is invoked.
-  */
- public void close() {
-   try {
-     beepSession.close();
-   }
-   catch (BEEPException e) {
-     logger.warn("Unable to close BEEP session", e);
-   }
+  /**
+   * Release resources associated with this session.
+   *
+   * The session won't be usable after this method is invoked.
+   */
+  public void close() {
+    try {
+      beepSession.close();
+    } catch (BEEPException e) {
+      logger.warn("Unable to close BEEP session", e);
+    }
 
-   beepSession = null;
- }
+    beepSession = null;
+  }
 
- public void login(URI securityDomain, String username, char[] password) {
-   logger.error("Login not implemented");
- }
+  public void login(URI securityDomain, String username, char[] password) {
+    logger.error("Login not implemented");
+  }
 
- //
- // Internal methods
- //
+  //
+  // Internal methods
+  //
 
- /**
-  * This method attempts to close a BEEP channel.
-  *
-  * If it fails, it only logs the fact rather than throwing an exception.
-  *
-  * @param channel  a BEEP channel to close
-  */
- private void close(Channel channel) {
-   try {
-     channel.close();
-   }
-   catch (BEEPException e) {
-     logger.warn("Unable to close BEEP channel (ignoring)", e);
-   }
- }
+  /**
+   * This method attempts to close a BEEP channel.
+   *
+   * If it fails, it only logs the fact rather than throwing an exception.
+   *
+   * @param channel  a BEEP channel to close
+   */
+  private void close(Channel channel) {
+    try {
+      channel.close();
+    } catch (BEEPException e) {
+      logger.warn("Unable to close BEEP channel (ignoring)", e);
+    }
+  }
 
- public boolean isLocal() {
-   return false;
- }
+  public boolean isLocal() {
+    return false;
+  }
 
- /**
-  * {@inheritDoc}
-  */
- public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
-   throw new UnsupportedOperationException("This operation is only supported on local sessions.");
- }
+  /**
+   * {@inheritDoc}
+   */
+  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
+    throw new UnsupportedOperationException("This operation is only supported on local sessions.");
+  }
 
- /**
-  * {@inheritDoc}
-  */
- public void applyRules(RulesRef rules) {
-   throw new UnsupportedOperationException("This operation is only supported on local sessions.");
- }
+  /**
+   * {@inheritDoc}
+   */
+  public void applyRules(RulesRef rules) {
+    throw new UnsupportedOperationException("This operation is only supported on local sessions.");
+  }
 
- public XAResource getXAResource() throws QueryException {
-   throw new QueryException("External transactions not implemented under Beep");
- }
+  public XAResource getXAResource() throws QueryException {
+    throw new QueryException("External transactions not implemented under Beep");
+  }
 
- public XAResource getReadOnlyXAResource() throws QueryException {
-   throw new QueryException("External transactions not implemented under Beep");
- }
- 
- public boolean ping() {
-   return true;
- }
+  public XAResource getReadOnlyXAResource() throws QueryException {
+    throw new QueryException("External transactions not implemented under Beep");
+  }
+
+  public boolean ping() {
+    return true;
+  }
 }
