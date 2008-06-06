@@ -32,18 +32,14 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
 
 // Third party packages
 import org.apache.log4j.Logger;
 
-// Date utils
-import com.mousepushers.date.DateParser;
-
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.*;
-import org.mulgara.util.Constants;
+import org.mulgara.util.LexicalDateTime;
 
 
 /**
@@ -53,88 +49,79 @@ import org.mulgara.util.Constants;
  *
  * @author David Makepeace
  * @author Edwin Shin
- *
- * @version $Revision: 1.1 $
- *
- * @modified $Date: 2005/03/11 04:15:22 $
- *
- * @maintenanceAuthor $Author: raboczi $
- *
+ * @author Paul Gearon
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
  * @copyright &copy; 2004 <A href="http://www.PIsoftware.com/">Plugged In
  *      Software Pty Ltd</A>
- *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDateTimeImpl.class);
 
   static final int TYPE_ID = 6; // Unique ID
 
   static final URI TYPE_URI = XSD.DATE_TIME_URI;
 
-  private Date date;
+  private LexicalDateTime dateTime;
 
 
+  /**
+   * Creates a dateTime using a LexicalDateTime.
+   * @param date A {@link java.util.Date} representing the dateTime.
+   */
+  SPDateTimeImpl(LexicalDateTime dateTime) {
+    super(TYPE_ID, TYPE_URI);
+    if (dateTime == null) throw new IllegalArgumentException("Null \"dateTime\" parameter");
+    this.dateTime = dateTime;
+  }
+
+
+  /**
+   * Creates a dateTime in the default timezone for this system. Not recommended.
+   * @param date A {@link java.util.Date} representing the dateTime.
+   */
   SPDateTimeImpl(Date date) {
     super(TYPE_ID, TYPE_URI);
-
-    if (date == null) {
-      throw new IllegalArgumentException("Null \"date\" parameter");
-    }
-
-    this.date = date;
+    if (date == null) throw new IllegalArgumentException("Null \"date\" parameter");
+    this.dateTime = new LexicalDateTime(date.getTime());
   }
 
 
+  /**
+   * Creates a dateTime from encoded data in a buffer.
+   * @param data The encoded data.
+   */
   SPDateTimeImpl(ByteBuffer data) {
-    this(data.getLong());
+    super(TYPE_ID, TYPE_URI);
+    this.dateTime = LexicalDateTime.decode(data);
   }
 
 
+  /**
+   * Creates a dateTime in the default timezone for this system. Not recommended.
+   * @param l The number of milliseconds since the epoch.
+   */
   SPDateTimeImpl(long l) {
-    this(new Date(l));
+    super(TYPE_ID, TYPE_URI);
+    this.dateTime = new LexicalDateTime(l);
   }
 
 
   static SPDateTimeImpl newInstance(String lexicalForm) {
-
-    StringBuffer sb = new StringBuffer(lexicalForm);
-    int pos = sb.length() - 4;
-    int index = sb.indexOf(".", pos);
-    if (index == -1) {
-      sb.append(".000");
-    }
-    else {
-      if (index == sb.length() - 1) {
-        throw new IllegalArgumentException("Cannot parse date: " + lexicalForm);
-      }
-      int pad = pos - index;
-      while (pad < 0) {
-        sb.append("0");
-        pad++;
-      }
-    }
-    lexicalForm = sb.toString();
     try {
-      Date date = DateParser.parse(lexicalForm, XSD.DATE_TIME_FORMAT,
-          Locale.getDefault());
-      return new SPDateTimeImpl(date);
-    }
-    catch (ParseException ex) {
+      return new SPDateTimeImpl(LexicalDateTime.parseDateTime(lexicalForm));
+    } catch (ParseException ex) {
       throw new IllegalArgumentException("Cannot parse date: " + lexicalForm);
     }
-
   }
 
   /* from SPObject interface. */
 
   public ByteBuffer getData() {
-    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG);
-    data.putLong(date.getTime());
-    data.flip();
+    ByteBuffer data = ByteBuffer.allocate(LexicalDateTime.requiredBufferSize());
+    dateTime.encode(data);
     return data;
   }
 
@@ -143,19 +130,12 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
   }
 
   /**
-   * Returns the lexical form of the XSD dateTime value according to
-   * "3.2.7.2 Canonical representation" of
-   * http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/
-   * with the following exceptions:
-   * - Timezones are not supported
-   * - Dates before 1 CE (i.e. 1 AD) are handled according to ISO 8601:2000
-   *   Second Edition:
-   *     "0000" is the lexical representation of 1 BCE
-   *     "-0001" is the lexical representation of 2 BCE
+   * Returns the lexical form of the XSD dateTime value, using the original form of the
+   * lexical value.
    * @return the lexical form of the XSD dateTime value
    */
   public String getLexicalForm() {
-    return XSD.getLexicalForm(date);
+    return dateTime.toString();
   }
 
   /* from Comparable interface. */
@@ -166,14 +146,16 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
     if (c != 0) return c;
 
     // Compare the Dates.
-    return date.compareTo(((SPDateTimeImpl)o).date);
+    long a = dateTime.getMillis();
+    long b = (((SPDateTimeImpl)o).dateTime).getMillis();
+    return a == b ? 0 : (a < b ? -1 : 1);
   }
 
 
   /* from Object. */
 
   public int hashCode() {
-    return date.hashCode();
+    return dateTime.hashCode();
   }
 
 
@@ -182,7 +164,7 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
     if (obj == null) return false;
 
     try {
-      return date.equals(((SPDateTimeImpl)obj).date);
+      return dateTime.equals(((SPDateTimeImpl)obj).dateTime);
     } catch (ClassCastException ex) {
       // obj was not an SPDateTimeImpl.
       return false;
@@ -190,11 +172,14 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
   }
 
 
-  /** Compares the binary representations of two SPDateTimeImpl objects. */
+  /**
+   * Compares the binary representations of two SPDateTimeImpl objects.
+   * Performs comparisons on the canonical representations, so 2 different
+   * values can compare the same, so long as they refer to the same time.
+   */
   public static class SPDateTimeComparator implements SPComparator {
 
-    private static final SPDateTimeComparator INSTANCE =
-        new SPDateTimeComparator();
+    private static final SPDateTimeComparator INSTANCE = new SPDateTimeComparator();
 
     public static SPDateTimeComparator getInstance() {
       return INSTANCE;
