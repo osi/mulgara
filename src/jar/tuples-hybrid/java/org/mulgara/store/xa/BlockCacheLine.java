@@ -351,7 +351,7 @@ public class BlockCacheLine extends CacheLine {
 
 
   private int compareBlockWithPrefix(Block block, long[] prefix) {
-    assert prefix.length < width;
+    assert prefix.length <= width;
 
     long[] first = new long[width];
     loadTupleFromBlock(first, block, 0);
