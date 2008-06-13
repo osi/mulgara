@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.*;
 import org.mulgara.util.LexicalDateTime;
+import static org.mulgara.util.Constants.SIZEOF_LONG;
 
 
 /**
@@ -95,7 +96,10 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
    */
   SPDateTimeImpl(ByteBuffer data) {
     super(TYPE_ID, TYPE_URI);
-    this.dateTime = LexicalDateTime.decode(data);
+    if (data.limit() == SIZEOF_LONG)    // backwards compat with <= 1.x
+      this.dateTime = new LexicalDateTime(data.getLong(0));
+    else
+      this.dateTime = LexicalDateTime.decode(data);
   }
 
 
