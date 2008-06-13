@@ -177,11 +177,11 @@ public class Rule implements Serializable {
     // see if this rule needs to be run
     Answer answer = null;
     try {
-      try {
-        answer = context.doQuery(query);
-      } catch (Exception e) {
-        throw new QueryException("Unable to access data in rule.", e);
-      }
+      answer = context.doQuery(query);
+    } catch (Exception e) {
+      throw new QueryException("Unable to access data in rule.", e);
+    }
+    try {
       // compare the size of the result data
       long newCount = answer.getRowCount();
       if (newCount == lastCount) {
