@@ -76,7 +76,7 @@ public class Rule implements Serializable {
 
   /** The most recent size of the data matching this rule. */
   private long lastCount;
-  
+
   /** The structure containing this rule */
   private RuleStructure ruleStruct;
 
@@ -152,14 +152,14 @@ public class Rule implements Serializable {
     return Collections.unmodifiableSet(triggerSet);
   }
 
-  
+
   /**
    * Sets the rule system structure containing this rule.
    * 
    * @param ruleStruct The structure for this rule.
    */
   public void setRuleStruct(RuleStructure ruleStruct) {
-  	this.ruleStruct = ruleStruct;
+    this.ruleStruct = ruleStruct;
   }
 
 
@@ -175,21 +175,21 @@ public class Rule implements Serializable {
   public void execute(OperationContext context, Resolver resolver, SystemResolver sysResolver) throws QueryException, TuplesException, ResolverException {
     if (targetGraph == UNINITIALIZED) throw new IllegalStateException("Target graph has not been set");
     // see if this rule needs to be run
-  	Answer answer = null;
-  	try {
-    	try {
+    Answer answer = null;
+    try {
+      try {
         answer = context.doQuery(query);
       } catch (Exception e) {
         throw new QueryException("Unable to access data in rule.", e);
       }
-    	// compare the size of the result data  	
-    	long newCount = answer.getRowCount(); 
-    	if (newCount == lastCount) {
-    	  logger.debug("Rule <" + name + "> is up to date.");
-    	  // this rule does not need to be run
-    	  return;
-    	}
-    	logger.debug("Rule <" + name + "> has increased by " + (newCount - lastCount) + " entries");
+      // compare the size of the result data
+      long newCount = answer.getRowCount();
+      if (newCount == lastCount) {
+        logger.debug("Rule <" + name + "> is up to date.");
+        // this rule does not need to be run
+        return;
+      }
+      logger.debug("Rule <" + name + "> has increased by " + (newCount - lastCount) + " entries");
       logger.debug("Inserting results of: " + query);
       if (answer instanceof AnswerImpl) {
         AnswerImpl a = (AnswerImpl)answer;
@@ -201,25 +201,25 @@ public class Rule implements Serializable {
         list += "]";
         logger.debug("query has " + a.getNumberOfVariables() + " variables: " + list);
       }
-    	// insert the resulting data
+      // insert the resulting data
       insertData(answer, resolver, sysResolver);
       // update the count
       lastCount = newCount;
       logger.debug("Insertion complete, triggering rules for scheduling.");
-  	} finally {
-  	  answer.close();
-  	}
-  	// trigger subsequent rules
-  	scheduleTriggeredRules();
+    } finally {
+      answer.close();
+    }
+    // trigger subsequent rules
+    scheduleTriggeredRules();
   }
 
-  
+
   /**
    * Schedule subsequent rules.
    */
   private void scheduleTriggeredRules() {
-  	Iterator<Rule> it = triggerSet.iterator();
-  	while (it.hasNext()) ruleStruct.schedule(it.next());
+    Iterator<Rule> it = triggerSet.iterator();
+    while (it.hasNext()) ruleStruct.schedule(it.next());
   }
 
 
