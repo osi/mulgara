@@ -94,7 +94,7 @@
 
   <target name="driver-dist"
           depends="driver-jar, driver-jar, itql-jar, query-jar,
-                   server-jar, server-beep-jar, server-rmi-jar, util-jar"
+                   server-jar, server-beep-jar, server-rmi-jar, util-jar, driver-uptodate"
           unless="driver.uptodate"
           description="Performs all tasks related to finalising this driver
                        and readying it for distribution">
@@ -117,6 +117,22 @@
       <zipfileset src="${lib.dir}/${commons-discovery.jar}" excludes="META-INF/**"/>
       <zipfileset src="${util.dist.dir}/${util.jar}" excludes="META-INF/**"/>
     </jar>
+  </target>
+
+  <target name="driver-uptodate">
+
+    <uptodate property="driver.uptodate"
+              targetfile="${dist.dir}/${driver.jar}">
+
+      <srcfiles dir="${driver.dist.dir}" includes="${driver.jar}"/>
+      <srcfiles dir="${itql.dist.dir}" includes="${itql.jar}"/>
+      <srcfiles dir="${rules.dist.dir}" includes="${rules.jar}"/>
+      <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
+      <srcfiles dir="${server.dist.dir}" includes="${server.jar}"/>
+      <srcfiles dir="${server-beep.dist.dir}" includes="${server-beep.jar}"/>
+      <srcfiles dir="${server-rmi.dist.dir}" includes="${server-rmi.jar}"/>
+      <srcfiles dir="${util.dist.dir}" includes="${util.jar}"/>
+    </uptodate>
   </target>
 
   <target name="driver-test"
