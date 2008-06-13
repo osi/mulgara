@@ -257,7 +257,7 @@ public class LexicalDateTime {
    * @return The populated ByteBuffer.
    */
   public ByteBuffer encode(ByteBuffer bb) {
-    assert bb.limit() >= PLACES_OFFSET;
+    assert bb.limit() > PLACES_OFFSET;
     bb.putLong(0, millis);
     bb.put(TZ_OFFSET, encodeTimezoneState());
     bb.put(PLACES_OFFSET, milliPlaces);
@@ -288,7 +288,7 @@ public class LexicalDateTime {
    * @return a new LexicalDateTime structure.
    */
   public static LexicalDateTime decode(ByteBuffer bb) {
-    assert bb.limit() >= PLACES_OFFSET;
+    assert bb.limit() > PLACES_OFFSET;
     return decode(bb.getLong(0), bb.get(TZ_OFFSET), bb.get(PLACES_OFFSET));
   }
 
