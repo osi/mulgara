@@ -584,6 +584,7 @@
       <arg value="-o"/>
       <arg value="${dist.dir}/mulgara-output"/>
       <arg value="${java.home}/bin/java"/>
+      <arg value="-ea"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg line="-Dorg.mulgara.test=&quot;${org.mulgara.test}&quot;"/>
@@ -604,6 +605,7 @@
       <arg value="${dist.dir}/mulgara-output"/>
       <arg value="${java.home}/bin/java"/>
       <arg value="${arch.bits}"/>
+      <arg value="-ea"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
@@ -621,6 +623,7 @@
       <arg value="-o"/>
       <arg value="${dist.dir}/mulgara-output"/>
       <arg value="${java.home}/bin/java"/>
+      <arg value="-ea"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
@@ -639,6 +642,7 @@
       <arg value="-o"/>
       <arg value="${dist.dir}\mulgara-output"/>
       <arg value="${java.home}\bin\javaw"/>
+      <arg value="-ea"/>
       <arg value="${jvm.args}"/>
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
