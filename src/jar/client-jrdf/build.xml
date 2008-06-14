@@ -29,6 +29,7 @@
     <pathelement path="${itql.dist.dir}/${itql.jar}"/>
     <pathelement path="${rules.dist.dir}/${rules.jar}"/>
     <pathelement path="${lib.dir}/${jrdf.jar}"/>
+    <pathelement path="${lib.dir}/${sesame-model.jar}"/>
   </path>
 
   <path id="client-jrdf-test-classpath">

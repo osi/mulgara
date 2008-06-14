@@ -106,7 +106,7 @@ public class LiteralImplUnitTest extends TestCase {
       new LiteralImpl((String) null);
       fail("Shouldn't be able to construct a literal with null lexical form");
     }
-    catch (IllegalArgumentException e) {
+    catch (Throwable e) {
       // correct behavior
     }
 
@@ -114,7 +114,7 @@ public class LiteralImplUnitTest extends TestCase {
       new LiteralImpl("foo", (String) null);
       fail("Shouldn't be able to construct a literal with null language");
     }
-    catch (IllegalArgumentException e) {
+    catch (Throwable e) {
       // correct behavior
     }
 
@@ -122,7 +122,7 @@ public class LiteralImplUnitTest extends TestCase {
       new LiteralImpl((String) null, (URI) null);
       fail("Shouldn't be able to construct a literal with null lexical form");
     }
-    catch (IllegalArgumentException e) {
+    catch (Throwable e) {
       // correct behavior
     }
 

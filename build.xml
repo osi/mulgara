@@ -496,7 +496,7 @@
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
-          lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${mulgara-sparql.jar}"/>
+          lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${mulgara-sparql.jar}, lib/${sesame-model.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
@@ -554,7 +554,7 @@
         ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
         ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
         ${axis.jar}, ${commons-discovery.jar}, ${jaxrpc.jar}, ${wsdl4j.jar},
-        ${jena.jar}, ${antlr.jar}, ${jakarta-oro.jar}, {jid3.jar}"/>
+        ${jena.jar}, ${antlr.jar}, ${jakarta-oro.jar}, {jid3.jar}, lib/${sesame-model.jar}"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="${saaj.jar},
                        ${axis.jar}, ${commons-discovery.jar},
                        ${jaxrpc.jar}, ${wsdl4j.jar}"/>
@@ -944,7 +944,7 @@
         <jvmarg value="${arch.bits}"/>
 
         <classpath>
-            <pathelement path="${lib.dir}/${jrdf.jar}"/>
+            <pathelement path="${lib.dir}/${jrdf.jar}, ${lib.dir}/${sesame-model.jar}"/>
         </classpath>
       </java>
   </target>
@@ -1028,7 +1028,7 @@
                            icu4j.jar, jena*.jar, antlr*.jar,
                            ${commons-logging.jar}, log4j*.jar, lucene*.jar,
                            xerces*.jar, xmlParserAPIs.jar, ${jrdf.jar},
-                           ${saaj.jar}"/>
+                           ${saaj.jar}, ${sesame-model.jar}"/>
       </classpath>
     </java>
 
@@ -1404,7 +1404,7 @@
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
-        lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${joda-time.jar}, ${commons-logging.jar}"/>
+        lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
         ${driver.jar}, ${itql.jar}, ${sparql-int.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
@@ -1741,6 +1741,7 @@
       <zipfileset src="${lib.dir}/${beep.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jargs.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jetty.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jetty.plus.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>

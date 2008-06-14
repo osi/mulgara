@@ -78,6 +78,8 @@ public class BlankNodeImpl
    */
   private long nodeId;
 
+  private String stringValue;
+
   /**
    * Create an empty blank node.  Just a place holder.
    */
@@ -85,6 +87,7 @@ public class BlankNodeImpl
 
     // Do nothing
     this(0);
+	stringValue = "node0";
   }
 
   /**
@@ -95,6 +98,7 @@ public class BlankNodeImpl
   public BlankNodeImpl(long newNodeId) {
 
     nodeId = newNodeId;
+    stringValue = "node" + nodeId;
   }
 
 
@@ -113,6 +117,7 @@ public class BlankNodeImpl
    */
   public void setNodeId(long nodeId) {
     this.nodeId = nodeId;
+    stringValue = "node" + nodeId;
   }
 
 
@@ -148,27 +153,15 @@ public class BlankNodeImpl
       return false;
     } else if (obj == this) {
       return true;
-    } else if (obj instanceof BlankNodeImpl &&
-               this.nodeId != 0 && this.nodeId == ((BlankNodeImpl)obj).nodeId) {
-      return true;
+    } else if (obj instanceof BlankNodeImpl) {
+      return this.nodeId != 0 && this.nodeId == ((BlankNodeImpl)obj).nodeId;
     } else {
-      return false;
+      return super.equals(obj);
     }
   }
 
-
   /**
-   * Reproducible hashcode for the object.
-   *
-   * @return Hashcode of the nodeid.
-   */
-  public int hashCode() {
-
-    return (int) (nodeId ^ (nodeId >>>32));
-  }
-
-  /**
-   * Provide a legible representation of the blank node.  Returns _node and
+   * Provide a legible representation of the blank node.  Returns "node" and
    * the node id.
    *
    * @return the string value of the uri and node id.
@@ -176,5 +169,10 @@ public class BlankNodeImpl
   public String toString() {
 
     return "_node" + nodeId;
+  }
+
+  public String getID() {
+
+    return stringValue;
   }
 }

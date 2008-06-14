@@ -112,8 +112,6 @@ public class VariableNodeImpl
    */
   public boolean equals(Object obj) {
 
-    boolean returnValue = false;
-
     // Object must not be null
     if (obj != null) {
 
@@ -125,7 +123,7 @@ public class VariableNodeImpl
         // string values.
         if (getVariableName().equals(tmpNode.getVariableName())) {
 
-          returnValue = true;
+          return true;
         }
       }
       catch (ClassCastException cce) {
@@ -134,17 +132,11 @@ public class VariableNodeImpl
       }
     }
 
-    return returnValue;
+    return super.equals(obj);
   }
 
-  /**
-   * Reproducible hashcode for the object.
-   *
-   * @return Hashcode of the nodeid.
-   */
-  public int hashCode() {
-
-    return variableName.hashCode();
+  public String getID() {
+    return variableName;
   }
 
   /**

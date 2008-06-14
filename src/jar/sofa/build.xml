@@ -30,6 +30,7 @@
     <pathelement path="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <pathelement path="${itql.dist.dir}/${itql.jar}"/>
     <pathelement path="${lib.dir}/${jrdf.jar}"/>
+    <pathelement path="${lib.dir}/${sesame-model.jar}"/>
     <pathelement path="${lib.dir}/${sofa.jar}"/>
     <pathelement path="${lib.dir}/${xom.jar}"/>
   </path>

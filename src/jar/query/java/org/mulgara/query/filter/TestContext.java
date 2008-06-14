@@ -145,5 +145,6 @@ public class TestContext implements Context {
   private static class Null implements Node {
     public static final Null NULL = new Null();
     public int hashCode() { return -1; }
+    public String stringValue() { return "null"; }
   }
 }

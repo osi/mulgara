@@ -475,7 +475,14 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
       try {
         compareResult(expected, lc.getConstraintExpression());
       } catch (AssertionFailedError af2) {
-        throw af;
+          expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
+              new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:4=[test:uri:7, test:uri:8], test:uri:3=[test:uri:5, test:uri:6]}}|C{}"),
+          }));
+          try {
+            compareResult(expected, lc.getConstraintExpression());
+          } catch (AssertionFailedError af3) {
+            throw af3;
+          }
       }
     }
   }
@@ -518,7 +525,15 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
       try {
         compareResult(expected, lc.getConstraintExpression());
       } catch (AssertionFailedError af2) {
-        throw af;
+          expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
+              new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:4=[test:uri:7, test:uri:8], test:uri:3=[test:uri:5, test:uri:6]}}|C{}"),
+              new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:7=[test:uri:5, test:uri:6], test:uri:8=[test:uri:7, test:uri:8]}}|C{}"),
+          }));
+          try {
+            compareResult(expected, lc.getConstraintExpression());
+          } catch (AssertionFailedError af3) {
+            throw af3;
+          }
       }
     }
   }
@@ -563,7 +578,15 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
       try {
         compareResult(expected, lc.getConstraintExpression());
       } catch (AssertionFailedError af2) {
-        throw af;
+          expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
+              new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:4=[test:uri:7, test:uri:8], test:uri:3=[test:uri:5, test:uri:6]}}|C{test:uri:1={test:uri:3=[test:uri:5]}}"),
+              new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:7=[test:uri:5, test:uri:6], test:uri:8=[test:uri:7, test:uri:8]}}|C{test:uri:2={test:uri:4=[test:uri:6]}}"),
+          }));
+          try {
+            compareResult(expected, lc.getConstraintExpression());
+          } catch (AssertionFailedError af3) {
+            throw af3;
+          }
       }
     }
   }

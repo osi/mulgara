@@ -125,4 +125,8 @@ public class ParserBlankNodeImpl extends AbstractBlankNode implements BlankNode
     return label;
   }
 
+  public String getID() {
+    return label == null ? String.valueOf(seqNo) : label;
+  }
+
 }

@@ -153,7 +153,7 @@
                        commons-discovery-*.jar, commons-httpclient-*.jar,
                        commons-codec-*.jar, connector-*.jar, jaxrpc-*.jar,
                        carol*.jar, howl-logger*.jar,
-                       ${joda-time.jar}, mulgara-sparql*.jar"
+                       ${joda-time.jar}, mulgara-sparql*.jar, sesame-model-*.jar"
              excludes="jboss-j2ee.jar"/>
   </path>
 

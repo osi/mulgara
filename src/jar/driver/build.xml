@@ -110,6 +110,7 @@
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**"/>

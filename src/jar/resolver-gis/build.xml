@@ -25,6 +25,7 @@
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <pathelement path="${lib.dir}/${jrdf.jar}"/>
+    <pathelement path="${lib.dir}/${sesame-model.jar}"/>
   </path>
 
   <path id="resolver-gis-test-classpath">

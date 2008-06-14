@@ -36,11 +36,14 @@ public class ForeignBlankNode extends AbstractBlankNode {
   
   /** The hashcode of the foreign server. */
   final int serverHashCode;
+
+  private String stringValue;
   
   public ForeignBlankNode(URI serverUri, BlankNodeImpl remoteNode) {
     this.nodeId = remoteNode.getNodeId();
     this.serverUri = serverUri;
     this.serverHashCode = serverUri.hashCode();
+    stringValue = serverUri.toString() + ":" + nodeId;
   }
 
 
@@ -48,8 +51,8 @@ public class ForeignBlankNode extends AbstractBlankNode {
    * Provide a representation that is unique for this node.
    * @return A string containing all the unique features of the node.
    */
-  public String toString() {
-    return "_:" + serverUri.toString() + ":" + nodeId;
+  public String getID() {
+    return stringValue;
   }
 
 
@@ -66,16 +69,7 @@ public class ForeignBlankNode extends AbstractBlankNode {
       ForeignBlankNode fbn = (ForeignBlankNode)obj;
       return (serverUri.equals(fbn.serverUri) && nodeId == fbn.nodeId);
     }
-    return false;
-  }
-
-
-  /**
-   * Reproducable hashcode for the object.
-   * @return Hashcode of the nodeid.
-   */
-  public int hashCode() {
-    return serverHashCode ^ (int)(nodeId ^ (nodeId >>> 32));
+    return super.equals(obj);
   }
 
 }
