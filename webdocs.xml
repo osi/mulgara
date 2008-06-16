@@ -57,50 +57,59 @@
     <meta name="DC.Rights" scheme="URI" content="http://opensource.org/licenses/osl-3.0.php" />
     
 	<script type="text/javascript" src="/script/styleswitcher.js"></script>
-	<script type="text/javascript" src="/script/rollover.js"></script>
+	<!-- <script type="text/javascript" src="/script/rollover.js"></script> -->
 	<link rel="stylesheet" type="text/css" href="/style/style.css"/>
-	<!--[if lt IE 7]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
+	<link rel="stylesheet" type="text/css" href="/style/fixed.css" title="fixed" />
+	<link rel="alternate stylesheet" type="text/css" href="/style/fluid.css" title="fluid" />
+	<link rel="alternate stylesheet" type="text/css" href="/style/straight.css" title="straight" />
+	
+	<!--[if lte IE 6]><style type="text/css">@import url(/style/styleIE6.css);</style><![endif]-->
 	<!--[if gte IE 7]><style type="text/css">@import url(/style/styleIE7.css);</style><![endif]-->
-	<link rel="stylesheet" type="text/css" href="/style/navIn.css" title="navIn" />
-	<link rel="alternate stylesheet" type="text/css" href="/style/navOut.css" title="navOut" />
+	<!--[if gte IE 7]><link rel="alternate stylesheet" type="text/css" href="/style/straightIE7.css" title="straight" /><![endif]-->
 </head>
 
  <body>
 	<div id="top"><a name="top"></a></div>
-	<div id="logo"></div>
-	<div id="logomulgara"></div> 
-	<div id="textonlymode">
+	<div id="logo"><img src="/img-layout/logomulgaraV2.png" width="450" height="55" class="ieOpacity" alt="mulgara semantic store" /></div>
+	<div class="textonlymode">
 		<h1>mulgara - semantic store</h1>
 		<p><a href="#textonlynav">skip navigation</a></p>
 	</div>
+	<div id="verticalLine"></div>      
+
 <!-- PROJECT NAVIGATION STARTS HERE -->
 	<div id="navProject"><!--
-	--><a href="/index.html" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('home','','/img-layout/home2.png',1)"><img src="/img-layout/home1.png" alt="WebSite Home" width="50" height="50" name="home" /></a><br />	
-		<a href="/index.html" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('docs','','/img-layout/docs2.png',1)"><img src="/img-layout/docs3.png" alt="Documentation" width="50" height="50" name="docs" /></a><br />
-		<a href="http://mulgara.org/confluence" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('wiki','','/img-layout/wiki2.png',1)"><img src="/img-layout/wiki1.png" alt="Development Wiki" width="50" height="50" name="wiki" /></a><br />
-		<a href="http://mulgara.org/jira" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('bugs','','/img-layout/bugs2.png',1)"><img src="/img-layout/bugs1.png" alt="Issue Tracker" width="50" height="50" name="bugs" /></a>
+	--><a href="http://mulgara.org/index.html" id="home" class="ieOpacity"><img src="/img-layout/blank.gif" alt="WebSite Home" width="50" height="50" /></a>	
+		<a href="/index.html" id="docs" class="ieOpacity"><img src="/img-layout/blank.gif" alt="Documentation" width="50" height="50" /></a>
+		<a href="http://mulgara.org/confluence"  id="wiki" class="ieOpacity"><img src="/img-layout/blank.gif" alt="Development Wiki" width="50" height="50" /></a>
+		<a href="http://mulgara.org/jira" id="bugs" class="ieOpacity"><img src="/img-layout/blank.gif" alt="Issue Tracker" width="50" height="50" /></a>
 	</div>  
 <!-- PROJECT NAVIGATION ENDS HERE -->      
 
-<!-- SITE NAVIGATION STARTS HERE -->   
+<!-- SITE NAVIGATION STARTS HERE --> 
+<div id="pulldowner">SHOW SITE NAV
 <div id="navMain">
 	<div id="navSite">
   @@includeTOC@@
 	</div>
+</div>	
 </div>
 <!-- SITE NAVIGATION ENDS HERE -->
 
-<!-- IN-OUT SWITCH STARTS HERE -->
-<div id="navGimmicks">
-	<div id="verticalLine"></div>	
-	<div id="arrowLeft">
-		<a href="#" onclick="setActiveStyleSheet('navOut'); return false"><img src="/img-layout/arrowLeft.png" alt="Hide Navigation" width="20" height="39" /></a>
-	</div>
-	<div id="arrowRight">
-		<a href="#" onclick="setActiveStyleSheet('navIn'); return false"><img src="/img-layout/arrowRight.png" alt="Show Navigation" width="20" height="39" /></a>
-	</div>
+
+<!-- STYLE SWITCHING STARTS HERE
+<div id="styleSwitch">
+	<div id="fixed"><a href="#" onclick="setActiveStyleSheet('fixed'); return false" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('fixed','','/img-layout/fixed2.png',1)"><img src="/img-layout/blank.gif" alt="fixed" width="50" height="50" name="fixed" /></a></div>
+	<div id="fluid"><a href="#" onclick="setActiveStyleSheet('fluid'); return false" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('fluid','','/img-layout/fluid2.png',1)"><img src="/img-layout/blank.gif" alt="fluid" width="50" height="50" name="fluid" /></a></div>
+	<div id="straight"><a href="#" onclick="setActiveStyleSheet('straight'); return false" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('straight','','/img-layout/straight2.png',1)"><img src="/img-layout/blank.gif" alt="straight" width="50" height="50" name="straight" /></a></div>
+</div> -->
+<!-- STYLE SWITCHING STARTS HERE -->
+<div id="styleSwitch">
+	<div id="fixed"><a href="#" onclick="setActiveStyleSheet('fixed'); return false"><img src="/img-layout/blank.gif" alt="fixed" width="50" height="50" /></a></div>
+	<div id="fluid"><a href="#" onclick="setActiveStyleSheet('fluid'); return false"><img src="/img-layout/blank.gif" alt="fluid" width="50" height="50" /></a></div>
+	<div id="straight"><a href="#" onclick="setActiveStyleSheet('straight'); return false"><img src="/img-layout/blank.gif" alt="straight" width="50" height="50" /></a></div>
 </div>
-<!-- IN-OUT SWITCH ENDS HERE -->]]></replacevalue>
+<!--STYLE SWITCHING ENDS HERE -->]]></replacevalue>
     </replace>
 
     <replace dir="${src.docs.dir}" token="@@includeTOC@@">
@@ -197,12 +206,12 @@
       <include name="**/*.html"/>
       <replacevalue><![CDATA[
 
+	<div id="validator">
+		<a href="http://validator.w3.org/check?uri=referer"><img src="/img-layout/w3xhtml10.gif" alt="Valid XHTML 1.0 Transitional" height="21" width="66" /></a><!--
+		--><a class="right" href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fmulgara.org%2Fstyle%2Fstyle.css&amp;warning=1&amp;profile=css3&amp;usermedium=all"><img src="/img-layout/w3css30.gif" alt="Valid CSS 3.0!" height="21" width="66" /></a>
+	</div>
 	<div id="footer">
 		Copyright 2006-2007 The Mulgara Project. Some rights reserved. <a href="/overview/legal.html">MORE&nbsp;&gt;</a>
-	</div>
-	<div id="validator">
-		<a href="http://validator.w3.org/check?uri=referer"><img src="/img-layout/w3xhtml10.gif" alt="Valid XHTML 1.0 Transitional" height="21" width="66" /></a>
-		<a class="right" href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fmulgara.org%2Fstyle%2Fstyle.css&amp;warning=1&amp;profile=css3&amp;usermedium=all"><img src="/img-layout/w3css30.gif" alt="Valid CSS 3.0!" height="21" width="66" /></a>
 	</div>
 
 </body>
@@ -245,7 +254,6 @@
 									<li><a href="/overview/suncomponents.html">Sun<span class="toc"> Microsystems Components</span></a></li>
 									<li><a href="/overview/optcomponents.html"><span class="toc">Supporting </span>Optional<span class="toc"> Packages</span></a></li>
 							</ul></li>
-							<li><a href="/overview/license.html">License</a></li>
 							<li><a href="/overview/history.html">Documentation History</a></li>
 							<li><a href="/overview/aboutsite.html">About this site</a></li>
 							<li class="ulcontainer toc"><ul class="toc">

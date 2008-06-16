@@ -1,4 +1,4 @@
-
+/*
 #navProject	{
 	left: 10px;
 	top: 109px;
@@ -20,13 +20,18 @@
 	left: 212px;
 	height: 1.2em;
 	}
-
-#content	{
-	top: 95px;
-	left: -2px;
-	}	
+	
+	*/
 #content ol, #content ul {
 	margin-left: 2em;
 	padding-left: 0em;
 	}
+
+#content	{
+	top: 93px;
+	left: 210px;
+	}	
 	
+#verticalLine	{
+	display: none;
+	}
