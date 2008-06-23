@@ -131,6 +131,27 @@ interface RemoteSession extends Remote {
    */
   public void backup(URI sourceURI, OutputStream outputStream)
     throws QueryException, RemoteException;
+  
+  
+  /**
+   * Export the data in the specified graph. The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI) throws QueryException, RemoteException;
+  
+  
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream) throws QueryException, RemoteException;
 
   /**
    * Restore the specified server.

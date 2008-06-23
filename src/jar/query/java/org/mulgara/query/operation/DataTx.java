@@ -47,6 +47,8 @@ public abstract class DataTx extends ServerCommand {
   /** String constant for the extension of zip files. */
   private static final String ZIP_EXTENSION = ".zip";
 
+  protected static final String FILE_SCHEME = "file";
+
   /** The source of data to insert. */
   private final URI source;
   

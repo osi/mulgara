@@ -29,29 +29,30 @@
 package org.mulgara.server.beep;
 
 // Java 2 Standard Packages
-import java.io.*;
-import java.net.*;
-import java.rmi.RemoteException;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+
 import javax.transaction.xa.XAResource;
 
-// Third party packages
-import org.apache.log4j.Logger; // Apache Log4J
-import org.beepcore.beep.core.BEEPException; // BEEP
+import org.apache.log4j.Logger;
+import org.beepcore.beep.core.BEEPException;
 import org.beepcore.beep.core.ByteOutputDataStream;
 import org.beepcore.beep.core.Channel;
 import org.beepcore.beep.core.Message;
-import org.beepcore.beep.core.StringOutputDataStream;
 import org.beepcore.beep.lib.Reply;
-import org.jrdf.graph.Node; // JRDF
-import org.jrdf.graph.Triple; // JRDF
-
-// Locally written packages
+import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
-import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
 import org.mulgara.server.Session;
 import org.mulgara.sparql.protocol.StreamFormatException;
@@ -206,6 +207,31 @@ class BEEPSession implements Session {
   public void backup(URI serverURI, OutputStream outputStream) throws QueryException {
     throw new QueryException("Backup not implemented");
   }
+  
+  
+  /**
+   * Export the data in the specified graph. The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI) throws QueryException {
+    throw new QueryException("Export not implemented");
+  }
+  
+  
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream) throws QueryException {
+    throw new QueryException("Export not implemented");
+  }
 
 
   /**
@@ -316,6 +342,7 @@ class BEEPSession implements Session {
    * @return a list of non-<code>null</code> answers to the <var>queries</var>
    * @throws QueryException if <var>query</var> can't be answered
    */
+  @SuppressWarnings("unchecked")
   public List query(List queries) throws QueryException {
     throw new QueryException("Multiple queries not implemented");
   }

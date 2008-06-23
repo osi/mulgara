@@ -28,23 +28,30 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URI;
-import java.util.*;
+import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
-// Third party packages
-import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
-
-// Local packages
-import org.mulgara.content.rdfxml.writer.*;
-import org.mulgara.query.*;
-import org.mulgara.query.rdf.*;
-import org.mulgara.resolver.spi.*;
+import org.jrdf.graph.URIReference;
+import org.mulgara.content.rdfxml.writer.RDFXMLWriter;
+import org.mulgara.query.Constraint;
+import org.mulgara.query.ConstraintImpl;
+import org.mulgara.query.LocalNode;
+import org.mulgara.query.Variable;
+import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.Resolution;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.Statements;
+import org.mulgara.resolver.spi.SystemResolver;
+import org.mulgara.resolver.spi.TuplesWrapperStatements;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.tuples.Tuples;
 
 /**
@@ -60,15 +67,9 @@ import org.mulgara.store.tuples.Tuples;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class BackupOperation implements BackupConstants, Operation {
+class BackupOperation extends OutputOperation implements BackupConstants, Operation {
 
-  /** Logger.  */
-  private static final Logger logger =
-      Logger.getLogger(BackupOperation.class.getName());
-
-  private final OutputStream outputStream;
   private final URI serverURI;
-  private final URI destinationURI;
 
   //
   // Constructor
@@ -87,12 +88,9 @@ class BackupOperation implements BackupConstants, Operation {
    * @param destinationURI  URI of the file to backup into, may be
    *   <code>null</code> if an <var>outputStream</var> is specified
    */
-  public BackupOperation(
-      OutputStream outputStream, URI serverURI, URI destinationURI
-  ) {
-    this.outputStream = outputStream;
+  public BackupOperation(OutputStream outputStream, URI serverURI, URI destinationURI) {
+    super(outputStream, destinationURI);
     this.serverURI = serverURI;
-    this.destinationURI = destinationURI;
   }
 
   //
@@ -105,26 +103,7 @@ class BackupOperation implements BackupConstants, Operation {
     OutputStream os = outputStream;
     Writer writer = null;
     try {
-      // Check if an output stream was supplied and open the local file if it
-      // hasn't.
-      if (os == null) {
-        // Verify that the destination is a local file.
-        String scheme = destinationURI.getScheme();
-        if (scheme == null) {
-          throw new IllegalArgumentException(
-              "Relative URIs are not supported as backup destination");
-        }
-        if (!scheme.equals("file")) {
-          throw new IllegalArgumentException(
-              "Only file URIs are currently supported as backup destination");
-        }
-
-        // Open the local file.
-        os = new FileOutputStream(destinationURI.getPath());
-      }
-
-      // Ensure the output is buffered for efficiency.
-      os = new BufferedOutputStream(os);
+      os = getOutputStream();
 
       // The existence of a fragment indicates that a model is to be backed
       // up otherwise the entire database is to be backed up.

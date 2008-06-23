@@ -12,6 +12,7 @@
 package org.mulgara.query.operation;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.mulgara.query.ModelResource;
@@ -48,8 +49,12 @@ public abstract class ServerCommand implements Command {
    */
   public URI getServerURI() {
     Set<URI> gs = serverGraph.getDatabaseURIs();
-    assert gs.size() == 1;
-    return gs.iterator().next();
+    URI serverUri = null;
+    Iterator<URI> iter = gs.iterator();
+    if (iter.hasNext()) {
+      serverUri = iter.next();
+    }
+    return serverUri;
   }
 
 

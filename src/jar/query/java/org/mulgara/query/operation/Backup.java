@@ -39,8 +39,6 @@ import edu.emory.mathcs.util.remote.io.server.impl.RemoteOutputStreamSrvImpl;
  */
 public class Backup extends DataTx {
   
-  private static final String FILE = "file";
-
   /** The logger */
   static final Logger logger = Logger.getLogger(Backup.class.getName());
 
@@ -55,7 +53,7 @@ public class Backup extends DataTx {
    */
   public Backup(URI source, URI destination, boolean locality) {
     super(source, destination, source, locality);
-    if (!destination.getScheme().equals(FILE)) throw new IllegalArgumentException("Backups must be sent to a file");
+    if (!destination.getScheme().equals(FILE_SCHEME)) throw new IllegalArgumentException("Backups must be sent to a file");
     updateServerUri(source);
   }
 

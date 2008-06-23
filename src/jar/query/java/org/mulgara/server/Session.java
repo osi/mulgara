@@ -132,6 +132,28 @@ public interface Session {
    */
   public void backup(URI sourceURI, OutputStream outputStream)
     throws QueryException;
+  
+  /**
+   * Export the data in the specified graph. The database is not changed by
+   * this method.  Does not require an exclusive lock on the database and will
+   * begin with the currently committed state.
+   *
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI) throws QueryException;
+  
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.  Does not require an exclusive
+   * lock on the database and will begin with the currently committed state.
+   *
+   * @param graphURI The URI of the graph to export.
+   * @param outputStream The stream to receive the contents
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream) throws QueryException;
 
   /**
    * Restore all the data on the specified server. If the database is not

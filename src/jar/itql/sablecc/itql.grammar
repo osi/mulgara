@@ -48,6 +48,7 @@ Tokens
   {def}                echo        = 'echo';
   {def}                execute     = 'execute';
   {def}                exclude     = 'exclude';
+  {def}                export      = 'export';
   {def}                from        = 'from';
   {def}                help        = 'help';
   {def}                in          = 'in';
@@ -130,6 +131,7 @@ Productions
     {directory} directory resource                                           |
     {drop}      drop resource                                                |
     {execute}   execute resource                                             |
+    {export}    export [source]:resource to [locality]:locality? [destination]:resource |
     {help}      help command_prefix                                          |
     {insert}    insert triple_factor into resource                           |
     {load}      load [locality]:locality? [source]:resource into [destination]:resource |
@@ -180,6 +182,7 @@ Productions
     {directory} directory |
     {drop} drop           |
     {execute} execute     |
+    {export} export       |
     {help} help           |
     {insert} insert       |
     {load} load           |

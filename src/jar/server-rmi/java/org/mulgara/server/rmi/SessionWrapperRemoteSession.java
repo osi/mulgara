@@ -207,6 +207,37 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
       throw convertToQueryException(t);
     }
   }
+  
+  /**
+   * Export the data in the specified graph. The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI) throws QueryException, RemoteException {
+    try {
+      session.export(graphURI, destinationURI);
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+  
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream) throws QueryException, RemoteException {
+    try {
+      session.export(graphURI, outputStream);
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
 
   /**
    * Restore all the data on the specified server. If the database is not

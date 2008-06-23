@@ -38,6 +38,7 @@ import org.mulgara.query.operation.CreateGraph;
 import org.mulgara.query.operation.Deletion;
 import org.mulgara.query.operation.DropGraph;
 import org.mulgara.query.operation.ExecuteScript;
+import org.mulgara.query.operation.Export;
 import org.mulgara.query.operation.Help;
 import org.mulgara.query.operation.Insertion;
 import org.mulgara.query.operation.Load;
@@ -688,6 +689,24 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     lastCommand = new Backup(sourceURI, destinationURI, locality);
   }
 
+  /**
+   * Exports the contents of a graph to a local or remote file.
+   *
+   * @param node the backup command
+   */
+  public void outAExportCommand(AExportCommand node) {
+    
+    // log the command
+    if (logger.isDebugEnabled()) logger.debug("Processing export command " + node);
+
+    // get constituents of the export command
+    URI sourceURI = toURI(node.getSource());
+    URI destinationURI = toURI(node.getDestination());
+    boolean locality = node.getLocality() != null && (node.getLocality() instanceof ALocalLocality);
+
+    lastCommand = new Export(sourceURI, destinationURI, locality);
+  }
+  
   /**
    * Restores the contents of a server from a file.
    *

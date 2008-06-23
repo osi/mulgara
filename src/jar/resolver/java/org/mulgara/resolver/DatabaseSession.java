@@ -341,6 +341,29 @@ class DatabaseSession implements Session {
   public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
     this.backup(outputStream, sourceURI, null);
   }
+  
+  
+  /**
+   * Export the data in the specified graph. The database is not changed by this method.
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI) throws QueryException {
+    this.export(null, graphURI, destinationURI);
+  }
+  
+  
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream) throws QueryException {
+    this.export(outputStream, graphURI, null);
+  }
 
 
   /**
@@ -580,6 +603,21 @@ class DatabaseSession implements Session {
         throws QueryException {
     execute(new BackupOperation(outputStream, serverURI, destinationURI),
         "Unable to backup to " + destinationURI);
+  }
+  
+  /**
+   * Export the data on the specified graph to a URI or an output stream.
+   * The database is not changed by this method.
+   *
+   * If an outputstream is supplied then the destinationURI is ignored.
+   *
+   * @param outputStream Optional output stream to receive the contents
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI Optional URI of the file to export into.
+   * @throws QueryException if the export cannot be completed.
+   */
+  private synchronized void export(OutputStream outputStream, URI graphURI, URI destinationURI)
+        throws QueryException {
   }
 
 
