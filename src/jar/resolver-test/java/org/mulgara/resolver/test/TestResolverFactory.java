@@ -120,6 +120,14 @@ public class TestResolverFactory implements ResolverFactory {
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  /**
+   * {@inheritDoc}
+   * @return <code>false</code> - this graph is for custom constraint testing only.
+   */
+  public boolean supportsExport() {
+    return false;
+  }
 
   /**
    * Register this resolver upon database startup.

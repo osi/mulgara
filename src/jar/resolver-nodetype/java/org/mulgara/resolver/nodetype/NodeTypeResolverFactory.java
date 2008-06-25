@@ -134,6 +134,14 @@ public class NodeTypeResolverFactory implements ResolverFactory {
   public Graph[] getDefaultGraphs() {
     return new Graph[] { new Graph(DEFAULT_GRAPH, graphTypeURI) };
   }
+  
+  /**
+   * {@inheritDoc}
+   * @return <code>false</code> - this graph does not support exports.
+   */
+  public boolean supportsExport() {
+    return false;
+  }
 
   /**
    * Register this resolver upon database startup.

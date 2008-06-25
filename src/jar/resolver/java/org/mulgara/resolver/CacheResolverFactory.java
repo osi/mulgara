@@ -133,6 +133,14 @@ class CacheResolverFactory implements ResolverFactory
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  /**
+   * {@inheritDoc}
+   * @return externalResolverFactory.supportsExport() - should always be true, but check anyways.
+   */
+  public boolean supportsExport() {
+    return externalResolverFactory.supportsExport();
+  }
 
   public Resolver newResolver(boolean         canWrite,
                               ResolverSession resolverSession,

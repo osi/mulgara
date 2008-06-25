@@ -618,6 +618,8 @@ class DatabaseSession implements Session {
    */
   private synchronized void export(OutputStream outputStream, URI graphURI, URI destinationURI)
         throws QueryException {
+    execute(new ExportOperation(outputStream, graphURI, destinationURI),
+        "Unable to export " + graphURI);
   }
 
 

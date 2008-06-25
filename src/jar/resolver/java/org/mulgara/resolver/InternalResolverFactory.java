@@ -114,6 +114,14 @@ class InternalResolverFactory implements ResolverFactory
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  /**
+   * {@inheritDoc}
+   * @return resolverFactory.supportsExport() - delegate to the acual resolver.
+   */
+  public boolean supportsExport() {
+    return resolverFactory.supportsExport();
+  }
 
   public Resolver newResolver(boolean         canWrite,
                               ResolverSession resolverSession,

@@ -56,11 +56,11 @@ public abstract class OutputOperation implements Operation {
       String scheme = destinationURI.getScheme();
       if (scheme == null) {
         throw new IllegalArgumentException(
-            "Relative URIs are not supported as backup destination");
+            "Relative URIs are not supported as output destination");
       }
       if (!scheme.equals("file")) {
         throw new IllegalArgumentException(
-            "Only file URIs are currently supported as backup destination");
+            "Only file URIs are currently supported as output destination");
       }
 
       // Open the local file.

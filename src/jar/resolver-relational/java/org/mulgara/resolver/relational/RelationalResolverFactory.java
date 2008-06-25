@@ -148,6 +148,15 @@ public class RelationalResolverFactory implements ResolverFactory {
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  /**
+   * {@inheritDoc}
+   * @return <code>false</code> - this graph can resolve ($s $p $o) but the resolution is
+   * always empty, so exporting this type graph has no meaning.
+   */
+  public boolean supportsExport() {
+    return false;
+  }
 
   /**
    * Register this resolver upon database startup.

@@ -95,6 +95,15 @@ public class DistributedResolverFactory implements ResolverFactory
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  
+  /**
+   * {@inheritDoc}
+   * @return <code>true</code> - any constraint can be resolved against a remote server.
+   */
+  public boolean supportsExport() {
+    return true;
+  }
 
 
   /**

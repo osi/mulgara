@@ -116,6 +116,14 @@ public class FileResolverFactory implements ResolverFactory
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  /**
+   * @inheritDoc
+   * @return <code>true</code> - this graph supports exporting.
+   */
+  public boolean supportsExport() {
+    return true;
+  }
 
   /**
    * Register this resolver upon database startup.

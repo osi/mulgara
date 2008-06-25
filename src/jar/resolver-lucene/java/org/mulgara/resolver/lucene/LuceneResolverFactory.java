@@ -131,6 +131,14 @@ public class LuceneResolverFactory implements ResolverFactory {
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  /**
+   * {@inheritDoc}
+   * @return <code>false</code> - this graph does not support exports.
+   */
+  public boolean supportsExport() {
+    return false;
+  }
 
   /**
    * Register this resolver upon database startup.

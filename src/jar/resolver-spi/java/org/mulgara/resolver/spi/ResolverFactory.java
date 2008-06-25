@@ -115,6 +115,18 @@ public interface ResolverFactory
    */
   public abstract Resolver newResolver(boolean canWrite,
       ResolverSession resolverSession, Resolver systemResolver) throws ResolverFactoryException;
+  
+  /**
+   * Answers whether graphs associated with this factory (via a registered graph
+   * type URI for internal graphs or URL protocol scheme for external graphs) support
+   * the export operation.  If this method returns <code>true</code>, then the
+   * Resolver returned by the {@link #newResolver(boolean, ResolverSession, Resolver)} method
+   * MUST be able to resolve the constraint ($s $p $o &lt;graph&gt;).
+   * 
+   * @return <code>true</code> if graphs associated with this factory support exporting
+   *         all of their contents.
+   */
+  public abstract boolean supportsExport();
 
   /**
    * A class to manage pairs of URIs for graph identifiers and types.

@@ -161,6 +161,15 @@ public class MemoryResolverFactory implements SystemResolverFactory
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
+  
+  
+  /**
+   * {@inheritDoc}
+   * @return <code>true</code> - this graph supports exports.
+   */
+  public boolean supportsExport() {
+    return true;
+  }
 
 
   /**
