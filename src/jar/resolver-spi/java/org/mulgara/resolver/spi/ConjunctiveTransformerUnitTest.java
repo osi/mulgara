@@ -433,18 +433,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     TestMutableLocalQuery lc = new TestMutableLocalQuery(initial);
     transformer.transform(context, lc);
 
-    try {
-      compareResult(expected, lc.getConstraintExpression());
-    } catch (AssertionFailedError af) {
-      expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-          new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:2, test:uri:3]}, $v2={test:uri:4=[test:uri:5, test:uri:6]}}|C{test:uri:8={test:uri:3=[test:uri:4, test:uri:5]}, test:uri:7={test:uri:2=[test:uri:1]}}"),
-      }));
-      try {
-        compareResult(expected, lc.getConstraintExpression());
-      } catch (AssertionFailedError af2) {
-        throw af;
-      }
-    }
+    compareResult(expected, lc.getConstraintExpression());
   }
 
 
@@ -466,25 +455,7 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     TestMutableLocalQuery lc = new TestMutableLocalQuery(initial);
     transformer.transform(context, lc);
 
-    try {
-      compareResult(expected, lc.getConstraintExpression());
-    } catch (AssertionFailedError af) {
-      expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-          new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{}"),
-      }));
-      try {
-        compareResult(expected, lc.getConstraintExpression());
-      } catch (AssertionFailedError af2) {
-          expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-              new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:4=[test:uri:7, test:uri:8], test:uri:3=[test:uri:5, test:uri:6]}}|C{}"),
-          }));
-          try {
-            compareResult(expected, lc.getConstraintExpression());
-          } catch (AssertionFailedError af3) {
-            throw af3;
-          }
-      }
-    }
+    compareResult(expected, lc.getConstraintExpression());
   }
 
 
@@ -509,33 +480,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
       }));
     ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:1, test:uri:2], test:uri:2=[test:uri:3, test:uri:4]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{}"),
-        new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:8=[test:uri:7, test:uri:8], test:uri:7=[test:uri:5, test:uri:6]}}|C{}"),
+        new TestConstraint("test:model:model2|V{$v1={test:uri:5=[test:uri:1, test:uri:2], test:uri:6=[test:uri:3, test:uri:4]}, $v2={test:uri:7=[test:uri:5, test:uri:6], test:uri:8=[test:uri:7, test:uri:8]}}|C{}"),
       }));
 
     TestMutableLocalQuery lc = new TestMutableLocalQuery(initial);
     transformer.transform(context, lc);
 
-    try {
-      compareResult(expected, lc.getConstraintExpression());
-    } catch (AssertionFailedError af) {
-      expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-          new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{}"),
-          new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:8=[test:uri:7, test:uri:8], test:uri:7=[test:uri:5, test:uri:6]}}|C{}"),
-      }));
-      try {
-        compareResult(expected, lc.getConstraintExpression());
-      } catch (AssertionFailedError af2) {
-          expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-              new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:4=[test:uri:7, test:uri:8], test:uri:3=[test:uri:5, test:uri:6]}}|C{}"),
-              new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:7=[test:uri:5, test:uri:6], test:uri:8=[test:uri:7, test:uri:8]}}|C{}"),
-          }));
-          try {
-            compareResult(expected, lc.getConstraintExpression());
-          } catch (AssertionFailedError af3) {
-            throw af3;
-          }
-      }
-    }
+    compareResult(expected, lc.getConstraintExpression());
   }
 
 
@@ -562,33 +513,13 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
       }));
     ConstraintExpression expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
         new TestConstraint("test:model:model1|V{$v1={test:uri:1=[test:uri:1, test:uri:2], test:uri:2=[test:uri:3, test:uri:4]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{test:uri:1={test:uri:3=[test:uri:5]}}"),
-        new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:8=[test:uri:7, test:uri:8], test:uri:7=[test:uri:5, test:uri:6]}}|C{test:uri:2={test:uri:4=[test:uri:6]}}"),
+        new TestConstraint("test:model:model2|V{$v1={test:uri:5=[test:uri:1, test:uri:2], test:uri:6=[test:uri:3, test:uri:4]}, $v2={test:uri:7=[test:uri:5, test:uri:6], test:uri:8=[test:uri:7, test:uri:8]}}|C{test:uri:2={test:uri:4=[test:uri:6]}}"),
       }));
 
     TestMutableLocalQuery lc = new TestMutableLocalQuery(initial);
     transformer.transform(context, lc);
 
-    try {
-      compareResult(expected, lc.getConstraintExpression());
-    } catch (AssertionFailedError af) {
-      expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-          new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:3=[test:uri:5, test:uri:6], test:uri:4=[test:uri:7, test:uri:8]}}|C{test:uri:1={test:uri:3=[test:uri:5]}}"),
-          new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:8=[test:uri:7, test:uri:8], test:uri:7=[test:uri:5, test:uri:6]}}|C{test:uri:2={test:uri:4=[test:uri:6]}}"),
-      }));
-      try {
-        compareResult(expected, lc.getConstraintExpression());
-      } catch (AssertionFailedError af2) {
-          expected = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
-              new TestConstraint("test:model:model1|V{$v1={test:uri:2=[test:uri:3, test:uri:4], test:uri:1=[test:uri:1, test:uri:2]}, $v2={test:uri:4=[test:uri:7, test:uri:8], test:uri:3=[test:uri:5, test:uri:6]}}|C{test:uri:1={test:uri:3=[test:uri:5]}}"),
-              new TestConstraint("test:model:model2|V{$v1={test:uri:6=[test:uri:3, test:uri:4], test:uri:5=[test:uri:1, test:uri:2]}, $v2={test:uri:7=[test:uri:5, test:uri:6], test:uri:8=[test:uri:7, test:uri:8]}}|C{test:uri:2={test:uri:4=[test:uri:6]}}"),
-          }));
-          try {
-            compareResult(expected, lc.getConstraintExpression());
-          } catch (AssertionFailedError af3) {
-            throw af3;
-          }
-      }
-    }
+    compareResult(expected, lc.getConstraintExpression());
   }
 
 
@@ -640,10 +571,27 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     public ConstraintExpression constructConstraintExpression(ConstraintElement model,
         Map byVarSubject, Map byConstSubject) throws SymbolicTransformationException {
 
-      String id = model.toString() + "|V" + 
-          (byVarSubject != null ? byVarSubject.toString() : "{}") + "|C" +
-          (byConstSubject != null ? byConstSubject.toString() : "{}");
+      String id = model.toString() +
+          "|V" + sortedMap((Map<?,?>)byVarSubject) +
+          "|C" + sortedMap((Map<?,?>)byConstSubject);
       return new TestConstraint(id);
+    }
+
+    String sortedMap(Map<?,?> map) {
+      if (map == null) return "{}";
+      return createSortedMap(map).toString();
+    }
+    
+    @SuppressWarnings("unchecked")
+    SortedMap<?,?> createSortedMap(Map<?,?> m) {
+      SortedMap<?,?> sm = new TreeMap(m);
+      for (Map.Entry entry: sm.entrySet()) {
+        Object v = entry.getValue();
+        if (v instanceof Map) {
+          entry.setValue(createSortedMap((Map<?,?>)v));
+        }
+      }
+      return sm;
     }
   }
 
