@@ -178,8 +178,9 @@ class LocalQueryResolver implements QueryEvaluationContext {
       Constraint localized = ConstraintOperations.localize(this, constraint);
 
       if (localized.getModel().equals(Variable.FROM)) {
+        // create the URIReferenceImpl without checking if it is absolute
         localized = ConstraintOperations.rewriteConstraintModel(
-            localize(new URIReferenceImpl(modelResource.getURI())), localized);
+            localize(new URIReferenceImpl(modelResource.getURI(), false)), localized);
       }
 
       Tuples result = operationContext.resolve(localized);
