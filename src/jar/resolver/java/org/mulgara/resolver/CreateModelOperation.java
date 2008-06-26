@@ -96,7 +96,7 @@ class CreateModelOperation implements Operation {
     // Default to the system graph type
     if (graphTypeURI == null) graphTypeURI = metadata.getSystemModelTypeURI();
 
-    verifyGraphUriIsRelative(graphURI, metadata);
+    verifyGraphUri(graphURI, metadata);
     
     // Look up the resolver factory for the model type
     ResolverFactory resolverFactory = operationContext.findModelTypeResolverFactory(graphTypeURI);
@@ -175,7 +175,7 @@ class CreateModelOperation implements Operation {
    * @param metadata
    * @throws QueryException
    */
-  private void verifyGraphUriIsRelative(URI graphURI, DatabaseMetadata metadata) throws QueryException {
+  private void verifyGraphUri(URI graphURI, DatabaseMetadata metadata) throws QueryException {
     // only both if this is a scheme which uses fragments - for the moment only RMI
     if (!fragmentScheme(graphURI)) return;
 
