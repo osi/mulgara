@@ -28,7 +28,11 @@
 package org.mulgara.query;
 
 /**
- * Variable nodes.
+ * Variable nodes. These act as a label for columns in a tuple, and not as
+ * elements that are resolvable in a context (compare with
+ * {@link org.mulgara.query.filter.value.Var} which does do this).
+ * 
+ * Comparable for the sake of ordering elements by the label and not their value.
  *
  * @created 2001-07-31
  *
@@ -40,7 +44,7 @@ package org.mulgara.query;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class Variable implements SelectElement, ConstraintElement {
+public class Variable implements SelectElement, ConstraintElement, Comparable<Variable> {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -121,5 +125,10 @@ public class Variable implements SelectElement, ConstraintElement {
    */
   public String toString() {
     return "$" + name;
+  }
+
+
+  public int compareTo(Variable o) {
+    return name.compareTo(o.name);
   }
 }
