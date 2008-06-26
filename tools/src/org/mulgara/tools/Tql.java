@@ -3,7 +3,6 @@ package org.mulgara.tools;
 import org.mulgara.itql.*;
 import org.mulgara.connection.*;
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Mulgara;
 
 import org.apache.log4j.*;
 
@@ -35,9 +34,6 @@ public class Tql {
    * connection to the host is not configurable.
    */
   private static final URI HOST = URI.create("rmi://localhost/server1");
-
-  /** A URI for the default graph in Mulgara. This one is always empty. */
-  private static final URI EMPTY_GRAPH = URI.create(Mulgara.NULL_GRAPH);
 
   /**
    * Run a set of SPARQL queries against a local server.
