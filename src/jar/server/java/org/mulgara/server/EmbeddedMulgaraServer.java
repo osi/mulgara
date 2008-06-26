@@ -2008,11 +2008,7 @@ public class EmbeddedMulgaraServer extends Thread {
 
       // log that we're sutting down the servers
       if (log.isInfoEnabled()) {
-        log.info("Shutting down server");
-      } else {
-        // regardless of the log level output this to stdout.
-        // Note. "\n" Will give us a new line beneath a Ctrl-C
-        System.out.println("\nShutting down server");
+        log.info("Started system exit.");
       }
 
       // finally
