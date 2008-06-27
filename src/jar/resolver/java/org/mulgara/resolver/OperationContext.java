@@ -31,14 +31,15 @@ package org.mulgara.resolver;
 import java.net.URI;
 import java.util.List;
 
-// Local packages
 import org.mulgara.query.Answer;
+import org.mulgara.query.Constraint;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.SecurityAdapter;
 import org.mulgara.resolver.spi.SystemResolver;
+import org.mulgara.store.tuples.Tuples;
 
 /**
  * Services provided to invocations of the {@link Operation#execute} method.
@@ -113,6 +114,19 @@ public interface OperationContext {
    * @return The new model node, or the current model if it is already canonical or unknown.
    */
   public long getCanonicalModel(long model);
+  
+  /**
+   * Convenience method for evaluating a constraint in the context of a transactional
+   * operation.  This method may be used to evaluate constraints against both internal and
+   * external graphs; the context will find and use the appropriate Resolver.  The method will
+   * also perform security checks on the graph specified by the constraint before resolving it.
+   * 
+   * @param constraint The constraint to resolve.
+   * @return The constraint resolution.
+   * @throws QueryException if there was an error obtaining the resolver, or resolving the consraint,
+   *         or if security permissions were not satisfied.
+   */
+  public Tuples resolve(Constraint constraint) throws QueryException;
 
   /**
    * Here for the moment while we fix transactions.

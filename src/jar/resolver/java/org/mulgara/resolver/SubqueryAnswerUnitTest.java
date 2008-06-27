@@ -193,5 +193,7 @@ public class SubqueryAnswerUnitTest extends TestCase {
     throws Exception { return null; }
 
     public SystemResolver getSystemResolver() { return null; } // FIXME: Scaffolding for transactions.
+
+    public Tuples resolve(Constraint constraint) throws QueryException { return null; }
   }
 }

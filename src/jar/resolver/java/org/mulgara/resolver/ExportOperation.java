@@ -23,13 +23,12 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.DatabaseMetadata;
-import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.resolver.spi.TuplesWrapperStatements;
 import org.mulgara.store.statement.StatementStore;
+import org.mulgara.store.tuples.Tuples;
 
 /**
  * An {@link Operation} that serializes the contents of an RDF graph to either
@@ -92,12 +91,8 @@ class ExportOperation extends OutputOperation {
         };
         Constraint constraint = new ConstraintImpl(vars[0], vars[1], vars[2], new LocalNode(graph));
         
-        // Use to operation context to enlist a new resolver in this transaction.
-        // Can't use the SystemResolver because it only resolves internal graphs.
-        Resolver resolver = operationContext.obtainResolver(resolverFactory);
-        
-        // Get all statements from the graph.
-        Resolution resolution = resolver.resolve(constraint);
+        // Get all statements from the graph.  Delegate to the operation context to do the security check.
+        Tuples resolution = operationContext.resolve(constraint);
         Statements graphStatements = new TuplesWrapperStatements(resolution, vars[0], vars[1], vars[2]);
         
         // Do the writing.

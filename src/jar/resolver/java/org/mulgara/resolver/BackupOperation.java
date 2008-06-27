@@ -37,7 +37,9 @@ import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
 import org.mulgara.query.ConstraintImpl;
+import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.SecurityAdapter;
 import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
@@ -85,6 +87,14 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
   public void execute(OperationContext operationContext,
       SystemResolver systemResolver,
       DatabaseMetadata metadata) throws Exception {
+    
+    // Make sure security adapters are satisfied before proceeding.
+    for (SecurityAdapter securityAdapter : operationContext.getSecurityAdapterList()) {
+      if (!securityAdapter.canBackup()) {
+        throw new QueryException("You do not have permission to back up the database.");
+      }
+    }
+    
     OutputStream os = getOutputStream();;
     Writer writer = null;
     try {
