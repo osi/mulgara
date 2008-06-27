@@ -28,23 +28,29 @@
 package org.mulgara.itql;
 
 // Java APIs
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.soap.SOAPException;
-import org.w3c.dom.*;
 
-// Third party packages
-import org.apache.log4j.*;              // Log4J
-import org.apache.axis.utils.XMLUtils;  // Apache Axis
 import org.apache.axis.utils.DOM2Writer;
-import org.jrdf.graph.URIReference;     // JRDF
+import org.apache.axis.utils.XMLUtils;
+import org.apache.log4j.Logger;
 import org.jrdf.graph.BlankNode;
-
-// Mulgara packages
+import org.jrdf.graph.URIReference;
 import org.mulgara.connection.Connection;
 import org.mulgara.connection.ConnectionException;
+import org.mulgara.connection.ConnectionFactory;
 import org.mulgara.itql.lexer.LexerException;
 import org.mulgara.itql.parser.ParserException;
 import org.mulgara.parser.Interpreter;
@@ -56,13 +62,14 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Backup;
 import org.mulgara.query.operation.Command;
-import org.mulgara.query.operation.DataTx;
+import org.mulgara.query.operation.Export;
 import org.mulgara.query.operation.Load;
 import org.mulgara.query.operation.Restore;
 import org.mulgara.query.operation.SetAutoCommit;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.server.Session;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * iTQL Interpreter Bean.
@@ -98,9 +105,6 @@ public class ItqlInterpreterBean {
    */
   private final static String TQL_NS = "http://mulgara.org/tql#";
   
-  /** Dummy load source for RDF files on an input stream. */
-  private final static URI DUMMY_RDF_SOURCE = URI.create(Mulgara.NAMESPACE+"locally-sourced-inputStream.rdf");
-
   /** The ITQL interpreter Bean. */
   private final TqlAutoInterpreter interpreter = new TqlAutoInterpreter();
   
@@ -711,20 +715,19 @@ public class ItqlInterpreterBean {
 
 
   /**
-   * Backup all the data on the specified server or model to a client local file.
+   * Backup all the data on the specified server to a client local file.
    * The database is not changed by this method.
    *
-   * @param sourceURI The URI of the server or model to backup.
+   * @param sourceURI The URI of the server to backup.
    * @param destinationFile an non-existent file on the local file system to
    * receive the backup contents.
    * @throws QueryException if the backup cannot be completed.
    */
+  @SuppressWarnings("deprecation")
   public void backup(URI sourceURI, File destinationFile) throws QueryException {
     Backup backup = new Backup(sourceURI, destinationFile.toURI(), true);
     try {
       backup.execute(interpreter.establishConnection(backup.getServerURI()));
-    } catch (MalformedURLException e) {
-      throw new QueryException("Bad source graph URI: " + sourceURI, e);
     } catch (ConnectionException e) {
       throw new QueryException("Unable to establish connection to: " + backup.getServerURI(), e);
     }
@@ -735,17 +738,55 @@ public class ItqlInterpreterBean {
    * Backup all the data on the specified server to an output stream.
    * The database is not changed by this method.
    *
-   * @param sourceURI The URI of the server or model to backup.
+   * @param sourceURI The URI of the server to backup.
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
+  @SuppressWarnings("deprecation")
   public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
-    URI serverUri = DataTx.calcServerUri(sourceURI);
+    Backup backup = new Backup(sourceURI, null, true);
+    backup.setOverrideOutputStream(outputStream);
     try {
-      Connection conn = interpreter.establishConnection(serverUri);
-      Backup.backup(conn, sourceURI, outputStream);
+      backup.execute(interpreter.establishConnection(backup.getServerURI()));
     } catch (ConnectionException e) {
-      throw new QueryException("Unable to establish connection to: " + serverUri, e);
+      throw new QueryException("Unable to establish connection to: " + backup.getServerURI(), e);
+    }
+  }
+  
+  
+  /**
+   * Export the data in the specified graph to a client local file.
+   * The database is not changed by this method.
+   *
+   * @param graphURI The URI of the graph to export.
+   * @param destinationFile an non-existent file on the local file system to
+   * receive the export contents.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, File destinationFile) throws QueryException {
+    Export export = new Export(graphURI, destinationFile.toURI(), true);
+    try {
+      export.execute(interpreter.establishConnection(export.getServerURI()));
+    } catch (ConnectionException e) {
+      throw new QueryException("Unable to establish connection to: " + export.getServerURI(), e);
+    }
+  }
+  
+  
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.
+   *
+   * @param graphURI The URI of the graph to export.
+   * @param outputStream The stream to receive the contents
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream) throws QueryException {
+    Export export = new Export(graphURI, outputStream);
+    try {
+      export.execute(interpreter.establishConnection(export.getServerURI()));
+    } catch (ConnectionException e) {
+      throw new QueryException("Unable to establish connection to: " + export.getServerURI(), e);
     }
   }
 
@@ -763,7 +804,7 @@ public class ItqlInterpreterBean {
    * @return number of rows inserted into the destination model
    */
   public long load(InputStream inputStream, URI destinationURI) throws QueryException {
-    return load(inputStream, DUMMY_RDF_SOURCE, destinationURI);
+    return load(inputStream, null, destinationURI);
   }
 
 
@@ -787,7 +828,7 @@ public class ItqlInterpreterBean {
     long numberOfStatements = 0;
     try {
       Load loadCmd = new Load(sourceURI, destinationURI, true);
-      loadCmd.setOverrideStream(inputStream);
+      loadCmd.setOverrideInputStream(inputStream);
       numberOfStatements = (Long)loadCmd.execute(interpreter.establishConnection(loadCmd.getServerURI()));
     } catch (QueryException ex) {
       throw ex;
@@ -808,7 +849,7 @@ public class ItqlInterpreterBean {
    * @throws QueryException if the restore cannot be completed.
    */
   public void restore(InputStream inputStream, URI serverURI) throws QueryException {
-     restore(inputStream, serverURI, DUMMY_RDF_SOURCE);
+     restore(inputStream, serverURI, null);
   }
 
 
@@ -823,10 +864,11 @@ public class ItqlInterpreterBean {
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
+  @SuppressWarnings("deprecation")
   public void restore(InputStream inputStream, URI serverURI, URI sourceURI) throws QueryException {
     try {
       Restore restoreCmd = new Restore(sourceURI, serverURI, true);
-      restoreCmd.setOverrideStream(inputStream);
+      restoreCmd.setOverrideInputStream(inputStream);
       restoreCmd.execute(interpreter.establishConnection(restoreCmd.getServerURI()));
     } catch (QueryException ex) {
       throw ex;

@@ -676,6 +676,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    *
    * @param node the backup command
    */
+  @SuppressWarnings("deprecation")
   public void outABackupCommand(ABackupCommand node) {
 
     // log the command
@@ -712,6 +713,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    *
    * @param node the restore command
    */
+  @SuppressWarnings("deprecation")
   public void outARestoreCommand(ARestoreCommand node) {
 
     // log the command

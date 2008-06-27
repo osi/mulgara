@@ -40,7 +40,7 @@ import org.mulgara.store.statement.StatementStore;
  * @copyright &copy; 2008 <a href="http://www.revelytix.com">Revelytix, Inc.</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class ExportOperation extends OutputOperation {
+class ExportOperation extends OutputOperation {
   
   private final URI graphURI;
   

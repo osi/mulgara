@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
 import org.mulgara.query.ModelResource;
 import org.mulgara.query.QueryException;
+import org.mulgara.query.rdf.Mulgara;
 
 /**
  * Represents a command to load data into a model.
@@ -28,23 +29,41 @@ import org.mulgara.query.QueryException;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class Load extends DataTx {
+public class Load extends DataInputTx {
 
   /** The logger */
   static final Logger logger = Logger.getLogger(Load.class.getName());
   
+  /** Dummy source model URI to pass to the server when overriding with local stream. */
+  protected static final URI DUMMY_RDF_SOURCE = URI.create(Mulgara.NAMESPACE+"locally-sourced-inputStream.rdf");
+  
   /** Model resource form of the source URI */
   private final ModelResource srcRsc;
-
+  
   /**
    * Build a load operation, loading data from one URI into a graph specified by another URI.
    * @param source The URI of the source of the RDF data.
-   * @param destination The URI of the graph to receive the data.
+   * @param graphURI The URI of the graph to receive the data.
    * @param local Set to <code>true</code> to indicate that the source is on the client system.
    */
-  public Load(URI source, URI destination, boolean local) {
-    super(source, destination, destination, local);
-    srcRsc = new ModelResource(source);
+  public Load(URI source, URI graphURI, boolean local) {
+    super(source, graphURI, graphURI, local);
+    
+    // Validate arguments.
+    if (graphURI == null) throw new IllegalArgumentException("Need a valid destination graph URI");
+    
+    srcRsc = new ModelResource(source == null ? DUMMY_RDF_SOURCE : source);
+  }
+
+
+  /**
+   * Alternate constructor for creating a load operation whose source will be a local input stream.
+   * @param graphURI The URI of the graph to receive the data.
+   * @param stream The local input stream that is the source of data to load.
+   */
+  public Load(URI graphURI, InputStream stream) {
+    this(null, graphURI, true);
+    setOverrideInputStream(stream);
   }
 
 
@@ -60,8 +79,9 @@ public class Load extends DataTx {
       long stmtCount = isLocal() ? sendMarshalledData(conn, true) : conn.getSession().setModel(dest, srcRsc);
       if (logger.isDebugEnabled()) logger.debug("Loaded " + stmtCount + " statements from " + src + " into " + dest);
   
-      if (stmtCount > 0L) setResultMessage("Successfully loaded " + stmtCount + " statements from " + src + " into " + dest);
-      else setResultMessage("WARNING: No valid RDF statements found in " + src);
+      if (stmtCount > 0L) setResultMessage("Successfully loaded " + stmtCount + " statements from " + 
+          (src != null ? src : "input stream") + " into " + dest);
+      else setResultMessage("WARNING: No valid RDF statements found in " + (src != null ? src : "input stream"));
       
       return stmtCount;
       
@@ -76,6 +96,7 @@ public class Load extends DataTx {
    * Perform the transfer with the configured datastream.
    * @return The number of statements affected, or <code>null</code> if this is not relevant.
    */
+  @Override
   protected Long doTx(Connection conn, InputStream inputStream) throws QueryException {
     return conn.getSession().setModel(inputStream, getDestination(), srcRsc);
   }

@@ -28,31 +28,33 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
-import java.net.URI;
-import java.util.*;
-import javax.transaction.xa.XAResource;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
-// Java 2 enterprise packages
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAException;
-import javax.transaction.InvalidTransactionException;
-
-// Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
-
-// Local packages
-import org.mulgara.query.*;
-import org.mulgara.resolver.spi.*;
+import org.mulgara.query.ConstraintImpl;
+import org.mulgara.query.QueryException;
+import org.mulgara.resolver.spi.BackupRestoreSession;
+import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.SingletonStatements;
+import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
@@ -64,8 +66,8 @@ import org.mulgara.util.TempDir;
  * An {@link Operation} that restores the state of the database from a backup
  * file generated using the complementary {@link BackupOperation}.
  *
- * If the database is not currently empty then the database will contain the
- * union of its current content and the content of the backup file when this
+ * If the database is not currently empty then the current contents of the database
+ * will be repalced with the content of the backup file when this
  * method returns.
  *
  * @created 2004-10-07
@@ -85,7 +87,6 @@ class RestoreOperation implements BackupConstants, Operation
     Logger.getLogger(RestoreOperation.class.getName());
 
   private final InputStream inputStream;
-  private final URI serverURI;
   private final URI sourceURI;
 
   //
@@ -97,12 +98,11 @@ class RestoreOperation implements BackupConstants, Operation
    *
    * @param inputStream a client supplied inputStream to obtain the restore
    *        content from. If null assume the sourceURI has been supplied.
-   * @param serverURI The URI of the server to restore.
    * @param sourceURI The URI of the backup file to restore from.
    * @throws IllegalArgumentException if the <var>sourceURI</var> is a
    *   relative URI
    */
-  public RestoreOperation(InputStream inputStream, URI serverURI, URI sourceURI)
+  public RestoreOperation(InputStream inputStream, URI sourceURI)
   {
     // Validate "sourceURI" parameter
     if (sourceURI != null && sourceURI.getScheme() == null) {
@@ -111,7 +111,6 @@ class RestoreOperation implements BackupConstants, Operation
     }
 
     this.inputStream = inputStream;
-    this.serverURI   = serverURI;
     this.sourceURI   = sourceURI;
   }
 
@@ -184,7 +183,6 @@ class RestoreOperation implements BackupConstants, Operation
   }
 
 
-  private static final int SIZEOF_LONG = 8;
   private static final String TKS_NAMESPACE = "<http://pisoftware.com/tks";
   private static final String TUCANA_NAMESPACE = "<http://tucana.org/tucana";
   private static final String TKS_INT_MODEL_URI = TKS_NAMESPACE + "-int#model>";
@@ -197,6 +195,7 @@ class RestoreOperation implements BackupConstants, Operation
    * @param metadata DatabaseMetadata
    * @param br BufferedReader
    */
+  @SuppressWarnings("unchecked")
   private void restoreDatabaseV4(
       Resolver resolver, ResolverSession resolverSession,
       DatabaseMetadata metadata, BufferedReader br

@@ -38,7 +38,7 @@ public abstract class ServerCommand implements Command {
    * @param serverGraphUri The URI of the graph.
    */
   public ServerCommand(URI serverGraphUri) {
-    serverGraph = new ModelResource(serverGraphUri);
+    serverGraph = (serverGraphUri != null) ? new ModelResource(serverGraphUri) : null;
     resultMessage = "";
   }
   
@@ -48,6 +48,11 @@ public abstract class ServerCommand implements Command {
    * @return The URI used to find the server.
    */
   public URI getServerURI() {
+    // Short-circuit for backup and restore (don't need a server URI if executed with an existing connection)
+    if (serverGraph == null) {
+      return null;
+    }
+    
     Set<URI> gs = serverGraph.getDatabaseURIs();
     URI serverUri = null;
     Iterator<URI> iter = gs.iterator();

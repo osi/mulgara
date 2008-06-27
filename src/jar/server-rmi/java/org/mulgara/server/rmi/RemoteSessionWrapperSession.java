@@ -272,18 +272,17 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   * Backup all the data on the specified server. The database is not changed by
   * this method.
   *
-  * @param sourceURI The URI of the server or model to backup.
   * @param destinationURI The URI of the file to backup into.
   * @throws QueryException if the backup cannot be completed.
   */
-  public void backup(URI sourceURI, URI destinationURI) throws QueryException {
+  public void backup(URI destinationURI) throws QueryException {
 
     try {
-      remoteSession.backup(sourceURI, destinationURI);
+      remoteSession.backup(destinationURI);
       resetRetries();
     } catch (RemoteException e) {
       testRetry(e);
-      backup(sourceURI, destinationURI);
+      backup(destinationURI);
     }
   }
 
@@ -292,18 +291,17 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    * Backup all the data on the specified server to an output stream.
    * The database is not changed by this method.
    *
-   * @param sourceURI The URI of the server or model to backup.
    * @param outputStream The stream to receive the contents
    * @throws QueryException if the backup cannot be completed.
    */
-  public void backup(URI sourceURI, OutputStream outputStream) throws QueryException {
+  public void backup(OutputStream outputStream) throws QueryException {
 
     try {
-      remoteSession.backup(sourceURI, outputStream);
+      remoteSession.backup(outputStream);
       resetRetries();
     } catch (RemoteException e) {
       testRetry(e);
-      backup(sourceURI, outputStream);
+      backup(outputStream);
     }
   }
   
@@ -346,46 +344,44 @@ class RemoteSessionWrapperSession implements Serializable, Session {
 
 
   /**
-   * Restore all the data on the specified server. If the database is not
-   * currently empty then the database will contain the union of its current
-   * content and the content of the backup file when this method returns.
+   * Restore all the data on the server. If the database is not
+   * currently empty then the current contents of the database will be replaced
+   * with the content of the backup file when this method returns.
    *
-   * @param serverURI The URI of the server to restore.
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(URI serverURI, URI sourceURI) throws QueryException {
+  public void restore(URI sourceURI) throws QueryException {
 
     try {
-      remoteSession.restore(serverURI, sourceURI);
+      remoteSession.restore(sourceURI);
       resetRetries();
     } catch (RemoteException e) {
       testRetry(e);
-      restore(serverURI, sourceURI);
+      restore(sourceURI);
     }
   }
 
 
   /**
-   * Restore all the data on the specified server. If the database is not
-   * currently empty then the database will contain the union of its current
-   * content and the content of the backup file when this method returns.
+   * Restore all the data on the server. If the database is not
+   * currently empty then the current contents of the database will be replaced
+   * with the content of the backup file when this method returns.
    *
    * @param inputStream a client supplied inputStream to obtain the restore
    *        content from. If null assume the sourceURI has been supplied.
-   * @param serverURI The URI of the server to restore.
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
-  public void restore(InputStream inputStream, URI serverURI, URI sourceURI)
+  public void restore(InputStream inputStream, URI sourceURI)
       throws QueryException {
 
     try {
-      remoteSession.restore(inputStream, serverURI, sourceURI);
+      remoteSession.restore(inputStream, sourceURI);
       resetRetries();
     } catch (RemoteException e) {
       testRetry(e);
-      restore(inputStream, serverURI, sourceURI);
+      restore(inputStream, sourceURI);
     }
   }
 

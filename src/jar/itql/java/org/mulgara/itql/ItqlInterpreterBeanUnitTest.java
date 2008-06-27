@@ -156,8 +156,8 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi9"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testBackupApi1"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testBackupApi2"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testBackupApi3"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testBackupApi4"));
+    suite.addTest(new ItqlInterpreterBeanUnitTest("testExportApi1"));
+    suite.addTest(new ItqlInterpreterBeanUnitTest("testExportApi2"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testRestoreApi1"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testRoundTrip1"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testMultipleBeanTest"));
@@ -608,33 +608,11 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
   /**
    * Test the interpreter using a backup API locally.
-   * Expects the test model to exist
-   *
-   * @throws Exception if the test fails
-   */
-  public void testBackupApi1() throws Exception {
-
-    // log that we're executing the test
-    log.debug("Starting backup API test 1");
-
-    File file = new File(tmpDirectory, "camera.rdf");
-    file.delete();
-
-    URI modelURI = new URI(testModel);
-
-    bean.backup(modelURI, file);
-
-    assertTrue("Excepting a backup file", file.exists());
-
-  }
-
-  /**
-   * Test the interpreter using a backup API locally.
    * Expects the server to exist
    *
    * @throws Exception if the test fails
    */
-  public void testBackupApi2() throws Exception {
+  public void testBackupApi1() throws Exception {
 
     // log that we're executing the test
     log.debug("Starting backup API test 2");
@@ -652,33 +630,11 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
   /**
    * Test the interpreter using a backup API locally.
-   * Expects the test model to exist
-   *
-   * @throws Exception if the test fails
-   */
-  public void testBackupApi3() throws Exception {
-
-    // log that we're executing the test
-    log.debug("Starting backup API test 3");
-
-    File file = new File(tmpDirectory, "camera2.rdf");
-    file.delete();
-
-    URI modelURI = new URI(testModel);
-
-    bean.backup(modelURI, new FileOutputStream(file));
-
-    assertTrue("Excepting a backup file", file.exists());
-
-  }
-
-  /**
-   * Test the interpreter using a backup API locally.
    * Expects the server to exist
    *
    * @throws Exception if the test fails
    */
-  public void testBackupApi4() throws Exception {
+  public void testBackupApi2() throws Exception {
 
     // log that we're executing the test
     log.debug("Starting backup API test 4");
@@ -689,6 +645,50 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     URI serverURI = new URI("rmi://localhost/server1");
 
     bean.backup(serverURI, new FileOutputStream(file));
+
+    assertTrue("Excepting a backup file", file.exists());
+
+  }
+
+  /**
+   * Test the interpreter using an export API locally.
+   * Expects the test model to exist
+   *
+   * @throws Exception if the test fails
+   */
+  public void testExportApi1() throws Exception {
+
+    // log that we're executing the test
+    log.debug("Starting backup API test 1");
+
+    File file = new File(tmpDirectory, "camera.rdf");
+    file.delete();
+
+    URI modelURI = new URI(testModel);
+
+    bean.export(modelURI, file);
+
+    assertTrue("Excepting a backup file", file.exists());
+
+  }
+
+  /**
+   * Test the interpreter using an export API locally.
+   * Expects the test model to exist
+   *
+   * @throws Exception if the test fails
+   */
+  public void testExportApi2() throws Exception {
+
+    // log that we're executing the test
+    log.debug("Starting backup API test 3");
+
+    File file = new File(tmpDirectory, "camera2.rdf");
+    file.delete();
+
+    URI modelURI = new URI(testModel);
+
+    bean.export(modelURI, new FileOutputStream(file));
 
     assertTrue("Excepting a backup file", file.exists());
 

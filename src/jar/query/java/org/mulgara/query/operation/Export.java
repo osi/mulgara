@@ -11,22 +11,12 @@
  */
 package org.mulgara.query.operation;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
-
-import edu.emory.mathcs.util.remote.io.RemoteOutputStream;
-import edu.emory.mathcs.util.remote.io.server.impl.RemoteOutputStreamSrvImpl;
 
 /**
  * Represents a command to export data from a graph.
@@ -36,17 +26,28 @@ import edu.emory.mathcs.util.remote.io.server.impl.RemoteOutputStreamSrvImpl;
  * @copyright &copy; 2008 <a href="http://www.revelytix.com">Revelytix, Inc.</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class Export extends DataTx {
+public class Export extends DataOutputTx {
 
   /**
-   * Creates a new Export command.
-   * @param source The graph to export.
-   * @param destination The location where to export the data.
-   *        Only file URLs supported at the moment.
+   * Creates a new Export command, exporting data from the graph URI to a file or output stream.
+   * @param graphURI The graph to export.
+   * @param destination The location to export the data. Only file URLs supported at the moment.
+   *        May be null if an output stream will be provided.
+   * @param local Set to <code>true</code> to indicate that the source is on the client system.
    */
-  public Export(URI source, URI destination, boolean locality) {
-    super(source, destination, source, locality);
-    if (!destination.getScheme().equals(FILE_SCHEME)) throw new IllegalArgumentException("Exports must be sent to a file");
+  public Export(URI graphURI, URI destination, boolean local) {
+    super(graphURI, destination, graphURI, local);
+    if (graphURI == null) throw new IllegalArgumentException("Need a valid source graph URI");
+  }
+  
+  /**
+   * Alternate constructor for creating a command to export data from a graph to an output stream.
+   * @param graphURI  The graph to export.
+   * @param outputStream The stream that will receive the contents of the exported graph.
+   */
+  public Export(URI graphURI, OutputStream outputStream) {
+    this(graphURI, null, true);
+    setOverrideOutputStream(outputStream);
   }
   
   /**
@@ -54,80 +55,49 @@ public class Export extends DataTx {
    * @param conn The connection to talk to the server on.
    * @return The text describing the graph that was exported.
    * @throws QueryException There was an error asking the server to perform the export.
-   * @throws MalformedURLException The destination is not a valid file.
    */
-  public Object execute(Connection conn) throws Exception {
-    // test if the server can do all the work, or if data needs to be streamed
-    if (!isLocal()) {
-      // server does all the work
-      conn.getSession().export(getSource(), getDestination());
-    } else {
-      // need to stream data through to an output stream
-      FileOutputStream fileOutputStream = null;
-      String destinationFile = this.getDestination().toURL().getPath();
-      try {
-        fileOutputStream = new FileOutputStream(destinationFile);
-      } catch (FileNotFoundException ex) {
-        throw new QueryException("File " + destinationFile + " cannot be created for export. ", ex);
-      }
-
-      // send to open method for exporting to a stream
-      export(conn, getSource(), fileOutputStream);
+  public Object execute(Connection conn) throws QueryException {
+    URI src = getSource();
+    URI dest = getDestination();
+    
+    try {
+      if (isLocal()) {
+        getMarshalledData(conn);
+      } else {
+        conn.getSession().export(src, dest);
+      } 
+      
+      if (logger.isDebugEnabled()) logger.debug("Completed backing up " + src + " to " + dest);
+      
+      return setResultMessage("Successfully exported " + src + " to " + 
+          (dest != null ? dest : "output stream") + ".");
     }
-  
-    return setResultMessage("Successfully exported " + getSource() + " to " + getDestination() + ".");
+    catch (IOException ioe) {
+      logger.error("Error attempting to export: " + src, ioe);
+      throw new QueryException("Error attempting to export: " + src, ioe);
+    }
   }
   
   /**
    * Public interface to perform an export into an output stream.
    * This is callable directly, without an AST interface.
    * @param conn The connection to a server to perform the export.
-   * @param source The URI describing the graph on the server to export.
+   * @param graphURI The URI describing the graph on the server to export.
    * @param outputStream The output which will receive the data to be exported.
    * @throws QueryException There was an error asking the server to perform the export.
    */
-  public static void export(Connection conn, URI source, OutputStream outputStream) throws QueryException {
-    // open and wrap the outputstream
-    RemoteOutputStreamSrvImpl srv = new RemoteOutputStreamSrvImpl(outputStream);
-
-    // prepare it for exporting
-    try {
-      UnicastRemoteObject.exportObject(srv);
-    } catch (RemoteException rex) {
-      throw new QueryException("Unable to export "+ source + " to an output stream", rex);
-    }
-
-    OutputStream marshallingOutputStream = new RemoteOutputStream(srv);
-
-    // perform the export
-    try {
-      conn.getSession().export(source, marshallingOutputStream);
-    } finally {
-      // cleanup the output
-      if (marshallingOutputStream != null) {
-        try {
-          marshallingOutputStream.close();
-        } catch (IOException ioe ) { /* ignore */ }
-      }
-      // cleanup the RMI for the output stream
-      if (srv != null) {
-        try {
-          UnicastRemoteObject.unexportObject(srv, false);
-        } catch (NoSuchObjectException ex) {};
-      }
-      try {
-        srv.close();
-      } catch (IOException e) {}
-    }
+  public static void export(Connection conn, URI graphURI, OutputStream outputStream) throws QueryException {
+    Export export = new Export(graphURI, null, true);
+    export.setOverrideOutputStream(outputStream);
+    export.execute(conn);
   }
 
   /**
-   * Perform the transfer with the configured datastream.
-   * @return The number of statements affected, or <code>null</code> if this is not relevant.
+   * Perform the transfer with the configured data stream.
    */
   @Override
-  protected Long doTx(Connection conn, InputStream inputStream) throws QueryException {
-    return null;
+  protected void doTx(Connection conn, OutputStream outputStream) throws QueryException {
+    conn.getSession().export(getSource(), outputStream);
   }
 
 }

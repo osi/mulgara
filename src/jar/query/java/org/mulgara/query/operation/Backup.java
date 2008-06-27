@@ -11,59 +11,79 @@
  */
 package org.mulgara.query.operation;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
 
-import edu.emory.mathcs.util.remote.io.RemoteOutputStream;
-import edu.emory.mathcs.util.remote.io.server.impl.RemoteOutputStreamSrvImpl;
-
 /**
- * Represents a command to back data up from a model.
+ * Represents a command to back data up from a server.
  *
  * @created Aug 19, 2007
  * @author Paul Gearon
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class Backup extends DataTx {
+public class Backup extends DataOutputTx {
   
   /** The logger */
   static final Logger logger = Logger.getLogger(Backup.class.getName());
 
-  /** The URI for the server. */
-  private URI serverUri;
-
   /**
    * Creates a new Backup command.
-   * @param source The data to back up.  May be a server or just a single graph.
+   * 
+   * This constructor is deprecated. The server URI is not part of the operation
+   * and is only present to support the TqlAutoInterpreter legacy code. Use
+   * {@link #Backup(URI, boolean)} or {@link #Backup(OutputStream)} instead.
+   * 
+   * @param serverURI The server to back up.
    * @param destination The location where to back the data up.
    *        Only file URLs supported at the moment.
+   * @param local The locality of the destination URI.
    */
-  public Backup(URI source, URI destination, boolean locality) {
-    super(source, destination, source, locality);
-    if (!destination.getScheme().equals(FILE_SCHEME)) throw new IllegalArgumentException("Backups must be sent to a file");
-    updateServerUri(source);
+  @Deprecated
+  public Backup(URI serverURI, URI destination, boolean local) {
+    super(serverURI, destination, serverURI, local);
   }
-
+  
   /**
-   * @return The URI of the destination graph.
+   * Creates a command to backup a server to a destination file.  This is the preferred
+   * constructor for API calls that use their own server connections.  The server URI
+   * is not an argument for the backup operation, and will be specified by the existing
+   * connection.
+   * @param destination The destination file URI to receive the backup.
+   * @param locality The locality of the destination file (<code>true</code> is client
+   *        file system, <code>false</code> is server file system).
    */
-  public URI getServerURI() {
-    return serverUri;
+  public Backup(URI destination, boolean locality) {
+    this(null, destination, locality);
   }
-
+  
+  /**
+   * Creates a command to backup a server to an output stream.  This is the preferred
+   * constructor for API calls that use their own server connections.  The server URI
+   * is not an argument for the backup operation, and will be specified by the existing
+   * connection.
+   * @param outputStream The stream which will receive the server contents.
+   */
+  public Backup(OutputStream outputStream) {
+    this(null, null, true);
+    setOverrideOutputStream(outputStream);
+  }
+  
+  /**
+   * The destination of a backup command is a database, not a graph.
+   * @return The URI of the server, or <code>null</code> if the server will be found from
+   * an existing connection.
+   */
+  @Override
+  public URI getServerURI() {
+    return getSource();
+  }
 
   /**
    * Perform a backup on a server.
@@ -72,26 +92,26 @@ public class Backup extends DataTx {
    * @throws QueryException There was an error asking the server to perform the backup.
    * @throws MalformedURLException The destination is not a valid file.
    */
-  public Object execute(Connection conn) throws QueryException, MalformedURLException {
-    // test if the server can do all the work, or if data needs to be streamed
-    if (!isLocal()) {
-      // server does all the work
-      conn.getSession().backup(getSource(), getDestination());
-    } else {
-      // need to stream data through to an output stream
-      FileOutputStream fileOutputStream = null;
-      String destinationFile = this.getDestination().toURL().getPath();
-      try {
-        fileOutputStream = new FileOutputStream(destinationFile);
-      } catch (FileNotFoundException ex) {
-        throw new QueryException("File " + destinationFile + " cannot be created for backup. ", ex);
+  public Object execute(Connection conn) throws QueryException {
+    URI src = getSource();
+    URI dest = getDestination();
+    if (serverTest(src)) throw new QueryException("Cannot back up a graph. Must be a server URI.");
+    
+    try {
+      if (isLocal()) {
+        getMarshalledData(conn);
+      } else {
+        conn.getSession().backup(dest);
       }
-
-      // send to open method for backing up to a stream
-      backup(conn, getSource(), fileOutputStream);
+      
+      if (logger.isDebugEnabled()) logger.debug("Completed backing up " + src + " to " + dest);
+      
+      return setResultMessage("Successfully backed up " + src + " to " + dest + ".");
+      
+    } catch (IOException ioe) {
+      logger.error("Error attempting to back up: " + dest, ioe);
+      throw new QueryException("Error attempting to back up: " + dest, ioe);
     }
-  
-    return setResultMessage("Successfully backed up " + getSource() + " to " + getDestination() + ".");
   }
 
 
@@ -99,60 +119,23 @@ public class Backup extends DataTx {
    * Public interface to perform a backup into an output stream.
    * This is callable directly, without an AST interface.
    * @param conn The connection to a server to be backed up.
-   * @param source The URI describing the graph on the server to back up.
+   * @param serverURI The URI describing the server to back up.
    * @param outputStream The output which will receive the data to be backed up.
    * @throws QueryException There was an error asking the server to perform the backup.
    */
-  public static void backup(Connection conn, URI source, OutputStream outputStream) throws QueryException {
-    // open and wrap the outputstream
-    RemoteOutputStreamSrvImpl srv = new RemoteOutputStreamSrvImpl(outputStream);
-
-    // prepare it for exporting
-    try {
-      UnicastRemoteObject.exportObject(srv);
-    } catch (RemoteException rex) {
-      throw new QueryException("Unable to backup "+ source + " to an output stream", rex);
-    }
-
-    OutputStream marshallingOutputStream = new RemoteOutputStream(srv);
-
-    // perform the backup
-    try {
-      conn.getSession().backup(source, marshallingOutputStream);
-    } finally {
-      // cleanup the output
-      if (marshallingOutputStream != null) {
-        try {
-          marshallingOutputStream.close();
-        } catch (IOException ioe ) { /* ignore */ }
-      }
-      // cleanup the RMI for the output stream
-      if (srv != null) {
-        try {
-          UnicastRemoteObject.unexportObject(srv, false);
-        } catch (NoSuchObjectException ex) {};
-      }
-      try {
-        srv.close();
-      } catch (IOException e) {}
-    }
+  public static void backup(Connection conn, URI serverURI, OutputStream outputStream) throws QueryException {
+    Backup backup = new Backup(serverURI, null, true);
+    backup.setOverrideOutputStream(outputStream);
+    backup.execute(conn);
   }
 
-
+  
   /**
-   * Perform the transfer with the configured datastream.
-   * @return The number of statements affected, or <code>null</code> if this is not relevant.
+   * Perform the transfer with the configured data stream.
    */
-  protected Long doTx(Connection conn, InputStream inputStream) throws QueryException {
-    return null;
+  @Override
+  protected void doTx(Connection conn, OutputStream outputStream) throws QueryException {
+    conn.getSession().backup(outputStream);
   }
 
-  /**
-   * Sets the server URI for this server operation.
-   * @param uri The URI to determine the server URI from.
-   */
-  private URI updateServerUri(URI uri) {
-    serverUri = calcServerUri(uri);
-    return serverUri;
-  }
 }

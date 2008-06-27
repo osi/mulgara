@@ -14,30 +14,68 @@ package org.mulgara.query.operation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
 
 /**
- * Represents a command to reload backup data.
+ * Represents a command to restore a server from backup data.
  *
  * @created Aug 19, 2007
  * @author Paul Gearon
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class Restore extends DataTx {
+public class Restore extends DataInputTx {
 
-  public Restore(URI source, URI destination, boolean local) {
-    super(source, destination, destination, local);
+  /**
+   * Creates a restore operation, restoring the server from backup data at the given location.
+   * 
+   * This constructor is deprecated. The server URI is not part of the operation
+   * and is only present to support the TqlAutoInterpreter legacy code. Use
+   * {@link #Restore(URI, boolean)} or {@link #Restore(InputStream)} instead.
+   * 
+   * @param source The location of the backup data to restore from.
+   * @param serverURI The URI of the server to restore (may be null if the operation is being
+   *        executed on an existing connection).
+   * @param local Locality of the backup data.
+   */
+  @Deprecated
+  public Restore(URI source, URI serverURI, boolean local) {
+    super(source, serverURI, serverURI, local);
+  }
+  
+  /**
+   * Creates a command to restore a server from a source file.  This is the preferred
+   * constructor for API calls that use their own server connections.  The server URI
+   * is not an argument for the restore operation, and will be specified by the existing
+   * connection.
+   * @param source The source file URI for the restore data.
+   * @param local The locality of the source file (<code>true</code> is client
+   *        file system, <code>false</code> is server file system).
+   */
+  public Restore(URI source, boolean local) {
+    this(source, null, local);
+  }
+  
+  /**
+   * Creates a command to restore a server from an input stream.  This is the preferred
+   * constructor for API calls that use their own server connections.  The server URI
+   * is not an argument for the restore operation, and will be specified by the existing
+   * connection.
+   * @param source The input stream that will provide the restore contents.
+   */
+  public Restore(InputStream inputStream) {
+    this(null, null, true);
+    setOverrideInputStream(inputStream);
   }
 
   /**
    * The destination of a restore command is a database, not a graph.
-   * @return The URI of the destination server.
+   * @return The URI of the destination server, or <code>null</code> if the server will be found from
+   * an existing connection.
    */
+  @Override
   public URI getServerURI() {
     return getDestination();
   }
@@ -53,7 +91,7 @@ public class Restore extends DataTx {
     if (serverTest(dest)) throw new QueryException("Cannot restore to a graph. Must be a server URI.");
     try {
       if (isLocal()) sendMarshalledData(conn, false);
-      else conn.getSession().restore(dest, src);
+      else conn.getSession().restore(src);
 
       if (logger.isDebugEnabled()) logger.debug("Completed restoring " + dest + " from " + src);
   
@@ -65,33 +103,14 @@ public class Restore extends DataTx {
     }
   }
 
-
   /**
    * Perform the transfer with the configured datastream.
-   * @return <code>null</code>, as this operation does not return a number.
+   * @return <code>0</code>, as this operation does not return a number.
    */
+  @Override
   protected Long doTx(Connection conn, InputStream inputStream) throws QueryException {
-    conn.getSession().restore(inputStream, getDestination(), getSource());
+    conn.getSession().restore(inputStream, getSource());
     return 0L;
   }
 
-  /** The known set of schemas describing servers. */
-  private static Set<String> knownSchemas = new HashSet<String>();
-  static {
-    knownSchemas.add("rmi");
-    knownSchemas.add("local");
-    knownSchemas.add("beep");
-  }
-
-
-  /**
-   * Tests if a URI can potentially refer to a server. This will only apply for known schemas.
-   * @param serverURI The URI to check.
-   * @return <code>false</code> if the URI refers to a known graph. <code>true</code> if we can't
-   *   tell or it is known to refer to a server.
-   */
-  protected boolean serverTest(URI serverURI) {
-    if (knownSchemas.contains(serverURI.getScheme())) return serverURI.getFragment() != null;
-    return true;
-  }
 }

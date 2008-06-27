@@ -11,25 +11,16 @@
  */
 package org.mulgara.query.operation;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.rmi.NoSuchObjectException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipInputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
-import org.mulgara.query.QueryException;
-
-import edu.emory.mathcs.util.remote.io.RemoteInputStream;
-import edu.emory.mathcs.util.remote.io.server.impl.RemoteInputStreamSrvImpl;
 
 /**
- * Represents a command to move data in or out of a model.
+ * Represents a command to move data in or out of a graph or server.
  *
  * @created Aug 13, 2007
  * @author Paul Gearon
@@ -41,53 +32,37 @@ public abstract class DataTx extends ServerCommand {
   /** The logger */
   static final Logger logger = Logger.getLogger(DataTx.class.getName());
 
-  /** String constant for the extension of gzip files. */
-  private static final String GZIP_EXTENSION = ".gz";
-
-  /** String constant for the extension of zip files. */
-  private static final String ZIP_EXTENSION = ".zip";
-
-  protected static final String FILE_SCHEME = "file";
-
-  /** The source of data to insert. */
+  /** The source of the data. */
   private final URI source;
   
-  /** The graph to load data into. */
+  /** The destination of the data. */
   private final URI destination;
 
   /** Indicates that data is to be loaded locally from the client. */
   private final boolean local;
   
-  /** A stream to enable an API to load data directly. */
-  private InputStream overrideStream;
-
   /**
-   * Create a new data transfer command for loads and restores.
+   * Create a new data transfer command for moving data into or out of a graph or server.
+   * If local is <code>true</code> then source or destination may be null, but 
+   * an overriding input or output stream must be set before executing the operation.
    * @param source The source of data to insert.
    * @param destination The graph or server to load data into.
+   * @param serverGraphURI The URI of the server or graph being operated on.  This
+   *        parameter is primarily for use by the TqlAutoInterpreter for discovering
+   *        server URI's of commands, and may be omitted if working directly with an
+   *        existing {@link Connection}.
+   * @param local If <code>true</code>, the source for load/restore or destination for
+   *        export/backup will be a file or stream on the local system that is marshalled
+   *        to/from the remote server.  If <code>false</code>, it will be a file on
+   *        the remote server filesystem. 
    */
   public DataTx(URI source, URI destination, URI serverGraphURI, boolean local) {
     super(serverGraphURI);
-    // make sure that the URI given to the parent was a good one
-    assert source.equals(serverGraphURI) || destination.equals(serverGraphURI);
-    // test and store the parameters
-    if (source == null) throw new IllegalArgumentException("Need a valid source of data");
-    if (destination == null) throw new IllegalArgumentException("Need a valid destination for data");
     this.source = source;
     this.destination = destination;
     this.local = local;
-    overrideStream = null;
   }
 
-
-  /**
-   * Allows an API to set the stream for loading, instead of getting it from the
-   * source URI.
-   * @param overrideStream The stream to use for loading data.
-   */
-  public void setOverrideStream(InputStream overrideStream) {
-    this.overrideStream = overrideStream;
-  }
 
   /**
    * @return the URI of the source data.
@@ -112,84 +87,33 @@ public abstract class DataTx extends ServerCommand {
   }
 
 
-  /**
-   * Perform the transfer with the configured datastream.
-   * @return The number of statements affected, or <code>null</code> if this is not relevant.
-   */
-  protected abstract Long doTx(Connection conn, InputStream inputStream) throws QueryException;
-
-
-  /**
-   * Wrap the file at the source URI in an RMI object for marshalling, and send over the connection.
-   * Used by Load and Restore, but not Backup, which marshalls in the opposite direction.
-   * @param conn The connection to the server.
-   * @return The number of statements inserted.
-   * @throws QueryException There was an error working with data at the server end.
-   * @throws IOException There was an error transferring data over the network.
-   */
-  protected long sendMarshalledData(Connection conn, boolean compressable) throws QueryException, IOException {
-    if (logger.isInfoEnabled()) logger.info("loading local resource : " + source);
-
-    RemoteInputStreamSrvImpl srv = null;
-    RemoteInputStream remoteInputStream = null;
-    try {
-
-      // is the file/stream compressed?
-      InputStream inputStream;
-      if (compressable) inputStream = adjustForCompression(source.toURL());
-      else inputStream = (overrideStream != null) ? overrideStream : source.toURL().openStream();
-
-      // open and wrap the inputstream
-      srv = new RemoteInputStreamSrvImpl(inputStream);
-      UnicastRemoteObject.exportObject(srv);
-      remoteInputStream = new RemoteInputStream(srv);
-
-      // call back to the implementing class
-      return doTx(conn, remoteInputStream);
-
-    } finally {
-      // clean up the RMI object
-      if (srv != null) {
-        try {
-          UnicastRemoteObject.unexportObject(srv, false);
-        } catch (NoSuchObjectException ex) {};
-      }
-      try {
-        if (remoteInputStream != null) remoteInputStream.close();
-      } catch (Exception e) { }
-    }
-
+  /** The known set of schemas describing servers. */
+  private static Set<String> knownSchemas = new HashSet<String>();
+  static {
+    knownSchemas.add("rmi");
+    knownSchemas.add("local");
+    knownSchemas.add("beep");
   }
 
 
   /**
-   * Gets a stream for a file.  Determines if the stream is compressed by inspecting
-   * the fileName extension.
-   *
-   * @return a new stream which supplies uncompressed data from the file location. 
-   * @param fileLocation String The URL for the file being loaded
-   * @throws IOException An error while reading from the input stream.
-   * @return InputStream A new input stream which supplies uncompressed data.
+   * Tests if a URI can potentially refer to a server. This will only apply for known schemas.
+   * If the URI is null, treat this as a valid server URI.  This accounts for the fact that creating
+   * a backup or restore operation with an explicit server URI is only to support legacy 
+   * TqlAutoInterpreter code.  Commands created directly from the API to use with an existing
+   * connection should not have server URI set.
+   * 
+   * @param serverURI The URI to check.
+   * @return <code>true</code> if the URI is known to refer to a graph. <code>false</code> if we can't
+   *   tell or it is known to refer to a server.
    */
-  private InputStream adjustForCompression(URL fileLocation) throws IOException {
-
-    if (fileLocation == null) throw new IllegalArgumentException("File name is null");
-
-    InputStream stream = (overrideStream == null) ? fileLocation.openStream() : overrideStream;
-
-    // wrap the stream in a decompressor if the suffixes indicate this should happen.
-    String fileName = fileLocation.toString();
-    if (fileName.toLowerCase().endsWith(GZIP_EXTENSION)) {
-      stream = new GZIPInputStream(stream);
-    } else if (fileName.toLowerCase().endsWith(ZIP_EXTENSION)) {
-      stream = new ZipInputStream(stream);
-    }
-
-    assert stream != null;
-    return stream;
+  protected boolean serverTest(URI serverURI) {
+    if (serverURI == null) return false;
+    if (knownSchemas.contains(serverURI.getScheme())) return serverURI.getFragment() != null;
+    return true;
   }
   
-
+  
   /**
    * Determine the URI to be used for a server when processing a backup.
    * @param uri Can contain the URI of a graph, or of an entire server.

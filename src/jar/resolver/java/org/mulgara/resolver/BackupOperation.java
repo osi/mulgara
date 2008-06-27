@@ -36,20 +36,9 @@ import java.net.URI;
 import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
-import org.jrdf.graph.URIReference;
-import org.mulgara.content.rdfxml.writer.RDFXMLWriter;
-import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintImpl;
-import org.mulgara.query.LocalNode;
-import org.mulgara.query.Variable;
-import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.DatabaseMetadata;
-import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
-import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.SystemResolver;
-import org.mulgara.resolver.spi.TuplesWrapperStatements;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.tuples.Tuples;
@@ -69,8 +58,6 @@ import org.mulgara.store.tuples.Tuples;
  */
 class BackupOperation extends OutputOperation implements BackupConstants, Operation {
 
-  private final URI serverURI;
-
   //
   // Constructor
   //
@@ -84,13 +71,11 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
    *
    * @param outputStream  output stream to receive the contents, may be
    *   <code>null</code> if a <var>destinationURI</var> is specified
-   * @param serverURI The URI of the server to backup, never <code>null</code>
    * @param destinationURI  URI of the file to backup into, may be
    *   <code>null</code> if an <var>outputStream</var> is specified
    */
-  public BackupOperation(OutputStream outputStream, URI serverURI, URI destinationURI) {
+  public BackupOperation(OutputStream outputStream, URI destinationURI) {
     super(outputStream, destinationURI);
-    this.serverURI = serverURI;
   }
 
   //
@@ -100,26 +85,16 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
   public void execute(OperationContext operationContext,
       SystemResolver systemResolver,
       DatabaseMetadata metadata) throws Exception {
-    OutputStream os = outputStream;
+    OutputStream os = getOutputStream();;
     Writer writer = null;
     try {
-      os = getOutputStream();
-
       // The existence of a fragment indicates that a model is to be backed
       // up otherwise the entire database is to be backed up.
-      if (serverURI != null && serverURI.getFragment() != null) {
-        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-        writer = osw;
-
-        // Export as RDF/XML.
-        backupModel(systemResolver, systemResolver, serverURI, osw);
-      } else {
-        writer = new BufferedWriter(new OutputStreamWriter(
-            new GZIPOutputStream(os), "UTF-8"
-        ));
-
-        backupDatabase(systemResolver, metadata, writer);
-      }
+      writer = new BufferedWriter(new OutputStreamWriter(
+          new GZIPOutputStream(os), "UTF-8"
+      ));
+      
+      backupDatabase(systemResolver, metadata, writer);
     } finally {
       // Clean up.
       if (writer != null) {
@@ -204,59 +179,6 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
     }
 
     writer.write("END\n");
-  }
-
-
-  /**
-   * Obtains statements for the model and writes to an RDFXMLWriter.
-   *
-   * @param resolver Resolver
-   * @param session ResolverSession
-   * @param modelURI URI
-   * @param writer OutputStreamWriter
-   * @throws Exception
-   */
-  private void backupModel(
-      Resolver resolver, ResolverSession session, URI modelURI,
-      OutputStreamWriter writer
-  ) throws Exception {
-    // get the meta node for the model
-    URIReference modelValue = new URIReferenceImpl(modelURI);
-    LocalNode modelNode = new LocalNode(
-        session.lookupPersistent(modelValue)
-    );
-
-    // create a constraint to get all statements
-    Variable[] vars = new Variable[] {
-        StatementStore.VARIABLES[0],
-        StatementStore.VARIABLES[1],
-        StatementStore.VARIABLES[2]
-    };
-
-    // get all statements for the model
-    Constraint constraint = new ConstraintImpl(vars[0], vars[1], vars[2],
-        modelNode);
-    Resolution resolution = resolver.resolve(constraint);
-
-    // convert to Statements Object
-    Statements modelStatements = new TuplesWrapperStatements(
-        resolution, vars[0], vars[1], vars[2]
-    );
-
-    // do the writing
-    try {
-      RDFXMLWriter rdfWriter = new RDFXMLWriter();
-      rdfWriter.write(modelStatements, session, writer);
-    } finally {
-      modelStatements.close();
-    }
-  }
-
-  /**
-   * @return <code>false</code>
-   */
-  public boolean isWriteOperation() {
-    return false;
   }
 
 }
