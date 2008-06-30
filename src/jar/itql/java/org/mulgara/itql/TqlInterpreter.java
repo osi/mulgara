@@ -74,6 +74,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
   /** The logger */
   static final Logger logger = Logger.getLogger(TqlInterpreter.class.getName());
 
+  static {
+    // force initialization of static, unsynchronized variables inside these classes
+    new Parser(new Lexer2());
+  }
+
   /** A constraint expression builder. */
   private ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(this);
 
@@ -1509,7 +1514,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     return o;
   }
 
-  private class Lexer2 extends Lexer {
+  private static class Lexer2 extends Lexer {
   
     int commandCount = 0;
     final LinkedList<Token> leftoverTokenList = new LinkedList<Token>();

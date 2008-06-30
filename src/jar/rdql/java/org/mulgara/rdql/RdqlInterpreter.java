@@ -78,6 +78,11 @@ public class RdqlInterpreter extends DepthFirstAdapter {
   private final static Logger logger =
       Logger.getLogger(RdqlInterpreter.class.getName());
 
+  static {
+    // force initialization of static, unsynchronized variables inside these classes
+    new Parser(new RdqlLexer());
+  }
+
   //
   // Members
   //
