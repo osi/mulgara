@@ -568,6 +568,7 @@
 						<li><a href="/itqlcommands/delete.html">delete</a></li>	
 						<li><a href="/itqlcommands/drop.html">drop</a></li>	
 						<li><a href="/itqlcommands/execute.html">execute</a></li>	
+						<li><a href="/itqlcommands/export.html">export</a></li>	
 						<li><a href="/itqlcommands/help.html">help</a></li>	
 						<li><a href="/itqlcommands/insert.html">insert</a></li>	
 						<li><a href="/itqlcommands/load.html">load</a></li>	
