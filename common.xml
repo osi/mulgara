@@ -513,20 +513,12 @@
     <filter token="server2" value="rmi://${host.name}/server2"/>
     <filter token="mulgara.jar" value="${mulgara.jar}"/>
 
-    <copy todir="${jxtest.dir}" filtering="yes">
+    <copy todir="${jxtest.dir}" filtering="yes" encoding="utf-8">
       <fileset dir="jxdata">
         <exclude name="**/*.gz"/>
-        <exclude name="iTQL/fulltext_queries/queryResult11.txt"/>
       </fileset>
     </copy>
 
-    <copy encoding="utf-8" file="jxdata/iTQL/fulltext_queries/queryResult11.txt" todir="${jxtest.dir}/iTQL/fulltext_queries" filtering="yes"/>
-
-    <condition property="isWindows">
-      <os family="windows"/>
-    </condition>
-
-    <ant target="-fixcrlf"/>
     <ant target="resolver-filesystem-test-data"/>
   </target>
 
@@ -536,14 +528,6 @@
               targetfile="${jxtest.dir}/iTQL/dc.rdfs">
       <srcfiles dir="${jxdata.dir}" includes="**/*"/>
     </uptodate>
-  </target>
-
-  <!-- Fix CR LF in test data results -->
-  <target name="-fixcrlf" if="isWindows">
-
-    <echo message="Fixing CR LF for Windows"/>
-
-    <fixcrlf encoding="utf-8" srcdir="${jxtest.dir}"/>
   </target>
 
   <!-- =================================================================== -->

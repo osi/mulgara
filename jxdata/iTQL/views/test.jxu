@@ -39,7 +39,7 @@
     <save name="queryResult" file="badQuery1Result.xml"/>
     <fail>Output failed.  Check badQuery1Result.xml for output.</fail>
   </ifEqual>
-  
+
   <set name="query" value="export &lt;@server@#view1&gt; to &lt;@baseuri@/tmp/view1.rdf&gt;;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -47,7 +47,7 @@
     <save name="queryResult" file="badExportResult1.xml"/>
     <fail>Output failed.  Check badExportResult1.xml for output.</fail>
   </ifEqual>
-  
+
   <set name="modelName" value="@server@#view1-export" />
   <set name="loadCommand" value="load &lt;@baseuri@/tmp/view1.rdf&gt; into &lt;@server@#view1-export&gt; ;" />
   <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
@@ -67,7 +67,7 @@
     <save name="queryResult" file="badExportResult3.xml"/>
     <fail>Output failed.  Check badExportResult3.xml for output.</fail>
   </ifEqual>
-  
+
   <set name="modelName" value="@server@#view2" />
   <set name="modelType" value="http://mulgara.org/mulgara#ViewModel" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxtest/iTQL/views/view2.rdf&gt; into
