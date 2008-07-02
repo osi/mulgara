@@ -12,6 +12,10 @@
 package org.mulgara.connection;
 
 import org.mulgara.query.Answer;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.BooleanAnswer;
+import org.mulgara.query.ConstructQuery;
+import org.mulgara.query.GraphAnswer;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -48,6 +52,20 @@ public abstract class CommandExecutor implements Connection {
    */
   public Answer execute(Query cmd) throws QueryException, TuplesException {
     return (Answer)cmd.execute(this);
+  }
+
+  /**
+   * @see org.mulgara.connection.Connection#execute(org.mulgara.query.AskQuery)
+   */
+  public BooleanAnswer execute(AskQuery cmd) throws QueryException, TuplesException {
+    return (BooleanAnswer)cmd.execute(this);
+  }
+
+  /**
+   * @see org.mulgara.connection.Connection#execute(org.mulgara.query.AskQuery)
+   */
+  public GraphAnswer execute(ConstructQuery cmd) throws QueryException, TuplesException {
+    return (GraphAnswer)cmd.execute(this);
   }
 
 }

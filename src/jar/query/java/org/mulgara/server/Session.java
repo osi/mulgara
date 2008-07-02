@@ -38,6 +38,9 @@ import javax.transaction.xa.XAResource;
 // Locally written packages
 import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.ConstructQuery;
+import org.mulgara.query.GraphAnswer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -184,6 +187,25 @@ public interface Session {
    * @throws QueryException if <var>query</var> can't be answered
    */
   public Answer query(Query query) throws QueryException;
+
+  /**
+   * Perform an ASK query.
+   *
+   * @param query the query
+   * @return <code>true</code> if the query results in data, <code>false</code> if
+   *         it results in the empty set.
+   * @throws QueryException if <var>query</var> can't be answered
+   */
+  public boolean query(AskQuery query) throws QueryException;
+
+  /**
+   * Perform a CONSTRUCT query.
+   *
+   * @param query the query
+   * @return An Answer that contains triples valid for a graph.
+   * @throws QueryException if <var>query</var> can't be answered
+   */
+  public GraphAnswer query(ConstructQuery query) throws QueryException;
 
   /**
    * Performs multiple queries storing the results, answers, into the returned

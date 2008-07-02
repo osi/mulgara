@@ -36,6 +36,8 @@ import java.net.*;
 
 // Locally written packages
 import org.jrdf.graph.Triple;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.ConstructQuery;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -249,15 +251,15 @@ interface RemoteSession extends Remote {
   public void commit() throws QueryException, RemoteException;
 
   /**
-   * METHOD TO DO
+   * Roll back the current transaction.
    *
-   * @throws QueryException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws QueryException An error occured in the abandoning of the transaction.
+   * @throws RemoteException An exception coming from the network connection.
    */
   public void rollback() throws QueryException, RemoteException;
 
   /**
-   * Make a TQL query.
+   * Make a query.
    *
    * @param query the query
    * @return a non-<code>null</code> answer to the <var>query</var>
@@ -265,6 +267,26 @@ interface RemoteSession extends Remote {
    * @throws RemoteException if the remote connection fails
    */
   public RemoteAnswer query(Query query) throws QueryException, RemoteException;
+
+  /**
+   * Make an ASK query.
+   *
+   * @param query the query
+   * @return <code>true</code> if the query returns a result.
+   * @throws QueryException if <var>query</var> can't be answered
+   * @throws RemoteException if the remote connection fails
+   */
+  public boolean query(AskQuery query) throws QueryException, RemoteException;
+
+  /**
+   * Make a CONSTRUCT query.
+   *
+   * @param query the query
+   * @return an Answer containing the triples for a graph.
+   * @throws QueryException if <var>query</var> can't be answered
+   * @throws RemoteException if the remote connection fails
+   */
+  public RemoteAnswer query(ConstructQuery query) throws QueryException, RemoteException;
 
   /**
    * Make a list of TQL query.

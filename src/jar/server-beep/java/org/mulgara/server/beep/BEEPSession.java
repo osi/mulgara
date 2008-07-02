@@ -50,9 +50,13 @@ import org.beepcore.beep.core.Message;
 import org.beepcore.beep.lib.Reply;
 import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.ConstructQuery;
+import org.mulgara.query.GraphAnswer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
 import org.mulgara.rules.RulesRef;
 import org.mulgara.server.Session;
 import org.mulgara.sparql.protocol.StreamFormatException;
@@ -329,6 +333,33 @@ class BEEPSession implements Session {
       close(queryChannel);
       throw new QueryException("Couldn't interpret BEEP reply", e);
     }
+  }
+
+  /**
+   * @see org.mulgara.server.Session#query(org.mulgara.query.AskQuery)
+   */
+  public boolean query(AskQuery query) throws QueryException {
+    Answer ans = query((Query)query);
+    try {
+      ans.beforeFirst();
+      ans.next();
+      return (Boolean)ans.getObject(0);
+    } catch (TuplesException e) {
+      throw new QueryException("Unable to access a boolean answer", e);
+    } finally {
+      try {
+        ans.close();
+      } catch (TuplesException e) {
+        throw new QueryException("Unable to release a boolean answer", e);
+      }
+    }
+  }
+
+  /**
+   * @see org.mulgara.server.Session#query(org.mulgara.query.ConstructQuery)
+   */
+  public GraphAnswer query(ConstructQuery query) throws QueryException {
+    return new GraphAnswer(query((Query)query));
   }
 
   /**

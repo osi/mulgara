@@ -14,6 +14,8 @@ package org.mulgara.connection;
 import java.net.URI;
 
 import org.mulgara.query.Answer;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.BooleanAnswer;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -162,5 +164,12 @@ public interface Connection {
    * @return An Answer with the query results.
    */
   public Answer execute(Query cmd) throws QueryException, TuplesException;
+
+  /**
+   * Issues an ASK query on the connection.
+   * @param cmd The ASK command to issue the query.
+   * @return A BooleanAnswer with the true/false result of the query.
+   */
+  public BooleanAnswer execute(AskQuery cmd) throws QueryException, TuplesException;
 
 }

@@ -789,7 +789,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   }
 
   public Answer doQuery(Query query) throws Exception {
-    TransactionalAnswer result;
+    Answer result;
 
     query = transform(query);
 
@@ -797,8 +797,16 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
 
     // Complete the numerical phase of resolution
     Tuples tuples = localQuery.resolveE(query);
-    result = new TransactionalAnswer(transaction, new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList()));
-    answers.put(result, null);
+    if (query instanceof AskQuery) {
+      // strip the answer down to true/false
+      result = new BooleanAnswer(tuples.getRowCardinality() != 0);
+    } else {
+      result = new TransactionalAnswer(transaction, new SubqueryAnswer(this, systemResolver, tuples, query.getVariableList()));
+      answers.put((TransactionalAnswer)result, null);
+
+      // check if the query was a CONSTRUCT, and wrap in a graph filter if needed
+      if (query instanceof ConstructQuery) result = new GraphAnswer(result);
+    }
     tuples.close();
 
     return result;

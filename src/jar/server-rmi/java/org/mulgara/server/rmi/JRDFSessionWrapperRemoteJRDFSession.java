@@ -205,23 +205,25 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
     // Generate the answer locally
     Answer localAnswer = jrdfSession.query(query);
 
-    RemoteAnswer remoteAnswer;
-
-    try {
-      // determine if this answer can be fully serialised or if it needs paging
-      if (localAnswer.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
-        remoteAnswer = new AnswerWrapperRemoteAnswerSerialised(new ArrayAnswer(localAnswer));
-        localAnswer.close();
-      } else {
-        remoteAnswer = new AnswerWrapperRemoteAnswer(localAnswer);
-      }
-    }
-    catch (TuplesException e) {
-      throw new QueryException("Unable to resolve answer: ", e);
-    }
-
-    return remoteAnswer;
+    return convertToRemoteAnswer(localAnswer);
   }
+
+  public boolean query(AskQuery query) throws QueryException, RemoteException {
+    return jrdfSession.query(query);
+  }
+
+  /**
+   * Queries the local server and returns a remote reference to an Answer.
+   *
+   * @param query The query to perform.
+   * @return A remote reference to an Answer.
+   * @throws QueryException The query caused an exception.
+   * @throws RemoteException Thrown when there is a network error.
+   */
+  public RemoteAnswer query(ConstructQuery query) throws QueryException, RemoteException {
+    return convertToRemoteAnswer(jrdfSession.query(query));
+  }
+
 
   public void insert(URI modelURI, Set statements)
       throws QueryException, RemoteException {
@@ -361,4 +363,19 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
     if (t instanceof GraphException) return (GraphException) t;
     return new GraphException(t.toString(), t);
   }
+
+  private RemoteAnswer convertToRemoteAnswer(Answer ans) throws QueryException, RemoteException {
+    try {
+      if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+        RemoteAnswer serialAnswer = new AnswerWrapperRemoteAnswerSerialised(new ArrayAnswer(ans));
+        ans.close();
+        return serialAnswer;
+      } else {
+        return new AnswerWrapperRemoteAnswer(ans);
+      }
+    } catch (TuplesException e) {
+      throw new QueryException("Unable to resolve answer", e);
+    }
+  }
+
 }

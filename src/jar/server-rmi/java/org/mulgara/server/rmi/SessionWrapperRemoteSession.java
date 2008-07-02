@@ -42,6 +42,8 @@ import org.apache.log4j.Logger;
 import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ArrayAnswer;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.ConstructQuery;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -356,24 +358,35 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    * @throws RemoteException Thrown when there is a network error.
    */
   public RemoteAnswer query(Query query) throws QueryException, RemoteException {
+    return convertToRemoteAnswer(session.query(query));
+  }
 
+  /**
+   * Queries the local server and returns the boolean result.
+   *
+   * @param query The query to perform.
+   * @return <code>true</code> if the query returns a non-empty result.
+   * @throws QueryException The query caused an exception.
+   * @throws RemoteException Thrown when there is a network error.
+   */
+  public boolean query(AskQuery query) throws QueryException, RemoteException {
     try {
-      Answer ans = session.query(query);
-      try {
-        if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
-          RemoteAnswer serialAnswer = new AnswerWrapperRemoteAnswerSerialised(new
-              ArrayAnswer(ans));
-          ans.close();
-          return serialAnswer;
-        } else {
-          return new AnswerWrapperRemoteAnswer(ans);
-        }
-      } catch (TuplesException e) {
-        throw new QueryException("Error getting information for answer", e);
-      }
+      return session.query(query);
     } catch (Throwable t) {
       throw convertToQueryException(t);
     }
+  }
+
+  /**
+   * Queries the local server and returns a remote reference to an Answer.
+   *
+   * @param query The query to perform.
+   * @return A remote reference to an Answer.
+   * @throws QueryException The query caused an exception.
+   * @throws RemoteException Thrown when there is a network error.
+   */
+  public RemoteAnswer query(ConstructQuery query) throws QueryException, RemoteException {
+    return convertToRemoteAnswer(session.query(query));
   }
 
   /**
@@ -559,6 +572,32 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
     QueryException qe = new QueryException(message, mappedCause);
     qe.setStackTrace(t.getStackTrace());
     return qe;
+  }
+
+  /**
+   * Converts an Answer to a RemoteAnswer. Closure of the original Answer is handled.
+   * @param ans The Answer to convert.
+   * @return A new RemoteAnswer containing the same data as the original Answer. This
+   *         needs to be closed when it is finished with.
+   * @throws QueryException Accessing the data caused an exception.
+   * @throws RemoteException Thrown when there is a network error.
+   */
+  private RemoteAnswer convertToRemoteAnswer(Answer ans) throws QueryException, RemoteException {
+    try {
+      try {
+        if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+          RemoteAnswer serialAnswer = new AnswerWrapperRemoteAnswerSerialised(new ArrayAnswer(ans));
+          ans.close();
+          return serialAnswer;
+        } else {
+          return new AnswerWrapperRemoteAnswer(ans);
+        }
+      } catch (TuplesException e) {
+        throw new QueryException("Error getting information for answer", e);
+      }
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
   }
 
   /**

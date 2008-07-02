@@ -393,12 +393,42 @@ class DatabaseSession implements Session {
   }
 
 
+  /**
+   * Execute a SELECT query on the database.
+   * @see org.mulgara.server.Session#query(org.mulgara.query.Query)
+   */
   public Answer query(Query query) throws QueryException {
     if (logger.isDebugEnabled()) logger.debug("QUERY: " + query);
 
     QueryOperation queryOperation = new QueryOperation(query, this);
     execute(queryOperation, "Query failed");
     return queryOperation.getAnswer();
+  }
+
+
+  /**
+   * Tests the database to see if a query will return any data.
+   * @see org.mulgara.server.Session#query(org.mulgara.query.AskQuery)
+   */
+  public boolean query(AskQuery query) throws QueryException {
+    if (logger.isDebugEnabled()) logger.debug("ASK QUERY: " + query);
+
+    QueryOperation queryOperation = new QueryOperation(query, this);
+    execute(queryOperation, "Query failed");
+    return ((BooleanAnswer)queryOperation.getAnswer()).getResult();
+  }
+
+
+  /**
+   * Queries the database for data that will be structured as a graph.
+   * @see org.mulgara.server.Session#query(org.mulgara.query.ConstructQuery)
+   */
+  public GraphAnswer query(ConstructQuery query) throws QueryException {
+    if (logger.isDebugEnabled()) logger.debug("CONSTRUCT QUERY: " + query);
+
+    QueryOperation queryOperation = new QueryOperation(query, this);
+    execute(queryOperation, "Query failed");
+    return (GraphAnswer)queryOperation.getAnswer();
   }
 
 

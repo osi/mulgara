@@ -43,6 +43,9 @@ import org.apache.log4j.Logger;
 // Locally written packages
 import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.ConstructQuery;
+import org.mulgara.query.GraphAnswer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -498,6 +501,36 @@ class RemoteSessionWrapperSession implements Serializable, Session {
       RemoteAnswer ans = remoteSession.query(query);
       resetRetries();
       return new RemoteAnswerWrapperAnswer(ans);
+    } catch (RemoteException e) {
+      testRetry(e);
+      return query(query);
+    }
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * Provices a lightweight GraphAnswer wrapper over the returned Answer (which is already
+   * a GraphAnswer at the server end).
+   */
+  public GraphAnswer query(ConstructQuery query) throws QueryException {
+    try {
+      RemoteAnswer ans = remoteSession.query(query);
+      resetRetries();
+      return new GraphAnswer(new RemoteAnswerWrapperAnswer(ans));
+    } catch (RemoteException e) {
+      testRetry(e);
+      return query(query);
+    }
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean query(AskQuery query) throws QueryException {
+    try {
+      return remoteSession.query(query);
     } catch (RemoteException e) {
       testRetry(e);
       return query(query);
