@@ -84,10 +84,11 @@ public class SingleTransitiveConstraint implements Constraint {
   /**
    * Constructor.
    *
-   * @param trans The constraint defining the transitive predicate.
-   * @throws QueryException If trans is not of the form {$var &lt;uri&gt; $var}
+   * @param trans The constraint defining the transitive predicate. Expected form
+   *        is: {$var &lt;uri&gt; $var}
+   * @throws IllegalArgumentException If trans is null.
    */
-  public SingleTransitiveConstraint(Constraint trans) throws QueryException {
+  public SingleTransitiveConstraint(Constraint trans) throws IllegalArgumentException {
 
     // Validate parameters
     if (trans == null) {

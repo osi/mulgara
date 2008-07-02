@@ -83,14 +83,14 @@ public class TransitiveConstraint implements Constraint {
 
   /**
    * Constructor.
-   *
+   * The parameters are expected to appear in the form {$var &lt;uri&gt; $var}
    * @param trans1 The anchored constraint defining the transitive predicate
    *   and beginning or ending point.
    * @param trans2 The constraint defining the transitive predicate.
-   * @throws QueryException If trans is not of the form {$var &lt;uri&gt; $var}
+   * @throws IllegalArgumentException If either trans is null.
    */
   public TransitiveConstraint(Constraint trans1, Constraint trans2)
-      throws QueryException {
+      throws IllegalArgumentException {
 
     // Validate parameters
     if (trans1 == null || trans2 == null) {
