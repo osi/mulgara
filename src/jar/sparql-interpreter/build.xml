@@ -21,6 +21,10 @@
 
     <path refid="common-classpath"/>
     <fileset file="${query.dist.dir}/${query.jar}"/>
+    <fileset file="${resolver-test.dist.dir}/${resolver-test.jar}"/>
+    <fileset file="${resolver-xsd.dist.dir}/${resolver-xsd.jar}"/>
+    <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
+    <fileset file="${resolver-relational.dist.dir}/${resolver-relational.jar}"/>
   </path>
 
   <path id="sparql-int-test-classpath">
@@ -66,7 +70,7 @@
   </target>
 
   <target name="sparql-int-compile"
-          depends="-sparql-int-prepare, util-jar, config-jar, -sparql-int-unjar-config"
+          depends="-sparql-int-prepare, util-jar, config-jar, -sparql-int-unjar-config, resolver-xsd-jar, resolver-test-jar, resolver-spi-jar, resolver-relational-jar"
           description="Compiles all SPARQL interpreter related files"
           unless="sparql-int.classes.uptodate">
 
