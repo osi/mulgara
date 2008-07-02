@@ -133,6 +133,16 @@ public class IntervalConstraint implements Constraint {
   }
 
   /**
+   * Used to create a copy of this constraint with a new variable and model.
+   * @param variable The variable to use in the new constraint.
+   * @param model The model to use in the new constraint.
+   * @return A new constraint with the same properties as this one, but with a different variable and model.
+   */
+  public IntervalConstraint mutateTo(Variable variable, URIReference model) {
+    return new IntervalConstraint(variable, lowerBound, upperBound, model);
+  }
+
+  /**
    * @param intervalConstraint  an instance constraining the same variable as
    *   this one, never <code>null</code>
    * @throws IllegalArgumentException if the <var>intervalConstraint</var> does
