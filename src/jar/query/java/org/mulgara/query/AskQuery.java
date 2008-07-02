@@ -1,0 +1,60 @@
+/*
+ * The contents of this file are subject to the Open Software License
+ * Version 3.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.opensource.org/licenses/osl-3.0.txt
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ */
+
+package org.mulgara.query;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.mulgara.connection.Connection;
+
+/**
+ * A query type to indicate that the result should be boolean. A true result indicates
+ * that the query would return more than 0 rows.
+ *
+ * @created Jun 26, 2008
+ * @author Paul Gearon
+ * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
+ * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
+ */
+public class AskQuery extends Query {
+
+  /** Required serialization ID */
+  private static final long serialVersionUID = -6024259961466362580L;
+
+  /**
+   * Creates an ASK query.
+   * @param variableList The variables in the result to check for.
+   * @param modelExpression The source of the data to query.
+   * @param constraintExpression The WHERE clause to test.
+   */
+  @SuppressWarnings("unchecked")
+  public AskQuery(List<? extends SelectElement> variableList, ModelExpression modelExpression,
+        ConstraintExpression constraintExpression) {
+    super(variableList, modelExpression, constraintExpression,
+        null, // no having
+        (List<Order>)Collections.EMPTY_LIST, // no ordering
+        null, // no limit
+        0, // zero offset
+        new UnconstrainedAnswer());
+  }
+
+  /**
+   * Executes this query on a connection.
+   * @param conn The connection to a database session to execute the query against.
+   * @return The answer to this query.  Closing is optional.
+   */
+  public BooleanAnswer execute(Connection conn) throws QueryException, TuplesException {
+    return new BooleanAnswer(conn.getSession().query(this));
+  }
+
+}
