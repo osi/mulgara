@@ -544,7 +544,7 @@ public class Query implements Cloneable, Serializable, Command {
    * @param conn The connection to a database session to execute the query against.
    * @return The answer to this query.  This must be closed by the calling code.
    */
-  public Object execute(Connection conn) throws QueryException, TuplesException {
+  public Answer execute(Connection conn) throws QueryException, TuplesException {
     if (logger.isDebugEnabled()) logger.debug("Executing query " + toString());
     Answer answer = conn.getSession().query(this);
     if (answer == null) throw new QueryException("Invalid answer received");
