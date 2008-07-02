@@ -291,7 +291,7 @@ I.  Open Source Components
               http://www.opensource.org/licenses/lgpl-license.php
     
     Mulgara SPARQL Parser
-    JARs:     mulgara-sparql-0.0.1.jar
+    JARs:     mulgara-sparql-0.0.2.jar
     URL:      http://mulgara.org/svn/sparqlparser
     License   Apache License Version 2.0
               http://www.apache.org/licenses/LICENSE-2.0.txt
