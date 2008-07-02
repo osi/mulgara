@@ -14,18 +14,26 @@ package org.mulgara.sparql;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.mulgara.parser.Interpreter;
 import org.mulgara.parser.MulgaraLexerException;
 import org.mulgara.parser.MulgaraParserException;
+import org.mulgara.query.AskQuery;
+import org.mulgara.query.ConstantValue;
+import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintConjunction;
 import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.ConstraintExpression;
+import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.ConstraintIs;
+import org.mulgara.query.ConstructQuery;
+import org.mulgara.query.GraphAnswer;
 import org.mulgara.query.ModelExpression;
 import org.mulgara.query.ModelResource;
 import org.mulgara.query.ModelUnion;
@@ -35,16 +43,24 @@ import org.mulgara.query.SelectElement;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
 import org.mulgara.query.operation.Command;
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.sparql.parser.ParseException;
 import org.mulgara.sparql.parser.QueryStructure;
 import org.mulgara.sparql.parser.SparqlParser;
+import org.mulgara.sparql.parser.cst.BlankNode;
 import org.mulgara.sparql.parser.cst.Expression;
 import org.mulgara.sparql.parser.cst.GroupGraphPattern;
 import org.mulgara.sparql.parser.cst.IRIReference;
 import org.mulgara.sparql.parser.cst.Node;
 import org.mulgara.sparql.parser.cst.Ordering;
+import org.mulgara.sparql.parser.cst.RDFLiteral;
+import org.mulgara.sparql.parser.cst.Triple;
 
+import static org.jrdf.vocabulary.RDF.TYPE;
+import static org.jrdf.vocabulary.RDFS.LITERAL;
+import static org.mulgara.query.rdf.Mulgara.NODE_TYPE_GRAPH;
 
 /**
  * Converts a parsed SPARQL query into a Command for execution.
@@ -58,6 +74,31 @@ public class SparqlInterpreter implements Interpreter {
 
   /** The default graph to use if none has been set. */
   private static final URI INTERNAL_DEFAULT_GRAPH_URI = URI.create("local:null");
+
+  /** The column variables used to build a graph. */
+  private static final Variable[] GRAPH_VARS = GraphAnswer.getGraphVariables();
+
+  /** A constraint for referring to an entire constructed graph. */
+  private static final Constraint GRAPH_CONSTRAINT = new ConstraintImpl(GRAPH_VARS[0], GRAPH_VARS[1], GRAPH_VARS[2]);
+
+  /** Reference for URI references. */
+  private static final URIReferenceImpl URI_REF = new URIReferenceImpl(URI.create(Mulgara.NAMESPACE + "UriReference"));
+
+  /** Reference for rdf:type. */
+  private static final URIReferenceImpl TYPE_REF = new URIReferenceImpl(TYPE);
+
+  /** Reference for rdfs:Literal. */
+  private static final URIReferenceImpl LITERAL_REF = new URIReferenceImpl(LITERAL);
+
+  /** Reference for the graph of sys:type. */
+  private static final URIReferenceImpl NODE_TYPE_GRAPH_REF = new URIReferenceImpl(URI.create(NODE_TYPE_GRAPH));
+
+  /** A constraint for limiting the graph predicate variable to literals. */
+  private static final ConstraintImpl LITERAL_ONLY_CONSTRAINT = new ConstraintImpl(GRAPH_VARS[2], TYPE_REF, LITERAL_REF, NODE_TYPE_GRAPH_REF);
+
+  /** A constraint for limiting the graph predicate variable to URIs. */
+  private static final ConstraintImpl URI_ONLY_CONSTRAINT = new ConstraintImpl(GRAPH_VARS[2], TYPE_REF, URI_REF, NODE_TYPE_GRAPH_REF);
+
 
   /** The default graph to use when none has been parsed. */
   private URI defaultGraphUri = null;
@@ -109,11 +150,11 @@ public class SparqlInterpreter implements Interpreter {
       case select:
         return buildSelectQuery(struct);
       case construct:
-        return unhandledType(struct);
+        return buildConstructQuery(struct);
       case describe:
         return unhandledType(struct);
       case ask:
-        return unhandledType(struct);
+        return buildAskQuery(struct);
       default:
         throw new MulgaraParserException("Unknown query type: " + struct.getType().name());
     }
@@ -147,6 +188,60 @@ public class SparqlInterpreter implements Interpreter {
   }
 
   /**
+   * Converts the elements of a {@link QueryStructure} into a Mulgara {@link AskQuery}.
+   * @param queryStruct The structure to analyze and convert.
+   * @return A new query that can be run as a {@link org.mulgara.query.operation.Command} on a connection.
+   * @throws MulgaraParserException If the query structure contains elements that are not supported by Mulgara.
+   */
+  AskQuery buildAskQuery(QueryStructure queryStruct) throws MulgaraParserException {
+    List<Variable> selection = new ArrayList<Variable>();
+    Collection<org.mulgara.sparql.parser.cst.Variable> allVars = queryStruct.getAllVariables();
+    for (org.mulgara.sparql.parser.cst.Variable v: allVars) selection.add(new Variable(v.getName()));
+    ModelExpression defaultGraphs = getFrom(queryStruct);
+    ConstraintExpression whereClause = getWhere(queryStruct);
+    return new AskQuery(selection, defaultGraphs, whereClause);
+  }
+
+  /**
+   * Converts the elements of a {@link QueryStructure} into a Mulgara {@link ConstructQuery}.
+   * @param queryStruct The structure to analyze and convert.
+   * @return A new query that can be run as a {@link org.mulgara.query.operation.Command} on a connection.
+   * @throws MulgaraParserException If the query structure contains elements that are not supported by Mulgara.
+   */
+  ConstructQuery buildConstructQuery(QueryStructure queryStruct) throws MulgaraParserException {
+    List<? extends SelectElement> selection = getConstructTemplate(queryStruct);
+    if (selection.size() % 3 != 0) {
+      throw new MulgaraParserException("CONSTRUCT queries require a multiple of 3 nodes in the template.");
+    }
+    ModelExpression defaultGraphs = getFrom(queryStruct);
+    ConstraintExpression whereClause = getWhere(queryStruct);
+    List<Order> orderBy = getOrdering(queryStruct);
+    Integer limit = getLimit(queryStruct);
+    int offset = queryStruct.getOffset();
+    // null having, unconstrained answer
+    return new ConstructQuery(selection, defaultGraphs, whereClause, orderBy, limit, offset);
+  }
+
+  /**
+   * Converts the elements of a {@link QueryStructure} into a Mulgara {@link ConstructQuery}
+   * appropriate for a DESCRIBE query.
+   * @param queryStruct The structure to analyze and convert.
+   * @return A new query that can be run as a {@link org.mulgara.query.operation.Command} on a connection.
+   * @throws MulgaraParserException If the query structure contains elements that are not supported by Mulgara.
+   */
+  ConstructQuery buildDescribeQuery(QueryStructure queryStruct) throws MulgaraParserException {
+    List<? extends SelectElement> described = getSelection(queryStruct);
+    ConstraintExpression whereClause = distributeIntoWhereClause(described, getWhere(queryStruct));
+    whereClause = constraintToNonBlank(whereClause);
+    ModelExpression defaultGraphs = getFrom(queryStruct);
+    List<Order> orderBy = getOrdering(queryStruct);
+    Integer limit = getLimit(queryStruct);
+    int offset = queryStruct.getOffset();
+    // null having, unconstrained answer
+    return new ConstructQuery(graphVariables(), defaultGraphs, whereClause, orderBy, limit, offset);
+  }
+
+  /**
    * Extract the requested variables from this query into a list.
    * @param queryStruct The query to get the selected variables from.
    * @return A new list containing Mulgara {@link Variable}s.
@@ -167,6 +262,59 @@ public class SparqlInterpreter implements Interpreter {
       }
     }
     return result;
+  }
+
+  /**
+   * Extract the requested elements from this construction template into a List.
+   * @param queryStruct The query to get the selected variables from.
+   * @return A new list containing Mulgara {@link Variable}s.
+   * @throws MulgaraParserException If and selected elements are not variables.
+   */
+  @SuppressWarnings("unchecked")
+  List<? extends SelectElement> getConstructTemplate(QueryStructure queryStruct) throws MulgaraParserException {
+    List<SelectElement> result = new ArrayList<SelectElement>();
+    List<Triple> template = (List<Triple>)queryStruct.getConstructTemplate().getElements();
+    ConstantVarFactory factory = new ConstantVarFactory();
+    for (Triple triple: template) {
+      result.add(convertForTemplate(triple.getSubject(), factory));
+      result.add(convertForTemplate(triple.getPredicate(), factory));
+      result.add(convertForTemplate(triple.getObject(), factory));
+    }
+    return result;
+  }
+
+  /**
+   * Converts a node to a "selectable" element for use in a CONSTRUCT template.
+   * @param node The query node to convert.
+   * @param constantVars A variable factory for labelling constants.
+   * @return A new element that can be used in a CONSTRUCT template.
+   * @throws MulgaraParserException The template element was not valid.
+   */
+  private SelectElement convertForTemplate(Node node, ConstantVarFactory constantVars) throws MulgaraParserException {
+    // variables are simply converted
+    if (node instanceof org.mulgara.sparql.parser.cst.Variable) {
+      return new Variable(((org.mulgara.sparql.parser.cst.Variable)node).getName());
+    }
+    // blank nodes are converted to unused variables
+    if (node instanceof BlankNode) {
+      // blank node labels are not used elsewhere as variables as they are not parsed as valid variables
+      return new Variable(((BlankNode)node).getLabel());
+    }
+    // RDFLiterals are converted to a literal, and wrapped in a ConstantValue
+    if (node instanceof RDFLiteral) {
+      RDFLiteral rl = (RDFLiteral)node;
+      LiteralImpl literal;
+      if (rl.isLanguageCoded()) literal = new LiteralImpl(rl.getValue(), rl.getLanguage());
+      else if (rl.isTyped()) literal = new LiteralImpl(rl.getValue(), rl.getDatatype().getUri());
+      else literal = new LiteralImpl(rl.getValue());
+      return new ConstantValue(constantVars.newVar(), literal);
+    }
+    // IRIReferences are converted to a URI and wrapped in a ConstantValue
+    if (node instanceof IRIReference) {
+      return new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)node).getUri()));
+    }
+    // nothing else is valid. We probably have a compound expression.
+    throw new MulgaraParserException("Unexpected element in CONSTRUCT template: " + node); 
   }
 
   /**
@@ -276,5 +424,62 @@ public class SparqlInterpreter implements Interpreter {
       isConstraints.add(new ConstraintIs(var, new URIReferenceImpl(iri.getUri())));
     }
     return new ConstraintDisjunction(isConstraints);
+  }
+
+  /**
+   * Converts a WHERE clause into using "subject" instead of the variables from described.
+   * Then creates a union of this WHERE clause converted for each element in described.
+   * If the base WHERE clause is empty, then ($subject $predicate $object) is presumed. 
+   * @param described The elements to distribute into the unioned WHERE clause.
+   * @param baseWhere The WHERE clause to convert and duplicate
+   * @return The UNIONed WHERE clauses with the variables adjusted.
+   */
+  ConstraintExpression distributeIntoWhereClause(List<? extends SelectElement> described, ConstraintExpression baseWhere) throws MulgaraParserException {
+    if (baseWhere == null) baseWhere = GRAPH_CONSTRAINT;
+    List<ConstraintExpression> constraints = new LinkedList<ConstraintExpression>();
+    for (SelectElement e: described) {
+      ConstraintExpression expr;
+      if (e instanceof URIReferenceImpl) {
+        expr = new ConstraintConjunction(baseWhere, new ConstraintIs(GRAPH_VARS[0], (URIReferenceImpl)e));
+      } else if (e instanceof Variable) {
+        expr = mapVariable(baseWhere, (Variable)e, GRAPH_VARS[0]);
+      } else throw new MulgaraParserException("Illegal type in DESCRIBE clause: " + e);
+      constraints.add(expr);
+    }
+    return new ConstraintDisjunction(constraints);
+  }
+
+  /**
+   * Maps a ConstraintExpression to a new ConstraintExpression with all instance of one
+   * {@link Variable} changed to another Variable.
+   * @param base The ConstraintExpression to map.
+   * @param from The Variable to find and replace.
+   * @param to The new Variable to replace <var>from</var> with.
+   * @return A new ConstraintExpression with all instances of <var>from</var> replaced
+   *         with <var>to</var>.
+   * @throws MulgaraParserException There was an error with the transformation.
+   */
+  ConstraintExpression mapVariable(ConstraintExpression base, Variable from, Variable to) throws MulgaraParserException {
+    VariableRenameTransformer tx = new VariableRenameTransformer(from, to);
+    try {
+      return tx.transform(base);
+    } catch (SymbolicTransformationException e) {
+      throw new MulgaraParserException("Unable to convert WHERE clause for use in query.", e);
+    }
+  }
+
+
+  ConstraintExpression constraintToNonBlank(ConstraintExpression expr) {
+    ConstraintExpression literals = new ConstraintConjunction(expr, LITERAL_ONLY_CONSTRAINT);
+    ConstraintExpression uris = new ConstraintConjunction(expr, URI_ONLY_CONSTRAINT);
+    return new ConstraintDisjunction(literals, uris);
+  }
+
+  /**
+   * Get the column names used in a Graph.
+   * @return A list of Variables used when defining a graph.
+   */
+  List<? extends SelectElement> graphVariables() {
+    return Arrays.asList(GRAPH_VARS);
   }
 }
