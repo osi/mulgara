@@ -154,6 +154,8 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
 
   public Node globalize(long localNode) throws GlobalizeException {
 
+    // this should not require guarding, as read-only operations will usually not be on the current phase
+    // any reads on the current phase are about to start failing anyway if the state changes under us
     if (state == ROLLBACK || state == RELEASE) {
       throw new GlobalizeException(localNode, "Attempting to globalize outside transaction.");
     }
@@ -225,38 +227,40 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
 
 
   public void prepare() throws SimpleXAResourceException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Preparing phase on StringPoolSession " + System.identityHashCode(this) + " SP=" + System.identityHashCode(persistentStringPool));
-    }
-    if (state == PREPARE) {
-      return;
-    } else if (state != OBTAIN) {
-      throw new SimpleXAResourceException("Attempting to prepare phase without obtaining phase");
-    }
-
-    state = PREPARE;
-
-    persistentStringPool.prepare();
-    persistentNodePool.prepare();
-    for (int i = 0; i < resources.length; i++) {
-      resources[i].prepare();
+    synchronized (globalLock) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Preparing phase on StringPoolSession " + System.identityHashCode(this) + " SP=" + System.identityHashCode(persistentStringPool));
+      }
+      if (state == PREPARE) {
+        return;
+      } else if (state != OBTAIN) {
+        throw new SimpleXAResourceException("Attempting to prepare phase without obtaining phase");
+      }
+  
+      state = PREPARE;
+  
+      persistentStringPool.prepare();
+      persistentNodePool.prepare();
+      for (int i = 0; i < resources.length; i++) {
+        resources[i].prepare();
+      }
     }
   }
 
 
   public void commit() throws SimpleXAResourceException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Committing phase on StringPoolSession " + System.identityHashCode(this));
-    }
-    if (state == COMMIT) {
-      return;
-    } else if (state != PREPARE) {
-      throw new SimpleXAResourceException("Attempting to commit phase without preparing");
-    }
-
-    state = COMMIT;
-
     synchronized (globalLock) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Committing phase on StringPoolSession " + System.identityHashCode(this));
+      }
+      if (state == COMMIT) {
+        return;
+      } else if (state != PREPARE) {
+        throw new SimpleXAResourceException("Attempting to commit phase without preparing");
+      }
+  
+      state = COMMIT;
+
       persistentStringPool.commit();
       persistentNodePool.commit();
       for (int i = 0; i < resources.length; i++) {
@@ -267,41 +271,45 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
 
 
   public void rollback() throws SimpleXAResourceException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Rollback phase on StringPoolSession " + System.identityHashCode(this));
-    }
-    if (state == RELEASE) {
-      throw new SimpleXAResourceException("Attempting to rollback phase outside transaction");
-    }
-    state = ROLLBACK;
-    persistentStringPool.rollback();
-    persistentNodePool.rollback();
-    for (int i = 0; i < resources.length; i++) {
-      resources[i].rollback();
+    synchronized (globalLock) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Rollback phase on StringPoolSession " + System.identityHashCode(this));
+      }
+      if (state == RELEASE) {
+        throw new SimpleXAResourceException("Attempting to rollback phase outside transaction");
+      }
+      state = ROLLBACK;
+      persistentStringPool.rollback();
+      persistentNodePool.rollback();
+      for (int i = 0; i < resources.length; i++) {
+        resources[i].rollback();
+      }
     }
   }
 
 
   public void release() throws SimpleXAResourceException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Release phase on StringPoolSession " + System.identityHashCode(this));
-    }
-    if (state == RELEASE) {
-      return;
-    } else if (state != COMMIT && state != ROLLBACK) {
-      throw new SimpleXAResourceException("Attempting to release phase without commit or rollback");
-    }
-
-    state = RELEASE;
-
-    persistentStringPool.release();
-    persistentNodePool.release();
-
-    // TODO determine if release() should be called for the temp components.
-    //temporaryStringPool.release();
-    //temporaryNodePool.release();
-    for (int i = 0; i < resources.length; i++) {
-      resources[i].release();
+    synchronized (globalLock) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Release phase on StringPoolSession " + System.identityHashCode(this));
+      }
+      if (state == RELEASE) {
+        return;
+      } else if (state != COMMIT && state != ROLLBACK) {
+        throw new SimpleXAResourceException("Attempting to release phase without commit or rollback");
+      }
+  
+      state = RELEASE;
+  
+      persistentStringPool.release();
+      persistentNodePool.release();
+  
+      // TODO determine if release() should be called for the temp components.
+      //temporaryStringPool.release();
+      //temporaryNodePool.release();
+      for (int i = 0; i < resources.length; i++) {
+        resources[i].release();
+      }
     }
   }
 
@@ -392,6 +400,8 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
 
   protected long localize(Node node, int flags) throws LocalizeException
   {
+    // this should not require guarding, as read-only operations will usually not be on the current phase
+    // any reads on the current phase are about to start failing anyway if the state changes under us
     if (state != OBTAIN) {
       throw new LocalizeException(node, "Attempting to localize outside transaction (STATE = " + state + ") " + System.identityHashCode(this));
     }
