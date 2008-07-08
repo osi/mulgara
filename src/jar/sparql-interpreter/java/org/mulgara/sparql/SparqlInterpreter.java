@@ -152,7 +152,7 @@ public class SparqlInterpreter implements Interpreter {
       case construct:
         return buildConstructQuery(struct);
       case describe:
-        return unhandledType(struct);
+        return buildDescribeQuery(struct);
       case ask:
         return buildAskQuery(struct);
       default:
@@ -166,6 +166,7 @@ public class SparqlInterpreter implements Interpreter {
    * @return Nothing. An exception is always thrown.
    * @throws UnsupportedOperationException An exception explaining that this query type is not handled.
    */
+  @SuppressWarnings("unused")
   private Query unhandledType(QueryStructure struct) throws UnsupportedOperationException {
     throw new UnsupportedOperationException("Query type not yet supported: " + struct.getType().name());
   }
@@ -237,7 +238,6 @@ public class SparqlInterpreter implements Interpreter {
     List<Order> orderBy = getOrdering(queryStruct);
     Integer limit = getLimit(queryStruct);
     int offset = queryStruct.getOffset();
-    // null having, unconstrained answer
     return new ConstructQuery(graphVariables(), defaultGraphs, whereClause, orderBy, limit, offset);
   }
 
