@@ -38,10 +38,8 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.store.*;
-import org.mulgara.store.statement.xa.*;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.Block;
-import org.mulgara.store.xa.ObjectPool;
 import org.mulgara.util.Constants;
 import org.mulgara.util.TempDir;
 
@@ -76,21 +74,12 @@ public class TripleAVLFileUnitTest extends TestCase {
   /**
    * Description of the Field
    */
-  private static Block metaroot = Block.newInstance(
-      ObjectPool.newInstance(),
-      TripleAVLFile.Phase.RECORD_SIZE * Constants.SIZEOF_LONG
-      );
+  private static Block metaroot = Block.newInstance(TripleAVLFile.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
 
   /**
    * Description of the Field
    */
   private TripleAVLFile tripleAVLFile;
-
-  /**
-   * Description of the Field
-   */
-  private ObjectPool objectPool = null;
-
 
   /**
    * Named constructor.
@@ -141,9 +130,8 @@ public class TripleAVLFileUnitTest extends TestCase {
   public void setUp() throws IOException {
     boolean exceptionOccurred = true;
     try {
-      objectPool = ObjectPool.newInstance();
       tripleAVLFile = new TripleAVLFile(
-          objectPool, new File(TempDir.getTempDir(), "tavlftest"),
+          new File(TempDir.getTempDir(), "tavlftest"),
           new int[] {0, 1, 2, 3}
       );
       exceptionOccurred = false;
@@ -163,14 +151,8 @@ public class TripleAVLFileUnitTest extends TestCase {
   public void tearDown() throws IOException {
     if (tripleAVLFile != null) {
       try {
-        if (objectPool != null) {
-          objectPool.release();
-          objectPool = null;
-        }
-
         tripleAVLFile.close();
-      }
-      finally {
+      } finally {
         tripleAVLFile = null;
       }
     }
@@ -188,10 +170,10 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
     tripleAVLFile.new Phase(phase0);
     token0.release();
@@ -209,13 +191,13 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    assertTrue("Found node in empty tree", !phase1.existsTriple(objectPool, 1, 2, 4, 2));
+    assertTrue("Found node in empty tree", !phase1.existsTriple(1, 2, 4, 2));
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
 
-    assertTrue("Node missing from tree", phase1.existsTriple(objectPool, 1, 2, 4, 2));
+    assertTrue("Node missing from tree", phase1.existsTriple(1, 2, 4, 2));
 
     tripleAVLFile.new Phase(phase0);
     token0.release();
@@ -233,39 +215,39 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    assertTrue(phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase1.removeTriple(objectPool, 1, 2, 3, 1);
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    phase1.removeTriple(1, 2, 3, 1);
+    assertTrue(!phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase1.removeTriple(objectPool, 1, 2, 4, 2);
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    phase1.removeTriple(1, 2, 4, 2);
+    assertTrue(!phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(!phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase1.removeTriple(objectPool, 2, 5, 6, 3);
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(!phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    phase1.removeTriple(2, 5, 6, 3);
+    assertTrue(!phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(!phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(!phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase1.removeTriple(objectPool, 3, 2, 3, 4);
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(!phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(!phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    phase1.removeTriple(3, 2, 3, 4);
+    assertTrue(!phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(!phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(!phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(!phase1.existsTriple(3, 2, 3, 4));
 
     tripleAVLFile.new Phase(phase0);
     token0.release();
@@ -283,27 +265,27 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    assertTrue(phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase1.removeTriple(objectPool, 1, 2, 3, 1);
-    assertTrue(!phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    phase1.removeTriple(1, 2, 3, 1);
+    assertTrue(!phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    phase1.addTriple(1, 2, 3, 1);
+    assertTrue(phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
     // set up for testPersist()
     phase1.writeToBlock(metaroot, 0);
@@ -322,10 +304,10 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    assertTrue(phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
     tripleAVLFile.new Phase(phase0);
     token0.release();
@@ -343,45 +325,45 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    assertTrue(phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
     TripleAVLFile.Phase.Token token1 = phase1.use();
     TripleAVLFile.Phase phase2 = tripleAVLFile.new Phase();
 
-    phase2.removeTriple(objectPool, 1, 2, 3, 1);
-    assertTrue(!phase2.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase2.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase2.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase2.existsTriple(objectPool, 3, 2, 3, 4));
+    phase2.removeTriple(1, 2, 3, 1);
+    assertTrue(!phase2.existsTriple(1, 2, 3, 1));
+    assertTrue(phase2.existsTriple(1, 2, 4, 2));
+    assertTrue(phase2.existsTriple(2, 5, 6, 3));
+    assertTrue(phase2.existsTriple(3, 2, 3, 4));
 
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase1.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase1.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase1.existsTriple(objectPool, 3, 2, 3, 4));
+    assertTrue(phase1.existsTriple(1, 2, 3, 1));
+    assertTrue(phase1.existsTriple(1, 2, 4, 2));
+    assertTrue(phase1.existsTriple(2, 5, 6, 3));
+    assertTrue(phase1.existsTriple(3, 2, 3, 4));
 
-    phase2.addTriple(objectPool, 1, 2, 3, 1);
-    assertTrue(phase2.existsTriple(objectPool, 1, 2, 3, 1));
-    assertTrue(phase2.existsTriple(objectPool, 1, 2, 4, 2));
-    assertTrue(phase2.existsTriple(objectPool, 2, 5, 6, 3));
-    assertTrue(phase2.existsTriple(objectPool, 3, 2, 3, 4));
+    phase2.addTriple(1, 2, 3, 1);
+    assertTrue(phase2.existsTriple(1, 2, 3, 1));
+    assertTrue(phase2.existsTriple(1, 2, 4, 2));
+    assertTrue(phase2.existsTriple(2, 5, 6, 3));
+    assertTrue(phase2.existsTriple(3, 2, 3, 4));
 
     try {
-      phase1.removeTriple(objectPool, 1, 2, 3, 1);
+      phase1.removeTriple(1, 2, 3, 1);
       fail("Able to remove from a read-only phase");
     } catch (IllegalStateException ex) {
       // NO-OP
     }
 
     try {
-      phase1.addTriple(objectPool, 4, 2, 3, 6);
+      phase1.addTriple(4, 2, 3, 6);
       fail("Able to insert into a read-only phase");
     } catch (IllegalStateException ex) {
       // NO-OP
@@ -404,12 +386,12 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
-    Tuples tuples = phase1.findTuples(objectPool, 1);
+    Tuples tuples = phase1.findTuples(1);
     tuples.close();
 
     tripleAVLFile.new Phase(phase0);
@@ -428,12 +410,12 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
-    Tuples tuples = phase1.findTuples(objectPool, 1);
+    Tuples tuples = phase1.findTuples(1);
 
     // move to the first triple
     tuples.beforeFirst();
@@ -475,11 +457,11 @@ public class TripleAVLFileUnitTest extends TestCase {
 
     for (int i = 1; i < 5; i++) {
       for (int j = 1; j <= 500; j++) {
-        phase1.addTriple(objectPool, i, j, 7, 6);
+        phase1.addTriple(i, j, 7, 6);
       }
     }
 
-    Tuples tuples = phase1.findTuples(objectPool, 3);
+    Tuples tuples = phase1.findTuples(3);
 
     tuples.beforeFirst();
     for (int j = 1; j <= 500; j++) {
@@ -510,15 +492,15 @@ public class TripleAVLFileUnitTest extends TestCase {
     TripleAVLFile.Phase.Token token0 = phase0.use();
     TripleAVLFile.Phase phase1 = tripleAVLFile.new Phase();
 
-    phase1.addTriple(objectPool, 1, 2, 3, 1);
-    phase1.addTriple(objectPool, 1, 2, 4, 2);
-    phase1.addTriple(objectPool, 2, 5, 6, 3);
-    phase1.addTriple(objectPool, 2, 6, 7, 3);
-    phase1.addTriple(objectPool, 2, 6, 8, 3);
-    phase1.addTriple(objectPool, 2, 7, 9, 3);
-    phase1.addTriple(objectPool, 3, 2, 3, 4);
+    phase1.addTriple(1, 2, 3, 1);
+    phase1.addTriple(1, 2, 4, 2);
+    phase1.addTriple(2, 5, 6, 3);
+    phase1.addTriple(2, 6, 7, 3);
+    phase1.addTriple(2, 6, 8, 3);
+    phase1.addTriple(2, 7, 9, 3);
+    phase1.addTriple(3, 2, 3, 4);
 
-    Tuples tuples = phase1.findTuples(objectPool, 2);
+    Tuples tuples = phase1.findTuples(2);
 
     // move to the first triple
     tuples.beforeFirst(new long[]{6}, 0);

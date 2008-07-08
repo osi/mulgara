@@ -70,7 +70,7 @@ public abstract class AbstractBlockFile implements BlockFile {
   private final static Logger logger = Logger.getLogger(AbstractBlockFile.class);
 
   /** All the open files accessed as block files. */
-  private static Set openFiles = new HashSet();
+  private static Set<File> openFiles = new HashSet<File>();
 
   /** Determine the byte order of this machine, and select an ordering to use. */
   static {

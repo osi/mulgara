@@ -96,6 +96,7 @@ public final class TripleAVLFile {
 
   private final static int PAYLOAD_SIZE = IDX_BLOCK_ID + 1;
 
+  @SuppressWarnings("unused")
   private File file;
 
   private AVLFile avlFile;
@@ -124,14 +125,11 @@ public final class TripleAVLFile {
   /**
    * CONSTRUCTOR TripleAVLFile TO DO
    *
-   * @param objectPool PARAMETER TO DO
    * @param file PARAMETER TO DO
    * @param sortOrder PARAMETER TO DO
    * @throws IOException EXCEPTION TO DO
    */
-  public TripleAVLFile(
-      ObjectPool objectPool, File file, int[] sortOrder
-  ) throws IOException {
+  public TripleAVLFile(File file, int[] sortOrder) throws IOException {
     this.file = file;
     this.sortOrder = sortOrder;
 
@@ -140,10 +138,8 @@ public final class TripleAVLFile {
     order2 = sortOrder[2];
     order3 = sortOrder[3];
 
-    avlFile = new AVLFile(objectPool, file, PAYLOAD_SIZE);
-    blockFile = new ManagedBlockFile(
-        objectPool, file + BLOCKFILE_EXT, BLOCK_SIZE, BlockFile.IOType.DEFAULT
-    );
+    avlFile = new AVLFile(file, PAYLOAD_SIZE);
+    blockFile = new ManagedBlockFile(file + BLOCKFILE_EXT, BLOCK_SIZE, BlockFile.IOType.DEFAULT);
     avlComparator = new TripleAVLComparator(sortOrder);
     tripleComparator = new TripleComparator(sortOrder);
 
@@ -154,15 +150,12 @@ public final class TripleAVLFile {
   /**
    * CONSTRUCTOR TripleAVLFile TO DO
    *
-   * @param objectPool PARAMETER TO DO
    * @param fileName PARAMETER TO DO
    * @param sortOrder PARAMETER TO DO
    * @throws IOException EXCEPTION TO DO
    */
-  public TripleAVLFile(
-      ObjectPool objectPool, String fileName, int[] sortOrder
-  ) throws IOException {
-    this(objectPool, new File(fileName), sortOrder);
+  public TripleAVLFile(String fileName, int[] sortOrder) throws IOException {
+    this(new File(fileName), sortOrder);
   }
 
 
@@ -665,37 +658,30 @@ public final class TripleAVLFile {
     /**
      * Adds a triple to the graph.
      *
-     * @param objectPool The feature to be added to the Triple attribute
      * @param node0 The 0 node of the triple.
      * @param node1 The 1 node of the triple.
      * @param node2 The 2 node of the triple.
      * @param node3 The 3 node of the triple.
      * @throws IOException EXCEPTION TO DO
      */
-    public void addTriple(
-        ObjectPool objectPool,
-        long node0, long node1, long node2, long node3
-    ) throws IOException {
-      addTriple(objectPool, new long[] {node0, node1, node2, node3});
+    public void addTriple(long node0, long node1, long node2, long node3) throws IOException {
+      addTriple(new long[] {node0, node1, node2, node3});
     }
 
 
     /**
      * Adds a triple to the graph.
      *
-     * @param objectPool The feature to be added to the Triple attribute
      * @param triple The triple to add
      * @throws IOException EXCEPTION TO DO
      */
-    void addTriple(ObjectPool objectPool, long[] triple) throws IOException {
-      if (this != currentPhase) {
-        throw new IllegalStateException("Attempt to modify a read-only phase.");
-      }
+    void addTriple(long[] triple) throws IOException {
+      if (this != currentPhase) throw new IllegalStateException("Attempt to modify a read-only phase.");
 
       if (tripleWriteThread != null) tripleWriteThread.drain();
 
       try {
-        syncAddTriple(objectPool, triple);
+        syncAddTriple(triple);
       } finally {
         releaseCache();
       }
@@ -705,16 +691,11 @@ public final class TripleAVLFile {
     /**
      * Adds multiple triples to the graph.
      *
-     * @param objectPool The feature to be added to the Triple attribute
      * @param triples The triples to add
      * @throws IOException EXCEPTION TO DO
      */
-    void syncAddTriples(
-        ObjectPool objectPool, long[][] triples
-    ) throws IOException {
-      if (this != currentPhase) {
-        throw new IllegalStateException("Attempt to modify a read-only phase.");
-      }
+    void syncAddTriples(long[][] triples) throws IOException {
+      if (this != currentPhase) throw new IllegalStateException("Attempt to modify a read-only phase.");
 
       Arrays.sort(triples, tripleComparator);
       try {
@@ -724,7 +705,7 @@ public final class TripleAVLFile {
 
           // Add the triple to the TripleAVLFile and check that the triple
           // wasn't already there.
-          syncAddTriple(objectPool, triple);
+          syncAddTriple(triple);
         }
       } finally {
         releaseCache();
@@ -737,7 +718,6 @@ public final class TripleAVLFile {
         if (cachedNode != null) cachedNode.release();
         if (cachedBlock != null) {
           cachedBlock.write();
-          cachedBlock.release();
         }
       } finally {
         cachedNode = null;
@@ -749,7 +729,6 @@ public final class TripleAVLFile {
     private void releaseBlockToCache(Block block) throws IOException {
       if (cachedBlock != null) {
         cachedBlock.write();
-        cachedBlock.release();
       }
       cachedBlock = block;
     }
@@ -776,16 +755,13 @@ public final class TripleAVLFile {
     /**
      * Adds a triple to the graph.
      *
-     * @param objectPool The feature to be added to the Triple attribute
      * @param triple The triple to add
      * @throws IOException EXCEPTION TO DO
      */
-    private void syncAddTriple(
-        ObjectPool objectPool, long[] triple
-    ) throws IOException {
+    private void syncAddTriple(long[] triple) throws IOException {
       AVLNode startNode;
       if (cachedNode == null) {
-        startNode = avlFilePhase.getRootNode(objectPool);
+        startNode = avlFilePhase.getRootNode();
       } else {
         startNode = cachedNode;
         cachedNode = null;
@@ -796,8 +772,8 @@ public final class TripleAVLFile {
 
       if (findResult == null) {
         // Tree is empty.  Create a node and allocate a triple block.
-        Block newTripleBlock = blockFilePhase.allocateBlock(objectPool);
-        AVLNode newNode = avlFilePhase.newAVLNodeInstance(objectPool);
+        Block newTripleBlock = blockFilePhase.allocateBlock();
+        AVLNode newNode = avlFilePhase.newAVLNodeInstance();
         newNode.putPayloadLong(IDX_LOW_TRIPLE, triple[0]);
         newNode.putPayloadLong(IDX_LOW_TRIPLE + 1, triple[1]);
         newNode.putPayloadLong(IDX_LOW_TRIPLE + 2, triple[2]);
@@ -880,7 +856,7 @@ public final class TripleAVLFile {
         long blockId = node.getPayloadLong(IDX_BLOCK_ID);
         tripleBlock = getCachedBlock(blockId);
         if (tripleBlock == null) {
-          tripleBlock = blockFilePhase.readBlock(objectPool, blockId);
+          tripleBlock = blockFilePhase.readBlock(blockId);
         } else {
           // Blocks in the cache are always dirty.
           tripleBlockDirty = true;
@@ -913,8 +889,8 @@ public final class TripleAVLFile {
           assert splitPoint > 0 || index == 0;
           assert splitPoint < MAX_TRIPLES || index == MAX_TRIPLES;
 
-          Block newTripleBlock = blockFilePhase.allocateBlock(objectPool);
-          AVLNode newNode = avlFilePhase.newAVLNodeInstance(objectPool);
+          Block newTripleBlock = blockFilePhase.allocateBlock();
+          AVLNode newNode = avlFilePhase.newAVLNodeInstance();
 
           // Low triple.
           if (splitPoint < MAX_TRIPLES) {
@@ -1010,7 +986,6 @@ public final class TripleAVLFile {
             nrTriples = MAX_TRIPLES - splitPoint;
             index -= splitPoint;
             if (tripleBlockDirty) tripleBlock.write();
-            tripleBlock.release();
             tripleBlock = newTripleBlock;
             node.write();
             node.release();
@@ -1018,7 +993,6 @@ public final class TripleAVLFile {
           } else {
             nrTriples = splitPoint;
             newTripleBlock.write();
-            newTripleBlock.release();
             newNode.write();
             newNode.release();
           }
@@ -1054,7 +1028,6 @@ public final class TripleAVLFile {
       } finally {
         if (tripleBlock != null) {
           if (tripleBlockDirty) releaseBlockToCache(tripleBlock);
-          else tripleBlock.release();
         }
         AVLFile.release(findResult);
         releaseNodeToCache(node);
@@ -1079,17 +1052,13 @@ public final class TripleAVLFile {
     /**
      * Remove a triple from the graph.
      *
-     * @param objectPool PARAMETER TO DO
      * @param node0 The 0 node of the triple to remove.
      * @param node1 The 1 node of the triple to remove.
      * @param node2 The 2 node of the triple to remove.
      * @param node3 PARAMETER TO DO
      * @throws IOException EXCEPTION TO DO
      */
-    public void removeTriple(
-        ObjectPool objectPool,
-        long node0, long node1, long node2, long node3
-    ) throws IOException {
+    public void removeTriple(long node0, long node1, long node2, long node3) throws IOException {
       if (this != currentPhase) {
         throw new IllegalStateException("Attempt to modify a read-only phase.");
       }
@@ -1098,13 +1067,10 @@ public final class TripleAVLFile {
 
       if (tripleWriteThread != null) tripleWriteThread.drain();
 
-      AVLNode[] findResult =
-          avlFilePhase.find(objectPool, avlComparator, triple);
+      AVLNode[] findResult = avlFilePhase.find(avlComparator, triple);
 
       if (findResult == null || findResult.length == 2) {
-        if (findResult != null) {
-          AVLFile.release(findResult);
-        }
+        if (findResult != null) AVLFile.release(findResult);
         // Triple not found
         return;
       }
@@ -1156,18 +1122,12 @@ public final class TripleAVLFile {
       }
 
       // Get the triple block.
-      Block tripleBlock = blockFilePhase.readBlock(
-          objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-      );
+      Block tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
       try {
         // Find the triple.
-        int index = binarySearch(
-            tripleBlock, tripleComparator, 0, nrTriples, triple
-        );
-        if (index < 0) {
-          // Triple not found
-          return;
-        }
+        int index = binarySearch(tripleBlock, tripleComparator, 0, nrTriples, triple);
+        // If triple not found
+        if (index < 0) return;
 
         // Duplicate both the AVLNode and the triple block.
         node.modify();
@@ -1194,40 +1154,31 @@ public final class TripleAVLFile {
         decNrTriples();
         return;
       } finally {
-        tripleBlock.release();
         node.release();
       }
     }
 
-    public StoreTuples findTuples(
-        ObjectPool objectPool, long node0
-    ) throws IOException {
+    public StoreTuples findTuples(long node0) throws IOException {
       long[] startTriple = new long[SIZEOF_TRIPLE];
       long[] endTriple = new long[SIZEOF_TRIPLE];
       startTriple[order0] = node0;
       endTriple[order0] = node0 + 1;
-      return new TuplesImpl(objectPool, startTriple, endTriple, 1);
+      return new TuplesImpl(startTriple, endTriple, 1);
     }
 
 
-    public StoreTuples findTuples(
-        ObjectPool objectPool,
-        long node0, long node1
-    ) throws IOException {
+    public StoreTuples findTuples(long node0, long node1) throws IOException {
       long[] startTriple = new long[SIZEOF_TRIPLE];
       long[] endTriple = new long[SIZEOF_TRIPLE];
       startTriple[order0] = node0;
       startTriple[order1] = node1;
       endTriple[order0] = node0;
       endTriple[order1] = node1 + 1;
-      return new TuplesImpl(objectPool, startTriple, endTriple, 2);
+      return new TuplesImpl(startTriple, endTriple, 2);
     }
 
 
-    public StoreTuples findTuples(
-        ObjectPool objectPool,
-        long node0, long node1, long node2
-    ) throws IOException {
+    public StoreTuples findTuples(long node0, long node1, long node2) throws IOException {
       long[] startTriple = new long[SIZEOF_TRIPLE];
       long[] endTriple = new long[SIZEOF_TRIPLE];
       startTriple[order0] = node0;
@@ -1236,79 +1187,57 @@ public final class TripleAVLFile {
       endTriple[order0] = node0;
       endTriple[order1] = node1;
       endTriple[order2] = node2 + 1;
-      return new TuplesImpl(objectPool, startTriple, endTriple, 3);
+      return new TuplesImpl(startTriple, endTriple, 3);
     }
 
 
-    public StoreTuples allTuples(ObjectPool objectPool) {
-      return new TuplesImpl(objectPool);
+    public StoreTuples allTuples() {
+      return new TuplesImpl();
     }
 
 
-    public boolean existsTriples(ObjectPool objectPool, long node0)
-         throws IOException {
+    public boolean existsTriples(long node0) throws IOException {
       long[] triple = new long[SIZEOF_TRIPLE];
       triple[order0] = node0;
 
-      if (this == currentPhase && tripleWriteThread != null)
-        tripleWriteThread.drain();
+      if (this == currentPhase && tripleWriteThread != null) tripleWriteThread.drain();
 
-      AVLNode[] findResult =
-          avlFilePhase.find(objectPool, avlComparator, triple);
-      if (findResult == null) {
-        // Triplestore is empty.
-        return false;
-      }
+      AVLNode[] findResult = avlFilePhase.find(avlComparator, triple);
+      // If Triplestore is empty.
+      if (findResult == null) return false;
 
       try {
         // Found the node.
         AVLNode node = findResult[findResult.length == 1 ? 0 : 1];
-        if (node == null) {
-          // Triple is less than the minimum or greater than the maximum.
-          return false;
-        }
+        // If Triple is less than the minimum or greater than the maximum.
+        if (node == null) return false;
 
         int nrTriples = node.getPayloadInt(IDX_NR_TRIPLES_I);
-        if (findResult.length == 1 && nrTriples == 1) {
-          // Exact match on a node that only contains one triple.
-          return true;
-        }
+        // If exact match on a node that only contains one triple.
+        if (findResult.length == 1 && nrTriples == 1) return true;
 
         // See if it matches the high or low triple.
-        if (node.getPayloadLong(IDX_LOW_TRIPLE + order0) == node0) {
-          return true;
-        }
-        if (findResult.length == 2) {
-          // This triple's value falls between two nodes.
-          return false;
-        }
-        if (node.getPayloadLong(IDX_HIGH_TRIPLE + order0) == node0) {
-          return true;
-        }
-        if (nrTriples == 2) {
-          // There is no point looking inside the triple block since we have
-          // already checked the only two triples for this node.
-          return false;
-        }
+        if (node.getPayloadLong(IDX_LOW_TRIPLE + order0) == node0) return true;
+        // If this triple's value falls between two nodes.
+        if (findResult.length == 2) return false;
+        if (node.getPayloadLong(IDX_HIGH_TRIPLE + order0) == node0) return true;
+
+        // Check if there is no point looking inside the triple block since we have
+        // already checked the only two triples for this node.
+        if (nrTriples == 2) return false;
 
         // Get the triple block.
-        Block tripleBlock = blockFilePhase.readBlock(
-            objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-        );
+        Block tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
 
         // Find the triple.
-        int index = binarySearch(
-            tripleBlock, tripleComparator, 0, nrTriples, triple
-        );
+        int index = binarySearch(tripleBlock, tripleComparator, 0, nrTriples, triple);
         boolean exists;
         if (index >= 0) {
           exists = true;
         } else {
           index = -index - 1;
-          exists = index < nrTriples &&
-              tripleBlock.getLong(index * SIZEOF_TRIPLE + order0) == node0;
+          exists = index < nrTriples && tripleBlock.getLong(index * SIZEOF_TRIPLE + order0) == node0;
         }
-        tripleBlock.release();
         return exists;
       } finally {
         AVLFile.release(findResult);
@@ -1316,35 +1245,26 @@ public final class TripleAVLFile {
     }
 
 
-    public boolean existsTriples(ObjectPool objectPool, long node0, long node1)
-         throws IOException {
+    public boolean existsTriples(long node0, long node1) throws IOException {
       long[] triple = new long[SIZEOF_TRIPLE];
       triple[order0] = node0;
       triple[order1] = node1;
 
-      if (this == currentPhase && tripleWriteThread != null)
-        tripleWriteThread.drain();
+      if (this == currentPhase && tripleWriteThread != null)tripleWriteThread.drain();
 
-      AVLNode[] findResult =
-          avlFilePhase.find(objectPool, avlComparator, triple);
-      if (findResult == null) {
-        // Triplestore is empty.
-        return false;
-      }
+      AVLNode[] findResult = avlFilePhase.find(avlComparator, triple);
+      // If Triplestore is empty.
+      if (findResult == null) return false;
 
       try {
         // Found the node.
         AVLNode node = findResult[findResult.length == 1 ? 0 : 1];
-        if (node == null) {
-          // Triple is less than the minimum or greater than the maximum.
-          return false;
-        }
+        // Check if Triple is less than the minimum or greater than the maximum.
+        if (node == null) return false;
 
         int nrTriples = node.getPayloadInt(IDX_NR_TRIPLES_I);
-        if (nrTriples == 1) {
-          // Exact match on a node that only contains one triple.
-          return true;
-        }
+        // Check if exact match on a node that only contains one triple.
+        if (nrTriples == 1) return true;
 
         // See if it matches the high or low triple.
         if (
@@ -1353,31 +1273,23 @@ public final class TripleAVLFile {
         ) {
           return true;
         }
-        if (findResult.length == 2) {
-          // This triple's value falls between two nodes.
-          return false;
-        }
+        // Check if this triple's value falls between two nodes.
+        if (findResult.length == 2) return false;
         if (
             node.getPayloadLong(IDX_HIGH_TRIPLE + order0) == node0 &&
             node.getPayloadLong(IDX_HIGH_TRIPLE + order1) == node1
         ) {
           return true;
         }
-        if (nrTriples == 2) {
-          // There is no point looking inside the triple block since we have
-          // already checked the only two triples for this node.
-          return false;
-        }
+        // Check if there is no point looking inside the triple block since we have
+        // already checked the only two triples for this node.
+        if (nrTriples == 2) return false;
 
         // Get the triple block.
-        Block tripleBlock = blockFilePhase.readBlock(
-            objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-        );
+        Block tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
 
         // Find the triple.
-        int index = binarySearch(
-            tripleBlock, tripleComparator, 0, nrTriples, triple
-        );
+        int index = binarySearch(tripleBlock, tripleComparator, 0, nrTriples, triple);
         boolean exists;
         if (index >= 0) {
           exists = true;
@@ -1387,7 +1299,6 @@ public final class TripleAVLFile {
               tripleBlock.getLong(index * SIZEOF_TRIPLE + order0) == node0 &&
               tripleBlock.getLong(index * SIZEOF_TRIPLE + order1) == node1;
         }
-        tripleBlock.release();
         return exists;
       } finally {
         AVLFile.release(findResult);
@@ -1395,37 +1306,27 @@ public final class TripleAVLFile {
     }
 
 
-    public boolean existsTriples(
-        ObjectPool objectPool, long node0, long node1, long node2
-    ) throws IOException {
+    public boolean existsTriples(long node0, long node1, long node2) throws IOException {
       long[] triple = new long[SIZEOF_TRIPLE];
       triple[order0] = node0;
       triple[order1] = node1;
       triple[order2] = node2;
 
-      if (this == currentPhase && tripleWriteThread != null)
-        tripleWriteThread.drain();
+      if (this == currentPhase && tripleWriteThread != null) tripleWriteThread.drain();
 
-      AVLNode[] findResult =
-          avlFilePhase.find(objectPool, avlComparator, triple);
-      if (findResult == null) {
-        // Triplestore is empty.
-        return false;
-      }
+      AVLNode[] findResult = avlFilePhase.find(avlComparator, triple);
+      // Check if Triplestore is empty.
+      if (findResult == null) return false;
 
       try {
         // Found the node.
         AVLNode node = findResult[findResult.length == 1 ? 0 : 1];
-        if (node == null) {
-          // Triple is less than the minimum or greater than the maximum.
-          return false;
-        }
+        // Check if Triple is less than the minimum or greater than the maximum.
+        if (node == null) return false;
 
         int nrTriples = node.getPayloadInt(IDX_NR_TRIPLES_I);
-        if (nrTriples == 1) {
-          // Exact match on a node that only contains one triple.
-          return true;
-        }
+        // Check if exact match on a node that only contains one triple.
+        if (nrTriples == 1) return true;
 
         // See if it matches the high or low triple.
         if (
@@ -1435,10 +1336,9 @@ public final class TripleAVLFile {
         ) {
           return true;
         }
-        if (findResult.length == 2) {
-          // This triple's value falls between two nodes.
-          return false;
-        }
+        // Check if this triple's value falls between two nodes.
+        if (findResult.length == 2) return false;
+
         if (
             node.getPayloadLong(IDX_HIGH_TRIPLE + order0) == node0 &&
             node.getPayloadLong(IDX_HIGH_TRIPLE + order1) == node1 &&
@@ -1446,21 +1346,14 @@ public final class TripleAVLFile {
         ) {
           return true;
         }
-        if (nrTriples == 2) {
-          // There is no point looking inside the triple block since we have
-          // already checked the only two triples for this node.
-          return false;
-        }
-
+        // Check if there is no point looking inside the triple block since we have
+        // already checked the only two triples for this node.
+        if (nrTriples == 2) return false;
         // Get the triple block.
-        Block tripleBlock = blockFilePhase.readBlock(
-            objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-        );
+        Block tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
 
         // Find the triple.
-        int index = binarySearch(
-            tripleBlock, tripleComparator, 0, nrTriples, triple
-        );
+        int index = binarySearch(tripleBlock, tripleComparator, 0, nrTriples, triple);
         boolean exists;
         if (index >= 0) {
           exists = true;
@@ -1471,24 +1364,22 @@ public final class TripleAVLFile {
               tripleBlock.getLong(index * SIZEOF_TRIPLE + order1) == node1 &&
               tripleBlock.getLong(index * SIZEOF_TRIPLE + order2) == node2;
         }
-        tripleBlock.release();
         return exists;
       } finally {
         AVLFile.release(findResult);
       }
+      
     }
 
 
-    public boolean existsTriple(
-        ObjectPool objectPool, long node0, long node1, long node2, long node3
-    ) throws IOException {
+    public boolean existsTriple(long node0, long node1, long node2, long node3) throws IOException {
       long[] triple = new long[SIZEOF_TRIPLE];
       triple[order0] = node0;
       triple[order1] = node1;
       triple[order2] = node2;
       triple[order3] = node3;
 
-      return existsTriple(objectPool, triple);
+      return existsTriple(triple);
     }
 
 
@@ -1501,12 +1392,8 @@ public final class TripleAVLFile {
       if (this == currentPhase && tripleWriteThread != null)
         tripleWriteThread.drain();
 
-      ObjectPool objectPool = ObjectPool.newInstance();
-      AVLNode node = avlFilePhase.getRootNode(objectPool);
-      if (node == null) {
-        objectPool.release();
-        return 0;
-      }
+      AVLNode node = avlFilePhase.getRootNode();
+      if (node == null) return 0;
 
       node = node.getMinNode_R();
       long[] prevTriple = new long[] {0, 0, 0, 0};
@@ -1542,9 +1429,7 @@ public final class TripleAVLFile {
 
         Block block;
         try {
-          block = blockFilePhase.readBlock(
-              objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-          );
+          block = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
         } catch (IOException ex) {
           throw new Error("I/O Error", ex);
         }
@@ -1577,7 +1462,6 @@ public final class TripleAVLFile {
           }
           System.arraycopy(triple, 0, prevTriple, 0, SIZEOF_TRIPLE);
         }
-        block.release();
 
         triple[0] = node.getPayloadLong(IDX_HIGH_TRIPLE);
         triple[1] = node.getPayloadLong(IDX_HIGH_TRIPLE + 1);
@@ -1599,7 +1483,6 @@ public final class TripleAVLFile {
         totalNrTriples += nrTriples;
       } while ((node = node.getNextNode_R()) != null);
 
-      objectPool.release();
       if (totalNrTriples != nrFileTriples) {
         throw new Error(
             "nrFileTriples (" + nrFileTriples +
@@ -1630,31 +1513,24 @@ public final class TripleAVLFile {
     }
 
 
-    private boolean existsTriple(ObjectPool objectPool, long[] triple)
+    private boolean existsTriple(long[] triple)
          throws IOException {
       if (this == currentPhase && tripleWriteThread != null)
         tripleWriteThread.drain();
 
-      AVLNode[] findResult =
-          avlFilePhase.find(objectPool, avlComparator, triple);
-      if (findResult == null) {
-        // Triplestore is empty.
-        return false;
-      }
+      AVLNode[] findResult = avlFilePhase.find(avlComparator, triple);
+      // Check if Triplestore is empty.
+      if (findResult == null) return false;
 
       try {
-        if (findResult.length == 2) {
-          // Triple not found.
-          return false;
-        }
+        // Check if triple not found.
+        if (findResult.length == 2) return false;
 
         // Found the node.
         AVLNode node = findResult[0];
 
         int nrTriples = node.getPayloadInt(IDX_NR_TRIPLES_I);
-        if (nrTriples == 1) {
-          return true;
-        }
+        if (nrTriples == 1) return true;
 
         // See if it matches the high or low triple.
         if (
@@ -1680,15 +1556,10 @@ public final class TripleAVLFile {
         }
 
         // Get the triple block.
-        Block tripleBlock = blockFilePhase.readBlock(
-            objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-        );
+        Block tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
 
         // Find the triple.
-        int index = binarySearch(
-            tripleBlock, tripleComparator, 0, nrTriples, triple
-        );
-        tripleBlock.release();
+        int index = binarySearch(tripleBlock, tripleComparator, 0, nrTriples, triple);
         return index >= 0;
       } finally {
         AVLFile.release(findResult);
@@ -1696,20 +1567,14 @@ public final class TripleAVLFile {
     }
 
 
-    private TripleLocation findTriple(ObjectPool objectPool, long[] triple)
-         throws IOException {
-      AVLNode[] findResult =
-          avlFilePhase.find(objectPool, avlComparator, triple);
-      if (findResult == null) {
-        return null;
-      }
+    private TripleLocation findTriple(long[] triple) throws IOException {
+      AVLNode[] findResult = avlFilePhase.find(avlComparator, triple);
+      if (findResult == null) return null;
 
       AVLNode node;
       if (findResult.length == 2) {
         node = findResult[1];
-        if (node != null) {
-          node.incRefCount();
-        }
+        if (node != null) node.incRefCount();
         AVLFile.release(findResult);
         return new TripleLocation(node, 0);
       }
@@ -1751,18 +1616,11 @@ public final class TripleAVLFile {
       }
 
       // Get the triple block.
-      Block tripleBlock = blockFilePhase.readBlock(
-          objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-      );
+      Block tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
 
       // Find the triple.
-      int index = binarySearch(
-          tripleBlock, tripleComparator, 0, nrTriples, triple
-      );
-      tripleBlock.release();
-      if (index < 0) {
-        index = -index - 1;
-      }
+      int index = binarySearch(tripleBlock, tripleComparator, 0, nrTriples, triple);
+      if (index < 0) index = -index - 1;
       return new TripleLocation(node, index);
     }
 
@@ -1821,8 +1679,6 @@ public final class TripleAVLFile {
 
       private Token token;
 
-      private ObjectPool objectPool;
-
       private long nrTriples;
 
       private boolean nrTriplesValid = false;
@@ -1856,27 +1712,22 @@ public final class TripleAVLFile {
       /**
        * CONSTRUCTOR TuplesImpl TO DO
        *
-       * @param objectPool PARAMETER TO DO
        * @param startTriple PARAMETER TO DO
        * @param endTriple PARAMETER TO DO
        * @param prefixLength PARAMETER TO DO
        * @throws IOException EXCEPTION TO DO
        */
       TuplesImpl(
-          ObjectPool objectPool,
           long[] startTriple, long[] endTriple,
           int prefixLength
       ) throws IOException {
         assert prefixLength >= 1 && prefixLength < SIZEOF_TRIPLE;
 
-        if (Phase.this == currentPhase && tripleWriteThread != null)
-          tripleWriteThread.drain();
+        if (Phase.this == currentPhase && tripleWriteThread != null) tripleWriteThread.drain();
 
-        this.objectPool = objectPool;
         this.startTriple = startTriple;
         this.endTriple = endTriple;
         this.prefixLength = prefixLength;
-        objectPool.incRefCount();
 
         int nrColumns = SIZEOF_TRIPLE - prefixLength;
 
@@ -1891,19 +1742,14 @@ public final class TripleAVLFile {
           variables[i] = StatementStore.VARIABLES[columnMap[i]];
         }
 
-        start = findTriple(objectPool, startTriple);
-        end = findTriple(objectPool, endTriple);
+        start = findTriple(startTriple);
+        end = findTriple(endTriple);
 
         if (end != null && end.node != null) {
           endBlockId = end.node.getId();
           endOffset = end.offset;
         }
-        if (
-            start != null && start.node != null && (
-                start.node.getId() != endBlockId ||
-                start.offset < endOffset
-            )
-        ) {
+        if (start != null && start.node != null && (start.node.getId() != endBlockId || start.offset < endOffset)) {
           token = use();
           beforeStart = true;
         } else {
@@ -1914,15 +1760,9 @@ public final class TripleAVLFile {
 
       /**
        * CONSTRUCTOR TuplesImpl TO DO
-       *
-       * @param objectPool PARAMETER TO DO
        */
-      TuplesImpl(ObjectPool objectPool) {
-        if (Phase.this == currentPhase && tripleWriteThread != null)
-          tripleWriteThread.drain();
-
-        this.objectPool = objectPool;
-        objectPool.incRefCount();
+      TuplesImpl() {
+        if (Phase.this == currentPhase && tripleWriteThread != null) tripleWriteThread.drain();
 
         this.nrTriples = Phase.this.nrFileTriples;
         this.nrTriplesValid = true;
@@ -1936,13 +1776,10 @@ public final class TripleAVLFile {
         };
 
         startTriple = new long[SIZEOF_TRIPLE];
-        endTriple = new long[] {
-            Constants.MASK63, Constants.MASK63,
-            Constants.MASK63, Constants.MASK63
-        };
+        endTriple = new long[] { Constants.MASK63, Constants.MASK63, Constants.MASK63, Constants.MASK63 };
         prefixLength = 0;
 
-        AVLNode node = avlFilePhase.getRootNode(objectPool);
+        AVLNode node = avlFilePhase.getRootNode();
         if (node != null) {
           start = new TripleLocation(node.getMinNode_R(), 0);
           token = use();
@@ -1965,9 +1802,7 @@ public final class TripleAVLFile {
 
       public long getColumnValue(int column) throws TuplesException {
         try {
-          return tripleBlock.getLong(
-              offset * SIZEOF_TRIPLE + columnMap[column]
-          );
+          return tripleBlock.getLong(offset * SIZEOF_TRIPLE + columnMap[column]);
         } catch (ArrayIndexOutOfBoundsException ex) {
           if (column < 0 || column >= variables.length) {
             throw new TuplesException("Column index out of range: " + column);
@@ -1975,8 +1810,7 @@ public final class TripleAVLFile {
           throw ex;
         } catch (NullPointerException ex) {
           if (beforeStart || node == null) {
-            throw new TuplesException("No current row.  Before start: " +
-                beforeStart + " node: " + node);
+            throw new TuplesException("No current row.  Before start: " + beforeStart + " node: " + node);
           }
           throw ex;
         }
@@ -1992,14 +1826,10 @@ public final class TripleAVLFile {
       }
 
       public long getRowCount() throws TuplesException {
-        if (nrTriplesValid) {
-          return nrTriples;
-        }
+        if (nrTriplesValid)  return nrTriples;
         nrTriplesValid = true;
 
-        if (start == null) {
-          return nrTriples = 0;
-        }
+        if (start == null) return nrTriples = 0;
 
         long n = endOffset - start.offset;
         AVLNode curNode = start.node;
@@ -2021,11 +1851,8 @@ public final class TripleAVLFile {
       }
 
 
-      public int getRowCardinality() throws TuplesException
-      {
-        if (rowCardinality != -1) {
-          return rowCardinality;
-        }
+      public int getRowCardinality() throws TuplesException {
+        if (rowCardinality != -1) return rowCardinality;
         Tuples temp = (Tuples)this.clone();
         temp.beforeFirst();
         if (!temp.next()) {
@@ -2044,9 +1871,7 @@ public final class TripleAVLFile {
 
       public int getColumnIndex(Variable variable) throws TuplesException {
         for (int i = 0; i < variables.length; ++i) {
-          if (variables[i].equals(variable)) {
-            return i;
-          }
+          if (variables[i].equals(variable)) return i;
         }
 
         throw new TuplesException("variable doesn't match any column");
@@ -2084,45 +1909,33 @@ public final class TripleAVLFile {
 
 
       public boolean next() throws TuplesException {
-        if (prefix.length > variables.length) {
-          throw new TuplesException("prefix too long: " + prefix.length);
-        }
+        if (prefix.length > variables.length) throw new TuplesException("prefix too long: " + prefix.length);
 
         // Move to the next row.
         if (!advance()) {
           return false;
         }
-        if (prefix.length == 0) {
-          return true;
-        }
+        if (prefix.length == 0) return true;
 
         // See if the current row matches the prefix.
         RowComparator comparator = getComparator();
         int c = comparator.compare(prefix, this);
-        if (c == 0) {
-          return true;
-        }
+        if (c == 0) return true;
 
         closeIterator();
-        if (c < 0) {
-          return false;
-        }
+        if (c < 0) return false;
 
         // Reorder the prefix to create a triple.
         System.arraycopy(startTriple, 0, tmpTriple, 0, SIZEOF_TRIPLE);
-        for (int i = 0; i < prefix.length; ++i) {
-          tmpTriple[columnMap[i]] = prefix[i];
-        }
+        for (int i = 0; i < prefix.length; ++i) tmpTriple[columnMap[i]] = prefix[i];
 
         // Check if the prefix is past the end triple.
-        if (tripleComparator.compare(tmpTriple, endTriple) >= 0) {
-          return false;
-        }
+        if (tripleComparator.compare(tmpTriple, endTriple) >= 0) return false;
 
         // Locate the first triple greater than or equal to the prefix.
         TripleLocation tLoc;
         try {
-          tLoc = findTriple(objectPool, tmpTriple);
+          tLoc = findTriple(tmpTriple);
         } catch (IOException ex) {
           throw new TuplesException("I/O error", ex);
         }
@@ -2141,14 +1954,9 @@ public final class TripleAVLFile {
       }
 
 
-      public void beforeFirst(long[] prefix, int suffixTruncation)
-           throws TuplesException {
-        if (prefix == null) {
-          throw new IllegalArgumentException("Null \"prefix\" parameter");
-        }
-        if (suffixTruncation != 0) {
-          throw new TuplesException("Suffix truncation not implemented");
-        }
+      public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
+        if (prefix == null) throw new IllegalArgumentException("Null \"prefix\" parameter");
+        if (suffixTruncation != 0) throw new TuplesException("Suffix truncation not implemented");
 
         beforeStart = true;
         this.prefix = prefix;
@@ -2173,20 +1981,13 @@ public final class TripleAVLFile {
        */
       public void renameVariables(Constraint constraint) {
         if (logger.isDebugEnabled()) {
-          logger.debug(
-              "Renaming variables.  before: " + Arrays.asList(variables) +
-              " constraint: " + constraint
-          );
+          logger.debug("Renaming variables.  before: " + Arrays.asList(variables) + " constraint: " + constraint);
         }
 
-        for (int i = 0; i < columnMap.length; ++i) {
-          variables[i] = (Variable) constraint.getElement(columnMap[i]);
-        }
+        for (int i = 0; i < columnMap.length; ++i) variables[i] = (Variable) constraint.getElement(columnMap[i]);
 
         if (logger.isDebugEnabled()) {
-          logger.debug(
-              "Renaming variables.  after: " + Arrays.asList(variables)
-          );
+          logger.debug("Renaming variables.  after: " + Arrays.asList(variables));
         }
       }
 
@@ -2204,9 +2005,7 @@ public final class TripleAVLFile {
           for (int i = 0; i < variables.length; i++) {
             buffer.append(variables[i]);
 
-            for (int j = 0; j < (6 - variables[i].toString().length()); j++) {
-              buffer.append(" ");
-            }
+            for (int j = 0; j < (6 - variables[i].toString().length()); j++) buffer.append(" ");
 
             buffer.append("  ");
           }
@@ -2228,7 +2027,6 @@ public final class TripleAVLFile {
           while (cloned.next()) {
             if (++rowNo > 20) {
               buffer.append("..." + eol);
-
               break;
             }
 
@@ -2262,11 +2060,8 @@ public final class TripleAVLFile {
           TuplesImpl copy = (TuplesImpl) super.clone();
           tmpTriple = new long[SIZEOF_TRIPLE];
           if (start != null) {
-            objectPool.incRefCount();
             start.node.incRefCount();
-            if (end.node != null) {
-              end.node.incRefCount();
-            }
+            if (end.node != null) end.node.incRefCount();
             copy.token = use();
             copy.tripleBlock = null;
             copy.node = null;
@@ -2294,23 +2089,15 @@ public final class TripleAVLFile {
           token = null;
         }
 
-        if (objectPool != null) {
-          startTriple = null;
-          if (start != null) {
-            if (start.node != null) {
-              start.node.release();
-            }
-            start = null;
-          }
-          endTriple = null;
-          if (end != null) {
-            if (end.node != null) {
-              end.node.release();
-            }
-            end = null;
-          }
-          objectPool.release();
-          objectPool = null;
+        startTriple = null;
+        if (start != null) {
+          if (start.node != null) start.node.release();
+          start = null;
+        }
+        endTriple = null;
+        if (end != null) {
+          if (end.node != null) end.node.release();
+          end = null;
         }
         stack = null;
       }
@@ -2333,9 +2120,7 @@ public final class TripleAVLFile {
         if (o == null) {
           return false;
         }
-        if (o == this) {
-          return true;
-        }
+        if (o == this) return true;
 
         // Make sure the object is a Tuples.
         Tuples t;
@@ -2348,20 +2133,12 @@ public final class TripleAVLFile {
         Tuples t1 = null;
         Tuples t2 = null;
         try {
-          if (getRowCount() != t.getRowCount()) {
-            return false;
-          }
-          if (getRowCount() == 0) {
-            return true;
-          }
+          if (getRowCount() != t.getRowCount()) return false;
+          if (getRowCount() == 0) return true;
 
           // Return false if the column variable names don't match or the number
           // of columns differ.
-          if (!Arrays.asList(getVariables()).equals(
-              Arrays.asList(t.getVariables())
-          )) {
-            return false;
-          }
+          if (!Arrays.asList(getVariables()).equals(Arrays.asList(t.getVariables()))) return false;
 
           // Clone the two Tuples objects.
           t1 = (Tuples) this.clone();
@@ -2373,21 +2150,15 @@ public final class TripleAVLFile {
           t1.beforeFirst();
           t2.beforeFirst();
           while (t1.next()) {
-            if (!t2.next() || comp.compare(t1, t2) != 0) {
-              return false;
-            }
+            if (!t2.next() || comp.compare(t1, t2) != 0) return false;
           }
           return !t2.next();
         } catch (TuplesException ex) {
           throw new RuntimeException(ex.toString(), ex);
         } finally {
           try {
-            if (t1 != null) {
-              t1.close();
-            }
-            if (t2 != null) {
-              t2.close();
-            }
+            if (t1 != null) t1.close();
+            if (t2 != null) t2.close();
           } catch (TuplesException ex) {
             throw new RuntimeException(ex.toString(), ex);
           }
@@ -2410,7 +2181,6 @@ public final class TripleAVLFile {
         } else if (node != null) {
           if (++offset == nrBlockTriples) {
             offset = 0;
-            tripleBlock.release();
             tripleBlock = null;
             node = node.getNextNode_R();
           }
@@ -2428,10 +2198,7 @@ public final class TripleAVLFile {
 
 
       private void closeIterator() {
-        if (tripleBlock != null) {
-          tripleBlock.release();
-          tripleBlock = null;
-        }
+        if (tripleBlock != null) tripleBlock = null;
         if (node != null) {
           node.release();
           node = null;
@@ -2443,9 +2210,7 @@ public final class TripleAVLFile {
         if (tripleBlock == null && node != null) {
           nrBlockTriples = node.getPayloadInt(IDX_NR_TRIPLES_I);
           try {
-            tripleBlock = blockFilePhase.readBlock(
-                objectPool, node.getPayloadLong(IDX_BLOCK_ID)
-            );
+            tripleBlock = blockFilePhase.readBlock(node.getPayloadLong(IDX_BLOCK_ID));
           } catch (IOException ex) {
             throw new TuplesException("I/O error", ex);
           }

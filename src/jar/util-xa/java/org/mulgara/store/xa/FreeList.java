@@ -31,8 +31,6 @@ import java.io.*;
 
 // Java 2 standard packages
 import java.lang.ref.*;
-import java.nio.*;
-import java.nio.channels.*;
 import java.util.*;
 
 // Third party packages
@@ -113,9 +111,6 @@ public final class FreeList {
   /** A persistent map of items to their corresponding phases. */
   private IntFile itemToPhaseSeqMap;
 
-  /** The object pool to use when allocating blocks. */
-  private ObjectPool objectPool;
-
   /**
    * This is used to prevent items that are still in use from being returned by
    * {@link #allocate}. Items between firstHead and {@link Phase#head} are
@@ -170,7 +165,7 @@ public final class FreeList {
   private Block tailBlock = null;
 
   /** The list of Phases from oldest to newest. */
-  private LinkedList phases = new LinkedList();
+  private LinkedList<Phase> phases = new LinkedList<Phase>();
 
   /** The newest (writing) phase. */
   private Phase currentPhase = null;
@@ -186,17 +181,11 @@ public final class FreeList {
    * Constructs a FreeList which uses the specified file (if it exists) or
    * creates a new file (if it doesn't already exist).
    *
-   * @param objectPool the ObjectPool to use when allocating Blocks.
    * @param file the file.
    * @param ioType the IOType to use for the BlockFile.
    * @throws IOException if an I/O error occurs.
    */
-  private FreeList(
-      ObjectPool objectPool, File file, BlockFile.IOType ioType
-  ) throws IOException {
-    this.objectPool = objectPool;
-    objectPool.incRefCount();
-
+  private FreeList(File file, BlockFile.IOType ioType) throws IOException {
     this.file = file;
     blockFile = AbstractBlockFile.openBlockFile(file, BLOCK_SIZE_B, ioType);
     itemToPhaseSeqMap = IntFile.open(file + INTFILE_EXT);
@@ -207,31 +196,25 @@ public final class FreeList {
    * Factory method for a FreeList instance which uses the specified file
    * (if it exists) or creates a new file (if it doesn't already exist).
    *
-   * @param objectPool the ObjectPool to use when allocating Blocks.
    * @param file the file.
    * @param ioType the IOType to use for the BlockFile.
    * @return The new FreeList instance.
    * @throws IOException if an I/O error occurs.
    */
-  public static FreeList openFreeList(
-      ObjectPool objectPool, File file, BlockFile.IOType ioType
-  ) throws IOException {
-    return new FreeList(objectPool, file, ioType);
+  public static FreeList openFreeList(File file, BlockFile.IOType ioType) throws IOException {
+    return new FreeList(file, ioType);
   }
 
   /**
    * Creates a FreeList instance which uses the specified file (if it exists) or
    * creates a new file (if it doesn't already exist).  Uses the default IO file type.
    *
-   * @param objectPool the ObjectPool to use when allocating Blocks.
    * @param file the file.
    * @return The new FreeList instance.
    * @throws IOException if an I/O error occurs.
    */
-  public static FreeList openFreeList(
-      ObjectPool objectPool, File file
-  ) throws IOException {
-    return openFreeList(objectPool, file, DEF_IO_TYPE);
+  public static FreeList openFreeList(File file) throws IOException {
+    return openFreeList(file, DEF_IO_TYPE);
   }
 
   /**
@@ -239,15 +222,12 @@ public final class FreeList {
    * name (if the file exists) or creates a new file (if it doesn't already
    * exist).
    *
-   * @param objectPool the ObjectPool to use when allocating Blocks.
    * @param fileName the file name of the file.
    * @return The new FreeList instance.
    * @throws IOException if an I/O error occurs.
    */
-  public static FreeList openFreeList(
-      ObjectPool objectPool, String fileName
-  ) throws IOException {
-    return openFreeList(objectPool, new File(fileName));
+  public static FreeList openFreeList(String fileName) throws IOException {
+    return openFreeList(new File(fileName));
   }
 
   /**
@@ -362,16 +342,9 @@ public final class FreeList {
   public synchronized void close() throws IOException {
     try {
       unmap();
-
-      if (objectPool != null) {
-        objectPool.release();
-        objectPool = null;
-      }
     } finally {
       try {
-        if (itemToPhaseSeqMap != null) {
-          itemToPhaseSeqMap.delete();
-        }
+        if (itemToPhaseSeqMap != null) itemToPhaseSeqMap.delete();
       } finally {
         itemToPhaseSeqMap = null;
         blockFile.close();
@@ -387,16 +360,9 @@ public final class FreeList {
   public synchronized void delete() throws IOException {
     try {
       unmap();
-
-      if (objectPool != null) {
-        objectPool.release();
-        objectPool = null;
-      }
     } finally {
       try {
-        if (itemToPhaseSeqMap != null) {
-          itemToPhaseSeqMap.delete();
-        }
+        if (itemToPhaseSeqMap != null) itemToPhaseSeqMap.delete();
       } finally {
         itemToPhaseSeqMap = null;
         blockFile.delete();
@@ -427,19 +393,13 @@ public final class FreeList {
   public synchronized void free(long item) throws IOException {
     removeClosedPhases();
 
-    if (currentPhase == null) {
-      throw new IllegalStateException("FreeList has no phases.");
-    }
+    if (currentPhase == null) throw new IllegalStateException("FreeList has no phases.");
 
     if ( (item < 0) || (item >= currentPhase.getNextItem())) {
-      throw new IllegalArgumentException(
-          "Trying to free item that was never allocated: " + item
-      );
+      throw new IllegalArgumentException("Trying to free item that was never allocated: " + item);
     }
 
-    if (DEBUG && !isValid(item)) {
-      throw new AssertionError("Attempt to free an invalid item: " + item);
-    }
+    if (DEBUG && !isValid(item)) throw new AssertionError("Attempt to free an invalid item: " + item);
 
     long head = currentPhase.getHead();
     readHeadBlock(getBlockId(head));
@@ -448,9 +408,7 @@ public final class FreeList {
     headBlock.putLong(offset, item);
     headBlockDirty = true;
 
-    if (!isSharedItem(item)) {
-      reallocate = head;
-    }
+    if (!isSharedItem(item)) reallocate = head;
 
     if (getBlockOffset(head) == 0) {
       // Go to the next block.
@@ -477,29 +435,25 @@ public final class FreeList {
         // to the new block.
         prevHeadBlock.putInt(IDX_NEXT, newHeadBlockId);
         prevHeadBlock.write();
-        prevHeadBlock.release();
 
         // Update the prev pointer of the next block to point back to the new
         // block.
         Block nextHeadBlock = findBlock(nextHeadBlockId);
 
         if (nextHeadBlock == null) {
-          nextHeadBlock = blockFile.readBlock(objectPool, nextHeadBlockId);
+          nextHeadBlock = blockFile.readBlock(nextHeadBlockId);
         }
 
         nextHeadBlock.putInt(IDX_PREV, newHeadBlockId);
         nextHeadBlock.write();
-        nextHeadBlock.release();
 
         nextHeadBlockId = newHeadBlockId;
       }
 
-      head = ( (long) nextHeadBlockId * BLOCK_SIZE) + HEADER_SIZE;
+      head = ((long)nextHeadBlockId * BLOCK_SIZE) + HEADER_SIZE;
     }
 
-    if (phases.size() == 1) {
-      firstHead = head;
-    }
+    if (phases.size() == 1) firstHead = head;
 
     currentPhase.setHead(head);
     currentPhase.decNrValidItems();
@@ -516,9 +470,7 @@ public final class FreeList {
   public synchronized long allocate() throws IOException {
     removeClosedPhases();
 
-    if (currentPhase == null) {
-      throw new IllegalStateException("FreeList has no phases.");
-    }
+    if (currentPhase == null) throw new IllegalStateException("FreeList has no phases.");
 
     long item;
 
@@ -534,7 +486,7 @@ public final class FreeList {
           readReallocateBlock(getBlockId(reallocate));
 
           int blockId = reallocateBlock.getInt(IDX_PREV);
-          reallocate = ( (blockId * BLOCK_SIZE) + BLOCK_SIZE) - 1;
+          reallocate = ((blockId * BLOCK_SIZE) + BLOCK_SIZE) - 1;
         } else {
           --reallocate;
         }
@@ -600,9 +552,7 @@ public final class FreeList {
         tail = ( (long) blockId * BLOCK_SIZE) + HEADER_SIZE;
       }
 
-      if (phases.size() == 1) {
-        firstTail = tail;
-      }
+      if (phases.size() == 1) firstTail = tail;
 
       currentPhase.setTail(tail);
     }
@@ -626,13 +576,9 @@ public final class FreeList {
   public synchronized boolean isValid(long item) {
     removeClosedPhases();
 
-    if (currentPhase == null) {
-      throw new IllegalStateException("FreeList has no phases.");
-    }
+    if (currentPhase == null) throw new IllegalStateException("FreeList has no phases.");
 
-    if ( (item < 0) || (item >= currentPhase.getNextItem())) {
-      return false;
-    }
+    if ( (item < 0) || (item >= currentPhase.getNextItem())) return false;
 
     long index = currentPhase.getTail();
     long head = currentPhase.getHead();
@@ -645,9 +591,7 @@ public final class FreeList {
         long blockItem;
         blockItem = tailBlock.getLong(offset);
 
-        if (item == blockItem) {
-          return false;
-        }
+        if (item == blockItem) return false;
 
         if (getBlockOffset(index) == 0) {
           // Go to the next block.
@@ -670,7 +614,7 @@ public final class FreeList {
    * @return the block ID.
    */
   private int getBlockId(long index) {
-    return (int) (index / BLOCK_SIZE);
+    return (int)(index / BLOCK_SIZE);
   }
 
   /**
@@ -681,7 +625,7 @@ public final class FreeList {
    * @return the offset (in ints).
    */
   private int getBlockOffset(long index) {
-    return (int) (index % BLOCK_SIZE);
+    return (int)(index % BLOCK_SIZE);
   }
 
   /**
@@ -697,14 +641,11 @@ public final class FreeList {
     int prevBlockId = -1;
 
     do {
-      Block block = blockFile.readBlock(objectPool, nextBlockId);
+      Block block = blockFile.readBlock(nextBlockId);
 
       if ( (prevBlockId >= 0) && (block.getInt(IDX_PREV) != prevBlockId)) {
         // Bad previous block pointer.  Fix it.
-        logger.warn(
-            "Free list back pointer does not agree with forward pointer." +
-            "  Fixed."
-        );
+        logger.warn("Free list back pointer does not agree with forward pointer.  Fixed.");
         block.putInt(IDX_PREV, prevBlockId);
         block.write();
       }
@@ -712,30 +653,21 @@ public final class FreeList {
       prevBlockId = nextBlockId;
       nextBlockId = block.getInt(IDX_NEXT);
 
-      if (nextBlockId > maxBlockId) {
-        maxBlockId = nextBlockId;
-      }
+      if (nextBlockId > maxBlockId) maxBlockId = nextBlockId;
 
-      block.release();
     } while (nextBlockId != 0);
 
-    if (prevBlockId < 0) {
-      throw new AssertionError("prevBlockId is negative.");
-    }
+    if (prevBlockId < 0) throw new AssertionError("prevBlockId is negative.");
 
     // Check the previous block pointer in block 0.
-    Block block = blockFile.readBlock(objectPool, 0);
+    Block block = blockFile.readBlock(0);
 
     if (block.getInt(IDX_PREV) != prevBlockId) {
       // Bad previous block pointer.  Fix it.
-      logger.warn(
-          "Free list back pointer does not agree with forward pointer.  Fixed."
-      );
+      logger.warn("Free list back pointer does not agree with forward pointer.  Fixed.");
       block.putInt(IDX_PREV, prevBlockId);
       block.write();
     }
-
-    block.release();
 
     return maxBlockId;
   }
@@ -750,11 +682,11 @@ public final class FreeList {
     // Caller must be synchronized.
     assert Thread.holdsLock(this);
 
-    Phase phase = (Phase) phases.getFirst();
+    Phase phase = phases.getFirst();
 
     while (!phase.isInUse() && (phases.size() > 1)) {
       phases.removeFirst();
-      phase = (Phase) phases.getFirst();
+      phase = phases.getFirst();
 
       firstHead = phase.getHead();
       firstTail = phase.getTail();
@@ -779,19 +711,13 @@ public final class FreeList {
     if (headBlock != null) {
       if (blockId == (int) headBlock.getBlockId()) {
         headBlockDirty = false;
-
         return;
       }
-
       releaseHeadBlock();
     }
 
     headBlock = findBlock(blockId);
-
-    if (headBlock == null) {
-      headBlock = blockFile.allocateBlock(objectPool, blockId);
-    }
-
+    if (headBlock == null) headBlock = blockFile.allocateBlock(blockId);
     headBlockDirty = false;
   }
 
@@ -808,19 +734,12 @@ public final class FreeList {
    */
   private void readHeadBlock(int blockId) throws IOException {
     if (headBlock != null) {
-      if (blockId == (int) headBlock.getBlockId()) {
-        return;
-      }
-
+      if (blockId == (int) headBlock.getBlockId()) return;
       releaseHeadBlock();
     }
 
     headBlock = findBlock(blockId);
-
-    if (headBlock == null) {
-      headBlock = blockFile.readBlock(objectPool, blockId);
-    }
-
+    if (headBlock == null) headBlock = blockFile.readBlock(blockId);
     headBlockDirty = false;
   }
 
@@ -847,11 +766,7 @@ public final class FreeList {
    */
   private void releaseHeadBlock() throws IOException {
     if (headBlock != null) {
-      if (headBlockDirty) {
-        writeHeadBlock();
-      }
-
-      headBlock.release();
+      if (headBlockDirty) writeHeadBlock();
       headBlock = null;
     }
   }
@@ -866,19 +781,12 @@ public final class FreeList {
    */
   private void readReallocateBlock(int blockId) throws IOException {
     if (reallocateBlock != null) {
-      if (blockId == (int) reallocateBlock.getBlockId()) {
-        return;
-      }
-
+      if (blockId == (int) reallocateBlock.getBlockId()) return;
       releaseReallocateBlock();
     }
 
     reallocateBlock = findBlock(blockId);
-
-    if (reallocateBlock == null) {
-      reallocateBlock = blockFile.readBlock(objectPool, blockId);
-    }
-
+    if (reallocateBlock == null) reallocateBlock = blockFile.readBlock(blockId);
     reallocateBlockDirty = false;
   }
 
@@ -890,7 +798,7 @@ public final class FreeList {
    * @throws IOException if an I/O error occurs.
    */
   private void writeReallocateBlock() throws IOException {
-    if ( (reallocateBlock != null) && reallocateBlockDirty) {
+    if ((reallocateBlock != null) && reallocateBlockDirty) {
       reallocateBlock.write();
       reallocateBlockDirty = false;
     }
@@ -905,11 +813,7 @@ public final class FreeList {
    */
   private void releaseReallocateBlock() throws IOException {
     if (reallocateBlock != null) {
-      if (reallocateBlockDirty) {
-        writeReallocateBlock();
-      }
-
-      reallocateBlock.release();
+      if (reallocateBlockDirty) writeReallocateBlock();
       reallocateBlock = null;
     }
   }
@@ -924,30 +828,19 @@ public final class FreeList {
    */
   private void readTailBlock(int blockId) throws IOException {
     if (tailBlock != null) {
-      if (blockId == (int) tailBlock.getBlockId()) {
-        return;
-      }
-
+      if (blockId == (int) tailBlock.getBlockId()) return;
       releaseTailBlock();
     }
 
     tailBlock = findBlock(blockId);
-
-    if (tailBlock == null) {
-      tailBlock = blockFile.readBlock(objectPool, blockId);
-    }
+    if (tailBlock == null) tailBlock = blockFile.readBlock(blockId);
   }
 
   /**
-   * Releases the current tail buffer. After releasing, the tail buffer is made
-   * invalid.
-   *
+   * Releases the current tail buffer. After releasing, the tail buffer is made invalid.
    */
   private void releaseTailBlock() {
-    if (tailBlock != null) {
-      tailBlock.release();
-      tailBlock = null;
-    }
+    if (tailBlock != null) tailBlock = null;
   }
 
   /**
@@ -972,8 +865,7 @@ public final class FreeList {
       return block;
     }
 
-    if ( (reallocateBlock != null) &&
-        ( (int) reallocateBlock.getBlockId() == blockId)) {
+    if ((reallocateBlock != null) && ((int)reallocateBlock.getBlockId() == blockId)) {
       writeReallocateBlock();
 
       Block block = reallocateBlock;
@@ -986,7 +878,6 @@ public final class FreeList {
     if ( (tailBlock != null) && ( (int) tailBlock.getBlockId() == blockId)) {
       Block block = tailBlock;
       tailBlock = null;
-
       return block;
     }
 
@@ -1051,7 +942,7 @@ public final class FreeList {
      * current token.  This is collectable by the GC and can be used to indicate
      * that the phase is no longer in use.
      */
-    private Reference tokenRef = null;
+    private Reference<Token> tokenRef = null;
 
 
     /** Holds a stack trace of construction so we can tell where problems occurred. */
@@ -1112,11 +1003,7 @@ public final class FreeList {
         removeClosedPhases();
 
         int index = phases.indexOf(p);
-        if (index == -1) {
-          throw new IllegalStateException(
-              "Attempt to rollback to closed phase."
-          );
-        }
+        if (index == -1) throw new IllegalStateException("Attempt to rollback to closed phase.");
 
         while (phases.size() > (index + 1)) {
           Phase removedPhase = (Phase)phases.removeLast();
@@ -1241,7 +1128,7 @@ public final class FreeList {
 
       if (token == null) {
         token = new Token();
-        tokenRef = new WeakReference(token);
+        tokenRef = new WeakReference<Token>(token);
       }
 
       ++refCount;
@@ -1334,7 +1221,7 @@ public final class FreeList {
      * A new token is created if no token is available and the phase is in use.
      */
     private Token getToken() {
-      Token token = (tokenRef != null) ? (Token) tokenRef.get() : null;
+      Token token = (tokenRef != null) ? tokenRef.get() : null;
 
       if ( (token == null) && (refCount > 0)) {
         if (logger.isInfoEnabled()) {
@@ -1405,13 +1292,10 @@ public final class FreeList {
     private synchronized boolean release() {
       assert getToken() != null:"released() when there is no valid token";
 
-      if (refCount == 0) {
-        throw new AssertionError("Attempt to release Phase with refCount == 0.");
-      }
+      if (refCount == 0) throw new AssertionError("Attempt to release Phase with refCount == 0.");
 
       if (--refCount == 0) {
         tokenRef = null;
-
         return true;
       }
 

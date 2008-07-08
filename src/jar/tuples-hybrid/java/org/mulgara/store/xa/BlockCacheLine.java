@@ -9,7 +9,6 @@ import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.DenseLongMatrix;
 import org.mulgara.store.xa.Block;
 import org.mulgara.store.xa.BlockFile;
-import org.mulgara.store.xa.ObjectPool;
 
 /**
  * Split memory backed from file backed cache lines.
@@ -37,7 +36,6 @@ public class BlockCacheLine extends CacheLine {
   protected long[] prefix;
   protected BlockFile file;
   protected Block block;
-  protected ObjectPool objectPool;
   protected long initialBlockId;
   protected long nextBlockId;
   protected int nrBlocks;
@@ -51,7 +49,6 @@ public class BlockCacheLine extends CacheLine {
 
 
   public BlockCacheLine(BlockFile file,
-                        ObjectPool objectPool,
                         int blockSize,
                         DenseLongMatrix buffer,
                         int size) throws TuplesException {
@@ -70,8 +67,6 @@ public class BlockCacheLine extends CacheLine {
     if (this.initialBlockId < 0) {
       this.initialBlockId = 0;
     }
-    this.objectPool = objectPool;
-    this.objectPool.incRefCount();
     this.currentTuple = new long[width];
     this.previousTuple = new long[width];
     try {
@@ -83,7 +78,7 @@ public class BlockCacheLine extends CacheLine {
 
     this.nextBlockId = this.initialBlockId;
     try {
-      this.block = file.readBlock(this.objectPool, this.nextBlockId++);
+      this.block = file.readBlock(this.nextBlockId++);
     } catch (IOException ie) {
       logger.warn("Failed to read Temporary File");
       throw new TuplesException("Failed to read Temporary File", ie);
@@ -106,7 +101,6 @@ public class BlockCacheLine extends CacheLine {
     try {
       if (isEmpty()) {
         logger.debug("advancing empty tuples");
-        block.release();
         block = null;
         return;
       }
@@ -114,12 +108,11 @@ public class BlockCacheLine extends CacheLine {
       // If just cloned, then read in previous block.
       if (block == null) {
         logger.debug("BlockCache " + this + " Refreshing from clone block " + (nextBlockId - 1));
-        block = file.readBlock(objectPool, nextBlockId - 1);
+        block = file.readBlock(nextBlockId - 1);
       }
 
       if (endOfBlock(offset)) {
-        block.release();
-        block = file.readBlock(objectPool, nextBlockId++);
+        block = file.readBlock(nextBlockId++);
         offset = 0;
       }
 
@@ -151,10 +144,7 @@ public class BlockCacheLine extends CacheLine {
 
     try {
       if (this.prefix == null) {
-        if (block != null) {
-          block.release();
-        }
-        block = file.readBlock(objectPool, initialBlockId);
+        block = file.readBlock(initialBlockId);
         offset = 0;
         nextTuple = 0;
       } else {
@@ -185,20 +175,14 @@ public class BlockCacheLine extends CacheLine {
   public void close(int closer) throws TuplesException {
     super.close(closer);
     if (block != null) {
-      block.release();
       block = null;
       file = null;
-    }
-    if (objectPool != null) {
-      objectPool.release();
-      objectPool = null;
     }
   }
 
 
   public Object clone() {
     BlockCacheLine b = (BlockCacheLine)super.clone();
-    b.objectPool.incRefCount();
     b.block = null;
     b.currentTuple =  (long[])currentTuple.clone();
     b.previousTuple = (long[])previousTuple.clone();
@@ -216,14 +200,13 @@ public class BlockCacheLine extends CacheLine {
     file.setNrBlocks(this.initialBlockId + nrBlocks + 1);
 
     long blockId = this.initialBlockId;
-    Block block = file.allocateBlock(objectPool, blockId++);
+    Block block = file.allocateBlock(blockId++);
     int offset = 0;
 
     for (int i = 0; i < size; i++) {
       if (endOfBlock(offset)) {
         block.write();
-        block.release();
-        block = file.allocateBlock(this.objectPool, blockId++);
+        block = file.allocateBlock(blockId++);
         offset = 0;
       }
       for (int j = 0; j < this.width; j++) {
@@ -231,7 +214,6 @@ public class BlockCacheLine extends CacheLine {
       }
     }
     block.write();
-    block.release();
 
     return offset;
   }
@@ -265,18 +247,16 @@ public class BlockCacheLine extends CacheLine {
     try {
       assert prefix.length > 0 && prefix.length <= width;
 
-      Block first = file.readBlock(objectPool, initialBlockId);
+      Block first = file.readBlock(initialBlockId);
       long[] tmp = new long[width];
       loadTupleFromBlock(tmp, first, 0);
       if (logger.isDebugEnabled()) {
         logger.debug("Initial tuple for block " + first.getBlockId() + " : " + AbstractTuples.toString(tmp));
       }
-      if (compareBlockWithPrefix(first, prefix) >= 0) {
-          return first;
-      }
+      if (compareBlockWithPrefix(first, prefix) >= 0) return first;
 
       final long lastBlockId = initialBlockId + nrBlocks - 1;
-      Block last = file.readBlock(objectPool, lastBlockId);
+      Block last = file.readBlock(lastBlockId);
       boolean found;
       switch (compareBlockWithPrefix(last, prefix)) {
         case -1:
@@ -319,26 +299,20 @@ public class BlockCacheLine extends CacheLine {
           " lowBound: " + lowBound + " highBound: " + highBound);
     }
     try {
-      if (highBound - lowBound <= 1) {
-        lowBlock.release();
-        return highBlock;
-      }
+      if (highBound - lowBound <= 1) return highBlock;
 
       long midBound = (int)((lowBound + highBound) / 2);
-      Block midBlock = file.readBlock(objectPool, midBound);
+      Block midBlock = file.readBlock(midBound);
 
       switch (compareBlockWithPrefix(midBlock, prefix)) {
         case -1:
-          lowBlock.release();
           return findBlock(prefix, found, midBound, midBlock, highBound, highBlock);
 
         case 0:
-          highBlock.release();
           return findBlock(prefix, true, lowBound, lowBlock, midBound, midBlock);
 
         case +1:
           assert !found;
-          highBlock.release();
           return findBlock(prefix, false, lowBound, lowBlock, midBound, midBlock);
 
         default:

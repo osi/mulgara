@@ -31,9 +31,6 @@ import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
 
-// Java 2 standard packages
-import java.util.*;
-
 // Third party packages
 import org.apache.log4j.Logger;
 
@@ -61,6 +58,7 @@ import org.apache.log4j.Logger;
 public final class IOBlockFile extends AbstractBlockFile {
 
   /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(IOBlockFile.class);
 
   private static final int NOMINAL_ALLOCATION_SIZE = 1048576; // in bytes
@@ -131,28 +129,13 @@ public final class IOBlockFile extends AbstractBlockFile {
    * contents of the ByteBuffer are undefined. The method {@link #writeBlock}
    * is called to write the buffer to the block.
    *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param blockId The ID of the block that this buffer will be written to.
    * @return a ByteBuffer to be used for writing to the specified block.
    */
-  public Block allocateBlock(ObjectPool objectPool, long blockId) {
+  public Block allocateBlock(long blockId) {
     assert(blockId >= 0) && (blockId < nrBlocks);
 
-    return Block.newInstance(objectPool, this, blockSize, blockId, byteOrder);
-  }
-
-  /**
-   * Frees a buffer that was allocated by calling either {@link #allocateBlock}
-   * or {@link #readBlock}. While calling this method is not strictly
-   * necessary, it may improve performance. The buffer should not be used after
-   * it has been freed.
-   *
-   * @param objectPool The object pool to return the data buffer to.
-   * @param block the buffer to be freed.
-   */
-  public void releaseBlock(ObjectPool objectPool, Block block) {
-    block.dispose(objectPool);
+    return Block.newInstance(this, blockSize, blockId, byteOrder);
   }
 
   /**
@@ -160,17 +143,13 @@ public final class IOBlockFile extends AbstractBlockFile {
    * block. If the buffer is modified then the method {@link #writeBlock}
    * should be called to write the buffer back to the file.
    *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param blockId the block to read into the ByteBuffer.
    * @return The allocated block, containing valid data from the file.
    * @throws IOException if an I/O error occurs.
    */
-  public Block readBlock(
-      ObjectPool objectPool, long blockId
-  ) throws IOException {
+  public Block readBlock(long blockId) throws IOException {
     // Create the buffer to read into.
-    Block block = allocateBlock(objectPool, blockId);
+    Block block = allocateBlock(blockId);
 
     ByteBuffer byteBuffer = block.getByteBuffer();
 

@@ -29,8 +29,6 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
-import java.util.*;
 
 // Third party packages
 import junit.framework.*;
@@ -64,6 +62,7 @@ public class AVLFileTest extends TestCase {
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(AVLFileTest.class);
 
   /**
@@ -76,21 +75,13 @@ public class AVLFileTest extends TestCase {
    * Description of the Field
    *
    */
-  private static Block metaroot =
-      Block.newInstance(ObjectPool.newInstance(),
-      AVLFile.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
+  private static Block metaroot = Block.newInstance(AVLFile.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
 
   /**
    * Description of the Field
    *
    */
   private AVLFile avlFile;
-
-  /**
-   * Description of the Field
-   *
-   */
-  private ObjectPool objectPool = null;
 
   /**
    * Named constructor.
@@ -152,8 +143,7 @@ public class AVLFileTest extends TestCase {
     try {
 
       File dir = TempDir.getTempDir();
-      objectPool = ObjectPool.newInstance();
-      avlFile = new AVLFile(objectPool, new File(dir, "avlfiletest"), 1);
+      avlFile = new AVLFile(new File(dir, "avlfiletest"), 1);
       exceptionOccurred = false;
     }
     finally {
@@ -175,12 +165,6 @@ public class AVLFileTest extends TestCase {
     if (avlFile != null) {
 
       try {
-
-        if (objectPool != null) {
-
-          objectPool.release();
-          objectPool = null;
-        }
 
         avlFile.unmap();
 
@@ -210,32 +194,32 @@ public class AVLFileTest extends TestCase {
     AVLFile.Phase phase0 = avlFile.new Phase();
     avlFile.clear();
 
-    //AVLNode node = phase0.newAVLNodeInstance(objectPool);
-    insert(objectPool, phase0, 60);
-    assertEquals(1, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 50);
-    assertEquals(2, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 70);
-    assertEquals(2, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 80);
-    assertEquals(3, getHeight(objectPool, phase0));
+    //AVLNode node = phase0.newAVLNodeInstance();
+    insert(phase0, 60);
+    assertEquals(1, getHeight(phase0));
+    insert(phase0, 50);
+    assertEquals(2, getHeight(phase0));
+    insert(phase0, 70);
+    assertEquals(2, getHeight(phase0));
+    insert(phase0, 80);
+    assertEquals(3, getHeight(phase0));
 
     // test RR rotation
-    insert(objectPool, phase0, 90);
-    assertEquals(3, getHeight(objectPool, phase0));
+    insert(phase0, 90);
+    assertEquals(3, getHeight(phase0));
 
     // test RL rotation
-    insert(objectPool, phase0, 65);
-    assertEquals(3, getHeight(objectPool, phase0));
+    insert(phase0, 65);
+    assertEquals(3, getHeight(phase0));
 
-    insert(objectPool, phase0, 75);
-    assertEquals(3, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 77);
-    assertEquals(4, getHeight(objectPool, phase0));
+    insert(phase0, 75);
+    assertEquals(3, getHeight(phase0));
+    insert(phase0, 77);
+    assertEquals(4, getHeight(phase0));
 
     try {
 
-      insert(objectPool, phase0, 50);
+      insert(phase0, 50);
       fail("Able to insert the same node values twice");
     }
     catch (IllegalArgumentException e) {
@@ -253,20 +237,20 @@ public class AVLFileTest extends TestCase {
     AVLFile.Phase phase0 = avlFile.new Phase();
     avlFile.clear();
 
-    AVLNode[] nodes = find(objectPool, phase0, 5);
+    AVLNode[] nodes = find(phase0, 5);
 
     if (nodes != null) {
 
       fail("Found node in empty tree");
     }
 
-    insert(objectPool, phase0, 6);
-    insert(objectPool, phase0, 5);
-    insert(objectPool, phase0, 8);
+    insert(phase0, 6);
+    insert(phase0, 5);
+    insert(phase0, 8);
 
-    assertFound(find(objectPool, phase0, 5), 5);
+    assertFound(find(phase0, 5), 5);
 
-    assertNotFound(find(objectPool, phase0, 7), 6, 8);
+    assertNotFound(find(phase0, 7), 6, 8);
   }
 
   /**
@@ -279,82 +263,82 @@ public class AVLFileTest extends TestCase {
     AVLFile.Phase phase0 = avlFile.new Phase();
     avlFile.clear();
 
-    insert(objectPool, phase0, 60);
-    assertEquals(1, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 50);
-    assertEquals(2, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 70);
-    assertEquals(2, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 80);
-    assertEquals(3, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 90);
-    assertEquals(3, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 65);
-    assertEquals(3, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 75);
-    assertEquals(3, getHeight(objectPool, phase0));
-    insert(objectPool, phase0, 77);
-    assertEquals(4, getHeight(objectPool, phase0));
+    insert(phase0, 60);
+    assertEquals(1, getHeight(phase0));
+    insert(phase0, 50);
+    assertEquals(2, getHeight(phase0));
+    insert(phase0, 70);
+    assertEquals(2, getHeight(phase0));
+    insert(phase0, 80);
+    assertEquals(3, getHeight(phase0));
+    insert(phase0, 90);
+    assertEquals(3, getHeight(phase0));
+    insert(phase0, 65);
+    assertEquals(3, getHeight(phase0));
+    insert(phase0, 75);
+    assertEquals(3, getHeight(phase0));
+    insert(phase0, 77);
+    assertEquals(4, getHeight(phase0));
 
-    find(objectPool, phase0, 60)[0].remove();
-    assertEquals(4, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 60), 50, 65);
-    assertFound(find(objectPool, phase0, 65), 65);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 80), 80);
-    assertFound(find(objectPool, phase0, 90), 90);
-    assertFound(find(objectPool, phase0, 65), 65);
-    assertFound(find(objectPool, phase0, 75), 75);
-    assertFound(find(objectPool, phase0, 77), 77);
+    find(phase0, 60)[0].remove();
+    assertEquals(4, getHeight(phase0));
+    assertNotFound(find(phase0, 60), 50, 65);
+    assertFound(find(phase0, 65), 65);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 80), 80);
+    assertFound(find(phase0, 90), 90);
+    assertFound(find(phase0, 65), 65);
+    assertFound(find(phase0, 75), 75);
+    assertFound(find(phase0, 77), 77);
 
-    find(objectPool, phase0, 50)[0].remove();
-    assertEquals(3, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 50), 0, 65);
-    assertFound(find(objectPool, phase0, 65), 65);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 75), 75);
-    assertFound(find(objectPool, phase0, 77), 77);
-    assertFound(find(objectPool, phase0, 80), 80);
-    assertFound(find(objectPool, phase0, 90), 90);
+    find(phase0, 50)[0].remove();
+    assertEquals(3, getHeight(phase0));
+    assertNotFound(find(phase0, 50), 0, 65);
+    assertFound(find(phase0, 65), 65);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 75), 75);
+    assertFound(find(phase0, 77), 77);
+    assertFound(find(phase0, 80), 80);
+    assertFound(find(phase0, 90), 90);
 
-    find(objectPool, phase0, 75)[0].remove();
-    assertEquals(3, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 75), 70, 77);
-    assertFound(find(objectPool, phase0, 65), 65);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 77), 77);
-    assertFound(find(objectPool, phase0, 80), 80);
-    assertFound(find(objectPool, phase0, 90), 90);
+    find(phase0, 75)[0].remove();
+    assertEquals(3, getHeight(phase0));
+    assertNotFound(find(phase0, 75), 70, 77);
+    assertFound(find(phase0, 65), 65);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 77), 77);
+    assertFound(find(phase0, 80), 80);
+    assertFound(find(phase0, 90), 90);
 
-    find(objectPool, phase0, 65)[0].remove();
-    assertEquals(3, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 65), 0, 70);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 77), 77);
-    assertFound(find(objectPool, phase0, 80), 80);
-    assertFound(find(objectPool, phase0, 90), 90);
+    find(phase0, 65)[0].remove();
+    assertEquals(3, getHeight(phase0));
+    assertNotFound(find(phase0, 65), 0, 70);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 77), 77);
+    assertFound(find(phase0, 80), 80);
+    assertFound(find(phase0, 90), 90);
 
-    find(objectPool, phase0, 90)[0].remove();
-    assertEquals(2, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 90), 80, 0);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 77), 77);
-    assertFound(find(objectPool, phase0, 80), 80);
+    find(phase0, 90)[0].remove();
+    assertEquals(2, getHeight(phase0));
+    assertNotFound(find(phase0, 90), 80, 0);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 77), 77);
+    assertFound(find(phase0, 80), 80);
 
-    find(objectPool, phase0, 80)[0].remove();
-    assertEquals(2, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 80), 77, 0);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 77), 77);
+    find(phase0, 80)[0].remove();
+    assertEquals(2, getHeight(phase0));
+    assertNotFound(find(phase0, 80), 77, 0);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 77), 77);
 
-    find(objectPool, phase0, 70)[0].remove();
-    assertEquals(1, getHeight(objectPool, phase0));
-    assertNotFound(find(objectPool, phase0, 70), 0, 77);
-    assertFound(find(objectPool, phase0, 77), 77);
+    find(phase0, 70)[0].remove();
+    assertEquals(1, getHeight(phase0));
+    assertNotFound(find(phase0, 70), 0, 77);
+    assertFound(find(phase0, 77), 77);
 
-    find(objectPool, phase0, 77)[0].remove();
-    assertNull(phase0.getRootNode(objectPool));
-    assertNull(find(objectPool, phase0, 77));
+    find(phase0, 77)[0].remove();
+    assertNull(phase0.getRootNode());
+    assertNull(find(phase0, 77));
   }
 
   /**
@@ -367,27 +351,27 @@ public class AVLFileTest extends TestCase {
     AVLFile.Phase phase0 = avlFile.new Phase();
     avlFile.clear();
 
-    insert(objectPool, phase0, 60);
-    insert(objectPool, phase0, 50);
-    insert(objectPool, phase0, 70);
-    insert(objectPool, phase0, 80);
+    insert(phase0, 60);
+    insert(phase0, 50);
+    insert(phase0, 70);
+    insert(phase0, 80);
 
-    assertFound(find(objectPool, phase0, 60), 60);
-    assertFound(find(objectPool, phase0, 50), 50);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 80), 80);
+    assertFound(find(phase0, 60), 60);
+    assertFound(find(phase0, 50), 50);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 80), 80);
 
-    find(objectPool, phase0, 60)[0].remove();
-    assertNotFound(find(objectPool, phase0, 60), 50, 70);
-    assertFound(find(objectPool, phase0, 50), 50);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 80), 80);
+    find(phase0, 60)[0].remove();
+    assertNotFound(find(phase0, 60), 50, 70);
+    assertFound(find(phase0, 50), 50);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 80), 80);
 
-    insert(objectPool, phase0, 60);
-    assertFound(find(objectPool, phase0, 60), 60);
-    assertFound(find(objectPool, phase0, 50), 50);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 80), 80);
+    insert(phase0, 60);
+    assertFound(find(phase0, 60), 60);
+    assertFound(find(phase0, 50), 50);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 80), 80);
 
     // set up for testPersist()
     phase0.writeToBlock(metaroot, 0);
@@ -401,13 +385,14 @@ public class AVLFileTest extends TestCase {
   public void testPersist() throws IOException {
 
     AVLFile.Phase phase0 = avlFile.new Phase(metaroot, 0);
+    @SuppressWarnings("unused")
     AVLFile.Phase.Token token0 = phase0.use();
     AVLFile.Phase phase1 = avlFile.new Phase();
 
-    assertFound(find(objectPool, phase1, 60), 60);
-    assertFound(find(objectPool, phase1, 50), 50);
-    assertFound(find(objectPool, phase1, 70), 70);
-    assertFound(find(objectPool, phase1, 80), 80);
+    assertFound(find(phase1, 60), 60);
+    assertFound(find(phase1, 50), 50);
+    assertFound(find(phase1, 70), 70);
+    assertFound(find(phase1, 80), 80);
   }
 
   /**
@@ -420,39 +405,40 @@ public class AVLFileTest extends TestCase {
     AVLFile.Phase phase0 = avlFile.new Phase();
     avlFile.clear();
 
-    insert(objectPool, phase0, 60);
-    insert(objectPool, phase0, 50);
-    insert(objectPool, phase0, 70);
-    insert(objectPool, phase0, 80);
+    insert(phase0, 60);
+    insert(phase0, 50);
+    insert(phase0, 70);
+    insert(phase0, 80);
 
-    assertFound(find(objectPool, phase0, 60), 60);
-    assertFound(find(objectPool, phase0, 50), 50);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 80), 80);
+    assertFound(find(phase0, 60), 60);
+    assertFound(find(phase0, 50), 50);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 80), 80);
 
+    @SuppressWarnings("unused")
     AVLFile.Phase.Token token0 = phase0.use();
     AVLFile.Phase phase1 = avlFile.new Phase();
 
-    find(objectPool, phase1, 60)[0].remove();
-    assertNotFound(find(objectPool, phase1, 60), 50, 70);
-    assertFound(find(objectPool, phase1, 50), 50);
-    assertFound(find(objectPool, phase1, 70), 70);
-    assertFound(find(objectPool, phase1, 80), 80);
+    find(phase1, 60)[0].remove();
+    assertNotFound(find(phase1, 60), 50, 70);
+    assertFound(find(phase1, 50), 50);
+    assertFound(find(phase1, 70), 70);
+    assertFound(find(phase1, 80), 80);
 
-    assertFound(find(objectPool, phase0, 60), 60);
-    assertFound(find(objectPool, phase0, 50), 50);
-    assertFound(find(objectPool, phase0, 70), 70);
-    assertFound(find(objectPool, phase0, 80), 80);
+    assertFound(find(phase0, 60), 60);
+    assertFound(find(phase0, 50), 50);
+    assertFound(find(phase0, 70), 70);
+    assertFound(find(phase0, 80), 80);
 
-    insert(objectPool, phase1, 60);
-    assertFound(find(objectPool, phase1, 60), 60);
-    assertFound(find(objectPool, phase1, 50), 50);
-    assertFound(find(objectPool, phase1, 70), 70);
-    assertFound(find(objectPool, phase1, 80), 80);
+    insert(phase1, 60);
+    assertFound(find(phase1, 60), 60);
+    assertFound(find(phase1, 50), 50);
+    assertFound(find(phase1, 70), 70);
+    assertFound(find(phase1, 80), 80);
 
     try {
 
-      find(objectPool, phase0, 60)[0].remove();
+      find(phase0, 60)[0].remove();
       fail("Able to remove from a read-only phase");
     }
     catch (IllegalStateException ex) {
@@ -461,7 +447,7 @@ public class AVLFileTest extends TestCase {
 
     try {
 
-      insert(objectPool, phase0, 75);
+      insert(phase0, 75);
       fail("Able to insert into a read-only phase");
     }
     catch (IllegalStateException ex) {
@@ -476,7 +462,7 @@ public class AVLFileTest extends TestCase {
    */
   void dumpTree(AVLFile.Phase phase) {
 
-    AVLNode node = phase.getRootNode(objectPool);
+    AVLNode node = phase.getRootNode();
     System.out.println(toString(node));
 
     if (node != null) {
@@ -520,13 +506,12 @@ public class AVLFileTest extends TestCase {
   /**
    * Gets the Height attribute of the AVLFileTest object
    *
-   * @param objectPool PARAMETER TO DO
    * @param phase PARAMETER TO DO
    * @return The Height value
    */
-  private int getHeight(ObjectPool objectPool, AVLFile.Phase phase) {
+  private int getHeight(AVLFile.Phase phase) {
 
-    AVLNode rootNode = phase.getRootNode(objectPool);
+    AVLNode rootNode = phase.getRootNode();
     int height = rootNode.getHeight();
     rootNode.release();
 
@@ -536,19 +521,17 @@ public class AVLFileTest extends TestCase {
   /**
    * METHOD TO DO
    *
-   * @param objectPool PARAMETER TO DO
    * @param phase PARAMETER TO DO
    * @param value PARAMETER TO DO
    * @throws IOException EXCEPTION TO DO
    */
-  private void insert(ObjectPool objectPool, AVLFile.Phase phase,
-      int value) throws IOException {
+  private void insert(AVLFile.Phase phase, int value) throws IOException {
 
-    AVLNode[] findResult = find(objectPool, phase, value);
+    AVLNode[] findResult = find(phase, value);
 
     try {
 
-      AVLNode newNode = phase.newAVLNodeInstance(objectPool);
+      AVLNode newNode = phase.newAVLNodeInstance();
 
       try {
 
@@ -583,15 +566,13 @@ public class AVLFileTest extends TestCase {
   /**
    * METHOD TO DO
    *
-   * @param objectPool PARAMETER TO DO
    * @param phase PARAMETER TO DO
    * @param value PARAMETER TO DO
    * @return RETURNED VALUE TO DO
    */
-  private AVLNode[] find(ObjectPool objectPool, AVLFile.Phase phase, int value) {
+  private AVLNode[] find(AVLFile.Phase phase, int value) {
 
-    return phase.find(objectPool, comparator, new long[] {
-        value});
+    return phase.find(comparator, new long[] {value});
   }
 
   /**
@@ -610,8 +591,7 @@ public class AVLFileTest extends TestCase {
           ? ("(" + getKey(nodes[0]) + ", " + getKey(nodes[1]) + ")") : ""), 1,
           nodes.length);
       assertEquals("Incorrect node found", value, getKey(nodes[0]));
-    }
-    finally {
+    } finally {
 
       AVLFile.release(nodes);
     }

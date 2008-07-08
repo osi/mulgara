@@ -29,8 +29,6 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
-import java.util.*;
 
 // Third party packages
 import junit.framework.*;
@@ -64,6 +62,7 @@ public class IOBlockFileTest extends BlockFileTest {
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(IOBlockFileTest.class);
 
   private File file;
@@ -117,7 +116,6 @@ public class IOBlockFileTest extends BlockFileTest {
       File dir = TempDir.getTempDir();
       file = new File(dir, "iobftest");
       blockFile = new IOBlockFile(file, BLOCK_SIZE);
-      objectPool = ObjectPool.newInstance();
       exceptionOccurred = false;
     }
      finally {
@@ -140,11 +138,6 @@ public class IOBlockFileTest extends BlockFileTest {
 
     // Close the file.
     try {
-      if (objectPool != null) {
-        objectPool.release();
-        objectPool = null;
-      }
-
       blockFile.close();
     } finally {
       blockFile = null;

@@ -65,12 +65,6 @@ public final class Block {
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(Block.class);
 
-  /**
-   * The pool of currently unused blocks.  Blocks come from here where possible,
-   * and are returned here afterwards.
-   */
-  private ObjectPool objectPool;
-
   /** The file that this block is attached to. */
   private BlockFile blockFile;
 
@@ -80,6 +74,7 @@ public final class Block {
   /** The ID of this block, unique within the file, and usually maps to a block position. */
   private long blockId;
 
+  // TODO: check if this is still needed
   /**
    * Indicates if this block owns the buffer inside it.  If the buffer
    * is owned then it must be freed (and written back to disk if it is
@@ -109,9 +104,8 @@ public final class Block {
   private LongBuffer lb;
 
   /**
-   * Builds a block, providing the pool for the block to be returned to.
+   * Builds a block.
    *
-   * @param objectPool The pool that this block should be returned to.
    * @param blockFile The file that this data block is from.
    * @param blockSize The size of the data.
    * @param blockId The ID of the block in the file.
@@ -123,17 +117,16 @@ public final class Block {
    * @param lb The 64 bit long offset of the data for this block, from the start of the buffer.
    */
   private Block(
-      ObjectPool objectPool, BlockFile blockFile, int blockSize,
+      BlockFile blockFile, int blockSize,
       long blockId, int byteOffset, ByteBuffer bb, ByteBuffer sbb,
       IntBuffer ib, LongBuffer lb
   ) {
-    init(objectPool, blockFile, blockSize, blockId, byteOffset, bb, sbb, ib, lb);
+    init(blockFile, blockSize, blockId, byteOffset, bb, sbb, ib, lb);
   }
 
   /**
-   * Factory method to produce a block, using an {@link ObjectPool} if possible.
+   * Factory method to produce a block.
    *
-   * @param objectPool The pool to get this block from, and to ultimately return the block to.
    * @param blockFile The file to get the data from.
    * @param blockSize The size of the data.
    * @param blockId The ID of the block in the file.
@@ -143,69 +136,40 @@ public final class Block {
    *            which require a buffer of data.
    * @param ib The 32 bit integer offset of the data for this block, from the start of the buffer.
    * @param lb The 64 bit long offset of the data for this block, from the start of the buffer.
-   * @return A new block from the objectPool, or a new block which will be returned to the pool.
+   * @return A new block.
    */
   public static Block newInstance(
-      ObjectPool objectPool, BlockFile blockFile,
-      int blockSize, long blockId, int byteOffset, ByteBuffer bb,
+      BlockFile blockFile, int blockSize, long blockId, int byteOffset, ByteBuffer bb,
       ByteBuffer sbb, IntBuffer ib, LongBuffer lb
   ) {
-    Block block = (Block) objectPool.get(ObjectPool.TYPE_BLOCK);
-
-    if (block != null) {
-      block.init(
-          objectPool, blockFile, blockSize, blockId, byteOffset, bb,
-          sbb, ib, lb
-      );
-    } else {
-      block = new Block(
-          objectPool, blockFile, blockSize, blockId, byteOffset, bb,
-          sbb, ib, lb
-      );
-    }
-
-    return block;
+    return new Block(blockFile, blockSize, blockId, byteOffset, bb, sbb, ib, lb);
   }
 
   /**
    * Create a new block, not attached to any file.
    *
-   * @param objectPool The object pool to get the block from.
    * @param blockSize The size of the block to create.
    * @return A new block, with no file data.
    */
-  public static Block newInstance(ObjectPool objectPool, int blockSize) {
-    return newInstance(objectPool, null, blockSize, 0, ByteOrder.nativeOrder());
+  public static Block newInstance(int blockSize) {
+    return newInstance(null, blockSize, 0, ByteOrder.nativeOrder());
   }
 
   /**
-   * Factory method to create a new block, allocating a new data buffer.  Uses the objectPool
-   * if possible, or else creates a new block that will be returned to the object pool.
+   * Factory method to create a new block, allocating a new data buffer.
    *
-   * @param objectPool The pool of blocks to get the block from.
    * @param blockFile The file to get the block from.
    * @param blockSize The size of the data in the block.
    * @param blockId The ID of the block from the file.
    * @param byteOrder Represents little endian or big endian byte ordering.
-   * @return The block from the pool, or a new block which will be returned to the pool.
+   * @return A new block.
    */
-  public static Block newInstance(
-      ObjectPool objectPool, BlockFile blockFile,
-      int blockSize, long blockId, ByteOrder byteOrder
-  ) {
-    Block block = (Block) objectPool.get(ObjectPool.TYPE_S_BLOCK, blockSize);
-
-    if (block != null) {
-      block.init(objectPool, blockFile, blockId);
-    } else {
-      block = Block.newInstance(
-          objectPool, blockFile, blockSize, blockId, 0,
-          ByteBuffer.allocateDirect(blockSize).order(byteOrder), null, null,
-          null
-      );
-      block.ownsBuffer = true;
-    }
-
+  public static Block newInstance(BlockFile blockFile, int blockSize, long blockId, ByteOrder byteOrder) {
+    Block block = Block.newInstance(
+        blockFile, blockSize, blockId, 0,
+        ByteBuffer.allocateDirect(blockSize).order(byteOrder), null, null, null
+    );
+    block.ownsBuffer = true;
     return block;
   }
 
@@ -512,46 +476,6 @@ public final class Block {
    */
   public void free() throws IOException {
     blockFile.freeBlock(blockId);
-    release();
-  }
-
-  /**
-   * Puts this buffer for this block back into the ObjectPool so it can be re-used in another Block.
-   */
-  public void release() {
-    if (blockFile != null) {
-      blockFile.releaseBlock(objectPool, this);
-      // blockFile should have been set to null in the call to releaseBlock()
-      // (which calls dispose()), but just to be sure we set it to null again.
-      blockFile = null;
-    } else {
-      dispose(objectPool);
-    }
-  }
-
-  /**
-   * Clears this Block, and puts the internal buffer back into the object pool for recycling.
-   * This block is invalid after calling this operation.
-   *
-   * @param objectPool The object pool to put the buffer back into.
-   */
-  public void dispose(ObjectPool objectPool) {
-    if (objectPool == null) {
-      throw new AssertionError();
-    }
-
-    this.objectPool = null;
-    blockFile = null;
-
-    if (ownsBuffer) {
-      objectPool.put(ObjectPool.TYPE_S_BLOCK, blockSize, this);
-    } else {
-      bb = null;
-      sbb = null;
-      ib = null;
-      lb = null;
-      objectPool.put(ObjectPool.TYPE_BLOCK, this);
-    }
   }
 
   /**
@@ -675,7 +599,6 @@ public final class Block {
   /**
    * Initializes a block for use.
    *
-   * @param objectPool The pool that this block should be returned to.
    * @param blockFile The file that this data block is from.
    * @param blockSize The size of the data.
    * @param blockId The ID of the block in the file.
@@ -687,12 +610,10 @@ public final class Block {
    * @param lb The 64 bit long offset of the data for this block, from the start of the buffer.
    */
   private void init(
-      ObjectPool objectPool, BlockFile blockFile, int blockSize,
+      BlockFile blockFile, int blockSize,
       long blockId, int byteOffset, ByteBuffer bb, ByteBuffer sbb,
       IntBuffer ib, LongBuffer lb
   ) {
-    assert this.objectPool == null;
-    this.objectPool = objectPool;
     this.blockFile = blockFile;
     this.blockSize = blockSize;
     init(blockId, byteOffset, bb, sbb, ib, lb);
@@ -702,20 +623,13 @@ public final class Block {
    * Initializes a block for use, not setting up any of the data buffer, but still pointing to
    * the file for the block..
    *
-   * @param objectPool The pool that this block should be returned to.
    * @param blockFile The file that data block will come from.
    * @param blockId The ID of the block within the file.
    */
-  void init(ObjectPool objectPool, BlockFile blockFile, long blockId) {
-    assert this.objectPool == null;
+  void init(BlockFile blockFile, long blockId) {
     assert ownsBuffer;
-    this.objectPool = objectPool;
     this.blockFile = blockFile;
     this.blockId = blockId;
   }
-
-  //  protected void finalize() {
-  //    if (objectPool != null) logger.warn("Unpooled Block.");
-  //  }
 
 }

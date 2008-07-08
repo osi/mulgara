@@ -28,9 +28,7 @@
 package org.mulgara.store.xa;
 
 // Java 2 standard packages
-import java.util.*;
 import java.io.*;
-import java.nio.*;
 
 // Third party packages
 import junit.framework.*;
@@ -65,6 +63,7 @@ public class MappedBlockFileTest extends BlockFileTest {
    * Logger.
    *
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(MappedBlockFileTest.class);
 
   /**
@@ -114,7 +113,6 @@ public class MappedBlockFileTest extends BlockFileTest {
 
       File dir = TempDir.getTempDir();
       blockFile = new MappedBlockFile(new File(dir, "mbftest"), BLOCK_SIZE);
-      objectPool = ObjectPool.newInstance();
       exceptionOccurred = false;
     }
     finally {

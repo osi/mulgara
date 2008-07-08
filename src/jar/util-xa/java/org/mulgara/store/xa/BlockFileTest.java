@@ -31,10 +31,6 @@ package org.mulgara.store.xa;
 import junit.framework.*;
 
 import java.io.*;
-import java.nio.*;
-
-// Java 2 standard packages
-import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -88,17 +84,13 @@ public abstract class BlockFileTest extends TestCase {
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(BlockFileTest.class);
 
   /**
    * Description of the Field
    */
   protected BlockFile blockFile;
-
-  /**
-   * Description of the Field
-   */
-  protected ObjectPool objectPool = null;
 
   /**
    * Named constructor.
@@ -131,12 +123,6 @@ public abstract class BlockFileTest extends TestCase {
 
       try {
 
-        if (objectPool != null) {
-
-          objectPool.release();
-          objectPool = null;
-        }
-
         blockFile.unmap();
 
         if (System.getProperty("os.name").startsWith("Win")) {
@@ -165,9 +151,8 @@ public abstract class BlockFileTest extends TestCase {
     blockFile.clear();
     blockFile.setNrBlocks(1);
 
-    Block blk = blockFile.allocateBlock(objectPool, 0);
+    Block blk = blockFile.allocateBlock(0);
     assertNotNull(blk);
-    blk.release();
   }
 
   /**
@@ -179,42 +164,34 @@ public abstract class BlockFileTest extends TestCase {
 
     blockFile.setNrBlocks(4);
 
-    Block blk = blockFile.allocateBlock(objectPool, 0);
+    Block blk = blockFile.allocateBlock(0);
     putString(blk, STR0);
     blk.write();
-    blk.release();
 
-    blk = blockFile.allocateBlock(objectPool, 3);
+    blk = blockFile.allocateBlock(3);
     putString(blk, STR3);
     blk.write();
-    blk.release();
 
-    blk = blockFile.allocateBlock(objectPool, 2);
+    blk = blockFile.allocateBlock(2);
     putString(blk, STR2);
     blk.write();
-    blk.release();
 
-    blk = blockFile.allocateBlock(objectPool, 1);
+    blk = blockFile.allocateBlock(1);
     putString(blk, STR1);
     blk.write();
-    blk.release();
 
     // Check what was written.
-    blk = blockFile.readBlock(objectPool, 2);
+    blk = blockFile.readBlock(2);
     assertEquals(STR2, getString(blk));
-    blk.release();
 
-    blk = blockFile.readBlock(objectPool, 0);
+    blk = blockFile.readBlock(0);
     assertEquals(STR0, getString(blk));
-    blk.release();
 
-    blk = blockFile.readBlock(objectPool, 1);
+    blk = blockFile.readBlock(1);
     assertEquals(STR1, getString(blk));
-    blk.release();
 
-    blk = blockFile.readBlock(objectPool, 3);
+    blk = blockFile.readBlock(3);
     assertEquals(STR3, getString(blk));
-    blk.release();
   }
 
   /**
@@ -226,21 +203,17 @@ public abstract class BlockFileTest extends TestCase {
 
     assertEquals(4, blockFile.getNrBlocks());
 
-    Block blk = blockFile.readBlock(objectPool, 2);
+    Block blk = blockFile.readBlock(2);
     assertEquals(STR2, getString(blk));
-    blk.release();
 
-    blk = blockFile.readBlock(objectPool, 0);
+    blk = blockFile.readBlock(0);
     assertEquals(STR0, getString(blk));
-    blk.release();
 
-    blk = blockFile.readBlock(objectPool, 1);
+    blk = blockFile.readBlock(1);
     assertEquals(STR1, getString(blk));
-    blk.release();
 
-    blk = blockFile.readBlock(objectPool, 3);
+    blk = blockFile.readBlock(3);
     assertEquals(STR3, getString(blk));
-    blk.release();
   }
 
   /**
@@ -255,30 +228,26 @@ public abstract class BlockFileTest extends TestCase {
     blockFile.setNrBlocks(nrBlocks);
 
     for (int i = 0; i < nrBlocks; ++i) {
-      Block blk = blockFile.allocateBlock(objectPool, i);
+      Block blk = blockFile.allocateBlock(i);
       blk.putInt(0, i + 5);
       blk.write();
-      blk.release();
     }
 
     for (int i = 0; i < nrBlocks; ++i) {
-      Block blk = blockFile.readBlock(objectPool, i);
+      Block blk = blockFile.readBlock(i);
       assertEquals(i + 5, blk.getInt(0));
-      blk.release();
     }
 
     for (int pass = 0; pass < 10; ++pass) {
       for (int i = 0; i < nrBlocks; ++i) {
-        Block blk = blockFile.readBlock(objectPool, i);
+        Block blk = blockFile.readBlock(i);
         blk.putInt(0, i ^ pass);
         blk.write();
-        blk.release();
       }
 
       for (int i = 0; i < nrBlocks; ++i) {
-        Block blk = blockFile.readBlock(objectPool, i);
+        Block blk = blockFile.readBlock(i);
         assertEquals(i ^ pass, blk.getInt(0));
-        blk.release();
       }
     }
 

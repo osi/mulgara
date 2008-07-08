@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.store.statement.*;
-import org.mulgara.store.xa.ObjectPool;
 
 final class TripleWriteThread extends Thread {
 
@@ -47,8 +46,6 @@ final class TripleWriteThread extends Thread {
   private static final int BUFFER_SIZE = 50000;
 
   private static final int QUEUE_MAX_BUFFERS = 10;
-
-  private ObjectPool objectPool = ObjectPool.newInstance();
 
   /** The current phase of the TripleAVLFile. */
   private TripleAVLFile.Phase phase;
@@ -155,7 +152,7 @@ final class TripleWriteThread extends Thread {
         }
 
         try {
-          phase.syncAddTriples(objectPool, buffer);
+          phase.syncAddTriples(buffer);
         } catch (Throwable t) {
           reportException(t);
         } finally {
@@ -167,8 +164,6 @@ final class TripleWriteThread extends Thread {
     } catch (Throwable t) {
       logger.error("Unhandled exception in " + getName(), t);
     }
-
-    objectPool.release();
 
     synchronized (this) {
       threadRunning = false;

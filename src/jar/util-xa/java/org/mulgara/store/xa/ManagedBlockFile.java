@@ -29,8 +29,6 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -87,44 +85,34 @@ public final class ManagedBlockFile {
   /**
    * Constructs a ManagedBlockFile with the specified file.
    *
-   * @param objectPool an objectPool for this thread.
    * @param file the name of the BlockFile.
    * @param blockSize the block size in bytes.
    * @param ioType the type of I/O mechanism to use.
    * @throws IOException if an I/O error occurs.
    */
-  public ManagedBlockFile(
-      ObjectPool objectPool, File file, int blockSize,
-      BlockFile.IOType ioType
-  ) throws IOException {
+  public ManagedBlockFile(File file, int blockSize,BlockFile.IOType ioType) throws IOException {
     this.file = file;
     File freeListFile = new File(file + FREELIST_EXT);
 
     if (file.exists() != freeListFile.exists()) {
-      logger.error(
-          "ERROR: inconsistency between Block file and Free List file"
-      );
+      logger.error("ERROR: inconsistency between Block file and Free List file");
     }
 
     blockFile = AbstractBlockFile.openBlockFile(file, blockSize, ioType);
-    freeList = FreeList.openFreeList(objectPool, freeListFile);
+    freeList = FreeList.openFreeList(freeListFile);
     isOpen = true;
   }
 
   /**
    * Constructs a ManagedBlockFile with the specified file name.
    *
-   * @param objectPool an objectPool for this thread.
    * @param fileName the name of the BlockFile.
    * @param blockSize the block size in bytes.
    * @param ioType the type of I/O mechanism to use.
    * @throws IOException if an I/O error occurs.
    */
-  public ManagedBlockFile(
-      ObjectPool objectPool, String fileName,
-      int blockSize, BlockFile.IOType ioType
-  ) throws IOException {
-    this(objectPool, new File(fileName), blockSize, ioType);
+  public ManagedBlockFile(String fileName, int blockSize, BlockFile.IOType ioType) throws IOException {
+    this(new File(fileName), blockSize, ioType);
   }
 
   /**
@@ -371,28 +359,11 @@ public final class ManagedBlockFile {
      * depending on the BlockFile implementation, changes to the ByteBuffer may
      * take effect even if {@link #writeBlock} is never called.
      *
-     * @param objectPool the object pool to attempt to get objects from and
-     *      release objects to.
      * @param blockId The ID of the block that this buffer will be written to.
      * @return a ByteBuffer to be used for writing to the specified block.
      */
-    public Block allocateBlock(ObjectPool objectPool, long blockId) {
-      throw new UnsupportedOperationException(
-          "Cannot allocate a specific block of a ManagedBlockFile.");
-    }
-
-    /**
-     * Frees a buffer that was allocated by calling either {@link
-     * #allocateBlock} or {@link #readBlock}. While calling this method is not
-     * strictly necessary, it may improve performance. The buffer should not be
-     * used after it has been freed.
-     *
-     * @param objectPool the object pool to attempt to get objects from and
-     *      release objects to.
-     * @param block the buffer to be freed.
-     */
-    public void releaseBlock(ObjectPool objectPool, Block block) {
-      blockFile.releaseBlock(objectPool, block);
+    public Block allocateBlock(long blockId) {
+      throw new UnsupportedOperationException("Cannot allocate a specific block of a ManagedBlockFile.");
     }
 
     /**
@@ -402,15 +373,12 @@ public final class ManagedBlockFile {
      * depending on the BlockFile implementation, changes to the ByteBuffer may
      * take effect even if {@link #writeBlock} is never called.
      *
-     * @param objectPool the object pool to attempt to get objects from and
-     *      release objects to.
      * @param blockId the block to read into the ByteBuffer.
      * @return The read block.
      * @throws IOException if an I/O error occurs.
      */
-    public Block readBlock(ObjectPool objectPool, long blockId)
-        throws IOException {
-      Block block = blockFile.readBlock(objectPool, blockId);
+    public Block readBlock(long blockId) throws IOException {
+      Block block = blockFile.readBlock(blockId);
       block.setBlockFile(this);
       return block;
     }
@@ -489,18 +457,16 @@ public final class ManagedBlockFile {
      * BlockFile implementation, changes to the ByteBuffer may take effect even if
      * {@link #writeBlock} is never called.
      *
-     * @param objectPool the object pool to attempt to get objects from and
-     *      release objects to.
      * @return a ByteBuffer to be used for writing to the specified block.
      * @throws IOException if an I/O error occurs.
      */
-    public Block allocateBlock(ObjectPool objectPool) throws IOException {
+    public Block allocateBlock() throws IOException {
       assert this == currentPhase;
 
       long blockId = freeList.allocate();
 
       blockFile.setNrBlocks(freeList.getNextItem());
-      Block block = blockFile.allocateBlock(objectPool, blockId);
+      Block block = blockFile.allocateBlock(blockId);
       block.setBlockFile(this);
       return block;
     }

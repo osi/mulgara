@@ -51,7 +51,6 @@ import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.store.xa.AbstractBlockFile;
 import org.mulgara.store.xa.BlockFile;
-import org.mulgara.store.xa.ObjectPool;
 import org.mulgara.util.TempDir;
 
 /**
@@ -92,7 +91,6 @@ public final class HybridTuples implements Tuples {
 
   protected BlockFile blockFile;
   protected RefCount blockFileRefCount;
-  protected ObjectPool objectPool;
 
   // Would be final except for clone
   // can be final once clone semantics migrated into CacheLine.
@@ -277,9 +275,6 @@ public final class HybridTuples implements Tuples {
         copy.heapCache[i] = (CacheLine)heapCache[i].clone();
       }
       copy.currTuple = copy.heapCache[0].getCurrentTuple(null);
-      if (objectPool != null) {
-        objectPool.incRefCount();
-      }
       if (blockFile != null) {
         blockFileRefCount.refCount++;
       }
@@ -324,10 +319,6 @@ public final class HybridTuples implements Tuples {
     }
     heapCache = null;
     currTuple = null;
-    if (objectPool != null) {
-      objectPool.release();
-      objectPool = null;
-    }
 
     tuples.close();
     tuples = null;
@@ -572,11 +563,11 @@ public final class HybridTuples implements Tuples {
 
       ArrayList tmpHeap = new ArrayList();
 
-      tmpHeap.add(new BlockCacheLine(blockFile, objectPool, BLOCK_SIZE, buffer, size));
+      tmpHeap.add(new BlockCacheLine(blockFile, BLOCK_SIZE, buffer, size));
       do {
         size = primeBuffer(buffer, tuples);
         if (size > 0) {
-          tmpHeap.add(new BlockCacheLine(blockFile, objectPool, BLOCK_SIZE, buffer, size));
+          tmpHeap.add(new BlockCacheLine(blockFile, BLOCK_SIZE, buffer, size));
         }
       } while (size == buffer.getLength());
 
@@ -829,7 +820,6 @@ public final class HybridTuples implements Tuples {
       logger.warn("Failed to open temporary block file.", ie);
       throw new TuplesException("Failed to open temporary block file.", ie);
     }
-    this.objectPool = ObjectPool.newInstance();
   }
 
 

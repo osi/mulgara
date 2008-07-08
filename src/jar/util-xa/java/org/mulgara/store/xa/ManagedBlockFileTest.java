@@ -29,8 +29,6 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
-import java.util.*;
 
 // Third party packages
 import junit.framework.*;
@@ -107,14 +105,13 @@ public abstract class ManagedBlockFileTest extends TestCase {
    * Description of the Field
    *
    */
-  protected static Block metaroot =
-      Block.newInstance(ObjectPool.newInstance(),
-      ManagedBlockFile.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
+  protected static Block metaroot = Block.newInstance(ManagedBlockFile.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
 
   /**
    * Logger.
    *
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(ManagedBlockFileTest.class);
 
   /**
@@ -122,12 +119,6 @@ public abstract class ManagedBlockFileTest extends TestCase {
    *
    */
   protected ManagedBlockFile blockFile;
-
-  /**
-   * Description of the Field
-   *
-   */
-  protected ObjectPool objectPool = null;
 
   /**
    * Named constructor.
@@ -156,11 +147,6 @@ public abstract class ManagedBlockFileTest extends TestCase {
   public void tearDown() throws IOException {
     if (blockFile != null) {
       try {
-        if (objectPool != null) {
-          objectPool.release();
-          objectPool = null;
-        }
-
         blockFile.close();
       } finally {
         blockFile = null;
@@ -177,9 +163,8 @@ public abstract class ManagedBlockFileTest extends TestCase {
     ManagedBlockFile.Phase phase0 = blockFile.new Phase();
     blockFile.clear();
 
-    Block blk = phase0.allocateBlock(objectPool);
+    Block blk = phase0.allocateBlock();
     assertNotNull(blk);
-    blk.release();
   }
 
   /**
@@ -191,49 +176,42 @@ public abstract class ManagedBlockFileTest extends TestCase {
     ManagedBlockFile.Phase phase0 = blockFile.new Phase();
     blockFile.clear();
 
+    @SuppressWarnings("unused")
     ManagedBlockFile.Phase.Token token0 = phase0.use();
     ManagedBlockFile.Phase phase1 = blockFile.new Phase();
 
-    Block blk = phase1.allocateBlock(objectPool);
+    Block blk = phase1.allocateBlock();
     assertEquals(0, blk.getBlockId());
     putString(blk, STR0);
     blk.write();
-    blk.release();
 
-    blk = phase1.allocateBlock(objectPool);
+    blk = phase1.allocateBlock();
     assertEquals(1, blk.getBlockId());
     putString(blk, STR1);
     blk.write();
-    blk.release();
 
-    blk = phase1.allocateBlock(objectPool);
+    blk = phase1.allocateBlock();
     assertEquals(2, blk.getBlockId());
     putString(blk, STR2);
     blk.write();
-    blk.release();
 
-    blk = phase1.allocateBlock(objectPool);
+    blk = phase1.allocateBlock();
     assertEquals(3, blk.getBlockId());
     putString(blk, STR3);
     blk.write();
-    blk.release();
 
     // Check what was written.
-    blk = phase1.readBlock(objectPool, 2);
+    blk = phase1.readBlock(2);
     assertEquals(STR2, getString(blk));
-    blk.release();
 
-    blk = phase1.readBlock(objectPool, 0);
+    blk = phase1.readBlock(0);
     assertEquals(STR0, getString(blk));
-    blk.release();
 
-    blk = phase1.readBlock(objectPool, 1);
+    blk = phase1.readBlock(1);
     assertEquals(STR1, getString(blk));
-    blk.release();
 
-    blk = phase1.readBlock(objectPool, 3);
+    blk = phase1.readBlock(3);
     assertEquals(STR3, getString(blk));
-    blk.release();
 
     phase1.writeToBlock(metaroot, 0);
   }
@@ -245,26 +223,23 @@ public abstract class ManagedBlockFileTest extends TestCase {
    */
   public void testPersist() throws IOException {
     ManagedBlockFile.Phase phase1 = blockFile.new Phase(metaroot, 0);
+    @SuppressWarnings("unused")
     ManagedBlockFile.Phase.Token token1 = phase1.use();
     ManagedBlockFile.Phase phase2 = blockFile.new Phase();
 
     assertEquals(4, phase2.getNrBlocks());
 
-    Block blk = phase2.readBlock(objectPool, 2);
+    Block blk = phase2.readBlock(2);
     assertEquals(STR2, getString(blk));
-    blk.release();
 
-    blk = phase2.readBlock(objectPool, 0);
+    blk = phase2.readBlock(0);
     assertEquals(STR0, getString(blk));
-    blk.release();
 
-    blk = phase2.readBlock(objectPool, 1);
+    blk = phase2.readBlock(1);
     assertEquals(STR1, getString(blk));
-    blk.release();
 
-    blk = phase2.readBlock(objectPool, 3);
+    blk = phase2.readBlock(3);
     assertEquals(STR3, getString(blk));
-    blk.release();
 
     phase2.writeToBlock(metaroot, 0);
   }
@@ -276,50 +251,46 @@ public abstract class ManagedBlockFileTest extends TestCase {
    */
   public void testDuplicate() throws IOException {
     ManagedBlockFile.Phase phase2 = blockFile.new Phase(metaroot, 0);
+    @SuppressWarnings("unused")
     ManagedBlockFile.Phase.Token token2 = phase2.use();
     ManagedBlockFile.Phase phase3 = blockFile.new Phase();
+    @SuppressWarnings("unused")
     ManagedBlockFile.Phase.Token token3 = phase3.use();
 
-    Block blk = phase3.readBlock(objectPool, 3);
+    Block blk = phase3.readBlock(3);
     assertEquals(STR3, getString(blk));
     blk.modify();
 
     long dup3Id = blk.getBlockId();
     assertEquals(4, dup3Id);
     blk.write();
-    blk.release();
 
-    blk = phase3.allocateBlock(objectPool);
+    blk = phase3.allocateBlock();
     assertEquals(5, blk.getBlockId());
     putString(blk, STR5);
     blk.write();
-    blk.release();
 
-    blk = phase3.readBlock(objectPool, 5);
+    blk = phase3.readBlock(5);
     assertEquals(STR5, getString(blk));
     blk.modify();
     assertEquals(5, blk.getBlockId());
     blk.write();
-    blk.release();
 
     // Check that the duplicate of block 3 has the same contents as block 3.
-    blk = phase3.readBlock(objectPool, dup3Id);
+    blk = phase3.readBlock(dup3Id);
     assertEquals(STR3, getString(blk));
-    blk.release();
 
     ManagedBlockFile.Phase phase4 = blockFile.new Phase();
 
-    blk = phase4.readBlock(objectPool, 5);
+    blk = phase4.readBlock(5);
     blk.modify();
     assertEquals(6, blk.getBlockId());
 
-    Block blk5 = phase4.readBlock(objectPool, 5);
+    Block blk5 = phase4.readBlock(5);
     assertEquals(
         blk5.getByteBuffer().position(0), blk.getByteBuffer().position(0)
     );
     blk.write();
-    blk.release();
-    blk5.release();
 
     phase4.writeToBlock(metaroot, 0);
   }

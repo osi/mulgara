@@ -92,6 +92,7 @@ public final class AVLNode {
   final static long NULL_NODE = Block.INVALID_BLOCK_ID;
 
   /** The logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(AVLNode.class);
 
   /** The most recent phase that this node belongs to. */
@@ -118,9 +119,6 @@ public final class AVLNode {
   /** Whether or not this node has been modified. */
   private boolean dirty;
 
-  /** The pool of objects this node came from. */
-  private ObjectPool objectPool;
-
   //  private Throwable trace;
 
   /** The number of references to this node. */
@@ -136,83 +134,50 @@ public final class AVLNode {
    * Creates a new AVLNode for a given AVLFile phase, and data in the file.
    *
    * @param phase The phase from the AVLFile.
-   * @param objectPool The object pool to return this node to when it's finished with.
    * @param parentNode The parent node to this node.
    * @param childIndex The index (left or right) of this node in relation to its parent.
    * @param nodeId The ID of this node, used for finding it in the file..
    */
-  private AVLNode(
-      AVLFile.Phase phase, ObjectPool objectPool,
-      AVLNode parentNode, int childIndex, long nodeId
-  ) {
-    init(phase, objectPool, parentNode, childIndex, nodeId);
+  private AVLNode(AVLFile.Phase phase, AVLNode parentNode, int childIndex, long nodeId) {
+    init(phase, parentNode, childIndex, nodeId);
   }
 
   /**
    * Constructs a new node for a given AVLFile phase.
    *
    * @param phase The phase form the AVLFile.
-   * @param objectPool The object pool to return this node to when it's finished with.
    * @throws IOException If there was an I/O exception.
    */
-  private AVLNode(
-      AVLFile.Phase phase, ObjectPool objectPool
-  ) throws IOException {
-    init(phase, objectPool);
+  private AVLNode(AVLFile.Phase phase) throws IOException {
+    init(phase);
   }
 
   /**
    * Factory method for an AVLNode.
    *
    * @param phase The phase form the AVLFile.
-   * @param objectPool The object pool to return this node to when it's finished with.
    * @return The new node, backed by a new block in the file.
    * @throws IOException If there was an I/O exception.
    */
-  public static AVLNode newInstance(
-      AVLFile.Phase phase, ObjectPool objectPool
-  ) throws IOException {
+  public static AVLNode newInstance(AVLFile.Phase phase) throws IOException {
     if (!phase.isCurrent()) {
-      throw new IllegalStateException(
-          "Attempt to allocate a new AVL node on a read-only phase."
-      );
+      throw new IllegalStateException("Attempt to allocate a new AVL node on a read-only phase.");
     }
-
-    AVLNode avlNode = (AVLNode) objectPool.get(ObjectPool.TYPE_AVLNODE);
-
-    if (avlNode != null) {
-      avlNode.init(phase, objectPool);
-    } else {
-      avlNode = new AVLNode(phase, objectPool);
-    }
-
-    return avlNode;
+    return new AVLNode(phase);
   }
 
   /**
    * Factory method for an AVLNode.
    *
    * @param phase The phase form the AVLFile.
-   * @param objectPool The object pool to return this node to when it's finished with.
    * @param parentNode The parent to this node.
    * @param childIndex The index of this node within its parent, either left or right.
    * @param nodeId The ID to find the data for this node in the file.
    * @return The new node, read from file, or with new file info in it.
    * @throws IOException If there was an I/O exception.
    */
-  static AVLNode newInstance(
-      AVLFile.Phase phase, ObjectPool objectPool,
-      AVLNode parentNode, int childIndex, long nodeId
-  ) {
-    AVLNode avlNode = (AVLNode) objectPool.get(ObjectPool.TYPE_AVLNODE);
-
-    if (avlNode != null) {
-      avlNode.init(phase, objectPool, parentNode, childIndex, nodeId);
-    } else {
-      avlNode = new AVLNode(phase, objectPool, parentNode, childIndex, nodeId);
-    }
-
-    return avlNode;
+  static AVLNode newInstance(AVLFile.Phase phase, AVLNode parentNode, int childIndex, long nodeId) {
+    return new AVLNode(phase, parentNode, childIndex, nodeId);
   }
 
   /**
@@ -1006,11 +971,8 @@ public final class AVLNode {
 
     do {
       assert avlNode.refCount > 0;
-      assert avlNode.objectPool != null;
 
-      if (--avlNode.refCount > 0) {
-        return;
-      }
+      if (--avlNode.refCount > 0) return;
 
       assert avlNode.leftChildNode == null;
       assert avlNode.rightChildNode == null;
@@ -1026,18 +988,10 @@ public final class AVLNode {
           }
         }
 
-        avlNode.block.release();
         avlNode.block = null;
       }
 
       avlNode.writable = false;
-
-      // NOTE: it is currently safe to modify objects after they have been put
-      // into a local pool since no other thread can get objects from the pool
-      // and the objects don't migrate to the global pool until the local pool
-      // has been released.
-      avlNode.objectPool.put(ObjectPool.TYPE_AVLNODE, avlNode);
-      avlNode.objectPool = null;
 
       //X     avlNode.trace = null;
       AVLNode prevNode = avlNode;
@@ -1065,15 +1019,6 @@ public final class AVLNode {
     toString(sb);
 
     return sb.toString();
-  }
-
-  /**
-   * Gets the ObjectPool for this AVLNode
-   *
-   * @return The ObjectPool value
-   */
-  ObjectPool getObjectPool() {
-    return objectPool;
   }
 
   /**
@@ -1168,15 +1113,13 @@ public final class AVLNode {
 
     long nodeId = block.getLong(index);
 
-    return nodeId == NULL_NODE ? null :
-        newInstance(phase, objectPool, this, index, nodeId);
+    return nodeId == NULL_NODE ? null : newInstance(phase, this, index, nodeId);
   }
 
   /**
    * Initialises a node on the given information.
    *
    * @param phase The phase that the node exists in.
-   * @param objectPool The pool that the node will return to.
    * @param parentNode The parent node for this node.  Only
    *     <code>null</code> at the root of the tree.
    * @param childIndex Indicates if this is to the left or the
@@ -1184,18 +1127,13 @@ public final class AVLNode {
    *     {@link #IDX_RIGHT}.
    * @param nodeId This ID for this node.
    */
-  private void init(
-      AVLFile.Phase phase, ObjectPool objectPool,
-      AVLNode parentNode, int childIndex, long nodeId
-  ) {
-    assert this.objectPool == null;
+  private void init(AVLFile.Phase phase, AVLNode parentNode, int childIndex, long nodeId) {
 
     this.phase = phase;
     this.parentNode = parentNode;
     this.childIndex = childIndex;
     this.leftChildNode = null;
     this.rightChildNode = null;
-    this.objectPool = objectPool;
 
     //X    trace = new Throwable();
     refCount = 1;
@@ -1203,7 +1141,7 @@ public final class AVLNode {
     dirty = false;
 
     try {
-      block = phase.getAVLBlockFilePhase().readBlock(objectPool, nodeId);
+      block = phase.getAVLBlockFilePhase().readBlock(nodeId);
     } catch (IOException ex) {
       throw new Error("IOException", ex);
     }
@@ -1213,26 +1151,21 @@ public final class AVLNode {
    * Initialises a node on the given information.
    *
    * @param phase The phase that the node exists in.
-   * @param objectPool The pool that the node will return to.
    * @throws IOException If an I/O error occurs.
    */
-  private void init(
-      AVLFile.Phase phase, ObjectPool objectPool
-  ) throws IOException {
-    assert this.objectPool == null;
+  private void init(AVLFile.Phase phase) throws IOException {
 
     this.phase = phase;
     parentNode = null;
     childIndex = 0;
     this.leftChildNode = null;
     this.rightChildNode = null;
-    this.objectPool = objectPool;
 
     //X    trace = new Throwable();
     refCount = 1;
     writable = true;
     dirty = true;
-    block = phase.getAVLBlockFilePhase().allocateBlock(objectPool);
+    block = phase.getAVLBlockFilePhase().allocateBlock();
     block.putLong(IDX_LEFT, NULL_NODE);
     block.putLong(IDX_RIGHT, NULL_NODE);
     block.putByte(IDX_BALANCE_B, (byte) 0);

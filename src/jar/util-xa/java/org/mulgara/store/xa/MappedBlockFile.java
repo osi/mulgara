@@ -232,13 +232,11 @@ public final class MappedBlockFile extends AbstractBlockFile {
    * Allocates a ByteBuffer to be used for writing to the specified block. The
    * contents of the ByteBuffer are undefined.
    *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param blockId The ID of the block that this buffer will be written to.
    * @return a ByteBuffer to be used for writing to the specified block.
    */
-  public Block allocateBlock(ObjectPool objectPool, long blockId) {
-    return readBlock(objectPool, blockId);
+  public Block allocateBlock(long blockId) {
+    return readBlock(blockId);
   }
 
   /**
@@ -246,29 +244,21 @@ public final class MappedBlockFile extends AbstractBlockFile {
    * or {@link #readBlock}. The buffer should not be used after it has been
    * freed.
    *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param block the buffer to be freed.
    */
-  public void releaseBlock(ObjectPool objectPool, Block block) {
-    block.dispose(objectPool);
+  public void releaseBlock(Block block) {
   }
 
   /**
    * Allocates a ByteBuffer which is filled with the contents of the specified
    * block. If the buffer is modified then the method {@link #writeBlock}
    * should be called to write the buffer back to the file.
-   *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param blockId the block to read into the ByteBuffer.
    * @return The block that was read.
    */
-  public Block readBlock(ObjectPool objectPool, long blockId) {
+  public Block readBlock(long blockId) {
     if ((blockId < 0) || (blockId >= nrBlocks)) {
-      throw new IllegalArgumentException(
-          "blockId: " + blockId + " of " + nrBlocks
-      );
+      throw new IllegalArgumentException("blockId: " + blockId + " of " + nrBlocks);
     }
 
     long fileOffset = blockId * blockSize;
@@ -280,7 +270,7 @@ public final class MappedBlockFile extends AbstractBlockFile {
     assert longBuffers != null;
 
     return Block.newInstance(
-        objectPool, this, blockSize, blockId, offset,
+        this, blockSize, blockId, offset,
         mappedByteBuffers[regionNr], srcByteBuffers[regionNr],
         intBuffers[regionNr], longBuffers[regionNr]
     );

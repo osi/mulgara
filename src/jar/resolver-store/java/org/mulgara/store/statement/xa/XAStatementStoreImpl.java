@@ -46,7 +46,6 @@ import org.mulgara.store.xa.AbstractBlockFile;
 import org.mulgara.store.xa.Block;
 import org.mulgara.store.xa.BlockFile;
 import org.mulgara.store.xa.LockFile;
-import org.mulgara.store.xa.ObjectPool;
 import org.mulgara.store.xa.PersistableMetaRoot;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAStatementStore;
@@ -227,11 +226,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
   private String fileName;
 
   /**
-   * Description of the Field
-   */
-  private ObjectPool objectPool;
-
-  /**
    * The LockFile that protects the graph from being opened twice.
    */
   private LockFile lockFile;
@@ -315,8 +309,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
     lockFile = LockFile.createLockFile(fileName + ".g.lock");
 
-    objectPool = ObjectPool.newInstance();
-
     try {
       // Check that the metaroot file was created with a compatible version
       // of the triplestore.
@@ -345,8 +337,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
       for (int i = 0; i < NR_INDEXES; ++i) {
         tripleAVLFiles[i] = new TripleAVLFile(
-            objectPool, fileName + ".g_" +
-                orders[i][0] + orders[i][1] + orders[i][2] + orders[i][3],
+            fileName + ".g_" + orders[i][0] + orders[i][1] + orders[i][2] + orders[i][3],
             orders[i]
         );
       }
@@ -481,9 +472,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       currentPhase.removeTriple(node0, node1, node2, node3);
     } else {
       // Find all the tuples matching the specification and remove them.
-      StoreTuples tuples = currentPhase.findTuples(
-          objectPool, node0, node1, node2, node3
-      );
+      StoreTuples tuples = currentPhase.findTuples(node0, node1, node2, node3);
       try {
         try {
           if (!tuples.isEmpty()) {
@@ -537,7 +526,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
   ) throws StatementStoreException {
     checkInitialized();
     dirty = false;
-    return currentPhase.findTuples(objectPool, node0, node1, node2, node3);
+    return currentPhase.findTuples(node0, node1, node2, node3);
   }
 
   
@@ -559,7 +548,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     checkInitialized();
     dirty = false;
     if (!checkMask(mask, node0, node1, node2, node3)) throw new StatementStoreException("Bad explicit index selection for given node pattern.");
-    return currentPhase.findTuples(objectPool, mask, node0, node1, node2, node3);
+    return currentPhase.findTuples(mask, node0, node1, node2, node3);
   }
 
   /**
@@ -598,9 +587,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
   ) throws StatementStoreException {
     checkInitialized();
     dirty = false;
-    return currentPhase.findTuples(
-        objectPool, node0Bound, node1Bound, node2Bound, node3Bound
-    );
+    return currentPhase.findTuples(node0Bound, node1Bound, node2Bound, node3Bound);
   }
 
 
@@ -619,7 +606,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       long node0, long node1, long node2, long node3
   ) throws StatementStoreException {
     checkInitialized();
-    return currentPhase.existsTriples(objectPool, node0, node1, node2, node3);
+    return currentPhase.existsTriples(node0, node1, node2, node3);
   }
 
 
@@ -654,11 +641,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
           } catch (IOException ex) {
             savedEx = ex;
           }
-        }
-
-        if (objectPool != null) {
-          objectPool.release();
-          objectPool = null;
         }
 
         if (metarootFile != null) {
@@ -698,17 +680,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
         for (int i = 0; i < NR_INDEXES; ++i) {
           try {
-            if (tripleAVLFiles[i] != null) {
-              tripleAVLFiles[i].delete();
-            }
+            if (tripleAVLFiles[i] != null) tripleAVLFiles[i].delete();
           } catch (IOException ex) {
             savedEx = ex;
           }
-        }
-
-        if (objectPool != null) {
-          objectPool.release();
-          objectPool = null;
         }
 
         if (metarootFile != null) {
@@ -837,7 +812,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       logger.debug("Prepare " + this.getClass() + ":" + System.identityHashCode(this));
     }
     checkInitialized();
-    objectPool.flush();
 
     if (prepared) {
       // prepare already performed.
@@ -1149,14 +1123,8 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     }
 
     if (metarootFile != null) {
-      if (metarootBlocks[0] != null) {
-        metarootBlocks[0].release();
-        metarootBlocks[0] = null;
-      }
-      if (metarootBlocks[1] != null) {
-        metarootBlocks[1].release();
-        metarootBlocks[1] = null;
-      }
+      if (metarootBlocks[0] != null) metarootBlocks[0] = null;
+      if (metarootBlocks[1] != null) metarootBlocks[1] = null;
       metarootFile.unmap();
     }
   }
@@ -1221,8 +1189,8 @@ public final class XAStatementStoreImpl implements XAStatementStore {
         metarootFile.setNrBlocks(NR_METAROOTS);
       }
 
-      metarootBlocks[0] = metarootFile.readBlock(objectPool, 0);
-      metarootBlocks[1] = metarootFile.readBlock(objectPool, 1);
+      metarootBlocks[0] = metarootFile.readBlock(0);
+      metarootBlocks[1] = metarootFile.readBlock(1);
     }
 
     if (clear) {
@@ -1259,8 +1227,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
     private Phase.Token token = null;
 
-    private ObjectPool objectPool = null;
-
 
     /**
      * CONSTRUCTOR ReadOnlyGraph TO DO
@@ -1268,9 +1234,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     ReadOnlyGraph() {
       synchronized (committedPhaseLock) {
         if (committedPhaseToken == null) {
-          throw new IllegalStateException(
-              "Cannot create read only view of uninitialized Graph."
-          );
+          throw new IllegalStateException("Cannot create read only view of uninitialized Graph.");
         }
       }
     }
@@ -1340,7 +1304,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     public synchronized StoreTuples findTuples(
         long node0, long node1, long node2, long node3
     ) throws StatementStoreException {
-      return phase.findTuples(objectPool, node0, node1, node2, node3);
+      return phase.findTuples(node0, node1, node2, node3);
     }
 
     /**
@@ -1359,7 +1323,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
         int mask, long node0, long node1, long node2, long node3
     ) throws StatementStoreException {
       if (!checkMask(mask, node0, node1, node2, node3)) throw new StatementStoreException("Bad explicit index selection for given node pattern.");
-      return phase.findTuples(objectPool, mask, node0, node1, node2, node3);
+      return phase.findTuples(mask, node0, node1, node2, node3);
     }
 
 
@@ -1380,16 +1344,14 @@ public final class XAStatementStoreImpl implements XAStatementStore {
         boolean node0Bound, boolean node1Bound, boolean node2Bound,
         boolean node3Bound
     ) throws StatementStoreException {
-      return phase.findTuples(
-          objectPool, node0Bound, node1Bound, node2Bound, node3Bound
-      );
+      return phase.findTuples(node0Bound, node1Bound, node2Bound, node3Bound);
     }
 
 
     public synchronized boolean existsTriples(
         long node0, long node1, long node2, long node3
     ) throws StatementStoreException {
-      return phase.existsTriples(objectPool, node0, node1, node2, node3);
+      return phase.existsTriples(node0, node1, node2, node3);
     }
 
 
@@ -1404,9 +1366,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
 
     public void close() {
-      throw new UnsupportedOperationException(
-          "Trying to close a read-only graph."
-      );
+      throw new UnsupportedOperationException("Trying to close a read-only graph.");
     }
 
 
@@ -1425,17 +1385,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
         logger.debug("Releasing " + this.getClass() + ":" + System.identityHashCode(this));
       }
       try {
-        if (token != null) {
-          token.release();
-        }
-        if (objectPool != null) {
-          objectPool.flush();
-          objectPool.release();
-        }
+        if (token != null) token.release();
       } finally {
         phase = null;
         token = null;
-        objectPool = null;
       }
     }
 
@@ -1444,16 +1397,11 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       if (logger.isDebugEnabled()) {
         logger.debug("Refreshing " + this.getClass() + ":" + System.identityHashCode(this));
       }
-      if (objectPool == null) {
-        objectPool = ObjectPool.newInstance();
-      }
 
       synchronized (committedPhaseLock) {
         Phase committedPhase = committedPhaseToken.getPhase();
         if (phase != committedPhase) {
-          if (token != null) {
-            token.release();
-          }
+          if (token != null) token.release();
           phase = committedPhase;
           token = phase.use();
         }
@@ -1591,26 +1539,21 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
 
     public String toString() {
-      ObjectPool objectPool = ObjectPool.newInstance();
-      try {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < NR_INDEXES; ++i) {
-          StoreTuples ts = tripleAVLFilePhases[i].allTuples(objectPool);
+      StringBuffer sb = new StringBuffer();
+      for (int i = 0; i < NR_INDEXES; ++i) {
+        StoreTuples ts = tripleAVLFilePhases[i].allTuples();
+        try {
+          sb.append(ts).append('\n');
+        } finally {
           try {
-            sb.append(ts).append('\n');
-          } finally {
-            try {
-              ts.close();
-            } catch (TuplesException ex) {
-              logger.warn("TuplesException while closing Tuples", ex);
-              return ex.toString();
-            }
+            ts.close();
+          } catch (TuplesException ex) {
+            logger.warn("TuplesException while closing Tuples", ex);
+            return ex.toString();
           }
         }
-        return sb.toString();
-      } finally {
-        objectPool.release();
       }
+      return sb.toString();
     }
 
 
@@ -1692,9 +1635,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
       try {
         for (int i = 0; i < NR_INDEXES; ++i) {
-          tripleAVLFilePhases[i].removeTriple(
-              objectPool, node0, node1, node2, node3
-          );
+          tripleAVLFilePhases[i].removeTriple(node0, node1, node2, node3);
         }
 
         if (RELEASE_NODE_LISTENERS_ENABLED) {
@@ -1704,10 +1645,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
           // on every removeTriple.
 
           if (
-              !tripleAVLFilePhases[TI_0123].existsTriples(objectPool, node0) &&
-              !tripleAVLFilePhases[TI_1203].existsTriples(objectPool, node0) &&
-              !tripleAVLFilePhases[TI_2013].existsTriples(objectPool, node0) &&
-              !tripleAVLFilePhases[TI_3012].existsTriples(objectPool, node0)
+              !tripleAVLFilePhases[TI_0123].existsTriples(node0) &&
+              !tripleAVLFilePhases[TI_1203].existsTriples(node0) &&
+              !tripleAVLFilePhases[TI_2013].existsTriples(node0) &&
+              !tripleAVLFilePhases[TI_3012].existsTriples(node0)
           ) {
             try {
               notifyReleaseNodeListeners(node0);
@@ -1720,10 +1661,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
           if (node1 != node0) {
             if (
-                !tripleAVLFilePhases[TI_0123].existsTriples(objectPool, node1) &&
-                !tripleAVLFilePhases[TI_1203].existsTriples(objectPool, node1) &&
-                !tripleAVLFilePhases[TI_2013].existsTriples(objectPool, node1) &&
-                !tripleAVLFilePhases[TI_3012].existsTriples(objectPool, node1)
+                !tripleAVLFilePhases[TI_0123].existsTriples(node1) &&
+                !tripleAVLFilePhases[TI_1203].existsTriples(node1) &&
+                !tripleAVLFilePhases[TI_2013].existsTriples(node1) &&
+                !tripleAVLFilePhases[TI_3012].existsTriples(node1)
             ) {
               try {
                 notifyReleaseNodeListeners(node1);
@@ -1737,10 +1678,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
           if (node2 != node0 && node2 != node1) {
             if (
-                !tripleAVLFilePhases[TI_0123].existsTriples(objectPool, node2) &&
-                !tripleAVLFilePhases[TI_1203].existsTriples(objectPool, node2) &&
-                !tripleAVLFilePhases[TI_2013].existsTriples(objectPool, node2) &&
-                !tripleAVLFilePhases[TI_3012].existsTriples(objectPool, node2)
+                !tripleAVLFilePhases[TI_0123].existsTriples(node2) &&
+                !tripleAVLFilePhases[TI_1203].existsTriples(node2) &&
+                !tripleAVLFilePhases[TI_2013].existsTriples(node2) &&
+                !tripleAVLFilePhases[TI_3012].existsTriples(node2)
             ) {
               try {
                 notifyReleaseNodeListeners(node2);
@@ -1754,10 +1695,10 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
           if (node3 != node0 && node3 != node1 && node3 != node2) {
             if (
-                !tripleAVLFilePhases[TI_0123].existsTriples(objectPool, node3) &&
-                !tripleAVLFilePhases[TI_1203].existsTriples(objectPool, node3) &&
-                !tripleAVLFilePhases[TI_2013].existsTriples(objectPool, node3) &&
-                !tripleAVLFilePhases[TI_3012].existsTriples(objectPool, node3)
+                !tripleAVLFilePhases[TI_0123].existsTriples(node3) &&
+                !tripleAVLFilePhases[TI_1203].existsTriples(node3) &&
+                !tripleAVLFilePhases[TI_2013].existsTriples(node3) &&
+                !tripleAVLFilePhases[TI_3012].existsTriples(node3)
             ) {
               try {
                 notifyReleaseNodeListeners(node3);
@@ -1777,7 +1718,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     /**
      * Finds triples matching the given specification.
      *
-     * @param objectPool PARAMETER TO DO
      * @param variableMask the mask used to indicate the desired index.
      * @param node0 The 0 node of the triple to find.
      * @param node1 The 1 node of the triple to find.
@@ -1786,10 +1726,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
      * @return A StoreTuples containing all the triples which match the search.
      * @throws StatementStoreException EXCEPTION TO DO
      */
-    StoreTuples findTuples(
-        ObjectPool objectPool, int variableMask,
-        long node0, long node1, long node2, long node3
-    ) throws StatementStoreException {
+    StoreTuples findTuples(int variableMask, long node0, long node1, long node2, long node3) throws StatementStoreException {
       if (
           node0 < NodePool.NONE ||
           node1 < NodePool.NONE ||
@@ -1804,21 +1741,21 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       try {
         switch (variableMask) {
           case MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3012].findTuples(node3);
           case MASK0 | MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3012].findTuples(node3);
           case MASK1 | MASK3:
-            return tripleAVLFilePhases[TI_3120].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3120].findTuples(node3);
           case MASK0 | MASK1 | MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3012].findTuples(node3);
           case MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3201].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3201].findTuples(node3);
           case MASK0 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3201].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3201].findTuples(node3);
           case MASK1 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3120].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3120].findTuples(node3);
           case MASK0 | MASK1 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3012].findTuples(node3);
           default:
             throw new AssertionError();
         }
@@ -1830,7 +1767,6 @@ public final class XAStatementStoreImpl implements XAStatementStore {
     /**
      * Finds triples matching the given specification.
      *
-     * @param objectPool PARAMETER TO DO
      * @param node0 The 0 node of the triple to find.
      * @param node1 The 1 node of the triple to find.
      * @param node2 The 2 node of the triple to find.
@@ -1838,10 +1774,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
      * @return A StoreTuples containing all the triples which match the search.
      * @throws StatementStoreException EXCEPTION TO DO
      */
-    StoreTuples findTuples(
-        ObjectPool objectPool,
-        long node0, long node1, long node2, long node3
-    ) throws StatementStoreException {
+    StoreTuples findTuples(long node0, long node1, long node2, long node3) throws StatementStoreException {
       if (
           node0 < NodePool.NONE ||
           node1 < NodePool.NONE ||
@@ -1861,67 +1794,37 @@ public final class XAStatementStoreImpl implements XAStatementStore {
       try {
         switch (variableMask) {
           case 0:
-            return tripleAVLFilePhases[TI_0123].allTuples(objectPool);
+            return tripleAVLFilePhases[TI_0123].allTuples();
           case MASK0:
-            return tripleAVLFilePhases[TI_0123].findTuples(
-                objectPool, node0
-            );
+            return tripleAVLFilePhases[TI_0123].findTuples(node0);
           case MASK1:
-            return tripleAVLFilePhases[TI_1203].findTuples(
-                objectPool, node1
-            );
+            return tripleAVLFilePhases[TI_1203].findTuples(node1);
           case MASK0 | MASK1:
-            return tripleAVLFilePhases[TI_0123].findTuples(
-                objectPool, node0, node1
-            );
+            return tripleAVLFilePhases[TI_0123].findTuples(node0, node1);
           case MASK2:
-            return tripleAVLFilePhases[TI_2013].findTuples(
-                objectPool, node2
-            );
+            return tripleAVLFilePhases[TI_2013].findTuples(node2);
           case MASK0 | MASK2:
-            return tripleAVLFilePhases[TI_2013].findTuples(
-                objectPool, node2, node0
-            );
+            return tripleAVLFilePhases[TI_2013].findTuples(node2, node0);
           case MASK1 | MASK2:
-            return tripleAVLFilePhases[TI_1203].findTuples(
-                objectPool, node1, node2
-            );
+            return tripleAVLFilePhases[TI_1203].findTuples(node1, node2);
           case MASK0 | MASK1 | MASK2:
-            return tripleAVLFilePhases[TI_0123].findTuples(
-                objectPool, node0, node1, node2
-            );
+            return tripleAVLFilePhases[TI_0123].findTuples(node0, node1, node2);
           case MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(
-                objectPool, node3
-            );
+            return tripleAVLFilePhases[TI_3012].findTuples(node3);
           case MASK0 | MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(
-                objectPool, node3, node0
-            );
+            return tripleAVLFilePhases[TI_3012].findTuples(node3, node0);
           case MASK1 | MASK3:
-            return tripleAVLFilePhases[TI_3120].findTuples(
-                objectPool, node3, node1
-            );
+            return tripleAVLFilePhases[TI_3120].findTuples(node3, node1);
           case MASK0 | MASK1 | MASK3:
-            return tripleAVLFilePhases[TI_3012].findTuples(
-                objectPool, node3, node0, node1
-            );
+            return tripleAVLFilePhases[TI_3012].findTuples(node3, node0, node1);
           case MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3201].findTuples(
-                objectPool, node3, node2
-            );
+            return tripleAVLFilePhases[TI_3201].findTuples(node3, node2);
           case MASK0 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3201].findTuples(
-                objectPool, node3, node2, node0
-            );
+            return tripleAVLFilePhases[TI_3201].findTuples(node3, node2, node0);
           case MASK1 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3120].findTuples(
-                objectPool, node3, node1, node2
-            );
+            return tripleAVLFilePhases[TI_3120].findTuples(node3, node1, node2);
           case MASK0 | MASK1 | MASK2 | MASK3:
-            if (tripleAVLFilePhases[TI_0123].existsTriple(
-                objectPool, node0, node1, node2, node3
-            )) {
+            if (tripleAVLFilePhases[TI_0123].existsTriple(node0, node1, node2, node3)) {
               return TuplesOperations.unconstrained();
             }
             return TuplesOperations.empty();
@@ -1935,7 +1838,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
 
     StoreTuples findTuples(
-        ObjectPool objectPool, boolean node0Bound, boolean node1Bound,
+        boolean node0Bound, boolean node1Bound,
         boolean node2Bound, boolean node3Bound
     ) throws StatementStoreException {
       int variableMask =
@@ -1944,15 +1847,11 @@ public final class XAStatementStoreImpl implements XAStatementStore {
           (node2Bound ? MASK2 : 0) |
           (node3Bound ? MASK3 : 0);
 
-      return tripleAVLFilePhases[selectIndex[variableMask]].allTuples(
-          objectPool
-      );
+      return tripleAVLFilePhases[selectIndex[variableMask]].allTuples();
     }
 
 
-    boolean existsTriples(
-        ObjectPool objectPool, long node0, long node1, long node2, long node3
-    ) throws StatementStoreException {
+    boolean existsTriples(long node0, long node1, long node2, long node3) throws StatementStoreException {
       if (
           node0 < NodePool.NONE ||
           node1 < NodePool.NONE ||
@@ -1974,57 +1873,35 @@ public final class XAStatementStoreImpl implements XAStatementStore {
           case 0:
             return !tripleAVLFilePhases[TI_0123].isEmpty();
           case MASK0:
-            return tripleAVLFilePhases[TI_0123].existsTriples(objectPool, node0);
+            return tripleAVLFilePhases[TI_0123].existsTriples(node0);
           case MASK1:
-            return tripleAVLFilePhases[TI_1203].existsTriples(objectPool, node1);
+            return tripleAVLFilePhases[TI_1203].existsTriples(node1);
           case MASK0 | MASK1:
-            return tripleAVLFilePhases[TI_0123].existsTriples(
-                objectPool, node0, node1
-            );
+            return tripleAVLFilePhases[TI_0123].existsTriples(node0, node1);
           case MASK2:
-            return tripleAVLFilePhases[TI_2013].existsTriples(objectPool, node2);
+            return tripleAVLFilePhases[TI_2013].existsTriples(node2);
           case MASK0 | MASK2:
-            return tripleAVLFilePhases[TI_2013].existsTriples(
-                objectPool, node2, node0
-            );
+            return tripleAVLFilePhases[TI_2013].existsTriples(node2, node0);
           case MASK1 | MASK2:
-            return tripleAVLFilePhases[TI_1203].existsTriples(
-                objectPool, node1, node2
-            );
+            return tripleAVLFilePhases[TI_1203].existsTriples(node1, node2);
           case MASK0 | MASK1 | MASK2:
-            return tripleAVLFilePhases[TI_0123].existsTriples(
-                objectPool, node0, node1, node2
-            );
+            return tripleAVLFilePhases[TI_0123].existsTriples(node0, node1, node2);
           case MASK3:
-            return tripleAVLFilePhases[TI_3012].existsTriples(objectPool, node3);
+            return tripleAVLFilePhases[TI_3012].existsTriples(node3);
           case MASK0 | MASK3:
-            return tripleAVLFilePhases[TI_3012].existsTriples(
-                objectPool, node3, node0
-            );
+            return tripleAVLFilePhases[TI_3012].existsTriples(node3, node0);
           case MASK1 | MASK3:
-            return tripleAVLFilePhases[TI_3120].existsTriples(
-                objectPool, node3, node1
-            );
+            return tripleAVLFilePhases[TI_3120].existsTriples(node3, node1);
           case MASK0 | MASK1 | MASK3:
-            return tripleAVLFilePhases[TI_3012].existsTriples(
-                objectPool, node3, node0, node1
-            );
+            return tripleAVLFilePhases[TI_3012].existsTriples(node3, node0, node1);
           case MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3201].existsTriples(
-                objectPool, node3, node2
-            );
+            return tripleAVLFilePhases[TI_3201].existsTriples(node3, node2);
           case MASK0 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3201].existsTriples(
-                objectPool, node3, node2, node0
-            );
+            return tripleAVLFilePhases[TI_3201].existsTriples(node3, node2, node0);
           case MASK1 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_3120].existsTriples(
-                objectPool, node3, node1, node2
-            );
+            return tripleAVLFilePhases[TI_3120].existsTriples(node3, node1, node2);
           case MASK0 | MASK1 | MASK2 | MASK3:
-            return tripleAVLFilePhases[TI_0123].existsTriple(
-                objectPool, node0, node1, node2, node3
-            );
+            return tripleAVLFilePhases[TI_0123].existsTriple(node0, node1, node2, node3);
           default:
             throw new AssertionError();
         }
@@ -2043,12 +1920,8 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
       for (int i = 1; i < NR_INDEXES; ++i) {
         if (nrTriples[0] != nrTriples[i]) {
-          StringBuffer sb = new StringBuffer(
-              "tripleAVLFiles disagree on the number of triples:"
-          );
-          for (int j = 0; j < NR_INDEXES; ++j) {
-            sb.append(' ').append(nrTriples[j]);
-          }
+          StringBuffer sb = new StringBuffer("tripleAVLFiles disagree on the number of triples:");
+          for (int j = 0; j < NR_INDEXES; ++j) sb.append(' ').append(nrTriples[j]);
           throw new RuntimeException(sb.toString());
         }
       }
@@ -2064,8 +1937,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
     final class Token {
 
-      private TripleAVLFile.Phase.Token[] tripleAVLFileTokens =
-          new TripleAVLFile.Phase.Token[NR_INDEXES];
+      private TripleAVLFile.Phase.Token[] tripleAVLFileTokens = new TripleAVLFile.Phase.Token[NR_INDEXES];
 
       private Phase phase = Phase.this;
 
@@ -2074,9 +1946,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
        * CONSTRUCTOR Token TO DO
        */
       Token() {
-        for (int i = 0; i < NR_INDEXES; ++i) {
-          tripleAVLFileTokens[i] = tripleAVLFilePhases[i].use();
-        }
+        for (int i = 0; i < NR_INDEXES; ++i) tripleAVLFileTokens[i] = tripleAVLFilePhases[i].use();
       }
 
 
@@ -2088,9 +1958,7 @@ public final class XAStatementStoreImpl implements XAStatementStore {
 
       public void release() {
         assert tripleAVLFileTokens != null : "Invalid Token";
-        for (int i = 0; i < NR_INDEXES; ++i) {
-          tripleAVLFileTokens[i].release();
-        }
+        for (int i = 0; i < NR_INDEXES; ++i) tripleAVLFileTokens[i].release();
         tripleAVLFileTokens = null;
         phase = null;
       }

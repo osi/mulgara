@@ -40,7 +40,6 @@ import org.apache.log4j.*;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.store.*;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.statement.StatementStore;
@@ -165,9 +164,6 @@ public final class XAStringPoolImpl implements XAStringPool {
    */
   private String fileName;
 
-  /** The object pool to use for all reusable objects. */
-  private ObjectPool writerObjectPool;
-
   /** The LockFile that protects the node pool from being opened twice. */
   private LockFile lockFile;
 
@@ -228,8 +224,6 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     lockFile = LockFile.createLockFile(fileName + ".sp.lock");
 
-    writerObjectPool = ObjectPool.newInstance();
-
     try {
       // Open the metaroot file.
       RandomAccessFile metarootRAF = null;
@@ -255,9 +249,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
       }
 
-      avlFile = new AVLFile(
-          writerObjectPool, fileName + ".sp_avl", PAYLOAD_SIZE
-      );
+      avlFile = new AVLFile(fileName + ".sp_avl", PAYLOAD_SIZE);
       gNodeToDataFile = IntFile.open(new File(fileName + ".sp_nd"));
 
       for (int i = 0; i < NR_BLOCK_FILES; ++i) {
@@ -266,8 +258,7 @@ public final class XAStringPoolImpl implements XAStringPool {
           num = "0" + num;
         }
         int blockSize = MIN_BLOCK_SIZE << i;
-        blockFiles[i] = new ManagedBlockFile(
-            writerObjectPool, fileName + ".sp_" + num,
+        blockFiles[i] = new ManagedBlockFile(fileName + ".sp_" + num,
             blockSize, blockSize > MappedBlockFile.REGION_SIZE ?
             BlockFile.IOType.EXPLICIT : BlockFile.IOType.DEFAULT
         );
@@ -380,22 +371,16 @@ public final class XAStringPoolImpl implements XAStringPool {
    * @return The graph node. <code>Graph.NONE</code> if not found.
    * @throws StringPoolException EXCEPTION TO DO
    */
-  public synchronized long findGNode(
-      SPObject spObject
-  ) throws StringPoolException {
+  public synchronized long findGNode(SPObject spObject) throws StringPoolException {
     checkInitialized();
-    return currentPhase.findGNode(writerObjectPool, spObject, null);
+    return currentPhase.findGNode(spObject, null);
   }
 
 
-  public synchronized long findGNode(
-      SPObject spObject, NodePool nodePool
-  ) throws StringPoolException {
+  public synchronized long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
     checkInitialized();
-    if (nodePool == null) {
-      throw new IllegalArgumentException("nodePool parameter is null");
-    }
-    return currentPhase.findGNode(writerObjectPool, spObject, nodePool);
+    if (nodePool == null) throw new IllegalArgumentException("nodePool parameter is null");
+    return currentPhase.findGNode(spObject, nodePool);
   }
 
 
@@ -408,11 +393,9 @@ public final class XAStringPoolImpl implements XAStringPool {
    * <code>null</code> if no such graph node is in the pool.
    * @throws StringPoolException if an internal error occurs.
    */
-  public synchronized SPObject findSPObject(
-      long gNode
-  ) throws StringPoolException {
+  public synchronized SPObject findSPObject(long gNode) throws StringPoolException {
     checkInitialized();
-    return currentPhase.findSPObject(writerObjectPool, gNode);
+    return currentPhase.findSPObject(gNode);
   }
 
 
@@ -422,18 +405,14 @@ public final class XAStringPoolImpl implements XAStringPool {
   ) throws StringPoolException {
     checkInitialized();
     dirty = false;
-    return currentPhase.findGNodes(
-        writerObjectPool, lowValue, inclLowValue, highValue, inclHighValue
-    );
+    return currentPhase.findGNodes(lowValue, inclLowValue, highValue, inclHighValue);
   }
 
 
-  public synchronized Tuples findGNodes(
-      SPObject.TypeCategory typeCategory, URI typeURI
-  ) throws StringPoolException {
+  public synchronized Tuples findGNodes(SPObject.TypeCategory typeCategory, URI typeURI) throws StringPoolException {
     checkInitialized();
     dirty = false;
-    return currentPhase.findGNodes(writerObjectPool, typeCategory, typeURI);
+    return currentPhase.findGNodes(typeCategory, typeURI);
   }
 
 
@@ -549,14 +528,8 @@ public final class XAStringPoolImpl implements XAStringPool {
    * @throws IOException EXCEPTION TO DO
    * @throws SimpleXAResourceException EXCEPTION TO DO
    */
-  public synchronized void clear(
-      int phaseNumber
-  ) throws IOException, SimpleXAResourceException {
-    if (currentPhase != null) {
-      throw new IllegalStateException(
-          "StringPool already has a current phase."
-      );
-    }
+  public synchronized void clear(int phaseNumber) throws IOException, SimpleXAResourceException {
+    if (currentPhase != null) throw new IllegalStateException("StringPool already has a current phase.");
 
     openMetarootFile(true);
 
@@ -567,9 +540,7 @@ public final class XAStringPoolImpl implements XAStringPool {
     phaseIndex = 1;
     avlFile.clear();
     gNodeToDataFile.clear();
-    for (int i = 0; i < NR_BLOCK_FILES; ++i) {
-      blockFiles[i].clear();
-    }
+    for (int i = 0; i < NR_BLOCK_FILES; ++i) blockFiles[i].clear();
 
     new Phase();
   }
@@ -581,11 +552,8 @@ public final class XAStringPoolImpl implements XAStringPool {
    * @throws IOException EXCEPTION TO DO
    * @throws SimpleXAResourceException EXCEPTION TO DO
    */
-  public synchronized void clear(
-  ) throws IOException, SimpleXAResourceException {
-    if (currentPhase == null) {
-      clear(0);
-    }
+  public synchronized void clear() throws IOException, SimpleXAResourceException {
+    if (currentPhase == null) clear(0);
 
     // TODO - should throw an exception if clear() is called after any other
     // operations are performed.  Calling clear() multiple times should be
@@ -600,7 +568,6 @@ public final class XAStringPoolImpl implements XAStringPool {
    */
   public synchronized void prepare() throws SimpleXAResourceException {
     checkInitialized();
-    writerObjectPool.flush();
 
     if (prepared) {
       // prepare already performed.
@@ -887,11 +854,9 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     if (metarootFile != null) {
       if (metarootBlocks[0] != null) {
-        metarootBlocks[0].release();
         metarootBlocks[0] = null;
       }
       if (metarootBlocks[1] != null) {
-        metarootBlocks[1].release();
         metarootBlocks[1] = null;
       }
       metarootFile.unmap();
@@ -953,11 +918,6 @@ public final class XAStringPoolImpl implements XAStringPool {
             }
           } finally {
             try {
-              if (writerObjectPool != null) {
-                writerObjectPool.release();
-                writerObjectPool = null;
-              }
-
               if (metarootFile != null) {
                 if (deleteFiles) {
                   metarootFile.delete();
@@ -1011,8 +971,8 @@ public final class XAStringPoolImpl implements XAStringPool {
         metarootFile.setNrBlocks(NR_METAROOTS);
       }
 
-      metarootBlocks[0] = metarootFile.readBlock(writerObjectPool, 0);
-      metarootBlocks[1] = metarootFile.readBlock(writerObjectPool, 1);
+      metarootBlocks[0] = metarootFile.readBlock(0);
+      metarootBlocks[1] = metarootFile.readBlock(1);
     }
 
     if (clear) {
@@ -1066,9 +1026,6 @@ public final class XAStringPoolImpl implements XAStringPool {
     private Phase phase = null;
 
     private Phase.Token token = null;
-
-    private ObjectPool readerObjectPool = null;
-
 
     /**
      * CONSTRUCTOR ReadOnlyStringPool TO DO
@@ -1131,19 +1088,13 @@ public final class XAStringPoolImpl implements XAStringPool {
      * @return The graph node. <code>Graph.NONE</code> if not found.
      * @throws StringPoolException EXCEPTION TO DO
      */
-    public synchronized long findGNode(
-        SPObject spObject
-    ) throws StringPoolException {
-      return phase.findGNode(readerObjectPool, spObject, null);
+    public synchronized long findGNode(SPObject spObject) throws StringPoolException {
+      return phase.findGNode(spObject, null);
     }
 
 
-    public synchronized long findGNode(
-        SPObject spObject, NodePool nodePool
-    ) throws StringPoolException {
-      throw new UnsupportedOperationException(
-          "Trying to modify a read-only string pool."
-      );
+    public synchronized long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
+      throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
     }
 
 
@@ -1156,10 +1107,8 @@ public final class XAStringPoolImpl implements XAStringPool {
      * <code>null</code> if no such graph node is in the pool.
      * @throws StringPoolException if an internal error occurs.
      */
-    public synchronized SPObject findSPObject(
-        long gNode
-    ) throws StringPoolException {
-      return phase.findSPObject(readerObjectPool, gNode);
+    public synchronized SPObject findSPObject(long gNode) throws StringPoolException {
+      return phase.findSPObject(gNode);
     }
 
 
@@ -1167,16 +1116,12 @@ public final class XAStringPoolImpl implements XAStringPool {
         SPObject lowValue, boolean inclLowValue,
         SPObject highValue, boolean inclHighValue
     ) throws StringPoolException {
-      return phase.findGNodes(
-          readerObjectPool, lowValue, inclLowValue, highValue, inclHighValue
-      );
+      return phase.findGNodes(lowValue, inclLowValue, highValue, inclHighValue);
     }
 
 
-    public synchronized Tuples findGNodes(
-        SPObject.TypeCategory typeCategory, URI typeURI
-    ) throws StringPoolException {
-      return phase.findGNodes(readerObjectPool, typeCategory, typeURI);
+    public synchronized Tuples findGNodes(SPObject.TypeCategory typeCategory, URI typeURI) throws StringPoolException {
+      return phase.findGNodes(typeCategory, typeURI);
     }
 
 
@@ -1194,9 +1139,7 @@ public final class XAStringPoolImpl implements XAStringPool {
      * Close all the files used in the string pool.
      */
     public void close() {
-      throw new UnsupportedOperationException(
-          "Trying to close a read-only string pool."
-      );
+      throw new UnsupportedOperationException("Trying to close a read-only string pool.");
     }
 
 
@@ -1205,40 +1148,25 @@ public final class XAStringPoolImpl implements XAStringPool {
      * associated with it.
      */
     public void delete() {
-      throw new UnsupportedOperationException(
-          "Trying to delete a read-only string pool."
-      );
+      throw new UnsupportedOperationException("Trying to delete a read-only string pool.");
     }
 
 
     public synchronized void release() {
       try {
-        if (token != null) {
-          token.release();
-        }
-        if (readerObjectPool != null) {
-          readerObjectPool.flush();
-          readerObjectPool.release();
-        }
+        if (token != null) token.release();
       } finally {
         phase = null;
         token = null;
-        readerObjectPool = null;
       }
     }
 
 
     public synchronized void refresh() {
-      if (readerObjectPool == null) {
-        readerObjectPool = ObjectPool.newInstance();
-      }
-
       synchronized (committedPhaseLock) {
         Phase committedPhase = committedPhaseToken.getPhase();
         if (phase != committedPhase) {
-          if (token != null) {
-            token.release();
-          }
+          if (token != null) token.release();
           phase = committedPhase;
           token = phase.use();
         }
@@ -1373,11 +1301,7 @@ public final class XAStringPoolImpl implements XAStringPool {
      * exists in the pool.
      */
     void put(long gNode, SPObject spObject) throws StringPoolException {
-      if (gNode < NodePool.MIN_NODE) {
-        throw new IllegalArgumentException("gNode < MIN_NODE");
-      }
-
-      final ObjectPool objectPool = XAStringPoolImpl.this.writerObjectPool;
+      if (gNode < NodePool.MIN_NODE) throw new IllegalArgumentException("gNode < MIN_NODE");
 
       AVLNode[] findResult = null;
       try {
@@ -1388,9 +1312,7 @@ public final class XAStringPoolImpl implements XAStringPool {
             gNodeToDataFile.getByte(bOffset + IDX_TYPE_CATEGORY_B) !=
             SPObject.TypeCategory.TCID_FREE
         ) {
-          throw new StringPoolException(
-              "Graph node already exists.  (Graph node: " + gNode + ")"
-          );
+          throw new StringPoolException("Graph node already exists.  (Graph node: " + gNode + ")");
         }
 
         SPObject.TypeCategory typeCategory = spObject.getTypeCategory();
@@ -1406,12 +1328,10 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
         ByteBuffer data = spObject.getData();
         SPComparator spComparator = spObject.getSPComparator();
-        AVLComparator avlComparator = new SPAVLComparator(
-            objectPool, spComparator, typeCategory, typeId, data
-        );
+        AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
 
         // Find the adjacent nodes.
-        findResult = avlFilePhase.find(objectPool, avlComparator, null);
+        findResult = avlFilePhase.find(avlComparator, null);
         if (findResult != null && findResult.length == 1) {
           throw new StringPoolException(
               "SPObject already exists.  (existing graph node: " +
@@ -1419,17 +1339,10 @@ public final class XAStringPoolImpl implements XAStringPool {
           );
         }
 
-        put(
-            objectPool, gNode, findResult,
-            typeCategory, typeId, subtypeId, data
-        );
+        put(gNode, findResult,typeCategory, typeId, subtypeId, data);
 
-        if (GN2SPO_CACHE_ENABLED) {
-          gn2spoCache.put(gNode, spObject);
-        }
-        if (SPO2GN_CACHE_ENABLED) {
-          spo2gnCache.put(spObject, gNode);
-        }
+        if (GN2SPO_CACHE_ENABLED) gn2spoCache.put(gNode, spObject);
+        if (SPO2GN_CACHE_ENABLED) spo2gnCache.put(spObject, gNode);
       } catch (IOException ex) {
         throw new StringPoolException("I/O Error", ex);
       } finally {
@@ -1441,9 +1354,8 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
     private void put(
-        ObjectPool objectPool, long gNode, AVLNode[] findResult,
-        SPObject.TypeCategory typeCategory, int typeId, int subtypeId,
-        ByteBuffer data
+        long gNode, AVLNode[] findResult, SPObject.TypeCategory typeCategory,
+        int typeId, int subtypeId, ByteBuffer data
     ) throws StringPoolException, IOException {
       long offset = gNode * GN2SPO_BLOCKSIZE;
       long bOffset = offset * Constants.SIZEOF_LONG;
@@ -1452,14 +1364,14 @@ public final class XAStringPoolImpl implements XAStringPool {
           SPObject.TypeCategory.TCID_FREE;
 
       // Create the new AVLNode.
-      AVLNode newNode = avlFilePhase.newAVLNodeInstance(objectPool);
+      AVLNode newNode = avlFilePhase.newAVLNodeInstance();
       newNode.putPayloadByte(IDX_TYPE_CATEGORY_B, (byte)typeCategory.ID);
       newNode.putPayloadByte(IDX_TYPE_ID_B, (byte)typeId);
       newNode.putPayloadByte(IDX_SUBTYPE_ID_B, (byte)subtypeId);
       int dataSize = data.limit();
       newNode.putPayloadInt(IDX_DATA_SIZE_I, dataSize);
 
-      long blockId = storeByteBuffer(objectPool, newNode, data);
+      long blockId = storeByteBuffer(newNode, data);
 
       newNode.putPayloadLong(IDX_GRAPH_NODE, gNode);
       newNode.write();
@@ -1516,9 +1428,7 @@ public final class XAStringPoolImpl implements XAStringPool {
      * @return the block Id of the new block or Block.INVALID_BLOCK_ID if no
      * block was allocated.
      */
-    private long storeByteBuffer(
-        ObjectPool objectPool, AVLNode avlNode, ByteBuffer data
-    ) throws IOException, StringPoolException {
+    private long storeByteBuffer(AVLNode avlNode, ByteBuffer data) throws IOException, StringPoolException {
       // Get the number of bytes to be written.
       int dataSize = data.limit();
 
@@ -1561,19 +1471,15 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
 
         ManagedBlockFile.Phase blockFilePhase = blockFilePhases[fileIndex];
-        Block block = blockFilePhase.allocateBlock(objectPool);
-        try {
-          block.put(0, data);
-          block.write();
+        Block block = blockFilePhase.allocateBlock();
+        block.put(0, data);
+        block.write();
 
-          blockId = block.getBlockId();
+        blockId = block.getBlockId();
 
-          // Store the block ID in the AVLNode payload.
-          avlNode.putPayloadLong(IDX_BLOCK_ID, blockId);
-          return blockId;
-        } finally {
-          block.release();
-        }
+        // Store the block ID in the AVLNode payload.
+        avlNode.putPayloadLong(IDX_BLOCK_ID, blockId);
+        return blockId;
       } else {
         blockId = Block.INVALID_BLOCK_ID;
       }
@@ -1587,9 +1493,7 @@ public final class XAStringPoolImpl implements XAStringPool {
      * current position.  The number of bytes read is the number of remaining
      * bytes in the ByteBuffer.
      */
-    private ByteBuffer retrieveRemainingBytes(
-        ObjectPool objectPool, ByteBuffer data, long blockId
-    ) throws IOException {
+    private ByteBuffer retrieveRemainingBytes(ByteBuffer data, long blockId) throws IOException {
       int dataSize = data.remaining();
 
       if (dataSize > 0) {
@@ -1598,12 +1502,8 @@ public final class XAStringPoolImpl implements XAStringPool {
             (dataSize - 1) >> (LOG2_MIN_BLOCK_SIZE - 1)
         );
         ManagedBlockFile.Phase blockFilePhase = blockFilePhases[fileIndex];
-        Block block = blockFilePhase.readBlock(objectPool, blockId);
-        try {
-          block.get(0, data);
-        } finally {
-          block.release();
-        }
+        Block block = blockFilePhase.readBlock(blockId);
+        block.get(0, data);
       }
       return data;
     }
@@ -1639,19 +1539,13 @@ public final class XAStringPoolImpl implements XAStringPool {
      * @throws StringPoolException if an internal error occurs.
      */
     boolean remove(long gNode) throws StringPoolException {
-      if (gNode < NodePool.MIN_NODE) {
-        throw new IllegalArgumentException("gNode < MIN_NODE");
-      }
+      if (gNode < NodePool.MIN_NODE) throw new IllegalArgumentException("gNode < MIN_NODE");
 
-      if (avlFilePhase.isEmpty()) {
-        return false;
-      }
-
-      final ObjectPool objectPool = XAStringPoolImpl.this.writerObjectPool;
+      if (avlFilePhase.isEmpty()) return false;
 
       try {
         // Load the SPObject from the G2N file.
-        SPObject spObject = findSPObject(objectPool, gNode);
+        SPObject spObject = findSPObject(gNode);
         if (spObject == null) {
           // Graph node represents a blank node.
           return false;
@@ -1666,14 +1560,10 @@ public final class XAStringPoolImpl implements XAStringPool {
             SPObjectFactory.INVALID_TYPE_ID;
         ByteBuffer data = spObject.getData();
         SPComparator spComparator = spObject.getSPComparator();
-        AVLComparator avlComparator = new SPAVLComparator(
-          objectPool, spComparator, typeCategory, typeId, data
-        );
+        AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
 
         // Find the SPObject.
-        AVLNode[] findResult = avlFilePhase.find(
-            objectPool, avlComparator, null
-        );
+        AVLNode[] findResult = avlFilePhase.find(avlComparator, null);
         if (findResult == null) {
           // The AVL tree is empty.  This shouldn't happen since this was
           // checked for earlier.
@@ -1709,17 +1599,12 @@ public final class XAStringPoolImpl implements XAStringPool {
     /**
      * Finds a graph node matching a given SPObject.
      *
-     * @param objectPool PARAMETER TO DO
      * @param spObject The SPObject to search on.
      * @return The graph node. <code>Graph.NONE</code> if not found.
      * @throws StringPoolException EXCEPTION TO DO
      */
-    long findGNode(
-        ObjectPool objectPool, SPObject spObject, NodePool nodePool
-    ) throws StringPoolException {
-      if (spObject == null) {
-        throw new StringPoolException("spObject parameter is null");
-      }
+    long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
+      if (spObject == null) throw new StringPoolException("spObject parameter is null");
 
       long gNode;
       Long gNodeL;
@@ -1745,12 +1630,10 @@ public final class XAStringPoolImpl implements XAStringPool {
           }
           ByteBuffer data = spObject.getData();
           SPComparator spComparator = spObject.getSPComparator();
-          AVLComparator avlComparator = new SPAVLComparator(
-            objectPool, spComparator, typeCategory, typeId, data
-          );
+          AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
 
           // Find the SPObject.
-          findResult = avlFilePhase.find(objectPool, avlComparator, null);
+          findResult = avlFilePhase.find(avlComparator, null);
           if (findResult != null && findResult.length == 1) {
             gNode = findResult[0].getPayloadLong(IDX_GRAPH_NODE);
             if (GN2SPO_CACHE_ENABLED) {
@@ -1766,16 +1649,11 @@ public final class XAStringPoolImpl implements XAStringPool {
               } catch (NodePoolException ex) {
                 throw new StringPoolException("Could not allocate new node", ex);
               }
-              put(
-                  objectPool, gNode, findResult,
-                  typeCategory, typeId, subtypeId, data
-              );
+              put(gNode, findResult,typeCategory, typeId, subtypeId, data);
               if (GN2SPO_CACHE_ENABLED) {
                 //gn2spoCache.put(gNode, spObject);
               }
-              if (SPO2GN_CACHE_ENABLED) {
-                spo2gnCache.put(spObject, gNode);
-              }
+              if (SPO2GN_CACHE_ENABLED) spo2gnCache.put(spObject, gNode);
             } else {
               // Not found.
               gNode = NodePool.NONE;
@@ -1800,9 +1678,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
       }
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("findGNode(" + spObject + ") = " + gNode);
-      }
+      if (logger.isDebugEnabled()) logger.debug("findGNode(" + spObject + ") = " + gNode);
 
       return gNode;
     }
@@ -1817,23 +1693,15 @@ public final class XAStringPoolImpl implements XAStringPool {
      * <code>null</code> if no such graph node is in the pool.
      * @throws StringPoolException if an internal error occurs.
      */
-    SPObject findSPObject(
-        ObjectPool objectPool, long gNode
-    ) throws StringPoolException {
-      if (gNode < NodePool.MIN_NODE) {
-        throw new IllegalArgumentException("gNode=" + gNode + " < MIN_NODE");
-      }
+    SPObject findSPObject(long gNode) throws StringPoolException {
+      if (gNode < NodePool.MIN_NODE) throw new IllegalArgumentException("gNode=" + gNode + " < MIN_NODE");
 
       Long gNodeL = new Long(gNode);
       SPObject spObject;
-      if (GN2SPO_CACHE_ENABLED) {
-        spObject = gn2spoCache.get(gNodeL);
-      }
+      if (GN2SPO_CACHE_ENABLED) spObject = gn2spoCache.get(gNodeL);
       if (!GN2SPO_CACHE_ENABLED || spObject == null) {
         if (gn2spoCache.isBlankNode(gNodeL)) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("findSPObject(" + gNode + ") = Blank node");
-          }
+          if (logger.isDebugEnabled()) logger.debug("findSPObject(" + gNode + ") = Blank node");
           return null;
         }
 
@@ -1842,24 +1710,16 @@ public final class XAStringPoolImpl implements XAStringPool {
           // Get the type category ID.
           long offset = gNode * GN2SPO_BLOCKSIZE;
           long bOffset = offset * Constants.SIZEOF_LONG;
-          int typeCategoryId = gNodeToDataFile.getByte(
-              bOffset + IDX_TYPE_CATEGORY_B
-          );
+          int typeCategoryId = gNodeToDataFile.getByte(bOffset + IDX_TYPE_CATEGORY_B);
           if (typeCategoryId == SPObject.TypeCategory.TCID_FREE) {
             // A blank node.
-            if (logger.isDebugEnabled()) {
-              logger.debug("findSPObject(" + gNode + ") = Blank node");
-            }
-            if (GN2SPO_CACHE_ENABLED) {
-              gn2spoCache.putBlankNode(gNode);
-            }
+            if (logger.isDebugEnabled()) logger.debug("findSPObject(" + gNode + ") = Blank node");
+            if (GN2SPO_CACHE_ENABLED) gn2spoCache.putBlankNode(gNode);
             return null;
           }
 
           // Convert the ID to a TypeCategory object.
-          SPObject.TypeCategory typeCategory = SPObject.TypeCategory.forId(
-              typeCategoryId
-          );
+          SPObject.TypeCategory typeCategory = SPObject.TypeCategory.forId(typeCategoryId);
 
           // Get the type ID and subtype ID.
           int typeId = gNodeToDataFile.getByte(bOffset + IDX_TYPE_ID_B);
@@ -1884,56 +1744,41 @@ public final class XAStringPoolImpl implements XAStringPool {
           // Retrieve bytes from the AVLNode.
           ByteBuffer data = ByteBuffer.allocate(dataSize);
           data.limit(directDataSize);
-          XAStringPoolImpl.get(
-              gNodeToDataFile, bOffset + IDX_DATA * Constants.SIZEOF_LONG, data
-          );
+          XAStringPoolImpl.get(gNodeToDataFile, bOffset + IDX_DATA * Constants.SIZEOF_LONG, data);
 
           // Retrieve the remaining bytes if any.
           if (dataSize > MAX_DIRECT_DATA_BYTES) {
             data.limit(dataSize);
-            retrieveRemainingBytes(objectPool, data, blockId);
+            retrieveRemainingBytes(data, blockId);
           }
           data.rewind();
 
           // Construct the SPObject and return it.
-          spObject = SPO_FACTORY.newSPObject(
-            typeCategory, typeId, subtypeId, data
-          );
+          spObject = SPO_FACTORY.newSPObject(typeCategory, typeId, subtypeId, data);
 
-          if (GN2SPO_CACHE_ENABLED) {
-            gn2spoCache.put(gNode, spObject);
-          }
+          if (GN2SPO_CACHE_ENABLED) gn2spoCache.put(gNode, spObject);
           if (SPO2GN_CACHE_ENABLED) {
             //spo2gnCache.put(spObject, gNode);
           }
         } catch (IOException ex) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("IOException in findSPObject(" + gNode + ")", ex);
-          }
+          if (logger.isDebugEnabled()) logger.debug("IOException in findSPObject(" + gNode + ")", ex);
           throw new StringPoolException("I/O Error", ex);
         } catch (RuntimeException ex) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("RuntimeException in findSPObject(" + gNode + ")", ex);
-          }
+          if (logger.isDebugEnabled()) logger.debug("RuntimeException in findSPObject(" + gNode + ")", ex);
           throw ex;
         } catch (Error e) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("Error in findSPObject(" + gNode + ")", e);
-          }
+          if (logger.isDebugEnabled()) logger.debug("Error in findSPObject(" + gNode + ")", e);
           throw e;
         }
       }
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("findSPObject(" + gNode + ") = " + spObject);
-      }
+      if (logger.isDebugEnabled()) logger.debug("findSPObject(" + gNode + ") = " + spObject);
 
       return spObject;
     }
 
 
     Tuples findGNodes(
-        ObjectPool objectPool,
         SPObject lowValue, boolean inclLowValue,
         SPObject highValue, boolean inclHighValue
     ) throws StringPoolException {
@@ -1946,18 +1791,15 @@ public final class XAStringPoolImpl implements XAStringPool {
         // Return all nodes in the index.
         typeCategory = null;
         typeId = SPObjectFactory.INVALID_TYPE_ID;
-        lowAVLNode = avlFilePhase.getRootNode(objectPool);
-        if (lowAVLNode != null) {
-          lowAVLNode = lowAVLNode.getMinNode_R();
-        }
+        lowAVLNode = avlFilePhase.getRootNode();
+        if (lowAVLNode != null) lowAVLNode = lowAVLNode.getMinNode_R();
         highAVLNodeId = Block.INVALID_BLOCK_ID;
       } else {
         // Get the type category.
         SPObject typeValue = lowValue != null ? lowValue : highValue;
         typeCategory = typeValue.getTypeCategory();
-        typeId = typeCategory == SPObject.TypeCategory.TYPED_LITERAL ? (
-            ((SPTypedLiteral)typeValue).getTypeId()
-        ) : SPObjectFactory.INVALID_TYPE_ID;
+        typeId = typeCategory == SPObject.TypeCategory.TYPED_LITERAL ?
+                 ((SPTypedLiteral)typeValue).getTypeId() : SPObjectFactory.INVALID_TYPE_ID;
 
         // Check that the two SPObjects are of the same type.
         if (lowValue != null && highValue != null) {
@@ -1969,9 +1811,7 @@ public final class XAStringPoolImpl implements XAStringPool {
             )
           ) {
             // Type mismatch.
-            throw new StringPoolException(
-                "lowValue and highValue are not of the same type"
-            );
+            throw new StringPoolException("lowValue and highValue are not of the same type");
           }
 
           if (lowValue != null && highValue != null) {
@@ -1981,7 +1821,7 @@ public final class XAStringPoolImpl implements XAStringPool {
             int c = lowValue.compareTo(highValue);
             if (c > 0 || c == 0 && (!inclLowValue || !inclHighValue)) {
               return new GNodeTuplesImpl(
-                  objectPool, null, SPObjectFactory.INVALID_TYPE_ID,
+                  null, SPObjectFactory.INVALID_TYPE_ID,
                   null, null, null, Block.INVALID_BLOCK_ID
               );
             }
@@ -1993,15 +1833,11 @@ public final class XAStringPoolImpl implements XAStringPool {
         if (lowValue != null) {
           ByteBuffer data = lowValue.getData();
           SPComparator spComparator = lowValue.getSPComparator();
-          lowComparator = new SPAVLComparator(
-              objectPool, spComparator, typeCategory, typeId, data
-          );
+          lowComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
         } else {
           // Select the first node with the current type.
           if (typeCategory == SPObject.TypeCategory.TYPED_LITERAL) {
-            lowComparator = new SPCategoryTypeAVLComparator(
-                typeCategory.ID, typeId
-            );
+            lowComparator = new SPCategoryTypeAVLComparator(typeCategory.ID, typeId);
           } else {
             lowComparator = new SPCategoryAVLComparator(typeCategory.ID);
           }
@@ -2012,23 +1848,17 @@ public final class XAStringPoolImpl implements XAStringPool {
         if (highValue != null) {
           ByteBuffer data = highValue.getData();
           SPComparator spComparator = highValue.getSPComparator();
-          highComparator = new SPAVLComparator(
-              objectPool, spComparator, typeCategory, typeId, data
-          );
+          highComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
         } else {
           // Select the first node past the last one that has the current type.
           if (typeCategory == SPObject.TypeCategory.TYPED_LITERAL) {
-            highComparator = new SPCategoryTypeAVLComparator(
-                typeCategory.ID, typeId + 1
-            );
+            highComparator = new SPCategoryTypeAVLComparator(typeCategory.ID, typeId + 1);
           } else {
             highComparator = new SPCategoryAVLComparator(typeCategory.ID + 1);
           }
         }
 
-        AVLNode[] findResult = avlFilePhase.find(
-            objectPool, lowComparator, null
-        );
+        AVLNode[] findResult = avlFilePhase.find(lowComparator, null);
         if (findResult == null) {
           // Empty store.
           lowAVLNode = null;
@@ -2044,25 +1874,19 @@ public final class XAStringPoolImpl implements XAStringPool {
               // The lowValue passed to the GNodeTuplesImpl constructor
               // is always inclusive but inclLowValue is false.
               // Recalculate lowValue.
-              if (lowAVLNode != null) {
-                lowValue = loadSPObject(
-                    objectPool, typeCategory, typeId, lowAVLNode
-                );
-              }
+              if (lowAVLNode != null) lowValue = loadSPObject(typeCategory, typeId, lowAVLNode);
             }
           } else {
             // Did not find the node but found the location where the node
             // would be if it existed.
-            if (findResult[0] != null) {
-              findResult[0].release();
-            }
+            if (findResult[0] != null) findResult[0].release();
             lowAVLNode = findResult[1];
           }
 
           if (lowAVLNode != null) {
             // Find the high node.
 
-            findResult = avlFilePhase.find(objectPool, highComparator, null);
+            findResult = avlFilePhase.find(highComparator, null);
             if (findResult.length == 1) {
               // Found the node exactly.
               AVLNode highAVLNode = findResult[0];
@@ -2076,9 +1900,7 @@ public final class XAStringPoolImpl implements XAStringPool {
                   // The highValue passed to the GNodeTuplesImpl constructor
                   // is always exclusive but inclHighValue is true.
                   // Recalculate highValue.
-                  highValue = loadSPObject(
-                      objectPool, typeCategory, typeId, highAVLNode
-                  );
+                  highValue = loadSPObject(typeCategory, typeId, highAVLNode);
 
                   highAVLNode.release();
                 } else {
@@ -2091,8 +1913,7 @@ public final class XAStringPoolImpl implements XAStringPool {
             } else {
               // Did not find the node but found the location where the node
               // would be if it existed.
-              highAVLNodeId = findResult[1] != null ? findResult[1].getId() :
-                  Block.INVALID_BLOCK_ID;
+              highAVLNodeId = findResult[1] != null ? findResult[1].getId() : Block.INVALID_BLOCK_ID;
             }
 
             AVLFile.release(findResult);
@@ -2102,16 +1923,11 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
       }
 
-      return new GNodeTuplesImpl(
-          objectPool, typeCategory, typeId,
-          lowValue, highValue, lowAVLNode, highAVLNodeId
-      );
+      return new GNodeTuplesImpl(typeCategory, typeId,lowValue, highValue, lowAVLNode, highAVLNodeId);
     }
 
 
-    Tuples findGNodes(
-        ObjectPool objectPool, SPObject.TypeCategory typeCategory, URI typeURI
-    ) throws StringPoolException {
+    Tuples findGNodes(SPObject.TypeCategory typeCategory, URI typeURI) throws StringPoolException {
       int typeId;
       AVLNode lowAVLNode;
       long highAVLNodeId;
@@ -2122,9 +1938,7 @@ public final class XAStringPoolImpl implements XAStringPool {
           try {
             typeId = SPO_FACTORY.getTypeId(typeURI);
           } catch (IllegalArgumentException ex) {
-            throw new StringPoolException(
-                "Unsupported XSD type: " + typeURI, ex
-            );
+            throw new StringPoolException("Unsupported XSD type: " + typeURI, ex);
           }
         } else {
           typeId = SPObjectFactory.INVALID_TYPE_ID;
@@ -2138,21 +1952,15 @@ public final class XAStringPoolImpl implements XAStringPool {
             typeId != SPObjectFactory.INVALID_TYPE_ID
         ) {
           // Return nodes of the specified category and type node.
-          lowComparator = new SPCategoryTypeAVLComparator(
-              typeCategory.ID, typeId
-          );
-          highComparator = new SPCategoryTypeAVLComparator(
-              typeCategory.ID, typeId + 1
-          );
+          lowComparator = new SPCategoryTypeAVLComparator(typeCategory.ID, typeId);
+          highComparator = new SPCategoryTypeAVLComparator(typeCategory.ID, typeId + 1);
         } else {
           // Return nodes of the specified category.
           lowComparator = new SPCategoryAVLComparator(typeCategory.ID);
           highComparator = new SPCategoryAVLComparator(typeCategory.ID + 1);
         }
 
-        AVLNode[] findResult = avlFilePhase.find(
-            objectPool, lowComparator, null
-        );
+        AVLNode[] findResult = avlFilePhase.find(lowComparator, null);
         if (findResult == null) {
           // Empty store.
           lowAVLNode = null;
@@ -2166,10 +1974,9 @@ public final class XAStringPoolImpl implements XAStringPool {
 
           if (lowAVLNode != null) {
             // Find the high node.
-            findResult = avlFilePhase.find(objectPool, highComparator, null);
+            findResult = avlFilePhase.find(highComparator, null);
             assert findResult.length == 2;
-            highAVLNodeId = findResult[1] != null ? findResult[1].getId() :
-                Block.INVALID_BLOCK_ID;
+            highAVLNodeId = findResult[1] != null ? findResult[1].getId() : Block.INVALID_BLOCK_ID;
             AVLFile.release(findResult);
           } else {
             highAVLNodeId = Block.INVALID_BLOCK_ID;
@@ -2177,31 +1984,23 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
       } else {
         if (typeURI != null) {
-          throw new StringPoolException(
-              "typeCategory is null and typeURI is not null"
-          );
+          throw new StringPoolException("typeCategory is null and typeURI is not null");
         }
         typeId = SPObjectFactory.INVALID_TYPE_ID;
 
         // Return all nodes in the index.
-        lowAVLNode = avlFilePhase.getRootNode(objectPool);
-        if (lowAVLNode != null) {
-          lowAVLNode = lowAVLNode.getMinNode_R();
-        }
+        lowAVLNode = avlFilePhase.getRootNode();
+        if (lowAVLNode != null) lowAVLNode = lowAVLNode.getMinNode_R();
         highAVLNodeId = Block.INVALID_BLOCK_ID;
       }
 
-      return new GNodeTuplesImpl(
-          objectPool, typeCategory, typeId, null, null,
-          lowAVLNode, highAVLNodeId
-      );
+      return new GNodeTuplesImpl(typeCategory, typeId, null, null, lowAVLNode, highAVLNodeId);
     }
 
 
     // Returns the SPObject referenced by the avlNode or null if the SPObject
     // is not of the specified type.
     private SPObject loadSPObject(
-        ObjectPool objectPool,
         SPObject.TypeCategory typeCategory, int typeId, AVLNode avlNode
     ) throws StringPoolException {
       try {
@@ -2245,34 +2044,24 @@ public final class XAStringPoolImpl implements XAStringPool {
           ByteBuffer newData = ByteBuffer.allocate(dataSize);
           newData.put(data);
           data = newData;
-          retrieveRemainingBytes(objectPool, data, blockId);
+          retrieveRemainingBytes(data, blockId);
         }
         data.rewind();
 
         // Construct the SPObject and return it.
-        SPObject spObject = SPO_FACTORY.newSPObject(
-            typeCategory, typeId, subtypeId, data
-        );
+        SPObject spObject = SPO_FACTORY.newSPObject(typeCategory, typeId, subtypeId, data);
 
-        if (logger.isDebugEnabled()) {
-          logger.debug("loadSPObject() = " + spObject);
-        }
+        if (logger.isDebugEnabled()) logger.debug("loadSPObject() = " + spObject);
 
         return spObject;
       } catch (IOException ex) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("IOException in loadSPObject()", ex);
-        }
+        if (logger.isDebugEnabled()) logger.debug("IOException in loadSPObject()", ex);
         throw new StringPoolException("I/O Error", ex);
       } catch (RuntimeException ex) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("RuntimeException in loadSPObject()", ex);
-        }
+        if (logger.isDebugEnabled()) logger.debug("RuntimeException in loadSPObject()", ex);
         throw ex;
       } catch (Error e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Error in loadSPObject()", e);
-        }
+        if (logger.isDebugEnabled()) logger.debug("Error in loadSPObject()", e);
         throw e;
       }
     }
@@ -2284,12 +2073,8 @@ public final class XAStringPoolImpl implements XAStringPool {
      * nodes in the index.
      */
     long checkIntegrity() {
-      ObjectPool objectPool = ObjectPool.newInstance();
-      AVLNode node = avlFilePhase.getRootNode(objectPool);
-      if (node == null) {
-        objectPool.release();
-        return 0;
-      }
+      AVLNode node = avlFilePhase.getRootNode();
+      if (node == null) return 0;
 
       //logger.warn("StringPool tree: " + node);
       node = node.getMinNode_R();
@@ -2331,9 +2116,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         long iOffset = offset * (Constants.SIZEOF_LONG / Constants.SIZEOF_INT);
         long bOffset = offset * Constants.SIZEOF_LONG;
 
-        int gn2spoTypeCategoryId = gNodeToDataFile.getByte(
-            bOffset + IDX_TYPE_CATEGORY_B
-        );
+        int gn2spoTypeCategoryId = gNodeToDataFile.getByte(bOffset + IDX_TYPE_CATEGORY_B);
         if (gn2spoTypeCategoryId != typeCategoryId) {
           throw new AssertionError(
               "Type category mismatch.  gNode:" + graphNode +
@@ -2351,9 +2134,7 @@ public final class XAStringPoolImpl implements XAStringPool {
           );
         }
 
-        int gn2spoSubtypeId = gNodeToDataFile.getByte(
-            bOffset + IDX_SUBTYPE_ID_B
-        );
+        int gn2spoSubtypeId = gNodeToDataFile.getByte(bOffset + IDX_SUBTYPE_ID_B);
         if (gn2spoSubtypeId != subtypeId) {
           throw new AssertionError(
               "Subtype ID mismatch.  gNode:" + graphNode +
@@ -2387,7 +2168,6 @@ public final class XAStringPoolImpl implements XAStringPool {
 
         ++nodeIndex;
       } while ((node = node.getNextNode_R()) != null);
-      objectPool.release();
 
       return nodeIndex;
     }
@@ -2399,8 +2179,6 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
     final class GNodeTuplesImpl implements Tuples {
-
-      private ObjectPool objectPool;
 
       // Defines the constraining type.
       private SPObject.TypeCategory typeCategory;
@@ -2450,22 +2228,16 @@ public final class XAStringPoolImpl implements XAStringPool {
        * index that range from lowAVLNode up to but not including the node with
        * ID highAVLNodeId.
        *
-       * @param objectPool the object pool.
        * @param lowAVLNode the AVLNode that has the first graph node that is
        * included in the Tuples.
        * @param highAVLNodeId the ID of the AVLNode that has the first graph
        * node that is not included in the Tuples.
        */
       GNodeTuplesImpl(
-          ObjectPool objectPool,
           SPObject.TypeCategory typeCategory, int typeId,
           SPObject lowValue, SPObject highValue,
           AVLNode lowAVLNode, long highAVLNodeId
       ) {
-        if (objectPool == null) {
-          throw new IllegalArgumentException("objectPool is null");
-        }
-
         if (lowAVLNode != null && lowAVLNode.getId() == highAVLNodeId) {
           // Low and High are equal - Empty.
           lowAVLNode.release();
@@ -2475,23 +2247,18 @@ public final class XAStringPoolImpl implements XAStringPool {
 
         if (lowAVLNode == null) {
           // Empty tuples.
-          objectPool = null;
           typeCategory = null;
           lowValue = null;
           highValue = null;
           if (highAVLNodeId != Block.INVALID_BLOCK_ID) {
             if (logger.isDebugEnabled()) {
-              logger.debug(
-                  "lowAVLNode is null but highAVLNodeId is not " +
-                  Block.INVALID_BLOCK_ID
-              );
+              logger.debug("lowAVLNode is null but highAVLNodeId is not " +Block.INVALID_BLOCK_ID);
             }
             highAVLNodeId = Block.INVALID_BLOCK_ID;
           }
           nrGNodes = 0;
           nrGNodesValid = true;
         } else {
-          objectPool.incRefCount();
           token = use();
         }
 
@@ -2499,7 +2266,6 @@ public final class XAStringPoolImpl implements XAStringPool {
           typeId = SPObjectFactory.INVALID_TYPE_ID;
         }
 
-        this.objectPool = objectPool;
         this.typeCategory = typeCategory;
         this.typeId = typeId;
         this.lowValue = lowValue;
@@ -2509,18 +2275,12 @@ public final class XAStringPoolImpl implements XAStringPool {
       }
 
       public long getColumnValue(int column) throws TuplesException {
-        if (column != 0) {
-          throw new TuplesException("Column index out of range: " + column);
-        }
+        if (column != 0) throw new TuplesException("Column index out of range: " + column);
 
-        if (onPrefixNode) {
-          // Handle the prefix.
-          return prefix[0];
-        }
+        // Handle the prefix.
+        if (onPrefixNode) return prefix[0];
 
-        if (avlNode == null) {
-          throw new TuplesException("No current row");
-        }
+        if (avlNode == null) throw new TuplesException("No current row");
         return avlNode.getPayloadLong(IDX_GRAPH_NODE);
       }
 
@@ -2544,19 +2304,12 @@ public final class XAStringPoolImpl implements XAStringPool {
           AVLNode n = lowAVLNode;
           n.incRefCount();
           long count = 0;
-          while (
-              n != null && (
-                  highAVLNodeId == Block.INVALID_BLOCK_ID ||
-                  n.getId() != highAVLNodeId
-              )
-          ) {
+          while (n != null && (highAVLNodeId == Block.INVALID_BLOCK_ID || n.getId() != highAVLNodeId)) {
             ++count;
             n = n.getNextNode_R();
           }
 
-          if (n != null) {
-            n.release();
-          }
+          if (n != null) n.release();
 
           nrGNodes = count;
           nrGNodesValid = true;
@@ -2585,20 +2338,12 @@ public final class XAStringPoolImpl implements XAStringPool {
           assert lowAVLNode != null;
           AVLNode n = lowAVLNode;
           n.incRefCount();
-          while (
-              count < 2 && n != null && (
-                  highAVLNodeId == Block.INVALID_BLOCK_ID ||
-                  n.getId() != highAVLNodeId
-              )
-          ) {
+          while (count < 2 && n != null && (highAVLNodeId == Block.INVALID_BLOCK_ID || n.getId() != highAVLNodeId)) {
             ++count;
             n = n.getNextNode_R();
           }
 
-          if (n != null) {
-            n.release();
-          }
-
+          if (n != null) n.release();
         }
         return count == 0 ? Cursor.ZERO :
                count == 1 ? Cursor.ONE :
@@ -2606,18 +2351,14 @@ public final class XAStringPoolImpl implements XAStringPool {
       }
 
       public int getColumnIndex(Variable variable) throws TuplesException {
-        if (variable == null) {
-          throw new IllegalArgumentException("variable is null");
-        }
+        if (variable == null) throw new IllegalArgumentException("variable is null");
 
         if (variable.equals(variables[0])) {
           // The variable matches the one and only column.
           return 0;
         }
 
-        throw new TuplesException(
-            "variable doesn't match any column: " + variable
-        );
+        throw new TuplesException("variable doesn't match any column: " + variable);
       }
 
       public boolean isColumnEverUnbound(int column) {
@@ -2645,18 +2386,10 @@ public final class XAStringPoolImpl implements XAStringPool {
         return java.util.Collections.EMPTY_LIST;
       }
 
-      public void beforeFirst(
-          long[] prefix, int suffixTruncation
-      ) throws TuplesException {
+      public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
         assert prefix != null;
-        if (prefix.length > 1) {
-          throw new TuplesException(
-              "prefix.length (" + prefix.length + ") > nrColumns (1)"
-          );
-        }
-        if (suffixTruncation != 0) {
-          throw new TuplesException("suffixTruncation not supported");
-        }
+        if (prefix.length > 1) throw new TuplesException("prefix.length (" + prefix.length + ") > nrColumns (1)");
+        if (suffixTruncation != 0) throw new TuplesException("suffixTruncation not supported");
 
         beforeFirst = true;
         onPrefixNode = false;
@@ -2689,7 +2422,7 @@ public final class XAStringPoolImpl implements XAStringPool {
             SPObject spObject;
             try {
               // FIXME check the type category and type node.
-              spObject = findSPObject(objectPool, prefix[0]);
+              spObject = findSPObject(prefix[0]);
             } catch (StringPoolException ex) {
               throw new TuplesException("Exception while loading SPObject", ex);
             }
@@ -2734,8 +2467,6 @@ public final class XAStringPoolImpl implements XAStringPool {
           lowAVLNode = null;
           token.release();
           token = null;
-          objectPool.release();
-          objectPool = null;
         }
       }
 
@@ -2749,7 +2480,6 @@ public final class XAStringPoolImpl implements XAStringPool {
           t.variables = (Variable[])variables.clone();
           if (t.lowAVLNode != null) {
             t.lowAVLNode.incRefCount();
-            t.objectPool.incRefCount();
             t.token = use(); // Allocate a new token.
             if (t.avlNode != null) {
               t.avlNode.incRefCount();
@@ -2757,9 +2487,7 @@ public final class XAStringPoolImpl implements XAStringPool {
           }
           return t;
         } catch (CloneNotSupportedException e) {
-          throw new Error(
-              getClass() + " doesn't support clone, which it must", e
-          );
+          throw new Error(getClass() + " doesn't support clone, which it must", e);
         }
       }
 
@@ -2890,17 +2618,12 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     final class SPAVLComparator implements AVLComparator {
 
-      private final ObjectPool objectPool;
       private final SPComparator spComparator;
       private final SPObject.TypeCategory typeCategory;
       private final int typeId;
       private final ByteBuffer data;
 
-      SPAVLComparator(
-          ObjectPool objectPool, SPComparator spComparator,
-          SPObject.TypeCategory typeCategory, int typeId, ByteBuffer data
-      ) {
-        this.objectPool = objectPool;
+      SPAVLComparator(SPComparator spComparator, SPObject.TypeCategory typeCategory, int typeId, ByteBuffer data) {
         this.spComparator = spComparator;
         this.typeCategory = typeCategory;
         this.typeId = typeId;
@@ -2917,9 +2640,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
         // Second, order by type node.
         int nodeTypeId = avlNode.getPayloadByte(IDX_TYPE_ID_B);
-        if (typeId != nodeTypeId) {
-          return typeId < nodeTypeId ? -1 : 1;
-        }
+        if (typeId != nodeTypeId) return typeId < nodeTypeId ? -1 : 1;
 
         // Finally, defer to the SPComparator.
         int dataSize = avlNode.getPayloadInt(IDX_DATA_SIZE_I);
@@ -2941,10 +2662,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
         // Retrieve bytes from the AVLNode.
         nodeData.limit(directDataSize);
-        avlNode.getBlock().get(
-            (AVLNode.HEADER_SIZE + IDX_DATA) * Constants.SIZEOF_LONG,
-            nodeData
-        );
+        avlNode.getBlock().get((AVLNode.HEADER_SIZE + IDX_DATA) * Constants.SIZEOF_LONG, nodeData);
 
         if (dataSize > MAX_DIRECT_DATA_BYTES) {
           // Save the limit of data so it can be restored later in case it is
@@ -2964,7 +2682,7 @@ public final class XAStringPoolImpl implements XAStringPool {
             // smaller by the comparePrefix method.
             nodeData.limit(dataSize);
             nodeData.position(directDataSize);
-            retrieveRemainingBytes(objectPool, nodeData, blockId);
+            retrieveRemainingBytes(nodeData, blockId);
           } catch (IOException ex) {
             throw new Error("I/O Error while retrieving SPObject data", ex);
           }
@@ -2982,8 +2700,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
       private AVLFile.Phase.Token avlFileToken;
 
-      private ManagedBlockFile.Phase.Token[] blockFileTokens =
-          new ManagedBlockFile.Phase.Token[NR_BLOCK_FILES];
+      private ManagedBlockFile.Phase.Token[] blockFileTokens = new ManagedBlockFile.Phase.Token[NR_BLOCK_FILES];
 
 
       /**
@@ -2991,9 +2708,7 @@ public final class XAStringPoolImpl implements XAStringPool {
        */
       Token() {
         avlFileToken = avlFilePhase.use();
-        for (int i = 0; i < NR_BLOCK_FILES; ++i) {
-          blockFileTokens[i] = blockFilePhases[i].use();
-        }
+        for (int i = 0; i < NR_BLOCK_FILES; ++i)  blockFileTokens[i] = blockFilePhases[i].use();
       }
 
 
@@ -3025,34 +2740,28 @@ public final class XAStringPoolImpl implements XAStringPool {
   static final class SPO2GNCache {
     private static final int DEFAULT_MAX_SIZE = 1000;
     private static final int MAX_SIZE;
-    private Reference cacheRef;
+    private Reference<Cache<SPObject,Long>> cacheRef;
 
     static {
       String cacheSizeProp = System.getProperty("mulgara.sp.localizeCacheSize");
-      if (cacheSizeProp == null) {
-        cacheSizeProp = System.getProperty("mulgara.sp.cacheSize");
-      }
+      if (cacheSizeProp == null) cacheSizeProp = System.getProperty("mulgara.sp.cacheSize");
       if (cacheSizeProp != null) {
         MAX_SIZE = Integer.parseInt(cacheSizeProp);
-        if (MAX_SIZE < 1) {
-          throw new ExceptionInInitializerError(
-              "bad mulgara.sp.cacheSize property: " + cacheSizeProp
-          );
-        }
+        if (MAX_SIZE < 1) throw new ExceptionInInitializerError("bad mulgara.sp.cacheSize property: " + cacheSizeProp);
       } else {
         MAX_SIZE = DEFAULT_MAX_SIZE;
       }
     }
 
     public SPO2GNCache() {
-      cacheRef = new SoftReference(new Cache(MAX_SIZE));
+      cacheRef = new SoftReference<Cache<SPObject,Long>>(new Cache<SPObject,Long>(MAX_SIZE));
     }
 
-    private Cache getCache() {
-      Cache cache = (Cache)cacheRef.get();
+    private Cache<SPObject,Long> getCache() {
+      Cache<SPObject,Long> cache = cacheRef.get();
       if (cache == null) {
-        cache = new Cache(MAX_SIZE);
-        cacheRef = new SoftReference(cache);
+        cache = new Cache<SPObject,Long>(MAX_SIZE);
+        cacheRef = new SoftReference<Cache<SPObject,Long>>(cache);
       }
       return cache;
     }
@@ -3066,7 +2775,7 @@ public final class XAStringPoolImpl implements XAStringPool {
       assert gNodeL != null;
       assert spObject != null;
 
-      Object old = getCache().put(spObject, gNodeL);
+      Long old = getCache().put(spObject, gNodeL);
       assert old == null || old.equals(gNodeL);
     }
 
@@ -3077,7 +2786,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     public synchronized Long get(SPObject spObject) {
       assert spObject != null;
-      return (Long)getCache().get(spObject);
+      return getCache().get(spObject);
     }
 
   }
@@ -3086,34 +2795,28 @@ public final class XAStringPoolImpl implements XAStringPool {
   static final class GN2SPOCache {
     private static final int DEFAULT_MAX_SIZE = 1000;
     private static final int MAX_SIZE;
-    private Reference cacheRef;
+    private Reference<Cache<Long,SPObject>> cacheRef;
 
     static {
       String cacheSizeProp = System.getProperty("mulgara.sp.globalizeCacheSize");
-      if (cacheSizeProp == null) {
-        cacheSizeProp = System.getProperty("mulgara.sp.cacheSize");
-      }
+      if (cacheSizeProp == null) cacheSizeProp = System.getProperty("mulgara.sp.cacheSize");
       if (cacheSizeProp != null) {
         MAX_SIZE = Integer.parseInt(cacheSizeProp);
-        if (MAX_SIZE < 1) {
-          throw new ExceptionInInitializerError(
-              "bad mulgara.sp.cacheSize property: " + cacheSizeProp
-          );
-        }
+        if (MAX_SIZE < 1) throw new ExceptionInInitializerError("bad mulgara.sp.cacheSize property: " + cacheSizeProp);
       } else {
         MAX_SIZE = DEFAULT_MAX_SIZE;
       }
     }
 
     public GN2SPOCache() {
-      cacheRef = new SoftReference(new Cache(MAX_SIZE));
+      cacheRef = new SoftReference<Cache<Long,SPObject>>(new Cache<Long,SPObject>(MAX_SIZE));
     }
 
-    private Cache getCache() {
-      Cache cache = (Cache)cacheRef.get();
+    private Cache<Long,SPObject> getCache() {
+      Cache<Long,SPObject> cache = cacheRef.get();
       if (cache == null) {
-        cache = new Cache(MAX_SIZE);
-        cacheRef = new SoftReference(cache);
+        cache = new Cache<Long,SPObject>(MAX_SIZE);
+        cacheRef = new SoftReference<Cache<Long,SPObject>>(cache);
       }
       return cache;
     }
@@ -3127,7 +2830,7 @@ public final class XAStringPoolImpl implements XAStringPool {
       assert gNodeL != null;
       assert spObject != null;
 
-      Object old = getCache().put(gNodeL, spObject);
+      SPObject old = getCache().put(gNodeL, spObject);
       assert old == null || old.equals(spObject);
     }
 
@@ -3148,7 +2851,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     public synchronized void putBlankNode(Long gNodeL) {
       assert gNodeL != null;
-      Object old = getCache().put(gNodeL, null);
+      SPObject old = getCache().put(gNodeL, null);
       assert old == null;
     }
 
@@ -3158,7 +2861,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     public synchronized SPObject get(Long gNodeL) {
       assert gNodeL != null;
-      return (SPObject)getCache().get(gNodeL);
+      return getCache().get(gNodeL);
     }
 
     public boolean isBlankNode(long gNode) {
@@ -3168,7 +2871,7 @@ public final class XAStringPoolImpl implements XAStringPool {
     public synchronized boolean isBlankNode(Long gNodeL) {
       assert gNodeL != null;
       Cache cache = getCache();
-      return cache.get(gNodeL) == null && cache.containsKey(gNodeL);
+      return cache.containsKey(gNodeL) && cache.get(gNodeL) == null;
     }
 
   }
@@ -3177,7 +2880,8 @@ public final class XAStringPoolImpl implements XAStringPool {
   /**
    * A LRU cache.
    */
-  static final class Cache extends LinkedHashMap {
+  @SuppressWarnings("serial")
+  static final class Cache<K,V> extends LinkedHashMap<K,V> {
 
     /** The load factor on the internal hash table. */
     public static final float LOAD_FACTOR = 0.75F;
@@ -3201,7 +2905,7 @@ public final class XAStringPoolImpl implements XAStringPool {
      * @param eldest The eldest entry in the map.  Ignored.
      * @return <code>true</code> when the cache is overfull and data should be removed.
      */
-    protected boolean removeEldestEntry(Map.Entry eldest) {
+    protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
       return size() > MAX_SIZE;
     }
 

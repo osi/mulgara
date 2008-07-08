@@ -29,8 +29,6 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -68,12 +66,14 @@ import org.mulgara.util.Constants;
 public final class AVLFile {
 
   /** Logger.  */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(AVLFile.class);
 
   /** The underlying block file */
   private ManagedBlockFile avlBlockFile;
 
   /** The size of the user data stored in each node of the tree. */
+  @SuppressWarnings("unused")  // keep this member, since it isn't kept elsewhere
   private int payloadSize;
 
   /** The most recent phase for the file. */
@@ -83,38 +83,29 @@ public final class AVLFile {
   /**
    * Creates a new block file which contains an AVL tree.
    *
-   * @param objectPool An existing object pool to get blocks from.
    * @param file A {@link java.io.File} object giving the details of the file.
    * @param payloadSize Size of the payload in longs.  Must be at least 1.
    * @throws IOException If an i/o error occurs.
    */
-  public AVLFile(
-      ObjectPool objectPool, File file, int payloadSize
-  ) throws IOException {
+  public AVLFile(File file, int payloadSize) throws IOException {
     if (payloadSize < 1) {
       throw new IllegalArgumentException("payloadSize is less than 1");
     }
 
-    avlBlockFile = new ManagedBlockFile(
-        objectPool, file,
-        (AVLNode.HEADER_SIZE + payloadSize) * Constants.SIZEOF_LONG,
-        BlockFile.IOType.MAPPED
-    );
+    avlBlockFile = new ManagedBlockFile(file, (AVLNode.HEADER_SIZE + payloadSize) * Constants.SIZEOF_LONG,
+        BlockFile.IOType.MAPPED);
     this.payloadSize = payloadSize;
   }
 
   /**
    * Creates a new block file which contains an AVL tree.
    *
-   * @param objectPool An existing object pool to get blocks from.
    * @param fileName The name of the file to create.
    * @param payloadSize Size of the payload in longs.  Must be at least 1.
    * @throws IOException If an i/o error occurs.
    */
-  public AVLFile(
-      ObjectPool objectPool, String fileName, int payloadSize
-  ) throws IOException {
-    this(objectPool, new File(fileName), payloadSize);
+  public AVLFile(String fileName, int payloadSize) throws IOException {
+    this(new File(fileName), payloadSize);
   }
 
   /**
@@ -297,12 +288,10 @@ public final class AVLFile {
     /**
      * Get the AVLNode of the root of this phase tree.
      *
-     * @param objectPool The pool to get the block for the AVLNode from.
      * @return The AVL node at the root of this tree.
      */
-    public AVLNode getRootNode(ObjectPool objectPool) {
-      return rootId != AVLNode.NULL_NODE ?
-          AVLNode.newInstance(this, objectPool, null, 0, rootId) : null;
+    public AVLNode getRootNode() {
+      return rootId != AVLNode.NULL_NODE ? AVLNode.newInstance(this, null, 0, rootId) : null;
     }
 
     /**
@@ -357,17 +346,15 @@ public final class AVLFile {
     /**
      * Finds an AVLNode containing the requested data.
      *
-     * @param objectPool The pool to get the AVLNodes from.
      * @param comparator The means of comparing the key to the payload in the AVLNodes.
      * @param key The data to search for.
      * @return An array of nodes.  If the tree is empty, then <code>null</code>.
      *     If the data exists, then a single element array containing the required node.
      *     If the data does not exist then return the pair of nodes that the data exists between.
      */
-    public AVLNode[] find(
-        ObjectPool objectPool, AVLComparator comparator, long[] key
-    ) {
-      AVLNode rootNode = getRootNode(objectPool);
+    public AVLNode[] find(AVLComparator comparator, long[] key) {
+
+      AVLNode rootNode = getRootNode();
       if (rootNode == null) return null;
 
       try {
@@ -380,13 +367,11 @@ public final class AVLFile {
     /**
      * Get a new AVLNode, unattached to any data.
      *
-     * @param objectPool The pool to find the AVLNode in.
      * @return The new node.
      * @throws IOException If an I/O error occurred.
      */
-    public AVLNode newAVLNodeInstance(ObjectPool objectPool)
-        throws IOException {
-      return AVLNode.newInstance(this, objectPool);
+    public AVLNode newAVLNodeInstance() throws IOException {
+      return AVLNode.newInstance(this);
     }
 
     /**

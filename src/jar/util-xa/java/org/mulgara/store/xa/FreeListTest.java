@@ -28,9 +28,7 @@
 package org.mulgara.store.xa;
 
 // Java 2 standard packages
-import java.util.*;
 import java.io.*;
-import java.nio.*;
 
 // Third party packages
 import junit.framework.*;
@@ -66,13 +64,12 @@ public class FreeListTest extends TestCase {
   /**
    * Description of the Field
    */
-  static Block metaroot =
-      Block.newInstance(ObjectPool.newInstance(),
-      FreeList.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
+  static Block metaroot = Block.newInstance(FreeList.Phase.RECORD_SIZE * Constants.SIZEOF_LONG);
 
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(FreeListTest.class);
 
   /**
@@ -125,12 +122,9 @@ public class FreeListTest extends TestCase {
     try {
 
       File dir = TempDir.getTempDir();
-      freeList =
-          FreeList.openFreeList(ObjectPool.newInstance(),
-          new File(dir, "freelisttest"));
+      freeList = FreeList.openFreeList(new File(dir, "freelisttest"));
       exceptionOccurred = false;
-    }
-    finally {
+    } finally {
 
       if (exceptionOccurred) {
 
@@ -192,6 +186,7 @@ public class FreeListTest extends TestCase {
     assertEquals(3, freeList.allocate());
     assertEquals(5, freeList.getNextItem());
 
+    @SuppressWarnings("unused")
     FreeList.Phase.Token token0 = phase0.use();
     FreeList.Phase phase1 = freeList.new Phase();
 
@@ -208,7 +203,9 @@ public class FreeListTest extends TestCase {
     freeList.free(4);
 
     // free: | 2 4
+    @SuppressWarnings("unused")
     FreeList.Phase.Token token1 = phase1.use();
+    @SuppressWarnings("unused")
     FreeList.Phase phase2 = freeList.new Phase();
 
     phase1.writeToBlock(metaroot, 0);
@@ -250,6 +247,7 @@ public class FreeListTest extends TestCase {
     assertEquals(9, freeList.allocate());
     assertEquals(10, freeList.allocate());
 
+    @SuppressWarnings("unused")
     FreeList.Phase.Token token3 = phase3.use();
     FreeList.Phase phase4 = freeList.new Phase();
     assertEquals(11, freeList.allocate());
@@ -257,7 +255,9 @@ public class FreeListTest extends TestCase {
     token2.release();
     assertEquals(8, freeList.allocate());
 
+    @SuppressWarnings("unused")
     FreeList.Phase.Token token4 = phase4.use();
+    @SuppressWarnings("unused")
     FreeList.Phase phase5 = freeList.new Phase();
   }
 }

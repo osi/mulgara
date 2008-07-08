@@ -122,11 +122,6 @@ public final class XANodePoolImpl implements XANodePool {
   private String fileName;
 
   /**
-   * Description of the Field
-   */
-  private ObjectPool objectPool;
-
-  /**
    * The LockFile that protects the node pool from being opened twice.
    */
   private LockFile lockFile;
@@ -189,7 +184,7 @@ public final class XANodePoolImpl implements XANodePool {
   /**
    * Description of the Field
    */
-  private Set newNodeListeners = new HashSet();
+  private Set<NewNodeListener> newNodeListeners = new HashSet<NewNodeListener>();
 
 
   /**
@@ -205,8 +200,6 @@ public final class XANodePoolImpl implements XANodePool {
     this.fileName = fileName;
 
     lockFile = LockFile.createLockFile(fileName + ".np.lock");
-
-    objectPool = ObjectPool.newInstance();
 
     try {
       // Open the metaroot file.
@@ -233,7 +226,7 @@ public final class XANodePoolImpl implements XANodePool {
         }
       }
 
-      freeList = FreeList.openFreeList(objectPool, fileName + ".np_fl");
+      freeList = FreeList.openFreeList(fileName + ".np_fl");
     } catch (IOException ex) {
       try {
         close();
@@ -306,10 +299,9 @@ public final class XANodePoolImpl implements XANodePool {
 
       // Notify all the NewNodeListeners.
       try {
-        Iterator it = newNodeListeners.iterator();
+        Iterator<NewNodeListener> it = newNodeListeners.iterator();
         while (it.hasNext()) {
-          NewNodeListener l = (NewNodeListener) it.next();
-          l.newNode(node);
+          it.next().newNode(node);
         }
       } catch (Exception ex) {
         throw new NodePoolException("Call to NewNodeListener failed.", ex);
@@ -374,18 +366,9 @@ public final class XANodePoolImpl implements XANodePool {
     } finally {
       try {
         try {
-          if (objectPool != null) {
-            objectPool.release();
-            objectPool = null;
-          }
-
-          if (metarootFile != null) {
-            metarootFile.close();
-          }
+          if (metarootFile != null) metarootFile.close();
         } finally {
-          if (freeList != null) {
-            freeList.close();
-          }
+          if (freeList != null) freeList.close();
         }
       } catch (IOException ex) {
         throw new NodePoolException("I/O error closing node pool.", ex);
@@ -411,18 +394,9 @@ public final class XANodePoolImpl implements XANodePool {
     } finally {
       try {
         try {
-          if (objectPool != null) {
-            objectPool.release();
-            objectPool = null;
-          }
-
-          if (metarootFile != null) {
-            metarootFile.delete();
-          }
+          if (metarootFile != null) metarootFile.delete();
         } finally {
-          if (freeList != null) {
-            freeList.delete();
-          }
+          if (freeList != null) freeList.delete();
         }
       } catch (IOException ex) {
         throw new NodePoolException("I/O error deleting node pool.", ex);
@@ -516,7 +490,6 @@ public final class XANodePoolImpl implements XANodePool {
    */
   public synchronized void prepare() throws SimpleXAResourceException {
     checkInitialized();
-    objectPool.flush();
 
     if (prepared) {
       // prepare already performed.
@@ -810,20 +783,12 @@ public final class XANodePoolImpl implements XANodePool {
     }
 
     if (metarootFile != null) {
-      if (metarootBlocks[0] != null) {
-        metarootBlocks[0].release();
-        metarootBlocks[0] = null;
-      }
-      if (metarootBlocks[1] != null) {
-        metarootBlocks[1].release();
-        metarootBlocks[1] = null;
-      }
+      if (metarootBlocks[0] != null) metarootBlocks[0] = null;
+      if (metarootBlocks[1] != null) metarootBlocks[1] = null;
       metarootFile.unmap();
     }
 
-    if (freeList != null) {
-      freeList.unmap();
-    }
+    if (freeList != null) freeList.unmap();
   }
 
 
@@ -860,8 +825,8 @@ public final class XANodePoolImpl implements XANodePool {
         metarootFile.setNrBlocks(NR_METAROOTS);
       }
 
-      metarootBlocks[0] = metarootFile.readBlock(objectPool, 0);
-      metarootBlocks[1] = metarootFile.readBlock(objectPool, 1);
+      metarootBlocks[0] = metarootFile.readBlock(0);
+      metarootBlocks[1] = metarootFile.readBlock(1);
     }
 
     if (clear) {

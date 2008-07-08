@@ -29,8 +29,6 @@ package org.mulgara.store.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -107,26 +105,11 @@ public interface BlockFile {
    * BlockFile implementation, changes to the ByteBuffer may take effect even if
    * {@link #writeBlock} is never called.
    *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param blockId The ID of the block that this buffer will be written to.
    * @return a ByteBuffer to be used for writing to the specified block.
    * @throws IOException if an I/O error occurs.
    */
-  public Block allocateBlock(ObjectPool objectPool,
-      long blockId) throws IOException;
-
-  /**
-   * Frees a buffer that was allocated by calling either {@link #allocateBlock}
-   * or {@link #readBlock}. While calling this method is not strictly necessary,
-   * it may improve performance. The buffer should not be used after it has been
-   * freed.
-   *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
-   * @param block the buffer to be freed.
-   */
-  public void releaseBlock(ObjectPool objectPool, Block block);
+  public Block allocateBlock(long blockId) throws IOException;
 
   /**
    * Allocates a ByteBuffer which is filled with the contents of the specified
@@ -135,14 +118,11 @@ public interface BlockFile {
    * BlockFile implementation, changes to the ByteBuffer may take effect even if
    * {@link #writeBlock} is never called.
    *
-   * @param objectPool the object pool to attempt to get objects from and
-   *      release objects to.
    * @param blockId the block to read into the ByteBuffer.
    * @return The buffer that was read.
    * @throws IOException if an I/O error occurs.
    */
-  public Block readBlock(ObjectPool objectPool,
-      long blockId) throws IOException;
+  public Block readBlock(long blockId) throws IOException;
 
   /**
    * Writes a buffer that was allocated by calling either {@link #allocateBlock}
