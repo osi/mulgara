@@ -30,14 +30,10 @@ package org.mulgara.query.rdf;
 // Java 2 standard packages
 import java.io.Serializable;
 
-// Third party packages
-import org.apache.log4j.Logger;
-
 // JRDF
 import org.jrdf.graph.*;
 
 //Local packages
-import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Value;
 
 /**
@@ -60,10 +56,7 @@ import org.mulgara.query.Value;
  */
 public class BlankNodeImpl
     extends AbstractBlankNode
-    implements Comparable, BlankNode, Value, Serializable {
-
-  /** Logger.  */
-  private static final Logger logger = Logger.getLogger(BlankNodeImpl.class.getName());
+    implements Comparable<Node>, BlankNode, Value, Serializable {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -73,9 +66,7 @@ public class BlankNodeImpl
    */
   static final long serialVersionUID = -3557083462564312948L;
 
-  /**
-   * The unique node id for the blank node.
-   */
+  /** The unique node id for the blank node. */
   private long nodeId;
 
   private String stringValue;
@@ -84,10 +75,9 @@ public class BlankNodeImpl
    * Create an empty blank node.  Just a place holder.
    */
   public BlankNodeImpl() {
-
     // Do nothing
     this(0);
-	stringValue = "node0";
+    stringValue = "node0";
   }
 
   /**
@@ -96,7 +86,6 @@ public class BlankNodeImpl
    * @param newNodeId the unique node id.
    */
   public BlankNodeImpl(long newNodeId) {
-
     nodeId = newNodeId;
     stringValue = "node" + nodeId;
   }
@@ -127,8 +116,7 @@ public class BlankNodeImpl
    * @param object the RDF object to compare.
    * @return -1 if Literal or URIReference otherwise performance comparTo.
    */
-  public int compareTo(java.lang.Object object) {
-
+  public int compareTo(Node object) {
     if (object instanceof Literal) {
       return -1;
     } else if (object instanceof URIReference) {
@@ -167,12 +155,10 @@ public class BlankNodeImpl
    * @return the string value of the uri and node id.
    */
   public String toString() {
-
     return "_node" + nodeId;
   }
 
   public String getID() {
-
     return stringValue;
   }
 }
