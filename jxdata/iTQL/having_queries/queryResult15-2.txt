@@ -1,4 +1,4 @@
 ItqlInterpreter error - Query failed
-Caused by: (QueryException) Transaction rollback triggered
+Caused by: (MulgaraTransactionException) Transaction rollback triggered
 Caused by: (QueryException) Failed to resolve query
-Caused by: (QueryException) No such variable $k0 in tuples [$v, $p, $s] (class org.mulgara.resolver.AppendAggregateTuples)
+Caused by: (TuplesException) No such variable $k0 in tuples [$v, $p, $s] (class org.mulgara.resolver.AppendAggregateTuples)
