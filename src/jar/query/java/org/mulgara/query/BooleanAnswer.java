@@ -14,6 +14,9 @@ package org.mulgara.query;
 
 import java.io.Serializable;
 
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.XSD;
+
 /**
  * An Answer that represents a simple true/false result.
  *
@@ -42,12 +45,16 @@ public class BooleanAnswer implements Answer, Serializable {
   /** The actual result to be returned, and wrapped by this Answer */
   private boolean result;
 
+  /** The Literal expression for the result */
+  private LiteralImpl literalResult;
+
   /**
    * Constructs a new BooleanAnswer.
    * @param result The result this answer represents.
    */
   public BooleanAnswer(boolean result) {
     this.result = result;
+    literalResult = new LiteralImpl(Boolean.toString(result), XSD.BOOLEAN_URI);
   }
 
   /**
@@ -62,7 +69,7 @@ public class BooleanAnswer implements Answer, Serializable {
    * @see org.mulgara.query.Answer#getObject(int)
    */
   public Object getObject(int column) throws TuplesException {
-    if (column == 0) return result;
+    if (column == 0) return literalResult;
     throw new TuplesException("Invalid column: " + column);
   }
 
@@ -70,7 +77,7 @@ public class BooleanAnswer implements Answer, Serializable {
    * @see org.mulgara.query.Answer#getObject(java.lang.String)
    */
   public Object getObject(String columnName) throws TuplesException {
-    if (KONSTANT_VAR_NAME.equals(columnName)) return result;
+    if (KONSTANT_VAR_NAME.equals(columnName)) return literalResult;
     throw new TuplesException("Unknown variable");
   }
 
