@@ -83,12 +83,23 @@ public class Sparql {
    * @param a The answer to print.
    */
   private static void printAnswer(Answer a) throws Exception {
+    GraphAnswer graphAnswer = null;
+    if (a instanceof GraphAnswer) {
+      graphAnswer = (GraphAnswer)a.clone();
+    }
+    
     System.out.println("Showing " + a.getRowCount() + " results");
     int width = a.getNumberOfVariables();
     a.beforeFirst();
     while (a.next()) {
       for (int c = 0; c < width; c++) System.out.print(toString(a.getObject(c)) + "    ");
       System.out.println();
+    }
+    
+    if (graphAnswer != null) {
+      System.out.println("RDF/XML for GraphAnswer:");
+      System.out.println("------------------------");
+      RdfXmlEmitter.writeRdfXml(graphAnswer, System.out);
     }
   }
 
