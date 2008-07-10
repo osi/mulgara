@@ -11,6 +11,10 @@
  */
 package org.mulgara.sparql;
 
+import static org.jrdf.vocabulary.RDF.TYPE;
+import static org.jrdf.vocabulary.RDFS.LITERAL;
+import static org.mulgara.query.rdf.Mulgara.NODE_TYPE_GRAPH;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -48,6 +52,7 @@ import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.sparql.parser.ParseException;
 import org.mulgara.sparql.parser.QueryStructure;
+import org.mulgara.sparql.parser.QueryType;
 import org.mulgara.sparql.parser.SparqlParser;
 import org.mulgara.sparql.parser.cst.BlankNode;
 import org.mulgara.sparql.parser.cst.Expression;
@@ -57,10 +62,6 @@ import org.mulgara.sparql.parser.cst.Node;
 import org.mulgara.sparql.parser.cst.Ordering;
 import org.mulgara.sparql.parser.cst.RDFLiteral;
 import org.mulgara.sparql.parser.cst.Triple;
-
-import static org.jrdf.vocabulary.RDF.TYPE;
-import static org.jrdf.vocabulary.RDFS.LITERAL;
-import static org.mulgara.query.rdf.Mulgara.NODE_TYPE_GRAPH;
 
 /**
  * Converts a parsed SPARQL query into a Command for execution.
@@ -181,6 +182,7 @@ public class SparqlInterpreter implements Interpreter {
     List<? extends SelectElement> selection = getSelection(queryStruct);
     ModelExpression defaultGraphs = getFrom(queryStruct);
     ConstraintExpression whereClause = getWhere(queryStruct);
+    if (whereClause == null) throw new MulgaraParserException("SELECT query must have a WHERE clause");
     List<Order> orderBy = getOrdering(queryStruct);
     Integer limit = getLimit(queryStruct);
     int offset = queryStruct.getOffset();
@@ -200,6 +202,7 @@ public class SparqlInterpreter implements Interpreter {
     for (org.mulgara.sparql.parser.cst.Variable v: allVars) selection.add(new Variable(v.getName()));
     ModelExpression defaultGraphs = getFrom(queryStruct);
     ConstraintExpression whereClause = getWhere(queryStruct);
+    if (whereClause == null) throw new MulgaraParserException("ASK query must have a WHERE clause");
     return new AskQuery(selection, defaultGraphs, whereClause);
   }
 
@@ -216,6 +219,7 @@ public class SparqlInterpreter implements Interpreter {
     }
     ModelExpression defaultGraphs = getFrom(queryStruct);
     ConstraintExpression whereClause = getWhere(queryStruct);
+    if (whereClause == null) throw new MulgaraParserException("CONSTRUCT query must have a WHERE clause");
     List<Order> orderBy = getOrdering(queryStruct);
     Integer limit = getLimit(queryStruct);
     int offset = queryStruct.getOffset();
@@ -235,7 +239,9 @@ public class SparqlInterpreter implements Interpreter {
     ConstraintExpression whereClause = distributeIntoWhereClause(described, getWhere(queryStruct));
     whereClause = constraintToNonBlank(whereClause);
     ModelExpression defaultGraphs = getFrom(queryStruct);
-    List<Order> orderBy = getOrdering(queryStruct);
+    // Ignore the order since its behavior is unspecified for DESCRIBE.
+    //List<Order> orderBy = getOrdering(queryStruct);
+    List<Order> orderBy = new ArrayList<Order>(0);
     Integer limit = getLimit(queryStruct);
     int offset = queryStruct.getOffset();
     return new ConstructQuery(graphVariables(), defaultGraphs, whereClause, orderBy, limit, offset);
@@ -248,17 +254,24 @@ public class SparqlInterpreter implements Interpreter {
    * @throws MulgaraParserException If and selected elements are not variables.
    */
   List<? extends SelectElement> getSelection(QueryStructure queryStruct) throws MulgaraParserException {
-    List<Variable> result = new ArrayList<Variable>();
+    List<SelectElement> result = new ArrayList<SelectElement>();
     if (queryStruct.isSelectAll()) {
       Collection<org.mulgara.sparql.parser.cst.Variable> allVars = queryStruct.getAllVariables();
       for (org.mulgara.sparql.parser.cst.Variable v: allVars) result.add(new Variable(v.getName()));
     } else {
+      ConstantVarFactory constantVars = new ConstantVarFactory();
       List<? extends Node> selection = queryStruct.getSelection();
       for (Node n: selection) {
-        // SPARQL only permits variables
-        if (!(n instanceof org.mulgara.sparql.parser.cst.Variable)) throw new MulgaraParserException("Unexpected non-variable in the SELECT clause");
-        org.mulgara.sparql.parser.cst.Variable cv = (org.mulgara.sparql.parser.cst.Variable)n;
-        result.add(new Variable(cv.getName()));
+        if (n instanceof org.mulgara.sparql.parser.cst.Variable) {
+          org.mulgara.sparql.parser.cst.Variable cv = (org.mulgara.sparql.parser.cst.Variable)n;
+          result.add(new Variable(cv.getName()));
+        } else if (n instanceof IRIReference) {
+          // SPARQL SELECT only permits variables; DESCRIBE permits IRI's
+          if (queryStruct.getType() == QueryType.select) throw new MulgaraParserException("Unexpected non-variable in the SELECT clause");
+          result.add(new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)n).getUri())));
+        } else {
+          throw new MulgaraParserException("Unexpected select expression");
+        }
       }
     }
     return result;
@@ -386,6 +399,10 @@ public class SparqlInterpreter implements Interpreter {
   ConstraintExpression getWhere(QueryStructure queryStruct) throws MulgaraParserException {
     // get the basic pattern
     GroupGraphPattern pattern = queryStruct.getWhereClause();
+    
+    // short-circuit, since DESCRIBE may omit the WHERE clause
+    if (pattern == null) return null;
+    
     PatternMapper patternMapper = new PatternMapper(pattern);
     ConstraintExpression result = patternMapper.mapToConstraints();
     // apply the FROM NAMED expression
@@ -435,18 +452,20 @@ public class SparqlInterpreter implements Interpreter {
    * @return The UNIONed WHERE clauses with the variables adjusted.
    */
   ConstraintExpression distributeIntoWhereClause(List<? extends SelectElement> described, ConstraintExpression baseWhere) throws MulgaraParserException {
-    if (baseWhere == null) baseWhere = GRAPH_CONSTRAINT;
+    if (described == null || described.size() == 0) throw new MulgaraParserException("DESCRIBE clause must have at least one entry");
+    baseWhere = (baseWhere == null) ? GRAPH_CONSTRAINT : new ConstraintConjunction(baseWhere, GRAPH_CONSTRAINT);
     List<ConstraintExpression> constraints = new LinkedList<ConstraintExpression>();
     for (SelectElement e: described) {
       ConstraintExpression expr;
-      if (e instanceof URIReferenceImpl) {
-        expr = new ConstraintConjunction(baseWhere, new ConstraintIs(GRAPH_VARS[0], (URIReferenceImpl)e));
+      if (e instanceof ConstantValue) {
+        expr = new ConstraintConjunction(GRAPH_CONSTRAINT, new ConstraintIs(GRAPH_VARS[0], ((ConstantValue)e).getValue()));
       } else if (e instanceof Variable) {
         expr = mapVariable(baseWhere, (Variable)e, GRAPH_VARS[0]);
       } else throw new MulgaraParserException("Illegal type in DESCRIBE clause: " + e);
       constraints.add(expr);
     }
-    return new ConstraintDisjunction(constraints);
+    assert constraints.size() == described.size();
+    return constraints.size() > 1 ? new ConstraintDisjunction(constraints) : constraints.get(0);
   }
 
   /**
@@ -470,6 +489,7 @@ public class SparqlInterpreter implements Interpreter {
 
 
   ConstraintExpression constraintToNonBlank(ConstraintExpression expr) {
+    // TODO: Consider using ConstraintConjunction(expr, ConstraintDisjunction(LITERAL_ONLY, URI_ONLY) when disjunction performance is fixed.
     ConstraintExpression literals = new ConstraintConjunction(expr, LITERAL_ONLY_CONSTRAINT);
     ConstraintExpression uris = new ConstraintConjunction(expr, URI_ONLY_CONSTRAINT);
     return new ConstraintDisjunction(literals, uris);

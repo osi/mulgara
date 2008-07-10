@@ -184,7 +184,7 @@ public class GraphAnswer implements Answer, Serializable {
     boolean nextAvailable;
     do {
       nextAvailable = rawAnswer.next();
-    } while (nextAvailable && notGraphable());
+    } while (nextAvailable && !graphable());
     return nextAvailable;
   }
 
@@ -198,7 +198,7 @@ public class GraphAnswer implements Answer, Serializable {
    * @return <code>true</code> if the subject-predicate-object have valid node types.
    * @throws TuplesException The row could not be accessed.
    */
-  private boolean notGraphable() throws TuplesException {
+  private boolean graphable() throws TuplesException {
     if (rawAnswer.getObject(0) instanceof Literal) return false;
     Object predicate = rawAnswer.getObject(1);
     return !(predicate instanceof Literal || predicate instanceof BlankNode);
