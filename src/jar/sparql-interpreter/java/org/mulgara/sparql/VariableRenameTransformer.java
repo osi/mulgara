@@ -13,7 +13,6 @@
 package org.mulgara.sparql;
 
 
-import org.jrdf.graph.URIReference;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintImpl;
@@ -23,8 +22,6 @@ import org.mulgara.query.ConstraintOccurs;
 import org.mulgara.query.ConstraintOccursLessThan;
 import org.mulgara.query.ConstraintOccursMoreThan;
 import org.mulgara.query.Variable;
-import org.mulgara.resolver.test.TestConstraint;
-import org.mulgara.resolver.xsd.IntervalConstraint;
 
 /**
  * Transforms constraint expressions to rename variables.
@@ -50,7 +47,7 @@ public class VariableRenameTransformer extends IdentityTransformer {
   public VariableRenameTransformer(Variable from, Variable to) {
     this.from = from;
     this.to = to;
-    initialize(new CNO(), new CO(), new COLT(), new COMT(), new CI(), new CIs(), new CInt(), new CT());
+    initialize(new CNO(), new CO(), new COLT(), new COMT(), new CI(), new CIs());
   }
 
   // reimplement the individual construction code to replace variables
@@ -104,26 +101,6 @@ public class VariableRenameTransformer extends IdentityTransformer {
     public ConstraintIs newConstraint(Constraint c) {
       ConstraintElement[] o = morphOps(c);
       return new ConstraintIs(o[0], o[2], o[3]);
-    }
-  }
-
-  protected class CInt extends ConsInterval {
-    public IntervalConstraint newConstraint(Constraint c) {
-      IntervalConstraint i = (IntervalConstraint)c;
-      Variable v = i.getVariables().iterator().next();
-      if (v.equals(from)) v = to;
-      return i.mutateTo(v, (URIReference)i.getModel());
-    }
-  }
-
-  protected class CT extends ConsTest {
-    public TestConstraint newConstraint(Constraint c) {
-      TestConstraint t = (TestConstraint)c;
-      Variable v1 = t.getVariable1();
-      Variable v2 = t.getVariable2();
-      if (v1.equals(from)) v1 = to;
-      if (v2.equals(from)) v2 = to;
-      return new TestConstraint(v1, v2, t.getTestSelection(), t.getTestParam());
     }
   }
 

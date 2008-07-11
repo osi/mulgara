@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jrdf.graph.URIReference;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintConjunction;
 import org.mulgara.query.ConstraintDifference;
@@ -40,9 +39,6 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.SingleTransitiveConstraint;
 import org.mulgara.query.TransitiveConstraint;
 import org.mulgara.query.WalkConstraint;
-import org.mulgara.resolver.relational.RelationalConstraint;
-import org.mulgara.resolver.test.TestConstraint;
-import org.mulgara.resolver.xsd.IntervalConstraint;
 
 /**
  * Identity transformation on constraint expressions.
@@ -61,10 +57,10 @@ public abstract class IdentityTransformer {
    * Builds a transformer, with identity constructors.
    */
   public IdentityTransformer() {
-    initialize(new ConsImpl(), new ConsInterval(), new ConsIs(), new ConsNegation(),
+    initialize(new ConsImpl(), new ConsIs(), new ConsNegation(),
          new ConsNotOccurs(), new ConsOccurs(), new ConsOccursLessThan(),
-         new ConsOccursMoreThan(), new ConsRelational(), new ConsSingleTransitive(),
-         new ConsTest(), new ConsTransitive(), new ConsWalk());
+         new ConsOccursMoreThan(), new ConsSingleTransitive(),
+         new ConsTransitive(), new ConsWalk());
   }
 
   /**
@@ -273,33 +269,12 @@ public abstract class IdentityTransformer {
     public Class<ConstraintNegation> getType() { return ConstraintNegation.class; }
   }
 
-  protected class ConsInterval implements ConstraintTypeCons<IntervalConstraint> {
-    public IntervalConstraint newConstraint(Constraint c) {
-      IntervalConstraint i = (IntervalConstraint)c;
-      return i.mutateTo(i.getVariables().iterator().next(), (URIReference)i.getModel());
-    }
-    public Class<IntervalConstraint> getType() { return IntervalConstraint.class; }
-  }
-
-  protected class ConsRelational implements ConstraintTypeCons<RelationalConstraint> {
-    public RelationalConstraint newConstraint(Constraint c) { throw new UnsupportedOperationException("Cannot transform a relational constraint"); }
-    public Class<RelationalConstraint> getType() { return RelationalConstraint.class; }
-  }
-
   protected class ConsSingleTransitive implements ConstraintTypeCons<SingleTransitiveConstraint> {
     public SingleTransitiveConstraint newConstraint(Constraint c) throws SymbolicTransformationException {
       SingleTransitiveConstraint s = (SingleTransitiveConstraint)c;
       return new SingleTransitiveConstraint(transformConstraint(s.getTransConstraint()));
     }
     public Class<SingleTransitiveConstraint> getType() { return SingleTransitiveConstraint.class; }
-  }
-
-  protected class ConsTest implements ConstraintTypeCons<TestConstraint> {
-    public TestConstraint newConstraint(Constraint c) {
-      TestConstraint t = (TestConstraint)c;
-      return new TestConstraint(t.getVariable1(), t.getVariable2(), t.getTestSelection(), t.getTestParam());
-    }
-    public Class<TestConstraint> getType() { return TestConstraint.class; }
   }
 
   protected class ConsTransitive implements ConstraintTypeCons<TransitiveConstraint> {
