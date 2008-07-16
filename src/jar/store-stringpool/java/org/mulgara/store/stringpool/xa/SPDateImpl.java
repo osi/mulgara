@@ -36,7 +36,9 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.*;
@@ -72,10 +74,35 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
 
   static final URI TYPE_URI = XSD.DATE_URI;
 
+  static final int MAX_LEN_NO_TIMEZONE = "-YYYY-MM-dd".length();
+
+  static final int TIMEZONE_LEN = "+00:00".length();
+
+  static final int MILLIS_IN_MINUTE = 60000;
+
+  static final DateTimeFormatter utcParser;
+
+  static final DateTimeFormatter tzParser;
+
+  static final DateTimeFormatter outputFormat;
+
   private Date date;
 
+  private int timezoneOffset = 0;
 
-  private SPDateImpl(Date date) {
+  static {
+    DateTimeFormatterBuilder b = new DateTimeFormatterBuilder();
+    b.appendYear(4, 4).appendLiteral('-').appendMonthOfYear(2).appendLiteral('-').appendDayOfMonth(2);
+    b.appendOptional(new DateTimeFormatterBuilder().appendTimeZoneOffset("", true, 2, 2).toParser());
+    utcParser = b.toFormatter().withZone(DateTimeZone.UTC);
+    b = new DateTimeFormatterBuilder();
+    tzParser = b.appendTimeZoneOffset("", true, 2, 2).toFormatter().withZone(DateTimeZone.UTC);
+    b = new DateTimeFormatterBuilder();
+    b.appendYear(4, 4).appendLiteral('-').appendMonthOfYear(2).appendLiteral('-').appendDayOfMonth(2).appendTimeZoneOffset("+00:00", true, 2, 2);
+    outputFormat = b.toFormatter();
+  }
+
+  private SPDateImpl(Date date, int timezoneOffset) {
     super(TYPE_ID, TYPE_URI);
 
     if (date == null) {
@@ -83,31 +110,47 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
     }
 
     this.date = date;
+    this.timezoneOffset = timezoneOffset;
   }
 
 
   SPDateImpl(ByteBuffer data) {
-    this(data.getLong());
+    this(data.getLong(), data.getInt());
   }
 
 
   SPDateImpl(long l) {
-    this(new Date(l));
+    this(new Date(l), 0);
   }
 
+  SPDateImpl(long l, int timezoneMinutes) {
+    this(new Date(l), timezoneMinutes);
+  }
+
+  SPDateImpl(long l, int timezoneHours, int timezoneMinutes) {
+    this(new Date(l), timezoneHours * 60 + timezoneMinutes);
+  }
 
   static SPDateImpl newInstance(String lexicalForm) {
-    DateTimeFormatter parser = ISODateTimeFormat.dateElementParser();
-    Date date = new Date(parser.parseDateTime(lexicalForm).getMillis());
-    return new SPDateImpl(date);
+    int minuteOffset = 0;
+    if (lexicalForm.length() > MAX_LEN_NO_TIMEZONE) {
+      int timezoneStart = lexicalForm.length() - TIMEZONE_LEN;
+      String timezone = lexicalForm.substring(timezoneStart);
+      minuteOffset = -(int)(tzParser.parseDateTime(timezone).getMillis() / MILLIS_IN_MINUTE);
+    } else {
+      minuteOffset = Integer.MIN_VALUE;
+    }
+    Date date = new Date(utcParser.parseDateTime(lexicalForm).getMillis());
+    return new SPDateImpl(date, minuteOffset);
   }
 
 
   /* from SPObject interface. */
 
   public ByteBuffer getData() {
-    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG);
+    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG + Constants.SIZEOF_INT);
     data.putLong(date.getTime());
+    data.putInt(timezoneOffset);
     data.flip();
     return data;
   }
@@ -119,7 +162,12 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
 
 
   public String getLexicalForm() {
-    return ISODateTimeFormat.date().print(date.getTime());
+    if (timezoneOffset == Integer.MIN_VALUE) {
+      // no timezone information
+      return ISODateTimeFormat.date().withZone(DateTimeZone.UTC).print(date.getTime());
+    }
+    DateTimeZone zone = DateTimeZone.forOffsetMillis(timezoneOffset * MILLIS_IN_MINUTE);
+    return outputFormat.withZone(zone).print(date.getTime());
   }
 
 
