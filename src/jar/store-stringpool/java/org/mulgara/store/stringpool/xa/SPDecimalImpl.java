@@ -34,7 +34,6 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.*;
 import org.mulgara.util.Constants;
 
@@ -43,6 +42,8 @@ import org.mulgara.util.Constants;
  * An SPTypedLiteral that represents xsd:decimal literals.
  * TODO This is currently implemented as a 64 bit (long) value.  xsd:decimal
  * and xsd:integer are not properly supported by this class.
+ * Also, decimal places are not held for floating point values, meaning
+ * that these values are not round-tripped.
  *
  * @created 2004-10-05
  *
@@ -63,34 +64,67 @@ import org.mulgara.util.Constants;
  */
 public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalImpl.class);
 
-  private long l;
+  private Number n;
+  
+  private byte decPlaces = 0;
 
   static final int TYPE_ID = 2; // Unique ID
 
 
   SPDecimalImpl(int subtypeId, URI typeURI, long l) {
     super(TYPE_ID, subtypeId, typeURI);
-    this.l = l;
+    n = l;
+  }
+
+
+  SPDecimalImpl(int subtypeId, URI typeURI, double d) {
+    super(TYPE_ID, subtypeId, typeURI);
+    n = d;
+  }
+
+
+  SPDecimalImpl(int subtypeId, URI typeURI, Number n) {
+    super(TYPE_ID, subtypeId, typeURI);
+    this.n = n;
   }
 
 
   SPDecimalImpl(int subtypeId, URI typeURI, ByteBuffer data) {
-    this(subtypeId, typeURI, data.getLong());
+    super(TYPE_ID, subtypeId, typeURI);
+    // decimal places stored + 1 so that 0 can indicate a Long
+    decPlaces = (byte)(data.get(Constants.SIZEOF_LONG) - 1);
+    if (decPlaces < 0) this.n = data.getLong();
+    else this.n = data.getDouble();
   }
 
 
   SPDecimalImpl(int subtypeId, URI typeURI, String lexicalForm) {
-    this(subtypeId, typeURI, Long.parseLong(lexicalForm));
+    super(TYPE_ID, subtypeId, typeURI);
+    int decPos = lexicalForm.indexOf('.');
+    if (decPos < 0) {
+      n = Long.valueOf(lexicalForm);
+    } else {
+      n = Double.valueOf(lexicalForm);
+      decPlaces = (byte)(lexicalForm.length() - decPos - 1);
+    }
   }
 
 
   /* from SPObject interface. */
 
   public ByteBuffer getData() {
-    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG);
-    data.putLong(l);
+    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG + 1);
+    // decimal places stored + 1 so that 0 can indicate a Long
+    if (n instanceof Long) {
+      data.putLong((Long)n);
+      data.put((byte)0);
+    } else {
+      data.putDouble((Double)n);
+      data.put((byte)(decPlaces + 1));
+    }
     data.flip();
     return data;
   }
@@ -102,7 +136,10 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
 
   public String getLexicalForm() {
-    return Long.toString(l);
+    if (n instanceof Long) return n.toString();
+    String result = String.format("%." + decPlaces + "f", (Double)n);
+    if (decPlaces == 0) result += ".";
+    return result;
   }
 
 
@@ -114,14 +151,20 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
     if (c != 0) return c;
 
     // Compare the longs.
-    return compare(l, ((SPDecimalImpl)o).l);
+    SPDecimalImpl di = (SPDecimalImpl)o;
+    // unequal type comparisons
+    if (n instanceof Long && di.n instanceof Long) {
+      return compare(n.longValue(), di.n.longValue());
+    } else {
+      return compare(n.doubleValue(), di.n.doubleValue());
+    }
   }
 
 
   /* from Object. */
 
   public int hashCode() {
-    return (int)(l * 7) | (int)(l >> 32);
+    return (int)(n.longValue() * 7) | (int)(n.longValue() >> 32);
   }
 
 
@@ -130,16 +173,20 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
     if (obj == null) return false;
 
     try {
-      return l == ((SPDecimalImpl)obj).l;
+      SPDecimalImpl di = (SPDecimalImpl)obj;
+      return n.equals(di.n);
     } catch (ClassCastException ex) {
       // obj was not an SPDecimalImpl.
       return false;
     }
   }
 
-
   static int compare(long l1, long l2) {
     return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+  }
+
+  static int compare(double d1, double d2) {
+    return d1 < d2 ? -1 : (d1 > d2 ? 1 : 0);
   }
 
 
@@ -157,7 +204,19 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
     }
 
     public int compare(ByteBuffer d1, ByteBuffer d2) {
-      return SPDecimalImpl.compare(d1.getLong(), d2.getLong());
+      if (d1.get(Constants.SIZEOF_LONG) == 0) {
+        if (d2.get(Constants.SIZEOF_LONG) == 0) {
+          return SPDecimalImpl.compare(d1.getLong(), d2.getLong());
+        } else {
+          return SPDecimalImpl.compare(d1.getLong(), d2.getDouble());
+        }
+      } else {
+        if (d2.get(Constants.SIZEOF_LONG) == 0) {
+          return SPDecimalImpl.compare(d1.getDouble(), d2.getLong());
+        } else {
+          return SPDecimalImpl.compare(d1.getDouble(), d2.getDouble());
+        }
+      }
     }
 
   }
