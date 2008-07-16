@@ -59,7 +59,7 @@
 </rdf:Description>
 
 <rdf:Description>
-  <owl:sameIndividualAs rdf:datatype="&xsd;date">2004-02-14</owl:sameIndividualAs>
+  <owl:sameIndividualAs rdf:datatype="&xsd;date">2004-02-14-05:00</owl:sameIndividualAs>
   <rdfs:label xml:lang="en">Valentine's Day</rdfs:label>
 </rdf:Description>
 
