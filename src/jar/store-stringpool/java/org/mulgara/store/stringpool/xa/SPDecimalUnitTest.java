@@ -45,27 +45,19 @@ import org.mulgara.util.Constants;
  */
 public class SPDecimalUnitTest extends TestCase {
 
-  private static final String VALID_XSD_DECIMAL1 = "1001";
+  private static final String VALID_XSD_DECIMAL1 = "101";
 
   private static final String VALID_XSD_DECIMAL2 = "1001.";
 
-  private static final String VALID_XSD_DECIMAL3 = "1001.0";
+  private static final String VALID_XSD_DECIMAL3 = "1021.0";
 
-  private static final String VALID_XSD_DECIMAL4 = "1001.2";
+  private static final String VALID_XSD_DECIMAL4 = "-1";
 
-  private static final String VALID_XSD_DECIMAL5 = "1001.230";
-
-  private static final String VALID_XSD_DECIMAL6 = "0.1234";
-
-  private static final String VALID_XSD_DECIMAL7 = "0.123400";
-
-  private static final String VALID_XSD_DECIMAL8 = "-1";
-
-  private static final String VALID_XSD_DECIMAL9 = "0";
+  private static final String VALID_XSD_DECIMAL5 = "0";
 
   private static final String INVALID_XSD_DECIMAL = "x";
   private static final String INVALID_XSD_DECIMAL2 = "0x";
-  private static final String INVALID_XSD_DECIMAL3 = " 10";
+  private static final String INVALID_XSD_DECIMAL3 = "10.10";
 
   /**
    * Constructs a new test with the given name.
@@ -112,10 +104,6 @@ public class SPDecimalUnitTest extends TestCase {
     validTest(VALID_XSD_DECIMAL3, factory);
     validTest(VALID_XSD_DECIMAL4, factory);
     validTest(VALID_XSD_DECIMAL5, factory);
-    validTest(VALID_XSD_DECIMAL6, factory);
-    validTest(VALID_XSD_DECIMAL7, factory);
-    validTest(VALID_XSD_DECIMAL8, factory);
-    validTest(VALID_XSD_DECIMAL9, factory);
 
     SPDecimalImpl dec = (SPDecimalImpl)factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL1);
 
@@ -123,19 +111,16 @@ public class SPDecimalUnitTest extends TestCase {
     ByteBuffer dtBytes = dec.getData();
 
     long dLong = dtBytes.getLong();
-    byte dByte = dtBytes.get();
 
     // Test the correct value is stored
     assertEquals(VALID_XSD_DECIMAL1, Long.toString(dLong));
-    assertEquals((byte)0, dByte);
 
     // Byte buffer to hold our decimal information
-    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG + 1]);
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
 
     // If the previous step passed then we know the long value is what we want,
     // so store it in our buffer
     buffer.putLong(dLong);
-    buffer.put((byte)0);
 
     // Reset the buffer for reading
     buffer.flip();
@@ -145,40 +130,22 @@ public class SPDecimalUnitTest extends TestCase {
 
     // Test that the lexical form of the decimal is correct
     assertEquals(VALID_XSD_DECIMAL1, dec.getLexicalForm());
-
-    dec = (SPDecimalImpl)factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL2);
-
-    // Retrieve the byte data of the decimal object
-    dtBytes = dec.getData();
-
-    double dDbl = dtBytes.getDouble();
-    dByte = dtBytes.get();
-
-    // Test the correct value is stored
-    assertEquals(VALID_XSD_DECIMAL2, String.format("%.0f.", dDbl));
-    assertEquals((byte)1, dByte);
   }
 
   private void validTest(String number, SPDecimalFactory factory) throws Exception {
     // Create a decimal object by lexical string
     SPDecimalImpl d = (SPDecimalImpl)factory.newSPTypedLiteral(XSD.DECIMAL_URI, number);
 
+    if (number.contains(".")) number = number.substring(0, number.indexOf('.'));
     // Test that the lexical form of the decimal is correct
     assertEquals(number, d.getLexicalForm());
 
     // Retrieve the byte data of the decimal object
     ByteBuffer dtBytes = d.getData();
 
-    // Retrieve the long and in values from the buffer
-    byte places = (byte)(dtBytes.get(Constants.SIZEOF_LONG) - 1);
-
     // Create a decimal object from the decimal's long
     SPDecimalImpl dDec;
-    if (places < 0) {
-      dDec = new SPDecimalImpl(0, XSD.DECIMAL_URI, dtBytes.getLong());
-    } else {
-      dDec = new SPDecimalImpl(0, XSD.DECIMAL_URI, dtBytes.getDouble());
-    }
+    dDec = new SPDecimalImpl(0, XSD.DECIMAL_URI, dtBytes.getLong());
 
     assertEquals(d, dDec);
 
@@ -211,12 +178,11 @@ public class SPDecimalUnitTest extends TestCase {
     // Create a new factory
     SPDecimalFactory factory = new SPDecimalFactory();
 
-    // 6 < 1 < 5
     SPDecimalImpl t1, t2, t3;
 
-    t1 = (SPDecimalImpl) factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL6);
-    t2 = (SPDecimalImpl) factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL1);
-    t3 = (SPDecimalImpl) factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL5);
+    t1 = (SPDecimalImpl) factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL1);
+    t2 = (SPDecimalImpl) factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL2);
+    t3 = (SPDecimalImpl) factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL3);
 
     assertTrue(t1.compareTo(t1) == 0);
     assertTrue(t1.compareTo(t2) == -1);

@@ -67,37 +67,20 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalImpl.class);
 
-  private Number n;
+  private Long l;
   
-  private byte decPlaces = 0;
-
   static final int TYPE_ID = 2; // Unique ID
 
 
   SPDecimalImpl(int subtypeId, URI typeURI, long l) {
     super(TYPE_ID, subtypeId, typeURI);
-    n = l;
-  }
-
-
-  SPDecimalImpl(int subtypeId, URI typeURI, double d) {
-    super(TYPE_ID, subtypeId, typeURI);
-    n = d;
-  }
-
-
-  SPDecimalImpl(int subtypeId, URI typeURI, Number n) {
-    super(TYPE_ID, subtypeId, typeURI);
-    this.n = n;
+    this.l = l;
   }
 
 
   SPDecimalImpl(int subtypeId, URI typeURI, ByteBuffer data) {
     super(TYPE_ID, subtypeId, typeURI);
-    // decimal places stored + 1 so that 0 can indicate a Long
-    decPlaces = (byte)(data.get(Constants.SIZEOF_LONG) - 1);
-    if (decPlaces < 0) this.n = data.getLong();
-    else this.n = data.getDouble();
+    this.l = data.getLong();
   }
 
 
@@ -105,10 +88,12 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
     super(TYPE_ID, subtypeId, typeURI);
     int decPos = lexicalForm.indexOf('.');
     if (decPos < 0) {
-      n = Long.valueOf(lexicalForm);
+      l = Long.valueOf(lexicalForm);
     } else {
-      n = Double.valueOf(lexicalForm);
-      decPlaces = (byte)(lexicalForm.length() - decPos - 1);
+      for (int i = decPos + 1; i < lexicalForm.length(); i++) {
+        if (lexicalForm.charAt(i) != '0') throw new NumberFormatException("Fractional value in integer: " + lexicalForm);
+      }
+      l = Long.valueOf(lexicalForm.substring(0, decPos));
     }
   }
 
@@ -116,15 +101,8 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
   /* from SPObject interface. */
 
   public ByteBuffer getData() {
-    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG + 1);
-    // decimal places stored + 1 so that 0 can indicate a Long
-    if (n instanceof Long) {
-      data.putLong((Long)n);
-      data.put((byte)0);
-    } else {
-      data.putDouble((Double)n);
-      data.put((byte)(decPlaces + 1));
-    }
+    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG);
+    data.putLong(l);
     data.flip();
     return data;
   }
@@ -136,10 +114,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
 
   public String getLexicalForm() {
-    if (n instanceof Long) return n.toString();
-    String result = String.format("%." + decPlaces + "f", (Double)n);
-    if (decPlaces == 0) result += ".";
-    return result;
+    return l.toString();
   }
 
 
@@ -152,19 +127,14 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
     // Compare the longs.
     SPDecimalImpl di = (SPDecimalImpl)o;
-    // unequal type comparisons
-    if (n instanceof Long && di.n instanceof Long) {
-      return compare(n.longValue(), di.n.longValue());
-    } else {
-      return compare(n.doubleValue(), di.n.doubleValue());
-    }
+    return compare(l.longValue(), di.l.longValue());
   }
 
 
   /* from Object. */
 
   public int hashCode() {
-    return (int)(n.longValue() * 7) | (int)(n.longValue() >> 32);
+    return (int)(l * 7) | (int)(l >> 32);
   }
 
 
@@ -174,7 +144,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
     try {
       SPDecimalImpl di = (SPDecimalImpl)obj;
-      return n.equals(di.n);
+      return l.equals(di.l);
     } catch (ClassCastException ex) {
       // obj was not an SPDecimalImpl.
       return false;
@@ -183,10 +153,6 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
   static int compare(long l1, long l2) {
     return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
-  }
-
-  static int compare(double d1, double d2) {
-    return d1 < d2 ? -1 : (d1 > d2 ? 1 : 0);
   }
 
 
@@ -204,19 +170,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
     }
 
     public int compare(ByteBuffer d1, ByteBuffer d2) {
-      if (d1.get(Constants.SIZEOF_LONG) == 0) {
-        if (d2.get(Constants.SIZEOF_LONG) == 0) {
-          return SPDecimalImpl.compare(d1.getLong(), d2.getLong());
-        } else {
-          return SPDecimalImpl.compare(d1.getLong(), d2.getDouble());
-        }
-      } else {
-        if (d2.get(Constants.SIZEOF_LONG) == 0) {
-          return SPDecimalImpl.compare(d1.getDouble(), d2.getLong());
-        } else {
-          return SPDecimalImpl.compare(d1.getDouble(), d2.getDouble());
-        }
-      }
+      return SPDecimalImpl.compare(d1.getLong(), d2.getLong());
     }
 
   }

@@ -177,8 +177,14 @@ public class SPObjectFactoryImpl implements SPObjectFactory {
 
 
   public SPTypedLiteral newSPTypedLiteral(String lexicalForm, URI typeURI) {
-    return SPTypedLiteralRegistry.getSPTypedLiteralFactory(typeURI).
-        newSPTypedLiteral(typeURI, lexicalForm);
+    try {
+      return SPTypedLiteralRegistry.getSPTypedLiteralFactory(typeURI).
+          newSPTypedLiteral(typeURI, lexicalForm);
+    } catch (Exception e) {
+      // catch any parsing problems, and store in an "untyped" way
+      return SPTypedLiteralRegistry.getSPTypedLiteralFactory(UnknownSPTypedLiteralImpl.TYPE_ID).
+          newSPTypedLiteral(typeURI, lexicalForm);
+    }
   }
 
 
