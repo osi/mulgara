@@ -119,7 +119,7 @@ public final class AVLNode {
   /** Whether or not this node has been modified. */
   private boolean dirty;
 
-  //  private Throwable trace;
+  //  private StackTrace trace;
 
   /** The number of references to this node. */
   private int refCount;
@@ -1135,7 +1135,7 @@ public final class AVLNode {
     this.leftChildNode = null;
     this.rightChildNode = null;
 
-    //X    trace = new Throwable();
+    //X    trace = new StackTrace();
     refCount = 1;
     writable = false;
     dirty = false;
@@ -1161,7 +1161,7 @@ public final class AVLNode {
     this.leftChildNode = null;
     this.rightChildNode = null;
 
-    //X    trace = new Throwable();
+    //X    trace = new StackTrace();
     refCount = 1;
     writable = true;
     dirty = true;
@@ -1519,7 +1519,7 @@ public final class AVLNode {
 
   //X  protected void finalize() {
   //X    if (trace != null) logger.warn(
-  //X      "Unpooled AVLNode.  refCount=" + refCount + ", dirty=" + dirty, trace
+  //X      "Unpooled AVLNode.  refCount=" + refCount + ", dirty=" + dirty + "\n " + trace
   //X    );
   //X  }
 

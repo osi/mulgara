@@ -3,6 +3,7 @@ package org.mulgara.store.xa;
 import org.apache.log4j.Logger;
 
 import org.mulgara.query.TuplesException;
+import org.mulgara.util.StackTrace;
 
 /**
  *
@@ -29,7 +30,7 @@ public abstract class CacheLine implements Cloneable {
 
   protected final int segmentSize;
 
-  protected Throwable closed;
+  protected StackTrace closed;
   protected int firstCloser;
 
 
@@ -69,12 +70,12 @@ public abstract class CacheLine implements Cloneable {
 
   public void close(int closer) throws TuplesException {
     if (closed != null) {
-      logger.error("Attempt to close CacheLine twice by " + closer, new Throwable());
-      logger.error("    First closed at ", closed);
+      logger.error("Attempt to close CacheLine twice by " + closer + new StackTrace());
+      logger.error("    First closed at " + closed);
       logger.error("    First closed by " + firstCloser);
       throw new TuplesException("Attempt to close CacheLine twice");
     }
-    closed = new Throwable();
+    closed = new StackTrace();
     firstCloser = closer;
   }
 

@@ -23,10 +23,7 @@ package org.mulgara.resolver;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -34,11 +31,10 @@ import org.apache.log4j.Logger;
 // Local packages
 import org.mulgara.resolver.spi.DatabaseMetadata;
 import org.mulgara.resolver.spi.EnlistableResource;
-import org.mulgara.resolver.spi.ResolverSessionFactory;
+import org.mulgara.util.StackTrace;
 
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.TuplesException;
-import org.mulgara.query.QueryException;
 
 /**
  * Responsible for the javax.transaction.Transaction object.
@@ -455,6 +451,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
    * from abortTransaction().
    * Post-condition: The transaction is terminated and cleaned up.
    */
+  @SuppressWarnings("finally")
   MulgaraTransactionException implicitRollback(Throwable cause) throws MulgaraTransactionException {
     try {
       report("Implicit Rollback triggered");
@@ -508,6 +505,17 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     } finally {
       report("Leaving implicitRollback");
     }
+  }
+
+  /**
+   * Calls through to {@link #abortTransaction(String,Throwable)} passing the message in
+   * the cause as the message for the transaction abort.
+   * @param cause The state triggering the abort.
+   * @return The exception for aborting.
+   * @throws MulgaraTransactionException Indicated failure to cleanly abort.
+   */
+  public MulgaraTransactionException abortTransaction(Throwable cause) throws MulgaraTransactionException {
+    return abortTransaction(cause.getMessage(), cause);
   }
 
   /**
@@ -705,7 +713,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     if (state != State.FINISHED && state != State.FAILED) {
       errorReport("Finalizing incomplete transaction - aborting...", null);
       try {
-        abortTransaction("Transaction finalized while still valid", new Throwable());
+        abortTransaction(new MulgaraTransactionException("Transaction finalized while still valid"));
       } catch (Throwable th) {
         errorReport("Attempt to abort transaction from finalize failed", th);
       }
@@ -735,7 +743,12 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   private void errorReport(String desc, Throwable cause) {
-    logger.error(desc + ": " + System.identityHashCode(this) + ", state=" + state +
-        ", inuse=" + inuse + ", using=" + using, cause != null ? cause : new Throwable());
+    if (cause != null) {
+      logger.error(desc + ": " + System.identityHashCode(this) + ", state=" + state +
+          ", inuse=" + inuse + ", using=" + using, cause);
+    } else {
+      logger.error(desc + ": " + System.identityHashCode(this) + ", state=" + state +
+          ", inuse=" + inuse + ", using=" + using + "\n" + new StackTrace());
+    }
   }
 }

@@ -54,6 +54,7 @@ import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XANodePool;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAStringPool;
+import org.mulgara.util.StackTrace;
 
 /**
  * A database session.
@@ -132,7 +133,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
   ) {
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Constructing StringPoolSession " + System.identityHashCode(this), new Throwable());
+      logger.debug("Constructing StringPoolSession " + System.identityHashCode(this) + "\n" + new StackTrace());
     }
 
     assert databaseURI.getFragment() == null;

@@ -21,19 +21,14 @@ package org.mulgara.resolver;
 // Java2 packages
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-// Third party packages
-import org.apache.log4j.Logger;
-
 // Local packages
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.QueryException;
-import org.mulgara.transaction.TransactionManagerFactory;
 import org.mulgara.util.Assoc1toNMap;
 
 /**
@@ -233,7 +228,7 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
     acquireMutex();
     try {
       if (writeTransaction != null) {
-        writeTransaction.abortTransaction("Explicit abort requested by write-lock manager", new Throwable());
+        writeTransaction.abortTransaction(new MulgaraTransactionException("Explicit abort requested by write-lock manager"));
         writeTransaction = null;
       }
     } finally {

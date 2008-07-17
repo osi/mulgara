@@ -28,7 +28,6 @@ package org.mulgara.store.statement.xa;
 
 // Java 2 standard packages
 import java.io.*;
-import java.nio.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -41,12 +40,11 @@ import org.mulgara.query.Constraint;
 import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.store.*;
 import org.mulgara.store.statement.*;
-import org.mulgara.store.statement.xa.*;
 import org.mulgara.store.tuples.*;
 import org.mulgara.store.xa.*;
 import org.mulgara.util.Constants;
+import org.mulgara.util.StackTrace;
 
 /**
  * @created 2001-10-13
@@ -1666,8 +1664,9 @@ public final class TripleAVLFile {
     private final class TuplesImpl implements StoreTuples {
 
       // keep a stack trace of the instantiation of this object
-      private Throwable stack = logger.isDebugEnabled() ? new Throwable() : null;
-      private List objectIds = new ArrayList();
+      @SuppressWarnings("unused")
+      private StackTrace stack = logger.isDebugEnabled() ? new StackTrace() : null;
+      private List<Integer> objectIds = new ArrayList<Integer>();
 
       private long[] startTriple;
 
@@ -1683,6 +1682,7 @@ public final class TripleAVLFile {
 
       private boolean nrTriplesValid = false;
 
+      @SuppressWarnings("unused")
       private int prefixLength;
 
       private int[] columnMap;
@@ -2070,8 +2070,8 @@ public final class TripleAVLFile {
 
           copy.variables = getVariables();
 
-          copy.stack = logger.isDebugEnabled() ? new Throwable() : null;
-          copy.objectIds = new ArrayList(objectIds);
+          copy.stack = logger.isDebugEnabled() ? new StackTrace() : null;
+          copy.objectIds = new ArrayList<Integer>(objectIds);
           copy.objectIds.add(new Integer(System.identityHashCode(this)));
 
           return copy;
@@ -2108,7 +2108,7 @@ public final class TripleAVLFile {
       public void finalize() {
         if (logger.isDebugEnabled()) {
           if (stack != null) {
-            logger.debug("TuplesImpl not closed (" + System.identityHashCode(this) + ")", stack);
+            logger.debug("TuplesImpl not closed (" + System.identityHashCode(this) + ")\n" + stack);
             logger.debug("----Provenance : " + objectIds);
           }
         }

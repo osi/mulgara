@@ -230,7 +230,7 @@ public class MulgaraXAResourceContext {
         try {
           if (!xa.isHeuristicallyRollbacked()) {
             try {
-              xa.abortTransaction("External XA Manager specified 'forget'", new Throwable());
+              xa.abortTransaction(new MulgaraTransactionException("External XA Manager specified 'forget'"));
             } catch (MulgaraTransactionException em) {
               logger.error("Failed to abort transaction in forget", em);
               throw new XAException(XAException.XAER_RMERR);

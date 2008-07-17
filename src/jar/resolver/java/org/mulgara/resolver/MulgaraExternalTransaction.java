@@ -93,6 +93,17 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
   public void reference() throws MulgaraTransactionException {}  
   public void dereference() throws MulgaraTransactionException {}
 
+  /**
+   * Calls through to {@link #abortTransaction(String,Throwable)} passing the message in
+   * the cause as the message for the transaction abort.
+   * @param cause The state triggering the abort.
+   * @return The exception for aborting.
+   * @throws MulgaraTransactionException Indicated failure to cleanly abort.
+   */
+  public MulgaraTransactionException abortTransaction(Throwable cause) throws MulgaraTransactionException {
+    return abortTransaction(cause.getMessage(), cause);
+  }
+
   public MulgaraTransactionException abortTransaction(String errorMessage, Throwable cause)
       throws MulgaraTransactionException {
     report("abortTransaction");

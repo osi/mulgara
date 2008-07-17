@@ -54,6 +54,12 @@ public interface MulgaraTransaction {
   void dereference() throws MulgaraTransactionException;
 
   /**
+   * Calls through to {@link #abortTransaction(String, Throwable)} to force the transaction
+   * to be abandoned, using the same message as is present in the cause.
+   */
+  MulgaraTransactionException abortTransaction(Throwable cause) throws MulgaraTransactionException;
+
+  /**
    * Forces the transaction to be abandoned, including bypassing JTA to directly
    * rollback/abort the underlying store-phases if required.
    * This this transaction is externally managed this amounts to a heuristic

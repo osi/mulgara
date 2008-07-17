@@ -24,15 +24,11 @@ package org.mulgara.resolver;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -41,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.transaction.TransactionManagerFactory;
 import org.mulgara.util.Assoc1toNMap;
+import org.mulgara.util.StackTrace;
 
 /**
  * Implements the internal transaction controls offered by Session.
@@ -255,7 +252,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
           } else {
             // AutoCommit off -> off === no-op. Log info.
             if (logger.isInfoEnabled()) {
-              logger.info("Attempt to set autocommit false twice", new Throwable());
+              logger.info("Attempt to set autocommit false twice\n" + new StackTrace());
             }
           }
         }
@@ -413,7 +410,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     acquireMutex();
     try {
       if (writeTransaction != null) {
-        writeTransaction.abortTransaction("Explicit abort requested by write-lock manager", new Throwable());
+        writeTransaction.abortTransaction(new MulgaraTransactionException("Explicit abort requested by write-lock manager"));
         writeTransaction = null;
       }
     } finally {

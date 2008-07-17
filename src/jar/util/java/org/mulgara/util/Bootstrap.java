@@ -139,8 +139,7 @@ public class Bootstrap extends URLClassLoader {
       addToSystemClasspath(jarURLs);
     }
     catch (Exception e) {
-      new Throwable("Failed to add Embedded Jars to the System Classpath",
-          e).printStackTrace();
+      new Exception("Failed to add Embedded Jars to the System Classpath", e).printStackTrace();
     }
 
     // set the list of URLs

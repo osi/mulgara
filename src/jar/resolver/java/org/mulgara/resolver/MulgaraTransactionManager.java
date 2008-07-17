@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 // Local packages
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.transaction.TransactionManagerFactory;
+import org.mulgara.util.StackTrace;
 
 /**
  * Manages the Write-Lock.
@@ -116,7 +117,7 @@ public class MulgaraTransactionManager {
       }
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Obtaining write lock", new Throwable());
+        logger.debug("Obtaining write lock\n" + new StackTrace());
       }
       sessionHoldingWriteLock = session;
     } finally {
@@ -144,7 +145,7 @@ public class MulgaraTransactionManager {
         throw new MulgaraTransactionException("Attempted to release write lock being held by another session");
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("Releasing writelock", new Throwable());
+        logger.debug("Releasing writelock\n" + new StackTrace());
       }
       sessionHoldingWriteLock = null;
       writeLockCondition.signal();

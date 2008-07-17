@@ -28,11 +28,8 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.beans.Beans;
-import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 // Third party packages
@@ -45,11 +42,11 @@ import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerException;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.content.ContentLoader;
-import org.mulgara.content.CorruptContentException;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
+import org.mulgara.util.StackTrace;
 
 /**
  *  Mediates access to ContentHandlers
@@ -71,8 +68,8 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
     Logger.getLogger(ContentHandlerManagerImpl.class.getName());
 
 
-  protected List contentHandlerList;
-  protected List contentLoaderList;
+  protected List<ContentHandler> contentHandlerList;
+  protected List<ContentLoader> contentLoaderList;
   protected ContentHandler defaultHandler;
 
   /**
@@ -83,8 +80,8 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
   ContentHandlerManagerImpl(ContentHandler defaultContentHandler)
     throws ContentHandlerException
   {
-    contentHandlerList  = new ArrayList();
-    contentLoaderList   = new ArrayList();
+    contentHandlerList  = new ArrayList<ContentHandler>();
+    contentLoaderList   = new ArrayList<ContentLoader>();
     this.defaultHandler = defaultContentHandler;
 
     contentHandlerList.add(defaultContentHandler);
@@ -106,12 +103,10 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
       throw new IllegalArgumentException("Content is null");
     }
 
-    Iterator i = contentHandlerList.iterator();
-    while (i.hasNext()) {
-      ContentHandler contentHandler = (ContentHandler)i.next();
+    for (ContentHandler contentHandler: contentHandlerList) {
       if (contentHandler.canParse(content)) {
         if ( logger.isInfoEnabled()) {
-          logger.info("Determined " + contentHandler.getClass() + " can parse content", new Throwable());
+          logger.info("Determined " + contentHandler.getClass() + " can parse content\n" + new StackTrace());
         }
         return contentHandler;
       }
@@ -166,7 +161,7 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
       throw new IllegalArgumentException("Null \"className\" parameter");
     }
 
-    Class contentHandlerClass;
+    Class<?> contentHandlerClass;
     try {
       contentHandlerClass = Class.forName(className);
     } catch (ClassNotFoundException e) {
@@ -192,7 +187,7 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
       contentHandlerList.add(handler);
 
       if (handler instanceof ContentLoader) {
-        contentLoaderList.add(handler);
+        contentLoaderList.add((ContentLoader)handler);
       }
     } catch (IllegalAccessException e) {
       logger.warn("Error generating content handler", e);
@@ -224,15 +219,9 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
   /**
    * @return head(filter(\x:x.canLoad(uri), contentLoaders)) or null if filter is empty.
    */
-  public ContentLoader getContentLoader(Content content)
-    throws ContentHandlerException, NotModifiedException
-  {
-    Iterator i = contentLoaderList.iterator();
-    while (i.hasNext()) {
-      ContentLoader loader = (ContentLoader)i.next();
-      if (loader.canParse(content)) {
-        return loader;
-      }
+  public ContentLoader getContentLoader(Content content) throws ContentHandlerException, NotModifiedException {
+    for (ContentLoader loader: contentLoaderList) {
+      if (loader.canParse(content)) return loader;
     }
 
     return null;

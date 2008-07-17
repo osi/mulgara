@@ -32,6 +32,7 @@ import java.io.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
+import org.mulgara.util.StackTrace;
 
 /**
  * A class that implements efficient copy-on-write semantics for a BlockFile.
@@ -301,7 +302,7 @@ public final class ManagedBlockFile {
         if (logger.isInfoEnabled()) {
           logger.info("File " + file +
               " may not have been closed properly on shutdown.\n  nrBlocks=" + nrBlocks +
-              "  nrValidBlocks=" + nrValidBlocks, new Throwable());
+              "  nrValidBlocks=" + nrValidBlocks + "\n" + new StackTrace());
         }
         blockFile.setNrBlocks(nrValidBlocks);
       }

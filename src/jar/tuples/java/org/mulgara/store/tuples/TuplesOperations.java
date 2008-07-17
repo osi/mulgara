@@ -41,6 +41,7 @@ import org.mulgara.query.filter.And;
 import org.mulgara.query.filter.Filter;
 import org.mulgara.query.filter.value.Bool;
 import org.mulgara.resolver.spi.*;
+import org.mulgara.util.StackTrace;
 
 /**
  * TQL answer. An answer is a set of solutions, where a solution is a mapping of
@@ -506,8 +507,8 @@ public abstract class TuplesOperations {
             // and then next should return true too.
             logger.error(
                 "No rows but getRowCardinality returned Cursor.ONE: (class=" +
-                tuples.getClass().getName() + ") " + tuples.toString(),
-                new Throwable()
+                tuples.getClass().getName() + ") " + tuples.toString() + "\n" +
+                new StackTrace()
             );
             throw new AssertionError(
                 "No rows but getRowCardinality returned Cursor.ONE"

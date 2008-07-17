@@ -28,10 +28,7 @@
 package org.mulgara.server.rmi;
 
 // Java 2 standard packages
-import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.Hashtable;
 
 // Third party packages
 import org.apache.log4j.*;
@@ -41,6 +38,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.server.rmi.AnswerPage;
+import org.mulgara.util.StackTrace;
 
 /**
  * Wrap a {@link RemoteAnswer} to make it into an {@link Answer}.
@@ -103,7 +101,7 @@ class RemoteAnswerWrapperAnswer
   /**
    * Keeps the stack trace of where the answer was originally closed.
    */
-  private Throwable closed;
+  private StackTrace closed;
 
   //
   // Constructor
@@ -220,7 +218,7 @@ class RemoteAnswerWrapperAnswer
         // make onFirstPage false if the page is invalid
         onFirstPage = (currentPage != null);
         // Abandon the last prefetched page, and start a new prefetch thread
-        prefetchThread = new PrefetchThread(new Throwable());
+        prefetchThread = new PrefetchThread(new StackTrace());
       }
     } catch (RemoteException er) {
       logger.warn("RemoteException thrown in beforeFirst", er);
@@ -252,9 +250,9 @@ class RemoteAnswerWrapperAnswer
 
     if (closed != null) {
       logger.warn("Was already closed at: " + closed);
-      throw new TuplesException("Attempting to close answer twice.", new Throwable());
+      throw new TuplesException("Attempting to close answer twice.\n" + new StackTrace());
     }
-    closed = new Throwable();
+    closed = new StackTrace();
 
     // no more references left, close the remote object
     try {
@@ -459,7 +457,7 @@ class RemoteAnswerWrapperAnswer
       page = remoteAnswer.nextPage();
     }
     // launch new prefetch thread
-    prefetchThread = new PrefetchThread(new Throwable());
+    prefetchThread = new PrefetchThread(new StackTrace());
 
     return page;
   }
@@ -512,12 +510,12 @@ class RemoteAnswerWrapperAnswer
     private boolean finished;
 
     /** Stack Trace for client-side invokation */
-    private Throwable caller;
+    private StackTrace caller;
 
     /**
      * Main constructor.  Starts the current thread.
      */
-    public PrefetchThread(Throwable caller) {
+    public PrefetchThread(StackTrace caller) {
 
       this.caller = caller;
       page = null;
@@ -536,8 +534,8 @@ class RemoteAnswerWrapperAnswer
         // finished will never be set
 
         // log exception and include the stack trace that created this Thread.
-        caller.initCause(e);
-        logger.warn("Exception thrown in prefetchThread.", caller);
+        logger.warn("Exception thrown in prefetchThread.\n" + caller);
+        logger.warn("Caused by", e);
       }
     }
 

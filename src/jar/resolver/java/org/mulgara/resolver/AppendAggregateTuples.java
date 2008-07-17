@@ -42,6 +42,7 @@ import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
+import org.mulgara.util.StackTrace;
 
 /**
  * Wrapper around a partially-evaluated {@link Tuples} instance, evaluating
@@ -229,7 +230,7 @@ class AppendAggregateTuples extends AbstractTuples {
 
   public void close() throws TuplesException {
     if (logger.isDebugEnabled()) {
-      logger.debug("closing AppendAggregateTuples " + hashCode(), new Throwable());
+      logger.debug("closing AppendAggregateTuples " + hashCode() + "\n" + new StackTrace());
     }
     for (Query query : queryList) {
       if (logger.isDebugEnabled()) {

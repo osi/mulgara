@@ -64,6 +64,7 @@ import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.RestrictPredicateFactory;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
+import org.mulgara.util.StackTrace;
 
 /**
  * Localized version of a global {@link Query}.
@@ -262,7 +263,7 @@ class LocalQueryResolver implements QueryEvaluationContext {
       }
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Stacktrace: ", new Throwable());
+        logger.debug(new StackTrace().toString());
       }
 
       Tuples result = ConstraintOperations.resolveConstraintExpression(this,

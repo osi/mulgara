@@ -51,24 +51,22 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
-import org.jrdf.graph.Literal;
 
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.TuplesException;
 import org.mulgara.resolver.relational.d2rq.D2RQDefn;
+import org.mulgara.util.StackTrace;
 
 public class LiteralDesc extends VariableDesc {
   private static Logger logger = Logger.getLogger(LiteralDesc.class);
 
-  private final String column = "_";
   private int index = -1;
   // p used for debugging purposes.
   private Variable p;
 
-  private Throwable t;
+  private StackTrace t;
 
   public LiteralDesc(D2RQDefn defn, Variable p) {
     super(defn);
@@ -115,8 +113,8 @@ public class LiteralDesc extends VariableDesc {
     }
     
     if (this.index != -1 && this.index != index) {
-      logger.warn("Reassigning index will fail, was assigned: ", this.t);
-      logger.warn("Reassigning index will fail, now assigned: ", new Throwable());
+      logger.warn("Reassigning index will fail, was assigned:\n" + this.t);
+      logger.warn("Reassigning index will fail, now assigned:\n" + new StackTrace());
       throw new IllegalArgumentException("Index assigned multiple values in union.  Non-union compatible selects formed. Old index = " + this.index + ", New index = " + index + ", p=" + p);
     }
 
@@ -124,7 +122,7 @@ public class LiteralDesc extends VariableDesc {
       logger.debug("Assigning index to LiteralDesc: " + System.identityHashCode(this) + "=" + index);
     }
     this.index = index;
-    this.t = new Throwable();
+    this.t = new StackTrace();
   }
 
   public String toString() {

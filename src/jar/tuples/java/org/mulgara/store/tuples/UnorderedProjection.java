@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
+import org.mulgara.util.StackTrace;
 
 /**
  * Rearrange columns, discarding any existing sort order. If columns need to be
@@ -157,7 +158,7 @@ class UnorderedProjection extends AbstractTuples {
 
     if (columnMapping[column] == ABSENT_COLUMN) {
       if (logger.isInfoEnabled()) {
-        logger.info(getVariables()[column] + " is never bound", new Throwable());
+        logger.info(getVariables()[column] + " is never bound\n " + new StackTrace());
       }
       return Tuples.UNBOUND;
     }
@@ -201,7 +202,7 @@ class UnorderedProjection extends AbstractTuples {
     if (columnMapping[column] == ABSENT_COLUMN) {
 
       if (logger.isInfoEnabled()) {
-        logger.info(getVariables()[column] + " is never bound", new Throwable());
+        logger.info(getVariables()[column] + " is never bound\n" + new StackTrace());
       }
 
       return true;

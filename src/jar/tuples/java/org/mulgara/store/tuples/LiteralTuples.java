@@ -34,8 +34,6 @@ import java.util.*;
 import org.apache.log4j.*;
 
 // Locally written packages
-import org.mulgara.query.Constraint;
-import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 
@@ -63,13 +61,10 @@ public class LiteralTuples extends AbstractTuples {
   /**
    * Logger.
    */
-  private static Logger logger =
-      Logger.getLogger(LiteralTuples.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(LiteralTuples.class.getName());
 
-  private int numberOfVariables;
-
-  private List tuples;
-  private Iterator tupleIterator;
+  private List<long[]> tuples;
 
   private int currentTuple;
   private boolean[] columnContainsUnbound;
@@ -77,7 +72,7 @@ public class LiteralTuples extends AbstractTuples {
   private boolean sorted;
 
   public LiteralTuples(String[] variableNames, boolean sorted) {
-    List vars = new ArrayList();
+    List<Variable> vars = new ArrayList<Variable>();
     for (int i = 0; i < variableNames.length; i++) {
       Variable v = new Variable(variableNames[i]);
       assert!vars.contains(v);
@@ -102,9 +97,8 @@ public class LiteralTuples extends AbstractTuples {
   }
 
   private void init(Variable[] variables, boolean sorted) {
-    tuples = new ArrayList();
+    tuples = new ArrayList<long[]>();
     currentTuple = 0;
-    tupleIterator = null;
     setVariables(Arrays.asList(variables));
     columnContainsUnbound = new boolean[variables.length];
     Arrays.fill(columnContainsUnbound, false);
@@ -130,9 +124,6 @@ public class LiteralTuples extends AbstractTuples {
 
 
   public void appendTuple(long[] tuple) throws TuplesException {
-    if (tupleIterator != null) {
-      throw new TuplesException("Can't append row after beforeFirst is called");
-    }
     if (tuple.length != getNumberOfVariables()) {
       throw new TuplesException("Arity of rows dosn't match arity of tuples");
     }
@@ -152,7 +143,7 @@ public class LiteralTuples extends AbstractTuples {
       throw new TuplesException("getColumnValue called before beforeFirst()");
     }
 
-    return ((long[]) tuples.get(currentTuple))[column];
+    return tuples.get(currentTuple)[column];
   }
 
   public long getRowCount() throws TuplesException {
@@ -191,11 +182,10 @@ public class LiteralTuples extends AbstractTuples {
     beforeFirst(Tuples.NO_PREFIX, 0);
   }
 
-  public void beforeFirst(long[] prefix,
-      int suffixTruncation) throws TuplesException {
-//    Throwable th = new Throwable();
+  public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
+//    StackTrace th = new StackTrace();
 //    th.fillInStackTrace();
-//    logger.debug("LiteralTuples[" + Arrays.asList(getVariables()) + "].beforeFirst called with prefix " + toString(prefix), th);
+//    logger.debug("LiteralTuples[" + Arrays.asList(getVariables()) + "].beforeFirst called with prefix " + toString(prefix) + "\n" + th);
 //    logger.debug("LiteralTuples[" + Arrays.asList(getVariables()) + "].beforeFirst called with prefix " + toString(prefix));
 
     assert suffixTruncation == 0;
@@ -204,7 +194,7 @@ public class LiteralTuples extends AbstractTuples {
 
     search:for (currentTuple = 0; currentTuple < tuples.size(); currentTuple++) {
       for (int j = 0; j < prefix.length; j++) {
-        if (((long[]) tuples.get(currentTuple))[j] != prefix[j]) {
+        if (tuples.get(currentTuple)[j] != prefix[j]) {
           continue search;
         }
       }
@@ -217,7 +207,7 @@ public class LiteralTuples extends AbstractTuples {
   public boolean next() throws TuplesException {
     if (++currentTuple < tuples.size()) {
       for (int j = 0; j < prefix.length; j++) {
-        if (((long[]) tuples.get(currentTuple))[j] != prefix[j]) {
+        if (tuples.get(currentTuple)[j] != prefix[j]) {
           return false;
         }
       }

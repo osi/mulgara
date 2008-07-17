@@ -51,6 +51,7 @@ import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.store.xa.AbstractBlockFile;
 import org.mulgara.store.xa.BlockFile;
+import org.mulgara.util.StackTrace;
 import org.mulgara.util.TempDir;
 
 /**
@@ -113,8 +114,8 @@ public final class HybridTuples implements Tuples {
 
   // Debugging.
   private final static Logger logger = Logger.getLogger(HybridTuples.class);
-  private Throwable allocated;
-  private Throwable closed;
+  private StackTrace allocated;
+  private StackTrace closed;
 
 
 
@@ -169,7 +170,7 @@ public final class HybridTuples implements Tuples {
     } else {
       this.tuples = TuplesOperations.empty();
     }
-    this.allocated = new Throwable();
+    this.allocated = new StackTrace();
   }
 
 
@@ -278,7 +279,7 @@ public final class HybridTuples implements Tuples {
       if (blockFile != null) {
         blockFileRefCount.refCount++;
       }
-      copy.allocated = new Throwable();
+      copy.allocated = new StackTrace();
       copy.tuples = (Tuples)tuples.clone();
 
       return copy;
@@ -306,13 +307,12 @@ public final class HybridTuples implements Tuples {
    */
   public void close() throws TuplesException {
     if (closed != null) {
-      logger.error("Attempt to close HybridTuples twice; first closed", closed);
-      logger.error("Attempt to close HybridTuples twice; second closed",
-          new Throwable());
-      logger.error("    allocated", allocated);
+      logger.error("Attempt to close HybridTuples twice; first closed: " + closed);
+      logger.error("Attempt to close HybridTuples twice; second closed: " + new StackTrace());
+      logger.error("    allocated: " + allocated);
       throw new TuplesException("Attempted to close HybribTuples more than once");
     }
-    closed = new Throwable();
+    closed = new StackTrace();
 
     for (int i = 0; i < heapCache.length; i++) {
       heapCache[i].close(System.identityHashCode(this));

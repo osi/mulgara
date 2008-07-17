@@ -36,6 +36,7 @@ import java.util.*;
 // Third party packages
 import org.apache.log4j.Logger;
 import org.mulgara.util.IntFile;
+import org.mulgara.util.StackTrace;
 
 /**
  * A fifo of integer items. A list of "phases" is maintained where each phase
@@ -946,7 +947,7 @@ public final class FreeList {
 
 
     /** Holds a stack trace of construction so we can tell where problems occurred. */
-    private Throwable stack = null;
+    private StackTrace stack = null;
 
 
     /**
@@ -973,7 +974,7 @@ public final class FreeList {
       }
       // record the stack if info is enabled
       if (logger.isInfoEnabled()) {
-        stack = new Throwable();
+        stack = new StackTrace();
       }
     }
 
@@ -1019,7 +1020,7 @@ public final class FreeList {
 
         // record the stack if info is enabled
         if (logger.isInfoEnabled()) {
-          stack = new Throwable();
+          stack = new StackTrace();
         }       
       }
     }
@@ -1225,7 +1226,7 @@ public final class FreeList {
 
       if ( (token == null) && (refCount > 0)) {
         if (logger.isInfoEnabled()) {
-          logger.info("Lost phase token.", stack);
+          logger.info("Lost phase token.\n" + stack);
         }
         refCount = 0;
       }
