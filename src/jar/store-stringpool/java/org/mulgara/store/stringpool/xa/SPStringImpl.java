@@ -228,7 +228,7 @@ public final class SPStringImpl extends AbstractSPObject implements SPString {
    * @return <code>true</code> if the character meets the pattern [a-zA-Z0-9]
    */
   private static boolean isAsciiLetterDigit(char c) {
-    return (c > 'A' && c < 'Z') || (c > 'a' && c < 'z') || (c > '0' && c < '9');
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9');
   }
 
   /**
@@ -237,7 +237,7 @@ public final class SPStringImpl extends AbstractSPObject implements SPString {
    * @return <code>true</code> if the character meets the pattern [a-zA-Z]
    */
   private static boolean isAsciiLetter(char c) {
-    return (c > 'A' && c < 'Z') || (c > 'a' && c < 'z');
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
   }
 }
 
