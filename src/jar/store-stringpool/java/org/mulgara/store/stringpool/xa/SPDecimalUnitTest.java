@@ -55,6 +55,8 @@ public class SPDecimalUnitTest extends TestCase {
 
   private static final String VALID_XSD_DECIMAL5 = "0";
 
+  private static final String VALID_XSD_DECIMAL6 = "+101";
+
   private static final String INVALID_XSD_DECIMAL = "x";
   private static final String INVALID_XSD_DECIMAL2 = "0x";
   private static final String INVALID_XSD_DECIMAL3 = "10.10";
@@ -104,6 +106,7 @@ public class SPDecimalUnitTest extends TestCase {
     validTest(VALID_XSD_DECIMAL3, factory);
     validTest(VALID_XSD_DECIMAL4, factory);
     validTest(VALID_XSD_DECIMAL5, factory);
+    validTest(VALID_XSD_DECIMAL6, factory);
 
     SPDecimalImpl dec = (SPDecimalImpl)factory.newSPTypedLiteral(XSD.DECIMAL_URI, VALID_XSD_DECIMAL1);
 
@@ -137,6 +140,7 @@ public class SPDecimalUnitTest extends TestCase {
     SPDecimalImpl d = (SPDecimalImpl)factory.newSPTypedLiteral(XSD.DECIMAL_URI, number);
 
     if (number.contains(".")) number = number.substring(0, number.indexOf('.'));
+    if (number.charAt(0) == '+') number = number.substring(1);
     // Test that the lexical form of the decimal is correct
     assertEquals(number, d.getLexicalForm());
 

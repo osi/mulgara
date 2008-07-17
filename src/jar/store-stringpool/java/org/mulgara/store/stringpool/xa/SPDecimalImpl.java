@@ -67,7 +67,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalImpl.class);
 
-  private Long l;
+  private long l;
   
   static final int TYPE_ID = 2; // Unique ID
 
@@ -86,6 +86,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
   SPDecimalImpl(int subtypeId, URI typeURI, String lexicalForm) {
     super(TYPE_ID, subtypeId, typeURI);
+    if (lexicalForm.charAt(0) == '+') lexicalForm = lexicalForm.substring(1);
     int decPos = lexicalForm.indexOf('.');
     if (decPos < 0) {
       l = Long.valueOf(lexicalForm);
@@ -114,7 +115,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
 
   public String getLexicalForm() {
-    return l.toString();
+    return Long.toString(l);
   }
 
 
@@ -127,7 +128,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
     // Compare the longs.
     SPDecimalImpl di = (SPDecimalImpl)o;
-    return compare(l.longValue(), di.l.longValue());
+    return compare(l, di.l);
   }
 
 
@@ -144,7 +145,7 @@ public final class SPDecimalImpl extends AbstractSPTypedLiteral {
 
     try {
       SPDecimalImpl di = (SPDecimalImpl)obj;
-      return l.equals(di.l);
+      return l == di.l;
     } catch (ClassCastException ex) {
       // obj was not an SPDecimalImpl.
       return false;
