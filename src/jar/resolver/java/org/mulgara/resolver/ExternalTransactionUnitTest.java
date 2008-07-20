@@ -2128,8 +2128,13 @@ public class ExternalTransactionUnitTest extends TestCase
         try {
           t1.join(100L);
         } catch (InterruptedException ie) {
-          logger.error("wait for thread-termination interrupted", ie);
-          fail(ie);
+          // this could be the interrupt from the close(), so try again
+          try {
+            t1.join(100L);
+          } catch (InterruptedException ie2) {
+            logger.error("wait for thread-termination interrupted", ie2);
+            fail(ie2);
+          }
         }
         assertFalse("second session should've terminated", t1.isAlive());
 
