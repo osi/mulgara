@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 // Local packages
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.DatabaseMetadata;
-import org.mulgara.resolver.spi.ResolverSessionFactory;
 import org.mulgara.resolver.spi.SingletonStatements;
 import org.mulgara.resolver.spi.SystemResolver;
 

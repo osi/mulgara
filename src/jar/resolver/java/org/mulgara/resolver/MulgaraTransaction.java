@@ -22,12 +22,10 @@ package org.mulgara.resolver;
 // Java 2 enterprise packages
 
 // Third party packages
-import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.resolver.spi.DatabaseMetadata;
 import org.mulgara.resolver.spi.EnlistableResource;
-import org.mulgara.resolver.spi.ResolverSessionFactory;
 
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.TuplesException;
@@ -71,6 +69,13 @@ public interface MulgaraTransaction {
    */
   MulgaraTransactionException abortTransaction(String errorMessage, Throwable cause) throws MulgaraTransactionException;
 
+  /**
+   * Perform a heuristic rollback on the transaction.
+   *
+   * @param cause the reason for the rollback
+   * @throws MulgaraTransactionException if an error is encounted while attempting to roll back;
+   *                                     the transaction will still have been terminated, though.
+   */
   void heuristicRollback(String cause) throws MulgaraTransactionException;
 
   /**
@@ -96,4 +101,11 @@ public interface MulgaraTransaction {
    * abort().
    */
   public void enlist(EnlistableResource enlistable) throws MulgaraTransactionException;
+
+  /**
+   * Returns the currentTimeMillis when the transaction last used;
+   *   -1 if it is currently in use; or
+   *    0 if it has never been used.
+   */
+  public long lastActive();
 }

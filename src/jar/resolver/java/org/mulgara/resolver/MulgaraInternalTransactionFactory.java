@@ -21,7 +21,6 @@
 package org.mulgara.resolver;
 
 // Java2 packages
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +35,6 @@ import org.apache.log4j.Logger;
 // Local packages
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.transaction.TransactionManagerFactory;
-import org.mulgara.util.Assoc1toNMap;
 import org.mulgara.util.StackTrace;
 
 /**
@@ -58,49 +56,60 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
   private static final Logger logger =
     Logger.getLogger(MulgaraInternalTransactionFactory.class.getName());
 
-  private boolean autoCommit;
-
   /** Set of sessions whose transactions have been rolledback.*/
-  private Set<DatabaseSession> failedSessions;
+  private boolean isFailed;
 
   /** Map of threads to active transactions. */
-  private Map<Thread, MulgaraTransaction> activeTransactions;
+  private final Map<Thread, MulgaraTransaction> activeTransactions;
 
-  private Assoc1toNMap<DatabaseSession, MulgaraTransaction> sessionXAMap;
+  /** Are we in auto-commit mode. */
+  public boolean autoCommit;
+
+  /** All uncompleted transactions (may be more than 1 because of unclosed answers) */
+  public final Set<MulgaraTransaction> transactions;
+
+  /** Currently associated explicit transaction */
+  public MulgaraInternalTransaction explicitXA;
 
   private final TransactionManager transactionManager;
 
-  public MulgaraInternalTransactionFactory(MulgaraTransactionManager manager, TransactionManagerFactory transactionManagerFactory) {
-    super(manager);
-    this.autoCommit = true;
+  public MulgaraInternalTransactionFactory(DatabaseSession session, MulgaraTransactionManager manager,
+                                           TransactionManagerFactory transactionManagerFactory) {
+    super(session, manager);
 
-    this.failedSessions = new HashSet<DatabaseSession>();
+    this.isFailed = false;
     this.activeTransactions = new HashMap<Thread, MulgaraTransaction>();
-    this.sessionXAMap = new Assoc1toNMap<DatabaseSession, MulgaraTransaction>();
+    this.autoCommit = true;
+    this.transactions = new HashSet<MulgaraTransaction>();
+    this.explicitXA = null;
 
     this.transactionManager = transactionManagerFactory.newTransactionManager();
+    try {
+      /* "disable" the TM's timeout because we implement timeouts ourselves; we also don't set
+       * it to our timeout because that can interfere with txn cleanup if the TM's timeout has
+       * fired by causing rollback or commit to fail.
+       */
+      this.transactionManager.setTransactionTimeout(Integer.MAX_VALUE);
+    } catch (SystemException es) {
+      logger.warn("Unable to disable transaction timeout on jta tm", es);
+    }
   }
 
-  public MulgaraTransaction getTransaction(final DatabaseSession session, boolean write)
-      throws MulgaraTransactionException {
-    acquireMutex();
+  public MulgaraTransaction getTransaction(boolean write) throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
-      if (manager.isHoldingWriteLock(session)) {
-        return writeTransaction;
+      if (explicitXA != null) {
+        return explicitXA;
       }
 
       try {
         MulgaraInternalTransaction transaction;
         if (write) {
-          runWithoutMutex(new TransactionOperation() {
-            public void execute() throws MulgaraTransactionException {
-              manager.obtainWriteLock(session);
-            }
-          });
+          manager.obtainWriteLock(session);
           try {
             assert writeTransaction == null;
             writeTransaction = transaction = 
-                new MulgaraInternalTransaction(this, session.newOperationContext(true));
+              new MulgaraInternalTransaction(this, session.newOperationContext(true));
           } catch (Throwable th) {
             manager.releaseWriteLock(session);
             throw new MulgaraTransactionException("Error creating write transaction", th);
@@ -109,7 +118,8 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
           transaction = new MulgaraInternalTransaction(this, session.newOperationContext(false));
         }
 
-        sessionXAMap.put(session, transaction);
+        transactions.add(transaction);
+        transactionCreated(transaction);
 
         return transaction;
       } catch (MulgaraTransactionException em) {
@@ -122,36 +132,25 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     }
   }
 
-  public Set<MulgaraTransaction> getTransactionsForSession(DatabaseSession session) {
-    acquireMutex();
-    try {
-      Set <MulgaraTransaction> xas = sessionXAMap.getN(session);
-      return xas == null ? Collections.<MulgaraTransaction>emptySet() : xas;
-    } finally {
-      releaseMutex();
-    }
-  }
-
-  public MulgaraTransaction newMulgaraTransaction(DatabaseOperationContext context)
-      throws MulgaraTransactionException {
-    return new MulgaraInternalTransaction(this, context);
+  public Set<MulgaraTransaction> getTransactions() {
+    return transactions;
   }
 
 
-  public void commit(DatabaseSession session) throws MulgaraTransactionException {
-    acquireMutex();
+  public void commit() throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
+      if (isFailed) {
+        throw new MulgaraTransactionException("Attempting to commit failed session");
+      } else if (!manager.isHoldingWriteLock(session)) {
+        throw new MulgaraTransactionException(
+            "Attempting to commit while not the current writing transaction");
+      }
+
       manager.reserveWriteLock(session);
       try {
-        if (failedSessions.contains(session)) {
-          throw new MulgaraTransactionException("Attempting to commit failed exception");
-        } else if (!manager.isHoldingWriteLock(session)) {
-          throw new MulgaraTransactionException(
-              "Attempting to commit while not the current writing transaction");
-        }
-
-        setAutoCommit(session, true);
-        setAutoCommit(session, false);
+        setAutoCommit(true);
+        setAutoCommit(false);
       } finally {
         manager.releaseReserve(session);
       }
@@ -166,17 +165,18 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
    * 
    * This needs to be distinguished from an implicit rollback triggered by failure.
    */
-  public void rollback(DatabaseSession session) throws MulgaraTransactionException {
-    acquireMutex();
+  public void rollback() throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
-      manager.reserveWriteLock(session);
-      try {
-        if (manager.isHoldingWriteLock(session)) {
+      if (manager.isHoldingWriteLock(session)) {
+        manager.reserveWriteLock(session);
+        try {
           try {
             writeTransaction.execute(new TransactionOperation() {
-                public void execute() throws MulgaraTransactionException {
-                  writeTransaction.heuristicRollback("Explicit Rollback");
-                }
+              public void execute() throws MulgaraTransactionException {
+                writeTransaction.dereference();
+                ((MulgaraInternalTransaction)writeTransaction).explicitRollback();
+              }
             });
             // FIXME: Should be checking status here, not writelock.
             if (manager.isHoldingWriteLock(session)) {
@@ -185,47 +185,46 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
                   new MulgaraTransactionException("Rollback failed to terminate write transaction"));
             }
           } finally {
-            failedSessions.add(session);
-            setAutoCommit(session, false);
+            explicitXA = null;
+            setAutoCommit(false);
           }
-        } else if (failedSessions.contains(session)) {
-          failedSessions.remove(session);
-          setAutoCommit(session, false);
-        } else {
-          throw new MulgaraTransactionException(
-              "Attempt to rollback while not in the current writing transaction");
+        } finally {
+          manager.releaseReserve(session);
         }
-      } finally {
-        manager.releaseReserve(session);
+      } else if (isFailed) {
+        explicitXA = null;
+        isFailed = false;
+        setAutoCommit(false);
+      } else {
+        throw new MulgaraTransactionException(
+            "Attempt to rollback while not in the current writing transaction");
       }
     } finally {
       releaseMutex();
     }
   }
 
-  public void setAutoCommit(DatabaseSession session, boolean autoCommit)
-      throws MulgaraTransactionException {
-    acquireMutex();
+  public void setAutoCommit(boolean autoCommit) throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
-      if (manager.isHoldingWriteLock(session) && failedSessions.contains(session)) {
+      if (manager.isHoldingWriteLock(session) && isFailed) {
         writeTransaction.abortTransaction("Session failed and still holding writeLock",
-            new MulgaraTransactionException("Failed Session in setAutoCommit"));
+                              new MulgaraTransactionException("Failed Session in setAutoCommit"));
       }
 
-      if (manager.isHoldingWriteLock(session) || failedSessions.contains(session)) {
+      if (manager.isHoldingWriteLock(session) || isFailed) {
         if (autoCommit) {
+          this.autoCommit = true;
+          this.explicitXA = null;
+
           // AutoCommit off -> on === branch on current state of transaction.
           if (manager.isHoldingWriteLock(session)) {
             // Within active transaction - commit and finalise.
             try {
-              runWithoutMutex(new TransactionOperation() {
+              writeTransaction.execute(new TransactionOperation() {
                 public void execute() throws MulgaraTransactionException {
-                  writeTransaction.execute(new TransactionOperation() {
-                    public void execute() throws MulgaraTransactionException {
-                      writeTransaction.dereference();
-                      ((MulgaraInternalTransaction)writeTransaction).commitTransaction();
-                    }
-                  });
+                  writeTransaction.dereference();
+                  ((MulgaraInternalTransaction)writeTransaction).commitTransaction();
                 }
               });
             } finally {
@@ -235,20 +234,14 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
               if (manager.isHoldingWriteLock(session)) {
                 manager.releaseWriteLock(session);
               }
-              this.autoCommit = true;
             }
-          } else if (failedSessions.contains(session)) {
+          } else if (isFailed) {
             // Within failed transaction - cleanup.
-            failedSessions.remove(session);
+            isFailed = false;
           }
         } else {
           if (!manager.isHoldingWriteLock(session)) {
-            if (failedSessions.contains(session)) {
-              failedSessions.remove(session);
-              setAutoCommit(session, false);
-            } else {
-              throw new IllegalStateException("Can't reach here");
-            }
+            throw new MulgaraTransactionException("Attempting set auto-commit false in failed session");
           } else {
             // AutoCommit off -> off === no-op. Log info.
             if (logger.isInfoEnabled()) {
@@ -257,13 +250,15 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
           }
         }
       } else {
+        explicitXA = null;
         if (autoCommit) {
           // AutoCommit on -> on === no-op.  Log info.
           logger.info("Attempting to set autocommit true without setting it false");
         } else {
           // AutoCommit on -> off == Start new transaction.
-          getTransaction(session, true); // Set's writeTransaction.
+          getTransaction(true); // Set's writeTransaction.
           writeTransaction.reference();
+          explicitXA = (MulgaraInternalTransaction) writeTransaction;
           this.autoCommit = false;
         }
       }
@@ -277,7 +272,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
   //
 
   public Transaction transactionStart(MulgaraTransaction transaction) throws MulgaraTransactionException {
-    acquireMutex();
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
       try {
         logger.info("Beginning Transaction");
@@ -304,7 +299,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
 
   public void transactionResumed(MulgaraTransaction transaction, Transaction jtaXA) 
       throws MulgaraTransactionException {
-    acquireMutex();
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
       if (activeTransactions.get(Thread.currentThread()) != null) {
         throw new MulgaraTransactionException(
@@ -312,7 +307,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
       } else if (activeTransactions.containsValue(transaction)) {
         throw new MulgaraTransactionException("Attempt to resume active transaction");
       }
-      
+
       try {
         transactionManager.resume(jtaXA);
         activeTransactions.put(Thread.currentThread(), transaction);
@@ -326,7 +321,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
 
   public Transaction transactionSuspended(MulgaraTransaction transaction)
       throws MulgaraTransactionException {
-    acquireMutex();
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
       try {
         if (transaction != activeTransactions.get(Thread.currentThread())) {
@@ -358,22 +353,34 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     }
   }
 
-  public void transactionComplete(MulgaraTransaction transaction) throws MulgaraTransactionException {
-    acquireMutex();
+  public void closingSession() throws MulgaraTransactionException {
+    acquireMutexWithInterrupt(0, MulgaraTransactionException.class);
     try {
+      try {
+        super.closingSession();
+      } finally {
+        transactions.clear();
+      }
+    } finally {
+      releaseMutex();
+    }
+  }
+
+  public void transactionComplete(MulgaraTransaction transaction) throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
+    try {
+      super.transactionComplete(transaction);
+
       logger.debug("Transaction Complete");
+
       if (transaction == writeTransaction) {
-        DatabaseSession session = sessionXAMap.get1(transaction);
-        if (session == null) {
-          throw new MulgaraTransactionException("No associated session found for write transaction");
-        }
         if (manager.isHoldingWriteLock(session)) {
           manager.releaseWriteLock(session);
           writeTransaction = null;
         }
       }
 
-      sessionXAMap.removeN(transaction);
+      transactions.remove(transaction);
       activeTransactions.remove(Thread.currentThread());
     } finally {
       releaseMutex();
@@ -381,37 +388,17 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
   }
 
   public void transactionAborted(MulgaraTransaction transaction) {
-    acquireMutex();
+    acquireMutex(0, RuntimeException.class);
     try {
       try {
         // Make sure this cleans up the transaction metadata - this transaction is DEAD!
-        if (transaction == writeTransaction) {
-          failedSessions.add(sessionXAMap.get1(transaction));
+        if (!autoCommit && transaction == writeTransaction) {
+          isFailed = true;
         }
         transactionComplete(transaction);
       } catch (Throwable th) {
         // FIXME: This should probably abort the entire server after logging the error!
         logger.error("Error managing transaction abort", th);
-      }
-    } finally {
-      releaseMutex();
-    }
-  }
-
-  public void setTransactionTimeout(int transactionTimeout) {
-    try {
-      transactionManager.setTransactionTimeout(transactionTimeout);
-    } catch (SystemException es) {
-      logger.warn("Unable to set transaction timeout: " + transactionTimeout, es);
-    }
-  }
-
-  void abortWriteTransaction() throws MulgaraTransactionException {
-    acquireMutex();
-    try {
-      if (writeTransaction != null) {
-        writeTransaction.abortTransaction(new MulgaraTransactionException("Explicit abort requested by write-lock manager"));
-        writeTransaction = null;
       }
     } finally {
       releaseMutex();

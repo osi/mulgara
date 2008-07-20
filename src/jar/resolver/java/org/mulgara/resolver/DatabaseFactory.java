@@ -100,6 +100,7 @@ public abstract class DatabaseFactory {
         uri,        // security domain
         new JotmTransactionManagerFactory(),
         config.getTransactionTimeout(),
+        config.getIdleTimeout(),
         config.getPersistentNodePoolFactory().getType(),
         subdir(directory, config.getPersistentNodePoolFactory().getDir()),
         config.getPersistentStringPoolFactory().getType(),

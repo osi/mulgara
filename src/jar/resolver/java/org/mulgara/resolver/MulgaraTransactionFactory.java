@@ -21,24 +21,19 @@
 package org.mulgara.resolver;
 
 // Java2 packages
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
+import java.util.Timer;
+import java.util.TimerTask;
 
 // Third party packages
 import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.MulgaraTransactionException;
-import org.mulgara.server.Session;
-import org.mulgara.transaction.TransactionManagerFactory;
 
 /**
  * Manages transactions within Mulgara.
@@ -63,26 +58,54 @@ import org.mulgara.transaction.TransactionManagerFactory;
  */
 
 public abstract class MulgaraTransactionFactory {
-  private static final Logger logger =
-    Logger.getLogger(MulgaraTransactionFactory.class.getName());
+  private static final Logger logger = Logger.getLogger(MulgaraTransactionFactory.class.getName());
+  private static final Timer reaperTimer = new Timer("Write-lock Reaper", true);
 
   protected final MulgaraTransactionManager manager;
-  
+
+  protected final DatabaseSession session;
+
+  private final Map<MulgaraTransaction, XAReaper> timeoutTasks;
+
   /**
    * Contains a reference the the current writing transaction IFF it is managed
    * by this factory.  If there is no current writing transaction, or if the
    * writing transaction is managed by a different factory then it is null.
+   *
+   * Modifications of this must be holding the mutexLock.
    */
   protected MulgaraTransaction writeTransaction;
 
-  private ReentrantLock mutex;
+  private Thread mutexHolder;
+  private int lockCnt;
 
-  protected MulgaraTransactionFactory(MulgaraTransactionManager manager) {
+  protected MulgaraTransactionFactory(DatabaseSession session, MulgaraTransactionManager manager) {
+    this.session = session;
     this.manager = manager;
-    this.mutex = new ReentrantLock();
+    this.timeoutTasks = new HashMap<MulgaraTransaction, XAReaper>();
+    this.mutexHolder = null;
+    this.lockCnt = 0;
     this.writeTransaction = null;
   }
 
+  protected void transactionCreated(MulgaraTransaction transaction) {
+    long idleTimeout = session.getIdleTimeout() > 0 ? session.getIdleTimeout() : 15*60*1000L;
+    long txnTimeout = session.getTransactionTimeout() > 0 ? session.getTransactionTimeout() : 60*60*1000L;
+    long now = System.currentTimeMillis();
+
+    synchronized (getMutexLock()) {
+      timeoutTasks.put(transaction, new XAReaper(transaction, now + txnTimeout, idleTimeout, now));
+    }
+  }
+
+  protected void transactionComplete(MulgaraTransaction transaction) throws MulgaraTransactionException {
+    synchronized (getMutexLock()) {
+      XAReaper reaper = timeoutTasks.remove(transaction);
+      if (reaper != null) {
+        reaper.cancel();
+      }
+    }
+  }
 
   /**
    * Obtain a transaction context associated with a DatabaseSession.
@@ -94,20 +117,21 @@ public abstract class MulgaraTransactionFactory {
    * otherwise creates a new transaction context and associates it with the
    * session.
    */
-  public abstract MulgaraTransaction getTransaction(final DatabaseSession session, boolean write)
+  public abstract MulgaraTransaction getTransaction(boolean write)
       throws MulgaraTransactionException;
-  
-  protected abstract Set<? extends MulgaraTransaction> getTransactionsForSession(DatabaseSession session);
+
+  protected abstract Set<? extends MulgaraTransaction> getTransactions();
 
   /**
    * Rollback, or abort all transactions associated with a DatabaseSession.
    *
    * Will only abort the transaction if the rollback attempt fails.
    */
-  public void closingSession(DatabaseSession session) throws MulgaraTransactionException {
-    acquireMutex();
-    logger.debug("Cleaning up any stale transactions on session close");
+  public void closingSession() throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
+      logger.debug("Cleaning up any stale transactions on session close");
+
       Map<MulgaraTransaction, Throwable> requiresAbort = new HashMap<MulgaraTransaction, Throwable>();
       try {
         Throwable error = null;
@@ -140,7 +164,7 @@ public abstract class MulgaraTransactionFactory {
           logger.debug("Session does not hold write-lock");
         }
 
-        for (MulgaraTransaction transaction : getTransactionsForSession(session)) {
+        for (MulgaraTransaction transaction : new HashSet<MulgaraTransaction>(getTransactions())) {
           try {
             // This is final so we can create the closure.
             final MulgaraTransaction xa = transaction;
@@ -168,11 +192,19 @@ public abstract class MulgaraTransactionFactory {
             logger.error("Error aborting transactions after heuristic rollback failure on session close", th);
           } catch (Throwable throw_away) { }
         }
+
+        synchronized (getMutexLock()) {
+          for (XAReaper reaper : timeoutTasks.values()) {
+            reaper.cancel();
+          }
+          timeoutTasks.clear();
+        }
       }
     } finally {
       releaseMutex();
     }
   }
+
 
   /**
    * Abort as many of the transactions as we can.
@@ -211,40 +243,169 @@ public abstract class MulgaraTransactionFactory {
     }
   }
 
-  /**
-   * Used to replace the built in monitor to allow it to be properly released
-   * during potentially blocking operations.  All potentially blocking
-   * operations involve writes, so in these cases the write-lock is reserved
-   * allowing the mutex to be safely released and then reobtained after the
-   * blocking operation concludes.
+  /** 
+   * Acquire the mutex. The mutex is re-entrant, but {@link #releaseMutex} must be called as many
+   * times as this is called.
+   *
+   * <p>We use our own implementation here (as opposed to, say, java.util.concurrent.Lock) so we
+   * can reliably get the current mutex-owner, and we use a lock around the mutex acquisition and
+   * release to do atomic tests and settting of additional variables associated with the mutex.
+   * 
+   * @param timeout how many milliseconds to wait for the mutex, or 0 to wait indefinitely
+   * @param T       the type of exception to throw on failure
+   * @throws T if the mutex could not be acquired, either due to a timeout or due to an interrupt
    */
-  protected void acquireMutex() {
-    mutex.lock();
-  }
-
-
-  protected void releaseMutex() {
-    if (!mutex.isHeldByCurrentThread()) {
-      throw new IllegalStateException("Attempt to release mutex without holding mutex");
-    }
-
-    mutex.unlock();
-  }
-
-  protected void runWithoutMutex(TransactionOperation proc) throws MulgaraTransactionException {
-    if (!mutex.isHeldByCurrentThread()) {
-      throw new IllegalStateException("Attempt to run procedure without holding mutex");
-    }
-    int holdCount = mutex.getHoldCount();
-    for (int i = 0; i < holdCount; i++) {
-      mutex.unlock();
-    }
-    try {
-      proc.execute();
-    } finally {
-      for (int i = 0; i < holdCount; i++) {
-        mutex.lock();
+  public final <T extends Throwable> void acquireMutex(long timeout, Class<T> exc) throws T {
+    synchronized (getMutexLock()) {
+      if (mutexHolder == Thread.currentThread()) {
+        lockCnt++;
+        return;
       }
+
+      long deadline = System.currentTimeMillis() + timeout;
+
+      while (mutexHolder != null) {
+        long wait = deadline - System.currentTimeMillis();
+        if (timeout == 0) {
+          wait = 0;
+        } else if (wait <= 0) {
+          throw newException(exc, "Timed out waiting to acquire lock");
+        }
+
+        try {
+          getMutexLock().wait(wait);
+        } catch (InterruptedException ie) {
+          throw newExceptionOrCause(exc, "Interrupted while waiting to acquire lock", ie);
+        }
+      }
+
+      mutexHolder = Thread.currentThread();
+      lockCnt = 1;
+    }
+  }
+
+  /** 
+   * Acquire the mutex, interrupting the existing holder if there is one. 
+   * 
+   * @param timeout how many milliseconds to wait for the mutex, or 0 to wait indefinitely
+   * @param T       the type of exception to throw on failure
+   * @throws T if the mutex could not be acquired, either due to a timeout or due to an interrupt
+   * @see #acquireMutex
+   */
+  public final <T extends Throwable> void acquireMutexWithInterrupt(long timeout, Class<T> exc) throws T {
+    synchronized (getMutexLock()) {
+      if (mutexHolder != null && mutexHolder != Thread.currentThread()) {
+        mutexHolder.interrupt();
+      }
+
+      acquireMutex(timeout, exc);
+    }
+  }
+
+  /** 
+   * Release the mutex. 
+   *
+   * @throws IllegalStateException is the mutex is not held by the current thread
+   */
+  public final void releaseMutex() {
+    synchronized (getMutexLock()) {
+      if (Thread.currentThread() != mutexHolder) {
+        throw new IllegalStateException("Attempt to release mutex without holding mutex");
+      }
+
+      assert lockCnt > 0;
+      if (--lockCnt <= 0) {
+        mutexHolder = null;
+        getMutexLock().notify();
+      }
+    }
+  }
+
+  /**
+   * @return the lock used to protect access to and to implement the mutex; must be held as shortly
+   *         as possible (no blocking operations)
+   */
+  public final Object getMutexLock() {
+    return session;
+  }
+
+  /**
+   * @return the current holder of the mutex, or null if none. Must hold the mutex-lock while
+   *         calling this.
+   */
+  public final Thread getMutexHolder() {
+    return mutexHolder;
+  }
+
+  public static <T extends Throwable> T newException(Class<T> exc, String msg) {
+    try {
+      return exc.getConstructor(String.class).newInstance(msg);
+    } catch (Exception e) {
+      throw new Error("Internal error creating " + exc, e);
+    }
+  }
+
+  public static <T extends Throwable> T newExceptionOrCause(Class<T> exc, String msg, Throwable cause) {
+    if (exc.isAssignableFrom(cause.getClass()))
+      return exc.cast(cause);
+    return exc.cast(newException(exc, msg).initCause(cause));
+  }
+
+  private class XAReaper extends TimerTask {
+    private final MulgaraTransaction transaction;
+    private final long txnDeadline;
+    private final long idleTimeout;
+
+    public XAReaper(MulgaraTransaction transaction, long txnDeadline, long idleTimeout, long lastActive) {
+      this.transaction = transaction;
+      this.txnDeadline = txnDeadline;
+      this.idleTimeout = idleTimeout;
+
+      if (lastActive <= 0)
+        lastActive = System.currentTimeMillis();
+      long nextWakeup = Math.min(txnDeadline, lastActive + idleTimeout);
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Transaction-reaper created, txn=" + transaction + ", txnDeadline=" + txnDeadline +
+                     ", idleTimeout=" + idleTimeout + ", nextWakeup=" + nextWakeup + ": " +
+                     System.identityHashCode(getMutexLock()));
+      }
+
+      reaperTimer.schedule(this, new Date(nextWakeup));
+    }
+
+    public void run() {
+      logger.debug("Transaction-reaper running, txn=" + transaction + ": " + System.identityHashCode(getMutexLock()));
+
+      long lastActive = transaction.lastActive();
+      long now = System.currentTimeMillis();
+
+      synchronized (getMutexLock()) {
+        if (timeoutTasks.remove(transaction) == null)
+          return;       // looks like we got cleaned up
+
+        if (now < txnDeadline && ((lastActive <= 0) || (now < lastActive + idleTimeout))) {
+          if (logger.isDebugEnabled())
+            logger.debug("Transaction still active: " + lastActive + " time: " + now + " idle-timeout: " + idleTimeout + " - rescheduling timer");
+
+          timeoutTasks.put(transaction, new XAReaper(transaction, txnDeadline, idleTimeout, lastActive));
+          return;
+        }
+      }
+
+      final String txnType = (now >= txnDeadline) ? "over-extended" : "inactive";
+      final String toType = (now >= txnDeadline) ? "transaction" : "idle";
+
+      logger.warn("Rolling back " + txnType + " transaction");
+      new Thread(toType + "-timeout executor") {
+        public void run() {
+          try {
+            transaction.heuristicRollback(toType + "-timeout");
+          } catch (MulgaraTransactionException em) {
+            logger.warn("Exception thrown while rolling back " + txnType + " transaction");
+          }
+        }
+      }.start();
     }
   }
 }

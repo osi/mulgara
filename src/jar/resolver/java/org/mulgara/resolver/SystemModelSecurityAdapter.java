@@ -29,10 +29,7 @@ package org.mulgara.resolver;
 
 // Local packages
 import org.mulgara.resolver.spi.NullSecurityAdapter;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.resolver.spi.SecurityAdapter;
-import org.mulgara.server.Session;
 import org.mulgara.store.nodepool.NodePool;
 
 /**

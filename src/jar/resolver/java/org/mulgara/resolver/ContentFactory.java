@@ -29,9 +29,6 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.MalformedURLException;
-import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.reflect.Constructor;

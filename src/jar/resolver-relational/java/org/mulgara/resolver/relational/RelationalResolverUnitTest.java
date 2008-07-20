@@ -235,6 +235,7 @@ public class RelationalResolverUnitTest extends TestCase {
                    null,                            // no security domain
                    new JotmTransactionManagerFactory(),
                    0,                               // default transaction timeout
+                   0,                               // default idle timeout
                    nodePoolFactoryClassName,        // persistent
                    new File(persistenceDirectory, "xaNodePool"),
                    stringPoolFactoryClassName,      // persistent

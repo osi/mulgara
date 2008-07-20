@@ -44,13 +44,12 @@ import org.apache.log4j.Logger;
 import org.jrdf.graph.*;
 
 // Local packages
-import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.rules.*;
 import org.mulgara.server.Session;
-import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.transaction.TransactionManagerFactory;
 
 /**
  * A database session.
@@ -114,8 +113,20 @@ class DatabaseSession implements Session {
   private final MulgaraTransactionManager transactionManager;
 
   private MulgaraTransactionFactory transactionFactory;
-  private MulgaraInternalTransactionFactory internalFactory;
-  private MulgaraExternalTransactionFactory externalFactory;
+  private final MulgaraInternalTransactionFactory internalFactory;
+  private final MulgaraExternalTransactionFactory externalFactory;
+
+  /** the default maximum transaction duration */
+  private final long defaultTransactionTimeout;
+
+  /** the default maximum transaction idle time */
+  private final long defaultIdleTimeout;
+
+  /** the maximum transaction duration */
+  private long transactionTimeout;
+
+  /** the maximum transaction idle time */
+  private long idleTimeout;
 
   /** The name of the rule loader to use */
   private String ruleLoaderClassName;
@@ -134,6 +145,8 @@ class DatabaseSession implements Session {
    *
    * @param transactionManager  the source of transactions for this session,
    *   never <code>null</code>
+   * @param transactionManagerFactory  factory for internal jta transaction-manager
+   *   for this session, never <code>null</code>
    * @param securityAdapterList  {@link List} of {@link SecurityAdapter}s to be
    *   consulted before permitting operations, never <code>null</code>
    * @param symbolicTransformationList  {@link List} of
@@ -160,9 +173,17 @@ class DatabaseSession implements Session {
    *   never <code>null</code>
    * @param temporaryModelTypeURI  the URI of the model type to use to cache
    *   external models
+   * @param transactionTimeout  the default number of milli-seconds before transactions
+   *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
+   *   never negative
+   * @param idleTimeout  the default number of milli-seconds a transaction may be idle
+   *   before it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
+   *   default; never negative
+   * @param ruleLoaderClassName  the rule-loader class to use; may be null 
    * @throws IllegalArgumentException if any argument is <code>null</code>
    */
   DatabaseSession(MulgaraTransactionManager transactionManager,
+      TransactionManagerFactory transactionManagerFactory,
       List<SecurityAdapter> securityAdapterList,
       List<SymbolicTransformation> symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
@@ -175,6 +196,8 @@ class DatabaseSession implements Session {
       ContentHandlerManager contentHandlers,
       Set<ResolverFactory> cachedResolverFactorySet,
       URI temporaryModelTypeURI,
+      long transactionTimeout,
+      long idleTimeout,
       String ruleLoaderClassName) throws ResolverFactoryException {
 
     if (logger.isDebugEnabled()) {
@@ -186,6 +209,8 @@ class DatabaseSession implements Session {
     // Validate parameters
     if (transactionManager == null) {
       throw new IllegalArgumentException("Null 'transactionManager' parameter");
+    } else if (transactionManagerFactory == null) {
+      throw new IllegalArgumentException("Null 'transactionManagerFactory' parameter");
     } else if (securityAdapterList == null) {
       throw new IllegalArgumentException("Null 'securityAdapterList' parameter");
     } else if (symbolicTransformationList == null) {
@@ -210,6 +235,10 @@ class DatabaseSession implements Session {
       throw new IllegalArgumentException("Null 'cachedResolverFactorySet' parameter");
     } else if (temporaryModelTypeURI == null) {
       throw new IllegalArgumentException("Null 'temporaryModelTypeURI' parameter");
+    } else if (transactionTimeout < 0) {
+      throw new IllegalArgumentException("negative 'transactionTimeout' parameter");
+    } else if (idleTimeout < 0) {
+      throw new IllegalArgumentException("negative 'idleTimeout' parameter");
     } else if (ruleLoaderClassName == null) {
       ruleLoaderClassName = DUMMY_RULE_LOADER;
     }
@@ -228,15 +257,19 @@ class DatabaseSession implements Session {
     this.contentHandlers            = contentHandlers;
     this.cachedResolverFactorySet   = cachedResolverFactorySet;
     this.temporaryModelTypeURI      = temporaryModelTypeURI;
+    this.defaultTransactionTimeout  = transactionTimeout;
+    this.defaultIdleTimeout         = idleTimeout;
     this.ruleLoaderClassName        = ruleLoaderClassName;
 
     this.transactionFactory = null;
-    this.internalFactory = null;
+    this.externalFactory = new MulgaraExternalTransactionFactory(this, transactionManager);
+    this.internalFactory =
+        new MulgaraInternalTransactionFactory(this, transactionManager, transactionManagerFactory);
+
+    this.transactionTimeout  = defaultTransactionTimeout;
+    this.idleTimeout         = defaultIdleTimeout;
 
     if (logger.isTraceEnabled()) logger.trace("Constructed DatabaseSession");
-
-    // Set the transaction timeout to an hour
-    transactionManager.setTransactionTimeout(3600);
   }
 
 
@@ -244,6 +277,7 @@ class DatabaseSession implements Session {
    * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
    */
   DatabaseSession(MulgaraTransactionManager transactionManager,
+      TransactionManagerFactory transactionManagerFactory,
       List<SecurityAdapter> securityAdapterList,
       List<SymbolicTransformation> symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
@@ -256,10 +290,10 @@ class DatabaseSession implements Session {
       ContentHandlerManager contentHandlers,
       Set<ResolverFactory> cachedResolverFactorySet,
       URI temporaryModelTypeURI) throws ResolverFactoryException {
-    this(transactionManager, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
+    this(transactionManager, transactionManagerFactory, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
         systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
         internalResolverFactoryMap, metadata, contentHandlers, cachedResolverFactorySet,
-        temporaryModelTypeURI, "");
+        temporaryModelTypeURI, 0, 0, null);
   }
 
   //
@@ -556,7 +590,7 @@ class DatabaseSession implements Session {
     if (logger.isDebugEnabled()) logger.debug("setAutoCommit(" + autoCommit + ") called.");
     assertInternallyManagedXA();
     try {
-      internalFactory.setAutoCommit(this, autoCommit);
+      internalFactory.setAutoCommit(autoCommit);
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error setting autocommit", em);
     }
@@ -567,7 +601,7 @@ class DatabaseSession implements Session {
     logger.debug("Committing transaction");
     assertInternallyManagedXA();
     try {
-      internalFactory.commit(this);
+      internalFactory.commit();
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error performing commit", em);
     }
@@ -578,7 +612,7 @@ class DatabaseSession implements Session {
     logger.debug("Rollback transaction");
     assertInternallyManagedXA();
     try {
-      internalFactory.rollback(this);
+      internalFactory.rollback();
     } catch (MulgaraTransactionException em) {
       throw new QueryException("Error performing rollback", em);
     }
@@ -588,11 +622,18 @@ class DatabaseSession implements Session {
   public void close() throws QueryException {
     logger.debug("Closing session");
     try {
-      transactionManager.closingSession(this);
-      transactionFactory = null;
-    } catch (MulgaraTransactionException em2) {
-      logger.error("Error force-closing session", em2);
-      throw new QueryException("Error force-closing session.", em2);
+      if (transactionFactory != null)
+        transactionFactory.closingSession();
+    } catch (MulgaraTransactionException em) {
+      logger.error("Error force-closing session", em);
+      throw new QueryException("Error force-closing session.", em);
+    } finally {
+      try {
+        transactionManager.closingSession(this);
+      } catch (MulgaraTransactionException em2) {
+        logger.error("Error force-closing session", em2);
+        throw new QueryException("Error force-closing session.", em2);
+      }
     }
   }
 
@@ -678,7 +719,7 @@ class DatabaseSession implements Session {
   private void execute(Operation operation, String errorString) throws QueryException {
     ensureTransactionFactorySelected();
     try {
-      MulgaraTransaction transaction = transactionFactory.getTransaction(this, operation.isWriteOperation());
+      MulgaraTransaction transaction = transactionFactory.getTransaction(operation.isWriteOperation());
       transaction.execute(operation, metadata);
     } catch (MulgaraTransactionException em) {
       logger.debug("Error executing operation: " + errorString, em);
@@ -724,8 +765,8 @@ class DatabaseSession implements Session {
 
   private void assertInternallyManagedXA() throws QueryException {
     if (transactionFactory == null) {
-      transactionFactory = internalFactory = transactionManager.getInternalFactory();
-    } else if (internalFactory == null) {
+      transactionFactory = internalFactory;
+    } else if (transactionFactory != internalFactory) {
       throw new QueryException("Attempt to use internal transaction control in externally managed session");
     }
   }
@@ -733,8 +774,8 @@ class DatabaseSession implements Session {
 
   private void assertExternallyManagedXA() throws QueryException {
     if (transactionFactory == null) {
-      transactionFactory = externalFactory = transactionManager.getExternalFactory();
-    } else if (externalFactory == null) {
+      transactionFactory = externalFactory;
+    } else if (transactionFactory != externalFactory) {
       throw new QueryException("Attempt to use external transaction control in internally managed session");
     }
   }
@@ -742,15 +783,31 @@ class DatabaseSession implements Session {
 
   public XAResource getXAResource() throws QueryException {
     assertExternallyManagedXA();
-    return externalFactory.getXAResource(this, true);
+    return externalFactory.getXAResource(true);
   }
 
 
   public XAResource getReadOnlyXAResource() throws QueryException {
     assertExternallyManagedXA();
-    return externalFactory.getXAResource(this, false);
+    return externalFactory.getXAResource(false);
   }
-  
+
+  public void setIdleTimeout(long millis) {
+    idleTimeout = millis > 0 ? millis : defaultIdleTimeout;
+  }
+
+  public void setTransactionTimeout(long millis) {
+    transactionTimeout = millis > 0 ? millis : defaultTransactionTimeout;
+  }
+
+  public long getIdleTimeout() {
+    return idleTimeout;
+  }
+
+  public long getTransactionTimeout() {
+    return transactionTimeout;
+  }
+
   public boolean ping() {
     return true;
   }

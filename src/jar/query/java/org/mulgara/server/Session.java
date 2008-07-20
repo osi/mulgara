@@ -346,6 +346,30 @@ public interface Session {
    */
   public void login(URI securityDomain, String username, char[] password);
 
+  /** 
+   * The maximum time a transaction may be idle before it is aborted. If not set a default
+   * value is used. This value is only used for new transactions and does not affect any currently
+   * running transactions.
+   *
+   * <p>This currently only affects write transactions.
+   * 
+   * @param millis the number of milliseconds, or 0 for the default timeout
+   * @throws QueryException if there was an error talking to the server
+   */
+  public void setIdleTimeout(long millis) throws QueryException;
+
+  /** 
+   * The maximum time a transaction may be active (started but neither committed nor rolled back)
+   * before it is aborted. If not set a default value is used. This value is only used for new
+   * transactions and does not affect any currently running transactions.
+   *
+   * <p>This currently only affects write transactions.
+   * 
+   * @param millis the number of milliseconds, or 0 for the default timeout
+   * @throws QueryException if there was an error talking to the server
+   */
+  public void setTransactionTimeout(long millis) throws QueryException;
+
   /**
    * Obtain an XAResource for this Session.
    *

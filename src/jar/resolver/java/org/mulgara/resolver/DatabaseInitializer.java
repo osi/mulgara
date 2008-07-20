@@ -28,7 +28,6 @@
 package org.mulgara.resolver;
 
 // Third party packages
-import org.apache.log4j.Logger;  // Apache Log4J
 
 // Local packages
 import org.mulgara.resolver.spi.*;

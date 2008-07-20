@@ -38,10 +38,8 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.util.StackTrace;
 
 /**

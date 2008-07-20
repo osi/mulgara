@@ -31,8 +31,6 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import javax.transaction.xa.XAResource;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Set;
 
 // Third party packages
 import org.apache.log4j.Logger;  // Apache Log4J
@@ -40,12 +38,10 @@ import org.apache.log4j.Logger;  // Apache Log4J
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.spi.DummyXAResource;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverException;
-import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.SingletonStatements;
@@ -53,7 +49,6 @@ import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.view.SessionView;
 import org.mulgara.resolver.view.ViewMarker;
 import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.tuples.Tuples;
 
 /**
  * Access to models that appear in the system model (<code>#</code>).

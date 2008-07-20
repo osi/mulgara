@@ -30,7 +30,6 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import java.net.URI;
 import java.util.Set;
-import java.io.File;
 
 // Third party packages
 import org.apache.log4j.Logger;

@@ -37,7 +37,6 @@ import java.util.List;
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 
 /**
  * An {@link Operation} that implements the {@link Session#query} method.

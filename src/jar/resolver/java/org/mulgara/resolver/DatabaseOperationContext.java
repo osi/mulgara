@@ -66,7 +66,6 @@ import org.mulgara.resolver.spi.SystemResolverFactory;
 import org.mulgara.resolver.spi.TuplesWrapperStatements;
 import org.mulgara.resolver.view.ViewMarker;
 import org.mulgara.resolver.view.SessionView;
-import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
 

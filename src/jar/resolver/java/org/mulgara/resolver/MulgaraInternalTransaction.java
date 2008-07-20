@@ -22,7 +22,6 @@ package org.mulgara.resolver;
 // Java 2 enterprise packages
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.transaction.Transaction;
 
 // Third party packages
@@ -82,7 +81,8 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   private Transaction transaction;
   private Thread currentThread;
 
-  private ReentrantLock activationMutex;
+  private volatile long deactivateTime;
+  private boolean inXACompletion;
 
   private State state;
   private int inuse;
@@ -103,68 +103,63 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
       this.factory = factory;
       this.context = context;
       this.enlisted = new HashSet<EnlistableResource>();
-      this.activationMutex = new ReentrantLock();
       this.currentThread = null;
 
       inuse = 0;
       using = 0;
       state = State.CONSTRUCTEDUNREF;
       rollbackCause = null;
+      deactivateTime = 0;
     } finally {
       report("Finished Creating Transaction");
     }
   }
 
 
-  void activate() throws MulgaraTransactionException {
-//    report("Activating Transaction");
+  private void activate() throws MulgaraTransactionException {
+    debugReport("Activating Transaction");
+
     try {
-      synchronized (this) {
-        if (currentThread != null && !currentThread.equals(Thread.currentThread())) {
-          throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
-        }
+      if (currentThread != null && !currentThread.equals(Thread.currentThread())) {
+        throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
       }
-      
-      acquireActivationMutex();
-      try {
-        switch (state) {
-          case CONSTRUCTEDUNREF:
-            startTransaction();
-            inuse = 1;
-            state = State.ACTUNREF;
-            try {
-              context.initiate(this);
-            } catch (Throwable th) {
-              throw implicitRollback(th);
-            }
-            break;
-          case CONSTRUCTEDREF:
-            startTransaction();
-            inuse = 1;
-            using = 1;
-            state = State.ACTREF;
-            try {
-              context.initiate(this);
-            } catch (Throwable th) {
-              throw implicitRollback(th);
-            }
-            break;
-          case DEACTREF:
-            resumeTransaction();
-            inuse = 1;
-            state = State.ACTREF;
-            break;
-          case ACTREF:
-          case ACTUNREF:
-            inuse++;
-            break;
-          case FINISHED:
-            throw new MulgaraTransactionException("Attempt to activate terminated transaction");
-          case FAILED:
-            throw new MulgaraTransactionException("Attempt to activate failed transaction", rollbackCause);
-        }
-      } finally {
-        releaseActivationMutex();
+
+      deactivateTime = -1;
+      switch (state) {
+        case CONSTRUCTEDUNREF:
+          startTransaction();
+          inuse = 1;
+          state = State.ACTUNREF;
+          try {
+            context.initiate(this);
+          } catch (Throwable th) {
+            throw implicitRollback(th);
+          }
+          break;
+        case CONSTRUCTEDREF:
+          startTransaction();
+          inuse = 1;
+          using = 1;
+          state = State.ACTREF;
+          try {
+            context.initiate(this);
+          } catch (Throwable th) {
+            throw implicitRollback(th);
+          }
+          break;
+        case DEACTREF:
+          resumeTransaction();
+          inuse = 1;
+          state = State.ACTREF;
+          break;
+        case ACTREF:
+        case ACTUNREF:
+          inuse++;
+          break;
+        case FINISHED:
+          throw new MulgaraTransactionException("Attempt to activate terminated transaction");
+        case FAILED:
+          throw new MulgaraTransactionException("Attempt to activate failed transaction", rollbackCause);
       }
 
       try {
@@ -183,51 +178,45 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
 
 
   private void deactivate() throws MulgaraTransactionException {
-//    report("Deactivating transaction");
+    debugReport("Deactivating transaction");
 
     try {
-      synchronized (this) {
-        if (currentThread == null) {
-          throw new MulgaraTransactionException("Transaction not associated with thread");
-        } else if (!currentThread.equals(Thread.currentThread())) {
-          throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
-        }
+      if (currentThread == null) {
+        throw new MulgaraTransactionException("Transaction not associated with thread");
+      } else if (!currentThread.equals(Thread.currentThread())) {
+        throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
       }
-      
-      acquireActivationMutex();
-      try {
-        switch (state) {
-          case ACTUNREF:
-            if (inuse == 1) {
-              commitTransaction();
-            }
+
+      deactivateTime = System.currentTimeMillis();
+      switch (state) {
+        case ACTUNREF:
+          if (inuse == 1) {
+            commitTransaction();
+          }
+          inuse--;
+          break;
+        case ACTREF:
+          if (inuse == 1) {
+            suspendTransaction();
+          }
+          inuse--;
+          break;
+        case CONSTRUCTEDREF:
+          throw new MulgaraTransactionException("Attempt to deactivate uninitiated refed transaction");
+        case CONSTRUCTEDUNREF:
+          throw new MulgaraTransactionException("Attempt to deactivate uninitiated transaction");
+        case DEACTREF:
+          throw new IllegalStateException("Attempt to deactivate unactivated transaction");
+        case FINISHED:
+          if (inuse < 0) {
+            errorReport("Activation count failure - too many deacts - in finished transaction", null);
+          } else {
             inuse--;
-            break;
-          case ACTREF:
-            if (inuse == 1) {
-              suspendTransaction();
-            }
-            inuse--;
-            break;
-          case CONSTRUCTEDREF:
-            throw new MulgaraTransactionException("Attempt to deactivate uninitiated refed transaction");
-          case CONSTRUCTEDUNREF:
-            throw new MulgaraTransactionException("Attempt to deactivate uninitiated transaction");
-          case DEACTREF:
-            throw new IllegalStateException("Attempt to deactivate unactivated transaction");
-          case FINISHED:
-            if (inuse < 0) {
-              errorReport("Activation count failure - too many deacts - in finished transaction", null);
-            } else {
-              inuse--;
-            }
-            break;
-          case FAILED:
-            // Nothing to do here.
-            break;
-        }
-      } finally {
-        releaseActivationMutex();
+          }
+          break;
+        case FAILED:
+          // Nothing to do here.
+          break;
       }
     } catch (MulgaraTransactionException em) {
       throw em;
@@ -243,84 +232,91 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   //       references a transaction object that won't be started/activated
   //       until it is first used.
   public void reference() throws MulgaraTransactionException {
-    try {
-      report("Referencing Transaction");
+    report("Referencing Transaction");
 
-      synchronized (this) {
+    acquireMutex(0, false, MulgaraTransactionException.class);
+    try {
+      try {
         if (currentThread != null && !currentThread.equals(Thread.currentThread())) {
           throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
         }
-      }
 
-      switch (state) {
-        case CONSTRUCTEDUNREF:
-          state = State.CONSTRUCTEDREF;
-          break;
-        case ACTREF:
-        case ACTUNREF:
-          using++;
-          state = State.ACTREF;
-          break;
-        case DEACTREF:
-          using++;
-          break;
-        case CONSTRUCTEDREF:
-          throw new MulgaraTransactionException("Attempt to reference uninitated transaction twice");
-        case FINISHED:
-          throw new MulgaraTransactionException("Attempt to reference terminated transaction");
-        case FAILED:
-          throw new MulgaraTransactionException("Attempt to reference failed transaction", rollbackCause);
+        switch (state) {
+          case CONSTRUCTEDUNREF:
+            state = State.CONSTRUCTEDREF;
+            break;
+          case ACTREF:
+          case ACTUNREF:
+            using++;
+            state = State.ACTREF;
+            break;
+          case DEACTREF:
+            using++;
+            break;
+          case CONSTRUCTEDREF:
+            throw new MulgaraTransactionException("Attempt to reference uninitated transaction twice");
+          case FINISHED:
+            throw new MulgaraTransactionException("Attempt to reference terminated transaction");
+          case FAILED:
+            throw new MulgaraTransactionException("Attempt to reference failed transaction", rollbackCause);
+        }
+      } catch (MulgaraTransactionException em) {
+        throw em;
+      } catch (Throwable th) {
+        report("Error referencing transaction");
+        throw implicitRollback(th);
+      } finally {
+        report("Leaving Reference Transaction");
       }
-    } catch (MulgaraTransactionException em) {
-      throw em;
-    } catch (Throwable th) {
-      report("Error referencing transaction");
-      throw implicitRollback(th);
     } finally {
-      report("Leaving Reference Transaction");
+      releaseMutex();
     }
   }
 
   public void dereference() throws MulgaraTransactionException {
     report("Dereferencing Transaction");
+
+    acquireMutex(0, false, MulgaraTransactionException.class);
     try {
-      synchronized (this) {
+      try {
         if (currentThread != null && !currentThread.equals(Thread.currentThread())) {
           throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
         }
-      }
 
-      switch (state) {
-        case ACTREF:
-          if (using == 1) {
-            state = State.ACTUNREF;
-          }
-          using--;
-          break;
-        case CONSTRUCTEDREF:
-          state = State.CONSTRUCTEDUNREF;
-          break;
-        case FINISHED:
-        case FAILED:
-          if (using < 1) {
-            errorReport("Reference count failure - too many derefs - in finished transaction", null);
-          } else {
+        switch (state) {
+          case ACTREF:
+            if (using == 1) {
+              state = State.ACTUNREF;
+            }
             using--;
-          }
-          break;
-        case ACTUNREF:
-          throw new IllegalStateException("Attempt to dereference unreferenced transaction");
-        case CONSTRUCTEDUNREF:
-          throw new MulgaraTransactionException("Attempt to dereference uninitated transaction");
-        case DEACTREF:
-          throw new IllegalStateException("Attempt to dereference deactivated transaction");
+            break;
+          case CONSTRUCTEDREF:
+            state = State.CONSTRUCTEDUNREF;
+            break;
+          case FINISHED:
+          case FAILED:
+            if (using < 1) {
+              errorReport("Reference count failure - too many derefs - in finished transaction", null);
+            } else {
+              using--;
+            }
+            break;
+          case ACTUNREF:
+            throw new IllegalStateException("Attempt to dereference unreferenced transaction");
+          case CONSTRUCTEDUNREF:
+            throw new MulgaraTransactionException("Attempt to dereference uninitated transaction");
+          case DEACTREF:
+            throw new IllegalStateException("Attempt to dereference deactivated transaction");
+        }
+      } catch (MulgaraTransactionException em) {
+        throw em;
+      } catch (Throwable th) {
+        throw implicitRollback(th);
+      } finally {
+        report("Dereferenced Transaction");
       }
-    } catch (MulgaraTransactionException em) {
-      throw em;
-    } catch (Throwable th) {
-      throw implicitRollback(th);
     } finally {
-      report("Dereferenced Transaction");
+      releaseMutex();
     }
   }
 
@@ -328,9 +324,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     report("Initiating transaction");
     try {
       transaction = factory.transactionStart(this);
-      synchronized (this) {
-        currentThread = Thread.currentThread();
-      }
+      currentThread = Thread.currentThread();
     } catch (Throwable th) {
       throw abortTransaction("Failed to start transaction", th);
     }
@@ -340,11 +334,9 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
 //    report("Resuming transaction");
     try {
       factory.transactionResumed(this, transaction);
-      synchronized (this) {
-        currentThread = Thread.currentThread();
-      }
+      currentThread = Thread.currentThread();
     } catch (Throwable th) {
-      abortTransaction("Failed to resume transaction", th);
+      throw abortTransaction("Failed to resume transaction", th);
     }
   }
 
@@ -356,9 +348,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
             new MulgaraTransactionException("Attempt to suspend unreferenced transaction"));
       }
       transaction = factory.transactionSuspended(this);
-      synchronized (this) {
-        currentThread = null;
-      }
+      currentThread = null;
       state = State.DEACTREF;
     } catch (Throwable th) {
       throw implicitRollback(th);
@@ -369,35 +359,77 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
 
   public void commitTransaction() throws MulgaraTransactionException {
     report("Committing Transaction");
-    try {
-      transaction.commit();
-    } catch (Throwable th) {
-      throw implicitRollback(th);
-    }
+    acquireMutex(0, true, MulgaraTransactionException.class);
     try {
       try {
-        transaction = null;
-      } finally { try {
-        state = State.FINISHED;
-      } finally { try {
-        context.clear();
-      } finally { try {
-        enlisted.clear();
-      } finally { try {
-        factory.transactionComplete(this);
-      } finally { try {
-        factory = null;
-      } finally {
-        report("Committed transaction");
-      } } } } } }
-    } catch (Throwable th) {
-      errorReport("Error cleaning up transaction post-commit", th);
-      throw new MulgaraTransactionException("Error cleaning up transaction post-commit", th);
+        transaction.commit();
+      } catch (Throwable th) {
+        throw implicitRollback(th);
+      }
+      try {
+        try {
+          transaction = null;
+        } finally { try {
+          state = State.FINISHED;
+        } finally { try {
+          context.clear();
+        } finally { try {
+          enlisted.clear();
+        } finally { try {
+          factory.transactionComplete(this);
+        } finally {
+          report("Committed transaction");
+        } } } } }
+      } catch (Throwable th) {
+        errorReport("Error cleaning up transaction post-commit", th);
+        throw new MulgaraTransactionException("Error cleaning up transaction post-commit", th);
+      }
+    } finally {
+      releaseMutex();
     }
   }
 
   public void heuristicRollback(String cause) throws MulgaraTransactionException {
-    implicitRollback(new MulgaraTransactionException(cause));
+    synchronized (factory.getMutexLock()) {
+      if (factory.getMutexHolder() != null && factory.getMutexHolder() != Thread.currentThread()) {
+        if (inXACompletion) {
+          return;       // this txn is already being cleaned up, so let it go
+        }
+      }
+
+      factory.acquireMutexWithInterrupt(0L, MulgaraTransactionException.class);
+      inXACompletion = true;
+    }
+
+    try {
+      switch (state) {
+        case DEACTREF:
+          activate();
+          try {
+            implicitRollback(new MulgaraTransactionException(cause));
+          } finally {
+            currentThread = null;
+          }
+          break;
+
+        case ACTUNREF:
+        case ACTREF:
+          implicitRollback(new MulgaraTransactionException(cause));
+          break;
+
+        case CONSTRUCTEDREF:
+        case CONSTRUCTEDUNREF:
+          // no point in starting and then rolling back immediately, so just clean up
+          abortTransaction(cause, new Throwable());
+
+        case FINISHED:
+        case FAILED:
+          // Nothing to do here.
+          return;
+      }
+    } finally {
+      releaseMutex();
+    }
   }
 
   /**
@@ -406,39 +438,43 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
    * after all we requested it.
    */
   public void explicitRollback() throws MulgaraTransactionException {
-    synchronized (this) {
+    acquireMutex(0, true, MulgaraTransactionException.class);
+    try {
       if (currentThread == null) {
         throw new MulgaraTransactionException("Transaction failed activation check");
       } else if (!currentThread.equals(Thread.currentThread())) {
         throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
       }
-    }
 
-    try {
-      switch (state) {
-        case ACTUNREF:
-        case ACTREF:
-          transaction.rollback();
-          context.clear();
-          enlisted.clear();
-          factory.transactionComplete(this);
-          state = State.FINISHED;
-          break;
-        case DEACTREF:
-          throw new IllegalStateException("Attempt to rollback unactivated transaction");
-        case CONSTRUCTEDREF:
-          throw new MulgaraTransactionException("Attempt to rollback uninitiated ref'd transaction");
-        case CONSTRUCTEDUNREF:
-          throw new MulgaraTransactionException("Attempt to rollback uninitiated unref'd transaction");
-        case FINISHED:
-          throw new MulgaraTransactionException("Attempt to rollback finished transaction");
-        case FAILED:
-          throw new MulgaraTransactionException("Attempt to rollback failed transaction");
+      try {
+        switch (state) {
+          case ACTUNREF:
+          case ACTREF:
+            transaction.rollback();
+            context.clear();
+            enlisted.clear();
+            factory.transactionComplete(this);
+            transaction = null;
+            state = State.FINISHED;
+            break;
+          case DEACTREF:
+            throw new IllegalStateException("Attempt to rollback unactivated transaction");
+          case CONSTRUCTEDREF:
+            throw new MulgaraTransactionException("Attempt to rollback uninitiated ref'd transaction");
+          case CONSTRUCTEDUNREF:
+            throw new MulgaraTransactionException("Attempt to rollback uninitiated unref'd transaction");
+          case FINISHED:
+            throw new MulgaraTransactionException("Attempt to rollback finished transaction");
+          case FAILED:
+            throw new MulgaraTransactionException("Attempt to rollback failed transaction");
+        }
+      } catch (MulgaraTransactionException em) {
+        throw em;
+      } catch (Throwable th) {
+        throw implicitRollback(th);
       }
-    } catch (MulgaraTransactionException em) {
-      throw em;
-    } catch (Throwable th) {
-      throw implicitRollback(th);
+    } finally {
+      releaseMutex();
     }
   }
 
@@ -452,18 +488,14 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
    * Post-condition: The transaction is terminated and cleaned up.
    */
   @SuppressWarnings("finally")
-  MulgaraTransactionException implicitRollback(Throwable cause) throws MulgaraTransactionException {
+  private MulgaraTransactionException implicitRollback(Throwable cause) throws MulgaraTransactionException {
+    report("Implicit Rollback triggered");
+
+    synchronized (factory.getMutexLock()) {
+      inXACompletion = true;
+    }
+
     try {
-      report("Implicit Rollback triggered");
-
-      synchronized (this) {
-        if (currentThread == null) {
-          throw new MulgaraTransactionException("Transaction not associated with thread");
-        } else if (!currentThread.equals(Thread.currentThread())) {
-          throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
-        }
-      }
-
       if (rollbackCause != null) {
         errorReport("Cascading error, transaction already rolled back", cause);
         errorReport("Cascade error, expected initial cause", rollbackCause);
@@ -480,8 +512,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
             context.clear();
             enlisted.clear();
             state = State.FAILED;
-            factory.transactionComplete(this);
-            factory = null;
+            factory.transactionAborted(this);
             return new MulgaraTransactionException("Transaction rollback triggered", cause);
         case DEACTREF:
           throw new IllegalStateException("Attempt to rollback deactivated transaction");
@@ -529,36 +560,40 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
    */
   public MulgaraTransactionException abortTransaction(String errorMessage, Throwable cause)
       throws MulgaraTransactionException {
-    // We need to notify the factory here - this is serious, we
-    // need to rollback this transaction, but if we have reached here
-    // we have failed to obtain a valid transaction to rollback!
+    // we should actually already have the mutex, but let's make sure
+    acquireMutex(0L, true, MulgaraTransactionException.class);
     try {
+      // We need to notify the factory here - this is serious, we
+      // need to rollback this transaction, but if we have reached here
+      // we have failed to obtain a valid transaction to rollback!
       try {
-        errorReport(errorMessage + " - Aborting", cause);
-      } finally { try {
-        if (transaction != null) {
-          transaction.rollback();
-        }
-      } finally { try {
-        factory.transactionAborted(this);
-      } finally { try {
-        abortEnlistedResources();
-      } finally { try {
-        context.clear();
-      } finally { try {
-        enlisted.clear();
-      } finally { try {
-        transaction = null;
-      } finally { try {
-        factory = null;
+        try {
+          errorReport(errorMessage + " - Aborting", cause);
+        } finally { try {
+          if (transaction != null) {
+            transaction.rollback();
+          }
+        } finally { try {
+          factory.transactionAborted(this);
+        } finally { try {
+          abortEnlistedResources();
+        } finally { try {
+          context.clear();
+        } finally { try {
+          enlisted.clear();
+        } finally { try {
+          transaction = null;
+        } finally {
+          state = State.FAILED;
+        } } } } } } }
+        return new MulgaraTransactionException(errorMessage + " - Aborting", cause);
+      } catch (Throwable th) {
+        throw new MulgaraTransactionException(errorMessage + " - Failed to abort cleanly", th);
       } finally {
-        state = State.FAILED;
-      } } } } } } } }
-      return new MulgaraTransactionException(errorMessage + " - Aborting", cause);
-    } catch (Throwable th) {
-      throw new MulgaraTransactionException(errorMessage + " - Failed to abort cleanly", th);
+        report("Leaving abortTransaction");
+      }
     } finally {
-      report("Leaving abortTransaction");
+      releaseMutex();
     }
   }
 
@@ -579,92 +614,117 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
 
   public void execute(Operation operation, DatabaseMetadata metadata) throws MulgaraTransactionException {
     report("Executing Operation");
+
+    acquireMutex(0, false, MulgaraTransactionException.class);
     try {
-      activate();
       try {
-        operation.execute(context,
-                          context.getSystemResolver(),
-                          metadata);
-      } catch (Throwable th) {
-        throw implicitRollback(th);
+        activate();
+        try {
+          operation.execute(context,
+                            context.getSystemResolver(),
+                            metadata);
+        } catch (Throwable th) {
+          throw implicitRollback(th);
+        } finally {
+          deactivate();
+        }
       } finally {
-        deactivate();
+        report("Executed Operation");
       }
     } finally {
-      report("Executed Operation");
+      releaseMutex();
     }
   }
 
   public AnswerOperationResult execute(AnswerOperation ao) throws TuplesException {
     debugReport("Executing AnswerOperation");
+
+    acquireMutex(0, false, TuplesException.class);
     try {
-      activate();
       try {
-        ao.execute();
-        return ao.getResult();
-      } catch (Throwable th) {
-        throw implicitRollback(th);
+        activate();
+        try {
+          ao.execute();
+          return ao.getResult();
+        } catch (Throwable th) {
+          throw implicitRollback(th);
+        } finally {
+          deactivate();
+        }
+      } catch (MulgaraTransactionException em) {
+        throw new TuplesException("Transaction error", em);
       } finally {
-        deactivate();
+        debugReport("Executed AnswerOperation");
       }
-    } catch (MulgaraTransactionException em) {
-      throw new TuplesException("Transaction error", em);
     } finally {
-      debugReport("Executed AnswerOperation");
+      releaseMutex();
     }
   }
 
 
   public void execute(TransactionOperation to) throws MulgaraTransactionException {
     report("Executing TransactionOperation");
+
+    acquireMutex(0, false, MulgaraTransactionException.class);
     try {
-      activate();
       try {
-        to.execute();
-      } catch (Throwable th) {
-        throw implicitRollback(th);
+        activate();
+        try {
+          to.execute();
+        } catch (Throwable th) {
+          throw implicitRollback(th);
+        } finally {
+          deactivate();
+        }
       } finally {
-        deactivate();
+        report("Executed TransactionOperation");
       }
     } finally {
-      report("Executed TransactionOperation");
+      releaseMutex();
     }
   }
 
   public void enlist(EnlistableResource enlistable) throws MulgaraTransactionException {
+    acquireMutex(0, false, MulgaraTransactionException.class);
     try {
-      synchronized (this) {
+      try {
         if (currentThread == null) {
           throw new MulgaraTransactionException("Transaction not associated with thread");
         } else if (!currentThread.equals(Thread.currentThread())) {
           throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
         }
-      }
 
-      if (enlisted.contains(enlistable)) {
-        return;
-      }
+        if (enlisted.contains(enlistable)) {
+          return;
+        }
 
-      switch (state) {
-        case ACTUNREF:
-        case ACTREF:
-          transaction.enlistResource(enlistable.getXAResource());
-          enlisted.add(enlistable);
-          break;
-        case CONSTRUCTEDREF:
-          throw new MulgaraTransactionException("Attempt to enlist resource in uninitated ref'd transaction");
-        case CONSTRUCTEDUNREF:
-          throw new MulgaraTransactionException("Attempt to enlist resource in uninitated unref'd transaction");
-        case DEACTREF:
-          throw new MulgaraTransactionException("Attempt to enlist resource in unactivated transaction");
-        case FINISHED:
-          throw new MulgaraTransactionException("Attempt to enlist resource in finished transaction");
-        case FAILED:
-          throw new MulgaraTransactionException("Attempt to enlist resource in failed transaction");
+        switch (state) {
+          case ACTUNREF:
+          case ACTREF:
+            transaction.enlistResource(enlistable.getXAResource());
+            enlisted.add(enlistable);
+            break;
+          case CONSTRUCTEDREF:
+            throw new MulgaraTransactionException("Attempt to enlist resource in uninitated ref'd transaction");
+          case CONSTRUCTEDUNREF:
+            throw new MulgaraTransactionException("Attempt to enlist resource in uninitated unref'd transaction");
+          case DEACTREF:
+            throw new MulgaraTransactionException("Attempt to enlist resource in unactivated transaction");
+          case FINISHED:
+            throw new MulgaraTransactionException("Attempt to enlist resource in finished transaction");
+          case FAILED:
+            throw new MulgaraTransactionException("Attempt to enlist resource in failed transaction");
+        }
+      } catch (Throwable th) {
+        throw implicitRollback(th);
       }
-    } catch (Throwable th) {
-      throw implicitRollback(th);
+    } finally {
+      releaseMutex();
     }
+  }
+
+  public long lastActive() {
+    return deactivateTime;
   }
 
   //
@@ -672,12 +732,10 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   //
 
   private void checkActivated() throws MulgaraTransactionException {
-    synchronized (this) {
-      if (currentThread == null) {
-        throw new MulgaraTransactionException("Transaction not associated with thread");
-      } else if (!currentThread.equals(Thread.currentThread())) {
-        throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
-      }
+    if (currentThread == null) {
+      throw new MulgaraTransactionException("Transaction not associated with thread");
+    } else if (!currentThread.equals(Thread.currentThread())) {
+      throw new MulgaraTransactionException("Concurrent access attempted to transaction: Transaction has NOT been rolledback.");
     }
 
     switch (state) {
@@ -700,12 +758,15 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     }
   }
 
-  private void acquireActivationMutex() {
-    activationMutex.lock();
+  private <T extends Throwable> void acquireMutex(long timeout, boolean isXACompletion, Class<T> exc) throws T {
+    synchronized (factory.getMutexLock()) {
+      factory.acquireMutex(timeout, exc);
+      inXACompletion = isXACompletion;
+    }
   }
 
-  private void releaseActivationMutex() {
-    activationMutex.unlock();
+  private void releaseMutex() {
+    factory.releaseMutex();
   }
 
   protected void finalize() {
@@ -723,7 +784,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
       errorReport("Reference counting error in transaction", null);
     }
 
-    if (factory != null || transaction != null) {
+    if (transaction != null) {
       errorReport("Transaction not terminated properly", null);
     }
   }

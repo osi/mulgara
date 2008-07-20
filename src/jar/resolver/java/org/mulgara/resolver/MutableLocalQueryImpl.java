@@ -36,7 +36,6 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 
 // Third party packages
-import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.*;

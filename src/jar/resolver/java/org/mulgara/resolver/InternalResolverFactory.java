@@ -34,7 +34,6 @@ import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.store.nodepool.NodePool;
 
 /**
  * Wrapper around an external {@link ResolverFactory} that applies caching to

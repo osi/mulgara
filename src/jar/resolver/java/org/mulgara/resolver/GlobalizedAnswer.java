@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.Answer;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.resolver.spi.GlobalizeException;

@@ -50,13 +50,10 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
-import org.mulgara.content.Content;
 import org.mulgara.content.ContentHandler;
-import org.mulgara.query.LocalNode;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.resolver.spi.DatabaseMetadata;
@@ -64,7 +61,6 @@ import org.mulgara.resolver.spi.DuplicateVariableTransformer;
 import org.mulgara.resolver.spi.FactoryInitializer;
 import org.mulgara.resolver.spi.InitializerException;
 import org.mulgara.resolver.spi.LocalizeException;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverException;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
@@ -73,15 +69,11 @@ import org.mulgara.resolver.spi.SecurityAdapterFactory;
 import org.mulgara.resolver.spi.SecurityAdapterFactoryException;
 import org.mulgara.resolver.spi.SymbolicTransformation;
 import org.mulgara.resolver.spi.SystemResolverFactory;
-import org.mulgara.rules.RuleLoader;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
-import org.mulgara.store.nodepool.NodePoolFactory;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
-import org.mulgara.store.stringpool.StringPoolFactory;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.transaction.TransactionManagerFactory;
@@ -246,10 +238,7 @@ public class Database implements SessionFactory
   private final URI temporaryModelTypeURI;
 
   /**
-   * Factory for the {@link #transactionManager}.
-   *
-   * This only reason we hold a reference to this is so that it can be closed
-   * when the database shuts down.
+   * Factory for internal jta TransactionManager's.
    */
   private final TransactionManagerFactory transactionManagerFactory;
 
@@ -260,6 +249,11 @@ public class Database implements SessionFactory
    * Passed to new DatabaseSession's.
    */
   private final MulgaraTransactionManager transactionManager;
+
+  /** the default maximum duration for a transaction, in milli-seconds */
+  private final long defaultTransactionTimeout;
+  /** the default maximum idle time for a transaction, in milli-seconds */
+  private final long defaultIdleTimeout;
 
   /** The unique {@link URI} naming this database.  Not read in this implementation. */
   @SuppressWarnings("unused")
@@ -323,6 +317,7 @@ public class Database implements SessionFactory
          uri,        // security domain
          new JotmTransactionManagerFactory(),
          config.getTransactionTimeout(),
+         config.getIdleTimeout(),
          config.getPersistentNodePoolFactory().getType(),
          DatabaseFactory.subdir(
            directory,
@@ -376,9 +371,12 @@ public class Database implements SessionFactory
    *   database is within, or <code>null</code> if this database is unsecured
    * @param transactionManagerFactory  the source for the
    *   {@link TransactionManager}, never <code>null</code>
-   * @param transactionTimeout  the number of seconds before transactions time
-   *   out, or zero to take the <var>transactionManagerFactory</var>'s default;
+   * @param transactionTimeout  the default number of seconds before transactions
+   *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
    *   never negative
+   * @param idleTimeout  the default number of seconds a transaction may be idle before
+   *   it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
+   *   default; never negative
    * @param persistentNodePoolFactoryClassName  the name of a
    *   {@link NodePoolFactory} implementation which will be used to generate
    *   persistent local nodes, never <code>null</code>
@@ -416,6 +414,7 @@ public class Database implements SessionFactory
                   URI    securityDomainURI,
                   TransactionManagerFactory transactionManagerFactory,
                   int    transactionTimeout,
+                  int    idleTimeout,
                   String persistentNodePoolFactoryClassName,
                   File   persistentNodePoolDirectory,
                   String persistentStringPoolFactoryClassName,
@@ -512,9 +511,10 @@ public class Database implements SessionFactory
     assert this.contentHandlers != null;
 
     // FIXME: Migrate this code inside StringPoolSession.  Pass config to StringPoolSession.
-    this.transactionManager = new MulgaraTransactionManager(transactionManagerFactory);
+    this.transactionManager = new MulgaraTransactionManager();
 
-    transactionManager.setTransactionTimeout(transactionTimeout);
+    this.defaultTransactionTimeout = transactionTimeout * 1000L;
+    this.defaultIdleTimeout = idleTimeout * 1000L;
 
     // Enable resolver initialization
     if (logger.isDebugEnabled()) {
@@ -677,6 +677,7 @@ public class Database implements SessionFactory
 
     DatabaseSession session = new DatabaseSession(
         transactionManager,
+        transactionManagerFactory,
         unmodifiableSecurityAdapterList,
         unmodifiableSymbolicTransformationList,
         spSessionFactory,
@@ -689,6 +690,8 @@ public class Database implements SessionFactory
 		    contentHandlers,
         unmodifiableCachedResolverFactorySet,
         temporaryModelTypeURI,
+        defaultTransactionTimeout,
+        defaultIdleTimeout,
         ruleLoaderClassName);
 
     // Updates metadata to reflect bootstrapped system model.
@@ -888,6 +891,7 @@ public class Database implements SessionFactory
     try {
       return new DatabaseSession(
         transactionManager,
+        transactionManagerFactory,
         unmodifiableSecurityAdapterList,
         unmodifiableSymbolicTransformationList,
         spSessionFactory,
@@ -900,6 +904,8 @@ public class Database implements SessionFactory
         contentHandlers,
         unmodifiableCachedResolverFactorySet,
         temporaryModelTypeURI,
+        defaultTransactionTimeout,
+        defaultIdleTimeout,
         ruleLoaderClassName);
     } catch (ResolverFactoryException e) {
       throw new QueryException("Couldn't create session", e);
@@ -916,6 +922,7 @@ public class Database implements SessionFactory
     try {
       return new LocalJRDFDatabaseSession(
           transactionManager,
+          transactionManagerFactory,
           unmodifiableSecurityAdapterList,
           unmodifiableSymbolicTransformationList,
           jrdfSessionFactory,
@@ -1140,6 +1147,7 @@ public class Database implements SessionFactory
       try {
         return new DatabaseSession(
           transactionManager,
+          transactionManagerFactory,
           Collections.singletonList(
             (SecurityAdapter)new SystemModelSecurityAdapter(metadata.getSystemModelNode())
           ),
@@ -1154,6 +1162,8 @@ public class Database implements SessionFactory
           contentHandlers,
           unmodifiableCachedResolverFactorySet,
           temporaryModelTypeURI,
+          defaultTransactionTimeout,
+          defaultIdleTimeout,
           ruleLoaderClassName);
       }
       catch (ResolverFactoryException e) {
@@ -1168,6 +1178,7 @@ public class Database implements SessionFactory
       try {
         return new LocalJRDFDatabaseSession(
           transactionManager,
+          transactionManagerFactory,
           Collections.singletonList(
             new SystemModelSecurityAdapter(metadata.getSystemModelNode())
           ),

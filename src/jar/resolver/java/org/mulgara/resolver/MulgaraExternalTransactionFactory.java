@@ -19,9 +19,7 @@
 package org.mulgara.resolver;
 
 // Java2 packages
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -29,7 +27,6 @@ import javax.transaction.xa.Xid;
 // Local packages
 import org.mulgara.query.MulgaraTransactionException;
 import org.mulgara.query.QueryException;
-import org.mulgara.util.Assoc1toNMap;
 
 /**
  * Manages external transactions.
@@ -46,41 +43,40 @@ import org.mulgara.util.Assoc1toNMap;
  */
 
 public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory {
-  private Map<DatabaseSession, MulgaraExternalTransaction> associatedTransaction;
-  private Assoc1toNMap<DatabaseSession, MulgaraExternalTransaction> sessionXAMap;
+  private final Set<MulgaraExternalTransaction> transactions;
 
-  private Map<DatabaseSession, MulgaraXAResourceContext> xaResources;
+  private final MulgaraXAResourceContext xaResource;
 
-  public MulgaraExternalTransactionFactory(MulgaraTransactionManager manager) {
-    super(manager);
+  private MulgaraExternalTransaction associatedTransaction;
 
-    this.associatedTransaction = new HashMap<DatabaseSession, MulgaraExternalTransaction>();
-    this.sessionXAMap = new Assoc1toNMap<DatabaseSession, MulgaraExternalTransaction>();
-    this.xaResources = new HashMap<DatabaseSession, MulgaraXAResourceContext>();
+  public MulgaraExternalTransactionFactory(DatabaseSession session, MulgaraTransactionManager manager) {
+    super(session, manager);
+
+    this.associatedTransaction = null;
+    this.transactions = new HashSet<MulgaraExternalTransaction>();
+    this.xaResource = new MulgaraXAResourceContext(this, session);
   }
 
-  public MulgaraTransaction getTransaction(final DatabaseSession session, boolean write)
-      throws MulgaraTransactionException {
-    acquireMutex();
+  public MulgaraTransaction getTransaction(boolean write) throws MulgaraTransactionException {
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
-      MulgaraExternalTransaction xa = associatedTransaction.get(session);
-      if (xa == null) {
+      if (associatedTransaction == null) {
         throw new MulgaraTransactionException("No externally mediated transaction associated with session");
-      } else if (write && xa != writeTransaction) {
+      } else if (write && associatedTransaction != writeTransaction) {
         throw new MulgaraTransactionException("RO-transaction associated with session when requesting write operation");
       }
 
-      return xa;
+      return associatedTransaction;
     } finally {
       releaseMutex();
     }
   }
 
-  protected MulgaraExternalTransaction createTransaction(final DatabaseSession session, Xid xid, boolean write)
+  protected MulgaraExternalTransaction createTransaction(Xid xid, boolean write)
       throws MulgaraTransactionException {
-    acquireMutex();
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
-      if (associatedTransaction.get(session) != null) {
+      if (associatedTransaction != null) {
         throw new MulgaraTransactionException(
             "Attempt to initiate transaction with existing transaction active with session");
       }
@@ -89,27 +85,28 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
       }
 
       if (write) {
-          runWithoutMutex(new TransactionOperation() {
-            public void execute() throws MulgaraTransactionException {
-              manager.obtainWriteLock(session);
-            }
-          });
+        manager.obtainWriteLock(session);
+        MulgaraExternalTransaction xa = null;
         try {
-          MulgaraExternalTransaction xa = new MulgaraExternalTransaction(this, xid, session.newOperationContext(true));
+          xa = new MulgaraExternalTransaction(this, xid, session.newOperationContext(true));
           writeTransaction = xa;
-          associatedTransaction.put(session, xa);
-          sessionXAMap.put(session, xa);
+          associatedTransaction = xa;
+          transactions.add(xa);
+          transactionCreated(xa);
 
           return xa;
         } catch (Throwable th) {
           manager.releaseWriteLock(session);
+          if (xa != null)
+            transactionComplete(xa);
           throw new MulgaraTransactionException("Error initiating write transaction", th);
         }
       } else {
         try {
           MulgaraExternalTransaction xa = new MulgaraExternalTransaction(this, xid, session.newOperationContext(false));
-          associatedTransaction.put(session, xa);
-          sessionXAMap.put(session, xa);
+          associatedTransaction = xa;
+          transactions.add(xa);
+          transactionCreated(xa);
 
           return xa;
         } catch (QueryException eq) {
@@ -121,39 +118,14 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
     }
   }
 
-  public Set<MulgaraExternalTransaction> getTransactionsForSession(DatabaseSession session) {
-    acquireMutex();
-    try {
-      Set<MulgaraExternalTransaction> xas = sessionXAMap.getN(session);
-      return xas != null ? xas : Collections.<MulgaraExternalTransaction>emptySet();
-    } finally {
-      releaseMutex();
-    }
+  protected Set<MulgaraExternalTransaction> getTransactions() {
+    return transactions;
   }
 
-  public XAResource getXAResource(DatabaseSession session, boolean writing) {
-    acquireMutex();
+  public XAResource getXAResource(boolean writing) {
+    acquireMutex(0, RuntimeException.class);
     try {
-      MulgaraXAResourceContext xarc = xaResources.get(session);
-      if (xarc == null) {
-        xarc = new MulgaraXAResourceContext(this, session);
-        xaResources.put(session, xarc);
-      }
-
-      return xarc.getResource(writing);
-    } finally {
-      releaseMutex();
-    }
-  }
-
-  public void closingSession(DatabaseSession session) throws MulgaraTransactionException {
-    acquireMutex();
-    try {
-      try {
-        super.closingSession(session);
-      } finally {
-        xaResources.remove(session);
-      }
+      return xaResource.getResource(writing);
     } finally {
       releaseMutex();
     }
@@ -161,41 +133,42 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
 
   public void transactionComplete(MulgaraExternalTransaction xa)
       throws MulgaraTransactionException {
-    acquireMutex();
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
+      super.transactionComplete(xa);
+
       if (xa == null) {
         throw new IllegalArgumentException("Null transaction indicated completion");
       }
-      DatabaseSession session = sessionXAMap.get1(xa);
       if (xa == writeTransaction) {
         manager.releaseWriteLock(session);
         writeTransaction = null;
       }
-      sessionXAMap.removeN(xa);
-      if (associatedTransaction.get(session) == xa) {
-        associatedTransaction.remove(session);
+      transactions.remove(xa);
+      if (associatedTransaction == xa) {
+        associatedTransaction = null;
       }
     } finally {
       releaseMutex();
     }
   }
 
-  public boolean hasAssociatedTransaction(DatabaseSession session) {
-    acquireMutex();
+  public boolean hasAssociatedTransaction() {
+    acquireMutex(0, RuntimeException.class);
     try {
-      return associatedTransaction.get(session) != null;
+      return associatedTransaction != null;
     } finally {
       releaseMutex();
     }
   }
 
-  public boolean associateTransaction(DatabaseSession session, MulgaraExternalTransaction xa) {
-    acquireMutex();
+  public boolean associateTransaction(MulgaraExternalTransaction xa) {
+    acquireMutex(0, RuntimeException.class);
     try {
-      if (associatedTransaction.get(session) != null) {
+      if (associatedTransaction != null) {
         return false;
       } else {
-        associatedTransaction.put(session, xa);
+        associatedTransaction = xa;
         return true;
       }
     } finally {
@@ -203,33 +176,34 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
     }
   }
 
-  public MulgaraExternalTransaction getAssociatedTransaction(DatabaseSession session) {
-    acquireMutex();
+  public MulgaraExternalTransaction getAssociatedTransaction() {
+    acquireMutex(0, RuntimeException.class);
     try {
-      return associatedTransaction.get(session);
+      return associatedTransaction;
     } finally {
       releaseMutex();
     }
   }
 
-  public void disassociateTransaction(DatabaseSession session, MulgaraExternalTransaction xa) 
+  public void disassociateTransaction(MulgaraExternalTransaction xa) 
       throws MulgaraTransactionException {
-    acquireMutex();
+    acquireMutex(0, MulgaraTransactionException.class);
     try {
-      if (associatedTransaction.get(session) == xa) {
-        associatedTransaction.remove(session);
+      if (associatedTransaction == xa) {
+        associatedTransaction = null;
       }
     } finally {
       releaseMutex();
     }
   }
 
-  void abortWriteTransaction() throws MulgaraTransactionException {
-    acquireMutex();
+  public void closingSession() throws MulgaraTransactionException {
+    acquireMutexWithInterrupt(0, MulgaraTransactionException.class);
     try {
-      if (writeTransaction != null) {
-        writeTransaction.abortTransaction(new MulgaraTransactionException("Explicit abort requested by write-lock manager"));
-        writeTransaction = null;
+      try {
+        super.closingSession();
+      } finally {
+        transactions.clear();
       }
     } finally {
       releaseMutex();

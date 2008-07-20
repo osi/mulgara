@@ -30,18 +30,15 @@ import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.query.MulgaraTransactionException;
-import org.mulgara.transaction.TransactionManagerFactory;
 import org.mulgara.util.StackTrace;
 
 /**
  * Manages the Write-Lock.
  *
  * Manages tracking the ownership of the write-lock.
- * Provides new/existing TransactionContext's to DatabaseSession on request.
- *    Note: Returns new context unless Session is currently in a User Demarcated Transaction.
  * Provides a facility to trigger a heuristic rollback of any transactions still
  *   valid on session close.
- * Maintains the write-queue and any timeout algorithm desired.
+ * Maintains the write-queue
  *
  * @created 2006-10-06
  *
@@ -75,26 +72,11 @@ public class MulgaraTransactionManager {
   private final ReentrantLock mutex;
   private final Condition writeLockCondition;
 
-  private final MulgaraInternalTransactionFactory internalFactory;
-  private final MulgaraExternalTransactionFactory externalFactory;
-
-  public MulgaraTransactionManager(TransactionManagerFactory transactionManagerFactory) {
+  public MulgaraTransactionManager() {
     this.sessionHoldingWriteLock = null;
     this.sessionReservingWriteLock = null;
     this.mutex = new ReentrantLock();
     this.writeLockCondition = this.mutex.newCondition();
-
-    this.internalFactory = new MulgaraInternalTransactionFactory(this, transactionManagerFactory);
-    this.externalFactory = new MulgaraExternalTransactionFactory(this);
-  }
-
-
-  MulgaraInternalTransactionFactory getInternalFactory() {
-    return internalFactory;
-  }
-
-  MulgaraExternalTransactionFactory getExternalFactory() {
-    return externalFactory;
   }
 
 
@@ -155,10 +137,6 @@ public class MulgaraTransactionManager {
   }
 
 
-  public void setTransactionTimeout(int transactionTimeout) {
-    internalFactory.setTransactionTimeout(transactionTimeout);
-  }
-
   /**
    * Used to replace the built in monitor to allow it to be properly released
    * during potentially blocking operations.  All potentially blocking
@@ -192,11 +170,21 @@ public class MulgaraTransactionManager {
   }
 
   boolean writeLockReserved() {
-    return sessionReservingWriteLock != null;
+    acquireMutex();
+    try {
+      return sessionReservingWriteLock != null;
+    } finally {
+      releaseMutex();
+    }
   }
 
   boolean writeLockReserved(DatabaseSession session) {
-    return session == sessionReservingWriteLock;
+    acquireMutex();
+    try {
+      return session == sessionReservingWriteLock;
+    } finally {
+      releaseMutex();
+    }
   }
 
   void releaseReserve(DatabaseSession session) {
@@ -229,28 +217,12 @@ public class MulgaraTransactionManager {
   }
 
   public void closingSession(DatabaseSession session) throws MulgaraTransactionException {
-    // Calls to final fields do not require mutex.  As both of these calls
-    // potentially call back into the manager, calling these while holding the
-    // lock can invalidate lock-ordering and result in a deadlock.
-    Throwable error = null;
-    try {
-      internalFactory.closingSession(session);
-    } catch (Throwable th) {
-      logger.error("Error signalling session-close to internal xa-factory", th);
-      error = (error == null) ? th : error;
-    }
-
-    try {
-      externalFactory.closingSession(session);
-    } catch (Throwable th) {
-      logger.error("Error signalling session-close to external xa-factory", th);
-      error = (error == null) ? th : error;
-    }
-
     // This code should not be required, but is there to ensure the manager is
     // reset regardless of errors in the factories.
     acquireMutex();
     try {
+      Throwable error = null;
+
       if (writeLockReserved(session)) {
         try {
           releaseReserve(session);

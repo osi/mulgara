@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.store.statement.StatementStoreException;
 import org.mulgara.store.tuples.LiteralTuples;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;

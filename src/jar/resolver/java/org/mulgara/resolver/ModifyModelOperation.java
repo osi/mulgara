@@ -39,7 +39,6 @@ import org.jrdf.graph.Triple;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 
 /**
  * An {@link Operation} that implements the {@link Session#insert} and

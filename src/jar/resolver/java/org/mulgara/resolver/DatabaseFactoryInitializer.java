@@ -37,8 +37,6 @@ import org.apache.log4j.Logger;  // Apache Log4J
 
 // Local packages
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
 
 /**
  * The database initialiser used to provide configuration information to

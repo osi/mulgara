@@ -55,6 +55,9 @@ Mulgara Semantic Store configuration file.
   <!-- Maximum duration in seconds for transactions, a positive integer -->
   <TransactionTimeout>604800</TransactionTimeout> <!-- one week -->
 
+  <!-- Maximum time in seconds a transaction may be idle, a positive integer -->
+  <IdleTimeout>3600</IdleTimeout> <!-- one hour -->
+
   <!--
     Database implementation to use, one of:
 

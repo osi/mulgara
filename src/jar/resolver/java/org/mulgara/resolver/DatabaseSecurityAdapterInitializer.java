@@ -31,13 +31,11 @@ package org.mulgara.resolver;
 import java.net.URI;
 
 // Third party packages
-import org.apache.log4j.Logger;  // Apache Log4J
 import org.jrdf.graph.Node;
 
 // Local packages
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
 
 /**

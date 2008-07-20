@@ -580,4 +580,12 @@ class BEEPSession implements Session {
   public boolean ping() {
     return true;
   }
+
+  public void setIdleTimeout(long millis) {
+    throw new UnsupportedOperationException("Timeouts not implemented under beep.");
+  }
+
+  public void setTransactionTimeout(long millis) {
+    throw new UnsupportedOperationException("Timeouts not implemented under beep.");
+  }
 }

@@ -347,7 +347,27 @@ interface RemoteSession extends Remote {
    */
   public RemoteXAResource getXAResource() throws QueryException, RemoteException;
   public RemoteXAResource getReadOnlyXAResource() throws QueryException, RemoteException;
-  
+
+  /** 
+   * Set the idle timeout for new transactions. 
+   * 
+   * @param millis  the number of milliseconds a transaction may be idle before being aborted,
+   *                or 0 to use a default timeout.
+   * @throws QueryException 
+   * @throws RemoteException 
+   */
+  public void setIdleTimeout(long millis) throws QueryException, RemoteException;
+
+  /** 
+   * Set the maximum duration for new transactions. 
+   * 
+   * @param millis  the number of milliseconds a transaction may be open before being aborted,
+   *                or 0 to use a default timeout.
+   * @throws QueryException 
+   * @throws RemoteException 
+   */
+  public void setTransactionTimeout(long millis) throws QueryException, RemoteException;
+
   /**
    * Test the connectivity of the remote session.
    * @return <code>true</code> if connectivity was established.

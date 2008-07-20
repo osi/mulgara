@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -79,8 +78,6 @@ public class MulgaraXAResourceContext {
 
   private final Assoc1toNMap<MulgaraExternalTransaction, Xid> xa2xid;
 
-  private final ReentrantLock mutex;
-
   private final UUID uniqueId;
 
   MulgaraXAResourceContext(MulgaraExternalTransactionFactory factory, DatabaseSession session) {
@@ -88,7 +85,6 @@ public class MulgaraXAResourceContext {
     this.factory = factory;
     this.session = session;
     this.xa2xid = new Assoc1toNMap<MulgaraExternalTransaction, Xid>();
-    this.mutex = new ReentrantLock();
     this.uniqueId = UUID.randomUUID();
   }
 
@@ -114,7 +110,7 @@ public class MulgaraXAResourceContext {
      * for a call to forget().
      */
     public void commit(Xid xid, boolean onePhase) throws XAException {
-      acquireMutex();
+      factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
         logger.info("Performing commit: " + parseXid(xid));
@@ -167,7 +163,7 @@ public class MulgaraXAResourceContext {
           }
         }
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
@@ -181,7 +177,7 @@ public class MulgaraXAResourceContext {
      * In all cases disassociate from current session.
      */
     public void end(Xid xid, int flags) throws XAException {
-      acquireMutex();
+      factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
         logger.info("Performing end(" + formatFlags(flags) + "): " + parseXid(xid));
@@ -208,18 +204,18 @@ public class MulgaraXAResourceContext {
 
         try {
           // If XA is currently associated with session, disassociate it.
-          factory.disassociateTransaction(session, xa);
+          factory.disassociateTransaction(xa);
         } catch (MulgaraTransactionException em) {
           logger.error("Error disassociating transaction from session", em);
           throw new XAException(XAException.XAER_PROTO);
         }
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
     public void forget(Xid xid) throws XAException {
-      acquireMutex();
+      factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
         logger.info("Performing forget: " + parseXid(xid));
@@ -240,22 +236,22 @@ public class MulgaraXAResourceContext {
           xa2xid.remove1(xa);
         }
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
-    public int getTransactionTimeout() {
-      acquireMutex();
+    public int getTransactionTimeout() throws XAException {
+      factory.acquireMutex(0, XAException.class);
       try {
         logger.info("Performing getTransactionTimeout");
-        return 3600;
+        return (int) (session.getTransactionTimeout() / 1000);
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
-    public boolean isSameRM(XAResource xares) {
-      acquireMutex();
+    public boolean isSameRM(XAResource xares) throws XAException {
+      factory.acquireMutex(0, XAException.class);
       try {
         logger.info("Performing isSameRM");
         if (!xares.getClass().equals(MulgaraXAResource.class)) {
@@ -267,13 +263,13 @@ public class MulgaraXAResourceContext {
           return session == ((MulgaraXAResource)xares).getSession();
         }
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
 
     public int prepare(Xid xid) throws XAException {
-      acquireMutex();
+      factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
         logger.info("Performing prepare: " + parseXid(xid));
@@ -288,7 +284,7 @@ public class MulgaraXAResourceContext {
 
         return XA_OK;
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
@@ -297,19 +293,19 @@ public class MulgaraXAResourceContext {
      * FIXME: We should at least handle the case where we are asked to recover
      * when we haven't crashed.
      */
-    public Xid[] recover(int flag) {
-      acquireMutex();
+    public Xid[] recover(int flag) throws XAException {
+      factory.acquireMutex(0, XAException.class);
       try {
         logger.info("Performing recover");
         return new Xid[] {};
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
 
     public void rollback(Xid xid) throws XAException {
-      acquireMutex();
+      factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
         logger.info("Performing rollback: " + parseXid(xid));
@@ -323,7 +319,7 @@ public class MulgaraXAResourceContext {
         // transaction.  doRollback only throws Heuristic Exceptions.
         xa2xid.remove1(xa);
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
@@ -342,19 +338,23 @@ public class MulgaraXAResourceContext {
     }
 
 
-    public boolean setTransactionTimeout(int seconds) {
-      acquireMutex();
+    public boolean setTransactionTimeout(int seconds) throws XAException {
+      if (seconds < 0)
+        throw new XAException(XAException.XAER_INVAL);
+
+      factory.acquireMutex(0, XAException.class);
       try {
         logger.info("Performing setTransactionTimeout");
-        return false;
+        session.setTransactionTimeout(seconds * 1000L);
+        return true;
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
     }
 
 
     public void start(Xid xid, int flags) throws XAException {
-      acquireMutex();
+      factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
         logger.info("Performing start(" + formatFlags(flags) + "): " + parseXid(xid));
@@ -362,12 +362,12 @@ public class MulgaraXAResourceContext {
           case TMNOFLAGS:
             if (xa2xid.containsN(xid)) {
               throw new XAException(XAException.XAER_DUPID);
-            } else if (factory.hasAssociatedTransaction(session)) {
+            } else if (factory.hasAssociatedTransaction()) {
               throw new XAException(XAException.XA_RBDEADLOCK);
             } else {
               // FIXME: Need to consider read-only transactions here.
               try {
-                MulgaraExternalTransaction xa = factory.createTransaction(session, xid, writing);
+                MulgaraExternalTransaction xa = factory.createTransaction(xid, writing);
                 xa2xid.put(xa, xid);
               } catch (MulgaraTransactionException em) {
                 logger.error("Failed to create transaction", em);
@@ -376,9 +376,9 @@ public class MulgaraXAResourceContext {
             }
             break;
           case TMJOIN:
-            if (!factory.hasAssociatedTransaction(session)) {
+            if (!factory.hasAssociatedTransaction()) {
               throw new XAException(XAException.XAER_NOTA);
-            } else if (!factory.getAssociatedTransaction(session).getXid().equals(xid)) {
+            } else if (!factory.getAssociatedTransaction().getXid().equals(xid)) {
               throw new XAException(XAException.XAER_OUTSIDE);
             }
             break;
@@ -389,7 +389,7 @@ public class MulgaraXAResourceContext {
             } else if (xa.isRollbacked()) {
               throw new XAException(XAException.XA_RBROLLBACK);
             } else {
-              if (!factory.associateTransaction(session, xa)) {
+              if (!factory.associateTransaction(xa)) {
                 // session already associated with a transaction.
                 throw new XAException(XAException.XAER_PROTO);
               }
@@ -397,7 +397,7 @@ public class MulgaraXAResourceContext {
             break;
         }
       } finally {
-        releaseMutex();
+        factory.releaseMutex();
       }
 
     }
@@ -411,26 +411,6 @@ public class MulgaraXAResourceContext {
      * inner-classes.
      */
     private DatabaseSession getSession() { return session; }
-  }
-  
-  /**
-   * Used to replace the built in monitor to allow it to be properly released
-   * during potentially blocking operations.  All potentially blocking
-   * operations involve writes, so in these cases the write-lock is reserved
-   * allowing the mutex to be safely released and then reobtained after the
-   * blocking operation concludes.
-   */
-  protected void acquireMutex() {
-    mutex.lock();
-  }
-
-
-  protected void releaseMutex() {
-    if (!mutex.isHeldByCurrentThread()) {
-      throw new IllegalStateException("Attempt to release mutex without holding mutex");
-    }
-
-    mutex.unlock();
   }
 
   public static String parseXid(Xid xid) {

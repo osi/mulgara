@@ -46,16 +46,10 @@ import org.objectweb.transaction.jta.TMService;
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
-import org.mulgara.server.driver.SessionFactoryFinder;
-import org.mulgara.util.FileUtil;
 
-import org.mulgara.query.QueryException;
-import org.mulgara.server.JRDFSession;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.driver.SessionFactoryFinder;
 
@@ -250,47 +244,9 @@ public class JotmTransactionStandaloneTest extends TestCase
       try {
         txManager.getTransaction().enlistResource(session.getXAResource());
 
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
-        String[][] results = {
-          { "test:s01", "test:p01", "test:o01" },
-          { "test:s01", "test:p02", "test:o01" },
-          { "test:s01", "test:p02", "test:o02" },
-          { "test:s01", "test:p03", "test:o02" },
-          { "test:s02", "test:p03", "test:o02" },
-          { "test:s02", "test:p04", "test:o02" },
-          { "test:s02", "test:p04", "test:o03" },
-          { "test:s02", "test:p05", "test:o03" },
-          { "test:s03", "test:p01", "test:o01" },
-          { "test:s03", "test:p05", "test:o03" },
-          { "test:s03", "test:p06", "test:o01" },
-          { "test:s03", "test:p06", "test:o03" },
-        };
-        compareResults(results, answer);
+        Answer answer = session.query(createQuery(modelURI));
+        compareResults(expectedResults(), answer);
         answer.close();
 
         txManager.commit();
@@ -314,47 +270,9 @@ public class JotmTransactionStandaloneTest extends TestCase
         txManager.getTransaction().enlistResource(session.getXAResource());
         txManager.getTransaction().enlistResource(session.getXAResource());
 
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
-        String[][] results = {
-          { "test:s01", "test:p01", "test:o01" },
-          { "test:s01", "test:p02", "test:o01" },
-          { "test:s01", "test:p02", "test:o02" },
-          { "test:s01", "test:p03", "test:o02" },
-          { "test:s02", "test:p03", "test:o02" },
-          { "test:s02", "test:p04", "test:o02" },
-          { "test:s02", "test:p04", "test:o03" },
-          { "test:s02", "test:p05", "test:o03" },
-          { "test:s03", "test:p01", "test:o01" },
-          { "test:s03", "test:p05", "test:o03" },
-          { "test:s03", "test:p06", "test:o01" },
-          { "test:s03", "test:p06", "test:o03" },
-        };
-        compareResults(results, answer);
+        Answer answer = session.query(createQuery(modelURI));
+        compareResults(expectedResults(), answer);
         answer.close();
 
         txManager.commit();
@@ -375,45 +293,10 @@ public class JotmTransactionStandaloneTest extends TestCase
       Session session = sessionFactory.newSession();
       txManager.getTransaction().enlistResource(session.getXAResource());
       try {
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer1 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Collections.singletonList(                        // ORDER BY
-            new Order(subjectVariable, true)
-          ),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer1 = session.query(createQuery(modelURI));
 
-        Answer answer2 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Collections.singletonList(                        // ORDER BY
-            new Order(subjectVariable, true)
-          ),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer2 = session.query(createQuery(modelURI));
 
         compareResults(answer1, answer2);
 
@@ -438,47 +321,9 @@ public class JotmTransactionStandaloneTest extends TestCase
       try {
         txManager.getTransaction().enlistResource(session.getReadOnlyXAResource());
 
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
-        String[][] results = {
-          { "test:s01", "test:p01", "test:o01" },
-          { "test:s01", "test:p02", "test:o01" },
-          { "test:s01", "test:p02", "test:o02" },
-          { "test:s01", "test:p03", "test:o02" },
-          { "test:s02", "test:p03", "test:o02" },
-          { "test:s02", "test:p04", "test:o02" },
-          { "test:s02", "test:p04", "test:o03" },
-          { "test:s02", "test:p05", "test:o03" },
-          { "test:s03", "test:p01", "test:o01" },
-          { "test:s03", "test:p05", "test:o03" },
-          { "test:s03", "test:p06", "test:o01" },
-          { "test:s03", "test:p06", "test:o03" },
-        };
-        compareResults(results, answer);
+        Answer answer = session.query(createQuery(modelURI));
+        compareResults(expectedResults(), answer);
         answer.close();
 
         txManager.commit();
@@ -501,51 +346,16 @@ public class JotmTransactionStandaloneTest extends TestCase
       tx1.enlistResource(roResource);
 
       try {
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer1 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Collections.singletonList(                        // ORDER BY
-            new Order(subjectVariable, true)
-          ),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
-        
+        Answer answer1 = session.query(createQuery(modelURI));
+
         tx1 = txManager.suspend();
 
         txManager.begin();
         Transaction tx2 = txManager.getTransaction();
         tx2.enlistResource(roResource);
 
-        Answer answer2 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Collections.singletonList(                        // ORDER BY
-            new Order(subjectVariable, true)
-          ),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer2 = session.query(createQuery(modelURI));
 
         tx2 = txManager.suspend();
 
@@ -576,51 +386,16 @@ public class JotmTransactionStandaloneTest extends TestCase
       tx1.enlistResource(session.getReadOnlyXAResource());
 
       try {
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer1 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Collections.singletonList(                        // ORDER BY
-            new Order(subjectVariable, true)
-          ),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
-        
+        Answer answer1 = session.query(createQuery(modelURI));
+
         tx1 = txManager.suspend();
 
         txManager.begin();
         Transaction tx2 = txManager.getTransaction();
         tx2.enlistResource(session.getReadOnlyXAResource());
 
-        Answer answer2 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Collections.singletonList(                        // ORDER BY
-            new Order(subjectVariable, true)
-          ),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer2 = session.query(createQuery(modelURI));
 
         tx2 = txManager.suspend();
 
@@ -660,35 +435,11 @@ public class JotmTransactionStandaloneTest extends TestCase
       Transaction tx1 = txManager.suspend();
 
       try {
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         txManager.begin();
         txManager.getTransaction().enlistResource(roResource);
 
         // Evaluate the query
-        Answer answer = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer = session.query(createQuery(modelURI));
 
         Transaction tx2 = txManager.suspend();
 
@@ -709,40 +460,11 @@ public class JotmTransactionStandaloneTest extends TestCase
         txManager.begin();
         txManager.getTransaction().enlistResource(roResource);
 
-        Answer answer2 = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(model2URI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer2 = session.query(createQuery(model2URI));
 
         Transaction tx3 = txManager.suspend();
 
-        String[][] results = {
-          { "test:s01", "test:p01", "test:o01" },
-          { "test:s01", "test:p02", "test:o01" },
-          { "test:s01", "test:p02", "test:o02" },
-          { "test:s01", "test:p03", "test:o02" },
-          { "test:s02", "test:p03", "test:o02" },
-          { "test:s02", "test:p04", "test:o02" },
-          { "test:s02", "test:p04", "test:o03" },
-          { "test:s02", "test:p05", "test:o03" },
-          { "test:s03", "test:p01", "test:o01" },
-          { "test:s03", "test:p05", "test:o03" },
-          { "test:s03", "test:p06", "test:o01" },
-          { "test:s03", "test:p06", "test:o03" },
-        };
-        compareResults(results, answer2);
+        compareResults(expectedResults(), answer2);
         answer2.close();
 
         txManager.begin();
@@ -1185,78 +907,16 @@ public class JotmTransactionStandaloneTest extends TestCase
   }
 
   private void assertChangeVisible(Session session) throws Exception {
-    Variable subjectVariable   = new Variable("subject");
-    Variable predicateVariable = new Variable("predicate");
-    Variable objectVariable    = new Variable("object");
-
-    List selectList = new ArrayList(3);
-    selectList.add(subjectVariable);
-    selectList.add(predicateVariable);
-    selectList.add(objectVariable);
-
     // Evaluate the query
-    Answer answer = session.query(new Query(
-      selectList,                                       // SELECT
-      new ModelResource(model3URI),                      // FROM
-      new ConstraintImpl(subjectVariable,               // WHERE
-                     predicateVariable,
-                     objectVariable),
-      null,                                             // HAVING
-      Arrays.asList(new Order[] {                       // ORDER BY
-        new Order(subjectVariable, true),
-        new Order(predicateVariable, true),
-        new Order(objectVariable, true)
-      }),
-      null,                                             // LIMIT
-      0,                                                // OFFSET
-      new UnconstrainedAnswer()                         // GIVEN
-    ));
+    Answer answer = session.query(createQuery(model3URI));
 
-    String[][] results = {
-      { "test:s01", "test:p01", "test:o01" },
-      { "test:s01", "test:p02", "test:o01" },
-      { "test:s01", "test:p02", "test:o02" },
-      { "test:s01", "test:p03", "test:o02" },
-      { "test:s02", "test:p03", "test:o02" },
-      { "test:s02", "test:p04", "test:o02" },
-      { "test:s02", "test:p04", "test:o03" },
-      { "test:s02", "test:p05", "test:o03" },
-      { "test:s03", "test:p01", "test:o01" },
-      { "test:s03", "test:p05", "test:o03" },
-      { "test:s03", "test:p06", "test:o01" },
-      { "test:s03", "test:p06", "test:o03" },
-    };
-    compareResults(results, answer);
+    compareResults(expectedResults(), answer);
     answer.close();
   }
 
   private void assertChangeNotVisible(Session session) throws Exception {
-    Variable subjectVariable   = new Variable("subject");
-    Variable predicateVariable = new Variable("predicate");
-    Variable objectVariable    = new Variable("object");
-
-    List selectList = new ArrayList(3);
-    selectList.add(subjectVariable);
-    selectList.add(predicateVariable);
-    selectList.add(objectVariable);
-
     // Evaluate the query
-    Answer answer = session.query(new Query(
-      selectList,                                       // SELECT
-      new ModelResource(model3URI),                      // FROM
-      new ConstraintImpl(subjectVariable,               // WHERE
-                     predicateVariable,
-                     objectVariable),
-      null,                                             // HAVING
-      Arrays.asList(new Order[] {                       // ORDER BY
-        new Order(subjectVariable, true),
-        new Order(predicateVariable, true),
-        new Order(objectVariable, true)
-      }),
-      null,                                             // LIMIT
-      0,                                                // OFFSET
-      new UnconstrainedAnswer()                         // GIVEN
-    ));
+    Answer answer = session.query(createQuery(model3URI));
     answer.beforeFirst();
     assertFalse(answer.next());
     answer.close();
@@ -1298,48 +958,10 @@ public class JotmTransactionStandaloneTest extends TestCase
                   tx2Started.notify();
                 }
 
-                Variable subjectVariable   = new Variable("subject");
-                Variable predicateVariable = new Variable("predicate");
-                Variable objectVariable    = new Variable("object");
-
-                List selectList = new ArrayList(3);
-                selectList.add(subjectVariable);
-                selectList.add(predicateVariable);
-                selectList.add(objectVariable);
-
                 // Evaluate the query
-                Answer answer = session2.query(new Query(
-                  selectList,                                       // SELECT
-                  new ModelResource(model3URI),                      // FROM
-                  new ConstraintImpl(subjectVariable,               // WHERE
-                                 predicateVariable,
-                                 objectVariable),
-                  null,                                             // HAVING
-                  Arrays.asList(new Order[] {                       // ORDER BY
-                    new Order(subjectVariable, true),
-                    new Order(predicateVariable, true),
-                    new Order(objectVariable, true)
-                  }),
-                  null,                                             // LIMIT
-                  0,                                                // OFFSET
-                  new UnconstrainedAnswer()                         // GIVEN
-                ));
+                Answer answer = session2.query(createQuery(model3URI));
 
-                String[][] results = {
-                  { "test:s01", "test:p01", "test:o01" },
-                  { "test:s01", "test:p02", "test:o01" },
-                  { "test:s01", "test:p02", "test:o02" },
-                  { "test:s01", "test:p03", "test:o02" },
-                  { "test:s02", "test:p03", "test:o02" },
-                  { "test:s02", "test:p04", "test:o02" },
-                  { "test:s02", "test:p04", "test:o03" },
-                  { "test:s02", "test:p05", "test:o03" },
-                  { "test:s03", "test:p01", "test:o01" },
-                  { "test:s03", "test:p05", "test:o03" },
-                  { "test:s03", "test:p06", "test:o01" },
-                  { "test:s03", "test:p06", "test:o03" },
-                };
-                compareResults(results, answer);
+                compareResults(expectedResults(), answer);
                 answer.close();
 
                 resource2.end(new TestXid(3), XAResource.TMSUCCESS);
@@ -1436,48 +1058,10 @@ public class JotmTransactionStandaloneTest extends TestCase
                   tx2Started.notify();
                 }
 
-                Variable subjectVariable   = new Variable("subject");
-                Variable predicateVariable = new Variable("predicate");
-                Variable objectVariable    = new Variable("object");
-
-                List selectList = new ArrayList(3);
-                selectList.add(subjectVariable);
-                selectList.add(predicateVariable);
-                selectList.add(objectVariable);
-
                 // Evaluate the query
-                Answer answer = session2.query(new Query(
-                  selectList,                                       // SELECT
-                  new ModelResource(model3URI),                      // FROM
-                  new ConstraintImpl(subjectVariable,               // WHERE
-                                 predicateVariable,
-                                 objectVariable),
-                  null,                                             // HAVING
-                  Arrays.asList(new Order[] {                       // ORDER BY
-                    new Order(subjectVariable, true),
-                    new Order(predicateVariable, true),
-                    new Order(objectVariable, true)
-                  }),
-                  null,                                             // LIMIT
-                  0,                                                // OFFSET
-                  new UnconstrainedAnswer()                         // GIVEN
-                ));
+                Answer answer = session2.query(createQuery(model3URI));
 
-                String[][] results = {
-                  { "test:s01", "test:p01", "test:o01" },
-                  { "test:s01", "test:p02", "test:o01" },
-                  { "test:s01", "test:p02", "test:o02" },
-                  { "test:s01", "test:p03", "test:o02" },
-                  { "test:s02", "test:p03", "test:o02" },
-                  { "test:s02", "test:p04", "test:o02" },
-                  { "test:s02", "test:p04", "test:o03" },
-                  { "test:s02", "test:p05", "test:o03" },
-                  { "test:s03", "test:p01", "test:o01" },
-                  { "test:s03", "test:p05", "test:o03" },
-                  { "test:s03", "test:p06", "test:o01" },
-                  { "test:s03", "test:p06", "test:o03" },
-                };
-                compareResults(results, answer);
+                compareResults(expectedResults(), answer);
                 answer.close();
 
                 session2.setAutoCommit(true);
@@ -1571,48 +1155,10 @@ public class JotmTransactionStandaloneTest extends TestCase
                   tx2Started.notify();
                 }
 
-                Variable subjectVariable   = new Variable("subject");
-                Variable predicateVariable = new Variable("predicate");
-                Variable objectVariable    = new Variable("object");
-
-                List selectList = new ArrayList(3);
-                selectList.add(subjectVariable);
-                selectList.add(predicateVariable);
-                selectList.add(objectVariable);
-
                 // Evaluate the query
-                Answer answer = session2.query(new Query(
-                  selectList,                                       // SELECT
-                  new ModelResource(model3URI),                      // FROM
-                  new ConstraintImpl(subjectVariable,               // WHERE
-                                 predicateVariable,
-                                 objectVariable),
-                  null,                                             // HAVING
-                  Arrays.asList(new Order[] {                       // ORDER BY
-                    new Order(subjectVariable, true),
-                    new Order(predicateVariable, true),
-                    new Order(objectVariable, true)
-                  }),
-                  null,                                             // LIMIT
-                  0,                                                // OFFSET
-                  new UnconstrainedAnswer()                         // GIVEN
-                ));
+                Answer answer = session2.query(createQuery(model3URI));
 
-                String[][] results = {
-                  { "test:s01", "test:p01", "test:o01" },
-                  { "test:s01", "test:p02", "test:o01" },
-                  { "test:s01", "test:p02", "test:o02" },
-                  { "test:s01", "test:p03", "test:o02" },
-                  { "test:s02", "test:p03", "test:o02" },
-                  { "test:s02", "test:p04", "test:o02" },
-                  { "test:s02", "test:p04", "test:o03" },
-                  { "test:s02", "test:p05", "test:o03" },
-                  { "test:s03", "test:p01", "test:o01" },
-                  { "test:s03", "test:p05", "test:o03" },
-                  { "test:s03", "test:p06", "test:o01" },
-                  { "test:s03", "test:p06", "test:o03" },
-                };
-                compareResults(results, answer);
+                compareResults(expectedResults(), answer);
                 answer.close();
 
                 resource.end(new TestXid(1), XAResource.TMSUCCESS);
@@ -1719,32 +1265,8 @@ public class JotmTransactionStandaloneTest extends TestCase
                   tx2Started.notify();
                 }
 
-                Variable subjectVariable   = new Variable("subject");
-                Variable predicateVariable = new Variable("predicate");
-                Variable objectVariable    = new Variable("object");
-
-                List selectList = new ArrayList(3);
-                selectList.add(subjectVariable);
-                selectList.add(predicateVariable);
-                selectList.add(objectVariable);
-
                 // Evaluate the query
-                Answer answer = session2.query(new Query(
-                  selectList,                                       // SELECT
-                  new ModelResource(model3URI),                      // FROM
-                  new ConstraintImpl(subjectVariable,               // WHERE
-                                 predicateVariable,
-                                 objectVariable),
-                  null,                                             // HAVING
-                  Arrays.asList(new Order[] {                       // ORDER BY
-                    new Order(subjectVariable, true),
-                    new Order(predicateVariable, true),
-                    new Order(objectVariable, true)
-                  }),
-                  null,                                             // LIMIT
-                  0,                                                // OFFSET
-                  new UnconstrainedAnswer()                         // GIVEN
-                ));
+                Answer answer = session2.query(createQuery(model3URI));
 
                 answer.beforeFirst();
                 assertFalse(answer.next());
@@ -1841,32 +1363,8 @@ public class JotmTransactionStandaloneTest extends TestCase
                   tx2Started.notify();
                 }
 
-                Variable subjectVariable   = new Variable("subject");
-                Variable predicateVariable = new Variable("predicate");
-                Variable objectVariable    = new Variable("object");
-
-                List selectList = new ArrayList(3);
-                selectList.add(subjectVariable);
-                selectList.add(predicateVariable);
-                selectList.add(objectVariable);
-
                 // Evaluate the query
-                Answer answer = session2.query(new Query(
-                  selectList,                                       // SELECT
-                  new ModelResource(model3URI),                      // FROM
-                  new ConstraintImpl(subjectVariable,               // WHERE
-                                 predicateVariable,
-                                 objectVariable),
-                  null,                                             // HAVING
-                  Arrays.asList(new Order[] {                       // ORDER BY
-                    new Order(subjectVariable, true),
-                    new Order(predicateVariable, true),
-                    new Order(objectVariable, true)
-                  }),
-                  null,                                             // LIMIT
-                  0,                                                // OFFSET
-                  new UnconstrainedAnswer()                         // GIVEN
-                ));
+                Answer answer = session2.query(createQuery(model3URI));
 
                 answer.beforeFirst();
                 assertFalse(answer.next());
@@ -1962,32 +1460,8 @@ public class JotmTransactionStandaloneTest extends TestCase
 
         roResource.start(new TestXid(3), XAResource.TMNOFLAGS);
 
-        Variable subjectVariable   = new Variable("subject");
-        Variable predicateVariable = new Variable("predicate");
-        Variable objectVariable    = new Variable("object");
-
-        List selectList = new ArrayList(3);
-        selectList.add(subjectVariable);
-        selectList.add(predicateVariable);
-        selectList.add(objectVariable);
-
         // Evaluate the query
-        Answer answer = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(model3URI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        Answer answer = session.query(createQuery(model3URI));
         answer.beforeFirst();
         assertFalse(answer.next());
         answer.close();
@@ -2005,22 +1479,7 @@ public class JotmTransactionStandaloneTest extends TestCase
         selectList.add(objectVariable);
 
         // Evaluate the query
-        answer = session.query(new Query(
-          selectList,                                       // SELECT
-          new ModelResource(model3URI),                      // FROM
-          new ConstraintImpl(subjectVariable,               // WHERE
-                         predicateVariable,
-                         objectVariable),
-          null,                                             // HAVING
-          Arrays.asList(new Order[] {                       // ORDER BY
-            new Order(subjectVariable, true),
-            new Order(predicateVariable, true),
-            new Order(objectVariable, true)
-          }),
-          null,                                             // LIMIT
-          0,                                                // OFFSET
-          new UnconstrainedAnswer()                         // GIVEN
-        ));
+        answer = session.query(createQuery(model3URI));
 
         answer.beforeFirst();
         assertFalse(answer.next());
@@ -2056,6 +1515,51 @@ public class JotmTransactionStandaloneTest extends TestCase
   //
   // Internal methods
   //
+
+  private Query createQuery(URI model) {
+    Variable subjectVariable   = new Variable("subject");
+    Variable predicateVariable = new Variable("predicate");
+    Variable objectVariable    = new Variable("object");
+
+    List<SelectElement> selectList = new ArrayList<SelectElement>(3);
+    selectList.add(subjectVariable);
+    selectList.add(predicateVariable);
+    selectList.add(objectVariable);
+
+    return new Query(
+      selectList,                                       // SELECT
+      new ModelResource(model),                         // FROM
+      new ConstraintImpl(subjectVariable,               // WHERE
+                     predicateVariable,
+                     objectVariable),
+      null,                                             // HAVING
+      Arrays.asList(new Order[] {                       // ORDER BY
+        new Order(subjectVariable, true),
+        new Order(predicateVariable, true),
+        new Order(objectVariable, true)
+      }),
+      null,                                             // LIMIT
+      0,                                                // OFFSET
+      new UnconstrainedAnswer()                         // GIVEN
+    );
+  }
+
+  private String[][] expectedResults() {
+    return new String[][] {
+          { "test:s01", "test:p01", "test:o01" },
+          { "test:s01", "test:p02", "test:o01" },
+          { "test:s01", "test:p02", "test:o02" },
+          { "test:s01", "test:p03", "test:o02" },
+          { "test:s02", "test:p03", "test:o02" },
+          { "test:s02", "test:p04", "test:o02" },
+          { "test:s02", "test:p04", "test:o03" },
+          { "test:s02", "test:p05", "test:o03" },
+          { "test:s03", "test:p01", "test:o01" },
+          { "test:s03", "test:p05", "test:o03" },
+          { "test:s03", "test:p06", "test:o01" },
+          { "test:s03", "test:p06", "test:o03" },
+        };
+  }
 
   private void compareResults(String[][] expected, Answer answer) throws Exception {
     try {

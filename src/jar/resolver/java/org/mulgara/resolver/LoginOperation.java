@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 
 // Local packages
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 
 /**
  * An {@link Operation} that implements the {@link Session#login} method.

@@ -41,7 +41,6 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 
 class ModelExistsOperation implements Operation
 {

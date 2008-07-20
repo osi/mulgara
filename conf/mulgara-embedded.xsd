@@ -93,6 +93,7 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="TransactionTimeout" type="xs:int"/>
+  <xs:element name="IdleTimeout" type="xs:int"/>
   <xs:element name="DefaultContentHandler">
     <xs:complexType>
       <xs:attribute name="type" type="xs:string" use="required"/>
@@ -119,7 +120,8 @@
         <xs:element ref="RMIPort" minOccurs="0"/>
         <xs:element ref="PersistencePath"/>
         <xs:element ref="DefaultGraph" minOccurs="0"/>
-        <xs:element ref="TransactionTimeout"/>
+        <xs:element ref="TransactionTimeout" minOccurs="0"/>
+        <xs:element ref="IdleTimeout" minOccurs="0"/>
         <xs:element ref="TripleStoreImplementation"/>
         <xs:element ref="RelatedQueryHandler"/>
         <xs:element ref="SecurityAdapterFactory" minOccurs="0" maxOccurs="unbounded"/>

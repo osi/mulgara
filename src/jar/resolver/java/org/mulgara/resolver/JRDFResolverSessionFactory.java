@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 // Local packages
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePoolException;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;
 import org.mulgara.store.xa.SimpleXAResourceException;

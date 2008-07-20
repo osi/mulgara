@@ -38,9 +38,6 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.statement.StatementStoreException;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.tuples.LiteralTuples;
 import org.mulgara.store.tuples.Tuples;
 

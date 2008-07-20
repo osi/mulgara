@@ -29,9 +29,7 @@ package org.mulgara.resolver;
 
 // Local packages
 import org.mulgara.resolver.spi.DatabaseMetadata;
-import org.mulgara.resolver.spi.ResolverSessionFactory;
 import org.mulgara.resolver.spi.SystemResolver;
-import org.mulgara.server.Session;
 
 /**
  * {@link Operation}s correspond to methods of the {@link Session} interface

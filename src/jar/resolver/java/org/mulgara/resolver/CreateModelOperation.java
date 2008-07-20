@@ -39,7 +39,6 @@ import org.jrdf.graph.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 import org.mulgara.store.nodepool.NodePool;
 
 /**

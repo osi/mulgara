@@ -29,20 +29,8 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-
-// Java 2 enterprise packages
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.InvalidTransactionException;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -58,7 +46,6 @@ import org.mulgara.content.NotModifiedException;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
 
 /**
  * An {@link Operation} that implements the {@link Session#setModel} method.

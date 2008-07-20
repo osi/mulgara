@@ -29,12 +29,7 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -42,7 +37,6 @@ import org.jrdf.graph.*;
 
 // Local packages
 import org.mulgara.resolver.spi.DatabaseMetadata;
-import org.mulgara.resolver.spi.ResolverSessionFactory;
 import org.mulgara.resolver.spi.SingletonStatements;
 import org.mulgara.resolver.spi.SystemResolver;
 

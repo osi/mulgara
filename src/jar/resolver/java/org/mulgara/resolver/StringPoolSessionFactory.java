@@ -32,12 +32,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.lang.reflect.Method;
-import javax.transaction.xa.XAResource;
-
-// Java 2 enterprise packages
-import javax.transaction.RollbackException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -48,22 +42,13 @@ import gnu.trove.TIntHashSet;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
-import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.nodepool.NodePoolFactory;
-import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.stringpool.StringPoolFactory;
-import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;
-import org.mulgara.store.xa.SimpleXAResource;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XANodePool;
-import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAResolverSessionFactory;
 import org.mulgara.store.xa.XAStatementStore;
 import org.mulgara.store.xa.XAStringPool;

@@ -517,7 +517,23 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
       throw convertToQueryException(t);
     }
   }
-  
+
+  public void setIdleTimeout(long millis) throws QueryException, RemoteException {
+    try {
+      session.setIdleTimeout(millis);
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+
+  public void setTransactionTimeout(long millis) throws QueryException, RemoteException {
+    try {
+      session.setTransactionTimeout(millis);
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+
   public boolean ping() throws QueryException, RemoteException {
     try {
       return session.ping();

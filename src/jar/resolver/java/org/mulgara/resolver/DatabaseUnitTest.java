@@ -41,9 +41,6 @@ import org.apache.log4j.Logger;  // Log4J
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.util.FileUtil;
 
 /**
@@ -111,7 +108,7 @@ public class DatabaseUnitTest extends TestCase
   public void test1Constructor()
   {
     try {
-      new Database(null, null, null, null, 0, null, null, null, null, null,
+      new Database(null, null, null, null, 0, 0, null, null, null, null, null,
                    null, null, null, null, null, null, null, null, null);
       fail("Expected " + IllegalArgumentException.class);
     } catch (IllegalArgumentException e) {
@@ -158,6 +155,7 @@ public class DatabaseUnitTest extends TestCase
           null,  // no security domain
           new JotmTransactionManagerFactory(),
           0,  // default transaction timeout
+          0,  // default idle timeout
           "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory",
           null,
           "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory",

@@ -30,15 +30,7 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-
-import javax.transaction.xa.XAResource;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-// Java 2 enterprise packages
-import javax.transaction.TransactionManager;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -53,6 +45,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.server.*;
 import org.mulgara.store.statement.StatementStore;
+import org.mulgara.transaction.TransactionManagerFactory;
 
 /**
  * A JRDF database session.
@@ -123,6 +116,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
    * @throws IllegalArgumentException if any argument is <code>null</code>
    */
   LocalJRDFDatabaseSession(MulgaraTransactionManager transactionManager, 
+      TransactionManagerFactory transactionManagerFactory,
       List securityAdapterList, List symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
       SystemResolverFactory systemResolverFactory,
@@ -131,8 +125,8 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
       DatabaseMetadata metadata, ContentHandlerManager contentHandlers,
       Set cachedResolverFactorySet, URI temporaryModelTypeURI)
       throws ResolverFactoryException {
-    super(transactionManager, securityAdapterList, symbolicTransformationList,
-        resolverSessionFactory,
+    super(transactionManager, transactionManagerFactory, securityAdapterList,
+        symbolicTransformationList, resolverSessionFactory,
         systemResolverFactory, temporaryResolverFactory, resolverFactoryList,
         externalResolverFactoryMap, internalResolverFactoryMap, metadata,
         contentHandlers, cachedResolverFactorySet, temporaryModelTypeURI);

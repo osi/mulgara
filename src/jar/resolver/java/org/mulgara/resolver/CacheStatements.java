@@ -28,7 +28,6 @@
 package org.mulgara.resolver;
 
 // Local packages
-import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.resolver.spi.Statements;

@@ -43,7 +43,6 @@ import org.mulgara.content.ContentHandlerException;
 import org.mulgara.content.ContentHandlerManager;
 import org.mulgara.content.ContentLoader;
 import org.mulgara.content.NotModifiedException;
-import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.util.StackTrace;

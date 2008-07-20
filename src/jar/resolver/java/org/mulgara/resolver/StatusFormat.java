@@ -29,7 +29,6 @@ package org.mulgara.resolver;
 
 // Java 2 enterprise packages
 import javax.transaction.Status;
-import javax.transaction.SystemException;
 
 /**
  * Generate a presentation form for a transaction {@link Status}.
