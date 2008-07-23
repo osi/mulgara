@@ -1,5 +1,23 @@
 ------------------------------------------------------------------------
-r1099 | ronald | 2008-07-20 18:00:05 -0500 (Sun, 20 Jul 2008) | 4 lines
+r1104 | pag | 2008-07-23 14:27:44 -0700 (Wed, 23 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraTransactionFactory.java
+
+Fixed a problem with the idle timeouts in transactions where cancelled tasks were holding onto transactions. This solution required regular wakeups and rescheduling, which is undesirable, but we will need a new timeout handler in order to fix this correctly.
+------------------------------------------------------------------------
+r1102 | pag | 2008-07-22 22:04:50 -0700 (Tue, 22 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/common.properties
+
+Updated the version for release
+------------------------------------------------------------------------
+r1100 | pag | 2008-07-21 12:52:22 -0700 (Mon, 21 Jul 2008) | 1 line
+Changed paths:
+   A /trunk/KOWARI-MODIFICATIONS/mods-mulgara-2.0.0.txt
+
+Modification log for release candidate
+------------------------------------------------------------------------
+r1099 | ronald | 2008-07-20 16:00:05 -0700 (Sun, 20 Jul 2008) | 4 lines
 Changed paths:
    M /trunk/src/jar/resolver/java/org/mulgara/resolver/AdvDatabaseSessionUnitTest.java
    M /trunk/src/jar/resolver/java/org/mulgara/resolver/ExternalTransactionUnitTest.java
@@ -9,7 +27,7 @@ may not have been processed yet, so we can get hit with it in the
 Thread.join().
 
 ------------------------------------------------------------------------
-r1098 | ronald | 2008-07-20 08:01:56 -0500 (Sun, 20 Jul 2008) | 7 lines
+r1098 | ronald | 2008-07-20 06:01:56 -0700 (Sun, 20 Jul 2008) | 7 lines
 Changed paths:
    M /trunk/conf/mulgara-config.xml
    M /trunk/conf/mulgara-embedded.dtd
@@ -86,7 +104,7 @@ This contains three sets of changes:
  3. miscellaneous small fixes to the transactions - this closes #101.
 
 ------------------------------------------------------------------------
-r1091 | pag | 2008-07-17 16:56:54 -0500 (Thu, 17 Jul 2008) | 1 line
+r1091 | pag | 2008-07-17 14:56:54 -0700 (Thu, 17 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/resolver/java/org/mulgara/resolver/AppendAggregateTuples.java
    M /trunk/src/jar/resolver/java/org/mulgara/resolver/ContentHandlerManagerImpl.java
@@ -115,32 +133,32 @@ Changed paths:
 
 Removed all references to 'new Throwable', replacing with StackTrace where appropriate, or an appropriate exception type otherwise.
 ------------------------------------------------------------------------
-r1090 | pag | 2008-07-17 12:13:08 -0500 (Thu, 17 Jul 2008) | 1 line
+r1090 | pag | 2008-07-17 10:13:08 -0700 (Thu, 17 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDecimalImpl.java
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDecimalUnitTest.java
 
 Added support for decimals to start with a '+' character
 ------------------------------------------------------------------------
-r1089 | pag | 2008-07-17 11:17:57 -0500 (Thu, 17 Jul 2008) | 1 line
+r1089 | pag | 2008-07-17 09:17:57 -0700 (Thu, 17 Jul 2008) | 1 line
 Changed paths:
    A /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPStringUnitTest.java
 
 Tests that strings are created as expected and compare first by language code and then by lexical value
 ------------------------------------------------------------------------
-r1088 | pag | 2008-07-17 11:17:01 -0500 (Thu, 17 Jul 2008) | 1 line
+r1088 | pag | 2008-07-17 09:17:01 -0700 (Thu, 17 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPStringImpl.java
 
 Fixed ascii tests on the language code
 ------------------------------------------------------------------------
-r1087 | pag | 2008-07-16 17:14:26 -0500 (Wed, 16 Jul 2008) | 1 line
+r1087 | pag | 2008-07-16 15:14:26 -0700 (Wed, 16 Jul 2008) | 1 line
 Changed paths:
    M /trunk/jxdata/iTQL/data_types/queryResult34.txt
 
 Now able to handle typed literals that don't validate for their type
 ------------------------------------------------------------------------
-r1086 | pag | 2008-07-16 17:13:12 -0500 (Wed, 16 Jul 2008) | 1 line
+r1086 | pag | 2008-07-16 15:13:12 -0700 (Wed, 16 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDecimalImpl.java
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDecimalUnitTest.java
@@ -149,84 +167,84 @@ Changed paths:
 
 Mistakenly changed SPDecimal to handle floating point, but the bug report leading to this was really about not throwing an exception for floating point values. Now accepting any lexical value for typed literals, and falling back to using untyped data when the semantics are violated, e.g. when a floating point value is giving for an integer, or a string is given for a number.
 ------------------------------------------------------------------------
-r1085 | eddie | 2008-07-16 10:13:45 -0500 (Wed, 16 Jul 2008) | 1 line
+r1085 | eddie | 2008-07-16 08:13:45 -0700 (Wed, 16 Jul 2008) | 1 line
 Changed paths:
    M /trunk/build.properties
    M /trunk/build.xml
 
 Added new build target (core-dist). This is largely based on embedded-dist, but removes third-party libraries and adds client-jrdf.
 ------------------------------------------------------------------------
-r1084 | pag | 2008-07-16 09:23:17 -0500 (Wed, 16 Jul 2008) | 1 line
+r1084 | pag | 2008-07-16 07:23:17 -0700 (Wed, 16 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDecimalImpl.java
    A /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDecimalUnitTest.java
 
 Updated xsd:decimal to handle floating point numbers as Doubles. If no decimal point is seen in the lexical form, then it still uses Longs. Also, remembers the number of decimal places in the lexical form for floating point values. This fixes #128
 ------------------------------------------------------------------------
-r1083 | pag | 2008-07-15 20:30:49 -0500 (Tue, 15 Jul 2008) | 1 line
+r1083 | pag | 2008-07-15 18:30:49 -0700 (Tue, 15 Jul 2008) | 1 line
 Changed paths:
    M /trunk/jxdata/iTQL/dates.rdf
 
 Updated Valentine's day to have a time offset. This helps test the fix checked in as 1081
 ------------------------------------------------------------------------
-r1082 | pag | 2008-07-15 20:29:31 -0500 (Tue, 15 Jul 2008) | 1 line
+r1082 | pag | 2008-07-15 18:29:31 -0700 (Tue, 15 Jul 2008) | 1 line
 Changed paths:
    A /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDateUnitTest.java
 
 New unit test for SPDateImpl
 ------------------------------------------------------------------------
-r1081 | pag | 2008-07-15 20:28:33 -0500 (Tue, 15 Jul 2008) | 1 line
+r1081 | pag | 2008-07-15 18:28:33 -0700 (Tue, 15 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPDateImpl.java
 
 Added in support for timezone offsets. This fixes #127
 ------------------------------------------------------------------------
-r1078 | alexhall | 2008-07-11 12:49:38 -0500 (Fri, 11 Jul 2008) | 1 line
+r1078 | alexhall | 2008-07-11 10:49:38 -0700 (Fri, 11 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/sparql-interpreter/java/org/mulgara/sparql/IdentityTransformer.java
    M /trunk/src/jar/sparql-interpreter/java/org/mulgara/sparql/VariableRenameTransformer.java
 
 Remove Interval, Relational, and Test constraints from the variable renaming constraint transformation used for SPARQL DESCRIBE queries.  These depend on resolver classes that are not in the itql-version.jar file, and furthermore these constraints cannot be created by the parser but only by the query transformation code on the server.
 ------------------------------------------------------------------------
-r1077 | alexhall | 2008-07-10 17:07:00 -0500 (Thu, 10 Jul 2008) | 1 line
+r1077 | alexhall | 2008-07-10 15:07:00 -0700 (Thu, 10 Jul 2008) | 1 line
 Changed paths:
    A /trunk/src/jar/query/java/org/mulgara/query/RdfXmlEmitter.java
    M /trunk/tools/src/org/mulgara/tools/Sparql.java
 
 Added RdfXmlEmitter, a utility for formatting the results of a SPARQL CONSTRUCT or DESCRIBE query as RDF/XML.
 ------------------------------------------------------------------------
-r1076 | alexhall | 2008-07-10 09:46:24 -0500 (Thu, 10 Jul 2008) | 1 line
+r1076 | alexhall | 2008-07-10 07:46:24 -0700 (Thu, 10 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/query/java/org/mulgara/query/GraphAnswer.java
    M /trunk/src/jar/sparql-interpreter/java/org/mulgara/sparql/SparqlInterpreter.java
 
 Fix bugs in SPARQL DESCRIBE queries.
 ------------------------------------------------------------------------
-r1075 | pag | 2008-07-09 17:17:32 -0500 (Wed, 09 Jul 2008) | 1 line
+r1075 | pag | 2008-07-09 15:17:32 -0700 (Wed, 09 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/query/java/org/mulgara/query/BooleanAnswer.java
 
 Returning a boolean literal instead of a boolean
 ------------------------------------------------------------------------
-r1074 | pag | 2008-07-09 17:16:48 -0500 (Wed, 09 Jul 2008) | 1 line
+r1074 | pag | 2008-07-09 15:16:48 -0700 (Wed, 09 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/query/java/org/mulgara/query/rdf/BlankNodeImpl.java
 
 Reformat and remove warnings
 ------------------------------------------------------------------------
-r1073 | pag | 2008-07-09 17:15:51 -0500 (Wed, 09 Jul 2008) | 1 line
+r1073 | pag | 2008-07-09 15:15:51 -0700 (Wed, 09 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/query/java/org/mulgara/query/AnswerImpl.java
 
 Reformat and remove warnings
 ------------------------------------------------------------------------
-r1072 | pag | 2008-07-08 23:13:06 -0500 (Tue, 08 Jul 2008) | 1 line
+r1072 | pag | 2008-07-08 21:13:06 -0700 (Tue, 08 Jul 2008) | 1 line
 Changed paths:
    M /trunk/jxdata/iTQL/having_queries/queryResult15-2.txt
 
 Fixed up new exception trace in message
 ------------------------------------------------------------------------
-r1071 | pag | 2008-07-08 11:15:40 -0500 (Tue, 08 Jul 2008) | 18 lines
+r1071 | pag | 2008-07-08 09:15:40 -0700 (Tue, 08 Jul 2008) | 18 lines
 Changed paths:
    M /trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/TripleAVLFile.java
    M /trunk/src/jar/resolver-store/java/org/mulgara/store/statement/xa/TripleAVLFileUnitTest.java
@@ -272,13 +290,13 @@ revisited in the foreseeable future.
 
 
 ------------------------------------------------------------------------
-r1070 | pag | 2008-07-08 10:33:34 -0500 (Tue, 08 Jul 2008) | 1 line
+r1070 | pag | 2008-07-08 08:33:34 -0700 (Tue, 08 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/sparql-interpreter/java/org/mulgara/sparql/SparqlInterpreter.java
 
 Hooked in Describe queries
 ------------------------------------------------------------------------
-r1054 | pag | 2008-07-06 19:20:20 -0500 (Sun, 06 Jul 2008) | 1 line
+r1054 | pag | 2008-07-06 17:20:20 -0700 (Sun, 06 Jul 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
 
