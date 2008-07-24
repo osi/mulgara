@@ -142,12 +142,12 @@ public class ViewerScreen
   /**
    * The example query text
    */
-  private static List exampleQueryText;
+  private static List<String> exampleQueryText;
 
   /**
    * The example query display values
    */
-  private static List exampleQueryDisplay;
+  private static List<String> exampleQueryDisplay;
 
   /**
    * The path to the mulgara jar file
@@ -294,8 +294,8 @@ public class ViewerScreen
     // Load example queries.
     if (exampleQueryText == null) {
 
-      exampleQueryDisplay = new ArrayList();
-      exampleQueryText = new ArrayList();
+      exampleQueryDisplay = new ArrayList<String>();
+      exampleQueryText = new ArrayList<String>();
 
       // Read in the query file.
       try {
@@ -382,14 +382,14 @@ public class ViewerScreen
    * @param resultList List The list of query results.
    * @throws TuplesException If the answer can't be closed.
    */
-  private void closeAnswers(List resultList)
+  private void closeAnswers(List<QueryResult> resultList)
       throws TuplesException {
 
     // Populate the result rows
     for (int resultIndex = 0; resultIndex < resultList.size();
         resultIndex++) {
 
-      QueryResult queryResult = (QueryResult) resultList.get(resultIndex);
+      QueryResult queryResult = resultList.get(resultIndex);
       Answer answer = queryResult.answer;
 
       // Got a message
@@ -407,6 +407,7 @@ public class ViewerScreen
   /**
    * Handles SetServer events which occur when the "SetServerButton" is clicked.
    */
+  @SuppressWarnings("deprecation")
   class ExecuteQueryHandler
       extends DefaultBaseEventListener {
 
@@ -418,6 +419,7 @@ public class ViewerScreen
      * @throws ServletException EXCEPTION TO DO
      * @throws IOException EXCEPTION TO DO
      */
+    @SuppressWarnings("unchecked")
     public void handleControlEvent(ControlEventContext context)
         throws EventException, ServletException, IOException {
 
@@ -467,7 +469,7 @@ public class ViewerScreen
         newModelURI = modelURI;
       }
 
-      List result = null;
+      List<QueryResult> result = null;
 
       try {
 
@@ -549,7 +551,7 @@ public class ViewerScreen
         }
 
         // Try to use message else use the toString
-        result = new ArrayList();
+        result = new ArrayList<QueryResult>();
 
         String exceptionMessage = lastCause.getMessage();
 
@@ -579,7 +581,7 @@ public class ViewerScreen
       if (result == null ||
           (result != null && !result.equals(session.getAttribute(WebUIKeys.RESULT)))) {
 
-        List oldResult = (List) session.getAttribute(WebUIKeys.RESULT);
+        List<QueryResult> oldResult = (List) session.getAttribute(WebUIKeys.RESULT);
 
         if (oldResult != null) {
           try {
@@ -621,13 +623,13 @@ public class ViewerScreen
      * @throws Exception if there is a problem executing or processing the
      *      query.
      */
-    private List executeQuery(String queryString,
+    private List<QueryResult> executeQuery(String queryString,
         ItqlInterpreterBean interpreter, HTMLTableElement resultTableTemplate,
         String modelURI)
         throws Exception {
 
       // List to put the query result tables in
-      List resultList = new ArrayList();
+      List<QueryResult> resultList = new ArrayList<QueryResult>();
 
       // There is a query and it is empty
       if ( (queryString != null) && (queryString.length() == 0)) {
@@ -727,11 +729,11 @@ public class ViewerScreen
      * @throws Exception if there is a problem executing or processing the
      *      query.
      */
-    private void incrementResults(List resultList,
+    private void incrementResults(List<QueryResult> resultList,
         int resultIndex, HTMLTableElement resultTableTemplate, String modelURI)
         throws Exception {
 
-      QueryResult queryResult = (QueryResult) resultList.get(resultIndex);
+      QueryResult queryResult = resultList.get(resultIndex);
 
       if (queryResult != null) {
 
@@ -1017,7 +1019,7 @@ public class ViewerScreen
       if (uri != null) {
         appendString = "^^<" + uri + ">";
       }
-      else if (!language.equals("")) {
+      else if (language != null && !language.equals("")) {
         appendString = "@" + language;
       }
 
@@ -1241,8 +1243,8 @@ public class ViewerScreen
       // Iterate over the example queries.
       for (int i = 0; i < exampleQueryDisplay.size(); i++) {
 
-        String displayText = (String) exampleQueryDisplay.get(i);
-        String queryText = (String) exampleQueryText.get(i);
+        String displayText = exampleQueryDisplay.get(i);
+        String queryText = exampleQueryText.get(i);
 
         listModel.add(new DefaultItemMap(queryText, displayText));
 
@@ -1271,7 +1273,7 @@ public class ViewerScreen
     /**
      * List of query results
      */
-    private List resultList;
+    private List<QueryResult> resultList;
 
     /**
      * Public constructor.
@@ -1279,6 +1281,7 @@ public class ViewerScreen
      * @param req The request this model represents data for.
      * @throws InterruptDispatchException EXCEPTION TO DO
      */
+    @SuppressWarnings("unchecked")
     public QueryResultModel(HttpServletRequest req)
         throws InterruptDispatchException {
 
@@ -1348,6 +1351,7 @@ public class ViewerScreen
      *
      * @return The result cell.
      */
+    @SuppressWarnings("unused")
     private org.w3c.dom.Node getResultCell() {
 
       //The query executed
@@ -1414,7 +1418,7 @@ public class ViewerScreen
         queryExecuted = queryTextArray[resultIndex];
         DOMUtil.setTextInNode(queryExecutedTemplate, queryExecuted, false);
 
-        QueryResult queryResult = (QueryResult) resultList.get(resultIndex);
+        QueryResult queryResult = resultList.get(resultIndex);
         Object resultObject = queryResult.actualResult;
 
         // Got a message
