@@ -103,6 +103,7 @@ public abstract class MulgaraTransactionFactory {
       XAReaper reaper = timeoutTasks.remove(transaction);
       if (reaper != null) {
         reaper.cancel();
+        reaperTimer.purge();
       }
     }
   }
@@ -197,6 +198,7 @@ public abstract class MulgaraTransactionFactory {
           for (XAReaper reaper : timeoutTasks.values()) {
             reaper.cancel();
           }
+          reaperTimer.purge();
           timeoutTasks.clear();
         }
       }
@@ -352,19 +354,18 @@ public abstract class MulgaraTransactionFactory {
   }
 
   private class XAReaper extends TimerTask {
-    private static final long WAKEUP_CYCLE = 20000;  // 20 seconds
+    private final MulgaraTransaction transaction;
     private final long txnDeadline;
     private final long idleTimeout;
-    private MulgaraTransaction transaction;
 
     public XAReaper(MulgaraTransaction transaction, long txnDeadline, long idleTimeout, long lastActive) {
       this.transaction = transaction;
       this.txnDeadline = txnDeadline;
       this.idleTimeout = idleTimeout;
 
-      long now = System.currentTimeMillis();
-      if (lastActive <= 0) lastActive = now;
-      long nextWakeup = Math.min(Math.min(txnDeadline, lastActive + idleTimeout), now + WAKEUP_CYCLE);
+      if (lastActive <= 0)
+        lastActive = System.currentTimeMillis();
+      long nextWakeup = Math.min(txnDeadline, lastActive + idleTimeout);
 
       if (logger.isDebugEnabled()) {
         logger.debug("Transaction-reaper created, txn=" + transaction + ", txnDeadline=" + txnDeadline +
@@ -382,10 +383,12 @@ public abstract class MulgaraTransactionFactory {
       long now = System.currentTimeMillis();
 
       synchronized (getMutexLock()) {
-        if (timeoutTasks.remove(transaction) == null) return;   // looks like we got cleaned up
+        if (timeoutTasks.remove(transaction) == null)
+          return;       // looks like we got cleaned up
 
         if (now < txnDeadline && ((lastActive <= 0) || (now < lastActive + idleTimeout))) {
-          if (logger.isDebugEnabled()) logger.debug("Transaction still active: " + lastActive + " time: " + now + " idle-timeout: " + idleTimeout + " - rescheduling timer");
+          if (logger.isDebugEnabled())
+            logger.debug("Transaction still active: " + lastActive + " time: " + now + " idle-timeout: " + idleTimeout + " - rescheduling timer");
 
           timeoutTasks.put(transaction, new XAReaper(transaction, txnDeadline, idleTimeout, lastActive));
           return;
@@ -405,13 +408,6 @@ public abstract class MulgaraTransactionFactory {
           }
         }
       }.start();
-    }
-    
-    public boolean cancel() {
-      synchronized (getMutexLock()) {
-        transaction = null;
-      }
-      return super.cancel();
     }
   }
 }
