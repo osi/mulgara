@@ -1787,6 +1787,8 @@ public class ExternalTransactionUnitTest extends TestCase
           assertFalse(answer.next());
           answer.close();
           fail("query should've gotten interrupted");
+        } catch (QueryException qe) {
+          logger.debug("query was interrupted", qe);
         } catch (TuplesException te) {
           logger.debug("query was interrupted", te);
         }
@@ -1826,6 +1828,8 @@ public class ExternalTransactionUnitTest extends TestCase
                 assertFalse(answer.next());
                 answer.close();
                 fail("query should've gotten interrupted");
+              } catch (QueryException qe) {
+                logger.debug("query was interrupted", qe);
               } catch (TuplesException te) {
                 logger.debug("query was interrupted", te);
               }
