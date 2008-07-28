@@ -29,6 +29,7 @@ package org.mulgara.server;
 
 // Java packages
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 // log4j packages
@@ -69,13 +70,13 @@ public class ServerInfo {
   private static String boundHostname = null;
 
   /** The port used for RMI. */
-  private static int rmiPort = 0;
+  private static int rmiPort = 1099;
 
   /** The port used for HTTP. */
-  private static int httpPort = 0;
+  private static int httpPort = 8080;
 
   /** The set of hostname aliases. */
-  private static Set<String> hostnames = null;
+  private static Set<String> hostnames = new HashSet<String>();
 
 
   /**
@@ -165,10 +166,7 @@ public class ServerInfo {
    * @throws IllegalStateException If the host names have already been set 
    */
   public static void setHostnameAliases(Set<String> hostnames) {
-    if (ServerInfo.hostnames != null) {
-      throw new IllegalStateException("Host names have already been set");
-    }
-    ServerInfo.hostnames = hostnames;
+    ServerInfo.hostnames.addAll(hostnames);
   }
 
 
@@ -225,6 +223,19 @@ public class ServerInfo {
    */
   static void setHttpPort(int httpPort) {
     ServerInfo.httpPort = httpPort;
+  }
+
+  public static String toStaticString() {
+    StringBuilder s = new StringBuilder();
+    s.append("Server URI = ").append(serverURI).append("\n");
+    s.append("Local session factory = ");
+    if (localSessionFactory == null) s.append("null\n");
+    else s.append(localSessionFactory.getClass().getSimpleName()).append("\n");
+    s.append("Bound host name = ").append(boundHostname).append("\n");
+    s.append("RMI Port = ").append(rmiPort).append("\n");
+    s.append("HTTP Port = ").append(httpPort).append("\n");
+    s.append("Host names = ").append(hostnames).append("\n");
+    return s.toString();
   }
 
 }
