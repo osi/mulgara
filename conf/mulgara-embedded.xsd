@@ -12,7 +12,8 @@
   <xs:element name="Jetty">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="Listener"/>
+        <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
+        <xs:element ref="Listener" minOccurs="0"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>

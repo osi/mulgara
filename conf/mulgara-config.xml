@@ -26,6 +26,7 @@ Mulgara Semantic Store configuration file.
           all interfaces
   -->
   <Jetty>
+    <Disabled>false</Disabled>
     <Listener>
       <!--<Host>localhost</Host>-->
       <Port>8080</Port>
