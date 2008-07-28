@@ -60,32 +60,34 @@ public interface ServerMBean {
   // MBean states
   //
 
-  /**
-   * Value of the <var>state</var> MBean property indicating that the server has
-   * not been created. This is the initial state when the MBean is created, and
-   * is also the result of calling the {@link #destroy} action from the {@link
-   * #STOPPED} state. The {@link #init} action can be used to transition from
-   * this state to the {@link #STOPPED} state.
-   */
-  public final int UNINITIALIZED = 1;
+  public enum ServerState {
+    /**
+     * Value of the <var>state</var> MBean property indicating that the server has
+     * not been created. This is the initial state when the MBean is created, and
+     * is also the result of calling the {@link #destroy} action from the {@link
+     * #STOPPED} state. The {@link #init} action can be used to transition from
+     * this state to the {@link #STOPPED} state.
+     */
+    UNINITIALIZED,
 
-  /**
-   * Value of the <var>state</var> MBean property indicating that the server has
-   * been created, but is not accepting client requests from the network. This
-   * state is entered from the {@link #UNINITIALIZED} state via the {@link
-   * #init} action. The {@link #start} action can be used to transition from
-   * this state to the {@link #STARTED} state.
-   */
-  public final int STOPPED = 2;
+    /**
+     * Value of the <var>state</var> MBean property indicating that the server has
+     * been created, but is not accepting client requests from the network. This
+     * state is entered from the {@link #UNINITIALIZED} state via the {@link
+     * #init} action. The {@link #start} action can be used to transition from
+     * this state to the {@link #STARTED} state.
+     */
+    STOPPED,
 
-  /**
-   * Value of the <var>state</var> MBean property indicating that the server is
-   * accepting client requests from the network. This state is entered from the
-   * {@link #STOPPED} state via the {@link #start} action. The {@link #stop}
-   * action can be used to transition from this state to the {@link #STOPPED}
-   * state.
-   */
-  public final int STARTED = 3;
+    /**
+     * Value of the <var>state</var> MBean property indicating that the server is
+     * accepting client requests from the network. This state is entered from the
+     * {@link #STOPPED} state via the {@link #start} action. The {@link #stop}
+     * action can be used to transition from this state to the {@link #STOPPED}
+     * state.
+     */
+    STARTED
+  };
 
   //
   // MBean actions
@@ -131,7 +133,7 @@ public interface ServerMBean {
    * @return The current server state, always one of the values {@link
    *      #UNINITIALIZED}, {@link #STOPPED} or {@link #STARTED}
    */
-  public int getState();
+  public ServerState getState();
 
   /**
    * Read the database persistence directory.

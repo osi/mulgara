@@ -98,7 +98,7 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
    */
   public void setName(String name) {
     // Prevent the name from being changed while the server is up
-    if (this.getState() == STARTED) {
+    if (this.getState() == ServerState.STARTED) {
       throw new IllegalStateException("Can't change name without first stopping the server");
     }
 
@@ -115,7 +115,7 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
    */
   public void setHostname(String hostname) {
     // Prevent the hostname from being changed while the server is up
-    if (this.getState() == STARTED) {
+    if (this.getState() == ServerState.STARTED) {
       throw new IllegalStateException("Can't change hostname without first stopping the server");
     }
 

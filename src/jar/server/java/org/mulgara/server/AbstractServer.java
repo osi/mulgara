@@ -85,7 +85,7 @@ public abstract class AbstractServer implements ServerMBean {
   protected String hostname = null;
 
   /** State. */
-  private int state = UNINITIALIZED;
+  private ServerState state = ServerState.UNINITIALIZED;
 
   /** The server object. */
   private SessionFactory sessionFactory;
@@ -110,7 +110,7 @@ public abstract class AbstractServer implements ServerMBean {
    */
   public void setPortNumber(int newPortNumber) {
     // Prevent the port from being changed while the server is up
-    if (this.getState() == STARTED) {
+    if (getState() == ServerState.STARTED) {
       throw new IllegalStateException("Can't change server port without first stopping the server");
     }
     portNumber = newPortNumber;
@@ -129,11 +129,11 @@ public abstract class AbstractServer implements ServerMBean {
   /**
    * Sets the hostname of the server.
    * @param newHostname  the hostname of the server, if <code>null</code> <code>localhost</code> will be used
-   * @throws IllegalStateException if the service is started or if the underlying session factory already has a fixed hostname
+   * @throws IllegalStateException if the service is STARTED or if the underlying session factory already has a fixed hostname
    */
   public void setHostname(String newHostname) {
     // Prevent the hostname from being changed while the server is up
-    if (this.getState() == STARTED) {
+    if (this.getState() == ServerState.STARTED) {
       throw new IllegalStateException("Can't change hostname without first stopping the server");
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractServer implements ServerMBean {
    * Read the server state.
    * @return The current server state.
    */
-  public int getState() {
+  public ServerState getState() {
     return state;
   }
 
@@ -278,7 +278,7 @@ public abstract class AbstractServer implements ServerMBean {
           .newInstance(new Object[] {getURI(), dir, sessionConfig});
     }
 
-    state = STOPPED;
+    state = ServerState.STOPPED;
 
     // Log successful creation
     if (logger.isInfoEnabled()) logger.info("Created server");
@@ -295,16 +295,11 @@ public abstract class AbstractServer implements ServerMBean {
     logger.info("Starting");
 
     // Validate state
-    switch (state) {
+    if (state == ServerState.UNINITIALIZED) throw new IllegalStateException("Not initialized");
 
-      case UNINITIALIZED:
-        throw new IllegalStateException("Not initialized");
+    if (state == ServerState.STARTED) throw new IllegalStateException("Already STARTED");
 
-      case STARTED:
-        throw new IllegalStateException("Already started");
-    }
-
-    assert state == STOPPED;
+    assert state == ServerState.STOPPED;
 
     // Invariant tests for the STOPPED state
     if (sessionFactory == null) throw new AssertionError("Null \"sessionFactory\" parameter");
@@ -334,7 +329,7 @@ public abstract class AbstractServer implements ServerMBean {
     //   }
     // }
 
-    state = STARTED;
+    state = ServerState.STARTED;
     logger.info("Started");
   }
 
@@ -349,14 +344,14 @@ public abstract class AbstractServer implements ServerMBean {
     logger.info("Shutting down");
 
     // Validate state
-    if (state != STARTED) throw new IllegalStateException("Server is not started");
+    if (state != ServerState.STARTED) throw new IllegalStateException("Server is not STARTED");
 
     // if (jmdns != null) {
     //   logger.info("Unregistering from ZeroConf server");
     //   jmdns.unregisterAllServices();
     // }
     stopService();
-    state = STOPPED;
+    state = ServerState.STOPPED;
     logger.info("Shut down");
   }
 
@@ -376,7 +371,7 @@ public abstract class AbstractServer implements ServerMBean {
     //   jmdns.unregisterAllServices();
     // }
     sessionFactory = null;
-    state = UNINITIALIZED;
+    state = ServerState.UNINITIALIZED;
     logger.info("Destroyed");
   }
 
@@ -385,12 +380,12 @@ public abstract class AbstractServer implements ServerMBean {
    * from other properties and call this method whenever those properties are
    * modified.
    * @param uri the desired server URI, or <code>null</code>
-   * @throws IllegalStateException if the service is started or if the
+   * @throws IllegalStateException if the service is STARTED or if the
    *      underlying session factory already has a fixed URI
    */
   protected void setURI(URI uri) {
     // Prevent the URI from being changed while the server is up
-    if (state == STARTED) throw new IllegalStateException("Can't change URI without first stopping the server");
+    if (state == ServerState.STARTED) throw new IllegalStateException("Can't change URI without first stopping the server");
     this.uri = uri;
   }
 
