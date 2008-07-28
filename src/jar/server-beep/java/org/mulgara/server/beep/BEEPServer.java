@@ -103,7 +103,7 @@ public class BEEPServer extends AbstractServer {
    */
   public void setHostname(String hostname) {
     // prevent the hostname from being changed while the server is up
-    if (this.getState() == STARTED) {
+    if (this.getState() == ServerState.STARTED) {
       throw new IllegalStateException("Can't change hostname without first stopping the server");
     }
 
