@@ -200,19 +200,38 @@
     <property name="define.itqlcommand" value="true"/>
   </target>
 
-  <!-- =================================================================== -->
-  <!-- Delete all intermediate and end product files, leaving only files   -->
-  <!-- from CVS.                                                           -->
-  <!-- =================================================================== -->
+  <!-- ================================================================================ -->
+  <!-- Delete all intermediate and end product files, leaving only files from SVN.      -->
+  <!-- ================================================================================ -->
+  <target name="mrclean" depends="clean" description="Deletes all files not from the versioning system.">
+    <delete dir="${obj.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <!-- ================================================================================ -->
+  <!-- Delete all intermediate and end product files, except grammar generated files.   -->
+  <!-- ================================================================================ -->
   <target name="clean"
       description="Deletes all intermediate and product files, leaving only sources">
 
     <tstamp/>
 
-    <delete dir="${obj.dir}"/>
+    <delete>
+      <fileset dir="${obj.dir}" defaultexcludes="false">
+        <exclude name="jar/itql/**/*"/>
+      </fileset>
+      <dirset dir="${obj.dir}" defaultexcludes="false">
+        <exclude name="jar/itql/*"/>
+      </dirset>
+    </delete>
     <delete dir="${test.dir}"/>
     <delete dir="${bin.dir}"/>
-    <delete dir="${dist.dir}"/>
+    <delete>
+      <fileset dir="${dist.dir}" defaultexcludes="false">
+        <exclude name="ideSupport.jar"/>
+      </fileset>
+      <dirset dir="${dist.dir}" defaultexcludes="false"/>
+    </delete>
     <delete dir="${tmp.dir}"/>
     <delete dir="${javadoc.dir}"/>
     <delete dir="${jxtest.dir}"/>
@@ -522,7 +541,7 @@
                    content-mbox-dist, content-mp3-dist, content-n3-dist,
                    content-rdfxml-dist, content-rio-dist,
                    lite-create-manifest, javadoc-dist,
-                   lite-dist-uptodate, webpage-includes"
+                   lite-dist-uptodate"
           unless="dist.lite.uptodate"
           description="Creates the executable JAR for the Embedded Mulgara Lite
                        server">
@@ -581,8 +600,6 @@
       <zipfileset dir="${basedir}/data" prefix="data"
           includes="mulgara.rdfs"/>
 
-      <zipfileset dir="${src.docs.dir}" prefix="docs"
-          includes="**/*.html, **/*.htm, **/*.gif, **/*.png, **/*.jpg, **/*.css, **/images/*, **/images/icons/*"/>
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
@@ -610,7 +627,6 @@
      <srcfiles dir="${conf.dir}" includes="**/*"/>
      <srcfiles dir="${lib.dir}" includes="**/*"/>
      <srcfiles dir="${data.dir}" includes="**/*"/>
-     <srcfiles dir="${template.src.docs.dir}" includes="**/*"/>
     </uptodate>
   </target>
 
@@ -1711,7 +1727,7 @@
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar,
-             webservices-war, webui-war, -embedded-dist-uptodate, webpage-includes"
+             webservices-war, webui-war, -embedded-dist-uptodate"
           description="Creates the executable JAR for the Embedded Mulgara server"
                 unless="embedded.dist.uptodate">
 
@@ -1843,11 +1859,6 @@
       <zipfileset dir="${basedir}/data" prefix="data"
           includes="**/*.rdfs,**/*.rss,**/*.n3"/>
 
-      <zipfileset dir="${basedir}/docs" prefix="docs"
-          includes="**/*.html, **/*.css, **/images/*, **/images/icons/*, LEGAL.txt"/>
-      <zipfileset dir="${src.docs.dir}" prefix="docs"
-          includes="**/*.html, **/*.htm, **/*.gif, **/*.png, **/*.jpg, **/*.css, **/images/*, **/images/icons/*"/>
-
       <fileset dir="${obj.dir}/jar/util/classes" includes="**/Bootstrap.class"/>
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>      <!-- fileset dir="${obj.dir}/jar/dtd/classes"/ -->
 
@@ -1953,7 +1964,6 @@
       <srcfiles dir="${lib.dir}" includes="**/*"/>
       <srcfiles dir="${data.dir}" includes="**/*"/>
       <srcfiles dir="${obj.dir}/war" includes="webservices.war"/>
-      <srcfiles dir="${basedir}/docs" includes="**/*"/>
     </uptodate>
   </target>
 
@@ -2062,9 +2072,6 @@
 
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs,**/*.rss,**/*.n3"/>
-
-      <zipfileset dir="${basedir}/docs" prefix="docs" includes="**/*.html, **/*.css, **/images/*, **/images/icons/*, LEGAL.txt"/>
-      <zipfileset dir="${src.docs.dir}" prefix="docs" includes="**/*.html, **/*.htm, **/*.gif, **/*.png, **/*.jpg, **/*.css, **/images/*, **/images/icons/*"/>
 
       <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>     
 
