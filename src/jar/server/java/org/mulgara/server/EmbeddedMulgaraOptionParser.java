@@ -60,6 +60,9 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   /** option to change the host the HTTP server is bound to */
   public final static Option HTTP_HOST = new StringOption('o', "httphost");
 
+  /** option to disble the http host */
+  public final static Option NO_HTTP = new BooleanOption('w', "nohttp");
+
   /** option to change the host the server is bound to */
   public final static Option SERVER_HOST = new StringOption('k', "serverhost");
 
@@ -109,6 +112,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
     addOption(SHUTDOWN);
     addOption(LOG_CONFIG);
     addOption(HTTP_HOST);
+    addOption(NO_HTTP);
     addOption(SERVER_HOST);
     addOption(PORT);
     addOption(NO_RMI);

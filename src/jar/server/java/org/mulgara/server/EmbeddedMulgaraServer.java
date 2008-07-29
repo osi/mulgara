@@ -560,6 +560,11 @@ public class EmbeddedMulgaraServer {
           System.setProperty(DISABLE_RMI, DISABLE_RMI);
         }
 
+        // disable automatic starting of the HTTP server
+        if (parser.getOptionValue(EmbeddedMulgaraOptionParser.NO_HTTP) != null) {
+          System.setProperty(DISABLE_HTTP, DISABLE_HTTP);
+        }
+
         // set the hostname to bind Mulgara to
         String host = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_HOST);
 
@@ -913,6 +918,7 @@ public class EmbeddedMulgaraServer {
     usage.append("" + eol);
     usage.append("-h, --help          display this help screen" + eol);
     usage.append("-n, --normi         disable automatic starting of the RMI registry" + eol);
+    usage.append("-w, --nohttp        disable the HTTP web service" + eol);
     usage.append("-x, --shutdown      shutdown the local running server" + eol);
     usage.append("-l, --logconfig     use an external logging configuration file" + eol);
     usage.append("-c, --serverconfig  use an external server configuration file" + eol);
