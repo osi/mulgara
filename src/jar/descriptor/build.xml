@@ -41,6 +41,7 @@
 
     <pathelement location="${lib.dir}/${jasper.runtime.jar}"/>
     <pathelement location="${lib.dir}/${servlet.jar}"/>
+    <pathelement location="${lib.dir}/${servlet-jsp.jar}"/>
     <pathelement location="${lib.dir}/${jetty.jar}"/>
 
     <pathelement location="${dist.dir}/${driver.jar}"/>
@@ -113,8 +114,7 @@
 
   <target name="descriptor-compile"
           depends="descriptor-jsp-compile"
-          description="Compiles all descriptor related files included generated
-                       source code">
+          description="Compiles all descriptor related files included generated source code">
 
     <javac destdir="${descriptor.obj.dir}/classes" debug="on"
            deprecation="on" source="1.5">

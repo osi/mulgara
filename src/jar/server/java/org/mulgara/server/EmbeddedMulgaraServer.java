@@ -46,19 +46,22 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 // locally written packages
 import org.mulgara.config.MulgaraConfig;
-import org.mulgara.config.Listener;
+import org.mulgara.config.Connector;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.StoreException;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.util.TempDir;
+
 import static org.mulgara.server.ServerMBean.ServerState;
 
 // jetty packages
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.SocketListener;
+import org.mortbay.jetty.AbstractConnector;
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.WebApplicationContext;
-import org.mortbay.jetty.servlet.WebApplicationHandler;
+import org.mortbay.jetty.handler.ContextHandler;
+import org.mortbay.jetty.nio.BlockingChannelConnector;
+import org.mortbay.jetty.webapp.WebAppClassLoader;
+import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.util.MultiException;
 
 /**
@@ -142,6 +145,9 @@ public class EmbeddedMulgaraServer {
   /** The system property to disable the RMI service. */
   private static final String DISABLE_RMI = "no_rmi";
 
+  /** The maximum number of acceptors that Jetty can handle. It locks above this number. */
+  private static final int WEIRD_JETTY_THREAD_LIMIT = 24;
+
   /** The Mulgara server instance. In this case, an RMIServer. */
   private ServerMBean serverManagement = null;
 
@@ -212,7 +218,7 @@ public class EmbeddedMulgaraServer {
       }
   
     } catch (MultiException me) {
-      for (Exception e: (List<Exception>)me.getExceptions()) {
+      for (Throwable e: (List<Throwable>)me.getThrowables()) {
         log.error("MultiException", e);
         e.printStackTrace();
       }
@@ -595,17 +601,17 @@ public class EmbeddedMulgaraServer {
           loadLoggingConfig(mulgaraConfig.getExternalConfigPaths().getMulgaraLogging());
         }
 
-        Listener httpListener = mulgaraConfig.getJetty().getListener();
+        Connector httpConnector = mulgaraConfig.getJetty().getConnector();
 
         String httpHost = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
-        httpHostName = (httpHost != null) ? httpHost : httpListener.getHost();
+        httpHostName = (httpHost != null || httpConnector == null) ? httpHost : httpConnector.getHost();
 
         // set the port on which to accept HTTP requests
         String httpPort = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.PORT);
         if (httpPort != null) {
           ServerInfo.setHttpPort(Integer.parseInt(httpPort));
         } else {
-          ServerInfo.setHttpPort(httpListener.getPort());
+          if (httpConnector != null) ServerInfo.setHttpPort(httpConnector.getPort());
         }
 
         // set the (RMI) name of the server, preferencing the command line
@@ -745,18 +751,26 @@ public class EmbeddedMulgaraServer {
     System.setProperty("LOG_CLASSES", "org.mortbay.util.log4j.Log4jSink");
 
     // create and register a new HTTP server
-    Server server = new Server();
-
-    // add a listener to the server
-    addListener(server);
+    Server server;
+    if (mulgaraConfig.getJetty().getConnector() == null) {
+      // create a default server
+      server = new Server(ServerInfo.getHttpPort());
+    } else {
+      // create a server with a configured connector
+      server = new Server();
+      addConnector(server);
+    }
 
     // add the webapps
     addWebServicesWebAppContext(server);
     addWebUIWebAppContext(server);
 
-    // add our class loader as the classloader of all contexts
+    // add our class loader as the classloader of all contexts, unless this is a webapp in which case we wrap it
     ClassLoader classLoader = this.getClass().getClassLoader();
-    for (HttpContext context: server.getContexts()) context.setParentClassLoader(classLoader);
+    for (Handler handler: server.getChildHandlers()) {
+      if (handler instanceof WebAppContext) ((WebAppContext)handler).setClassLoader(new WebAppClassLoader(classLoader, (WebAppContext)handler));
+      else if (handler instanceof ContextHandler) ((ContextHandler)handler).setClassLoader(classLoader);
+    }
 
     // return the server
     return server;
@@ -813,31 +827,38 @@ public class EmbeddedMulgaraServer {
    * @param httpServer the server to add the listener to
    * @throws UnknownHostException if an invalid hostname was specified in the Mulgara server configuration
    */
-  private void addListener(Server httpServer) throws UnknownHostException {
+  private void addConnector(Server httpServer) throws UnknownHostException {
     if (httpServer == null) throw new IllegalArgumentException("Null \"httpServer\" parameter");
 
-    log.debug("Adding socket listener");
+    if (log.isDebugEnabled()) log.debug("Adding socket listener");
 
     // create and configure a listener
-    SocketListener listener = new SocketListener();
+    AbstractConnector connector = new BlockingChannelConnector();
     if ((httpHostName != null) && !httpHostName.equals("")) {
-      listener.setHost(httpHostName);
-      log.debug("Servlet container listening on host " + this.getHttpHostName());
+      connector.setHost(httpHostName);
+      if (log.isDebugEnabled()) log.debug("Servlet container listening on host " + this.getHttpHostName());
     } else {
       httpHostName = getResolvedLocalHost();
-      log.debug("Servlet container listening on all host interfaces");
+      if (log.isDebugEnabled()) log.debug("Servlet container listening on all host interfaces");
     }
 
     // set the listener to the jetty configuration
-    Listener jettyConfig = (Listener)mulgaraConfig.getJetty().getListener();
-    listener.setPort(ServerInfo.getHttpPort());
-    listener.setMinThreads(jettyConfig.getMinThreads());
-    listener.setMaxThreads(jettyConfig.getMaxThreads());
-    listener.setMaxIdleTimeMs(jettyConfig.getMaxIdleTimeMs());
-    listener.setLowResourcePersistTimeMs(jettyConfig. getLowResourcePersistTimeMs());
+    Connector jettyConfig = (Connector)mulgaraConfig.getJetty().getConnector();
+    connector.setPort(ServerInfo.getHttpPort());
+
+    if (jettyConfig.hasMaxIdleTimeMs()) connector.setMaxIdleTime(jettyConfig.getMaxIdleTimeMs());
+    if (jettyConfig.hasLowResourceMaxIdleTimeMs()) connector.setLowResourceMaxIdleTime(jettyConfig.getLowResourceMaxIdleTimeMs());
+    if (jettyConfig.hasAcceptors()) {
+      int acceptors = jettyConfig.getAcceptors();
+      if (acceptors > WEIRD_JETTY_THREAD_LIMIT) {
+        log.warn("Acceptor threads set beyond HTTP Server limits. Reducing from" + acceptors + " to " + WEIRD_JETTY_THREAD_LIMIT);
+        acceptors = WEIRD_JETTY_THREAD_LIMIT;
+      }
+      connector.setAcceptors(acceptors);
+    }
 
     // add the listener to the http server
-    httpServer.addListener(listener);
+    httpServer.addConnector(connector);
   }
 
 
@@ -847,9 +868,6 @@ public class EmbeddedMulgaraServer {
    * @throws IOException if the driver WAR file is not readable
    */
   private void addWebServicesWebAppContext(Server server) throws IOException {
-    // Create a servlet handler for web services
-    WebApplicationHandler descriptorServletHandler = new WebApplicationHandler();
-
     // get the URL to the WAR file
     URL webServicesWebAppURL = ClassLoader.getSystemResource(WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
 
@@ -858,16 +876,14 @@ public class EmbeddedMulgaraServer {
       return;
     }
 
+    String warPath = extractToTemp(WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
+    
     // Add Descriptors and Axis
-    WebApplicationContext descriptorWARContext = server.addWebApplication(
-          null, "/" + WEBSERVICES_PATH + "/*", webServicesWebAppURL.toString());
+    WebAppContext descriptorWARContext = new WebAppContext(server, warPath, "/" + WEBSERVICES_PATH);
 
     // make some attributes available
     descriptorWARContext.setAttribute(BOUND_HOST_NAME_KEY, ServerInfo.getBoundHostname());
     descriptorWARContext.setAttribute(SERVER_MODEL_URI_KEY, ServerInfo.getServerURI().toString());
-
-    // add the handler for the servlets
-    descriptorWARContext.addHandler(descriptorServletHandler);
 
     // log that we're adding the test webapp context
     if (log.isDebugEnabled()) log.debug("Added Web Services webapp context");
@@ -882,17 +898,46 @@ public class EmbeddedMulgaraServer {
     if (log.isDebugEnabled()) log.debug("Adding WebUI webapp context");
 
     // get the URL to the WebUI WAR file
-    URL webUIWebAppURL = ClassLoader.getSystemResource(WEBAPP_PATH + "/" + WEBUI_WEBAPP);
+    String warPath = extractToTemp(WEBAPP_PATH + "/" + WEBUI_WEBAPP);
 
     // load the webapp if the WAR file exists
-    if (webUIWebAppURL != null) {
+    if (warPath != null) {
       // create the test webapp handler context
-      WebApplicationContext webUIWARContext =
-          server.addWebApplication(null, "/" + WEBUI_PATH + "/*", webUIWebAppURL.toString());
-      webUIWARContext.setParentClassLoader(this.getClass().getClassLoader());
+      new WebAppContext(server, warPath, "/" + WEBUI_PATH);
     } else {
       log.warn("Could not find WebUI webapp WAR file -> not adding to servlet container");
     }
+  }
+
+
+  /**
+   * Extracts a resource from the environment (a jar in the classpath) and writes
+   * this to a file in the working temporary directory.
+   * @param resourceName The name of the resource. This is a relative file path in the jar file.
+   * @return The absolute path of the file the resource is extracted to, or <code>null</code>
+   *         if the resource does not exist.
+   * @throws IOException If there was an error reading the resource, or writing to the extracted file.
+   */
+  private String extractToTemp(String resourceName) throws IOException {
+    // Find the resource
+    URL resourceUrl = ClassLoader.getSystemResource(resourceName);
+    if (resourceUrl == null) return null;
+
+    // open the resource and the file where it will be copied to
+    InputStream in = resourceUrl.openStream();
+    File outFile = new File(TempDir.getTempDir(), new File(resourceName).getName());
+    log.info("Extracting: " + resourceUrl + " to " + outFile);
+    OutputStream out = new FileOutputStream(outFile);
+
+    // loop to copy from the resource to the output file
+    byte[] buffer = new byte[10240];
+    int len;
+    while ((len = in.read(buffer)) >= 0) out.write(buffer, 0, len);
+    in.close();
+    out.close();
+
+    // return the file that the resource was extracted to
+    return outFile.getAbsolutePath();
   }
 
 

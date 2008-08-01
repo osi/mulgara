@@ -23,7 +23,7 @@
 
     <pathelement path="${query.dist.dir}/${query.jar}"/>
 
-    <fileset file="${lib.dir}/javax.servlet-2.3.jar"/>
+    <fileset file="${lib.dir}/${servlet-jsp.jar}"/>
  </path>
 
   <path id="tag-test-classpath">

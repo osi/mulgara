@@ -13,28 +13,24 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
-        <xs:element ref="Listener" minOccurs="0"/>
+        <xs:element ref="Connector" minOccurs="0"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Listener">
+  <xs:element name="Connector">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="Host" minOccurs="0"/>
         <xs:element ref="Port"/>
-        <xs:element ref="MinThreads"/>
-        <xs:element ref="MaxThreads"/>
-        <xs:element ref="MaxIdleTimeMs"/>
-        <xs:element ref="MaxReadTimeMs"/>
-        <xs:element ref="LowResourcePersistTimeMs"/>
+        <xs:element ref="Acceptors" minOccurs="0"/>
+        <xs:element ref="MaxIdleTimeMs" minOccurs="0"/>
+        <xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="LowResourcePersistTimeMs" type="xs:int"/>
+  <xs:element name="LowResourceMaxIdleTimeMs" type="xs:int"/>
   <xs:element name="MaxIdleTimeMs" type="xs:int"/>
-  <xs:element name="MaxReadTimeMs" type="xs:int"/>
-  <xs:element name="MaxThreads" type="xs:int"/>
-  <xs:element name="MinThreads" type="xs:int"/>
+  <xs:element name="Acceptors" type="xs:int"/>
   <xs:element name="DefaultGraph" type="xs:string"/>
   <xs:element name="PersistencePath" type="xs:string"/>
   <xs:element name="Port" type="xs:int"/>

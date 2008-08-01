@@ -85,11 +85,12 @@
 
       <classpath>
 
-        <pathelement location="${java.home}/../lib/tools.jar"/>
+        <pathelement location="${java.home}/lib/tools.jar"/>
         <pathelement location="${lib.dir}/ant-1.7.0.jar"/>
         <pathelement location="${lib.dir}/${jasper.runtime.jar}"/>
         <pathelement location="${lib.dir}/${jasper.compiler.jar}"/>
         <pathelement location="${lib.dir}/${servlet.jar}"/>
+        <pathelement location="${lib.dir}/${servlet-jsp.jar}"/>
         <pathelement location="${lib.dir}/${jetty.jar}"/>
       </classpath>
 
@@ -148,11 +149,11 @@
                        jena-*.jar, jrdf-*.jar, jxunit*.jar, castor*.jar,
                        mail-*.jar, activation-*.jar, apache-soap-*.jar,
                        axis-*.jar, saaj-*.jar, emory-*.jar, trove-*.jar,
-                       jargs-*.jar, org.mortbay.jetty*.jar, jta-spec*.jar,
+                       jargs-*.jar, jetty-*.jar, jta-spec*.jar,
                        jotm*.jar, commons-logging-*.jar, Quick4rt.jar,
                        commons-discovery-*.jar, commons-httpclient-*.jar,
                        commons-codec-*.jar, connector-*.jar, jaxrpc-*.jar,
-                       carol*.jar, howl-logger*.jar,
+                       carol*.jar, howl-logger*.jar, javax.servlet*.jar, servlet-api*.jar,
                        ${joda-time.jar}, mulgara-sparql*.jar, sesame-model-*.jar"
              excludes="jboss-j2ee.jar"/>
   </path>

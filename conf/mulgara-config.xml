@@ -27,15 +27,13 @@ Mulgara Semantic Store configuration file.
   -->
   <Jetty>
     <Disabled>false</Disabled>
-    <Listener>
+    <Connector>
       <!--<Host>localhost</Host>-->
       <Port>8080</Port>
-      <MinThreads>5</MinThreads>
-      <MaxThreads>255</MaxThreads>
+      <Acceptors>5</Acceptors>
       <MaxIdleTimeMs>60000</MaxIdleTimeMs>
-      <MaxReadTimeMs>60000</MaxReadTimeMs>
-      <LowResourcePersistTimeMs>5000</LowResourcePersistTimeMs>
-    </Listener>
+      <LowResourceMaxIdleTimeMs>5000</LowResourceMaxIdleTimeMs>
+    </Connector>
   </Jetty>
 
   <!-- The name of the server, used for RMI binding -->

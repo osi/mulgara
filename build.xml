@@ -512,7 +512,7 @@
           lib/${resolver-jar.jar}, lib/${dtd.jar}, lib/${jrdf.base.jar}
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
           lib/${joda-time.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
-          lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
+          lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet-jsp.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
           lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${mulgara-sparql.jar}, lib/${sesame-model.jar}"/>
@@ -566,7 +566,7 @@
       <zipfileset dir="${lib.dir}" prefix="lib" includes="
         ${log4j.jar}, ${icu4j.jar}, ${activation.jar}, ${beep.jar},
         ${jargs.jar}, ${jrdf.jar}, ${jetty.jar}, ${jetty.plus.jar},
-        ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
+        ${servlet-jsp.jar}, ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
         ${joda-time.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
         ${commons-codec.jar}, ${emory-util.jar}, ${mulgara-sparql.jar}
@@ -830,7 +830,8 @@
       <classpath path="${lib.dir}/antlr.jar"/>
       <classpath path="${lib.dir}/barracuda-1.2.6.jar"/>
       <classpath path="${lib.dir}/beepcore-0.9.08.jar"/>
-      <classpath path="${lib.dir}/javax.servlet-2.3.jar"/>
+      <classpath path="${lib.dir}/${servlet.jar}"/>
+      <classpath path="${lib.dir}/${servlet-jsp.jar}"/>
       <classpath path="${lib.dir}/${jid3.jar}"/>
       <classpath path="${lib.dir}/jsr173_07_api.jar"/>
       <classpath path="${lib.dir}/${lucene.jar}"/>
@@ -1751,47 +1752,52 @@
                     mulgara.policy"/>
 
       <!-- third party libraries -->
-      <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${icu4j.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${activation.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${antlr.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**, log4j.properties"/>
       <zipfileset src="${lib.dir}/${beep.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jargs.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jetty.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jetty.plus.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jasper.runtime.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jasper.compiler.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${mulgara-sparql.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${carol.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-xml.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-codegen.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${joda-time.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-discovery.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-httpclient.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-codec.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${howl.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${icu4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jakarta-oro.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jargs.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jasper.runtime.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jasper.compiler.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jaxrpc.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jca.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jena.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jetty.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jetty.plus.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${joda-time.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${carol.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${howl.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jsr.173.api.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jsr.173.ri.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jca.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${mulgara-sparql.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**, log4j.properties"/>
-      <zipfileset src="${lib.dir}/${commons-discovery.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jaxrpc.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jakarta-oro.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jena.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${antlr.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${serializer.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
+
+      <!-- Libs needed for JSP. Remove these when JSP is eliminated. -->
+      <zipfileset src="${jsp-lib.dir}/${jsp-core.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${jsp-lib.dir}/${jsp.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${servlet-jsp.jar}" excludes="META-INF/**"/>
 
       <!-- core libraries -->
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>

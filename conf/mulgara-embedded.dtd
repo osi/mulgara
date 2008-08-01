@@ -7,17 +7,15 @@
 
   <!ELEMENT MulgaraHost (#PCDATA)>
 
-  <!ELEMENT Jetty (Listener)>
+  <!ELEMENT Jetty (Connector)>
 
-    <!ELEMENT Listener (Host?, Port, MinThreads, MaxThreads, MaxIdleTimeMs, MaxReadTimeMs, LowResourcePersistTimeMs)>
+    <!ELEMENT Connector (Host?, Port, Acceptors?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
 
       <!ELEMENT Host (#PCDATA)>
       <!ELEMENT Port (#PCDATA)>
-      <!ELEMENT MinThreads (#PCDATA)>
-      <!ELEMENT MaxThreads (#PCDATA)>
+      <!ELEMENT Acceptors (#PCDATA)>
       <!ELEMENT MaxIdleTimeMs (#PCDATA)>
-      <!ELEMENT MaxReadTimeMs (#PCDATA)>
-      <!ELEMENT LowResourcePersistTimeMs (#PCDATA)>
+      <!ELEMENT LowResourceMaxIdleTimeMs (#PCDATA)>
 
   <!ELEMENT ServerName (#PCDATA)>
 
