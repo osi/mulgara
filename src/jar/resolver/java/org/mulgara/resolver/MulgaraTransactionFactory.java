@@ -363,8 +363,7 @@ public abstract class MulgaraTransactionFactory {
       this.txnDeadline = txnDeadline;
       this.idleTimeout = idleTimeout;
 
-      if (lastActive <= 0)
-        lastActive = System.currentTimeMillis();
+      if (lastActive <= 0) lastActive = System.currentTimeMillis();
       long nextWakeup = Math.min(txnDeadline, lastActive + idleTimeout);
 
       if (logger.isDebugEnabled()) {
@@ -383,12 +382,12 @@ public abstract class MulgaraTransactionFactory {
       long now = System.currentTimeMillis();
 
       synchronized (getMutexLock()) {
-        if (timeoutTasks.remove(transaction) == null)
-          return;       // looks like we got cleaned up
+        if (timeoutTasks.remove(transaction) == null) return;  // looks like we got cleaned up
 
         if (now < txnDeadline && ((lastActive <= 0) || (now < lastActive + idleTimeout))) {
-          if (logger.isDebugEnabled())
+          if (logger.isDebugEnabled()) {
             logger.debug("Transaction still active: " + lastActive + " time: " + now + " idle-timeout: " + idleTimeout + " - rescheduling timer");
+          }
 
           timeoutTasks.put(transaction, new XAReaper(transaction, txnDeadline, idleTimeout, lastActive));
           return;
