@@ -123,7 +123,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '1.0' in &lt;sys:xsd&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '-1.0' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -205,7 +205,7 @@ into &lt;@server@#dates&gt; ;" />
     select $label
     from &lt;@server@#numbers&gt;
     where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
-          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '-1' in &lt;sys:xsd&gt; and
+          $value2 &lt;http://mulgara.org/mulgara#gt&gt; '-2' in &lt;sys:xsd&gt; and
           $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
     order by $label ;
   "/>
@@ -381,5 +381,22 @@ into &lt;@server@#xmlliteral&gt; ;
   <ifEqual converse="true" file="queryResult37.txt" name="queryResult">
     <save name="queryResult" file="badQuery37Result.xml"/>
     <fail>Output failed.  Check badQuery37Result.xml for output.</fail>
+  </ifEqual>
+  
+  <!-- Test less-than zero -->
+
+  <set name="query" value="
+    select $label
+    from &lt;@server@#numbers&gt;
+    where $value &lt;http://www.w3.org/2002/07/owl#sameIndividualAs&gt; $value2 and
+          $value2 &lt;http://mulgara.org/mulgara#lt&gt; '0' in &lt;sys:xsd&gt; and
+          $value &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; $label
+    order by $label ;
+  "/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult38.txt" name="queryResult">
+    <save name="queryResult" file="badQuery38Result.xml"/>
+    <fail>Output failed.  Check badQuery38Result.xml for output.</fail>
   </ifEqual>
 </jxu>

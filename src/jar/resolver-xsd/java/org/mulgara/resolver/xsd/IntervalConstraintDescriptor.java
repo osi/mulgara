@@ -109,11 +109,11 @@ public class IntervalConstraintDescriptor implements ConstraintDescriptor {
     ResolverSession resolverSession = queryEvaluationContext.getResolverSession();
 
     SPObject lowValue = (intervalConstraint.getLowerBound() == null)
-      ? resolverSession.getSPObjectFactory().newSPDouble(Double.MIN_VALUE)
+      ? resolverSession.getSPObjectFactory().newSPDouble(Double.NEGATIVE_INFINITY)
       : resolverSession.getSPObjectFactory().newSPDouble(intervalConstraint.getLowerBound().getValue());
 
     SPObject highValue = (intervalConstraint.getUpperBound() == null)
-      ? resolverSession.getSPObjectFactory().newSPDouble(Double.MAX_VALUE)
+      ? resolverSession.getSPObjectFactory().newSPDouble(Double.POSITIVE_INFINITY)
       : resolverSession.getSPObjectFactory().newSPDouble(intervalConstraint.getUpperBound().getValue());
 
     boolean inclLowValue = (intervalConstraint.getLowerBound() == null)

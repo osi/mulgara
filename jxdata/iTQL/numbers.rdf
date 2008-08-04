@@ -13,6 +13,11 @@
          xmlns:rdfs ="&rdfs;">
 
 <rdf:Description>
+  <owl:sameIndividualAs rdf:datatype="&xsd;double">-1</owl:sameIndividualAs>
+  <rdfs:label xml:lang="en">negative one</rdfs:label>
+  <math:square rdf:datatype="&xsd;double">1</math:square>
+</rdf:Description>
+<rdf:Description>
   <owl:sameIndividualAs rdf:datatype="&xsd;double">1</owl:sameIndividualAs>
   <owl:sameIndividualAs rdf:datatype="&xsd;boolean">true</owl:sameIndividualAs>
   <rdfs:label xml:lang="en">one</rdfs:label>
