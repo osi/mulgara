@@ -761,7 +761,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   private <T extends Throwable> void acquireMutex(long timeout, boolean isXACompletion, Class<T> exc) throws T {
     synchronized (factory.getMutexLock()) {
       factory.acquireMutex(timeout, exc);
-      inXACompletion = isXACompletion;
+      inXACompletion |= isXACompletion;
     }
   }
 
