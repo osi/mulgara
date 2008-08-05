@@ -40,7 +40,6 @@ import org.mulgara.resolver.spi.InitializerException;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.nodepool.NodePoolFactory;
-import org.mulgara.store.xa.SimpleXAResourceException;
 
 /**
  * A {@link NodePoolFactory} that constructs {@link XANodePoolImpl}
@@ -86,8 +85,7 @@ public class XANodePoolFactory implements NodePoolFactory
    *
    * Use the {@link #newInstance} method to obtain instances.
    */
-  private XANodePoolFactory(String baseName)
-  {
+  private XANodePoolFactory(String baseName) {
     this.baseName = baseName;
   }
 
@@ -97,8 +95,8 @@ public class XANodePoolFactory implements NodePoolFactory
    * @param factoryInitializer  not used
    */
   static public NodePoolFactory newInstance(FactoryInitializer factoryInitializer)
-    throws InitializerException
-  {
+    throws InitializerException {
+
     //!!FIXME: getDirectory has the side effect of creating the directory if
     //         required.  this needs to be fixed!  Down with side effects!
     File directory = factoryInitializer.getDirectory();
@@ -124,8 +122,8 @@ public class XANodePoolFactory implements NodePoolFactory
     try {
       XANodePoolImpl xaNodePoolImpl = new XANodePoolImpl(baseName);
       return xaNodePoolImpl;
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
+      logger.error("Couldn't construct node pool", e);
       throw new NodePoolException("Couldn't construct node pool", e);
     }
   }

@@ -40,7 +40,6 @@ import org.mulgara.resolver.spi.InitializerException;
 import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.stringpool.StringPoolFactory;
-import org.mulgara.store.xa.SimpleXAResourceException;
 
 /**
  * A {@link StringPoolFactory} that constructs {@link XAStringPoolImpl}
@@ -122,9 +121,9 @@ public class XAStringPoolFactory implements StringPoolFactory
     try {
       XAStringPoolImpl xaStringPoolImpl = new XAStringPoolImpl(baseName);
       return xaStringPoolImpl;
-    }
-    catch (IOException e) {
-      throw new StringPoolException("Couldn't construct node pool", e);
+    } catch (IOException e) {
+      logger.error("Couldn't construct string pool", e);
+      throw new StringPoolException("Couldn't construct string pool", e);
     }
   }
 }
