@@ -12,6 +12,9 @@
 
 package org.mulgara.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Creates a stack trace for the current position at creation, or from a provided
  * Throwable object.
@@ -91,4 +94,15 @@ public class StackTrace {
     return b.toString();
   }
 
+  /**
+   * Converts a throwable to a string. This appears an Exception/Error/etc
+   * instead of using the STACK TRACE label.
+   * @param t The Throwable to print.
+   * @return A String with the output from the Throwable.
+   */
+  public static String throwableToString(Throwable t) {
+    StringWriter strWriter = new StringWriter();
+    t.printStackTrace(new PrintWriter(strWriter));
+    return strWriter.toString();
+  }
 }
