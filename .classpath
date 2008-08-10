@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/jar/ant-task/java"/>
-	<classpathentry kind="src" path="tools/src"/>
-	<classpathentry kind="src" path="src/jar/resolver-distributed/java"/>
-	<classpathentry kind="src" path="src/war/webui/java"/>
-	<classpathentry kind="src" path="src/jar/descriptor/src/java"/>
 	<classpathentry kind="src" path="src/jar/client-jrdf/java"/>
 	<classpathentry kind="src" path="src/jar/content-mbox/java"/>
 	<classpathentry kind="src" path="src/jar/content-mp3/java"/>
@@ -12,6 +8,7 @@
 	<classpathentry kind="src" path="src/jar/content-rdfxml/java"/>
 	<classpathentry kind="src" path="src/jar/content-rio/java"/>
 	<classpathentry kind="src" path="src/jar/demo-mp3/java"/>
+	<classpathentry kind="src" path="src/jar/descriptor/src/java"/>
 	<classpathentry kind="src" path="src/jar/driver/java"/>
 	<classpathentry kind="src" path="src/jar/dtd/java"/>
 	<classpathentry kind="src" path="src/jar/itql/java"/>
@@ -20,6 +17,7 @@
 	<classpathentry kind="src" path="src/jar/krule/java"/>
 	<classpathentry kind="src" path="src/jar/query/java"/>
 	<classpathentry kind="src" path="src/jar/resolver/java"/>
+	<classpathentry kind="src" path="src/jar/resolver-distributed/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-file/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-filesystem/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-gis/java"/>
@@ -28,6 +26,7 @@
 	<classpathentry kind="src" path="src/jar/resolver-lucene/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-memory/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-nodetype/java"/>
+	<classpathentry kind="src" path="src/jar/resolver-null/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-prefix/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-relational/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-spi/java"/>
@@ -43,6 +42,7 @@
 	<classpathentry kind="src" path="src/jar/server-local/java"/>
 	<classpathentry kind="src" path="src/jar/server-rmi/java"/>
 	<classpathentry kind="src" path="src/jar/sofa/java"/>
+	<classpathentry kind="src" path="src/jar/sparql-interpreter/java"/>
 	<classpathentry kind="src" path="src/jar/sparql-protocol/java"/>
 	<classpathentry kind="src" path="src/jar/store/java"/>
 	<classpathentry kind="src" path="src/jar/store-nodepool/java"/>
@@ -57,8 +57,9 @@
 	<classpathentry kind="src" path="src/jar/tuples-hybrid/java"/>
 	<classpathentry kind="src" path="src/jar/util/java"/>
 	<classpathentry kind="src" path="src/jar/util-xa/java"/>
-	<classpathentry kind="src" path="src/jar/sparql-interpreter/java"/>
-	<classpathentry kind="src" path="src/jar/resolver-null/java"/>
+	<classpathentry kind="src" path="src/jar/webquery/java"/>
+	<classpathentry kind="src" path="src/war/webui/java"/>
+	<classpathentry kind="src" path="tools/src"/>
 	<classpathentry kind="lib" path="lib/xom-1.0d21.jar"/>
 	<classpathentry kind="lib" path="lib/xmlParserAPIs.jar"/>
 	<classpathentry kind="lib" path="lib/xmlc-xerces.jar"/>
