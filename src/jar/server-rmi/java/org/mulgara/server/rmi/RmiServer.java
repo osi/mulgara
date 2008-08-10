@@ -183,8 +183,16 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
    * @throws NoSuchObjectException The current server is not registered in the registry.
    */
   protected void stopService() throws NamingException, NoSuchObjectException {
-    rmiRegistryContext.unbind(name);
-    UnicastRemoteObject.unexportObject(remoteSessionFactory, true);
+    try {
+      rmiRegistryContext.unbind(name);
+      UnicastRemoteObject.unexportObject(remoteSessionFactory, true);
+    } catch (Exception e) {
+      if (e.getCause() instanceof javax.naming.ServiceUnavailableException) {
+        logger.warn("RMI Server no longer available to be stopped. Abandoning.");
+      } else {
+        logger.warn("Unabled to deregister the RMI service. Abandoning.");
+      }
+    }
   }
 
   /**
