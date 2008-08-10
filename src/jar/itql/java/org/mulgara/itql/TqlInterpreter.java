@@ -216,6 +216,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       if (lexer.nextCommand()) {
   
         Start commandTree = null;
+        String commandText = lexer.getCurrentCommand();
   
         // parse the command
         Parser parser = new Parser(lexer);
@@ -223,6 +224,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
         // Build the command. This populates lastCommand
         commandTree.apply(this);
+        lastCommand.setText(commandText);
 
         if (logger.isDebugEnabled()) logger.debug("Successfully parsed command " + command);
       }
@@ -277,6 +279,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // if the lexer saw terminators, parse the associated commands
     while (lexer.nextCommand()) {
 
+      String commandText = lexer.getCurrentCommand();
+
       Start commandTree = null;
 
       // parse the command
@@ -288,6 +292,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
         // this populates lastCommand
         resetInterpreter();
         commandTree.apply(this);
+        lastCommand.setText(commandText);
+        
         // take the lastCommand result, and add it to the list of results
         commandList.add(lastCommand);
 
@@ -347,6 +353,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // check the the command worked as expected
     if (lastCommand == null) throw new MulgaraParserException("Parameter was not a query");
     if (!(lastCommand instanceof Query)) throw new IllegalArgumentException("Command was not a query: " + queryString);
+    // This may not be accurate if there was more than one query, but if the lexer stopped short, we're stuck here.
+    lastCommand.setText(queryString);
 
     // return the results of the command
     return (Query)lastCommand;
@@ -1518,7 +1526,10 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
   
     int commandCount = 0;
     final LinkedList<Token> leftoverTokenList = new LinkedList<Token>();
-  
+    StringBuilder buildingCommand = new StringBuilder();
+    LinkedList<String> commandQueue = new LinkedList<String>();
+    String currentCommand = null;
+
     public Lexer2() {
       super(null);
     }
@@ -1530,10 +1541,15 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     public void add(String command) throws LexerException, IOException {
       Lexer lexer = new Lexer(new PushbackReader(new StringReader(command), 256));
       Token t;
-      while (! ( (t = lexer.next()) instanceof EOF)) {
+      while (!((t = lexer.next()) instanceof EOF)) {
         if (t instanceof TTerminator) {
+          commandQueue.addLast(buildingCommand.toString());
+          buildingCommand = new StringBuilder();
           t = new EOF();
           commandCount++;
+          assert commandCount == commandQueue.size();
+        } else {
+          buildingCommand.append(t.getText());
         }
         leftoverTokenList.add(t);
       }
@@ -1550,12 +1566,17 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     public boolean nextCommand() {
       if (commandCount == 0) {
         return false;
-      }
-      else {
+      } else {
         //assert commandCount > 0;
         commandCount--;
+        currentCommand = commandQueue.remove();
+        assert commandCount == commandQueue.size();
         return true;
       }
+    }
+
+    public String getCurrentCommand() {
+      return currentCommand;
     }
   }
 
