@@ -311,26 +311,6 @@ public class HelpPrinter {
   // printDefaultHelp()
 
   /**
-   * Print the comment help message.
-   *
-   * @return RETURNED VALUE TO DO
-   */
-  private static StringBuffer printCommentHelp() {
-
-    // log the command we're printing help for
-    log.debug("Printing comment help screen");
-
-    // create the help message
-    StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append("\nThe comment command is not yet implemented." + eol);
-
-    // return the help mesage
-    return helpMsg;
-  }
-
-  // printCommentHelp()
-
-  /**
    * Print the su help message.
    *
    * @return RETURNED VALUE TO DO
