@@ -27,6 +27,9 @@ import org.mulgara.query.ModelResource;
  */
 public abstract class ServerCommand implements Command {
 
+  /** The text used to create this command. */
+  private String textualForm;
+
   /** The graph being referred to on the server. */
   private final ModelResource serverGraph;
   
@@ -108,6 +111,21 @@ public abstract class ServerCommand implements Command {
    */
   public boolean isAnswerable() {
     return false;
+  }
+
+
+  /** @see org.mulgara.query.operation.Command#setText(java.lang.String) */
+  public void setText(String text) {
+    textualForm = text;
+  }
+
+
+  /**
+   * Returns the textual representation of this Command. Same as {@link #toString()}.
+   * @return The text of the command.
+   */
+  public String getText() {
+    return textualForm;
   }
 
 

@@ -24,6 +24,9 @@ import java.net.URI;
  */
 public abstract class LocalCommand implements Command {
 
+  /** The text used to create this command. */
+  private String textualForm;
+
   /** The message set by the result of this command. */
   private String resultMessage = "";
 
@@ -68,7 +71,32 @@ public abstract class LocalCommand implements Command {
   public URI getServerURI() {
     return null;
   }
-  
+
+
+  /** @see org.mulgara.query.operation.Command#setText(java.lang.String) */
+  public void setText(String text) {
+    textualForm = text;
+  }
+
+
+  /**
+   * Returns the textual representation of this Command. Same as {@link #toString()}.
+   * @return The text of the command.
+   */
+  public String getText() {
+    return textualForm;
+  }
+
+
+  /**
+   * Returns the textual representation of this Command.
+   * @return The text of the command.
+   */
+  public String toString() {
+    return textualForm;
+  }
+
+
   /**
    * Executes the operation. This is highly specific to each operation.
    * @return Data specific to the operation.
@@ -77,7 +105,8 @@ public abstract class LocalCommand implements Command {
   public Object execute() throws Exception {
     return execute(null);
   }
-  
+
+
   /**
    * Gets a message text relevant to the operation.  Useful for the UI.
    * @return A text message associated with the result of this
@@ -86,6 +115,7 @@ public abstract class LocalCommand implements Command {
   public String getResultMessage() {
     return resultMessage;
   }
+
 
   /**
    * Sets message text relevant to the operation.  Useful for the UI.

@@ -74,4 +74,19 @@ public interface Command {
    * @return <code>true</code> if the result of execute is an Answer.
    */
   boolean isAnswerable();
+
+  /**
+   * Sets the textual representation of this command. This may not be the original command
+   * but will be equivalent.
+   * @param text A textual representation of the command.
+   */
+  void setText(String text);
+
+
+  /**
+   * Returns the textual representation of this Command.
+   * @return The text of the command.
+   */
+  public String getText();
+
 }

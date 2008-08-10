@@ -112,6 +112,9 @@ public class Query implements Cloneable, Serializable, Command {
   /** A UI message describing the result of this message. */
   private String resultMessage = "";
 
+  /** A lexical form for the query, set manually rather than constructed in {@link #toString()}. */
+  private String textualForm = "";
+
   //
   // Constructors
   //
@@ -412,6 +415,22 @@ public class Query implements Cloneable, Serializable, Command {
         }
       }
     }
+  }
+
+
+  /** @see org.mulgara.query.operation.Command#setText(java.lang.String) */
+  public void setText(String text) {
+    textualForm = text;
+  }
+
+
+  /**
+   * Returns the textual representation of this Command.
+   * @return The text of the command. This comes from the lexer, rather than reconstruction
+   *         from the structure of the query.
+   */
+  public String getText() {
+    return textualForm;
   }
 
 
