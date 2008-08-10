@@ -71,6 +71,7 @@
   <property file="${jar.src.dir}/tuples/tuples-build.properties"/>
   <property file="${jar.src.dir}/util-xa/util-xa-build.properties"/>
   <property file="${jar.src.dir}/util/util-build.properties"/>
+  <property file="${jar.src.dir}/webquery/webquery-build.properties"/>
 
   <property name="webui.viewer.src.dir"
       value="${webui.src.dir}/java/org/mulgara/webui/viewer"/>
@@ -142,6 +143,7 @@
   <import file="${jar.src.dir}/tuples/build.xml"/>
   <import file="${jar.src.dir}/util-xa/build.xml"/>
   <import file="${jar.src.dir}/util/build.xml"/>
+  <import file="${jar.src.dir}/webquery/build.xml"/>
 
   <!-- =================================================================== -->
   <!--                          Path Definitions                           -->
@@ -349,7 +351,7 @@
                    store-stringpool-dist, store-stringpool-memory-dist,
                    store-stringpool-xa-dist, tag-dist,
                    tuples-dist, tuples-hybrid-dist,
-                   util-dist, util-xa-dist"
+                   util-dist, util-xa-dist, webquery-dist"
           description="Creates the distribution base jars">
   </target>
 
@@ -543,8 +545,7 @@
                    lite-create-manifest, javadoc-dist,
                    lite-dist-uptodate"
           unless="dist.lite.uptodate"
-          description="Creates the executable JAR for the Embedded Mulgara Lite
-                       server">
+          description="Creates the executable JAR for the Embedded Mulgara Lite server">
 
     <!-- HACK!!!!! -->
     <!-- This will get the ARP parser working -->
@@ -764,7 +765,7 @@
              sofa-jar, krule-jar, rules-jar, sparql-protocol-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar,
-             tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war"
+             tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war, webquery-jar"
     unless="javadoc-uptodate"
     description="Creates the project javadoc">
     <delete dir="${javadoc.dir}"/>
@@ -804,6 +805,7 @@
                       org.mulgara.store.stringpool.xa.*,
                       org.mulgara.store.tuples.*,
                       org.mulgara.store.xa.*,
+                      org.mulgara.webquery.*,
                       org.mulgara.webui.*,
                       org.mulgara.util,
                       org.mulgara.xml.*"
@@ -885,6 +887,7 @@
       <sourcepath path="${util.src.dir}/java"/>
       <sourcepath path="${util-xa.src.dir}/java"/>
       <sourcepath path="${webui.src.dir}/java"/>
+      <sourcepath path="${webquery.src.dir}/java"/>
       <sourcepath path="${obj.dir}/jar/config/java"/>
       <sourcepath path="${obj.dir}/jar/itql/java"/>
       <sourcepath path="${obj.dir}/jar/query/java"/>
@@ -1728,7 +1731,7 @@
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar,
-             webservices-war, webui-war, -embedded-dist-uptodate"
+             webservices-war, webui-war, webquery-jar, -embedded-dist-uptodate"
           description="Creates the executable JAR for the Embedded Mulgara server"
                 unless="embedded.dist.uptodate">
 
@@ -1851,6 +1854,7 @@
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${webquery.jar}" excludes="META-INF/**"/>
 
 
       <!-- include pre-bundled webapps -->
@@ -1897,7 +1901,7 @@
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, tuples-jar,
-             tuples-hybrid-jar, util-jar, util-xa-jar,
+             tuples-hybrid-jar, util-jar, util-xa-jar, webquery-jar,
              -embedded-dist-uptodate"
           description="core dist for embedded apps, without 3rd party libs"
                 unless="embedded.dist.uptodate">
@@ -1955,6 +1959,7 @@
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${webquery.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
 
