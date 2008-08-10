@@ -37,6 +37,7 @@ import java.rmi.registry.LocateRegistry;
 import java.util.*;
 
 import javax.naming.*;
+import javax.servlet.Servlet;
 import javax.xml.parsers.*;
 import org.xml.sax.SAXException;
 
@@ -50,16 +51,21 @@ import org.mulgara.config.Connector;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.StoreException;
 import org.mulgara.store.xa.SimpleXAResourceException;
+import org.mulgara.util.MortbayLogger;
+import org.mulgara.util.Reflect;
 import org.mulgara.util.TempDir;
 
 import static org.mulgara.server.ServerMBean.ServerState;
+import static org.mortbay.jetty.servlet.Context.SESSIONS;
 
 // jetty packages
 import org.mortbay.jetty.AbstractConnector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandler;
+import org.mortbay.jetty.handler.DefaultHandler;
 import org.mortbay.jetty.nio.BlockingChannelConnector;
+import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppClassLoader;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.util.MultiException;
@@ -117,6 +123,9 @@ public class EmbeddedMulgaraServer {
 
   /** The Web UI path. */
   private final static String WEBUI_PATH = "webui";
+
+  /** The Web Query path. */
+  private final static String WEBQUERY_PATH = "webquery";
 
   /** The logging category to log to. */
   protected static Logger log = Logger.getLogger(EmbeddedMulgaraServer.class.getName());
@@ -460,7 +469,7 @@ public class EmbeddedMulgaraServer {
    */
   public SessionFactory getSessionFactory() {
     SessionFactory sessionFactory = null;
-    if (serverManagement != null)  sessionFactory = ((AbstractServer)serverManagement).getSessionFactory();
+    if (serverManagement != null) sessionFactory = ((AbstractServer)serverManagement).getSessionFactory();
     return sessionFactory;
   }
 
@@ -748,7 +757,7 @@ public class EmbeddedMulgaraServer {
     if (log.isDebugEnabled()) log.debug("Creating HTTP server instance");
 
     // Set the magic logging property for Jetty to use Log4j
-    System.setProperty("LOG_CLASSES", "org.mortbay.util.log4j.Log4jSink");
+    System.setProperty(MortbayLogger.LOGGING_CLASS_PROPERTY, MortbayLogger.class.getCanonicalName());
 
     // create and register a new HTTP server
     Server server;
@@ -762,8 +771,10 @@ public class EmbeddedMulgaraServer {
     }
 
     // add the webapps
+//    server.addHandler(new DefaultHandler());
     addWebServicesWebAppContext(server);
     addWebUIWebAppContext(server);
+    addWebQueryContext(server);
 
     // add our class loader as the classloader of all contexts, unless this is a webapp in which case we wrap it
     ClassLoader classLoader = this.getClass().getClassLoader();
@@ -906,6 +917,23 @@ public class EmbeddedMulgaraServer {
       new WebAppContext(server, warPath, "/" + WEBUI_PATH);
     } else {
       log.warn("Could not find WebUI webapp WAR file -> not adding to servlet container");
+    }
+  }
+
+
+  /**
+   * Creates the Mulgara Semantic Store Query Tool (webui).
+   * @throws IOException if the driver WAR file i not readable
+   */
+  private void addWebQueryContext(Server server) throws IOException {
+    if (log.isDebugEnabled()) log.debug("Adding WebQuery servlet context");
+
+    // create the web query context
+    try {
+      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName("org.mulgara.webquery.QueryServlet"), getHttpHostName(), getServerName(), (AbstractServer)serverManagement);
+      new org.mortbay.jetty.servlet.Context(server, "/" + WEBQUERY_PATH, SESSIONS).addServlet(new ServletHolder(servlet), "/*");
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("Not configured to use the requested Query servlet");
     }
   }
 

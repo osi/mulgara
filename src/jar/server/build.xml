@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE project>
 
 <!-- =================================================================== -->
@@ -26,6 +25,7 @@
     <fileset file="${store.dist.dir}/${store.jar}"/>
     <fileset file="${store-xa.dist.dir}/${store-xa.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
+    <fileset file="${webquery.dist.dir}/${webquery.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${util-xa.dist.dir}/${util-xa.jar}"/>
   </path>
@@ -100,8 +100,7 @@
   </target>
 
   <target name="server-compile"
-          depends="server-configure, store-jar, store-xa-jar, 
-          resolver-spi-jar, util-xa-jar"
+          depends="server-configure, store-jar, store-xa-jar, resolver-spi-jar, util-xa-jar"
           description="Compiles all server related files included generated
                        source code">
 
