@@ -69,6 +69,11 @@ import org.mulgara.util.TempDir;
  * This class parses N3 data. It is implemented as a {@link Runnable} to allow it to be running in
  * the background filling a queue, while a consumer thread drains the queue.
  *
+ * <p>Because ResolverSession (and the underlying StringPoolSession) may not be accessed
+ * concurrently from multiple threads, there is some extra complication when creating blank nodes,
+ * whereby blank-node instances are created in the parser thread but their id's are allocated later
+ * in the app-thread.
+ *
  * @created 2004-04-02
  * @author <a href="http://staff.pisoftware.com/anewman">Andrew Newman</a>
  * @author <a href="http://staff.pisoftware.com/davidm">David Makepeace</a>
@@ -99,6 +104,12 @@ class Parser extends Thread implements N3ParserEventHandler {
 
   /** Mapping between blank node rdf:nodeIDs and local node numbers. */
   private StringToLongMap blankNodeNameMap;
+
+  /** Mapping between blank node IDs and blank-node instances. */
+  private Map<Long, BlankNodeImpl> unallocBlankNodeIdMap = new HashMap<Long, BlankNodeImpl>();
+
+  /** Mapping between blank node rdf:nodeIDs and blank-node instances. */
+  private Map<String, BlankNodeImpl> unallocBlankNodeNameMap = new HashMap<String, BlankNodeImpl>();
 
   /** The resolverSession to create new internal identifiers for blank nodes. */
   private ResolverSession resolverSession;
@@ -190,6 +201,8 @@ class Parser extends Thread implements N3ParserEventHandler {
 
       // Keep the LinkedList drained.
       triples.clear();
+      unallocBlankNodeIdMap.clear();
+      unallocBlankNodeNameMap.clear();
       notifyAll();
 
       try {
@@ -417,53 +430,46 @@ class Parser extends Thread implements N3ParserEventHandler {
     long anonId = parseAnonId(n);
     String anonIdStr = null;
     try {
-      // look up the id in the blank node maps
-      long resourceNodeId;
-      if (anonId >= 0) {
-        resourceNodeId = blankNodeIdMap.getLong(anonId);
-      } else {
-        // don't expect to use this map
-        anonIdStr = n.toString();
-        resourceNodeId = blankNodeNameMap.get(anonIdStr);
-      }
-
-      // check if the node was found
-      BlankNodeImpl blankNode;
-      if (resourceNodeId == 0) {
-        // need a new anonymous node for this ID
-        blankNode = createBlankNode();
-        // this was using a new BlankNodeImpl, but we need new internal IDs for every new node
-
-        // need to put this node into a map
+      synchronized (this) {
+        // look up the id in the blank node maps
+        long resourceNodeId;
         if (anonId >= 0) {
-          blankNodeIdMap.putLong(anonId, blankNode.getNodeId());
+          resourceNodeId = blankNodeIdMap.getLong(anonId);
         } else {
           // don't expect to use this map
-          blankNodeNameMap.put(anonIdStr, blankNode.getNodeId());
+          anonIdStr = n.toString();
+          resourceNodeId = blankNodeNameMap.get(anonIdStr);
         }
-      } else {
-        // Found the ID, so need to recreate the anonymous resource for it
-        blankNode = new BlankNodeImpl(resourceNodeId);
+
+        // check if the node was found
+        BlankNodeImpl blankNode;
+        if (resourceNodeId == 0) {
+          if (anonId >= 0) {
+            blankNode = unallocBlankNodeIdMap.get(resourceNodeId);
+          } else {
+            blankNode = unallocBlankNodeNameMap.get(n.toString());
+          }
+        } else {
+          // Found the ID, so need to recreate the anonymous resource for it
+          blankNode = new BlankNodeImpl(resourceNodeId);
+        }
+
+        // check if the node was found
+        if (blankNode == null) {
+          // need a new anonymous node for this ID
+          blankNode = new BlankNodeImpl();
+          // need to put this node into a map
+          if (anonId >= 0) {
+            unallocBlankNodeIdMap.put(anonId, blankNode);
+          } else {
+            unallocBlankNodeNameMap.put(anonIdStr, blankNode);
+          }
+        }
+
+        return blankNode;
       }
-
-      return blankNode;
-
     } catch (IOException e) {
       throw new RuntimeException("Couldn't generate anonymous resource", e);
-    }
-  }
-
-  /**
-   * Creates an entirely new blank node.
-   * @return A new blank node with a new internal identifier.
-   */
-  private BlankNodeImpl createBlankNode() {
-    try {
-      BlankNodeImpl bn = new BlankNodeImpl();
-      resolverSession.localize(bn);  // This sets and returns the node ID
-      return bn;
-    } catch (LocalizeException le) {
-      throw new RuntimeException("Unable to create blank node", le);
     }
   }
 
@@ -547,9 +553,33 @@ class Parser extends Thread implements N3ParserEventHandler {
       }
     }
     checkForException();
+    allocateBlankNodes();
 
     notifyAll();
     return triples.removeFirst();
+  }
+
+  /**
+   * Allocate the ids for the new blank nodes.
+   */
+  private synchronized void allocateBlankNodes() {
+    try {
+      for (Map.Entry<Long, BlankNodeImpl> entry : unallocBlankNodeIdMap.entrySet()) {
+        resolverSession.localize(entry.getValue());     // This sets and returns the node ID
+        blankNodeIdMap.putLong(entry.getKey(), entry.getValue().getNodeId());
+      }
+      unallocBlankNodeIdMap.clear();
+
+      for (Map.Entry<String, BlankNodeImpl> entry : unallocBlankNodeNameMap.entrySet()) {
+        resolverSession.localize(entry.getValue());     // This sets and returns the node ID
+        blankNodeNameMap.put(entry.getKey(), entry.getValue().getNodeId());
+      }
+      unallocBlankNodeNameMap.clear();
+    } catch (LocalizeException le) {
+      throw new RuntimeException("Unable to create blank node", le);
+    } catch (IOException ioe) {
+      throw new RuntimeException("Unable to create blank node", ioe);
+    }
   }
 
   /**
