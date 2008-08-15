@@ -28,26 +28,36 @@
 package org.mulgara.content.n3;
 
 // Java 2 standard packages
-import java.io.*;
+import java.io.InputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 // Third party packages
 import antlr.collections.AST;        // ANTLR compiler-compiler
 import com.hp.hpl.jena.n3.N3Parser;  // Jena
 import com.hp.hpl.jena.n3.N3ParserEventHandler;
 import org.apache.log4j.Logger;      // Apache Log4J
-import org.jrdf.graph.*;             // JRDF
+import org.jrdf.graph.BlankNode;     // JRDF
+import org.jrdf.graph.Node;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.Triple;
+import org.jrdf.graph.URIReference;
 
 // Locally written packages
-/*
-import org.mulgara.store.nodepool.NodePoolException;
-*/
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.query.TuplesException;
-import org.mulgara.query.rdf.*;
+import org.mulgara.query.rdf.BlankNodeImpl;
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.TripleImpl;
+import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.util.IntFile;
@@ -57,7 +67,7 @@ import org.mulgara.util.TempDir;
 
 /**
  * This class parses N3 data. It is implemented as a {@link Runnable} to allow it to be running in
- * the background filling a queue, while a consumer thread drains the queue. 
+ * the background filling a queue, while a consumer thread drains the queue.
  *
  * @created 2004-04-02
  * @author <a href="http://staff.pisoftware.com/anewman">Andrew Newman</a>
@@ -75,7 +85,7 @@ class Parser extends Thread implements N3ParserEventHandler {
   private static final Logger logger = Logger.getLogger(Parser.class.getName());
 
   private static final String ANON_TAG = "_:";
-  
+
   private static final String LOCAL_ANON_TAG = ANON_TAG + "node";
 
   /**
@@ -89,7 +99,7 @@ class Parser extends Thread implements N3ParserEventHandler {
 
   /** Mapping between blank node rdf:nodeIDs and local node numbers. */
   private StringToLongMap blankNodeNameMap;
-  
+
   /** The resolverSession to create new internal identifiers for blank nodes. */
   private ResolverSession resolverSession;
 
@@ -423,7 +433,7 @@ class Parser extends Thread implements N3ParserEventHandler {
         // need a new anonymous node for this ID
         blankNode = createBlankNode();
         // this was using a new BlankNodeImpl, but we need new internal IDs for every new node
-        
+
         // need to put this node into a map
         if (anonId >= 0) {
           blankNodeIdMap.putLong(anonId, blankNode.getNodeId());
@@ -442,7 +452,7 @@ class Parser extends Thread implements N3ParserEventHandler {
       throw new RuntimeException("Couldn't generate anonymous resource", e);
     }
   }
-  
+
   /**
    * Creates an entirely new blank node.
    * @return A new blank node with a new internal identifier.
