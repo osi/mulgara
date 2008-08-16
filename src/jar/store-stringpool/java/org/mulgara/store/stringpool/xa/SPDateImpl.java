@@ -115,7 +115,7 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
 
 
   SPDateImpl(ByteBuffer data) {
-    this(data.getLong(), data.getInt());
+    this(data.getLong(), (data.limit() > Constants.SIZEOF_LONG) ? data.getInt() : 0);
   }
 
 
