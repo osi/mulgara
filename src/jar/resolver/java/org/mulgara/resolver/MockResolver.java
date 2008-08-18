@@ -72,8 +72,15 @@ public class MockResolver implements Resolver {
   /** Logger */
   private static Logger logger = Logger.getLogger(MockResolver.class);
 
+  /** the next XAResource to return */
+  private static XAResource nextXARes = null;
+
   /** The session that this resolver is associated with */
   private final ResolverSession resolverSession;
+
+  public static synchronized void setNextXAResource(XAResource xaRes) {
+    nextXARes = xaRes;
+  }
 
   MockResolver(ResolverSession resolverSession) {
     this.resolverSession = resolverSession;
@@ -84,7 +91,9 @@ public class MockResolver implements Resolver {
   }
 
   public XAResource getXAResource() {
-    return new DummyXAResource(10);
+    synchronized (MockResolver.class) {
+      return (nextXARes != null) ? nextXARes : new DummyXAResource(10);
+    }
   }
 
   public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {

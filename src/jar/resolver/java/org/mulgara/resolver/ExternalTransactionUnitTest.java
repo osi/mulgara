@@ -46,6 +46,7 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.TripleImpl;
+import org.mulgara.resolver.spi.DummyXAResource;
 import org.mulgara.server.Session;
 import org.mulgara.util.FileUtil;
 
@@ -122,6 +123,7 @@ public class ExternalTransactionUnitTest extends TestCase {
     suite.addTest(new ExternalTransactionUnitTest("testTransactionTimeout"));
     suite.addTest(new ExternalTransactionUnitTest("testTransactionFailure"));
     suite.addTest(new ExternalTransactionUnitTest("testSessionClose"));
+    suite.addTest(new ExternalTransactionUnitTest("testResourceActivation"));
 
     return suite;
   }
@@ -2136,6 +2138,270 @@ public class ExternalTransactionUnitTest extends TestCase {
       }
     } catch (Exception e) {
       fail(e);
+    }
+  }
+
+
+  /**
+   * Test that the underlying xa-resources (from resolvers) are properly activated and deactivated.
+   */
+  public void testResourceActivation() {
+    logger.info("Testing resourceActivation");
+
+    try {
+      Session session1 = database.newSession();
+      try {
+        // two commands in transaction
+        MockXAResource mockRes = new MockXAResource();
+        MockResolver.setNextXAResource(mockRes);
+
+        XAResource resource1 = session1.getXAResource();
+        Xid xid1 = new TestXid(1);
+        resource1.start(xid1, XAResource.TMNOFLAGS);
+
+        final URI testModel = new URI("foo://mulgara/resourceActivationTest");
+        session1.createModel(testModel, URI.create(Mulgara.NAMESPACE + "MockModel"));
+
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(1, mockRes.suspendCnt);
+        assertEquals(0, mockRes.resumeCnt);
+        assertEquals(0, mockRes.endCnt);
+
+        session1.query(createQuery(testModel)).close();
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(3, mockRes.suspendCnt);
+        assertEquals(2, mockRes.resumeCnt);
+        assertEquals(0, mockRes.endCnt);
+
+        resource1.end(xid1, XAResource.TMSUCCESS);
+        resource1.commit(xid1, true);
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(3, mockRes.suspendCnt);
+        assertEquals(3, mockRes.resumeCnt);
+        assertEquals(1, mockRes.endCnt);
+        assertEquals(1, mockRes.prepareCnt);
+        assertEquals(1, mockRes.commitCnt);
+
+        // two commands in transaction, where one resolver is enlisted later
+        mockRes = new MockXAResource();
+        MockResolver.setNextXAResource(mockRes);
+
+        xid1 = new TestXid(2);
+        resource1.start(xid1, XAResource.TMNOFLAGS);
+
+        session1.query(createQuery(modelURI)).close();
+        assertEquals(0, mockRes.startCnt);
+        assertEquals(0, mockRes.suspendCnt);
+        assertEquals(0, mockRes.resumeCnt);
+        assertEquals(0, mockRes.endCnt);
+
+        session1.query(createQuery(testModel)).close();
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(2, mockRes.suspendCnt);
+        assertEquals(1, mockRes.resumeCnt);
+        assertEquals(0, mockRes.endCnt);
+
+        resource1.end(xid1, XAResource.TMSUCCESS);
+        resource1.commit(xid1, true);
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(2, mockRes.suspendCnt);
+        assertEquals(2, mockRes.resumeCnt);
+        assertEquals(1, mockRes.endCnt);
+        assertEquals(1, mockRes.prepareCnt);
+        assertEquals(1, mockRes.commitCnt);
+
+        // two threads, 2 commands in each thread, all one transaction (e.g. RMI)
+        mockRes = new MockXAResource();
+        MockResolver.setNextXAResource(mockRes);
+
+        xid1 = new TestXid(3);
+        resource1.start(xid1, XAResource.TMNOFLAGS);
+
+        session1.query(createQuery(testModel)).close();
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(2, mockRes.suspendCnt);
+        assertEquals(1, mockRes.resumeCnt);
+        assertEquals(0, mockRes.endCnt);
+
+        final boolean[] steps = new boolean[3];
+        final Xid theXid = xid1;
+        final XAResource theRes = resource1;
+        final Session theSession = session1;
+        final MockXAResource theMockRes = mockRes;
+
+        Thread t1 = new Thread() {
+          public void run() {
+            try {
+              theSession.query(createQuery(testModel)).close();
+              assertEquals(1, theMockRes.startCnt);
+              assertEquals(4, theMockRes.suspendCnt);
+              assertEquals(3, theMockRes.resumeCnt);
+              assertEquals(0, theMockRes.endCnt);
+
+              synchronized (this) {
+                steps[0] = true;
+                notify();
+
+                try {
+                  wait(2000L);
+                } catch (InterruptedException ie) {
+                  logger.error("wait for tx step1 interrupted", ie);
+                  fail(ie);
+                }
+                assertTrue("transaction should've completed step1", steps[1]);
+              }
+
+              theRes.end(theXid, XAResource.TMSUCCESS);
+              theRes.rollback(theXid);
+              assertEquals(1, theMockRes.startCnt);
+              assertEquals(6, theMockRes.suspendCnt);
+              assertEquals(6, theMockRes.resumeCnt);
+              assertEquals(1, theMockRes.endCnt);
+              assertEquals(0, theMockRes.prepareCnt);
+              assertEquals(0, theMockRes.commitCnt);
+              assertEquals(1, theMockRes.rollbackCnt);
+
+              synchronized (this) {
+                steps[2] = true;
+                notify();
+              }
+            } catch (Exception e) {
+              fail(e);
+            }
+          }
+        };
+
+        synchronized (t1) {
+          t1.start();
+
+          try {
+            t1.wait(2000L);
+          } catch (InterruptedException ie) {
+            logger.error("wait for tx step0 interrupted", ie);
+            fail(ie);
+          }
+          assertTrue("transaction should've completed step0", steps[0]);
+        }
+
+        session1.query(createQuery(testModel)).close();
+        assertEquals(1, mockRes.startCnt);
+        assertEquals(6, mockRes.suspendCnt);
+        assertEquals(5, mockRes.resumeCnt);
+        assertEquals(0, mockRes.endCnt);
+
+        synchronized (t1) {
+          steps[1] = true;
+          t1.notify();
+
+          try {
+            t1.wait(2000L);
+          } catch (InterruptedException ie) {
+            logger.error("wait for tx step2 interrupted", ie);
+            fail(ie);
+          }
+          assertTrue("transaction should've completed step2", steps[2]);
+        }
+      } finally {
+        session1.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+  private static class MockXAResource extends DummyXAResource {
+    private static enum State { IDLE, ACTIVE, SUSPENDED, ENDED, PREPARED, FINISHED };
+
+    private final ThreadLocal<Xid> currTxn = new ThreadLocal<Xid>();
+    private State state = State.IDLE;
+
+    public int startCnt = 0;
+    public int resumeCnt = 0;
+    public int suspendCnt = 0;
+    public int endCnt = 0;
+    public int prepareCnt = 0;
+    public int commitCnt = 0;
+    public int rollbackCnt = 0;
+
+    public void start(Xid xid, int flags) throws XAException {
+      super.start(xid, flags);
+
+      if (currTxn.get() != null) {
+        throw new XAException("transaction already active: " + currTxn.get());
+      }
+      currTxn.set(xid);
+
+      if (flags == XAResource.TMNOFLAGS && state == State.ACTIVE) {
+        throw new XAException("resource already active: " + state);
+      }
+      if (flags == XAResource.TMRESUME && state != State.SUSPENDED) {
+        throw new XAException("resource not suspended: " + state);
+      }
+      state = State.ACTIVE;
+
+      if (flags == XAResource.TMNOFLAGS) startCnt++;
+      if (flags == XAResource.TMRESUME) resumeCnt++;
+    }
+
+    public void end(Xid xid, int flags) throws XAException {
+      super.end(xid, flags);
+
+      if (!xid.equals(currTxn.get())) {
+        throw new XAException("mismatched transaction end");
+      }
+      currTxn.set(null);
+
+      if (state != State.ACTIVE) {
+        throw new XAException("resource not active: " + state);
+      }
+      state = (flags == XAResource.TMSUSPEND) ? State.SUSPENDED : State.ENDED;
+
+      if (flags == XAResource.TMSUSPEND) suspendCnt++;
+      if (flags != XAResource.TMSUSPEND) endCnt++;
+    }
+
+    public int prepare(Xid xid) throws XAException {
+      super.prepare(xid);
+
+      if (currTxn.get() != null) {
+        throw new XAException("transaction still active: " + currTxn.get());
+      }
+      if (state != State.ENDED) {
+        throw new XAException("resource not ended: " + state);
+      }
+      state = State.PREPARED;
+
+      prepareCnt++;
+      return XA_OK;
+    }
+
+    public void commit(Xid xid, boolean onePhase) throws XAException {
+      super.commit(xid, onePhase);
+
+      if (currTxn.get() != null) {
+        throw new XAException("transaction still active: " + currTxn.get());
+      }
+      if (onePhase && state != State.ENDED) {
+        throw new XAException("resource not ended: " + state);
+      }
+      if (!onePhase && state != State.PREPARED) {
+        throw new XAException("resource not prepared: " + state);
+      }
+      state = State.FINISHED;
+
+      commitCnt++;
+    }
+
+    public void rollback(Xid xid) throws XAException {
+      super.rollback(xid);
+
+      if (currTxn.get() != null) throw new XAException("transaction still active: " + currTxn.get());
+      if (state != State.ENDED && state != State.PREPARED) {
+        throw new XAException("resource not ended or prepared: " + state);
+      }
+      state = State.FINISHED;
+
+      rollbackCnt++;
     }
   }
 

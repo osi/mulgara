@@ -10,7 +10,7 @@
  * under the License.
  *
  * This file is an original work developed by Netymon Pty Ltd
- * (http://www.netymon.com, mailto:mail@netymon.com) under contract to 
+ * (http://www.netymon.com, mailto:mail@netymon.com) under contract to
  * Topaz Foundation. Portions created under this contract are
  * Copyright (c) 2007 Topaz Foundation
  * All Rights Reserved.
@@ -51,15 +51,19 @@ import org.mulgara.query.QueryException;
 public class MulgaraExternalTransaction implements MulgaraTransaction {
   private static final Logger logger =
     Logger.getLogger(MulgaraExternalTransaction.class.getName());
+  private static enum ResourceState { IDLE, ACTIVE, SUSPENDED, FINISHED };
 
   private Xid xid;
 
   private Set<EnlistableResource> enlisted;
+  private Set<EnlistableResource> started;
   private Set<EnlistableResource> prepared;
   private Set<EnlistableResource> committed;
   private Set<EnlistableResource> rollbacked;
 
   private Map<EnlistableResource, XAResource> xaResources;
+  private ResourceState xaResState;
+  private int inuse;
 
   private MulgaraExternalTransactionFactory factory;
   private DatabaseOperationContext context;
@@ -80,11 +84,14 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     this.xid = xid;
 
     this.enlisted = new HashSet<EnlistableResource>();
+    this.started = new HashSet<EnlistableResource>();
     this.prepared = new HashSet<EnlistableResource>();
     this.committed = new HashSet<EnlistableResource>();
     this.rollbacked = new HashSet<EnlistableResource>();
 
     this.xaResources = new HashMap<EnlistableResource, XAResource>();
+    this.xaResState = ResourceState.IDLE;
+    this.inuse = 0;
 
     this.inXACompletion = false;
 
@@ -98,7 +105,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
   }
 
   // We ignore reference counting in external transactions
-  public void reference() throws MulgaraTransactionException {}  
+  public void reference() throws MulgaraTransactionException {}
   public void dereference() throws MulgaraTransactionException {}
 
   /**
@@ -182,6 +189,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
       checkActive(MulgaraTransactionException.class);
+      activateXARes(MulgaraTransactionException.class);
       try {
         long la = lastActive;
         lastActive = -1;
@@ -198,6 +206,8 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           logger.error("Error in rollback after operation failure", ex);
         }
         throw new MulgaraTransactionException("Operation failed", th);
+      } finally {
+        deactivateXARes(MulgaraTransactionException.class);
       }
     } finally {
       releaseMutex();
@@ -208,6 +218,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     acquireMutex(0, false, TuplesException.class);
     try {
       checkActive(TuplesException.class);
+      activateXARes(TuplesException.class);
       try {
         long la = lastActive;
         lastActive = -1;
@@ -225,6 +236,8 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           logger.error("Error in rollback after answer-operation failure", ex);
         }
         throw new TuplesException("Request failed", th);
+      } finally {
+        deactivateXARes(TuplesException.class);
       }
     } finally {
       releaseMutex();
@@ -236,13 +249,17 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
       checkActive(MulgaraTransactionException.class);
+      activateXARes(MulgaraTransactionException.class);
+      try {
+        long la = lastActive;
+        lastActive = -1;
 
-      long la = lastActive;
-      lastActive = -1;
+        to.execute();
 
-      to.execute();
-
-      lastActive = (la != -1) ? System.currentTimeMillis() : -1;
+        lastActive = (la != -1) ? System.currentTimeMillis() : -1;
+      } finally {
+        deactivateXARes(MulgaraTransactionException.class);
+      }
     } finally {
       releaseMutex();
     }
@@ -257,6 +274,116 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
       throw factory.newException(exc, "Transaction has been completed");
   }
 
+  private <T extends Throwable> void activateXARes(Class<T> exc) throws T {
+    assert xaResState != ResourceState.FINISHED : "Unexpected resource-state: state=" + xaResState;
+
+    if (xaResState == ResourceState.ACTIVE) {
+      inuse++;
+      return;
+    }
+
+    assert inuse == 0 : "Unexpected use-count: state=" + xaResState + ", inuse=" + inuse;
+    boolean wasStarted = (xaResState == ResourceState.SUSPENDED);
+    xaResState = ResourceState.ACTIVE;
+
+    int flags = wasStarted ? XAResource.TMRESUME : XAResource.TMNOFLAGS;
+    for (EnlistableResource eres : wasStarted ? started : enlisted) {
+      XAResource res = xaResources.get(eres);
+      try {
+        res.start(xid, flags);
+        if (!wasStarted) {
+          started.add(eres);
+        }
+      } catch (XAException xae) {
+        // end started resources so we're in a consistent state
+        flags = wasStarted ? XAResource.TMSUSPEND : XAResource.TMFAIL;
+        for (EnlistableResource eres2 : wasStarted ? started : enlisted) {
+          XAResource res2 = xaResources.get(eres2);
+          if (res2 == res) {
+            break;
+          }
+
+          try {
+            res2.end(xid, flags);
+          } catch (XAException xae2) {
+            logger.error("Error ending resource '" + res2 + "' after start failure", xae2);
+          }
+        }
+
+        throw factory.newExceptionOrCause(exc, "Error starting resource '" + res + "'", xae);
+      }
+    }
+
+    inuse = 1;
+  }
+
+  private <T extends Throwable> void deactivateXARes(Class<T> exc) throws T {
+    if (xaResState == ResourceState.FINISHED) {
+      return;
+    }
+
+    assert xaResState == ResourceState.ACTIVE : "Unexpected resource-state: state=" + xaResState;
+    assert inuse > 0 : "Unexpected use-count: state=" + xaResState + ", inuse=" + inuse;
+
+    inuse--;
+    if (inuse > 0) {
+      return;
+    }
+
+    int flags = XAResource.TMSUSPEND;
+    T error = null;
+
+    for (EnlistableResource eres : started) {
+      XAResource res = xaResources.get(eres);
+      try {
+        res.end(xid, flags);
+      } catch (XAException xae) {
+        if (error == null) {
+          error = factory.newExceptionOrCause(exc, "Error ending resource '" + res + "'", xae);
+        } else {
+          logger.error("Error ending resource '" + res + "'", xae);
+        }
+      }
+    }
+
+    xaResState = ResourceState.SUSPENDED;
+
+    if (error != null) {
+      throw error;
+    }
+  }
+
+  private void endXARes(boolean success) throws XAException {
+    if (xaResState != ResourceState.SUSPENDED && xaResState != ResourceState.ACTIVE) {
+      return;
+    }
+
+    int flags = success ? XAResource.TMSUCCESS : XAResource.TMFAIL;
+    XAException error = null;
+
+    for (EnlistableResource eres : started) {
+      XAResource res = xaResources.get(eres);
+      try {
+        if (xaResState == ResourceState.SUSPENDED) {
+          res.start(xid, XAResource.TMRESUME);
+        }
+        res.end(xid, flags);
+      } catch (XAException xae) {
+        if (error == null) {
+          error = xae;
+        } else {
+          logger.error("Error ending resource '" + res + "'", xae);
+        }
+      }
+    }
+
+    xaResState = ResourceState.FINISHED;
+
+    if (error != null) {
+      throw error;
+    }
+  }
+
   public void enlist(EnlistableResource enlistable) throws MulgaraTransactionException {
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
@@ -269,10 +396,15 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
         }
         enlisted.add(enlistable);
         xaResources.put(enlistable, res);
-        // FIXME: We need to handle this uptodate operation properly - handle
-        // suspension or mid-prepare/commit.
-        // bringUptodate(res);
-        res.start(xid, XAResource.TMNOFLAGS);
+
+        if (xaResState == ResourceState.ACTIVE) {
+          res.start(xid, XAResource.TMNOFLAGS);
+          started.add(enlistable);
+        } else if (xaResState == ResourceState.SUSPENDED) {
+          res.start(xid, XAResource.TMNOFLAGS);
+          res.end(xid, XAResource.TMSUSPEND);
+          started.add(enlistable);
+        }
       } catch (XAException ex) {
         throw new MulgaraTransactionException("Failed to enlist resource", ex);
       }
@@ -331,10 +463,12 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
       long la = lastActive;
       lastActive = -1;
 
-      for (EnlistableResource er : enlisted) {
+      endXARes(true);
+      for (EnlistableResource er : started) {
         xaResources.get(er).prepare(xid);
         prepared.add(er);
       }
+
       lastActive = (la != -1) ? System.currentTimeMillis() : -1;
     } finally {
       releaseMutex();
@@ -355,7 +489,13 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
         rollback = true;
         Map<EnlistableResource, XAException> rollbackFailed = new HashMap<EnlistableResource, XAException>();
 
-        for (EnlistableResource er : enlisted) {
+        try {
+          endXARes(false);
+        } catch (XAException ex) {
+          logger.error("Error ending resources - attempting to rollback anyway", ex);
+        }
+
+        for (EnlistableResource er : started) {
           try {
             if (!committed.contains(er)) {
               xaResources.get(er).rollback(xid);
@@ -380,7 +520,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           // Then check every rollback failure code for a contradiction to all committed.
           for (XAException xaex : rollbackFailed.values()) {
             switch (xaex.errorCode) {
-              case XAException.XA_HEURHAZ:  
+              case XAException.XA_HEURHAZ:
               case XAException.XAER_NOTA:
               case XAException.XAER_RMERR:
               case XAException.XAER_RMFAIL:
