@@ -62,8 +62,7 @@ import org.mulgara.server.driver.SessionFactoryFinder;
  * @copyright &copy;2008 <a href="http://www.topazproject.org/">The Topaz Foundation</a>
  * @licence Apache License v2.0
  */
-public class JotmTransactionStandaloneTest extends TestCase
-{
+public class JotmTransactionStandaloneTest extends TestCase {
   /** Logger.  */
   private static Logger logger =
     Logger.getLogger(JotmTransactionStandaloneTest.class.getName());
@@ -656,8 +655,7 @@ public class JotmTransactionStandaloneTest extends TestCase
     }
   }
 
-  public void testExplicitIsolationQuerySingleSession() throws URISyntaxException
-  {
+  public void testExplicitIsolationQuerySingleSession() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -766,8 +764,7 @@ public class JotmTransactionStandaloneTest extends TestCase
     }
   }
 
-  public void testExternalInternalIsolation() throws URISyntaxException
-  {
+  public void testExternalInternalIsolation() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -827,8 +824,7 @@ public class JotmTransactionStandaloneTest extends TestCase
     }
   }
 
-  public void testInternalExternalIsolation() throws URISyntaxException
-  {
+  public void testInternalExternalIsolation() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -926,8 +922,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   // Test two simultaneous, explicit transactions, in two threads. The second one should block
   // until the first one sets auto-commit back to true.
   //
-  public void testConcurrentExplicitTxn() throws URISyntaxException
-  {
+  public void testConcurrentExplicitTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1027,8 +1022,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   // Test two simultaneous transactions, in two threads. The second one should block
   // until the first one sets auto-commit back to true.
   ///
-  public void testExternalInternalConcurrentTxn() throws URISyntaxException
-  {
+  public void testExternalInternalConcurrentTxn() throws URISyntaxException {
     logger.info("testExternalInternalConcurrentTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1127,8 +1121,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   // Test two simultaneous transactions, in two threads. The second one should block
   // until the first one sets auto-commit back to true.
   ///
-  public void testInternalExternalConcurrentTxn() throws URISyntaxException
-  {
+  public void testInternalExternalConcurrentTxn() throws URISyntaxException {
     logger.info("testInternalExternalConcurrentTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1234,8 +1227,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   // Test two simultaneous transactions, in two threads. The second one should block
   // until the first one sets auto-commit back to true.
   ///
-  public void testExternalInternalConcurrentTxnRollback() throws URISyntaxException
-  {
+  public void testExternalInternalConcurrentTxnRollback() throws URISyntaxException {
     logger.info("testExternalInternalConcurrentTxnRollback");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1335,8 +1327,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   // Test two simultaneous transactions, in two threads. The second one should block
   // until the first one sets auto-commit back to true.
   ///
-  public void testInternalExternalConcurrentTxnRollback() throws URISyntaxException
-  {
+  public void testInternalExternalConcurrentTxnRollback() throws URISyntaxException {
     logger.info("testInternalExternalConcurrentTxnRollback");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1496,8 +1487,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   }
 */
 
-  public void testTrivalImplicit() throws URISyntaxException
-  {
+  public void testTrivalImplicit() throws URISyntaxException {
     logger.info("testTrivialImplicit");
     try {
       Session session = sessionFactory.newSession();
@@ -1596,8 +1586,7 @@ public class JotmTransactionStandaloneTest extends TestCase
   /**
    * Fail with an unexpected exception
    */
-  private void fail(Throwable throwable)
-  {
+  private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(stringWriter));
     fail(stringWriter.toString());

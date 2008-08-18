@@ -86,8 +86,7 @@ import org.mulgara.util.FileUtil;
 *      Software Pty Ltd</a>
 * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
 */
-public class AdvDatabaseSessionUnitTest extends TestCase
-{
+public class AdvDatabaseSessionUnitTest extends TestCase {
   /** Logger.  */
   private static Logger logger =
     Logger.getLogger(AdvDatabaseSessionUnitTest.class.getName());
@@ -721,8 +720,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase
    * The variable blank node should map to different internal node ID's in each
    * insert operation.
    */
-  public void testInsertionBlankNodes()
-  {
+  public void testInsertionBlankNodes() {
     logger.info("testInsertionBlankNodes");
 
     try {

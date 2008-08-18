@@ -59,8 +59,7 @@ import org.mulgara.util.FileUtil;
 *      Software Pty Ltd</a>
 * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
 */
-public class BasicDatabaseSessionUnitTest extends TestCase
-{
+public class BasicDatabaseSessionUnitTest extends TestCase {
   /** The URI of the {@link #database}: <code>local:database</code>.  */
   private static final URI databaseURI = URI.create("local:database");
 

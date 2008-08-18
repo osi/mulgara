@@ -59,8 +59,7 @@ import org.mulgara.query.rdf.XSD;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class NTriplesUnitTest extends TestCase
-{
+public class NTriplesUnitTest extends TestCase {
   /**
    * Logger.
    *
@@ -74,8 +73,7 @@ public class NTriplesUnitTest extends TestCase
    *
    * @param name  the name of the test
    */
-  public NTriplesUnitTest(String name)
-  {
+  public NTriplesUnitTest(String name) {
     super(name);
   }
 
@@ -84,8 +82,7 @@ public class NTriplesUnitTest extends TestCase
    *
    * @return the test suite
    */
-  public static Test suite()
-  {
+  public static Test suite() {
     return new TestSuite(NTriplesUnitTest.class);
   }
 
@@ -101,16 +98,14 @@ public class NTriplesUnitTest extends TestCase
   /**
    * Create test instance.
    */
-  public void setUp()
-  {
+  public void setUp() {
     // null implementation
   }
 
   /**
    * The teardown method for JUnit
    */
-  public void tearDown()
-  {
+  public void tearDown() {
     // null implementation
   }
 
@@ -121,8 +116,7 @@ public class NTriplesUnitTest extends TestCase
   /**
    * Test {@link NTriples#escapeLexicalForm} method.
    */
-  public void testEscapeLexicalForm()
-  {
+  public void testEscapeLexicalForm() {
     try {
       // no escaped characters
       escapeAndUnescape("foo", "foo");
@@ -161,8 +155,7 @@ public class NTriplesUnitTest extends TestCase
    * Test {@link NTriples#toNode} and {@link NTriples#toString} method for
    * good inputs.
    */
-  public void testConvert() throws Exception
-  {
+  public void testConvert() throws Exception {
     URI          baseURI = new URI("foo://auth/");
     Literal      cat     = new LiteralImpl("cat");
     Literal      catEn   = new LiteralImpl("cat", "en");
@@ -211,8 +204,7 @@ public class NTriplesUnitTest extends TestCase
   /**
    * Test {@link NTriples#toNode} method for bad inputs.
    */
-  public void testToNode() throws Exception
-  {
+  public void testToNode() throws Exception {
     URI baseURI = new URI("foo://auth/");
 
     try {
@@ -242,8 +234,7 @@ public class NTriplesUnitTest extends TestCase
   /**
    * Test {@link NTriples#toString} method for bad inputs.
    */
-  public void testToString() throws Exception
-  {
+  public void testToString() throws Exception {
     URI baseURI = new URI("foo://auth/");
 
     try {
@@ -270,8 +261,7 @@ public class NTriplesUnitTest extends TestCase
    * @param escaped  an ASCII string comprising the <var>unescaped</var> text
    *   with N-Triples escaping applied
    */
-  private static void escapeAndUnescape(String unescaped, String escaped)
-  {
+  private static void escapeAndUnescape(String unescaped, String escaped) {
     assertEquals(escaped, NTriples.escapeLexicalForm(unescaped));
     assertEquals(unescaped, NTriples.unescapeLexicalForm(escaped));
   }
@@ -286,8 +276,7 @@ public class NTriplesUnitTest extends TestCase
    * @param baseURI  the base URI to use in both conversions
    */
   private static void convert(Node node, String string, URI baseURI)
-    throws ParseException
-  {
+      throws ParseException {
     assertEquals(node, NTriples.toNode(string, baseURI));
     assertEquals(string, NTriples.toString(node, baseURI));
   }
@@ -295,8 +284,7 @@ public class NTriplesUnitTest extends TestCase
   /**
    * Fail with an unexpected exception
    */
-  private void fail(Throwable throwable)
-  {
+  private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(stringWriter));
     fail(stringWriter.toString());

@@ -62,8 +62,7 @@ import org.mulgara.util.FileUtil;
  * @licence Open Software License v3.0</a>
  */
 
-public class ExternalTransactionUnitTest extends TestCase
-{
+public class ExternalTransactionUnitTest extends TestCase {
   /** Logger.  */
   private static Logger logger =
     Logger.getLogger(ExternalTransactionUnitTest.class.getName());
@@ -94,13 +93,11 @@ public class ExternalTransactionUnitTest extends TestCase
 
   private static Database database = null;
 
-  public ExternalTransactionUnitTest(String name)
-  {
+  public ExternalTransactionUnitTest(String name) {
     super(name);
   }
 
-  public static Test suite()
-  {
+  public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new ExternalTransactionUnitTest("testSimpleOnePhaseCommit"));
     suite.addTest(new ExternalTransactionUnitTest("testSimpleTwoPhaseCommit"));
@@ -206,8 +203,7 @@ public class ExternalTransactionUnitTest extends TestCase
   /**
   * The teardown method for JUnit
   */
-  public void tearDown()
-  {
+  public void tearDown() {
   }
 
   //
@@ -243,8 +239,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test the {@link DatabaseSession#create} method.
    * As a side-effect, creates the model required by the next tests.
    */
-  public void testSimpleOnePhaseCommit() throws URISyntaxException
-  {
+  public void testSimpleOnePhaseCommit() throws URISyntaxException {
     logger.info("testSimpleOnePhaseCommit");
 
     try {
@@ -269,8 +264,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test two phase commit.
    * As a side-effect, loads the model required by the next tests.
    */
-  public void testSimpleTwoPhaseCommit() throws URISyntaxException
-  {
+  public void testSimpleTwoPhaseCommit() throws URISyntaxException {
     logger.info("testSimpleTwoPhaseCommit");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -757,8 +751,7 @@ public class ExternalTransactionUnitTest extends TestCase
     }
   }
 
-  public void testExplicitIsolationQuerySingleSession() throws URISyntaxException
-  {
+  public void testExplicitIsolationQuerySingleSession() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -867,8 +860,7 @@ public class ExternalTransactionUnitTest extends TestCase
     }
   }
 
-  public void testExternalInternalIsolation() throws URISyntaxException
-  {
+  public void testExternalInternalIsolation() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -928,8 +920,7 @@ public class ExternalTransactionUnitTest extends TestCase
     }
   }
 
-  public void testInternalExternalIsolation() throws URISyntaxException
-  {
+  public void testInternalExternalIsolation() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1027,8 +1018,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test two simultaneous, explicit transactions, in two threads. The second one should block
    * until the first one sets auto-commit back to true.
    */
-  public void testConcurrentExplicitTxn() throws URISyntaxException
-  {
+  public void testConcurrentExplicitTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1128,8 +1118,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test two simultaneous transactions, in two threads. The second one should block
    * until the first one sets auto-commit back to true.
    */
-  public void testExternalInternalConcurrentTxn() throws URISyntaxException
-  {
+  public void testExternalInternalConcurrentTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1228,8 +1217,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test two simultaneous transactions, in two threads. The second one should block
    * until the first one sets auto-commit back to true.
    */
-  public void testInternalExternalConcurrentTxn() throws URISyntaxException
-  {
+  public void testInternalExternalConcurrentTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1335,8 +1323,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test two simultaneous transactions, in two threads. The second one should block
    * until the first one sets auto-commit back to true.
    */
-  public void testExternalInternalConcurrentTxnRollback() throws URISyntaxException
-  {
+  public void testExternalInternalConcurrentTxnRollback() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -1436,8 +1423,7 @@ public class ExternalTransactionUnitTest extends TestCase
    * Test two simultaneous transactions, in two threads. The second one should block
    * until the first one sets auto-commit back to true.
    */
-  public void testInternalExternalConcurrentTxnRollback() throws URISyntaxException
-  {
+  public void testInternalExternalConcurrentTxnRollback() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
     URI fileURI  = new File("data/xatest-model1.rdf").toURI();
 
@@ -2152,6 +2138,8 @@ public class ExternalTransactionUnitTest extends TestCase
       fail(e);
     }
   }
+
+
   //
   // Internal methods
   //
@@ -2237,8 +2225,7 @@ public class ExternalTransactionUnitTest extends TestCase
   /**
    * Fail with an unexpected exception
    */
-  private void fail(Throwable throwable)
-  {
+  private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(stringWriter));
     fail(stringWriter.toString());

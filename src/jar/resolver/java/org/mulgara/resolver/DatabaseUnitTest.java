@@ -57,8 +57,7 @@ import org.mulgara.util.FileUtil;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class DatabaseUnitTest extends TestCase
-{
+public class DatabaseUnitTest extends TestCase {
   /** Logger.  */
   private Logger logger = Logger.getLogger(DatabaseUnitTest.class.getName());
 
@@ -67,8 +66,7 @@ public class DatabaseUnitTest extends TestCase
    *
    * @param name  the name of the test
    */
-  public DatabaseUnitTest(String name)
-  {
+  public DatabaseUnitTest(String name) {
     super(name);
   }
 
@@ -77,24 +75,21 @@ public class DatabaseUnitTest extends TestCase
    *
    * @return the test suite
    */
-  public static Test suite()
-  {
+  public static Test suite() {
     return new TestSuite(DatabaseUnitTest.class);
   }
 
   /**
    * Create test instance.
    */
-  public void setUp()
-  {
+  public void setUp() {
     // null implementation
   }
 
   /**
    * The teardown method for JUnit
    */
-  public void tearDown()
-  {
+  public void tearDown() {
     // null implementation
   }
 
@@ -105,8 +100,7 @@ public class DatabaseUnitTest extends TestCase
   /**
    * Test {@link Database} constructor with invalid parameters.
    */
-  public void test1Constructor()
-  {
+  public void test1Constructor() {
     try {
       new Database(null, null, null, null, 0, 0, null, null, null, null, null,
                    null, null, null, null, null, null, null, null, null);
@@ -123,8 +117,7 @@ public class DatabaseUnitTest extends TestCase
    */
   public void testQuery()
     throws ClassNotFoundException, IllegalAccessException,
-           InstantiationException, URISyntaxException
-  {
+           InstantiationException, URISyntaxException {
     URI databaseURI    = new URI("local:database");
     URI systemModelURI = new URI("local:database#");
 
@@ -182,8 +175,7 @@ public class DatabaseUnitTest extends TestCase
   /**
    * Fail with an unexpected exception
    */
-  private void fail(Throwable throwable)
-  {
+  private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(stringWriter));
     fail(stringWriter.toString());
