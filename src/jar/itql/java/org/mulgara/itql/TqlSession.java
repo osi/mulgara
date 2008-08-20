@@ -313,6 +313,9 @@ public class TqlSession {
 
           String lastMessage = autoTql.getLastMessage();
           if ((lastMessage != null) && (lastMessage != "") && (gui != null)) System.out.println(lastMessage);
+          
+          Exception e = autoTql.getLastException();
+          if (e != null) log.warn("Couldn't execute command", e);
         }
 
       }
