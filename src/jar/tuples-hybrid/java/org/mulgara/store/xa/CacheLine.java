@@ -30,13 +30,15 @@ public abstract class CacheLine implements Cloneable {
 
   protected final int segmentSize;
 
-  protected StackTrace closed;
+  protected StackTrace closedBy;
   protected int firstCloser;
+
+  private boolean closed;
 
 
   public CacheLine(int size) {
     this.segmentSize = size;
-    this.closed = null;
+    this.closedBy = null;
   }
 
 
@@ -62,20 +64,24 @@ public abstract class CacheLine implements Cloneable {
 
 
   public void reset(long[] prefix) throws TuplesException {
-    if (closed != null) {
-      throw new TuplesException("Attempt to reset closed MemoryCacheLine");
-    }
+    if (closed) throw new TuplesException("Attempt to reset closed MemoryCacheLine");
   }
 
 
   public void close(int closer) throws TuplesException {
-    if (closed != null) {
-      logger.error("Attempt to close CacheLine twice by " + closer + new StackTrace());
-      logger.error("    First closed at " + closed);
-      logger.error("    First closed by " + firstCloser);
+    if (closed) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Attempt to close CacheLine twice by " + closer + new StackTrace());
+        logger.debug("    First closed at " + closedBy);
+        logger.debug("    First closed by " + firstCloser);
+      } else {
+        logger.error("Attempt to close CacheLine twice. Enable debug to trace how.");
+        logger.error("    First closed by " + firstCloser);
+      }
       throw new TuplesException("Attempt to close CacheLine twice");
     }
-    closed = new StackTrace();
+    closed = true;
+    if (logger.isDebugEnabled()) closedBy = new StackTrace();
     firstCloser = closer;
   }
 

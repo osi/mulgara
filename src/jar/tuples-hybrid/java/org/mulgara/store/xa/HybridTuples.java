@@ -111,11 +111,12 @@ public final class HybridTuples implements Tuples {
   protected long[] tempTuple;
 
   protected int[] varLookupList;
+  private boolean closed = false;
 
   // Debugging.
   private final static Logger logger = Logger.getLogger(HybridTuples.class);
-  private StackTrace allocated;
-  private StackTrace closed;
+  private StackTrace allocatedBy;
+  private StackTrace closedBy;
 
 
 
@@ -170,7 +171,7 @@ public final class HybridTuples implements Tuples {
     } else {
       this.tuples = TuplesOperations.empty();
     }
-    this.allocated = new StackTrace();
+    if (logger.isDebugEnabled()) this.allocatedBy = new StackTrace();
   }
 
 
@@ -279,7 +280,7 @@ public final class HybridTuples implements Tuples {
       if (blockFile != null) {
         blockFileRefCount.refCount++;
       }
-      copy.allocated = new StackTrace();
+      if (logger.isDebugEnabled()) copy.allocatedBy = new StackTrace();
       copy.tuples = (Tuples)tuples.clone();
 
       return copy;
@@ -306,14 +307,19 @@ public final class HybridTuples implements Tuples {
    * Required by Cursor.
    */
   public void close() throws TuplesException {
-    if (closed != null) {
-      logger.error("Attempt to close HybridTuples twice; first closed: " + closed);
-      logger.error("Attempt to close HybridTuples twice; second closed: " + new StackTrace());
-      logger.error("    allocated: " + allocated);
+    if (closed) {
+      if (logger.isDebugEnabled()) {
+          logger.debug("Attempt to close HybridTuples twice; first closed: " + closedBy);
+          logger.debug("Attempt to close HybridTuples twice; second closed: " + new StackTrace());
+          logger.debug("    allocated: " + allocatedBy);
+      } else {
+          logger.error("Attempt to close HybridTuples twice. Enable debug to trace how.");
+      }
       throw new TuplesException("Attempted to close HybribTuples more than once");
     }
-    closed = new StackTrace();
-
+    closed = true;
+    if (logger.isDebugEnabled()) closedBy = new StackTrace();
+    
     for (int i = 0; i < heapCache.length; i++) {
       heapCache[i].close(System.identityHashCode(this));
     }
@@ -338,9 +344,7 @@ public final class HybridTuples implements Tuples {
    */
   public int getColumnIndex(Variable variable) throws TuplesException {
     for (int c = 0; c < vars.length; c++) {
-      if (vars[c].equals(variable)) {
-        return c;
-      }
+      if (vars[c].equals(variable)) return c;
     }
 
     logger.warn("Variable not found: " + variable);
