@@ -191,6 +191,9 @@ public final class XAStringPoolImpl implements XAStringPool {
   /** Maps gNodes to SPObjects. */
   private GN2SPOCache gn2spoCache = new GN2SPOCache();
 
+  /** The node pool to use with this string pool. */
+  private XANodePool xaNodePool;
+
   /** Indicates that the current phase has been written to. */
   private boolean dirty = true;
 
@@ -275,6 +278,14 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
   /**
+   * @see org.mulgara.store.xa.XAStringPool#setNodePool(org.mulgara.store.xa.XANodePool)
+   */
+  public void setNodePool(XANodePool xaNodePool) {
+    this.xaNodePool = xaNodePool;
+  }
+
+
+  /**
    * Gets the PhaseNumber attribute of the XAStringPoolImpl object
    *
    * @return The PhaseNumber value
@@ -298,16 +309,44 @@ public final class XAStringPoolImpl implements XAStringPool {
   }
 
   /**
+   * Adds a new SObject into the string pool, returning the new gNode that is associated
+   * with this object.
+   * @param spObject The object to store.
+   * @return The new gNode for the object.
+   * @throws StringPoolException If the string pool could not store the object.
+   * @throws NodePoolException If the node pool could not allocate a gNode.
+   */
+  public long put(SPObject spObject) throws StringPoolException, NodePoolException {
+    long gNode = xaNodePool.newNode();
+    putInternal(gNode, spObject);
+    return gNode;
+  }
+
+  /**
    * Adds a new graph node / SPObject pair into the string pool. An error will
    * result if the graph node or the SPObject (or both) already exists in the
    * pool.
-   *
    * @param gNode The graph node to add.
    * @param spObject The SPObject to add.
    * @throws StringPoolException if the graph node or the SPObject already
    * exists in the pool.
    */
-  public synchronized void put(
+  @Deprecated
+  public synchronized void put(long gNode, SPObject spObject) throws StringPoolException {
+    putInternal(gNode, spObject);
+  }
+
+
+  /**
+   * Adds a new graph node / SPObject pair into the string pool. An error will
+   * result if the graph node or the SPObject (or both) already exists in the
+   * pool.
+   * @param gNode The graph node to add.
+   * @param spObject The SPObject to add.
+   * @throws StringPoolException if the graph node or the SPObject already
+   * exists in the pool.
+   */
+  private synchronized void putInternal(
       long gNode, SPObject spObject
   ) throws StringPoolException {
     checkInitialized();
@@ -377,6 +416,20 @@ public final class XAStringPoolImpl implements XAStringPool {
   }
 
 
+  /**
+   * @see org.mulgara.store.xa.XAStringPool#findGNode(org.mulgara.store.stringpool.SPObject, boolean)
+   */
+  public synchronized long findGNode(SPObject spObject, boolean create) throws StringPoolException {
+    checkInitialized();
+    if (xaNodePool == null) throw new IllegalArgumentException("nodePool is null");
+    return currentPhase.findGNode(spObject, xaNodePool);
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.StringPool#findGNode(org.mulgara.store.stringpool.SPObject, org.mulgara.store.nodepool.NodePool)
+   */
+  @Deprecated
   public synchronized long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
     checkInitialized();
     if (nodePool == null) throw new IllegalArgumentException("nodePool parameter is null");
@@ -473,18 +526,18 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
   /**
-   * METHOD TO DO
+   * @see org.mulgara.store.xa.SimpleXAResource#release()
    */
-  public void release() {
-    // NO-OP
+  public void release() throws SimpleXAResourceException {
+    if (xaNodePool != null) xaNodePool.release();
   }
 
 
   /**
-   * METHOD TO DO
+   * @see org.mulgara.store.xa.SimpleXAResource#refresh()
    */
-  public void refresh() {
-    // NO-OP
+  public void refresh() throws SimpleXAResourceException {
+    if (xaNodePool != null) xaNodePool.refresh();
   }
 
 
@@ -562,124 +615,127 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
   /**
-   * METHOD TO DO
-   *
-   * @throws SimpleXAResourceException EXCEPTION TO DO
+   * Writes all transactional data to disk, in preparation for a full commit.
+   * @throws SimpleXAResourceException Occurs due to an IO error when writing data to disk.
    */
-  public synchronized void prepare() throws SimpleXAResourceException {
-    checkInitialized();
-
-    if (prepared) {
-      // prepare already performed.
-      throw new SimpleXAResourceException("prepare() called twice.");
-    }
-
-    try {
-      // Perform a prepare.
-      recordingPhaseToken = currentPhase.use();
-      Phase recordingPhase = currentPhase;
-      new Phase();
-
-      // Ensure that all data associated with the phase is on disk.
-      avlFile.force();
-      for (int i = 0; i < NR_BLOCK_FILES; ++i) {
-        blockFiles[i].force();
+  public void prepare() throws SimpleXAResourceException {
+    // TODO: This synchronization is probably redundant due to the global lock in StringPoolSession
+    synchronized(this) {
+      checkInitialized();
+  
+      if (prepared) {
+        // prepare already performed.
+        throw new SimpleXAResourceException("prepare() called twice.");
       }
-      gNodeToDataFile.force();
+  
+      try {
+        // Perform a prepare.
+        recordingPhaseToken = currentPhase.use();
+        Phase recordingPhase = currentPhase;
+        new Phase();
+  
+        // Ensure that all data associated with the phase is on disk.
+        avlFile.force();
+        for (int i = 0; i < NR_BLOCK_FILES; ++i) {
+          blockFiles[i].force();
+        }
+        gNodeToDataFile.force();
+  
+        // Write the metaroot.
+        int newPhaseIndex = 1 - phaseIndex;
+        int newPhaseNumber = phaseNumber + 1;
+  
+        Block block = metarootBlocks[newPhaseIndex];
+        block.putInt(IDX_VALID, 0); // should already be invalid.
+        block.putInt(IDX_PHASE_NUMBER, newPhaseNumber);
+        logger.debug("Writing string pool metaroot for phase: " + newPhaseNumber);
+        recordingPhase.writeToBlock(block, HEADER_SIZE_LONGS);
+        block.write();
+        metarootFile.force();
+        block.putInt(IDX_VALID, 1);
+        block.write();
+        metarootFile.force();
+  
+        phaseIndex = newPhaseIndex;
+        phaseNumber = newPhaseNumber;
+        prepared = true;
+      } catch (IOException ex) {
+        logger.error("I/O error while performing prepare.", ex);
+        throw new SimpleXAResourceException("I/O error while performing prepare.", ex);
+      } finally {
+        if (!prepared) {
+          // Something went wrong!
+          logger.error("Prepare failed.");
+          if (recordingPhaseToken != null) {
+            recordingPhaseToken.release();
+            recordingPhaseToken = null;
+          }
+        }
+      }
+    }
+    if (xaNodePool != null) xaNodePool.prepare();
+  }
 
-      // Write the metaroot.
-      int newPhaseIndex = 1 - phaseIndex;
-      int newPhaseNumber = phaseNumber + 1;
 
-      Block block = metarootBlocks[newPhaseIndex];
-      block.putInt(IDX_VALID, 0); // should already be invalid.
-      block.putInt(IDX_PHASE_NUMBER, newPhaseNumber);
-      logger.debug("Writing string pool metaroot for phase: " + newPhaseNumber);
-      recordingPhase.writeToBlock(block, HEADER_SIZE_LONGS);
-      block.write();
-      metarootFile.force();
-      block.putInt(IDX_VALID, 1);
-      block.write();
-      metarootFile.force();
-
-      phaseIndex = newPhaseIndex;
-      phaseNumber = newPhaseNumber;
-      prepared = true;
-    } catch (IOException ex) {
-      logger.error("I/O error while performing prepare.", ex);
-      throw new SimpleXAResourceException(
-          "I/O error while performing prepare.", ex
-      );
-    } finally {
+  /**
+   * Writes to the meta-root file to make all the transaction data written in {@link #prepare()}
+   * suddenly valid.
+   * @throws SimpleXAResourceException Error due to IO problems.
+   */
+  public void commit() throws SimpleXAResourceException {
+    // TODO: This synchronization is probably redundant due to the global lock in StrinPoolSession
+    synchronized (this) {
       if (!prepared) {
-        // Something went wrong!
-        logger.error("Prepare failed.");
+        // commit without prepare.
+        throw new SimpleXAResourceException("commit() called without previous prepare().");
+      }
+  
+      // Perform a commit.
+      try {
+        // Invalidate the metaroot of the old phase.
+        Block block = metarootBlocks[1 - phaseIndex];
+        block.putInt(IDX_VALID, 0);
+        block.write();
+        metarootFile.force();
+  
+        // Release the token for the previously committed phase.
+        synchronized (committedPhaseLock) {
+          if (committedPhaseToken != null) committedPhaseToken.release();
+          committedPhaseToken = recordingPhaseToken;
+        }
+        recordingPhaseToken = null;
+      } catch (IOException ex) {
+        logger.fatal("I/O error while performing commit.", ex);
+        throw new SimpleXAResourceException("I/O error while performing commit.", ex);
+      } finally {
+        prepared = false;
         if (recordingPhaseToken != null) {
+          // Something went wrong!
           recordingPhaseToken.release();
           recordingPhaseToken = null;
+  
+          logger.error("Commit failed.  Calling close().");
+          try {
+            close();
+          } catch (Throwable t) {
+            logger.error("Exception on forced close()", t);
+          }
         }
       }
     }
+    if (xaNodePool != null) xaNodePool.commit();
   }
 
 
   /**
-   * METHOD TO DO
+   * Returns an array which contains a list of the phase numbers for all valid
+   * phases in the metaroot file. The array will contain zero, one or two
+   * elements. There will be no valid phases if no prepares have been
+   * successfully performed since the SimpleXAResource was initially created.
    *
-   * @throws SimpleXAResourceException EXCEPTION TO DO
-   */
-  public synchronized void commit() throws SimpleXAResourceException {
-    if (!prepared) {
-      // commit without prepare.
-      throw new SimpleXAResourceException(
-          "commit() called without previous prepare()."
-      );
-    }
-
-    // Perform a commit.
-    try {
-      // Invalidate the metaroot of the old phase.
-      Block block = metarootBlocks[1 - phaseIndex];
-      block.putInt(IDX_VALID, 0);
-      block.write();
-      metarootFile.force();
-
-      // Release the token for the previously committed phase.
-      synchronized (committedPhaseLock) {
-        if (committedPhaseToken != null) {
-          committedPhaseToken.release();
-        }
-        committedPhaseToken = recordingPhaseToken;
-      }
-      recordingPhaseToken = null;
-    } catch (IOException ex) {
-      logger.fatal("I/O error while performing commit.", ex);
-      throw new SimpleXAResourceException(
-          "I/O error while performing commit.", ex
-      );
-    } finally {
-      prepared = false;
-      if (recordingPhaseToken != null) {
-        // Something went wrong!
-        recordingPhaseToken.release();
-        recordingPhaseToken = null;
-
-        logger.error("Commit failed.  Calling close().");
-        try {
-          close();
-        } catch (Throwable t) {
-          logger.error("Exception on forced close()", t);
-        }
-      }
-    }
-  }
-
-
-  /**
-   * METHOD TO DO
-   *
-   * @return RETURNED VALUE TO DO
-   * @throws SimpleXAResourceException EXCEPTION TO DO
+   * @return the array of valid phase numbers.
+   * @throws SimpleXAResourceException if {@link #selectPhase} or {@link #clear}
+   *      has already been called.
    */
   public synchronized int[] recover() throws SimpleXAResourceException {
     if (currentPhase != null) {
@@ -780,39 +836,42 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
   /**
-   * METHOD TO DO
-   *
-   * @throws SimpleXAResourceException EXCEPTION TO DO
+   * Drops all data in the current transaction, recovering any used resources.
+   * @throws SimpleXAResourceException Caused by any IO errors.
    */
-  public synchronized void rollback() throws SimpleXAResourceException {
-    checkInitialized();
-    try {
-      if (prepared) {
-        // Restore phaseIndex and phaseNumber to their previous values.
-        phaseIndex = 1 - phaseIndex;
-        --phaseNumber;
-        recordingPhaseToken = null;
-        prepared = false;
-
-        // Invalidate the metaroot of the other phase.
-        Block block = metarootBlocks[1 - phaseIndex];
-        block.putInt(IDX_VALID, 0);
-        block.write();
-        metarootFile.force();
-      }
-    } catch (IOException ex) {
-      throw new SimpleXAResourceException(
-          "I/O error while performing rollback (invalidating metaroot)", ex
-      );
-    } finally {
+  public void rollback() throws SimpleXAResourceException {
+    // TODO: This synchronization is probably redundant due to the global lock in StringPoolSession
+    synchronized (this) {
+      checkInitialized();
       try {
-        new Phase(committedPhaseToken.getPhase());
+        if (prepared) {
+          // Restore phaseIndex and phaseNumber to their previous values.
+          phaseIndex = 1 - phaseIndex;
+          --phaseNumber;
+          recordingPhaseToken = null;
+          prepared = false;
+  
+          // Invalidate the metaroot of the other phase.
+          Block block = metarootBlocks[1 - phaseIndex];
+          block.putInt(IDX_VALID, 0);
+          block.write();
+          metarootFile.force();
+        }
       } catch (IOException ex) {
         throw new SimpleXAResourceException(
-            "I/O error while performing rollback (new committed phase)", ex
+            "I/O error while performing rollback (invalidating metaroot)", ex
         );
+      } finally {
+        try {
+          new Phase(committedPhaseToken.getPhase());
+        } catch (IOException ex) {
+          throw new SimpleXAResourceException(
+              "I/O error while performing rollback (new committed phase)", ex
+          );
+        }
       }
     }
+    if (xaNodePool != null) xaNodePool.rollback();
   }
 
 
@@ -1041,6 +1100,12 @@ public final class XAStringPoolImpl implements XAStringPool {
     }
 
 
+    /** Sets the node pool for this string pool. */
+    public void setNodePool(XANodePool xaNodePool) {
+      /* no-op */
+    }
+
+
     /**
      * Gets the SPObjectFactory associated with this StringPool implementation.
      */
@@ -1050,19 +1115,18 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
     /**
-     * Adds a new graph node / SPString pair into the string pool. An existing
-     * graph node and SPString may only be added if that exact pair already
-     * exists, otherwise an error will result.
-     *
-     * @param gNode The graph node to add.
-     * @param spObject PARAMETER TO DO
-     * @throws UnsupportedOperationException since this string pool is read
-     *      only.
+     * @see org.mulgara.store.stringpool.StringPool#put(org.mulgara.store.stringpool.SPObject)
+     */
+    public long put(SPObject spObject) {
+      throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
+    }
+
+
+    /**
+     * @see org.mulgara.store.stringpool.StringPool#put(long, org.mulgara.store.stringpool.SPObject)
      */
     public void put(long gNode, SPObject spObject) {
-      throw new UnsupportedOperationException(
-          "Trying to modify a read-only string pool."
-      );
+      throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
     }
 
 
@@ -1084,7 +1148,7 @@ public final class XAStringPoolImpl implements XAStringPool {
     /**
      * Finds the graph node matching a given SPObject.
      *
-     * @param spObject PARAMETER TO DO
+     * @param spObject The object being searched for.
      * @return The graph node. <code>Graph.NONE</code> if not found.
      * @throws StringPoolException EXCEPTION TO DO
      */
@@ -1093,8 +1157,14 @@ public final class XAStringPoolImpl implements XAStringPool {
     }
 
 
+    @Deprecated
     public synchronized long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
       throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
+    }
+
+    public synchronized long findGNode(SPObject spObject, boolean create) throws StringPoolException {
+      if (create) throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
+      return phase.findGNode(spObject, null);
     }
 
 
