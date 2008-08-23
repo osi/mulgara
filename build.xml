@@ -66,6 +66,7 @@
   <property file="${jar.src.dir}/store-stringpool/store-stringpool-build.properties"/>
   <property file="${jar.src.dir}/store-stringpool-memory/store-stringpool-memory-build.properties"/>
   <property file="${jar.src.dir}/store-stringpool-xa/store-stringpool-xa-build.properties"/>
+  <property file="${jar.src.dir}/store-stringpool-xa11/store-stringpool-xa11-build.properties"/>
   <property file="${jar.src.dir}/tag/tag-build.properties"/>
   <property file="${jar.src.dir}/tuples-hybrid/tuples-hybrid-build.properties"/>
   <property file="${jar.src.dir}/tuples/tuples-build.properties"/>
@@ -138,6 +139,7 @@
   <import file="${jar.src.dir}/store-stringpool/build.xml"/>
   <import file="${jar.src.dir}/store-stringpool-memory/build.xml"/>
   <import file="${jar.src.dir}/store-stringpool-xa/build.xml"/>
+  <import file="${jar.src.dir}/store-stringpool-xa11/build.xml"/>
   <import file="${jar.src.dir}/tag/build.xml"/>
   <import file="${jar.src.dir}/tuples-hybrid/build.xml"/>
   <import file="${jar.src.dir}/tuples/build.xml"/>
@@ -349,7 +351,8 @@
                    server-dist, server-beep-dist, server-http-dist, server-local-dist,
                    server-rmi-dist, sofa-dist, sparql-int-dist, krule-dist, rules-dist,
                    store-stringpool-dist, store-stringpool-memory-dist,
-                   store-stringpool-xa-dist, tag-dist,
+                   store-stringpool-xa-dist,
+                   store-stringpool-xa11-dist, tag-dist,
                    tuples-dist, tuples-hybrid-dist,
                    util-dist, util-xa-dist, webquery-dist"
           description="Creates the distribution base jars">
@@ -503,6 +506,7 @@
           lib/${store-nodepool.jar}, lib/${store-nodepool-xa.jar},
           lib/${store-nodepool-memory.jar}, lib/${store-stringpool.jar}
           lib/${store-stringpool-xa.jar},
+          lib/${store-stringpool-xa11.jar},
           lib/${store-stringpool-memory.jar}, lib/${util-xa.jar}, lib/${resolver-null.jar}, lib/${resolver-file.jar},
           lib/${resolver-http.jar}, lib/${resolver-lucene.jar}, lib/${resolver-memory.jar},
           lib/${resolver-store.jar}, lib/${resolver-url.jar}, lib/${resolver-view.jar},
@@ -534,6 +538,7 @@
                    store-nodepool-memory-dist,
                    store-stringpool-dist,
                    store-stringpool-xa-dist,
+                   store-stringpool-xa11-dist,
                    store-stringpool-memory-dist, tuples-dist, tuples-hybrid-dist, resolver-null-dist,
                    resolver-file-dist, resolver-filesystem-dist, resolver-distributed-dist,
                    resolver-http-dist, resolver-lucene-dist, resolver-relational-dist,
@@ -586,7 +591,8 @@
           ${resolver.jar}, ${resolver-spi.jar}, ${resolver-filesystem.jar},
           ${store.jar}, ${store-xa.jar},
           ${store-nodepool.jar}, ${store-nodepool-xa.jar}, ${store-stringpool.jar},
-          ${store-stringpool-xa.jar}, ${store-nodepool-memory.jar}, ${resolver-null.jar},
+          ${store-stringpool-xa.jar},
+          ${store-stringpool-xa11.jar}, ${store-nodepool-memory.jar}, ${resolver-null.jar},
           ${store-stringpool-memory.jar}, ${util-xa.jar}, ${resolver-file.jar},
           ${resolver-http.jar}, ${resolver-lucene.jar}, ${resolver-memory.jar},
           ${resolver-store.jar}, ${resolver-url.jar}, ${resolver-view.jar},
@@ -764,7 +770,7 @@
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, krule-jar, rules-jar, sparql-protocol-jar,
              store-stringpool-jar,
-             store-stringpool-memory-jar, store-stringpool-xa-jar,
+             store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
              tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war, webquery-jar"
     unless="javadoc-uptodate"
     description="Creates the project javadoc">
@@ -882,6 +888,7 @@
       <sourcepath path="${store-stringpool.src.dir}/java"/>
       <sourcepath path="${store-stringpool-memory.src.dir}/java"/>
       <sourcepath path="${store-stringpool-xa.src.dir}/java"/>
+      <sourcepath path="${store-stringpool-xa11.src.dir}/java"/>
       <sourcepath path="${tuples.src.dir}/java"/>
       <sourcepath path="${tuples-hybrid.src.dir}/java"/>
       <sourcepath path="${util.src.dir}/java"/>
@@ -933,6 +940,7 @@
                    sofa-javadoc, rules-javadoc, krule-javadoc,
                    store-stringpool-javadoc,
                    store-stringpool-memory-javadoc, store-stringpool-xa-javadoc,
+                   store-stringpool-xa11-javadoc,
                    tag-javadoc, tuples-hybrid-javadoc, tuples-javadoc,
                    util-xa-javadoc, util-javadoc"
       unless="javadoc.uptodate"
@@ -1729,7 +1737,7 @@
              resolver-xsd-jar, resolver-test-jar, rmi-jar,
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
-             store-stringpool-xa-jar, tuples-jar,
+             store-stringpool-xa-jar, store-stringpool-xa11-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar,
              webservices-war, webui-war, webquery-jar, -embedded-dist-uptodate"
           description="Creates the executable JAR for the Embedded Mulgara server"
@@ -1826,6 +1834,7 @@
       <zipfileset src="${bin.dir}/${store-stringpool.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${store-stringpool-memory.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-xa11.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**"/>
@@ -1900,7 +1909,7 @@
              resolver-xsd-jar, resolver-test-jar, rmi-jar,
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
-             store-stringpool-xa-jar, tuples-jar,
+             store-stringpool-xa-jar, store-stringpool-xa11-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar, webquery-jar,
              -embedded-dist-uptodate"
           description="core dist for embedded apps, without 3rd party libs"
@@ -1932,6 +1941,7 @@
       <zipfileset src="${bin.dir}/${store-stringpool.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${store-stringpool-memory.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-xa11.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**"/>
@@ -2001,7 +2011,9 @@
 
   <target name="test"
           depends="dist, client-test, session-test, resolver-api-test, store-xa-test,
-                   utils-test, jxtest, store-stringpool-xa-loadtest, publish-summary"
+                   utils-test, jxtest,
+                   store-stringpool-xa-loadtest, store-stringpool-xa11-loadtest,
+                   publish-summary"
           description="Runs all tests (updates source first)">
 
     <loadfile property="test.status.success" srcfile="${test.dir}/junit-summary.txt">
@@ -2045,7 +2057,7 @@
   <target name="store-xa-test"
     depends="store-nodepool-memory-test, store-nodepool-xa-test,
              store-stringpool-memory-test,
-             store-stringpool-xa-test, tuples-test, tuples-hybrid-test"
+             store-stringpool-xa-test, store-stringpool-xa11-test, tuples-test, tuples-hybrid-test"
     description="Runs store -xa tests">
   </target>
 
