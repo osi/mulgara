@@ -1,0 +1,136 @@
+/*
+ * The contents of this file are subject to the Open Software License
+ * Version 3.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.opensource.org/licenses/osl-3.0.txt
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ */
+
+package org.mulgara.store.stringpool.xa11;
+
+import java.nio.ByteBuffer;
+
+/**
+ * This class manages the allocation and detection of blank nodes.
+ *
+ * @created Aug 15, 2008
+ * @author Paul Gearon
+ * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
+ * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
+ */
+public class BlankNodeAllocator {
+
+  /** The bit that indicates a blank node. */
+  static final long BLANK_NODE_BIT = 0x8000000000000000L;
+
+  /** The first valid blank node value. */
+  static final long FIRST = 1;
+  
+  /** The next node to be allocated. Initialized to 1, but usually set by the metaroot file. */
+  private long nextNode = FIRST;
+
+  /** The last committed nextNode value. */
+  private long committedNextNode = FIRST;
+
+  /**
+   * The constructor for a new blank node allocator.
+   */
+  public BlankNodeAllocator() {
+  }
+
+
+  /**
+   * Creates a new blank node allocator, initialized from a data buffer.
+   * @param data The data to initialize from.
+   */
+  public BlankNodeAllocator(ByteBuffer data, int offset) {
+    committedNextNode = data.getLong(offset);
+    nextNode = committedNextNode;
+  }
+
+
+  /**
+   * Writes the current state to the current position in a data buffer.
+   * @param data The buffer to write to.
+   */
+  public void writeTo(ByteBuffer data, int offset) {
+    data.putLong(offset, committedNextNode);
+  }
+
+
+  /**
+   * Get the next blank node from this allocator.
+   * @return A GNode for a new blank node.
+   */
+  public synchronized long allocate() {
+    return nextNode++ | BLANK_NODE_BIT;
+  }
+
+
+  /**
+   * Test if a GNode is a blank node.
+   * @param gNode The gNode to test.
+   * @return <code>true</code> if the gNode is for a blank node.
+   */
+  public static boolean isBlank(long gNode) {
+    return (gNode & BLANK_NODE_BIT) != 0;
+  }
+
+
+  /**
+   * Clear all values back to their initialized states.
+   */
+  public void clear() {
+    nextNode = FIRST;
+    committedNextNode = FIRST;
+  }
+
+
+  /**
+   * Get the current internal state.
+   * @return The next node value. This encodes all of the internal state.
+   */
+  public long getCurrentState() {
+    return nextNode;
+  }
+
+
+  /**
+   * Set the internal state. This is just the blank node counter.
+   * @param state The state for this object.
+   */
+  public void setCurrentState(long state) {
+    this.nextNode = state;
+    committedNextNode = state;
+  }
+
+
+  /**
+   * Prepares this object for commiting.
+   * @param metaroot The object that will hold state data on disk.
+   */
+  public void prepare(XA11StringPoolImpl.Metaroot metaroot) {
+    metaroot.setNextBlankNode(nextNode);
+  }
+
+
+  /**
+   * Commits the prepared changes.
+   */
+  public void commit() {
+    committedNextNode = nextNode;
+  }
+
+
+  /**
+   * Go back to the last committed position.
+   */
+  public void rollback() {
+    nextNode = committedNextNode;
+  }
+
+}
