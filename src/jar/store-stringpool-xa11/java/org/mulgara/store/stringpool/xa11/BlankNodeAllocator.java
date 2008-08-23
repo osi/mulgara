@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
 public class BlankNodeAllocator {
 
   /** The bit that indicates a blank node. */
-  static final long BLANK_NODE_BIT = 0x8000000000000000L;
+  static final long BLANK_NODE_BIT = 0x4000000000000000L;
 
   /** The first valid blank node value. */
   static final long FIRST = 1;
