@@ -38,7 +38,7 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
 import org.mulgara.server.AbstractServer;
 import org.mulgara.server.SessionFactory;
-import org.mulgara.util.FnE;
+import org.mulgara.util.Fn1E;
 import org.mulgara.util.C;
 import org.mulgara.util.Pair;
 import org.mulgara.util.StackTrace;
@@ -208,7 +208,7 @@ public class QueryServlet extends HttpServlet {
       time = System.currentTimeMillis();
       final Connection c = getConnection(req);
       cmds = getInterpreter(req).parseCommands(command);
-      results = C.map(cmds, new FnE<Command,Object,Exception>() { public Object fn(Command cmd) throws Exception { return cmd.execute(c); } });
+      results = C.map(cmds, new Fn1E<Command,Object,Exception>() { public Object fn(Command cmd) throws Exception { return cmd.execute(c); } });
       time = System.currentTimeMillis() - time;
     } catch (MulgaraParserException mpe) {
       resp.sendError(SC_BAD_REQUEST, "Error parsing command: " + mpe.getMessage());
