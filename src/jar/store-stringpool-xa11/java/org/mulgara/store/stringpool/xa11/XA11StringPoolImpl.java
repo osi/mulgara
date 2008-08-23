@@ -583,7 +583,11 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
    * @see org.mulgara.store.xa.SimpleXARecoveryHandler#selectPhase(int)
    */
   public void selectPhase(int phaseNumber) throws IOException, SimpleXAResourceException {
-    if (currentPhase != null) throw new SimpleXAResourceException("selectPhase() called on initialized StringPoolImpl.");
+    // check if this was already called
+    if (currentPhase != null) {
+      if (phaseNumber != this.phaseNumber) throw new SimpleXAResourceException("selectPhase() called on initialized StringPoolImpl.");
+      return;
+    }
     if (metarootFile == null) throw new SimpleXAResourceException("String pool metaroot file is not open.");
 
     // Locate the metaroot corresponding to the given phase number.
