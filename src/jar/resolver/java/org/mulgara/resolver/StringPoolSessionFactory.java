@@ -113,13 +113,13 @@ public class StringPoolSessionFactory implements XAResolverSessionFactory, Simpl
     this.hostnameAliases = hostnameAliases;
 
     // Create the persistent node pool
+    XANodePool nodePool = null;
     try {
       NodePoolFactory factory =
         (NodePoolFactory) newFactory(persistentNodePoolFactoryInitializer,
                                      persistentNodePoolFactoryClassName,
                                      NodePoolFactory.class);
-      persistentNodePool = (XANodePool)factory.newNodePool();
-      assert persistentNodePool != null;
+      nodePool = (XANodePool)factory.newNodePool();
     } catch (ClassCastException ec) {
       logger.error("Error obtaining XANodePool. (" + persistentNodePoolFactoryClassName + ")");
       throw new InitializerException("Persistent Node-pool non-transactional", ec);
@@ -138,6 +138,14 @@ public class StringPoolSessionFactory implements XAResolverSessionFactory, Simpl
       throw new InitializerException("Persistent String-pool non-transactional", ec);
     }
 
+    if (nodePool == null) {
+      if (!(persistentStringPool instanceof XANodePool)) {
+        throw new IllegalArgumentException("Can only use a node pool from " + persistentNodePoolFactoryClassName + " if string pool from " + persistentStringPoolFactoryClassName + " is also a node pool.");
+      }
+      nodePool = (XANodePool)persistentStringPool;
+    }
+    // now we know the node pool, we can set the final field
+    persistentNodePool = nodePool;
     persistentNodePool.addNewNodeListener(persistentStringPool);
 
     // Create the factory used to create node pools for temporary resources
