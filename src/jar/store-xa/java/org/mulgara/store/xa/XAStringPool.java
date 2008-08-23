@@ -28,7 +28,9 @@
 package org.mulgara.store.xa;
 
 // Internal packages.
+import org.mulgara.store.StoreException;
 import org.mulgara.store.nodepool.*;
+import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 
@@ -68,12 +70,41 @@ public interface XAStringPool extends SimpleXAResource, NewNodeListener,
   /**
    * Advise that this string pool is no longer needed.
    */
-  public void close() throws StringPoolException;
+  public void close() throws StoreException;
 
   /**
    * Close this string pool, if it is currently open, and remove all files
    * associated with it.
    */
-  public void delete() throws StringPoolException;
+  public void delete() throws StoreException;
 
+  /**
+   * Adds a [graph node:SPObject] pair to the string pool.  If the SPObject exists
+   * a StringPoolException is thrown.
+   * @param spObject The SPObject to be stored.
+   * @return The gNode allocated to store the SPObject.
+   * @throws StringPoolException if either the graph node or the SPObject.
+   * already exists in the pool or an internal error occurs.
+   */
+  public long put(SPObject spObject) throws StringPoolException, NodePoolException;
+
+  /**
+   * Finds and returns the graph node corresponding to <var>spObject</var>.  If
+   * the SPObject is not in the string pool then a new node is allocated from
+   * the internal node pool and the [graph node:SPObject] pair is added to the
+   * string pool.  The use of this method is faster than calling the
+   * findGNode(), NodePool.newNode() and put() methods separately.
+   *
+   * @param spObject An SPObject to search for within the pool.
+   * @param create A flag to indicate that new nodes should be created if needed.
+   * @return the graph node corresponding to <var>spObject</var>.
+   * @throws StringPoolException if an internal error occurs.
+   */
+  public long findGNode(SPObject spObject, boolean create) throws StringPoolException;
+
+  /**
+   * Sets the node pool to be used in association with this StringPool.
+   * @param nodePool The node pool this string pool will allocate nodes from.
+   */
+  public void setNodePool(XANodePool nodePool);
 }
