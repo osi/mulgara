@@ -80,13 +80,6 @@ public interface NodePool {
       NoSuchNodeException;
 
   /**
-   * Returns a count of nodes which have been allocated but not yet released.
-   *
-   * @return a count of nodes which have been allocated but not yet released.
-   */
-  public long getNrValidNodes();
-
-  /**
    * Adds a feature to the NewNodeListener attribute of the XANodePoolImpl
    * object
    *
