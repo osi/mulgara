@@ -276,6 +276,16 @@ public final class AVLFile {
       currentPhase = this;
     }
 
+
+    /**
+     * Indicates if there are any remaining references to the current phase.
+     *
+     * @return <code>true</code> if the phase on the free list is still being referenced.
+     */
+    public boolean isInUse() {
+      return avlBlockFilePhase.isInUse();
+    }
+
     /**
      * Retrieve the number of AVL nodes in this phase.
      *
