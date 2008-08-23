@@ -149,6 +149,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     this.globalLock = globalLock;
     this.state = OBTAIN;
     this.currentThread = null;
+    this.persistentStringPool.setNodePool(this.persistentNodePool);
   }
 
 
@@ -230,8 +231,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
       this.resources = resources;
 
       synchronized (this.globalLock) {
-        this.persistentStringPool.refresh();
-        this.persistentNodePool.refresh();
+        this.persistentStringPool.refresh();  // calls refresh on the node pool
         // !!Review: Call rollback on temporary? NB. Can't rollback non XA-SP/NP.
         //this.temporaryStringPool.refresh();
         //this.temporaryNodePool.refresh();
@@ -261,11 +261,8 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     
         state = PREPARE;
     
-        persistentStringPool.prepare();
-        persistentNodePool.prepare();
-        for (int i = 0; i < resources.length; i++) {
-          resources[i].prepare();
-        }
+        persistentStringPool.prepare();  // calls prepare on the node pool
+        for (int i = 0; i < resources.length; i++) resources[i].prepare();
       }
     } finally {
       releaseCurrentThread();
@@ -288,11 +285,8 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     
         state = COMMIT;
 
-        persistentStringPool.commit();
-        persistentNodePool.commit();
-        for (int i = 0; i < resources.length; i++) {
-          resources[i].commit();
-        }
+        persistentStringPool.commit();  // calls commit() on the node pool
+        for (int i = 0; i < resources.length; i++) resources[i].commit();
       }
     } finally {
       releaseCurrentThread();
@@ -311,11 +305,8 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
           throw new SimpleXAResourceException("Attempting to rollback phase outside transaction");
         }
         state = ROLLBACK;
-        persistentStringPool.rollback();
-        persistentNodePool.rollback();
-        for (int i = 0; i < resources.length; i++) {
-          resources[i].rollback();
-        }
+        persistentStringPool.rollback();  // calls rollback on the node pool
+        for (int i = 0; i < resources.length; i++) resources[i].rollback();
       }
     } finally {
       releaseCurrentThread();
@@ -338,15 +329,12 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     
         state = RELEASE;
     
-        persistentStringPool.release();
-        persistentNodePool.release();
+        persistentStringPool.release(); // calls release on the node pool
     
         // TODO determine if release() should be called for the temp components.
         //temporaryStringPool.release();
         //temporaryNodePool.release();
-        for (int i = 0; i < resources.length; i++) {
-          resources[i].release();
-        }
+        for (int i = 0; i < resources.length; i++) resources[i].release();
       }
     } finally {
       releaseCurrentThread();
@@ -585,8 +573,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
       if ((flags & WRITE_MASK) == WRITE) {
         // Node does not already exist: create node in requested pool.
         if ((flags & STORE_MASK) == PERSIST) {
-          localNode = persistentNodePool.newNode();
-          persistentStringPool.put(localNode, relativeSPObject);
+          localNode = persistentStringPool.put(relativeSPObject);  // allocates from the internal node pool
           if (logger.isDebugEnabled()) {
             //logger.debug("Inserted " + spObject + " as " + localNode + " into persistent sp");
           }
