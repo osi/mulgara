@@ -188,7 +188,13 @@ public final class ManagedBlockFile {
               !deleteFiles && isOpen &&
               freeList != null && currentPhase != null
           ) {
-            blockFile.setNrBlocks(freeList.getNextItem());
+            long blockNr = freeList.getNextItem();
+            long currentBlocks = blockFile.getNrBlocks();
+            if (currentBlocks < blockNr) {
+              logger.error("Block file smaller than it should be. Currently: " + currentBlocks + ". Should be >" + blockNr);
+            } else {
+              blockFile.setNrBlocks(blockNr);
+            }
           }
         } finally {
           isOpen = false;
