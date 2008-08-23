@@ -102,7 +102,7 @@ public class DatabaseUnitTest extends TestCase {
    */
   public void test1Constructor() {
     try {
-      new Database(null, null, null, null, 0, 0, null, null, null, null, null,
+      new Database(null, (File)null, null, null, 0, 0, null, null, null, null, null,
                    null, null, null, null, null, null, null, null, null);
       fail("Expected " + IllegalArgumentException.class);
     } catch (IllegalArgumentException e) {

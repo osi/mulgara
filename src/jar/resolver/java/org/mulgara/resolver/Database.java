@@ -113,7 +113,7 @@ public class Database implements SessionFactory
   private final long NONE = NodePool.NONE;
 
   /** The directory where persistence files are stored.  */
-  private final File directory;
+  private final File[] directories;
 
   /**
    * Session to use for the initialization of new resolvers.
@@ -433,27 +433,123 @@ public class Database implements SessionFactory
            NamingException, NodePoolException, QueryException,
            ResolverException, ResolverFactoryException, StringPoolException,
            SystemException, URISyntaxException {
+    this(uri,
+        new File[] {directory},
+        securityDomainURI,
+        transactionManagerFactory,
+        transactionTimeout,
+        idleTimeout,
+        persistentNodePoolFactoryClassName,
+        new File[] {persistentNodePoolDirectory},
+        persistentStringPoolFactoryClassName,
+        new File[] {persistentStringPoolDirectory},
+        systemResolverFactoryClassName,
+        new File[] {persistentResolverDirectory},
+        temporaryNodePoolFactoryClassName,
+        new File[] {temporaryNodePoolDirectory},
+        temporaryStringPoolFactoryClassName,
+        new File[] {temporaryStringPoolDirectory},
+        temporaryResolverFactoryClassName,
+        new File[] {temporaryResolverDirectory},
+        ruleLoaderClassName,
+        defaultContentHandlerClassName);
+  }
+
+  /**
+   * Construct a database.
+   *
+   * @param uri  the unique {@link URI} naming this database, never
+   *   <code>null</code>; this mustn't have a fragment part, because the
+   *   fragment is used to represent models within the database
+   * @param directory  an area on the filesystem for the database's use; if this
+   *   is <code>null</code>, resolvers which require a filesystem can't be added
+   * @param securityDomainURI  the {@link URI} of the security domain this
+   *   database is within, or <code>null</code> if this database is unsecured
+   * @param transactionManagerFactory  the source for the
+   *   {@link TransactionManager}, never <code>null</code>
+   * @param transactionTimeout  the default number of seconds before transactions
+   *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
+   *   never negative
+   * @param idleTimeout  the default number of seconds a transaction may be idle before
+   *   it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
+   *   default; never negative
+   * @param persistentNodePoolFactoryClassName  the name of a
+   *   {@link NodePoolFactory} implementation which will be used to generate
+   *   persistent local nodes, never <code>null</code>
+   * @param persistentStringPoolFactoryClassName  the name of a
+   *   {@link StringPoolFactory} implementation which will be used to manage
+   *   persistent RDF literals, never <code>null</code>
+   * @param systemResolverFactoryClassName  the name of a
+   *   {@link ResolverFactory} implementation which will be used to store
+   *   system models; this class is required to register a model type
+   * @param temporaryNodePoolFactoryClassName  the name of a
+   *   {@link NodePoolFactory} implementation which will be used to generate
+   *   temporary local nodes, never <code>null</code>
+   * @param temporaryStringPoolFactoryClassName  the name of a
+   *   {@link StringPoolFactory} implementation which will be used to manage
+   *   temporary RDF literals, never <code>null</code>
+   * @param temporaryResolverFactoryClassName  the name of a
+   *   {@link ResolverFactory} implementation which will be used to store
+   *   temporary statements, never <code>null</code>
+   * @param ruleLoaderClassName  the name of a
+   *   {@link RuleLoader} implementation which will be used for loading
+   *   rule frameworks, never <code>null</code>
+   * @param defaultContentHandlerClassName the name of the class that should be
+   *   used to parse external content of unknown MIME type, or
+   *   <code>null</code> to disable blind parsing
+   * @throws IllegalArgumentException if <var>uri</var>,
+   *   <var>systemResolverFactory</var> are <code>null</code>, or if the
+   *   <var>uri</var> has a fragment part
+   * @throws InitializerException  if the {@link NodePoolFactory},
+   *   {@link ResolverFactory}, or {@link StringPoolFactory} instances
+   *   generated from the various class names can't be initialized
+   * @throws SystemException if <var>transactionTimeout</var> is negative
+   */
+  public Database(URI    uri,
+                  File[] directories,
+                  URI    securityDomainURI,
+                  TransactionManagerFactory transactionManagerFactory,
+                  int    transactionTimeout,
+                  int    idleTimeout,
+                  String persistentNodePoolFactoryClassName,
+                  File[] persistentNodePoolDirectories,
+                  String persistentStringPoolFactoryClassName,
+                  File[] persistentStringPoolDirectories,
+                  String systemResolverFactoryClassName,
+                  File[] persistentResolverDirectories,
+                  String temporaryNodePoolFactoryClassName,
+                  File[] temporaryNodePoolDirectories,
+                  String temporaryStringPoolFactoryClassName,
+                  File[] temporaryStringPoolDirectories,
+                  String temporaryResolverFactoryClassName,
+                  File[] temporaryResolverDirectories,
+                  String ruleLoaderClassName,
+                  String defaultContentHandlerClassName)
+    throws ConfigurationException, InitializerException, LocalizeException,
+           NamingException, NodePoolException, QueryException,
+           ResolverException, ResolverFactoryException, StringPoolException,
+           SystemException, URISyntaxException {
 
     if (logger.isDebugEnabled()) {
       logger.debug("Constructing database");
       logger.debug("Persistent node pool factory: class=" +
                    persistentNodePoolFactoryClassName + " directory=" +
-                   persistentNodePoolDirectory);
+                   persistentNodePoolDirectories);
       logger.debug("Persistent string pool factory: class=" +
                    persistentStringPoolFactoryClassName + " directory=" +
-                   persistentStringPoolDirectory);
+                   persistentStringPoolDirectories);
       logger.debug("Persistent resolver factory: class=" +
                    systemResolverFactoryClassName + " directory=" +
-                   persistentResolverDirectory);
+                   persistentResolverDirectories);
       logger.debug("Temporary node pool factory: class=" +
                    temporaryNodePoolFactoryClassName + " directory=" +
-                   temporaryNodePoolDirectory);
+                   temporaryNodePoolDirectories);
       logger.debug("Temporary string pool factory: class=" +
                    temporaryStringPoolFactoryClassName + " directory=" +
-                   temporaryStringPoolDirectory);
+                   temporaryStringPoolDirectories);
       logger.debug("Temporary resolver factory: class=" +
                    temporaryResolverFactoryClassName + " directory=" +
-                   temporaryResolverDirectory);
+                   temporaryResolverDirectories);
       logger.debug("Rule loader: class=" +
                    ruleLoaderClassName);
     }
@@ -492,7 +588,7 @@ public class Database implements SessionFactory
 
     // Initialize fields
     this.uri                       = uri;
-    this.directory                 = directory;
+    this.directories               = directories;
     this.securityDomainURI         = securityDomainURI;
     this.transactionManagerFactory = transactionManagerFactory;
 
@@ -563,22 +659,22 @@ public class Database implements SessionFactory
     DatabaseFactoryInitializer persistentStringPoolFactoryInitializer =
       new DatabaseFactoryInitializer(uri,
                                      hostnameAliases,
-                                     persistentStringPoolDirectory);
+                                     persistentStringPoolDirectories);
 
     DatabaseFactoryInitializer persistentNodePoolFactoryInitializer =
       new DatabaseFactoryInitializer(uri,
                                      hostnameAliases,
-                                     persistentNodePoolDirectory);
+                                     persistentNodePoolDirectories);
 
     DatabaseFactoryInitializer temporaryStringPoolFactoryInitializer =
       new DatabaseFactoryInitializer(uri,
                                      hostnameAliases,
-                                     temporaryStringPoolDirectory);
+                                     temporaryStringPoolDirectories);
 
     DatabaseFactoryInitializer temporaryNodePoolFactoryInitializer =
       new DatabaseFactoryInitializer(uri,
                                      hostnameAliases,
-                                     temporaryNodePoolDirectory);
+                                     temporaryNodePoolDirectories);
 
     spSessionFactory = new StringPoolSessionFactory(
       uri,
@@ -600,7 +696,7 @@ public class Database implements SessionFactory
     temporaryNodePoolFactoryInitializer.close();
 
     DatabaseFactoryInitializer initializer =
-        new DatabaseFactoryInitializer(uri, hostnameAliases, directory);
+        new DatabaseFactoryInitializer(uri, hostnameAliases, directories);
 
     jrdfSessionFactory = new JRDFResolverSessionFactory(initializer, spSessionFactory);
 
@@ -609,7 +705,7 @@ public class Database implements SessionFactory
 
     // Create the temporary resolver factory
     initializer = new DatabaseFactoryInitializer(
-      uri, hostnameAliases, temporaryResolverDirectory
+      uri, hostnameAliases, temporaryResolverDirectories
     );
     temporaryResolverFactory = ResolverFactoryFactory.newSystemResolverFactory(
       temporaryResolverFactoryClassName, initializer, spSessionFactory
@@ -645,7 +741,7 @@ public class Database implements SessionFactory
 
     // Create the system resolver factory
     initializer = new DatabaseFactoryInitializer(
-      uri, hostnameAliases, persistentResolverDirectory
+      uri, hostnameAliases, persistentResolverDirectories
     );
     systemResolverFactory = ResolverFactoryFactory.newSystemResolverFactory(
       systemResolverFactoryClassName, initializer, spSessionFactory
@@ -1029,7 +1125,12 @@ public class Database implements SessionFactory
 
 
   File getRootDirectory() {
-    return directory;
+    return (directories != null && directories.length >= 1) ? directories[0] : null;
+  }
+
+
+  File[] getRootDirectories() {
+    return directories;
   }
 
 

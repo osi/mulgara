@@ -96,23 +96,23 @@ public abstract class DatabaseFactory {
 
     Database database = new Database(
         uri,        // database name
-        directory,  // persistence directory
+        new File[] {directory},  // persistence directory
         uri,        // security domain
         new JotmTransactionManagerFactory(),
         config.getTransactionTimeout(),
         config.getIdleTimeout(),
         config.getPersistentNodePoolFactory().getType(),
-        subdir(directory, config.getPersistentNodePoolFactory().getDir()),
+        subdirs(directory, config.getPersistentNodePoolFactory().getDir()),
         config.getPersistentStringPoolFactory().getType(),
-        subdir(directory, config.getPersistentStringPoolFactory().getDir()),
+        subdirs(directory, config.getPersistentStringPoolFactory().getDir()),
         config.getPersistentResolverFactory().getType(),
-        subdir(directory, config.getPersistentResolverFactory().getDir()),
+        subdirs(directory, config.getPersistentResolverFactory().getDir()),
         config.getTemporaryNodePoolFactory().getType(),
-        subdir(directory, config.getTemporaryNodePoolFactory().getDir()),
+        subdirs(directory, config.getTemporaryNodePoolFactory().getDir()),
         config.getTemporaryStringPoolFactory().getType(),
-        subdir(directory, config.getTemporaryStringPoolFactory().getDir()),
+        subdirs(directory, config.getTemporaryStringPoolFactory().getDir()),
         config.getTemporaryResolverFactory().getType(),
-        subdir(directory, config.getTemporaryResolverFactory().getDir()),
+        subdirs(directory, config.getTemporaryResolverFactory().getDir()),
         config.getRuleLoader().getType(),
         config.getDefaultContentHandler().getType());
 
@@ -126,12 +126,25 @@ public abstract class DatabaseFactory {
   }
 
 
+  static File[] subdirs(File parentDirectory, String childDirectory) throws ConfigurationException {
+    if (childDirectory == null) return null;
+    if (parentDirectory == null) {
+      throw new ConfigurationException("Can't configure directory " + childDirectory + "because there is no PersistencePath configured");
+    }
+    String[] children = childDirectory.split(File.pathSeparator);
+    File[] subdirs = new File[children.length];
+    for (int f = 0; f < children.length; f++) subdirs[f] = subdir(parentDirectory, children[f]);
+    return subdirs;
+  }
+
+
   /**
    * @param parentDirectory  the absolute parent directory; this may be
-   *   <code>null</code> if <var>childDirectory</var> is also <code>null</code>
-   * @param childDirectory  the relative child directory
+   *   <code>null</code> if <var>childDirectory</var> is also <code>null</code>.
+   *   Ignored if the child directory is absolute.
+   * @param childDirectory If relative, then relative to the parentDirectory, otherwise absolute.
    * @return if <var>childDirectory</var> is non-<code>null</code> then the
-   *   corresponding subdirectory, otherwise <code>null</code>
+   *   corresponding directory, otherwise <code>null</code>
    * @throws ConfigurationException if <var>childDirectory</var> is not
    *   <code>null</code> and <var>parentDirectory</var> is <code>null</code>
    */
@@ -142,6 +155,7 @@ public abstract class DatabaseFactory {
     if (parentDirectory == null) {
       throw new ConfigurationException("Can't configure directory " + childDirectory + "because there is no PersistencePath configured");
     }
+    if (childDirectory.startsWith("/")) return new File(childDirectory);
     return new File(parentDirectory, childDirectory);
   }
 

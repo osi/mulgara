@@ -57,7 +57,7 @@ class DatabaseFactoryInitializer extends DatabaseInitializer implements FactoryI
   private static final Logger logger = Logger.getLogger(DatabaseFactoryInitializer.class.getName());
 
   /** The databases toplevel directory */
-  private File directory;
+  private File[] directories;
 
   /** The unique {@link URI} naming this database. */
   private final URI databaseURI;
@@ -66,7 +66,7 @@ class DatabaseFactoryInitializer extends DatabaseInitializer implements FactoryI
   private final Set<String> hostnameAliases;
 
   /**
-   * Sole constructor.
+   * Constructor based on individual directory startup.
    *
    * @param directory  the persistence directory to offer this component; if
    *   <code>null</code>, no persistence directory will be offered
@@ -74,7 +74,19 @@ class DatabaseFactoryInitializer extends DatabaseInitializer implements FactoryI
   DatabaseFactoryInitializer(URI databaseURI, Set<String> hostnameAliases, File directory) {
     this.databaseURI = databaseURI;
     this.hostnameAliases = hostnameAliases;
-    this.directory = directory;
+    this.directories = new File[] { directory };
+  }
+
+  /**
+   * Constructor based on staartup directory list.
+   *
+   * @param directories The persistence directories to offer this component; if
+   *   <code>null</code>, no persistence directories will be offered
+   */
+  DatabaseFactoryInitializer(URI databaseURI, Set<String> hostnameAliases, File[] directories) {
+    this.databaseURI = databaseURI;
+    this.hostnameAliases = hostnameAliases;
+    this.directories = directories;
   }
 
   //
@@ -91,9 +103,12 @@ class DatabaseFactoryInitializer extends DatabaseInitializer implements FactoryI
     return hostnameAliases;
   }
 
-  public File getDirectory() throws InitializerException
-  {
+  public File getDirectory() throws InitializerException {
     checkState();
+
+    File directory = null;
+
+    if (directories != null && directories.length > 0) directory = directories[0];
 
     if (directory != null) {
       // Ensure that the directory exists
@@ -104,5 +119,20 @@ class DatabaseFactoryInitializer extends DatabaseInitializer implements FactoryI
     }
 
     return directory;
+  }
+
+  public File[] getDirectories() throws InitializerException {
+    checkState();
+
+    for (File directory: directories) {
+      if (directory == null) throw new InitializerException("Null directory entry in initializing list.");
+      // Ensure that the directory exists
+      if (!directory.isDirectory()) {
+        if (!directory.mkdirs()) throw new InitializerException("Couldn't create " + directory);
+      }
+      assert directory.isDirectory();
+    }
+
+    return directories;
   }
 }
