@@ -42,6 +42,7 @@ import gnu.trove.TIntHashSet;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
+import org.mulgara.store.StoreException;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.nodepool.NodePoolFactory;
 import org.mulgara.store.stringpool.StringPoolException;
@@ -266,14 +267,14 @@ public class StringPoolSessionFactory implements XAResolverSessionFactory, Simpl
     // Node pool
     try {
       persistentNodePool.close();
-    } catch (NodePoolException e) {
+    } catch (StoreException e) {
       logger.error("Unable to close node pool", e);
     }
 
     // String pool
     try {
       persistentStringPool.close();
-    } catch (StringPoolException e) {
+    } catch (StoreException e) {
       logger.error("Unable to close string pool", e);
     }
   }
@@ -283,14 +284,14 @@ public class StringPoolSessionFactory implements XAResolverSessionFactory, Simpl
     // Node pool
     try {
       persistentNodePool.delete();
-    } catch (NodePoolException e) {
+    } catch (StoreException e) {
       logger.error("Unable to delete node pool", e);
     }
 
     // String pool
     try {
       persistentStringPool.delete();
-    } catch (StringPoolException e) {
+    } catch (StoreException e) {
       logger.error("Unable to delete string pool", e);
     }
   }
