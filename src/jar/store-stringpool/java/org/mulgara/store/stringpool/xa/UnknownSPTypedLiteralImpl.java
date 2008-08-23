@@ -29,23 +29,17 @@ package org.mulgara.store.stringpool.xa;
 
 //Java 2 standard packages
 import java.nio.ByteBuffer;
-import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 //apache packages
 import org.apache.log4j.*;
 
-// jrdf
-import org.jrdf.vocabulary.RDF;
-
 //mulgara packages
 import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;
+import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPTypedLiteral;
-import org.jrdf.graph.Graph;
-import org.jrdf.graph.mem.GraphImpl;
-import org.jrdf.parser.rdfxml.RdfXmlParser;
 
 /**
  * A class that represents a datatyped literal of some type we don't natively
@@ -72,6 +66,7 @@ public class UnknownSPTypedLiteralImpl extends AbstractSPTypedLiteral
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private static final Logger logger =
       Logger.getLogger(UnknownSPTypedLiteralImpl.class.getName());
 
@@ -142,7 +137,7 @@ public class UnknownSPTypedLiteralImpl extends AbstractSPTypedLiteral
     return lexicalForm;
   }
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare types.
     int c = super.compareTo(o);
     if (c != 0) return c;

@@ -30,7 +30,6 @@ package org.mulgara.store.stringpool.xa;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -38,7 +37,6 @@ import java.util.Calendar;
 import org.apache.log4j.Logger;
 import com.hp.hpl.jena.datatypes.xsd.impl.XSDMonthType;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
@@ -284,16 +282,13 @@ public final class SPGMonthImpl extends AbstractSPTypedLiteral {
    * @return Whether the gMonth value is greater than (> 0), less than (< 0), or
    *         equal to (0) this value
    */
-  public int compareTo(Object object) {
+  public int compareTo(SPObject object) {
 
     // Compare types.
     int comparison = super.compareTo(object);
 
     // If we have not got matching types return the value
-    if (comparison != 0) {
-
-      return comparison;
-    }
+    if (comparison != 0) return comparison;
 
     // Compare the dates lexiocally
     return getLexicalForm().compareTo(((SPGMonthImpl) object).getLexicalForm());

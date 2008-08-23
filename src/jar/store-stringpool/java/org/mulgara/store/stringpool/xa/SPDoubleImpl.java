@@ -59,9 +59,9 @@ import org.mulgara.util.Constants;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public final class SPDoubleImpl extends AbstractSPTypedLiteral
-      implements SPDouble {
+public final class SPDoubleImpl extends AbstractSPTypedLiteral implements SPDouble {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDoubleImpl.class);
 
   private double d;
@@ -116,7 +116,7 @@ public final class SPDoubleImpl extends AbstractSPTypedLiteral
 
   /* from Comparable interface. */
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare types.
     int c = super.compareTo(o);
     if (c != 0) return c;

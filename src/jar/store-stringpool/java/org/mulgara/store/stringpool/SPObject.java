@@ -49,7 +49,7 @@ import java.nio.ByteBuffer;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface SPObject extends Comparable {
+public interface SPObject extends Comparable<SPObject> {
 
   public TypeCategory getTypeCategory();
 

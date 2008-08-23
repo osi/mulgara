@@ -28,13 +28,9 @@
 package org.mulgara.store.stringpool;
 
 // Java 2 standard packages
-import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 // Third party packages
-
-// Locally written packages
-import org.mulgara.store.stringpool.*;
 
 
 /**
@@ -68,21 +64,21 @@ public abstract class AbstractSPObject implements SPObject {
 
   /* from Comparable interface. */
 
-  public int compareTo(Object o) {
-    if (compareOverride() || ((SPObject)o).compareOverride()) {
+  public int compareTo(SPObject o) {
+    if (compareOverride() || o.compareOverride()) {
       // start by checking if these are of differing types
-      int c = getTypeCategory().ID - ((SPObject)o).getTypeCategory().ID; 
+      int c = getTypeCategory().ID - o.getTypeCategory().ID; 
       if (0 != c) {
         return c;
       }
       if (compareOverride()) {
         return isSmallest() ? -1 : 1;
       } else {
-        return ((SPObject)o).isSmallest() ? 1 : -1;
+        return o.isSmallest() ? 1 : -1;
       }
     }
     // Compare the type category ids.
-    return getTypeCategory().ID - ((SPObject)o).getTypeCategory().ID;
+    return getTypeCategory().ID - o.getTypeCategory().ID;
   }
 
 

@@ -38,9 +38,8 @@ import org.apache.log4j.*;
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;
+import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPTypedLiteral;
-
-import java.nio.*;
 
 
 /**
@@ -66,6 +65,7 @@ public class SPHexBinaryImpl
     implements SPTypedLiteral {
 
   /** Logger */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(SPHexBinaryImpl.class);
 
   /** Type code that identifies this type */
@@ -217,7 +217,7 @@ public class SPHexBinaryImpl
    * @param obj Object
    * @return int
    */
-  public int compareTo(Object obj) {
+  public int compareTo(SPObject obj) {
 
     int compare = super.compareTo(obj);
 

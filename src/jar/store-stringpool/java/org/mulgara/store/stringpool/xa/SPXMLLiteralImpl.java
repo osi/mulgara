@@ -41,6 +41,7 @@ import org.jrdf.vocabulary.RDF;
 //mulgara packages
 import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;
+import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPTypedLiteral;
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.mem.GraphImpl;
@@ -132,7 +133,7 @@ public class SPXMLLiteralImpl extends AbstractSPTypedLiteral implements SPTypedL
     return str;
   }
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare types.
     int c = super.compareTo(o);
     if (c != 0) return c;

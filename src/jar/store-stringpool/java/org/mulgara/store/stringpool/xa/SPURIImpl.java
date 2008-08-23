@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.*;
 
 
@@ -61,9 +60,8 @@ import org.mulgara.store.stringpool.*;
  */
 public final class SPURIImpl extends AbstractSPObject implements SPURI {
 
-  /**
-   * Description of the Field
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPURIImpl.class);
 
   private URI uri;
@@ -134,7 +132,7 @@ public final class SPURIImpl extends AbstractSPObject implements SPURI {
 
   /* from Comparable interface. */
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare types.
     int c = super.compareTo(o);
     if (c != 0) return c;

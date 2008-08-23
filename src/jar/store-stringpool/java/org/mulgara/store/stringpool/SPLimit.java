@@ -124,13 +124,8 @@ public class SPLimit implements SPObject {
     throw new UnsupportedOperationException("Limit objects do not represent an RDF node");
   }
 
-  public int compareTo(Object o) {
-    // this is only valid for SPObjects
-    if (!(o instanceof SPObject)) {
-      throw new IllegalArgumentException("Illegal comparison");
-    }
+  public int compareTo(SPObject s) {
 
-    SPObject s = (SPObject)o;
     // compare the types
     int c = type.ID - s.getTypeCategory().ID;
     // if the types are different, then return
@@ -139,8 +134,8 @@ public class SPLimit implements SPObject {
     }
 
     // same types, is the other object also a limit?
-    if (o instanceof SPLimit) {
-      SPLimit l = (SPLimit)o;
+    if (s instanceof SPLimit) {
+      SPLimit l = (SPLimit)s;
       // identical limits are equal, else smallest < largest
       if (smallest) {
         return l.smallest ? 0 : -1;

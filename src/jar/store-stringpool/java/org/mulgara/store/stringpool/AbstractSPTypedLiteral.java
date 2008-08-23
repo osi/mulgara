@@ -28,17 +28,13 @@
 package org.mulgara.store.stringpool;
 
 // Java 2 standard packages
-import java.nio.ByteBuffer;
 import java.net.URI;
-import java.util.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
 
 // Locally written packages
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.XSD;
-import org.mulgara.store.stringpool.*;
 
 
 /**
@@ -63,6 +59,7 @@ import org.mulgara.store.stringpool.*;
 public abstract class AbstractSPTypedLiteral extends AbstractSPObject
       implements SPTypedLiteral {
 
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(AbstractSPTypedLiteral.class);
 
   protected int typeId;
@@ -135,7 +132,7 @@ public abstract class AbstractSPTypedLiteral extends AbstractSPObject
 
   /* from Comparable interface. */
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare type categories.
     int c = super.compareTo(o);
     if (c != 0) return c;

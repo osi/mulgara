@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;
+import org.mulgara.store.stringpool.SPObject;
 
 
 /**
@@ -63,6 +64,7 @@ import org.mulgara.store.stringpool.SPComparator;
  */
 public final class SPXSDStringImpl extends AbstractSPTypedLiteral {
 
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPXSDStringImpl.class);
 
   private String str;
@@ -106,7 +108,7 @@ public final class SPXSDStringImpl extends AbstractSPTypedLiteral {
 
   /* from Comparable interface. */
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare types.
     int c = super.compareTo(o);
     if (c != 0) return c;

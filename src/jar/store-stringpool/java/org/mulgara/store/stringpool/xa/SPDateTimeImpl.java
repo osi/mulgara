@@ -144,7 +144,7 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
 
   /* from Comparable interface. */
 
-  public int compareTo(Object o) {
+  public int compareTo(SPObject o) {
     // Compare types.
     int c = super.compareTo(o);
     if (c != 0) return c;
