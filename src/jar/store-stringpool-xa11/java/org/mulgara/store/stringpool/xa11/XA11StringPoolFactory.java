@@ -23,6 +23,9 @@ import org.apache.log4j.*;
 // Local packages
 import org.mulgara.resolver.spi.FactoryInitializer;
 import org.mulgara.resolver.spi.InitializerException;
+import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.store.nodepool.NodePoolException;
+import org.mulgara.store.nodepool.NodePoolFactory;
 import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.stringpool.StringPoolFactory;
@@ -35,7 +38,7 @@ import org.mulgara.store.stringpool.StringPoolFactory;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class XA11StringPoolFactory implements StringPoolFactory {
+public class XA11StringPoolFactory implements StringPoolFactory, NodePoolFactory {
 
   /** Logger. */
   private static final Logger logger = Logger.getLogger(XA11StringPoolFactory.class.getName());
@@ -88,5 +91,9 @@ public class XA11StringPoolFactory implements StringPoolFactory {
       logger.error("Couldn't construct string pool", e);
       throw new StringPoolException("Couldn't construct string pool", e);
     }
+  }
+
+  public NodePool newNodePool() throws NodePoolException {
+    return null;
   }
 }
