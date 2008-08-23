@@ -52,6 +52,7 @@ import org.mulgara.store.stringpool.xa.SPObjectFactoryImpl;
 import org.mulgara.store.tuples.Annotation;
 import org.mulgara.store.tuples.RowComparator;
 import org.mulgara.store.tuples.Tuples;
+import org.mulgara.store.xa.XANodePool;
 import org.mulgara.store.xa.XAStringPool;
 
 import gnu.trove.TLongObjectHashMap;
@@ -100,7 +101,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
   /**
    * An index for sorting the SPObjects.
    */
-  private SortedSet stringIndex;
+  private SortedSet<SPObject> stringIndex;
 
   /**
    * An array of smallest SPObject values.  Ordered by Type ID.
@@ -111,6 +112,11 @@ public final class MemoryStringPoolImpl implements XAStringPool {
    * An array of largest SPObject values.  Ordered by Type ID.
    */
   private SPObject[] largestSPObjects;
+
+  /**
+   * The node pool to allocate gNodes from.
+   */
+  private XANodePool xaNodePool;
 
   /**
    * Variables for when data is returned as a Tuples.
@@ -126,7 +132,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
 
     nodeToStringPool = new TLongObjectHashMap(10);
     stringToNodePool = new TObjectLongHashMap(10);
-    stringIndex = new TreeSet();
+    stringIndex = new TreeSet<SPObject>();
 
     // intialise the SPObject arrays
     smallestSPObjects = new SPObject[SPObject.TypeCategory.TCID_TYPED_LITERAL + 1];
@@ -148,6 +154,23 @@ public final class MemoryStringPoolImpl implements XAStringPool {
     return SPO_FACTORY;
   }
 
+
+  /**
+   * Add a graph node:SPObject pair to the string pool. If the pair already
+   * exists, do nothing. If neither the SPObject nor the graph node exists,
+   * create them. If either the graph node or the SPObject exists, but the other
+   * doesn't, throw an exception.
+   * @deprecated
+   * @param gNode the graph node half of the graph node:SPObject pair
+   * @param spObject the SPObject half of the graph node:SPObject pair
+   * @throws StringPoolException if only one of the graph node and SPObject
+   *      exists in the pool
+   */
+  public void put(long gNode, SPObject spObject) throws StringPoolException {
+    putInternal(gNode, spObject);
+  }
+
+
   /**
    * Add a graph node:SPObject pair to the string pool. If the pair already
    * exists, do nothing. If neither the SPObject nor the graph node exists,
@@ -159,7 +182,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
    * @throws StringPoolException if only one of the graph node and SPObject
    *      exists in the pool
    */
-  public void put(long gNode, SPObject spObject) throws StringPoolException {
+  private void putInternal(long gNode, SPObject spObject) throws StringPoolException {
 
     // Stop adding of nodes below a certain threshold.
     if (gNode < MemoryNodePoolImpl.MIN_NODE) {
@@ -179,6 +202,17 @@ public final class MemoryStringPoolImpl implements XAStringPool {
     }
   }
 
+  public long put(SPObject spObject) throws StringPoolException, NodePoolException {
+    if (xaNodePool == null) throw new IllegalStateException("No node pool set for the string pool.");
+    long gNode = xaNodePool.newNode();
+    putInternal(gNode, spObject);
+    return gNode;
+  }
+
+  public void setNodePool(XANodePool nodePool) {
+    this.xaNodePool = nodePool;
+  }
+
   /**
    * Remove a graph node:SPObject pair from the string pool.
    *
@@ -192,7 +226,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
 
     if (nodeToStringPool.contains(gNode)) {
 
-      Object obj = nodeToStringPool.remove(gNode);
+      SPObject obj = (SPObject)nodeToStringPool.remove(gNode);
       long node = stringToNodePool.remove(obj);
       stringIndex.remove(obj);
 
@@ -237,9 +271,16 @@ public final class MemoryStringPoolImpl implements XAStringPool {
   }
 
 
-  public long findGNode(
-      SPObject spObject, NodePool nodePool
-  ) throws StringPoolException {
+  public long findGNode(SPObject spObject, boolean create) throws StringPoolException {
+    return findGNodeInternal(spObject, xaNodePool);
+  }
+
+  @Deprecated
+  public long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
+    return findGNodeInternal(spObject, nodePool);
+  }
+
+  public long findGNodeInternal(SPObject spObject, NodePool nodePool) throws StringPoolException {
     if (nodePool == null) {
       throw new IllegalArgumentException("nodePool parameter is null");
     }
@@ -279,7 +320,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       SPObject highValue, boolean inclHighValue
   ) throws StringPoolException {
 
-    SortedSet subset;
+    SortedSet<SPObject> subset;
 
     // check if the low value should be excluded
     if (lowValue != null && !inclLowValue && stringIndex.contains(lowValue)) {
@@ -287,17 +328,17 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       // find the tailSet including the low value
       subset = stringIndex.tailSet(lowValue);
       // find the second element
-      Iterator it = subset.iterator();
+      Iterator<SPObject> it = subset.iterator();
       assert it.hasNext();
       // move to the element that needs to be dropped
       it.next();
       // see if there is more than just this element
       if (!it.hasNext()) {
         // no other items, so just exit with empty data
-        return new SetWrapperTuples(new TreeSet(Collections.EMPTY_SET));
+        return new SetWrapperTuples(new TreeSet<SPObject>());
       }
       // move the low value
-      lowValue = (SPObject)it.next();
+      lowValue = it.next();
     }
 
     // check if the high value should be appended
@@ -306,7 +347,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       // get the subset following the high value
       subset = stringIndex.tailSet(highValue);
       // go to the second element of this set
-      Iterator it = subset.iterator();
+      Iterator<SPObject> it = subset.iterator();
       assert it.hasNext();
       // move to the highValue
       it.next();
@@ -316,7 +357,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
         highValue = null;
       } else {
         // move the high value
-        highValue = (SPObject)it.next();
+        highValue = it.next();
       }
     }
 
@@ -355,7 +396,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       );
     }
 
-    SortedSet subset = typeCategory != null ?
+    SortedSet<SPObject> subset = typeCategory != null ?
         stringIndex.subSet(smallestSPObjects[typeCategory.ID], largestSPObjects[typeCategory.ID]) : stringIndex;
 
     return new SetWrapperTuples(subset);
@@ -432,13 +473,13 @@ public final class MemoryStringPoolImpl implements XAStringPool {
   private class SetWrapperTuples implements Tuples {
 
     /** The internal set data */
-    private SortedSet set;
+    private SortedSet<SPObject> set;
 
     /** The current row of data for this set */
     private SPObject currentRow;
 
     /** The iterator for the internal set */
-    private Iterator internalIterator;
+    private Iterator<SPObject> internalIterator;
 
     /** The single column of variables for this object */
     private Variable[] variables;
@@ -448,7 +489,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
      *
      * @param set The set to wrap.
      */
-    public SetWrapperTuples(SortedSet set) {
+    public SetWrapperTuples(SortedSet<SPObject> set) {
       this.set = set;
       internalIterator = null;
       currentRow = null;
@@ -541,8 +582,8 @@ public final class MemoryStringPoolImpl implements XAStringPool {
     /**
      * {@inheritDoc}
      */
-    public java.util.List getOperands() {
-      return java.util.Collections.EMPTY_LIST;
+    public java.util.List<Tuples> getOperands() {
+      return java.util.Collections.emptyList();
     }
 
     /**
@@ -564,9 +605,10 @@ public final class MemoryStringPoolImpl implements XAStringPool {
         internalIterator = set.iterator();
       } else {
         // check if the object exists
-        Object start = nodeToStringPool.get(prefix[0]);
+        SPObject start = (SPObject)nodeToStringPool.get(prefix[0]);
         if (start == null) {
-          internalIterator = Collections.EMPTY_SET.iterator();
+          Set<SPObject> empty = Collections.emptySet();
+          internalIterator = empty.iterator();
         } else {
           internalIterator = Collections.singleton(start).iterator();
         }
@@ -652,8 +694,9 @@ public final class MemoryStringPoolImpl implements XAStringPool {
     /**
      * Copied from AbstractTuples
      */
-    public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+    public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
       return null;
     }
   }
+
 }
