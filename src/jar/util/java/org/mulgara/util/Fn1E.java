@@ -21,7 +21,7 @@ package org.mulgara.util;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public interface FnE<T1,T2,E extends Exception> {
+public interface Fn1E<T1,T2,E extends Exception> {
 
   /**
    * Declares a function template that takes one argument and returns a value of

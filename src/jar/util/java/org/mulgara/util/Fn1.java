@@ -21,6 +21,6 @@ package org.mulgara.util;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public interface Fn<T1,T2> extends FnE<T1,T2,RuntimeException> {
+public interface Fn1<T1,T2> extends Fn1E<T1,T2,RuntimeException> {
 
 }

@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 /**
  * Generic Collections utility class.
  * This class defines static methods for operating on Collections and the functors found in
- * {@link org.mulgara.util.Fn} and {@link org.mulgara.util.Fn2}.
+ * {@link org.mulgara.util.Fn1} and {@link org.mulgara.util.Fn2}.
  *
  * @created Aug 4, 2008
  * @author Paul Gearon
@@ -39,22 +39,22 @@ public class C {
    *             argument type for the operation.
    * @param <T2> The type of the elements in the result list, which is also
    *             the return type of the operation.
-   * @param <E> The exception that my be thrown from {@link FnE#fn(Object)}.
+   * @param <E> The exception that my be thrown from {@link Fn1E#fn(Object)}.
    * @param args The input list.
    * @param op The operation to apply to the elements of the input list.
    * @return A list whose elements are the result of applying op to each element of args.
-   * @throws E An exception that may be thrown from the {@link FnE#fn(Object)} method.
+   * @throws E An exception that may be thrown from the {@link Fn1E#fn(Object)} method.
    */
-  public static <T1,T2,E extends Exception> List<T2> map(Collection<T1> args, FnE<T1,T2,E> op) throws E {
+  public static <T1,T2,E extends Exception> List<T2> map(Collection<T1> args, Fn1E<T1,T2,E> op) throws E {
     List<T2> result = new LinkedList<T2>();
     for (T1 a: args) result.add(op.fn(a));
     return result;
   }
 
   /**
-   * The same method as {@link #map(Collection, FnE)} for arrays.
+   * The same method as {@link #map(Collection, Fn1E)} for arrays.
    */
-  public static <T1,T2,E extends Exception> List<T2> map(T1[] args, FnE<T1,T2,E> op) throws E {
+  public static <T1,T2,E extends Exception> List<T2> map(T1[] args, Fn1E<T1,T2,E> op) throws E {
     List<T2> result = new ArrayList<T2>(args.length);
     for (T1 a: args) result.add(op.fn(a));
     return result;
@@ -73,14 +73,14 @@ public class C {
    * @param op The operation to apply to the elements of the input list.
    * @return A list whose elements are the result of applying op to each element of args.
    */
-  public static <T1,T2> List<T2> map(Collection<T1> args, Fn<T1,T2> op) {
-    return map(args, (FnE<T1,T2,RuntimeException>)op);
+  public static <T1,T2> List<T2> map(Collection<T1> args, Fn1<T1,T2> op) {
+    return map(args, (Fn1E<T1,T2,RuntimeException>)op);
   }
 
   /**
-   * The same method as {@link #map(Collection, Fn)} for arrays.
+   * The same method as {@link #map(Collection, Fn1)} for arrays.
    */
-  public static <T1,T2> List<T2> map(T1[] args, Fn<T1,T2> op) {
+  public static <T1,T2> List<T2> map(T1[] args, Fn1<T1,T2> op) {
     List<T2> result = new ArrayList<T2>(args.length);
     for (T1 a: args) result.add(op.fn(a));
     return result;
