@@ -27,6 +27,7 @@
 
 package org.mulgara.store.xa;
 
+import org.mulgara.store.StoreException;
 import org.mulgara.store.nodepool.*;
 
 /**
@@ -74,12 +75,12 @@ public interface XANodePool extends SimpleXAResource, ReleaseNodeListener, NodeP
   /**
    * Advise that this node pool is no longer needed.
    */
-  public void close() throws NodePoolException;
+  public void close() throws StoreException;
 
   /**
    * Close this node pool, if it is currently open, and remove all files
    * associated with it.
    */
-  public void delete() throws NodePoolException;
+  public void delete() throws StoreException;
 
 }
