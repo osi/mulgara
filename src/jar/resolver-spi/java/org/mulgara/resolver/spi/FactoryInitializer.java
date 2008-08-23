@@ -32,15 +32,8 @@ import java.net.URI;
 import java.util.Set;
 import java.io.File;
 
-// Third party packages
-import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
-
 // Local packages
-import org.mulgara.server.Session;
-import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolFactory;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolFactory;
 
 /**
@@ -64,8 +57,7 @@ import org.mulgara.store.stringpool.StringPoolFactory;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface FactoryInitializer
-{
+public interface FactoryInitializer {
 
   /**
    * Obtain the canonical name of this database.
@@ -79,7 +71,7 @@ public interface FactoryInitializer
    * @return the Set of Strings that enumerates the alternative hostnames.
    * @throws IllegalStateException if called outside of initialization
    */
-  public Set getHostnameAliases();
+  public Set<String> getHostnameAliases();
 
   /**
    * Obtain a persistence directory.
@@ -92,5 +84,15 @@ public interface FactoryInitializer
    *   not available
    */
   public File getDirectory() throws InitializerException;
+
+  /**
+   * Obtain an array of persistence directories.
+   *
+   * @return an array of directories for the factory's exclusive use, or <code>null</code>
+   *   if the database has no persistence directory configured for this resolver factory's use.
+   * @throws IllegalStateException if called outside of initialization
+   * @throws InitializerException if the requested <var>subdirectory</var> is not available
+   */
+  public File[] getDirectories() throws InitializerException;
 
 }
