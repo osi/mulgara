@@ -36,6 +36,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
@@ -115,7 +116,14 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
 
 
   SPDateImpl(ByteBuffer data) {
-    this(data.getLong(), (data.limit() > Constants.SIZEOF_LONG) ? data.getInt() : 0);
+    this(data.getLong(), (data.limit() > Constants.SIZEOF_LONG) ? data.getInt() : calcTZOffset(data.getLong(0)));
+  }
+
+  /** Guess the timezone offset the given time (date) was stored under */
+  private static int calcTZOffset(long time) {
+    int minutes = new DateTime(time, DateTimeZone.UTC).getMinuteOfDay();
+    return (minutes < 12*60) ? -minutes : (minutes > 12*60) ? 24*60 - minutes :
+           (DateTimeZone.getDefault().getOffset(time) > 0) ? -minutes : minutes;
   }
 
 
