@@ -154,7 +154,7 @@ public class SPLimit implements SPObject {
       return 0;
     }
 
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
+    public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
       return 0;
     }
 

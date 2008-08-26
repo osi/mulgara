@@ -83,7 +83,7 @@ public abstract class AbstractSPStringComparator implements SPComparator {
     return compare(d1cb, d2cb);
   }
 
-  public final int compare(ByteBuffer d1, ByteBuffer d2) {
+  public final int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
     return compare(
         AbstractSPObject.CHARSET.decode(d1), AbstractSPObject.CHARSET.decode(d2)
     );

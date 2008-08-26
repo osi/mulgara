@@ -29,7 +29,6 @@ package org.mulgara.store.stringpool.xa;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 // Third party packages

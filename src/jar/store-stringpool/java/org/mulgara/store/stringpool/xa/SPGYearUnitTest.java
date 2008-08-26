@@ -27,17 +27,14 @@
 
 package org.mulgara.store.stringpool.xa;
 
-import java.io.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.text.ParseException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 
 // Third party packages
 import junit.framework.*;
-import java.nio.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.*;
 
@@ -314,6 +311,7 @@ public class SPGYearUnitTest extends TestCase {
     SPGYearFactory factory = new SPGYearFactory();
 
     // Container for our gYear object
+    @SuppressWarnings("unused")
     SPGYearImpl gYear = null;
 
     // Indicator of whether an exception occurred or not.  Assumed false.
@@ -322,8 +320,7 @@ public class SPGYearUnitTest extends TestCase {
     try {
 
       // Create a gYear object by lexical string
-      gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI,
-          INVALID_DATE_1);
+      gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, INVALID_DATE_1);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -331,8 +328,7 @@ public class SPGYearUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gYear with non-numeric characters",
-               failed);
+    assertTrue("Unexpectedly created a gYear with non-numeric characters", failed);
 
     // Reset the failure flag
     failed = false;
@@ -340,8 +336,7 @@ public class SPGYearUnitTest extends TestCase {
     try {
 
       // Create a gYear object by lexical string
-      gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI,
-          INVALID_DATE_2);
+      gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, INVALID_DATE_2);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -349,8 +344,7 @@ public class SPGYearUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gYear with invalid lexical format.",
-               failed);
+    assertTrue("Unexpectedly created a gYear with invalid lexical format.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -358,8 +352,7 @@ public class SPGYearUnitTest extends TestCase {
     try {
 
       // Create a gYear object by lexical string
-      gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI,
-          INVALID_DATE_3);
+      gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, INVALID_DATE_3);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -367,8 +360,7 @@ public class SPGYearUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gYear with invalid timezone format.",
-               failed);
+    assertTrue("Unexpectedly created a gYear with invalid timezone format.", failed);
 
   }
 
@@ -381,23 +373,19 @@ public class SPGYearUnitTest extends TestCase {
     SPGYearFactory factory = new SPGYearFactory();
 
     // Create a gYear object by lexical string
-    SPGYearImpl gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI,
-        VALID_DATE);
+    SPGYearImpl gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, VALID_DATE);
 
     // Create a gYear object that is different
-    SPGYearImpl gYear2 = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI,
-        VALID_DATE2);
+    SPGYearImpl gYear2 = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, VALID_DATE2);
 
     // Test that two same objects will be equal
     assertTrue("Same object did not register as equal.", gYear.equals(gYear));
 
     // Test that two different objects will be inequal
-    assertTrue("Different object was unexpectedly found to be equal.",
-               !gYear.equals(gYear2));
+    assertTrue("Different object was unexpectedly found to be equal.", !gYear.equals(gYear2));
 
     // Test that two same objects will compare equally
-    assertTrue("Same object did not compare equally.",
-               gYear.compareTo(gYear) == 0);
+    assertTrue("Same object did not compare equally.", gYear.compareTo(gYear) == 0);
 
     // Test that two different objects will compare inequally
     assertTrue("Different object was unexpectedly found to compare equally.",
@@ -421,12 +409,12 @@ public class SPGYearUnitTest extends TestCase {
 
     // Test that two same objects will compare equally by comparator
     assertTrue("Same object did not compare equally by comparator.",
-               comparator.compare(gYear.getData(), gYear.getData()) == 0);
+               comparator.compare(gYear.getData(), 0, gYear.getData(), 0) == 0);
 
     // Test that two different objects will compare inequally by comparator
     assertTrue(
         "Different object was unexpectedly found to compare inequally by comparator.",
-        comparator.compare(gYear.getData(), gYear2.getData()) != 0);
+        comparator.compare(gYear.getData(), 0, gYear2.getData(), 0) != 0);
 
   }
 
@@ -458,8 +446,7 @@ public class SPGYearUnitTest extends TestCase {
     } catch (Exception exception) {
 
       // Fail the test if we cannot tear down
-      fail("Failed to tear down members after testing. " +
-           exception.getMessage());
+      fail("Failed to tear down members after testing. " + exception.getMessage());
     }
   }
 }

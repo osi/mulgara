@@ -27,7 +27,6 @@
 
 package org.mulgara.store.stringpool.xa;
 
-import java.io.*;
 import java.nio.*;
 
 // Third party packages
@@ -265,11 +264,11 @@ public class SPBooleanUnitTest
     SPComparator comparator = false1.getSPComparator();
     assertTrue("'false' SPBoolean compared to 'true' SPBoolean should return " +
                "a negative number. ",
-               comparator.compare(false1.getData(), true1.getData()) < 0);
+               comparator.compare(false1.getData(), 0, true1.getData(), 0) < 0);
     comparator = true2.getSPComparator();
     assertTrue("'true' SPBoolean compared to 'false' SPBoolean should return " +
                "a positive number.",
-               comparator.compare(true2.getData(), false1.getData()) > 0);
+               comparator.compare(true2.getData(), 0, false1.getData(), 0) > 0);
   }
 
   //set up and tear down

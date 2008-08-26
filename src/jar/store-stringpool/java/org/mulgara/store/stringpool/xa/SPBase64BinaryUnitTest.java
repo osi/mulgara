@@ -27,11 +27,8 @@
 
 package org.mulgara.store.stringpool.xa;
 
-import java.io.*;
-
 // Third party packages
 import junit.framework.*;
-import java.nio.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.store.stringpool.*;
 

@@ -41,6 +41,9 @@ import org.mulgara.util.Constants;
 
 /**
  * An SPTypedLiteral that represents xsd:decimal literals.
+ * Data is encoded as a string or a long. If the data is the length of a long, then
+ * it is a long. If it is one more, then it could be a normal string, or a string
+ * that was padded to not look like a long.
  *
  * @created 2004-10-05
  * @author David Makepeace
@@ -76,13 +79,16 @@ public abstract class SPDecimalImpl extends AbstractSPTypedLiteral {
    */
   static BigDecimal decode(ByteBuffer bb) {
     ByteBuffer number = bb;
-    if (bb.limit() == END_IDX + 1) {
-      byte type = bb.get(END_IDX);
-      if (type == SPDecimalExtImpl.END_BYTE) {
-        return BigDecimal.valueOf(bb.getLong());
+    int limit = bb.limit();
+    if (limit == Constants.SIZEOF_LONG) return BigDecimal.valueOf(bb.getLong());
+    if (limit == END_IDX + 1) {
+      // is this buffer padded?
+      byte terminator = bb.get(END_IDX);
+      if (terminator == SPDecimalBaseImpl.END_BYTE) {
+        // remove the padding
+        bb.limit(END_IDX);
+        number = bb.slice();
       }
-      bb.limit(END_IDX);
-      number = bb.slice();
     }
     return new BigDecimal(CHARSET.decode(number).toString());
   }
@@ -143,11 +149,13 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
    */
   SPDecimalBaseImpl(int subtypeId, URI typeURI, ByteBuffer data) {
     super(subtypeId, typeURI);
+    if (data.limit() == Constants.SIZEOF_LONG) throw new IllegalArgumentException("Buffer does not hold a decimal.");
     ByteBuffer number = data;
     if (data.limit() == END_IDX + 1) {
-      assert data.get(END_IDX) == END_BYTE;
-      data.limit(END_IDX);
-      number = data.slice();
+      if (data.get(END_IDX) == END_BYTE) {
+        data.limit(END_IDX);
+        number = data.slice();
+      }
     }
     lexical = CHARSET.decode(number).toString();
     val = new BigDecimal(lexical);
@@ -170,10 +178,12 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
   /** @see org.mulgara.store.stringpool.SPObject#getData() */
   public ByteBuffer getData() {
     ByteBuffer data = CHARSET.encode(lexical);
+    // if this is the same size as a long, expand it and pad it
     if (data.limit() == END_IDX) {
       ByteBuffer newData = ByteBuffer.allocate(END_IDX + 1);
       newData.put(data);
       newData.put(END_IDX, END_BYTE);
+      newData.rewind();
       data = newData;
     }
     return data;
@@ -253,8 +263,10 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
      * @see org.mulgara.store.stringpool.SPComparator#compare(java.nio.ByteBuffer, java.nio.ByteBuffer)
      * This comparator WILL compare between xsd:decimal and the extending types
      */
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
-      return decode(d1).compareTo(decode(d2));
+    public int compare(ByteBuffer d1, int subtypeId1, ByteBuffer d2, int subtypeId2) {
+      int c = decode(d1).compareTo(decode(d2));
+      if (c == 0) c = AbstractSPObject.compare(subtypeId1, subtypeId2);
+      return c;
     }
 
   }
@@ -268,9 +280,6 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
  * distinguish the data format from xsd:decimal, which is stored as a string.
  */
 class SPDecimalExtImpl extends SPDecimalImpl {
-
-  /** The terminating byte, to distinguish the data types from SPDecimalBaseImpl */
-  static final byte END_BYTE = 0;
 
   /** The long value containing the number. */
   final Long l;
@@ -295,9 +304,7 @@ class SPDecimalExtImpl extends SPDecimalImpl {
    */
   SPDecimalExtImpl(int subtypeId, URI typeURI, ByteBuffer data) {
     super(subtypeId, typeURI);
-    assert data.limit() == Constants.SIZEOF_LONG + 1;
-    int end = data.limit() - 1;
-    assert data.get(end) == END_BYTE;
+    assert isLong(data);
     l = data.getLong();
   }
 
@@ -316,9 +323,8 @@ class SPDecimalExtImpl extends SPDecimalImpl {
 
   /** @see org.mulgara.store.stringpool.SPObject#getData() */
   public ByteBuffer getData() {
-    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG + 1);
+    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG);
     data.putLong(l);
-    data.put((byte)END_BYTE);
     data.flip();
     return data;
   }
@@ -375,15 +381,14 @@ class SPDecimalExtImpl extends SPDecimalImpl {
 
 
   /**
-   * Utility for comparing long values.
-   * @param l1 The first long.
-   * @param l2 The second long.
-   * @return +1 if l1 > l2, -1 if l1 < l2, and 0 if l1 == l2
+   * Tests a buffer to see if if contains a long value. It must be the correct length
+   * and it must have the correct byte in the last place.
+   * @param d The buffer to test.
+   * @return <code>true</code> if the buffer contains a long value.
    */
-  public static int compare(long l1, long l2) {
-    return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+  static final boolean isLong(ByteBuffer d) {
+    return d.limit() == Constants.SIZEOF_LONG;
   }
-
 
   /** Compares the binary representations of two SPDecimalExtImpl objects. */
   public static class SPDecimalExtComparator implements SPComparator {
@@ -408,11 +413,15 @@ class SPDecimalExtImpl extends SPDecimalImpl {
      * @see org.mulgara.store.stringpool.SPComparator#compare(java.nio.ByteBuffer, java.nio.ByteBuffer)
      * This comparator WILL compare between xsd:decimal and the extending types
      */
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
-      if (d1.get(END_IDX) == END_BYTE && d2.get(END_IDX) == END_BYTE) {
-        return SPDecimalExtImpl.compare(d1.getLong(), d2.getLong());
+    public int compare(ByteBuffer d1, int subtypeId1, ByteBuffer d2, int subtypeId2) {
+      int c;
+      if (isLong(d1) && isLong(d2)) {
+        c = SPDecimalExtImpl.compare(d1.getLong(), d2.getLong());
+      } else {
+        c = decode(d1).compareTo(decode(d2));
       }
-      return SPDecimalExtImpl.compare(d1.getLong(), d2.getLong());
+      if (c == 0) c = AbstractSPObject.compare(subtypeId1, subtypeId2);
+      return c;
     }
 
   }

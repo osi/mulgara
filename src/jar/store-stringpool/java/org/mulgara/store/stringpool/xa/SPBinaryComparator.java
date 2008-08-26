@@ -69,10 +69,10 @@ public final class SPBinaryComparator implements SPComparator {
     if (d1.limit() > d2.limit()) {
       d1.limit(d2.limit());
     }
-    return compare(d1, d2);
+    return compare(d1, 0, d2, 0);
   }
 
-  public int compare(ByteBuffer d1, ByteBuffer d2) {
+  public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
     while (d1.hasRemaining() && d2.hasRemaining()) {
       int c = (d1.get() & 0xff) - (d2.get() & 0xff);
       if (c != 0) return c;

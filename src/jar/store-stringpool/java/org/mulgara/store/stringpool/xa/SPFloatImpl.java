@@ -152,7 +152,7 @@ public final class SPFloatImpl extends AbstractSPTypedLiteral {
       return 0;
     }
 
-    public int compare(ByteBuffer f1, ByteBuffer f2) {
+    public int compare(ByteBuffer f1, int st1, ByteBuffer f2, int st2) {
       return Float.compare(f1.getFloat(), f2.getFloat());
     }
 

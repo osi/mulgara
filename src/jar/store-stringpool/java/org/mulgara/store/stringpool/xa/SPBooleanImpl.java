@@ -287,7 +287,7 @@ public class SPBooleanImpl
      * @param d2 ByteBuffer
      * @return int
      */
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
+    public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
 
       //value is stored in the first byte
       return d1.get(0) - d2.get(0);

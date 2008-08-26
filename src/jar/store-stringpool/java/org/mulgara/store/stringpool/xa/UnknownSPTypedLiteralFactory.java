@@ -59,6 +59,7 @@ import org.mulgara.store.stringpool.*;
 public final class UnknownSPTypedLiteralFactory
   implements SPTypedLiteralFactory
 {
+  @SuppressWarnings("unused")
   private final static Logger logger =
       Logger.getLogger(UnknownSPTypedLiteralFactory.class.getName());
 
@@ -66,7 +67,7 @@ public final class UnknownSPTypedLiteralFactory
     return UnknownSPTypedLiteralImpl.TYPE_ID;
   }
 
-  public Set getTypeURIs() {
+  public Set<URI> getTypeURIs() {
     throw new UnsupportedOperationException("Unknown types");
   }
 

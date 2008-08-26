@@ -27,18 +27,15 @@
 
 package org.mulgara.store.stringpool.xa;
 
-import java.io.*;
 import java.util.Date;
 import java.util.TimeZone;
 import java.text.SimpleDateFormat;
-import java.text.ParseException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 
 // Third party packages
 import junit.framework.*;
-import java.nio.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.*;
 
@@ -325,6 +322,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     SPGMonthDayFactory factory = new SPGMonthDayFactory();
 
     // Container for our gMonthDay object
+    @SuppressWarnings("unused")
     SPGMonthDayImpl gMonthDay = null;
 
     // Indicator of whether an exception occurred or not.  Assumed false.
@@ -333,8 +331,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
-          INVALID_DATE_1);
+      gMonthDay = (SPGMonthDayImpl)factory.newSPTypedLiteral(XSD.GMONTHDAY_URI, INVALID_DATE_1);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -342,8 +339,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with non-numeric month value.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with non-numeric month value.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -351,8 +347,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
-          INVALID_DATE_2);
+      gMonthDay = (SPGMonthDayImpl)factory.newSPTypedLiteral(XSD.GMONTHDAY_URI, INVALID_DATE_2);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -360,8 +355,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with invalid lexical format.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with invalid lexical format.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -369,7 +363,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
+      gMonthDay = (SPGMonthDayImpl)factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
           INVALID_DATE_3);
     } catch (IllegalArgumentException illegalArgumentException) {
 
@@ -378,8 +372,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with invalid timezone format.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with invalid timezone format.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -387,8 +380,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
-          INVALID_DATE_4);
+      gMonthDay = (SPGMonthDayImpl)factory.newSPTypedLiteral(XSD.GMONTHDAY_URI, INVALID_DATE_4);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -396,8 +388,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with invalid month value.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with invalid month value.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -414,8 +405,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with preceding '-'.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with preceding '-'.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -432,8 +422,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with non-numeric day.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with non-numeric day.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -441,7 +430,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
+      gMonthDay = (SPGMonthDayImpl)factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
           INVALID_DATE_7);
     } catch (IllegalArgumentException illegalArgumentException) {
 
@@ -450,8 +439,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with invalid day value.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with invalid day value.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -459,8 +447,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
-          INVALID_DATE_8);
+      gMonthDay = (SPGMonthDayImpl)factory.newSPTypedLiteral(XSD.GMONTHDAY_URI, INVALID_DATE_8);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -468,8 +455,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     }
 
     // Test that we failed to create the object
-    assertTrue("Unexpectedly created a gMonthDay with invalid day lexical value.",
-               failed);
+    assertTrue("Unexpectedly created a gMonthDay with invalid day lexical value.", failed);
 
     // Reset the failure flag
     failed = false;
@@ -477,8 +463,7 @@ public class SPGMonthDayUnitTest extends TestCase {
     try {
 
       // Create a gMonthDay object by lexical string
-      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI,
-          INVALID_DATE_9);
+      gMonthDay = (SPGMonthDayImpl) factory.newSPTypedLiteral(XSD.GMONTHDAY_URI, INVALID_DATE_9);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -504,8 +489,7 @@ public class SPGMonthDayUnitTest extends TestCase {
 
     // Create a gMonthDay object that is different
     SPGMonthDayImpl gMonthDay2 = (SPGMonthDayImpl) factory.newSPTypedLiteral(
-        XSD.
-        GMONTHDAY_URI, "--06-01");
+        XSD.GMONTHDAY_URI, "--06-01");
 
     // Test that two same objects will be equal
     assertTrue("Same object did not register as equal.",
@@ -541,13 +525,12 @@ public class SPGMonthDayUnitTest extends TestCase {
 
     // Test that two same objects will compare equally by comparator
     assertTrue("Same object did not compare equally by comparator.",
-               comparator.compare(gMonthDay.getData(), gMonthDay.getData()) ==
-               0);
+               comparator.compare(gMonthDay.getData(), 0, gMonthDay.getData(), 0) == 0);
 
     // Test that two different objects will compare inequally by comparator
     assertTrue(
         "Different object was unexpectedly found to compare inequally by comparator.",
-        comparator.compare(gMonthDay.getData(), gMonthDay2.getData()) != 0);
+        comparator.compare(gMonthDay.getData(), 0, gMonthDay2.getData(), 0) != 0);
 
   }
 

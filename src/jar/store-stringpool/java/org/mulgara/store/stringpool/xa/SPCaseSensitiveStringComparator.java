@@ -34,7 +34,6 @@ import java.nio.CharBuffer;
 
 // Locally written packages
 import org.mulgara.store.stringpool.AbstractSPStringComparator;
-import org.mulgara.store.stringpool.SPComparator;
 
 
 /**

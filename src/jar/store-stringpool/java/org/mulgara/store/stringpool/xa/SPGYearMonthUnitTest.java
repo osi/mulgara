@@ -27,17 +27,14 @@
 
 package org.mulgara.store.stringpool.xa;
 
-import java.io.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.text.ParseException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 
 // Third party packages
 import junit.framework.*;
-import java.nio.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.*;
 
@@ -330,6 +327,7 @@ public class SPGYearMonthUnitTest extends TestCase {
     SPGYearMonthFactory factory = new SPGYearMonthFactory();
 
     // Container for our gYearMonth object
+    @SuppressWarnings("unused")
     SPGYearMonthImpl gYearMonth = null;
 
     // Indicator of whether an exception occurred or not.  Assumed false.
@@ -498,13 +496,12 @@ public class SPGYearMonthUnitTest extends TestCase {
 
     // Test that two same objects will compare equally by comparator
     assertTrue("Same object did not compare equally by comparator.",
-               comparator.compare(gYearMonth.getData(), gYearMonth.getData()) ==
-               0);
+               comparator.compare(gYearMonth.getData(), 0, gYearMonth.getData(), 0) == 0);
 
     // Test that two different objects will compare inequally by comparator
     assertTrue(
         "Different object was unexpectedly found to compare inequally by comparator.",
-        comparator.compare(gYearMonth.getData(), gYearMonth2.getData()) != 0);
+        comparator.compare(gYearMonth.getData(), 0, gYearMonth2.getData(), 0) != 0);
 
   }
 

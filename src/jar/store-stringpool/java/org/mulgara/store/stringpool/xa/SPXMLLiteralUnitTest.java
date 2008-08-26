@@ -27,17 +27,11 @@
 
 package org.mulgara.store.stringpool.xa;
 
-import java.io.*;
-import java.nio.*;
-
 // JRDF
 import org.jrdf.vocabulary.RDF;
 
 // Third party packages
 import junit.framework.*;
-
-import org.mulgara.query.rdf.XSD;
-import org.mulgara.store.stringpool.*;
 
 /**
  * Unit test for {@link SPXMLLiteralImpl}
@@ -174,24 +168,22 @@ public class SPXMLLiteralUnitTest extends TestCase {
   public void testInvalid() throws Exception {
 
     SPXMLLiteralFactory factory = new SPXMLLiteralFactory();
+
+    @SuppressWarnings("unused")
     SPXMLLiteralImpl text;
 
     // Test with a tag.
     try {
-      text = (SPXMLLiteralImpl) factory.newSPTypedLiteral(
-          RDF.XML_LITERAL, "<foo>Hello there</bar>");
+      text = (SPXMLLiteralImpl) factory.newSPTypedLiteral(RDF.XML_LITERAL, "<foo>Hello there</bar>");
       fail("Should be invalid");
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
     }
 
     // Test nested tags
     try {
-      text = (SPXMLLiteralImpl) factory.newSPTypedLiteral(
-          RDF.XML_LITERAL, "<bar><foo>Hello there</bar></foo>");
+      text = (SPXMLLiteralImpl) factory.newSPTypedLiteral(RDF.XML_LITERAL, "<bar><foo>Hello there</bar></foo>");
       fail("Should be invalid");
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
     }
   }
 

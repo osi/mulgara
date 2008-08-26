@@ -389,22 +389,9 @@ public final class SPGMonthDayImpl extends AbstractSPTypedLiteral {
      * @return Whether the first buffer's content is greater than (> 0), less
      *         than (< 0), or equal to (0) the other
      */
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
-      return compare(d1.getLong(), d2.getLong());
+    public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
+      return AbstractSPObject.compare(d1.getLong(), d2.getLong());
     }
 
-    /**
-     * Compares two longs and returns whether the first is equal to (0), greater
-     * than (> 0), or less than (< 0) the second.
-     *
-     * @param a The first long
-     * @param b The second long
-     * @return Whether the first is equal to (0), greater than (> 0), or less
-     *         than (< 0) the second
-     */
-    private static int compare(long a, long b) {
-
-      return a == b ? 0 : (a < b ? -1 : 1);
-    }
   }
 }

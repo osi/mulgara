@@ -57,6 +57,6 @@ public interface SPComparator {
    */
   public int comparePrefix(ByteBuffer d1, ByteBuffer d2, int d2Size);
 
-  public int compare(ByteBuffer d1, ByteBuffer d2);
+  public int compare(ByteBuffer d1, int subtypeId1, ByteBuffer d2, int subtypeId2);
 
 }

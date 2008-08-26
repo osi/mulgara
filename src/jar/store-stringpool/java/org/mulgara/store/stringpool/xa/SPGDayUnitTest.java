@@ -354,6 +354,7 @@ public class SPGDayUnitTest extends TestCase {
     SPGDayFactory factory = new SPGDayFactory();
 
     // Container for our gDay object
+    @SuppressWarnings("unused")
     SPGDayImpl gDay = null;
 
     // Indicator of whether an exception occurred or not.  Assumed false.
@@ -362,8 +363,7 @@ public class SPGDayUnitTest extends TestCase {
     try {
 
       // Create a gDay object by lexical string
-      gDay = (SPGDayImpl) factory.newSPTypedLiteral(XSD.GDAY_URI,
-          INVALID_DATE_1);
+      gDay = (SPGDayImpl) factory.newSPTypedLiteral(XSD.GDAY_URI, INVALID_DATE_1);
     } catch (IllegalArgumentException illegalArgumentException) {
 
       // We are expecting an exception so indicate it with the flag
@@ -496,12 +496,12 @@ public class SPGDayUnitTest extends TestCase {
 
     // Test that two same objects will compare equally by comparator
     assertTrue("Same object did not compare equally by comparator.",
-               comparator.compare(gDay.getData(), gDay.getData()) == 0);
+               comparator.compare(gDay.getData(), 0, gDay.getData(), 0) == 0);
 
     // Test that two different objects will compare inequally by comparator
     assertTrue(
         "Different object was unexpectedly found to compare inequally by comparator.",
-        comparator.compare(gDay.getData(), gDay2.getData()) != 0);
+        comparator.compare(gDay.getData(), 0, gDay2.getData(), 0) != 0);
 
   }
 

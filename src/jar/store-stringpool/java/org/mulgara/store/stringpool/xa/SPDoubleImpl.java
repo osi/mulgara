@@ -160,7 +160,7 @@ public final class SPDoubleImpl extends AbstractSPTypedLiteral implements SPDoub
       return 0;
     }
 
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
+    public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
       return Double.compare(d1.getDouble(), d2.getDouble());
     }
 

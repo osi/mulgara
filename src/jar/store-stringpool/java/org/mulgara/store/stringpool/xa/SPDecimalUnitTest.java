@@ -121,12 +121,11 @@ public class SPDecimalUnitTest extends TestCase {
     assertEquals(VALID_XSD_DECIMAL1, Long.toString(dLong));
 
     // Byte buffer to hold our decimal information
-    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG + 1]);
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
 
     // If the previous step passed then we know the long value is what we want,
     // so store it in our buffer
     buffer.putLong(dLong);
-    buffer.put((byte)0);
 
     // Reset the buffer for reading
     buffer.flip();

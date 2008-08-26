@@ -34,13 +34,15 @@ public class DataAVLComparator implements AVLComparator {
   private final SPComparator spComparator;
   private final int typeCategoryId;
   private final int typeId;
+  private final int subtypeId;
   private final ByteBuffer data;
   private final RandomAccessFile readOnlyFlatFile;
 
-  DataAVLComparator(SPComparator spComparator, SPObject.TypeCategory typeCategory, int typeId, ByteBuffer data, RandomAccessFile flatFile) {
+  DataAVLComparator(SPComparator spComparator, SPObject.TypeCategory typeCategory, int typeId, int subtypeId, ByteBuffer data, RandomAccessFile flatFile) {
     this.spComparator = spComparator;
     this.typeCategoryId = typeCategory.ID;
     this.typeId = typeId;
+    this.subtypeId = subtypeId;
     this.data = data;
     this.readOnlyFlatFile = flatFile;
   }
@@ -49,6 +51,7 @@ public class DataAVLComparator implements AVLComparator {
     this.spComparator = spComparator;
     this.typeCategoryId = dataStruct.getTypeCategoryId();
     this.typeId = dataStruct.getTypeId();
+    this.subtypeId = dataStruct.getSubtypeId();
     this.data = dataStruct.getData();
     this.readOnlyFlatFile = readOnlyFlatFile;
   }
@@ -67,6 +70,8 @@ public class DataAVLComparator implements AVLComparator {
     // Second, order by type node.
     int nodeTypeId = DataStruct.getTypeId(avlNode);
     if (typeId != nodeTypeId) return typeId < nodeTypeId ? -1 : 1;
+
+    int nodeSubtypeId = DataStruct.getSubtypeId(avlNode);
 
     // Finally, defer to the SPComparator.
     int dataSize = DataStruct.getDataSize(avlNode);
@@ -100,7 +105,7 @@ public class DataAVLComparator implements AVLComparator {
 
     data.rewind();
     nodeData.rewind();
-    return spComparator.compare(data, nodeData);
+    return spComparator.compare(data, subtypeId, nodeData, nodeSubtypeId);
   }
 
 }

@@ -224,12 +224,8 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
       return 0;
     }
 
-    public int compare(ByteBuffer d1, ByteBuffer d2) {
-      return compare(d1.getLong(), d2.getLong());
-    }
-
-    private static int compare(long a, long b) {
-      return a == b ? 0 : (a < b ? -1 : 1);
+    public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
+      return AbstractSPObject.compare(d1.getLong(), d2.getLong());
     }
 
   }

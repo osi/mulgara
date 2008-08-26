@@ -1398,7 +1398,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
         ByteBuffer data = spObject.getData();
         SPComparator spComparator = spObject.getSPComparator();
-        AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
+        AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, subtypeId, data);
 
         // Find the adjacent nodes.
         findResult = avlFilePhase.find(avlComparator, null);
@@ -1625,12 +1625,18 @@ public final class XAStringPoolImpl implements XAStringPool {
         }
 
         SPObject.TypeCategory typeCategory = spObject.getTypeCategory();
-        int typeId = typeCategory == SPObject.TypeCategory.TYPED_LITERAL ?
-            ((SPTypedLiteral)spObject).getTypeId() :
-            SPObjectFactory.INVALID_TYPE_ID;
+        int typeId;
+        int subtypeId;
+        if (typeCategory == SPObject.TypeCategory.TYPED_LITERAL) {
+          typeId = ((SPTypedLiteral)spObject).getTypeId();
+          subtypeId = ((SPTypedLiteral)spObject).getSubtypeId();
+        } else {
+          typeId = SPObjectFactory.INVALID_TYPE_ID;
+          subtypeId = 0;
+        }
         ByteBuffer data = spObject.getData();
         SPComparator spComparator = spObject.getSPComparator();
-        AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
+        AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, subtypeId, data);
 
         // Find the SPObject.
         AVLNode[] findResult = avlFilePhase.find(avlComparator, null);
@@ -1700,7 +1706,7 @@ public final class XAStringPoolImpl implements XAStringPool {
           }
           ByteBuffer data = spObject.getData();
           SPComparator spComparator = spObject.getSPComparator();
-          AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
+          AVLComparator avlComparator = new SPAVLComparator(spComparator, typeCategory, typeId, subtypeId, data);
 
           // Find the SPObject.
           findResult = avlFilePhase.find(avlComparator, null);
@@ -1854,6 +1860,7 @@ public final class XAStringPoolImpl implements XAStringPool {
     ) throws StringPoolException {
       SPObject.TypeCategory typeCategory;
       int typeId;
+      int subtypeId;
       AVLNode lowAVLNode;
       long highAVLNodeId;
 
@@ -1861,6 +1868,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         // Return all nodes in the index.
         typeCategory = null;
         typeId = SPObjectFactory.INVALID_TYPE_ID;
+        subtypeId = 0;
         lowAVLNode = avlFilePhase.getRootNode();
         if (lowAVLNode != null) lowAVLNode = lowAVLNode.getMinNode_R();
         highAVLNodeId = Block.INVALID_BLOCK_ID;
@@ -1868,8 +1876,13 @@ public final class XAStringPoolImpl implements XAStringPool {
         // Get the type category.
         SPObject typeValue = lowValue != null ? lowValue : highValue;
         typeCategory = typeValue.getTypeCategory();
-        typeId = typeCategory == SPObject.TypeCategory.TYPED_LITERAL ?
-                 ((SPTypedLiteral)typeValue).getTypeId() : SPObjectFactory.INVALID_TYPE_ID;
+        if (typeCategory == SPObject.TypeCategory.TYPED_LITERAL) {
+          typeId = ((SPTypedLiteral)typeValue).getTypeId();
+          subtypeId = ((SPTypedLiteral)typeValue).getSubtypeId();
+        } else {
+          typeId = SPObjectFactory.INVALID_TYPE_ID;
+          subtypeId = 0;
+        }
 
         // Check that the two SPObjects are of the same type.
         if (lowValue != null && highValue != null) {
@@ -1903,7 +1916,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         if (lowValue != null) {
           ByteBuffer data = lowValue.getData();
           SPComparator spComparator = lowValue.getSPComparator();
-          lowComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
+          lowComparator = new SPAVLComparator(spComparator, typeCategory, typeId, subtypeId, data);
         } else {
           // Select the first node with the current type.
           if (typeCategory == SPObject.TypeCategory.TYPED_LITERAL) {
@@ -1918,7 +1931,7 @@ public final class XAStringPoolImpl implements XAStringPool {
         if (highValue != null) {
           ByteBuffer data = highValue.getData();
           SPComparator spComparator = highValue.getSPComparator();
-          highComparator = new SPAVLComparator(spComparator, typeCategory, typeId, data);
+          highComparator = new SPAVLComparator(spComparator, typeCategory, typeId, subtypeId, data);
         } else {
           // Select the first node past the last one that has the current type.
           if (typeCategory == SPObject.TypeCategory.TYPED_LITERAL) {
@@ -2691,12 +2704,14 @@ public final class XAStringPoolImpl implements XAStringPool {
       private final SPComparator spComparator;
       private final SPObject.TypeCategory typeCategory;
       private final int typeId;
+      private final int subtypeId;
       private final ByteBuffer data;
 
-      SPAVLComparator(SPComparator spComparator, SPObject.TypeCategory typeCategory, int typeId, ByteBuffer data) {
+      SPAVLComparator(SPComparator spComparator, SPObject.TypeCategory typeCategory, int typeId, int subtypeId, ByteBuffer data) {
         this.spComparator = spComparator;
         this.typeCategory = typeCategory;
         this.typeId = typeId;
+        this.subtypeId = subtypeId;
         this.data = data;
       }
 
@@ -2711,6 +2726,8 @@ public final class XAStringPoolImpl implements XAStringPool {
         // Second, order by type node.
         int nodeTypeId = avlNode.getPayloadByte(IDX_TYPE_ID_B);
         if (typeId != nodeTypeId) return typeId < nodeTypeId ? -1 : 1;
+
+        int nodeSubtypeId = avlNode.getPayloadByte(IDX_SUBTYPE_ID_B);
 
         // Finally, defer to the SPComparator.
         int dataSize = avlNode.getPayloadInt(IDX_DATA_SIZE_I);
@@ -2760,7 +2777,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
         data.rewind();
         nodeData.rewind();
-        return spComparator.compare(data, nodeData);
+        return spComparator.compare(data, subtypeId, nodeData, nodeSubtypeId);
       }
 
     }

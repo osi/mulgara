@@ -113,22 +113,22 @@ public class SPCaseInsensitiveStringComparatorUnitTest extends TestCase {
     // First test the compare() method.
     bb1.clear();
     bb2.clear();
-    assertTrue(spc.compare(bb1, bb2) < 0);
+    assertTrue(spc.compare(bb1, 0, bb2, 0) < 0);
     bb2.clear();
     bb1.clear();
-    assertTrue(spc.compare(bb2, bb1) > 0);
+    assertTrue(spc.compare(bb2, 0, bb1, 0) > 0);
     bb2.clear();
     bb3.clear();
-    assertTrue(spc.compare(bb2, bb3) < 0);
+    assertTrue(spc.compare(bb2, 0, bb3, 0) < 0);
     bb3.clear();
     bb2.clear();
-    assertTrue(spc.compare(bb3, bb2) > 0);
+    assertTrue(spc.compare(bb3, 0, bb2, 0) > 0);
     bb1.clear();
     bb3.clear();
-    assertTrue(spc.compare(bb1, bb3) < 0);
+    assertTrue(spc.compare(bb1, 0, bb3, 0) < 0);
     bb3.clear();
     bb1.clear();
-    assertTrue(spc.compare(bb3, bb1) > 0);
+    assertTrue(spc.compare(bb3, 0, bb1, 0) > 0);
 
     // The comparePrefix() method should return 0 in all these cases.
     bb1.clear();

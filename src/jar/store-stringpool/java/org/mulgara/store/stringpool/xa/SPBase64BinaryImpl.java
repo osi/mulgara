@@ -292,7 +292,7 @@ public class SPBase64BinaryImpl
       compare = comparator.comparePrefix(data, objData, data.limit());
       if (compare == 0) {
 
-        compare = comparator.compare(data, objData);
+        compare = comparator.compare(data, 0, objData, 0);
       }
     }
 
