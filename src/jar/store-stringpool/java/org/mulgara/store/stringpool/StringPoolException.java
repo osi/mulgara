@@ -49,29 +49,29 @@ import org.mulgara.store.StoreException;
  */
 public class StringPoolException extends StoreException {
 
+  /** */
+  private static final long serialVersionUID = -3461930028372638566L;
+
   /**
-   * CONSTRUCTOR StringPoolException TO DO
-   *
-   * @param message PARAMETER TO DO
+   * Builds an exception for a string pool operation, with a string message.
+   * @param message The message about the operation error.
    */
   public StringPoolException(String message) {
     super(message);
   }
 
   /**
-   * CONSTRUCTOR StringPoolException TO DO
-   *
-   * @param message PARAMETER TO DO
-   * @param throwable PARAMETER TO DO
+   * Builds an exception for a string pool operation, with a cause and string message.
+   * @param message The message about the operation error.
+   * @param throwable The cause of the error.
    */
   public StringPoolException(String message, Throwable throwable) {
     super(message, throwable);
   }
 
   /**
-   * CONSTRUCTOR StringPoolException TO DO
-   *
-   * @param throwable PARAMETER TO DO
+   * Builds an exception for a string pool operation, with a cause and string message.
+   * @param throwable The cause of the error.
    */
   public StringPoolException(Throwable throwable) {
     super(throwable);
