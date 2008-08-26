@@ -28,7 +28,6 @@
 package org.mulgara.store.stringpool;
 
 // Java 2 standard packages
-import java.util.Date;
 import java.net.URI;
 import java.nio.ByteBuffer;
 
