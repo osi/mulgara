@@ -225,7 +225,10 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
     }
 
     public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
-      return AbstractSPObject.compare(d1.getLong(), d2.getLong());
+      int c = AbstractSPObject.compare(d1.getLong(), d2.getLong());
+      // if the times are the same, then differentiate by timezone
+      if (c == 0) c = AbstractSPObject.compare(d1.getInt(), d2.getInt());
+      return c;
     }
 
   }
