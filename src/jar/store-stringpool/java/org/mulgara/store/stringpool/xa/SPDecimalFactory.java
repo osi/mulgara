@@ -65,8 +65,13 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalFactory.class);
 
+  private final static URI XSD_DEC = URI.create(XSD.NAMESPACE + "decimal");
+  private final static int XSD_DEC_ID;
+  private final static URI XSD_DEC_SHORT = URI.create(XSDAbbrev.NAMESPACE + "decimal");
+  private final static int XSD_DEC_SHORT_ID;
+
   private final static URI[] TYPE_URIS = {
-      URI.create(XSD.NAMESPACE + "decimal"),
+      XSD_DEC,
       URI.create(XSD.NAMESPACE + "integer"),
       URI.create(XSD.NAMESPACE + "nonPositiveInteger"),
       URI.create(XSD.NAMESPACE + "negativeInteger"),
@@ -81,7 +86,7 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
       URI.create(XSD.NAMESPACE + "unsignedByte"),
       URI.create(XSD.NAMESPACE + "positiveInteger"),
       // Hacks to pick up on missing namespaces
-      URI.create(XSDAbbrev.NAMESPACE + "decimal"),
+      XSD_DEC_SHORT,
       URI.create(XSDAbbrev.NAMESPACE + "integer"),
       URI.create(XSDAbbrev.NAMESPACE + "nonPositiveInteger"),
       URI.create(XSDAbbrev.NAMESPACE + "negativeInteger"),
@@ -100,11 +105,16 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
 
   private final static Map<URI,Integer> uriToSubtypeIdMap;
   static {
+    int decId = 0, decShortId = 0;
     // Populate the uriToSubtypeIdMap.
     uriToSubtypeIdMap = new HashMap<URI,Integer>();
     for (int i = 0; i < TYPE_URIS.length; ++i) {
       uriToSubtypeIdMap.put(TYPE_URIS[i], new Integer(i));
+      if (TYPE_URIS[i].equals(XSD_DEC)) decId = i;
+      if (TYPE_URIS[i].equals(XSD_DEC_SHORT)) decShortId = i;
     }
+    XSD_DEC_ID = decId;
+    XSD_DEC_SHORT_ID = decShortId;
   }
 
 
@@ -126,7 +136,11 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
     if (subtypeIdI == null) {
       throw new IllegalArgumentException("Invalid type URI: " + typeURI);
     }
-    return new SPDecimalImpl(subtypeIdI.intValue(), typeURI, lexicalForm);
+    if (subtypeIdI == XSD_DEC_ID || subtypeIdI == XSD_DEC_SHORT_ID) {
+      return new SPDecimalBaseImpl(subtypeIdI, typeURI, lexicalForm);
+    } else {
+      return new SPDecimalExtImpl(subtypeIdI, typeURI, lexicalForm);
+    }
   }
 
 
@@ -134,7 +148,11 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
     if (subtypeId < 0 || subtypeId >= TYPE_URIS.length) {
       throw new IllegalArgumentException("Invalid subtype ID: " + subtypeId);
     }
-    return new SPDecimalImpl(subtypeId, TYPE_URIS[subtypeId], data);
+    if (subtypeId == XSD_DEC_ID || subtypeId == XSD_DEC_SHORT_ID) {
+      return new SPDecimalBaseImpl(subtypeId, TYPE_URIS[subtypeId], data);
+    } else {
+      return new SPDecimalExtImpl(subtypeId, TYPE_URIS[subtypeId], data);
+    }
   }
 
 }
