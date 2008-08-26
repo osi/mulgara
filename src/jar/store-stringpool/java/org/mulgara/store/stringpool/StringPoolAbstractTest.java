@@ -31,9 +31,6 @@ package org.mulgara.store.stringpool;
 // third party packages
 import junit.framework.*;
 
-// Java 2 standard packages
-import java.util.*;
-
 // Log4J
 import org.apache.log4j.Logger;
 
@@ -65,6 +62,7 @@ public abstract class StringPoolAbstractTest extends TestCase {
   /**
    * The category to log to.
    */
+  @SuppressWarnings("unused")
   private static final Logger log = Logger.getLogger(StringPoolAbstractTest.class);
 
   /**
