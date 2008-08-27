@@ -35,6 +35,7 @@ import junit.framework.*;
 
 // Internal Packages
 import org.mulgara.query.rdf.XSD;
+import org.mulgara.store.stringpool.SPComparator;
 import org.mulgara.util.Constants;
 
 /**
@@ -108,6 +109,7 @@ public class SPDateUnitTest extends TestCase {
     suite.addTest(new SPDateUnitTest("testValid"));
     suite.addTest(new SPDateUnitTest("testInvalid"));
     suite.addTest(new SPDateUnitTest("testCompare"));
+    suite.addTest(new SPDateUnitTest("testAvlCompare"));
     suite.addTest(new SPDateUnitTest("testBoundaryDates"));
 
     return suite;
@@ -248,6 +250,22 @@ public class SPDateUnitTest extends TestCase {
     assertTrue(t3.compareTo(t1) == 1);
     assertTrue(t3.compareTo(t2) == 1);
     assertTrue(t3.compareTo(t3) == 0);
+  }
+
+  public void testAvlCompare() throws Exception {
+    // Create a new factory
+    SPDateFactory factory = new SPDateFactory();
+
+    SPDateImpl t1, t2;
+
+    t1 = (SPDateImpl) factory.newSPTypedLiteral(XSD.DATE_URI, "2006-08-23+00:00");
+    t2 = (SPDateImpl) factory.newSPTypedLiteral(XSD.DATE_URI, "2006-08-23");
+
+    assertEquals(0, t1.compareTo(t2));
+
+    SPComparator comparator = SPDateImpl.SPDateComparator.getInstance();
+    assertEquals(1, comparator.compare(t1.getData(), 0, t2.getData(), 0));
+    assertEquals(-1, comparator.compare(t2.getData(), 0, t1.getData(), 0));
   }
 
   public void testBoundaryDates() throws Exception {
