@@ -351,7 +351,7 @@ class SPDecimalExtImpl extends SPDecimalImpl {
     // The super will have returned a value already, but just in case we need to compare
     // values between different types, we convert.
     if (o instanceof SPDecimalBaseImpl) {
-      return -((SPDecimalBaseImpl)o).compareTo(this);
+      return BigDecimal.valueOf(l).compareTo(((SPDecimalBaseImpl)o).val);
     }
     // Compare the longs.
     SPDecimalExtImpl di = (SPDecimalExtImpl)o;
@@ -361,7 +361,7 @@ class SPDecimalExtImpl extends SPDecimalImpl {
 
   /** @see java.lang.Object#hashCode() */
   public int hashCode() {
-    return (int)(l * 7) | (int)(l >> 32);
+    return (int)(l * 7) | (int)(l >> 32) ^ subtypeId;
   }
 
 
@@ -372,7 +372,7 @@ class SPDecimalExtImpl extends SPDecimalImpl {
 
     try {
       SPDecimalExtImpl di = (SPDecimalExtImpl)obj;
-      return l == di.l;
+      return l == di.l && subtypeId == di.subtypeId;
     } catch (ClassCastException ex) {
       // obj was not an SPDecimalExtImpl.
       return false;
