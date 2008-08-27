@@ -65,59 +65,54 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalFactory.class);
 
-  private final static URI XSD_DEC = URI.create(XSD.NAMESPACE + "decimal");
-  private final static int XSD_DEC_ID;
-  private final static URI XSD_DEC_SHORT = URI.create(XSDAbbrev.NAMESPACE + "decimal");
-  private final static int XSD_DEC_SHORT_ID;
+  /** The label for the base XSD type. */
+  private final static String DECIMAL = "decimal";
 
-  private final static URI[] TYPE_URIS = {
-      XSD_DEC,
-      URI.create(XSD.NAMESPACE + "integer"),
-      URI.create(XSD.NAMESPACE + "nonPositiveInteger"),
-      URI.create(XSD.NAMESPACE + "negativeInteger"),
-      URI.create(XSD.NAMESPACE + "long"),
-      URI.create(XSD.NAMESPACE + "int"),
-      URI.create(XSD.NAMESPACE + "short"),
-      URI.create(XSD.NAMESPACE + "byte"),
-      URI.create(XSD.NAMESPACE + "nonNegativeInteger"),
-      URI.create(XSD.NAMESPACE + "unsignedLong"),
-      URI.create(XSD.NAMESPACE + "unsignedInt"),
-      URI.create(XSD.NAMESPACE + "unsignedShort"),
-      URI.create(XSD.NAMESPACE + "unsignedByte"),
-      URI.create(XSD.NAMESPACE + "positiveInteger"),
-      // Hacks to pick up on missing namespaces
-      XSD_DEC_SHORT,
-      URI.create(XSDAbbrev.NAMESPACE + "integer"),
-      URI.create(XSDAbbrev.NAMESPACE + "nonPositiveInteger"),
-      URI.create(XSDAbbrev.NAMESPACE + "negativeInteger"),
-      URI.create(XSDAbbrev.NAMESPACE + "long"),
-      URI.create(XSDAbbrev.NAMESPACE + "int"),
-      URI.create(XSDAbbrev.NAMESPACE + "short"),
-      URI.create(XSDAbbrev.NAMESPACE + "byte"),
-      URI.create(XSDAbbrev.NAMESPACE + "nonNegativeInteger"),
-      URI.create(XSDAbbrev.NAMESPACE + "unsignedLong"),
-      URI.create(XSDAbbrev.NAMESPACE + "unsignedInt"),
-      URI.create(XSDAbbrev.NAMESPACE + "unsignedShort"),
-      URI.create(XSDAbbrev.NAMESPACE + "unsignedByte"),
-      URI.create(XSDAbbrev.NAMESPACE + "positiveInteger"),
-      // Always add new entries at the end of this array.
+  /** The subtype ID for the base XSD type. */
+  private final static int XSD_DEC_ID = 0;
+
+  /**
+   * The labels for each of the XSD types.
+   * The element at position {@link #XSD_DEC_ID} must be {@link #DECIMAL}.
+   */
+  private final static String[] TYPE_LABELS = {
+    DECIMAL,    // must be at position 0 to match XSD_DEC_ID
+    "integer",
+    "nonPositiveInteger",
+    "negativeInteger",
+    "long",
+    "int",
+    "short",
+    "byte",
+    "nonNegativeInteger",
+    "unsignedLong",
+    "unsignedInt",
+    "unsignedShort",
+    "unsignedByte",
+    "positiveInteger",
   };
 
+  /** The type URIs, indexed by subtype ID. */
+  private final static URI[] TYPE_URIS = new URI[TYPE_LABELS.length];
+
+  /** A map of the URIs to the subtypes. This includes abbreviated URIs. */
   private final static Map<URI,Integer> uriToSubtypeIdMap;
+
   static {
-    int decId = 0, decShortId = 0;
+    // check that no one changed the structure
+    assert TYPE_LABELS[XSD_DEC_ID].equals(DECIMAL);
     // Populate the uriToSubtypeIdMap.
     uriToSubtypeIdMap = new HashMap<URI,Integer>();
-    for (int i = 0; i < TYPE_URIS.length; ++i) {
-      uriToSubtypeIdMap.put(TYPE_URIS[i], new Integer(i));
-      if (TYPE_URIS[i].equals(XSD_DEC)) decId = i;
-      if (TYPE_URIS[i].equals(XSD_DEC_SHORT)) decShortId = i;
+    for (int i = 0; i < TYPE_LABELS.length; ++i) {
+      URI type = URI.create(XSD.NAMESPACE + TYPE_LABELS[i]);
+      uriToSubtypeIdMap.put(type, i);
+      uriToSubtypeIdMap.put(URI.create(XSDAbbrev.NAMESPACE + TYPE_LABELS[i]), i);
+      TYPE_URIS[i] = type;
     }
-    XSD_DEC_ID = decId;
-    XSD_DEC_SHORT_ID = decShortId;
   }
 
 
+  /** @see org.mulgara.store.stringpool.SPTypedLiteralFactory#getTypeId() */
   public int getTypeId() {
     return SPDecimalImpl.TYPE_ID;
   }
@@ -125,18 +120,20 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
 
   /**
    * Returns the type URIs for the objects created by this factory.
+   * @return All the type URIs this factory handles.
    */
   public Set<URI> getTypeURIs() {
     return Collections.unmodifiableSet(uriToSubtypeIdMap.keySet());
   }
 
 
+  /** @see org.mulgara.store.stringpool.SPTypedLiteralFactory#newSPTypedLiteral(java.net.URI, java.lang.String) */
   public SPTypedLiteral newSPTypedLiteral(URI typeURI, String lexicalForm) {
     Integer subtypeIdI = (Integer)uriToSubtypeIdMap.get(typeURI);
     if (subtypeIdI == null) {
       throw new IllegalArgumentException("Invalid type URI: " + typeURI);
     }
-    if (subtypeIdI == XSD_DEC_ID || subtypeIdI == XSD_DEC_SHORT_ID) {
+    if (subtypeIdI == XSD_DEC_ID) {
       return new SPDecimalBaseImpl(subtypeIdI, typeURI, lexicalForm);
     } else {
       return new SPDecimalExtImpl(subtypeIdI, typeURI, lexicalForm);
@@ -144,11 +141,12 @@ public final class SPDecimalFactory implements SPTypedLiteralFactory {
   }
 
 
+  /** @see org.mulgara.store.stringpool.SPTypedLiteralFactory#newSPTypedLiteral(int, java.nio.ByteBuffer) */
   public SPTypedLiteral newSPTypedLiteral(int subtypeId, ByteBuffer data) {
     if (subtypeId < 0 || subtypeId >= TYPE_URIS.length) {
       throw new IllegalArgumentException("Invalid subtype ID: " + subtypeId);
     }
-    if (subtypeId == XSD_DEC_ID || subtypeId == XSD_DEC_SHORT_ID) {
+    if (subtypeId == XSD_DEC_ID) {
       return new SPDecimalBaseImpl(subtypeId, TYPE_URIS[subtypeId], data);
     } else {
       return new SPDecimalExtImpl(subtypeId, TYPE_URIS[subtypeId], data);
