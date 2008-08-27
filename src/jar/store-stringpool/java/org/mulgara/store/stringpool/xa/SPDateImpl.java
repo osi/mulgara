@@ -191,19 +191,26 @@ public final class SPDateImpl extends AbstractSPTypedLiteral {
   }
 
 
-  /* from Object. */
-
+  /**
+   * Used for caching, so it cannot compare by value.
+   * @return The hashcode for this date with timezone.
+   */
   public int hashCode() {
-    return date.hashCode();
+    return date.hashCode() ^ timezoneOffset;
   }
 
 
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   * Used for caching, so it cannot compare by value.
+   */
   public boolean equals(Object obj) {
     // Check for null.
     if (obj == null) return false;
 
     try {
-      return date.equals(((SPDateImpl)obj).date);
+      SPDateImpl oDate = (SPDateImpl)obj;
+      return date.equals(oDate.date) && timezoneOffset == oDate.timezoneOffset;
     } catch (ClassCastException ex) {
       // obj was not an SPDateImpl.
       return false;
