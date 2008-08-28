@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.mulgara.util.Pair;
+import org.mulgara.util.functional.Pair;
 
 /**
  * Represents the parameters used in an HTTP request.
