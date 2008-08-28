@@ -38,10 +38,10 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
 import org.mulgara.server.AbstractServer;
 import org.mulgara.server.SessionFactory;
-import org.mulgara.util.Fn1E;
-import org.mulgara.util.C;
-import org.mulgara.util.Pair;
 import org.mulgara.util.StackTrace;
+import org.mulgara.util.functional.C;
+import org.mulgara.util.functional.Fn1E;
+import org.mulgara.util.functional.Pair;
 
 import static org.mulgara.webquery.Template.*;
 
