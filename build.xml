@@ -72,7 +72,7 @@
   <property file="${jar.src.dir}/tuples/tuples-build.properties"/>
   <property file="${jar.src.dir}/util-xa/util-xa-build.properties"/>
   <property file="${jar.src.dir}/util/util-build.properties"/>
-  <property file="${jar.src.dir}/webquery/webquery-build.properties"/>
+  <property file="${jar.src.dir}/web/webquery-build.properties"/>
 
   <property name="webui.viewer.src.dir"
       value="${webui.src.dir}/java/org/mulgara/webui/viewer"/>
@@ -145,7 +145,7 @@
   <import file="${jar.src.dir}/tuples/build.xml"/>
   <import file="${jar.src.dir}/util-xa/build.xml"/>
   <import file="${jar.src.dir}/util/build.xml"/>
-  <import file="${jar.src.dir}/webquery/build.xml"/>
+  <import file="${jar.src.dir}/web/build.xml"/>
 
   <!-- =================================================================== -->
   <!--                          Path Definitions                           -->
@@ -354,7 +354,7 @@
                    store-stringpool-xa-dist,
                    store-stringpool-xa11-dist, tag-dist,
                    tuples-dist, tuples-hybrid-dist,
-                   util-dist, util-xa-dist, webquery-dist"
+                   util-dist, util-xa-dist, web-dist"
           description="Creates the distribution base jars">
   </target>
 
@@ -771,7 +771,7 @@
              sofa-jar, krule-jar, rules-jar, sparql-protocol-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
-             tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war, webquery-jar"
+             tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war, web-jar"
     unless="javadoc-uptodate"
     description="Creates the project javadoc">
     <delete dir="${javadoc.dir}"/>
@@ -894,7 +894,7 @@
       <sourcepath path="${util.src.dir}/java"/>
       <sourcepath path="${util-xa.src.dir}/java"/>
       <sourcepath path="${webui.src.dir}/java"/>
-      <sourcepath path="${webquery.src.dir}/java"/>
+      <sourcepath path="${web.src.dir}/java"/>
       <sourcepath path="${obj.dir}/jar/config/java"/>
       <sourcepath path="${obj.dir}/jar/itql/java"/>
       <sourcepath path="${obj.dir}/jar/query/java"/>
@@ -1739,7 +1739,7 @@
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, store-stringpool-xa11-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar,
-             webservices-war, webui-war, webquery-jar, -embedded-dist-uptodate"
+             webservices-war, webui-war, web-jar, -embedded-dist-uptodate"
           description="Creates the executable JAR for the Embedded Mulgara server"
                 unless="embedded.dist.uptodate">
 
@@ -1863,7 +1863,7 @@
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${webquery.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
 
       <!-- include pre-bundled webapps -->
@@ -1910,7 +1910,7 @@
              server-jar, server-beep-jar, server-rmi-jar,
              sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, store-stringpool-xa11-jar, tuples-jar,
-             tuples-hybrid-jar, util-jar, util-xa-jar, webquery-jar,
+             tuples-hybrid-jar, util-jar, util-xa-jar, web-jar,
              -embedded-dist-uptodate"
           description="core dist for embedded apps, without 3rd party libs"
                 unless="embedded.dist.uptodate">
@@ -1969,7 +1969,7 @@
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${webquery.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
 

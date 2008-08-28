@@ -25,7 +25,7 @@
     <fileset file="${store.dist.dir}/${store.jar}"/>
     <fileset file="${store-xa.dist.dir}/${store-xa.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
-    <fileset file="${webquery.dist.dir}/${webquery.jar}"/>
+    <fileset file="${web.dist.dir}/${web.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${util-xa.dist.dir}/${util-xa.jar}"/>
   </path>
