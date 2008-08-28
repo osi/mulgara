@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.mulgara.util.C;
+import org.mulgara.util.functional.C;
 
 /**
  * Represents an HTML element that can be written to an output stream.
