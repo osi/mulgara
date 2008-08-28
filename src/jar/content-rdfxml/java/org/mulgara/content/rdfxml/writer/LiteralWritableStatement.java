@@ -69,8 +69,8 @@ public class LiteralWritableStatement extends AbstractWritableStatement {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger logger = Logger.getLogger(LiteralWritableStatement.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(LiteralWritableStatement.class.getName());
 
   /** Literal being writen */
   private Literal literal = null;

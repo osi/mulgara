@@ -28,11 +28,8 @@
 package org.mulgara.content.rdfxml;
 
 // Java 2 standard packages
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.util.Map;
 
 // Java 2 enterprise packages
 import javax.activation.MimeType;
@@ -69,6 +66,7 @@ public class RDFXMLContentHandler implements ContentHandler
   /**
    * Logger.
    */
+  @SuppressWarnings("unused")
   private static Logger logger =
     Logger.getLogger(RDFXMLContentHandler.class.getName());
 

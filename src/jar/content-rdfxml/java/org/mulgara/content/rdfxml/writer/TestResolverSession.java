@@ -61,11 +61,8 @@ import org.mulgara.store.tuples.Tuples;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class TestResolverSession implements ResolverSession
-{
-  /**
-   * Our pretend node pool, a counter used to generate new local node values.
-   */
+public class TestResolverSession implements ResolverSession {
+  /** Our pretend node pool, a counter used to generate new local node values. */
   private long top = 0;
 
   /**
@@ -75,72 +72,55 @@ public class TestResolverSession implements ResolverSession
    */
   private long bNode = 1000000;
 
-  /**
-   * Our pretend string pool, a map from global JRDF nodes to local
-   * {@link Long}s.
-   */
-  private final Map map = new HashMap();
+  /** Our pretend string pool, a map from global JRDF nodes to local {@link Long}s. */
+  private final Map<Node,Long> map = new HashMap<Node,Long>();
 
-  /**
-   * Mirror to the string pool map that allows globalization.
-   */
-  private final Map mirrorMap = new HashMap();
+  /** Mirror to the string pool map that allows globalization. */
+  private final Map<Long,Node> mirrorMap = new HashMap<Long,Node>();
 
   //
   // Methods implementing ResolverSession
   //
 
-  public Node globalize(long node) throws GlobalizeException
-  {
-
-    Node gNode = (Node) mirrorMap.get(new Long(node));
-    return gNode;
+  public Node globalize(long node) throws GlobalizeException {
+    return mirrorMap.get(node);
   }
 
-  public long lookup(Node node) throws LocalizeException
-  {
-    Object object = map.get(node);
+  public long lookup(Node node) throws LocalizeException {
+    Long object = map.get(node);
     if (object == null) {
       throw new LocalizeException(node, "No such node");
-    }
-    else {
-      return ((Long) object).longValue();
+    } else {
+      return object.longValue();
     }
   }
 
-  public long lookupPersistent(Node node) throws LocalizeException
-  {
+  public long lookupPersistent(Node node) throws LocalizeException {
     throw new LocalizeException(node, "Not implemented");
   }
 
-  public long localize(Node node) throws LocalizeException
-  {
-    Object object = map.get(node);
+  public long localize(Node node) throws LocalizeException {
+    Long object = map.get(node);
     if (object == null) {
       top++;
-
       Long id = new Long(top);
 
       if (node instanceof BlankNodeImpl) {
-
         bNode++;
         id = new Long(bNode);
-        ((BlankNodeImpl) node).setNodeId(bNode);
+        ((BlankNodeImpl)node).setNodeId(bNode);
       }
 
       map.put(node, id);
       mirrorMap.put(id, node);
 
       return id.longValue();
-    }
-    else {
-
-      return ((Long) object).longValue();
+    } else {
+      return object.longValue();
     }
   }
 
-  public long localizePersistent(Node node) throws LocalizeException
-  {
+  public long localizePersistent(Node node) throws LocalizeException {
     throw new LocalizeException(node, "Not implemented");
   }
 
@@ -168,7 +148,6 @@ public class TestResolverSession implements ResolverSession
   /**
    * Retrieve the SPObject factory from the stringpool to allow for the creation
    * of new SPObjects.
-   *
    * @return The factory to allow for creation of SPObjects
    */
   public SPObjectFactory getSPObjectFactory() {

@@ -63,7 +63,6 @@ import org.mortbay.jetty.AbstractConnector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandler;
-import org.mortbay.jetty.handler.DefaultHandler;
 import org.mortbay.jetty.nio.BlockingChannelConnector;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppClassLoader;

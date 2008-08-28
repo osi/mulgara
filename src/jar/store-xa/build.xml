@@ -23,6 +23,7 @@
     <fileset file="${store-nodepool.dist.dir}/${store-nodepool.jar}"/>
     <fileset file="${store-stringpool.dist.dir}/${store-stringpool.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
+    <fileset file="${query.dist.dir}/${query.jar}"/>
   </path>
 
   <path id="store-xa-test-classpath">
@@ -49,7 +50,7 @@
 
   <target name="store-xa-compile"
           depends="-store-xa-prepare, store-jar, store-nodepool-jar,
-                   store-stringpool-jar, resolver-spi-jar"
+                   store-stringpool-jar, resolver-spi-jar, query-jar"
           description="Compiles all store-xa related files included generated
                        source code">
 

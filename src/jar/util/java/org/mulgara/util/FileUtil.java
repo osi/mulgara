@@ -29,6 +29,12 @@ package org.mulgara.util;
 
 // Java 2 standard packages
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.apache.log4j.*;
 
 /**
@@ -37,22 +43,17 @@ import org.apache.log4j.*;
  * @created 2003-11-27
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.9 $
- *
- * @modified $Date: 2005/01/05 04:59:29 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
  * @copyright &copy;2003
  *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
- *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public abstract class FileUtil {
 
   /** Logger.  */
   private static Logger logger = Logger.getLogger(FileUtil.class.getName());
+
+  /** The size of the buffer used to read and write to files. 0.25MB. */
+  private static final int BUFFER_SIZE = 1024 * 256;
 
   /**
    * Recursively delete a file or directory.
@@ -79,4 +80,58 @@ public abstract class FileUtil {
 
     return directory.delete();
   }
+
+
+  /**
+   * @see #copyFile(File, File)
+   * @param src The path for the source file.
+   * @param dest The destination file or directory.
+   */
+  public static String copyFile(String src, File dest) throws IOException {
+    return copyFile(new File(src), dest);
+  }
+
+
+  /**
+   * @see #copyFile(File, File)
+   * @param src The source file.
+   * @param dest The path for the destination file or directory.
+   */
+  public static String copyFile(File src, String dest) throws IOException {
+    return copyFile(src, new File(dest));
+  }
+
+
+  /**
+   * @see #copyFile(File, File)
+   * @param src The path for the source file.
+   * @param dest The path for the destination file or directory.
+   */
+  public static String copyFile(String src, String dest) throws IOException {
+    return copyFile(new File(src), new File(dest));
+  }
+
+
+  /**
+   * Copies a file from one place to another. This is similar to the "cp" utility.
+   * @param src The source file.
+   * @param dest The destination file or directory. If this specifies a directory,
+   *        then the filename part of <value>src</value> will be used.
+   * @return The path of the file that was written.
+   * @throws IOException If there was a problem reading or writing the file.
+   */
+  public static String copyFile(File src, File dest) throws IOException {
+    if (dest.isDirectory()) dest = new File(dest, src.getName());
+    InputStream in = new FileInputStream(src);
+    OutputStream out = new FileOutputStream(dest);
+    byte[] buffer = new byte[BUFFER_SIZE];
+    int len;
+    while ((len = in.read(buffer)) >= 0) {
+      if (len != 0) out.write(buffer, 0, len);
+    }
+    in.close();
+    out.close();
+    return dest.getPath();
+  }
+
 }

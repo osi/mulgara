@@ -21,7 +21,6 @@
   <property file="${jar.src.dir}/content-mp3/content-mp3-build.properties"/>
   <property file="${jar.src.dir}/content-n3/content-n3-build.properties"/>
   <property file="${jar.src.dir}/content-rdfxml/content-rdfxml-build.properties"/>
-  <property file="${jar.src.dir}/content-rio/content-rio-build.properties"/>
   <property file="${jar.src.dir}/descriptor/descriptor-build.properties"/>
   <property file="${jar.src.dir}/driver/driver-build.properties"/>
   <property file="${jar.src.dir}/dtd/dtd-build.properties"/>
@@ -72,7 +71,7 @@
   <property file="${jar.src.dir}/tuples/tuples-build.properties"/>
   <property file="${jar.src.dir}/util-xa/util-xa-build.properties"/>
   <property file="${jar.src.dir}/util/util-build.properties"/>
-  <property file="${jar.src.dir}/web/webquery-build.properties"/>
+  <property file="${jar.src.dir}/web/web-build.properties"/>
 
   <property name="webui.viewer.src.dir"
       value="${webui.src.dir}/java/org/mulgara/webui/viewer"/>
@@ -94,7 +93,6 @@
   <import file="${jar.src.dir}/content-mp3/build.xml"/>
   <import file="${jar.src.dir}/content-n3/build.xml"/>
   <import file="${jar.src.dir}/content-rdfxml/build.xml"/>
-  <import file="${jar.src.dir}/content-rio/build.xml"/>
   <import file="${jar.src.dir}/descriptor/build.xml"/>
   <import file="${jar.src.dir}/driver/build.xml"/>
   <import file="${jar.src.dir}/dtd/build.xml"/>
@@ -337,7 +335,7 @@
   <target name="base-dist"
           depends="ant-task-dist,
                    client-jrdf-dist, content-mbox-dist,
-                   content-mp3-dist, content-rdfxml-dist, content-rio-dist,
+                   content-mp3-dist, content-rdfxml-dist,
                    descriptor-dist, driver-dist, dtd-dist, itql-dist, jrdf-dist,
                    store-dist, store-xa-dist, store-nodepool-dist,
                    store-nodepool-memory-dist,
@@ -512,14 +510,14 @@
           lib/${resolver-store.jar}, lib/${resolver-url.jar}, lib/${resolver-view.jar},
           lib/${tuples.jar}, lib/${tuples-hybrid.jar}, lib/${content-mp3.jar},
           lib/${content-n3.jar}, lib/${content-mbox.jar}, lib/${content-rdfxml.jar},
-          lib/${content-rio.jar}, lib/${resolver-nodetype.jar}, lib/${resolver-prefix.jar},
+          lib/${resolver-nodetype.jar}, lib/${resolver-prefix.jar},
           lib/${resolver-relational.jar}, lib/${resolver-xsd.jar}, lib/${resolver-test.jar},
           lib/${resolver-distributed.jar},
-          lib/${resolver-jar.jar}, lib/${dtd.jar}, lib/${jrdf.base.jar}
+          lib/${resolver-jar.jar}, lib/${dtd.jar},
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
           lib/${joda-time.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet-jsp.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
-          lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${jrdf.jar}, lib/${saaj.jar},
+          lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
           lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${mulgara-sparql.jar}, lib/${sesame-model.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
@@ -546,7 +544,7 @@
                    resolver-store-dist, resolver-url-dist, resolver-jar-dist,
                    resolver-view-dist, resolver-xsd-dist,
                    content-mbox-dist, content-mp3-dist, content-n3-dist,
-                   content-rdfxml-dist, content-rio-dist,
+                   content-rdfxml-dist,
                    lite-create-manifest, javadoc-dist,
                    lite-dist-uptodate"
           unless="dist.lite.uptodate"
@@ -571,7 +569,7 @@
                     mulgara.policy"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="
         ${log4j.jar}, ${icu4j.jar}, ${activation.jar}, ${beep.jar},
-        ${jargs.jar}, ${jrdf.jar}, ${jetty.jar}, ${jetty.plus.jar},
+        ${jargs.jar}, ${jetty.jar}, ${jetty.plus.jar},
         ${servlet-jsp.jar}, ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
         ${joda-time.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
@@ -598,7 +596,7 @@
           ${resolver-store.jar}, ${resolver-url.jar}, ${resolver-view.jar},
           ${tuples.jar}, ${tuples-hybrid.jar}, ${content-mp3.jar},
           ${content-n3.jar}, ${content-mbox.jar}, ${content-rdfxml.jar},
-          ${content-rio.jar}, ${resolver-nodetype.jar}, ${resolver-prefix.jar},
+          ${resolver-nodetype.jar}, ${resolver-prefix.jar},
           ${resolver-xsd.jar}, ${resolver-test.jar}, ${resolver-relational.jar},
           ${resolver-distributed.jar},
           ${resolver-jar.jar}, ${dtd.jar}, ${jrdf.base.jar}"/>
@@ -756,7 +754,7 @@
     depends="javadoc-uptodate, javadoc-overview.html,
              ant-task-jar, client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar,
-             content-n3-jar, content-rdfxml-jar, content-rio-jar,
+             content-n3-jar, content-rdfxml-jar,
              itql-jar, sparql-int-jar,
              doclet.jar, jrdf-jar, store-jar,
              store-xa-jar,
@@ -851,7 +849,6 @@
       <sourcepath path="${content-mp3.src.dir}/java"/>
       <sourcepath path="${content-n3.src.dir}/java"/>
       <sourcepath path="${content-rdfxml.src.dir}/java"/>
-      <sourcepath path="${content-rio.src.dir}/java"/>
       <sourcepath path="${driver.src.dir}/java"/>
       <sourcepath path="${dtd.src.dir}/java"/>
       <sourcepath path="${itql.src.dir}/java"/>
@@ -921,7 +918,7 @@
                    client-jrdf-javadoc,
                    content-mbox-javadoc,
                    content-mp3-javadoc, content-n3-javadoc,
-                   content-rdfxml-javadoc, content-rio-javadoc,
+                   content-rdfxml-javadoc,
                    descriptor-javadoc, driver-javadoc, dtd-javadoc,
                    itql-javadoc, sparql-int-javadoc,
                    store-javadoc, store-xa-javadoc,
@@ -972,7 +969,7 @@
         <jvmarg value="${arch.bits}"/>
 
         <classpath>
-            <pathelement path="${lib.dir}/${jrdf.jar}, ${lib.dir}/${sesame-model.jar}"/>
+            <pathelement path="${lib.dir}/${sesame-model.jar}"/>
         </classpath>
       </java>
   </target>
@@ -1055,7 +1052,7 @@
                  includes="activation*.jar, beepcore-*.jar, jargs-*.jar,
                            icu4j.jar, jena*.jar, antlr*.jar,
                            ${commons-logging.jar}, log4j*.jar, lucene*.jar,
-                           xerces*.jar, xmlParserAPIs.jar, ${jrdf.jar},
+                           xerces*.jar, xmlParserAPIs.jar,
                            ${saaj.jar}, ${sesame-model.jar}"/>
       </classpath>
     </java>
@@ -1432,7 +1429,7 @@
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
-        lucene*.jar, apache-soap-*.jar, ${jrdf.jar}, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
+        lucene*.jar, apache-soap-*.jar, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
         ${driver.jar}, ${itql.jar}, ${sparql-int.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
@@ -1723,7 +1720,7 @@
   <target name="embedded-dist"
           depends="client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar, content-n3-jar,
-             content-rdfxml-jar, content-rio-jar,
+             content-rdfxml-jar,
              create-manifest, demo-jar, dtd-jar, driver-jar, dtd-jar,
              itql-jar, sparql-int-jar,
              javadoc-dist, jrdf-jar, store-jar, store-xa-jar,
@@ -1790,7 +1787,6 @@
       <zipfileset src="${lib.dir}/${joda-time.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jsr.173.api.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jsr.173.ri.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
@@ -1850,7 +1846,6 @@
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-rio.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
@@ -1895,7 +1890,7 @@
   <target name="core-dist"
           depends="client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar, content-n3-jar,
-             content-rdfxml-jar, content-rio-jar,
+             content-rdfxml-jar,
              demo-jar, driver-jar, dtd-jar,
              itql-jar, sparql-int-jar,
              jrdf-jar, store-jar, store-xa-jar,
@@ -1957,7 +1952,6 @@
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-rio.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
@@ -2042,7 +2036,7 @@
 
   <target name="resolver-api-test"
     depends="content-mbox-test, content-mp3-test, content-n3-test,
-             content-rdfxml-test, content-rio-test,
+             content-rdfxml-test,
              resolver-test, resolver-null-test, resolver-file-test,
              resolver-filesystem-test, resolver-jar-test, resolver-gis-test,
              resolver-http-test, resolver-lucene-test,

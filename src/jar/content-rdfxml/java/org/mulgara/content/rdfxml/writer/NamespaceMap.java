@@ -68,16 +68,16 @@ import java.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class NamespaceMap extends HashMap {
+public class NamespaceMap extends HashMap<String,Object> {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger logger = Logger.getLogger(NamespaceMap.class.
-      getName());
+  /** For serialization */
+  private static final long serialVersionUID = 1161744419591660130L;
+
+  /** Logger. This is named after the class. */
+  private final static Logger logger = Logger.getLogger(NamespaceMap.class.getName());
 
   /** A mirror of this map (where keys and values are swapped) */
-  private Map mirror = null;
+  private Map<Object,String> mirror = null;
 
   /** Prefix used to abbreviate RDF Namespace */
   private static final String RDF_PREFIX = "rdf";
@@ -92,30 +92,23 @@ public class NamespaceMap extends HashMap {
    * @param session ResolverSession
    * @throws GraphException
    */
-  public NamespaceMap(Statements statements, ResolverSession session) throws
-      GraphException {
+  public NamespaceMap(Statements statements, ResolverSession session) throws GraphException {
 
-    mirror = new HashMap();
+    mirror = new HashMap<Object,String>();
 
     //add default namespaces
-    put(RDF_PREFIX, RDF.baseURI);
-    put(RDFS_PREFIX, RDFS.baseURI);
+    put(RDF_PREFIX, RDF.BASE_URI);
+    put(RDFS_PREFIX, RDFS.BASE_URI);
     put("owl", "http://www.w3.org/2002/07/owl#");
     put("dc", "http://purl.org/dc/elements/1.1/");
 
     //read namespaces from the statements
     try {
-
       populate(statements, session);
-    }
-    catch (TuplesException tuplesException) {
-
+    } catch (TuplesException tuplesException) {
       throw new GraphException("Could not read statements.", tuplesException);
-    }
-    catch (GlobalizeException globalException) {
-
-      throw new GraphException("Could not globalize statements.",
-          globalException);
+    } catch (GlobalizeException globalException) {
+      throw new GraphException("Could not globalize statements.", globalException);
     }
   }
 
@@ -132,7 +125,7 @@ public class NamespaceMap extends HashMap {
   private void populate(Statements statements, ResolverSession session) throws
       TuplesException, GraphException, GlobalizeException {
 
-    Statements clonedStatements = (Statements) statements.clone();
+    Statements clonedStatements = (Statements)statements.clone();
 
     try {
 
@@ -201,19 +194,14 @@ public class NamespaceMap extends HashMap {
    */
   protected void addNamespaceURI(URI uri) throws GraphException {
 
-    if (uri == null) {
-
-      throw new IllegalArgumentException("URI argument is null.");
-    }
+    if (uri == null) throw new IllegalArgumentException("URI argument is null.");
 
     //extract namespace from URI
     String uriString = uri.toString();
     String newURI = toNamespaceURI(uriString);
 
     //only add namespace if it is new
-    if ((newURI != null)
-        && (!containsValue(newURI))) {
-
+    if ((newURI != null) && !containsValue(newURI)) {
       //add to namespaces
       put("ns" + size(), newURI);
     }
@@ -228,10 +216,7 @@ public class NamespaceMap extends HashMap {
    */
   private String toNamespaceURI(String uri) throws GraphException {
 
-    if (uri == null) {
-
-      throw new IllegalArgumentException("URI argument is null.");
-    }
+    if (uri == null) throw new IllegalArgumentException("URI argument is null.");
 
     //return original string by default
     String nsURI = uri;
@@ -251,7 +236,7 @@ public class NamespaceMap extends HashMap {
       }
     }
 
-    assert nsURI != null:"Extracted namespace is null";
+    assert nsURI != null : "Extracted namespace is null";
     return nsURI;
   }
 
@@ -262,8 +247,7 @@ public class NamespaceMap extends HashMap {
    * @return String
    */
   public String getRDFPrefix() {
-
-    return this.RDF_PREFIX;
+    return RDF_PREFIX;
   }
 
   /**
@@ -277,12 +261,9 @@ public class NamespaceMap extends HashMap {
 
     String newURI = null;
     String nsURI = toNamespaceURI(uri);
-    Object key = mirror.get(nsURI);
+    String key = mirror.get(nsURI);
 
-    if (key == null) {
-
-      throw new GraphException("Namespace: " + nsURI + " has not been mapped.");
-    }
+    if (key == null) throw new GraphException("Namespace: " + nsURI + " has not been mapped.");
 
     //should all or part of the URI be replaced?
     if (uri.equals(nsURI)) {
@@ -293,8 +274,7 @@ public class NamespaceMap extends HashMap {
       //this may produce invalid XML
       logger.warn("Replacing URI: " + uri + " with ENTITY: " + newURI +
           ". Namepace replacement may be invalid XML.");
-    }
-    else if (uri.startsWith(nsURI)) {
+    } else if (uri.startsWith(nsURI)) {
 
       //replace namespace part with key
       newURI = uri.replaceAll(nsURI, key + ":");
@@ -320,10 +300,7 @@ public class NamespaceMap extends HashMap {
     String uri = original;
 
     //validate URI
-    if (original != null) {
-
-      uri = original.replaceAll("_[0-9]+", "li");
-    }
+    if (original != null) uri = original.replaceAll("_[0-9]+", "li");
 
     return uri;
   }
@@ -333,11 +310,11 @@ public class NamespaceMap extends HashMap {
    * Overridden to allow for bi-directional mapping. Not intended to be called
    * outside this class.
    *
-   * @param key Object
+   * @param key String
    * @param value Object
    * @return Object
    */
-  public Object put(Object key, Object value) {
+  public Object put(String key, Object value) {
 
     mirror.put(value, key);
     return super.put(key, value);

@@ -71,30 +71,26 @@ class TestResolverSession implements ResolverSession
    * Our pretend string pool, a map from global JRDF nodes to local
    * {@link Long}s.
    */
-  private final Map map = new HashMap();
+  private final Map<Node,Long> map = new HashMap<Node,Long>();
 
   //
   // Methods implementing ResolverSession
   //
 
-  public Node globalize(long node) throws GlobalizeException
-  {
+  public Node globalize(long node) throws GlobalizeException {
     throw new GlobalizeException(node, "Not implemented");
   }
 
-  public long lookup(Node node) throws LocalizeException
-  {
-    Object object = map.get(node);
+  public long lookup(Node node) throws LocalizeException {
+    Long object = map.get(node);
     if (object == null) {
       throw new LocalizeException(node, "No such node");
-    }
-    else {
-      return ((Long) object).longValue();
+    } else {
+      return object.longValue();
     }
   }
 
-  public long lookupPersistent(Node node) throws LocalizeException
-  {
+  public long lookupPersistent(Node node) throws LocalizeException {
     throw new LocalizeException(node, "Not implemented");
   }
 
@@ -111,8 +107,7 @@ class TestResolverSession implements ResolverSession
     }
   }
 
-  public long localizePersistent(Node node) throws LocalizeException
-  {
+  public long localizePersistent(Node node) throws LocalizeException {
     throw new LocalizeException(node, "Not implemented");
   }
 

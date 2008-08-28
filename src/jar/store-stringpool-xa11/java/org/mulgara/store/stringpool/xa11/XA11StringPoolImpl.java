@@ -56,7 +56,7 @@ import org.mulgara.store.xa.XANodePool;
 import org.mulgara.store.xa.XAStringPool;
 import org.mulgara.store.xa.XAUtils;
 import org.mulgara.util.Constants;
-import org.mulgara.util.Pair;
+import org.mulgara.util.functional.Pair;
 
 import static org.mulgara.store.stringpool.xa11.DataStruct.*;
 

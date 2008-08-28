@@ -66,8 +66,8 @@ public abstract class AbstractWritableStatement {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger logger = Logger.getLogger(AbstractWritableStatement.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(AbstractWritableStatement.class.getName());
 
   /** Subject of the statement to be written */
   protected SubjectNode subject = null;

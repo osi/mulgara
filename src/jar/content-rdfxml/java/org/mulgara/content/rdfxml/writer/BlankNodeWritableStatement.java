@@ -68,8 +68,8 @@ public class BlankNodeWritableStatement extends AbstractWritableStatement {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger logger = Logger.getLogger(
-      BlankNodeWritableStatement.class.getName());
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(BlankNodeWritableStatement.class.getName());
 
   /** BlankNode being writen */
   private BlankNode blankNode = null;

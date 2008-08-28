@@ -164,7 +164,7 @@ public class StreamAnswer implements Answer, XMLStreamConstants
             logger.debug("document element "+xmlStreamReader.getName());
           }
 
-          if (xmlStreamReader.getName().equals("{"+RDF.baseURI+"}RDF")) {
+          if (xmlStreamReader.getName().equals("{"+RDF.BASE_URI+"}RDF")) {
             throw new StreamFormatException("Document element is not RDF");
           }
 
@@ -533,9 +533,9 @@ public class StreamAnswer implements Answer, XMLStreamConstants
 
     // Write the Answer's solutions
     xmlStreamWriter.writeStartElement("RDF");
-    xmlStreamWriter.setPrefix("rdf", RDF.baseURI.toString());
+    xmlStreamWriter.setPrefix("rdf", RDF.BASE_URI.toString());
     xmlStreamWriter.setDefaultNamespace(NAMESPACE);
-    xmlStreamWriter.writeNamespace("rdf", RDF.baseURI.toString());
+    xmlStreamWriter.writeNamespace("rdf", RDF.BASE_URI.toString());
     serializeSolutions(answer, xmlStreamWriter);
     xmlStreamWriter.writeEndElement();
 
@@ -602,7 +602,7 @@ public class StreamAnswer implements Answer, XMLStreamConstants
 
           if (object instanceof Answer) {
             xmlStreamWriter.writeAttribute(
-              RDF.baseURI.toString(), "parseType", "Collection"
+              RDF.BASE_URI.toString(), "parseType", "Collection"
             );
             serializeMetadata((Answer) object, xmlStreamWriter);
             serializeSolutions((Answer) object, xmlStreamWriter);
@@ -611,7 +611,7 @@ public class StreamAnswer implements Answer, XMLStreamConstants
             Literal literal = (Literal) object;
             if (literal.getDatatypeURI() != null) {
               xmlStreamWriter.writeAttribute(
-                RDF.baseURI.toString(),
+                RDF.BASE_URI.toString(),
                 "datatype",
                 literal.getDatatypeURI().toString()
               );
@@ -620,7 +620,7 @@ public class StreamAnswer implements Answer, XMLStreamConstants
           }
           else if (object instanceof URIReference) {
             xmlStreamWriter.writeAttribute(
-              RDF.baseURI.toString(), "resource", object.toString()
+              RDF.BASE_URI.toString(), "resource", object.toString()
             );
           }
           else {

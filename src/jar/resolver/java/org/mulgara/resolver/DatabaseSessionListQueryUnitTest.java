@@ -320,8 +320,8 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
 
     //add some statements
     URIReference subject = null;
-    URIReference predicate = new URIReferenceImpl(new URI(RDF.baseURI + "type"));
-    URIReference object = new URIReferenceImpl(new URI(RDFS.baseURI + "Class"));
+    URIReference predicate = new URIReferenceImpl(new URI(RDF.BASE_URI + "type"));
+    URIReference object = new URIReferenceImpl(new URI(RDFS.BASE_URI + "Class"));
     for (int i = 0; i < NUM_STATEMENTS; i++) {
 
       subject = new URIReferenceImpl(URI.create(Mulgara.NAMESPACE + "subject" + i));

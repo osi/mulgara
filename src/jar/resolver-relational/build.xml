@@ -28,7 +28,7 @@
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${resolver.dist.dir}/${resolver.jar}"/>
     <fileset file="${util-xa.dist.dir}/${util-xa.jar}"/>
-    <fileset file="${content-rio.dist.dir}/${content-rio.jar}"/>
+    <fileset file="${content-rdfxml.dist.dir}/${content-rdfxml.jar}"/>
     <fileset file="${server.dist.dir}/${server-base.jar}"/>
 
     <fileset file="${resolver-file.dist.dir}/${resolver-file.jar}"/>

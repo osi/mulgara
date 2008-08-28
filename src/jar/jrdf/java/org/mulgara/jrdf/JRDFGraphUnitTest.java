@@ -61,7 +61,7 @@ import org.mulgara.server.driver.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class JRDFGraphUnitTest extends AbstractGraphUnitTest {
+public class JRDFGraphUnitTest extends AbstractGraphTest {
 
   /**
    * init the logging class

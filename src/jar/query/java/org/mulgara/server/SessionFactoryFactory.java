@@ -37,6 +37,7 @@ import org.apache.log4j.Logger; // Apache Log4J
 // Locally written packages
 import org.mulgara.config.MulgaraConfig;
 import org.mulgara.server.SessionFactory;
+import org.mulgara.util.ClasspathDesc;
 
 import java.lang.reflect.Constructor;
 
@@ -174,8 +175,11 @@ public class SessionFactoryFactory {
 
       //instantiate
       return constructor.newInstance(args);
-    }
-    catch (Exception exception) {
+    } catch (ClassNotFoundException cnf) {
+      logger.error("Could not find TripleStoreImplementation class in: " +
+          ClasspathDesc.getPath());
+      throw new SessionFactoryException("Could not instantiate TripleStoreImplementation from configuration.", cnf);
+    } catch (Exception exception) {
 
       throw new SessionFactoryException("Could not instantiate " +
                                         "TripleStoreImplementation from " +

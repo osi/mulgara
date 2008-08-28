@@ -6,15 +6,14 @@
 	<classpathentry kind="src" path="src/jar/content-mp3/java"/>
 	<classpathentry kind="src" path="src/jar/content-n3/java"/>
 	<classpathentry kind="src" path="src/jar/content-rdfxml/java"/>
-	<classpathentry kind="src" path="src/jar/content-rio/java"/>
 	<classpathentry kind="src" path="src/jar/demo-mp3/java"/>
 	<classpathentry kind="src" path="src/jar/descriptor/src/java"/>
 	<classpathentry kind="src" path="src/jar/driver/java"/>
 	<classpathentry kind="src" path="src/jar/dtd/java"/>
 	<classpathentry kind="src" path="src/jar/itql/java"/>
 	<classpathentry kind="src" path="src/jar/itql/sablecc"/>
-	<classpathentry kind="src" path="src/jar/jrdf/java"/>
 	<classpathentry kind="src" path="src/jar/krule/java"/>
+	<classpathentry kind="src" path="src/jar/jrdf/java"/>
 	<classpathentry kind="src" path="src/jar/query/java"/>
 	<classpathentry kind="src" path="src/jar/resolver/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-distributed/java"/>
@@ -58,7 +57,7 @@
 	<classpathentry kind="src" path="src/jar/tuples-hybrid/java"/>
 	<classpathentry kind="src" path="src/jar/util/java"/>
 	<classpathentry kind="src" path="src/jar/util-xa/java"/>
-	<classpathentry kind="src" path="src/jar/webquery/java"/>
+	<classpathentry kind="src" path="src/jar/web/java"/>
 	<classpathentry kind="src" path="src/war/webui/java"/>
 	<classpathentry kind="src" path="tools/src"/>
 	<classpathentry kind="lib" path="lib/xom-1.0d21.jar"/>
@@ -115,10 +114,9 @@
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jena-2.1.jar"/>
-	<classpathentry kind="lib" path="dist/ideSupport.jar"/>
+	<classpathentry kind="lib" path="dist/ideSupport.jar" sourcepath="obj/jar/config/java"/>
 	<classpathentry kind="lib" path="lib/xalan-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/jrdf-0.3.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/ant-trax-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ant-nodeps-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher-1.7.0.jar"/>

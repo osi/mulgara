@@ -28,12 +28,10 @@
 package org.mulgara.content.rdfxml;
 
 // Java 2 standard packages
-import java.beans.Beans;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.HashMap;
 
 // Third party packages
 import junit.framework.*;        // JUnit unit testing framework
@@ -42,7 +40,6 @@ import org.jrdf.vocabulary.RDF;  // Java RDF API
 
 // Locally written packages
 import org.mulgara.content.Content;
-import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ResolverSession;
@@ -61,9 +58,8 @@ import org.mulgara.resolver.spi.ResolverSession;
  */
 public class RDFXMLStatementsUnitTest extends TestCase
 {
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private static final Logger logger =
     Logger.getLogger(RDFXMLStatementsUnitTest.class.getName());
 
@@ -133,7 +129,7 @@ public class RDFXMLStatementsUnitTest extends TestCase
     long o1 = resolverSession.localize(new URIReferenceImpl(RDF.SEQ));
 
     long p2 = resolverSession.localize(new URIReferenceImpl(new URI(
-                                         RDF.baseURI + "_1")));
+                                         RDF.BASE_URI + "_1")));
     long o2 = resolverSession.localize(new LiteralImpl("bar"));
 
     try {

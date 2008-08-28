@@ -941,8 +941,8 @@ public class MemoryXMLWriter {
 
     //default namespaces
     this.namespaces = new HashMap();
-    this.namespaces.put(RDF_PREFIX, RDF.baseURI);
-    this.namespaces.put(RDFS_PREFIX, RDFS.baseURI);
+    this.namespaces.put(RDF_PREFIX, RDF.BASE_URI);
+    this.namespaces.put(RDFS_PREFIX, RDFS.BASE_URI);
     this.namespaces.put("owl", "http://www.w3.org/2002/07/owl#");
     this.namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
 

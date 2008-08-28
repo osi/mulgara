@@ -31,15 +31,11 @@ import java.io.*;
 
 // Third party packages
 import junit.framework.*;
-import org.jrdf.graph.*;
 import org.mulgara.content.Content;
 import org.mulgara.content.rdfxml.RDFXMLContentHandler;
 import org.mulgara.content.rdfxml.writer.TestResolverSession;
-import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.file.FileContent;
 import org.mulgara.resolver.spi.*;
-import org.mulgara.store.statement.*;
-import org.mulgara.store.tuples.*;
 import org.mulgara.util.TempDir;
 
 
@@ -225,29 +221,22 @@ public class RDFXMLWriterUnitTest extends TestCase {
 
       //let superclass set up too
       super.setUp();
-    }
-    catch (Exception exception) {
-
+    } catch (Exception exception) {
       //try to tear down first
       try {
-
         tearDown();
+      } catch (Exception e2) {
+        // ignore
       }
-      finally {
-
-        throw exception;
-      }
+      throw exception;
     }
   }
 
   /**
    * The teardown method for JUnit
-   *
-   * @throws Exception EXCEPTION TO DO
    */
   public void tearDown() throws Exception {
-
-    //allow super to close down too
+    // allow super to close down too
     super.tearDown();
   }
 }

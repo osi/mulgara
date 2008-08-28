@@ -39,14 +39,11 @@ import org.jrdf.graph.GraphException;
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.Node;
 import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.URIReference;
 
 // Local packages
-import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.StatementsWrapperTuples;
@@ -83,8 +80,7 @@ public class RDFXMLWriter {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(RDFXMLWriter.class.
-      getName());
+  private final static Logger log = Logger.getLogger(RDFXMLWriter.class.getName());
 
   /** Convenience reference to the new line character */
   private static final String NEWLINE = System.getProperty("line.separator");
@@ -153,23 +149,17 @@ public class RDFXMLWriter {
       RDF_PREFIX = namespaces.getRDFPrefix();
 
       //write document
-      this.writeHeader(writer);
-      this.writeBody(statements, session, out);
-      this.writeFooter(out);
-    }
-    catch (Exception exception) {
+      writeHeader(writer);
+      writeBody(statements, session, out);
+      writeFooter(out);
+    } catch (Exception exception) {
 
       exception.printStackTrace();
       log.error("Failed to write Statements.", exception);
 
       throw new GraphException("Failed to write Statements.", exception);
-    }
-    finally {
-
-      if (out != null) {
-
-        out.close();
-      }
+    } finally {
+      if (out != null) out.close();
     }
   }
 
@@ -230,10 +220,10 @@ public class RDFXMLWriter {
     }
 
     //print the Entities
-    this.writeXMLEntities(writer);
+    writeXMLEntities(writer);
 
     //print the opening RDF tag (including namespaces)
-    this.writeRDFHeader(writer);
+    writeRDFHeader(writer);
   }
 
   /**
@@ -250,25 +240,23 @@ public class RDFXMLWriter {
     out.print(NEWLINE + "<!DOCTYPE " + RDF_PREFIX + ":RDF [");
 
     //print namespaces
-    Set keys = this.namespaces.keySet();
+    Set<String> keys = namespaces.keySet();
 
     if (keys != null) {
 
-      Iterator keyIter = keys.iterator();
-      Object currentKey = null;
+      Iterator<String> keyIter = keys.iterator();
+      String currentKey = null;
       Object currentValue = null;
 
       while (keyIter.hasNext()) {
 
         currentKey = keyIter.next();
-        currentValue = this.namespaces.get(currentKey);
+        currentValue = namespaces.get(currentKey);
 
-        if ((currentKey != null)
-            && (currentValue != null)) {
+        if ((currentKey != null) && (currentValue != null)) {
 
           //write as: <!ENTITY ns 'http://example.org/abc#'>
-          out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" +
-              currentValue + "'>");
+          out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" + currentValue + "'>");
         }
       }
     }
@@ -291,25 +279,24 @@ public class RDFXMLWriter {
     out.print("<" + RDF_PREFIX + ":RDF ");
 
     //print namespaces
-    Set keys = this.namespaces.keySet();
+    Set<String> keys = namespaces.keySet();
 
     if (keys != null) {
 
-      Iterator keyIter = keys.iterator();
-      Object currentKey = null;
+      Iterator<String> keyIter = keys.iterator();
+      String currentKey = null;
       Object currentValue = null;
 
       while (keyIter.hasNext()) {
 
         currentKey = keyIter.next();
-        currentValue = this.namespaces.get(currentKey);
+        currentValue = namespaces.get(currentKey);
 
         if ((currentKey != null)
             && (currentValue != null)) {
 
           //use entities: xmlns:ns="&ns;"
-          out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey +
-              ";\"");
+          out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey + ";\"");
         }
       }
     }
@@ -410,25 +397,16 @@ public class RDFXMLWriter {
 
       statement = new URIReferenceWritableStatement(subject, predicate,
           (URIReference) object);
-    }
-    else if (object instanceof BlankNode) {
-
-      statement = new BlankNodeWritableStatement(subject, predicate,
-          (BlankNode) object);
-    }
-    else if (object instanceof Literal) {
-
-      statement = new LiteralWritableStatement(subject, predicate,
-          (Literal) object);
-    }
-    else {
-
+    } else if (object instanceof BlankNode) {
+      statement = new BlankNodeWritableStatement(subject, predicate, (BlankNode)object);
+    } else if (object instanceof Literal) {
+      statement = new LiteralWritableStatement(subject, predicate, (Literal)object);
+    } else {
       assert(object != null):"Object should not be null";
-      throw new GraphException("Unknown ObjectNode type: " +
-          object.getClass().getName());
+      throw new GraphException("Unknown ObjectNode type: " + object.getClass().getName());
     }
 
-    assert statement != null:"WritableStatement should not be null";
+    assert statement != null : "WritableStatement should not be null";
     statement.write(namespaces, writer);
   }
 
@@ -439,10 +417,9 @@ public class RDFXMLWriter {
    * @param out PrintWriter
    * @throws Exception
    */
-  protected void writeOpeningSubjectTag(SubjectNode subject,
-      PrintWriter out) throws Exception {
+  protected void writeOpeningSubjectTag(SubjectNode subject, PrintWriter out) throws Exception {
 
-    assert out != null:"PrintWriter is null";
+    assert out != null : "PrintWriter is null";
 
     //write
     if (subject instanceof URIReference) {
@@ -452,9 +429,7 @@ public class RDFXMLWriter {
       String rdf = namespaces.getRDFPrefix();
       out.print("  <" + rdf + ":Description " + rdf + ":about=\"" +
           uri.toString() + "\">" + NEWLINE);
-    }
-    else if (subject instanceof BlankNode) {
-
+    } else if (subject instanceof BlankNode) {
       //get an identifier for the BlankNode
       String nodeString = subject.toString();
       nodeString = StringUtil.quoteAV(nodeString);
@@ -463,11 +438,8 @@ public class RDFXMLWriter {
       //print as: <rdf:Description rdf:nodeID="blankNodeID">
       out.print("  <" + rdf + ":Description " + rdf + ":nodeID=\"" +
           nodeString + "\">" + NEWLINE);
-    }
-    else {
-
-      throw new IllegalArgumentException("Unknown SubjectNode type: " +
-          subject.getClass().getName());
+    } else {
+      throw new IllegalArgumentException("Unknown SubjectNode type: " + subject.getClass().getName());
     }
   }
 

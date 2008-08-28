@@ -66,7 +66,7 @@ import org.mulgara.server.driver.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ItqlGraphUnitTest extends AbstractGraphUnitTest {
+public class ItqlGraphUnitTest extends AbstractGraphTest {
 
   /** name used for the server */
   private static String SERVER_NAME = "server1";

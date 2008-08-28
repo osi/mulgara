@@ -72,7 +72,6 @@ public class SPXMLLiteralUnitTest extends TestCase {
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new SPXMLLiteralUnitTest("testValid"));
-    suite.addTest(new SPXMLLiteralUnitTest("testInvalid"));
 
     return suite;
   }
@@ -157,33 +156,6 @@ public class SPXMLLiteralUnitTest extends TestCase {
     catch (IllegalArgumentException iae) {
       iae.printStackTrace();
       fail("Should be valid");
-    }
-  }
-
-  /**
-   * Tests some invalid xsd:boolean values
-   *
-   * @throws Exception
-   */
-  public void testInvalid() throws Exception {
-
-    SPXMLLiteralFactory factory = new SPXMLLiteralFactory();
-
-    @SuppressWarnings("unused")
-    SPXMLLiteralImpl text;
-
-    // Test with a tag.
-    try {
-      text = (SPXMLLiteralImpl) factory.newSPTypedLiteral(RDF.XML_LITERAL, "<foo>Hello there</bar>");
-      fail("Should be invalid");
-    } catch (IllegalArgumentException iae) {
-    }
-
-    // Test nested tags
-    try {
-      text = (SPXMLLiteralImpl) factory.newSPTypedLiteral(RDF.XML_LITERAL, "<bar><foo>Hello there</bar></foo>");
-      fail("Should be invalid");
-    } catch (IllegalArgumentException iae) {
     }
   }
 

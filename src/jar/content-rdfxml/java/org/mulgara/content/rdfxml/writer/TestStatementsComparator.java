@@ -37,7 +37,6 @@ import org.jrdf.graph.BlankNode;
 // Local packages
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collections;
 import org.jrdf.graph.Node;
 import java.util.Arrays;
 
@@ -78,6 +77,7 @@ public class TestStatementsComparator {
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(
       TestStatementsComparator.class.getName());
 
@@ -102,7 +102,7 @@ public class TestStatementsComparator {
     equal = (compareReference(statements1, statements2))
         || (compareCount(statements1, statements2)
         && compareStatementNodes(statements1, session1, statements2, session2,
-        new HashMap()));
+        new HashMap<String,Object>()));
 
     return equal;
   }
@@ -148,7 +148,7 @@ public class TestStatementsComparator {
    */
   private boolean compareStatementNodes(Statements statements1,
       ResolverSession session1, Statements statements2, ResolverSession session2,
-      Map environment) throws Exception {
+      Map<String,Object> environment) throws Exception {
 
     statements1 = prepareStatements(statements1);
     statements2 = prepareStatements(statements2);

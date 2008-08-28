@@ -66,6 +66,7 @@ public class URIReferenceWritableStatement extends AbstractWritableStatement {
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(
       URIReferenceWritableStatement.class.getName());
 

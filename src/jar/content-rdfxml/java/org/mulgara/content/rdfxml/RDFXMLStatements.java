@@ -29,39 +29,21 @@ package org.mulgara.content.rdfxml;
 
 // Java 2 standard packages
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import org.xml.sax.*;
 
 // Third party packages
-import com.hp.hpl.jena.rdf.arp.ARP;  // ARP (Jena RDF/XML parser)
-import com.hp.hpl.jena.rdf.arp.ALiteral;
-import com.hp.hpl.jena.rdf.arp.AResource;
-import com.hp.hpl.jena.rdf.arp.StatementHandler;
-import com.hp.hpl.jena.rdf.arp.StatementHandler;
 import org.apache.log4j.Logger;      // Apache Log4J
-import org.jrdf.graph.*;             // JRDF
 
 // Locally written packages
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.content.NotModifiedTuplesException;
-import org.mulgara.query.Constraint;
 import org.mulgara.query.Cursor;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.query.rdf.*;
-import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.StatementsWrapperResolution;
-import org.mulgara.store.StoreException;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 
@@ -80,8 +62,7 @@ import org.mulgara.store.tuples.Tuples;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class RDFXMLStatements extends AbstractTuples implements Statements
-{
+public class RDFXMLStatements extends AbstractTuples implements Statements {
   /**
    * Logger.
    */
@@ -262,13 +243,11 @@ public class RDFXMLStatements extends AbstractTuples implements Statements
     return triple[column];
   }
 
-  public List getOperands()
-  {
-    return Collections.EMPTY_LIST;
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
-  public int getRowCardinality() throws TuplesException
-  {
+  public int getRowCardinality() throws TuplesException {
     long statementCount;
 
     if (rowCountIsValid) {

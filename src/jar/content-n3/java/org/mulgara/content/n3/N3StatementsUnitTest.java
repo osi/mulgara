@@ -134,7 +134,7 @@ public class N3StatementsUnitTest extends TestCase
     long o1 = resolverSession.localize(new URIReferenceImpl(RDF.SEQ));
 
     long p2 = resolverSession.localize(new URIReferenceImpl(new URI(
-                                         RDF.baseURI + "_1")));
+                                         RDF.BASE_URI + "_1")));
     long o2 = resolverSession.localize(new LiteralImpl("bar"));
 
     try {

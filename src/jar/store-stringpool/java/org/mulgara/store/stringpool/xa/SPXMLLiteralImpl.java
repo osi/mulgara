@@ -29,7 +29,6 @@ package org.mulgara.store.stringpool.xa;
 
 //Java 2 standard packages
 import java.nio.ByteBuffer;
-import java.io.*;
 import java.net.URI;
 
 //apache packages
@@ -43,9 +42,6 @@ import org.mulgara.store.stringpool.AbstractSPTypedLiteral;
 import org.mulgara.store.stringpool.SPComparator;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPTypedLiteral;
-import org.jrdf.graph.Graph;
-import org.jrdf.graph.mem.GraphImpl;
-import org.jrdf.parser.rdfxml.RdfXmlParser;
 
 /**
  * A class that represents the inbuilt RDF datatype XML Literal.  Based on
@@ -89,32 +85,8 @@ public class SPXMLLiteralImpl extends AbstractSPTypedLiteral implements SPTypedL
     if (str == null) {
       throw new IllegalArgumentException("Null \"str\" parameter");
     }
-    validate(str);
+    // validation is an unnecessary expense here, as the data must be accepted regardless
     this.str = str;
-  }
-
-  /**
-   * Attempts to ensure that the given XML Literal value is valid.
-   *
-   * @param str the XML Literal.
-   * @throws IllegalArgumentException if the str does not validate.
-   */
-  private void validate(String str) {
-    String document =
-      "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>\n" +
-      "  <rdf:Description>\n" +
-      "    <rdf:value rdf:parseType='Literal'>" + str + "</rdf:value>\n" +
-      "  </rdf:Description>\n" +
-      "</rdf:RDF>";
-
-    try {
-      final Graph jrdfMem = new GraphImpl();
-      RdfXmlParser parser = new RdfXmlParser(jrdfMem.getElementFactory());
-      parser.parse(new StringReader(document), URI.create("urn:foo:bar").
-          toString());
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Failed to validate: " + str, e);
-    }
   }
 
   SPXMLLiteralImpl(ByteBuffer data) {

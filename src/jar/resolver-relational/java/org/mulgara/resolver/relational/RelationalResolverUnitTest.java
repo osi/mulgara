@@ -249,7 +249,7 @@ public class RelationalResolverUnitTest extends TestCase {
                    tempResolverFactoryClassName,    // temporary models
                    null,                            // no dir for temp models
                    "",                              // no rule loader
-                   "org.mulgara.content.rio.RDFXMLContentHandler");
+                   "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
       database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
       database.addResolverFactory("org.mulgara.resolver.relational.RelationalResolverFactory", null);
