@@ -251,7 +251,7 @@
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="admin" value=""/>
-      <sysproperty key="itql.command.log" value="${tmp.dir}/itql.log"/>
+      <sysproperty key="itql.command.log" value="${tmp.dir}/querylang.log"/>
       <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
                    value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial"
@@ -315,7 +315,7 @@
       <sysproperty key="java.io.tmpdir" value="${tmp.dir}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="admin" value=""/>
-      <sysproperty key="itql.command.log" value="${tmp.dir}/itql.log"/>
+      <sysproperty key="itql.command.log" value="${tmp.dir}/querylang.log"/>
       <sysproperty key="org.mulgara.xml.ResourceDocumentBuilderFactory"
                    value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial"
@@ -391,7 +391,7 @@
   <!-- =================================================================== -->
 
   <target name="stress-test"
-          depends="itql-jar, uri"
+          depends="querylang-jar, uri"
           description="run stress tests the ItqlInterpreterBean">
 
     <java classname="org.mulgara.itql.ItqlInterpreterStressTest" fork="yes" failonerror="no"
@@ -418,7 +418,7 @@
 
         <path refid="query-classpath"/>
 
-        <fileset dir="${bin.dir}" includes="${dtd.jar}, ${itql.jar}, ${query.jar},
+        <fileset dir="${bin.dir}" includes="${dtd.jar}, ${querylang.jar}, ${query.jar},
                  ${driver.jar}, ${rmi.jar}, ${server-rmi.jar}"/>
         <fileset dir="${lib.dir}" includes="xerces*.jar, xmlParserAPIs.jar, jxunit*.jar, junit.jar, junitpp.jar"/>
       </classpath>
@@ -470,14 +470,14 @@
       <sysproperty key="file.encoding" value="UTF8"/>
       <sysproperty key="cvs.root" value="${basedir}"/>
       <sysproperty key="log4j.configuration" value="${baseuri}/log4j-conf.xml"/>
-      <sysproperty key="itql.command.log" value="${tmp.dir}/itql.log"/>
+      <sysproperty key="itql.command.log" value="${tmp.dir}/querylang.log"/>
       <sysproperty key="org.mulgara.test" value="${org.mulgara.test}"/>
 
       <classpath>
 
         <path refid="query-classpath"/>
 
-        <fileset dir="${bin.dir}" includes="${dtd.jar}, ${itql.jar},
+        <fileset dir="${bin.dir}" includes="${dtd.jar}, ${querylang.jar},
                                             ${query.jar},
                                             ${driver.jar}, ${rmi.base.jar},
                                             ${server-rmi.jar}"/>

@@ -24,7 +24,7 @@
     <fileset dir="${lib.dir}" includes="**/**"/>
 
     <fileset dir="${driver.dist.dir}" includes="${driver.jar}" />
-    <fileset dir="${itql.dist.dir}" includes="${itql.jar}" />
+    <fileset dir="${querylang.dist.dir}" includes="${querylang.jar}" />
     <fileset dir="${rules.dist.dir}" includes="${rules.jar}" />
     <fileset dir="${query.dist.dir}" includes="${query.jar}" />
     <fileset dir="${server.dist.dir}" includes="${server.jar}" />
@@ -45,7 +45,7 @@
     <pathelement location="${lib.dir}/${jetty.jar}"/>
 
     <pathelement location="${dist.dir}/${driver.jar}"/>
-    <pathelement location="${dist.dir}/${itql.jar}"/>
+    <pathelement location="${dist.dir}/${querylang.jar}"/>
     <pathelement location="${dist.dir}/${util.jar}"/>
 
     <pathelement location="${server.dist.dir}/${server.jar}"/>
@@ -89,7 +89,7 @@
   </target>
 
   <target name="descriptor-jsp-compile"
-          depends="-descriptor-prepare, driver-jar, itql-jar, server-jar"
+          depends="-descriptor-prepare, driver-jar, querylang-jar, server-jar"
           description="Pre-compiles JSPs">
 
     <!-- Replace basedir -->

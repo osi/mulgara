@@ -23,7 +23,7 @@
 
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${server.dist.dir}/${server.jar}"/>
-    <fileset file="${itql.dist.dir}/${itql.jar}"/>
+    <fileset file="${querylang.dist.dir}/${querylang.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
 
     <fileset dir="${lib.dir}" includes="jsr173_07_api.jar, jsr173_07_ri.jar"/>
@@ -58,7 +58,7 @@
   </target>
 
   <target name="sparql-protocol-compile"
-          depends="-sparql-protocol-prepare, server-jar, itql-jar"
+          depends="-sparql-protocol-prepare, server-jar, querylang-jar"
           description="Compiles all sparql-protocol related files included generated
                        source code">
 

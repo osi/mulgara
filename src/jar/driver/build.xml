@@ -93,7 +93,7 @@
   </target>
 
   <target name="driver-dist"
-          depends="driver-jar, driver-jar, itql-jar, query-jar,
+          depends="driver-jar, driver-jar, querylang-jar, query-jar,
                    server-jar, server-beep-jar, server-rmi-jar, util-jar, driver-uptodate"
           unless="driver.uptodate"
           description="Performs all tasks related to finalising this driver
@@ -102,7 +102,7 @@
     <jar jarfile="${dist.dir}/${driver.jar}">
 
       <zipfileset src="${driver.dist.dir}/${driver.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${itql.dist.dir}/${itql.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${querylang.dist.dir}/${querylang.jar}" excludes="META-INF/**"/>
       <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${query.dist.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server.dist.dir}/${server.jar}" excludes="META-INF/**"/>
@@ -125,7 +125,7 @@
               targetfile="${dist.dir}/${driver.jar}">
 
       <srcfiles dir="${driver.dist.dir}" includes="${driver.jar}"/>
-      <srcfiles dir="${itql.dist.dir}" includes="${itql.jar}"/>
+      <srcfiles dir="${querylang.dist.dir}" includes="${querylang.jar}"/>
       <srcfiles dir="${rules.dist.dir}" includes="${rules.jar}"/>
       <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
       <srcfiles dir="${server.dist.dir}" includes="${server.jar}"/>

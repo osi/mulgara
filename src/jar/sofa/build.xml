@@ -28,7 +28,7 @@
     <pathelement path="${client-jrdf.dist.dir}/${client-jrdf.jar}"/>
     <pathelement path="${server-rmi.dist.dir}/${server-rmi.jar}"/>
     <pathelement path="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
-    <pathelement path="${itql.dist.dir}/${itql.jar}"/>
+    <pathelement path="${querylang.dist.dir}/${querylang.jar}"/>
     <pathelement path="${lib.dir}/${jrdf.jar}"/>
     <pathelement path="${lib.dir}/${sesame-model.jar}"/>
     <pathelement path="${lib.dir}/${sofa.jar}"/>
@@ -66,7 +66,7 @@
   </target>
 
   <target name="sofa-compile"
-          depends="-sofa-prepare, driver-jar, itql-jar, server-jar, jrdf-jar,
+          depends="-sofa-prepare, driver-jar, querylang-jar, server-jar, jrdf-jar,
           client-jrdf-jar, resolver-spi-jar"
           description="Compiles all sofa related files included generated
                        source code">

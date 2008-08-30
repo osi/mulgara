@@ -21,7 +21,7 @@
     <path refid="common-classpath"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${query.dist.dir}/${query.jar}"/>
-    <fileset file="${itql.dist.dir}/${itql.jar}"/>
+    <fileset file="${querylang.dist.dir}/${querylang.jar}"/>
     <fileset file="${server.dist.dir}/${server.jar}"/>
     <fileset file="${lib.dir}/${jetty.jar}"/>
     <fileset file="${lib.dir}/${jetty-plus.jar}"/>
@@ -63,7 +63,7 @@
   </target>
 
   <target name="web-compile"
-          depends="-web-prepare, util-jar, config-jar, itql-jar, query-jar, -web-unjar-config"
+          depends="-web-prepare, util-jar, config-jar, querylang-jar, query-jar, -web-unjar-config"
           description="Compiles all web related files included generated
                        source code"
           unless="web.classes.uptodate">

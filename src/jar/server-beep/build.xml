@@ -24,7 +24,7 @@
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${server.dist.dir}/${server.jar}"/>
     <fileset file="${sparql-protocol.dist.dir}/${sparql-protocol.jar}"/>
-    <fileset file="${itql.dist.dir}/${itql.jar}"/>
+    <fileset file="${querylang.dist.dir}/${querylang.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
 
@@ -60,7 +60,7 @@
   </target>
 
   <target name="server-beep-compile"
-          depends="-server-beep-prepare, itql-jar, query-jar, server-jar, rules-jar,
+          depends="-server-beep-prepare, querylang-jar, query-jar, server-jar, rules-jar,
                    sparql-protocol-jar"
           description="Compiles all server-beep related files included generated
                        source code">

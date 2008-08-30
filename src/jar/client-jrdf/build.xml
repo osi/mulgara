@@ -26,7 +26,7 @@
     <pathelement path="${util.dist.dir}/${util.jar}"/>
     <pathelement path="${jrdf.dist.dir}/${jrdf.base.jar}"/>
     <pathelement path="${server-rmi.dist.dir}/${server-rmi.jar}"/>
-    <pathelement path="${itql.dist.dir}/${itql.jar}"/>
+    <pathelement path="${querylang.dist.dir}/${querylang.jar}"/>
     <pathelement path="${rules.dist.dir}/${rules.jar}"/>
     <pathelement path="${lib.dir}/${jrdf.jar}"/>
     <pathelement path="${lib.dir}/${sesame-model.jar}"/>
@@ -61,7 +61,7 @@
   </target>
 
   <target name="client-jrdf-compile"
-          depends="-client-jrdf-prepare, driver-jar, itql-jar, server-jar, jrdf-jar"
+          depends="-client-jrdf-prepare, driver-jar, querylang-jar, server-jar, jrdf-jar"
           description="Compiles all client-jrdf related files included generated
                        source code">
 

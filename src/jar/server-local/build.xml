@@ -23,7 +23,7 @@
 
     <fileset file="${driver.dist.dir}/${driver.jar}"/>
     <fileset file="${query.dist.dir}/${query.jar}"/>
-    <fileset file="${itql.dist.dir}/${itql.jar}"/>
+    <fileset file="${querylang.dist.dir}/${querylang.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
   </path>
 
@@ -58,7 +58,7 @@
   </target>
 
   <target name="server-local-compile"
-          depends="-server-local-prepare, itql-jar, server-jar"
+          depends="-server-local-prepare, querylang-jar, server-jar"
           description="Compiles all server-local related files included
                        generated source code"
           unless="server-local.classes.uptodate">
