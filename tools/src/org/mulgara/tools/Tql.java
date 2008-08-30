@@ -55,22 +55,26 @@ public class Tql {
 
     // iterate over all the query strings
     while (queryStrings.hasNext()) {
-      // parse the string into a Query object
-      TqlInterpreter interpreter = new TqlInterpreter();
-      Query query = interpreter.parseQuery(queryStrings.next());
+      // parse the string into a Command object
+      Command cmd = new TqlInterpreter().parseCommand(queryStrings.next());
 
-      // execute the query, and get back the answer
-      Answer a = conn.execute(query);
-      // print the results
-      System.out.println("Result: " + query.getResultMessage());
-      printAnswer(a);
-      a.close();
+      if (cmd instanceof Query) {
+        // execute the query, and get back the answer
+        Answer a = (Answer)conn.execute((Query)cmd);
+        System.out.println("Result: " + cmd.getResultMessage());
+        printAnswer(a);
+        a.close();
+      } else {
+        // other command to be executed. Print the result object.
+        Object result = conn.execute(cmd);
+        System.out.println("Result: " + cmd.getResultMessage() + " <" + result + ">");
+      }
 
       System.out.println("---");
     }
 
     // clean up the server connection
-    conn.dispose();
+    conn.close();
   }
 
   /**
@@ -82,7 +86,16 @@ public class Tql {
     int width = a.getNumberOfVariables();
     a.beforeFirst();
     while (a.next()) {
-      for (int c = 0; c < width; c++) System.out.print(toString(a.getObject(c)) + "    ");
+      for (int c = 0; c < width; c++) {
+        Object o = a.getObject(c);
+        if (o instanceof Answer) {
+          System.out.println("[");
+          printAnswer((Answer)o);
+          System.out.print("] ");
+        } else {
+          System.out.print(toString(a.getObject(c)) + "    ");
+        }
+      }
       System.out.println();
     }
   }
