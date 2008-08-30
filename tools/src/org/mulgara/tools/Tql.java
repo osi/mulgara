@@ -3,6 +3,7 @@ package org.mulgara.tools;
 import org.mulgara.itql.*;
 import org.mulgara.connection.*;
 import org.mulgara.query.*;
+import org.mulgara.query.operation.Command;
 
 import org.apache.log4j.*;
 
