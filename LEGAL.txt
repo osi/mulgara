@@ -235,11 +235,9 @@ I.  Open Source Components
               http://www.sun.com/cddl/cddl.html
 
     JRDF
-    JARs:     jrdf-0.3.4.3.jar
-    URL:      http://mulgara.org/files/jrdf/
-    LICENSE:  Dual license: Apache or GNU LGPL
-              LGPL chosen
-              http://opensource.org/licenses/lgpl-license.php
+    URL:      http://jrdf.sourceforge.net/
+    LICENSE:  Apache 1.1
+              Code from version 0.3.4.2 has been imported and updated.
     
     JSR-173 (Streaming API for XML "StAX")
     JARs:     jsr173_07_api.jar
