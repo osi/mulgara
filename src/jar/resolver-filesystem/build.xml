@@ -144,7 +144,6 @@
     <touch file="${tmp.dir}/filesystem/RDF-Test-Cases-2001-09-12.zip"/>
     <touch file="${tmp.dir}/filesystem/rdql-tests-jena-2.0.zip"/>
     <touch file="${tmp.dir}/filesystem/rss-1.0.rdfs"/>
-    <touch file="${tmp.dir}/filesystem/sample-tql.xml"/>
     <touch file="${tmp.dir}/filesystem/test0014.nt"/>
     <touch file="${tmp.dir}/filesystem/test0014.rdf"/>
     <touch file="${tmp.dir}/filesystem/test001.nt"/>
