@@ -42,7 +42,6 @@
 	<classpathentry kind="src" path="src/jar/server-rmi/java"/>
 	<classpathentry kind="src" path="src/jar/sofa/java"/>
 	<classpathentry kind="src" path="src/jar/sparql-interpreter/java"/>
-	<classpathentry kind="src" path="src/jar/sparql-protocol/java"/>
 	<classpathentry kind="src" path="src/jar/store/java"/>
 	<classpathentry kind="src" path="src/jar/store-nodepool/java"/>
 	<classpathentry kind="src" path="src/jar/store-nodepool-memory/java"/>

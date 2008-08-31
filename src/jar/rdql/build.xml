@@ -156,7 +156,6 @@
       <zipfileset src="${rdql.dist.dir}/${rdql.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${util.dist.dir}/${util.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/beepcore-0.9.08.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/jargs-0.2.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jrdf.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>

@@ -745,22 +745,6 @@
 								<li><a href="/inferencing/ontomanage.html#o2836">owl:priorVersion</a></li>		
 								<li><a href="/inferencing/ontomanage.html#o2837">owl:versionInfo</a></li>		
 						</ul></li>
-						<li><a href="/inferencing/sofa.html">SOFA</a></li>
-						<li class="ulcontainer toc"><ul class="toc">
-								<li><a href="/inferencing/sofa.html#o2624">Prerequisites</a></li>
-								<li><a href="/inferencing/sofa.html#o2625">Getting Started</a></li>
-								<li><a href="/inferencing/sofa.html#o2626">Creating the Ontology</a></li>
-								<li><a href="/inferencing/sofa.html#o2627">Changing the Backing of an Ontology</a></li>
-								<li><a href="/inferencing/sofa.html#o2628">Populating the Ontology</a></li>
-								<li><a href="/inferencing/sofa.html#o2639">Compiling and Running the Example</a></li>
-								<li><a href="/inferencing/sofa.html#o2629">Integration</a></li>
-						</ul></li>
-						<li><a href="/inferencing/inferexample.html">Inferencing Examples Using SOFA and iTQL</a></li>
-						<li class="ulcontainer toc"><ul class="toc">
-								<li><a href="/inferencing/inferexample.html#o2734">iTQL Inferencing</a></li>
-								<li><a href="/inferencing/inferexample.html#o2735">SOFA Inferencing</a></li>
-								<li><a href="/inferencing/inferexample.html#o2736">Should I use SOFA or iTQL?</a></li>
-						</ul></li>
 				</ul></li>]]></replacevalue>
     </replace>
 

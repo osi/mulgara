@@ -47,14 +47,11 @@
   <property file="${jar.src.dir}/resolver-relational/resolver-relational-build.properties"/>
   <property file="${jar.src.dir}/resolver-distributed/resolver-distributed-build.properties"/>
   <property file="${jar.src.dir}/server/server-build.properties"/>
-  <property file="${jar.src.dir}/server-beep/server-beep-build.properties"/>
   <property file="${jar.src.dir}/server-http/server-http-build.properties"/>
   <property file="${jar.src.dir}/server-local/server-local-build.properties"/>
   <property file="${jar.src.dir}/server-rmi/server-rmi-build.properties"/>
-  <property file="${jar.src.dir}/sofa/sofa-build.properties"/>
   <property file="${jar.src.dir}/krule/krule-build.properties"/>
   <property file="${jar.src.dir}/rules/rules-build.properties"/>
-  <property file="${jar.src.dir}/sparql-protocol/sparql-protocol-build.properties"/>
   <property file="${jar.src.dir}/sparql-interpreter/sparql-interpreter-build.properties"/>
   <property file="${jar.src.dir}/store/store-build.properties"/>
   <property file="${jar.src.dir}/store-xa/store-xa-build.properties"/>
@@ -118,14 +115,11 @@
   <import file="${jar.src.dir}/resolver-xsd/build.xml"/>
   <import file="${jar.src.dir}/resolver-test/build.xml"/>
   <import file="${jar.src.dir}/server/build.xml"/>
-  <import file="${jar.src.dir}/server-beep/build.xml"/>
   <import file="${jar.src.dir}/server-http/build.xml"/>
   <import file="${jar.src.dir}/server-local/build.xml"/>
   <import file="${jar.src.dir}/server-rmi/build.xml"/>
-  <import file="${jar.src.dir}/sofa/build.xml"/>
   <import file="${jar.src.dir}/krule/build.xml"/>
   <import file="${jar.src.dir}/rules/build.xml"/>
-  <import file="${jar.src.dir}/sparql-protocol/build.xml"/>
   <import file="${jar.src.dir}/sparql-interpreter/build.xml"/>
   <import file="${jar.src.dir}/store/build.xml"/>
   <import file="${jar.src.dir}/store-xa/build.xml"/>
@@ -198,14 +192,6 @@
     </taskdef>
 
     <property name="define.itqlcommand" value="true"/>
-  </target>
-
-  <!-- ================================================================================ -->
-  <!-- Delete all intermediate and end product files, leaving only files from SVN.      -->
-  <!-- ================================================================================ -->
-  <target name="mrclean" depends="clean" description="Deletes all files not from the versioning system.">
-    <delete dir="${obj.dir}"/>
-    <delete dir="${dist.dir}"/>
   </target>
 
   <!-- ================================================================================ -->
@@ -331,8 +317,8 @@
                    resolver-spi-dist, resolver-store-dist, resolver-distributed-dist,
                    resolver-url-dist, resolver-view-dist, resolver-xsd-dist,
                    resolver-jar-dist, resolver-test-dist,
-                   server-dist, server-beep-dist, server-http-dist, server-local-dist,
-                   server-rmi-dist, sofa-dist, sparql-int-dist, krule-dist, rules-dist,
+                   server-dist, server-http-dist, server-local-dist,
+                   server-rmi-dist, sparql-int-dist, krule-dist, rules-dist,
                    store-stringpool-dist, store-stringpool-memory-dist,
                    store-stringpool-xa-dist,
                    store-stringpool-xa11-dist, tag-dist,
@@ -482,7 +468,7 @@
       <attribute name="Embedded-Jar" value="
           lib/${query.jar}, lib/${driver.jar}, lib/${querylang.jar}, lib/${sparql-int.jar},
           lib/${rmi.jar},
-          lib/${server.jar}, lib/${server-beep.jar}, lib/${server-rmi.jar},
+          lib/${server.jar}, lib/${server-rmi.jar},
           lib/${util.jar}, lib/${config.jar}, lib/${descriptor.jar}, lib/${server-local.jar},
           lib/${resolver.jar}, lib/${resolver-spi.jar}, lib/${resolver-filesystem.jar},
           lib${store.jar}, lib/${store-xa.jar}, lib/${rules.jar},
@@ -500,7 +486,7 @@
           lib/${resolver-distributed.jar},
           lib/${resolver-jar.jar}, lib/${dtd.jar},
           lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar, lib/antlr.jar,
-          lib/${joda-time.jar}, lib/${commons-logging.jar}, lib/beepcore-0.9.08.jar, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
+          lib/${joda-time.jar}, lib/${commons-logging.jar}, lib/log4j-1.2.15.jar, lib/${lucene.jar}, lib/mail-1.3.jar,
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet-jsp.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
@@ -514,7 +500,7 @@
   <!-- =================================================================== -->
   <target name="lite-dist"
           depends="driver-jar, querylang-jar, sparql-int-jar, rules-jar, query-jar, rmi-jar,
-                   server-jar, server-local-jar, server-beep-jar,
+                   server-jar, server-local-jar,
                    server-rmi-jar, util-jar, config-jar, dtd-jar, jrdf-jar, ant-task-jar,
                    store-dist, store-xa-dist, store-nodepool-dist,
                    store-nodepool-xa-dist,
@@ -553,7 +539,7 @@
           includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy,
                     mulgara.policy"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="
-        ${log4j.jar}, ${icu4j.jar}, ${activation.jar}, ${beep.jar},
+        ${log4j.jar}, ${icu4j.jar}, ${activation.jar},
         ${jargs.jar}, ${jetty.jar}, ${jetty.plus.jar},
         ${servlet-jsp.jar}, ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
@@ -569,7 +555,7 @@
       <zipfileset dir="${bin.dir}" prefix="lib" includes="
           ${query.jar}, ${driver.jar}, ${querylang.jar}, ${sparql-int.jar},
           ${rules.jar}, ${rmi.jar},
-          ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
+          ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}, ${server-local.jar},
           ${resolver.jar}, ${resolver-spi.jar}, ${resolver-filesystem.jar},
           ${store.jar}, ${store-xa.jar},
@@ -750,8 +736,8 @@
              resolver-spi-jar, resolver-store-jar,
              resolver-url-jar, resolver-view-jar, resolver-xsd-jar,
              resolver-test-jar,
-             server-jar, server-beep-jar, server-rmi-jar,
-             sofa-jar, krule-jar, rules-jar, sparql-protocol-jar,
+             server-jar, server-rmi-jar,
+             krule-jar, rules-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
              tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war, web-jar"
@@ -762,7 +748,6 @@
     <javadoc destdir="${javadoc.dir}"
         packagenames="org.mulgara.ant.*,
                       org.mulgara.barracuda.*,
-                      org.mulgara.beep.*,
                       org.mulgara.client.*,
                       org.mulgara.config,
                       org.mulgara.content.*,
@@ -777,7 +762,6 @@
                       org.mulgara.resolver.*,
                       org.mulgara.rmi.*,
                       org.mulgara.server.*,
-                      org.mulgara.sofa.*,
                       org.mulgara.krule.*,
                       org.mulgara.rules.*,
                       org.mulgara.sparql.*,
@@ -820,13 +804,11 @@
       <classpath refid="project-classpath"/>
       <classpath path="${lib.dir}/antlr.jar"/>
       <classpath path="${lib.dir}/barracuda-1.2.6.jar"/>
-      <classpath path="${lib.dir}/beepcore-0.9.08.jar"/>
       <classpath path="${lib.dir}/${servlet.jar}"/>
       <classpath path="${lib.dir}/${servlet-jsp.jar}"/>
       <classpath path="${lib.dir}/${jid3.jar}"/>
       <classpath path="${lib.dir}/jsr173_07_api.jar"/>
       <classpath path="${lib.dir}/${lucene.jar}"/>
-      <classpath path="${lib.dir}/${sofa.jar}"/>
       <classpath path="${lib.dir}/xmlc-all-runtime-2.2.jar"/>
       <classpath path="${lib.dir}/xom-1.0d21.jar"/>
       <sourcepath path="${ant-task.src.dir}/java"/>
@@ -857,10 +839,7 @@
       <sourcepath path="${resolver-xsd.src.dir}/java"/>
       <sourcepath path="${resolver-test.src.dir}/java"/>
       <sourcepath path="${server.src.dir}/java"/>
-      <sourcepath path="${server-beep.src.dir}/java"/>
       <sourcepath path="${server-rmi.src.dir}/java"/>
-      <sourcepath path="${sofa.src.dir}/java"/>
-      <sourcepath path="${sparql-protocol.src.dir}/java"/>
       <sourcepath path="${sparql-int.src.dir}/java"/>
       <sourcepath path="${store.src.dir}/java"/>
       <sourcepath path="${store-xa.src.dir}/java"/>
@@ -917,9 +896,9 @@
                    resolver-store-javadoc, resolver-url-javadoc, resolver-view-javadoc,
                    resolver-nodetype-javadoc, resolver-prefix-javadoc, resolver-xsd-javadoc,
                    resolver-test-javadoc, resolver-javadoc, resolver-relational-javadoc,
-                   server-beep-javadoc, server-http-javadoc,
+                   server-http-javadoc,
                    server-local-javadoc, server-rmi-javadoc, server-javadoc,
-                   sofa-javadoc, rules-javadoc, krule-javadoc,
+                   rules-javadoc, krule-javadoc,
                    store-stringpool-javadoc,
                    store-stringpool-memory-javadoc, store-stringpool-xa-javadoc,
                    store-stringpool-xa11-javadoc,
@@ -1030,11 +1009,10 @@
         <pathelement path="${bin.dir}/${server-http.jar}"/>
         <pathelement path="${bin.dir}/${server-local.jar}"/>
         <pathelement path="${bin.dir}/${server-rmi.jar}"/>
-        <pathelement path="${bin.dir}/${server-beep.jar}"/>
         <pathelement path="${bin.dir}/${util.jar}"/>
 
         <fileset dir="${lib.dir}"
-                 includes="activation*.jar, beepcore-*.jar, jargs-*.jar,
+                 includes="activation*.jar, jargs-*.jar,
                            icu4j.jar, jena*.jar, antlr*.jar,
                            ${commons-logging.jar}, log4j*.jar, lucene*.jar,
                            xerces*.jar, xmlParserAPIs.jar,
@@ -1391,7 +1369,7 @@
   <target name="mulgara-war"
       description="Builds the Mulgara Semantic Store (Mulgara) WAR"
       depends="driver-jar, querylang-jar, sparql-int-jar, query-jar, rmi-jar, server-jar,
-      server-beep-jar, server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
+      server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
       set.host.name, mulgara.war-uptodate"
       unless="mulgara.war-uptodate">
 
@@ -1413,11 +1391,11 @@
       <fileset dir="${src.dir}/war/mulgara"
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
-      <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar, beepcore-*.jar,
+      <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar,
         lucene*.jar, apache-soap-*.jar, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
         ${driver.jar}, ${querylang.jar}, ${sparql-int.jar}, ${rules.jar}, ${rmi.jar},
-          ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
+          ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>
     </war>
@@ -1431,7 +1409,7 @@
       <srcfiles dir="${bin.dir}" includes="${query.jar},
           ${driver.jar}, ${querylang.jar}, ${rules.jar}, ${rmi.jar},
           ${sparql-int.jar},
-          ${server.jar}, ${server-beep.jar}, ${server-rmi.jar},
+          ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}"/>
       <srcfiles dir="${dist.dir}" includes="expires.txt"/>
       <srcfiles dir="${conf.dir}" includes="**/*"/>
@@ -1577,7 +1555,6 @@
       <fileset dir="${src.dir}/rar/mulgara" includes="META-INF/ra.xml"/>
       <fileset dir="${src.dir}/rar/mulgara/content"/>
       <fileset dir="${bin.dir}" includes="${driver.jar}, ${query.jar}"/>
-      <fileset dir="${lib.dir}" includes="beepcore-*.jar"/>
     </jar>
   </target>
 
@@ -1717,8 +1694,8 @@
              resolver-view-jar, resolver-nodetype-jar, resolver-prefix-jar, resolver-jar-jar,
              resolver-relational-jar, resolver-distributed-jar,
              resolver-xsd-jar, resolver-test-jar, rmi-jar,
-             server-jar, server-beep-jar, server-rmi-jar,
-             sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
+             server-jar, server-rmi-jar,
+             rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, store-stringpool-xa11-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar,
              webservices-war, webui-war, web-jar, -embedded-dist-uptodate"
@@ -1748,7 +1725,6 @@
       <zipfileset src="${lib.dir}/${activation.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${antlr.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**, log4j.properties"/>
-      <zipfileset src="${lib.dir}/${beep.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${carol.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-xml.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
@@ -1798,7 +1774,6 @@
       <zipfileset src="${bin.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${server-beep.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${config.jar}" excludes="META-INF/**"/>
@@ -1887,8 +1862,8 @@
              resolver-view-jar, resolver-nodetype-jar, resolver-prefix-jar, resolver-jar-jar,
              resolver-relational-jar, resolver-distributed-jar,
              resolver-xsd-jar, resolver-test-jar, rmi-jar,
-             server-jar, server-beep-jar, server-rmi-jar,
-             sofa-jar, rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
+             server-jar, server-rmi-jar,
+             rules-jar, krule-jar, store-stringpool-jar, store-stringpool-memory-jar,
              store-stringpool-xa-jar, store-stringpool-xa11-jar, tuples-jar,
              tuples-hybrid-jar, util-jar, util-xa-jar, web-jar,
              -embedded-dist-uptodate"
@@ -1905,7 +1880,6 @@
       <zipfileset src="${bin.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${server-beep.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${config.jar}" excludes="META-INF/**"/>
@@ -2014,7 +1988,7 @@
 
   <target name="session-test"
           depends="jrdf-test, server-test,
-             server-beep-test, server-http-test, server-local-test,
+             server-http-test, server-local-test,
              server-rmi-test"
           description="Runs session based tests">
   </target>
@@ -2041,7 +2015,7 @@
   </target>
 
   <target name="utils-test"
-    depends="ant-task-test, dtd-test, sofa-test, rules-test, krule-test, tag-test, util-test, util-xa-test"
+    depends="ant-task-test, dtd-test, rules-test, krule-test, tag-test, util-test, util-xa-test"
     description="Runs miscellaneous utility tests">
   </target>
 

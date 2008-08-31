@@ -28,8 +28,6 @@
     <pathelement path="${server-local.dist.dir}/${server-local.jar}"/>
     <pathelement path="${server-rmi.dist.dir}/${server-rmi.jar}"/>
     <pathelement path="${util.dist.dir}/${util.jar}"/>
-
-    <pathelement path="${lib.dir}/beepcore-*.jar"/>
   </path>
 
   <path id="driver-test-classpath">
@@ -94,7 +92,7 @@
 
   <target name="driver-dist"
           depends="driver-jar, driver-jar, querylang-jar, query-jar,
-                   server-jar, server-beep-jar, server-rmi-jar, util-jar, driver-uptodate"
+                   server-jar, server-rmi-jar, util-jar, driver-uptodate"
           unless="driver.uptodate"
           description="Performs all tasks related to finalising this driver
                        and readying it for distribution">
@@ -106,7 +104,6 @@
       <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${query.dist.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server.dist.dir}/${server.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${server-beep.dist.dir}/${server-beep.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
@@ -129,7 +126,6 @@
       <srcfiles dir="${rules.dist.dir}" includes="${rules.jar}"/>
       <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
       <srcfiles dir="${server.dist.dir}" includes="${server.jar}"/>
-      <srcfiles dir="${server-beep.dist.dir}" includes="${server-beep.jar}"/>
       <srcfiles dir="${server-rmi.dist.dir}" includes="${server-rmi.jar}"/>
       <srcfiles dir="${util.dist.dir}" includes="${util.jar}"/>
     </uptodate>
