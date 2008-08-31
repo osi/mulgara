@@ -36,11 +36,9 @@
 	<classpathentry kind="src" path="src/jar/resolver-xsd/java"/>
 	<classpathentry kind="src" path="src/jar/rules/java"/>
 	<classpathentry kind="src" path="src/jar/server/java"/>
-	<classpathentry kind="src" path="src/jar/server-beep/java"/>
 	<classpathentry kind="src" path="src/jar/server-http/java"/>
 	<classpathentry kind="src" path="src/jar/server-local/java"/>
 	<classpathentry kind="src" path="src/jar/server-rmi/java"/>
-	<classpathentry kind="src" path="src/jar/sofa/java"/>
 	<classpathentry kind="src" path="src/jar/sparql-interpreter/java"/>
 	<classpathentry kind="src" path="src/jar/store/java"/>
 	<classpathentry kind="src" path="src/jar/store-nodepool/java"/>
@@ -67,7 +65,6 @@
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/trove-1.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/sofa-1.0-alpha.jar"/>
 	<classpathentry kind="lib" path="lib/sablecc-2.18.2.jar"/>
 	<classpathentry kind="lib" path="lib/saaj-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/Quick4util.jar"/>
@@ -103,7 +100,6 @@
 	<classpathentry kind="lib" path="lib/commons-discovery-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/bsh-2.0b1.jar"/>
 	<classpathentry kind="lib" path="lib/bsf-2.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/beepcore-0.9.08.jar"/>
 	<classpathentry kind="lib" path="lib/barracuda-ant-1.2.6.jar"/>
 	<classpathentry kind="lib" path="lib/barracuda-1.2.6.jar"/>
 	<classpathentry kind="lib" path="lib/axis-ant-1.4.jar"/>
