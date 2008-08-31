@@ -110,7 +110,7 @@
   </target>
 
   <target name="querylang-dist"
-          depends="querylang-uptodate, querylang-jar, server-rmi-jar, sparql-int-jar"
+          depends="querylang-uptodate, querylang-jar, server-rmi-jar"
           unless="querylang.uptodate"
           description="Performs all tasks related to finalising this querylang and readying it for distribution">
 
@@ -133,7 +133,6 @@
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${util.dist.dir}/${util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${sparql-int.dist.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/concurrent-1.3.4.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/jargs-0.2.jar" excludes="META-INF/**"/>
@@ -157,7 +156,6 @@
       <srcfiles dir="${querylang.dist.dir}" includes="${querylang.jar}"/>
       <srcfiles dir="${driver.dist.dir}" includes="${driver.jar}"/>
       <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
-      <srcfiles dir="${sparql-int.dist.dir}" includes="${query.jar}"/>
       <srcfiles dir="${server-rmi.dist.dir}" includes="${server-rmi.jar}"/>
       <srcfiles dir="${util.dist.dir}" includes="${util.jar}"/>
     </uptodate>

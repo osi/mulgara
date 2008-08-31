@@ -52,7 +52,6 @@
   <property file="${jar.src.dir}/server-rmi/server-rmi-build.properties"/>
   <property file="${jar.src.dir}/krule/krule-build.properties"/>
   <property file="${jar.src.dir}/rules/rules-build.properties"/>
-  <property file="${jar.src.dir}/sparql-interpreter/sparql-interpreter-build.properties"/>
   <property file="${jar.src.dir}/store/store-build.properties"/>
   <property file="${jar.src.dir}/store-xa/store-xa-build.properties"/>
   <property file="${jar.src.dir}/store-nodepool/store-nodepool-build.properties"/>
@@ -120,7 +119,6 @@
   <import file="${jar.src.dir}/server-rmi/build.xml"/>
   <import file="${jar.src.dir}/krule/build.xml"/>
   <import file="${jar.src.dir}/rules/build.xml"/>
-  <import file="${jar.src.dir}/sparql-interpreter/build.xml"/>
   <import file="${jar.src.dir}/store/build.xml"/>
   <import file="${jar.src.dir}/store-xa/build.xml"/>
   <import file="${jar.src.dir}/store-nodepool/build.xml"/>
@@ -203,6 +201,7 @@
     <tstamp/>
 
     <delete dir="${obj.dir}"/>
+    <delete dir="${test.dir}"/>
     <delete dir="${bin.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete dir="${tmp.dir}"/>
@@ -318,7 +317,7 @@
                    resolver-url-dist, resolver-view-dist, resolver-xsd-dist,
                    resolver-jar-dist, resolver-test-dist,
                    server-dist, server-http-dist, server-local-dist,
-                   server-rmi-dist, sparql-int-dist, krule-dist, rules-dist,
+                   server-rmi-dist, krule-dist, rules-dist,
                    store-stringpool-dist, store-stringpool-memory-dist,
                    store-stringpool-xa-dist,
                    store-stringpool-xa11-dist, tag-dist,
@@ -466,7 +465,7 @@
 
       <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
       <attribute name="Embedded-Jar" value="
-          lib/${query.jar}, lib/${driver.jar}, lib/${querylang.jar}, lib/${sparql-int.jar},
+          lib/${query.jar}, lib/${driver.jar}, lib/${querylang.jar},
           lib/${rmi.jar},
           lib/${server.jar}, lib/${server-rmi.jar},
           lib/${util.jar}, lib/${config.jar}, lib/${descriptor.jar}, lib/${server-local.jar},
@@ -499,7 +498,7 @@
   <!-- Creates the lite distribution file for the Embedded Mulgara server   -->
   <!-- =================================================================== -->
   <target name="lite-dist"
-          depends="driver-jar, querylang-jar, sparql-int-jar, rules-jar, query-jar, rmi-jar,
+          depends="driver-jar, querylang-jar, rules-jar, query-jar, rmi-jar,
                    server-jar, server-local-jar,
                    server-rmi-jar, util-jar, config-jar, dtd-jar, jrdf-jar, ant-task-jar,
                    store-dist, store-xa-dist, store-nodepool-dist,
@@ -553,7 +552,7 @@
                        ${axis.jar}, ${commons-discovery.jar},
                        ${jaxrpc.jar}, ${wsdl4j.jar}"/>
       <zipfileset dir="${bin.dir}" prefix="lib" includes="
-          ${query.jar}, ${driver.jar}, ${querylang.jar}, ${sparql-int.jar},
+          ${query.jar}, ${driver.jar}, ${querylang.jar},
           ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}, ${server-local.jar},
@@ -726,7 +725,7 @@
              ant-task-jar, client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar,
              content-n3-jar, content-rdfxml-jar,
-             querylang-jar, sparql-int-jar,
+             querylang-jar,
              doclet.jar, jrdf-jar, store-jar,
              store-xa-jar,
              store-nodepool-jar, store-nodepool-memory-jar,
@@ -840,7 +839,6 @@
       <sourcepath path="${resolver-test.src.dir}/java"/>
       <sourcepath path="${server.src.dir}/java"/>
       <sourcepath path="${server-rmi.src.dir}/java"/>
-      <sourcepath path="${sparql-int.src.dir}/java"/>
       <sourcepath path="${store.src.dir}/java"/>
       <sourcepath path="${store-xa.src.dir}/java"/>
       <sourcepath path="${store-nodepool.src.dir}/java"/>
@@ -884,7 +882,7 @@
                    content-mp3-javadoc, content-n3-javadoc,
                    content-rdfxml-javadoc,
                    descriptor-javadoc, driver-javadoc, dtd-javadoc,
-                   querylang-javadoc, sparql-int-javadoc,
+                   querylang-javadoc,
                    store-javadoc, store-xa-javadoc,
                    store-nodepool-javadoc,
                    store-nodepool-memory-javadoc, jrdf-javadoc,
@@ -1368,7 +1366,7 @@
   <!-- =================================================================== -->
   <target name="mulgara-war"
       description="Builds the Mulgara Semantic Store (Mulgara) WAR"
-      depends="driver-jar, querylang-jar, sparql-int-jar, query-jar, rmi-jar, server-jar,
+      depends="driver-jar, querylang-jar, query-jar, rmi-jar, server-jar,
       server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
       set.host.name, mulgara.war-uptodate"
       unless="mulgara.war-uptodate">
@@ -1394,7 +1392,7 @@
       <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar,
         lucene*.jar, apache-soap-*.jar, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
-        ${driver.jar}, ${querylang.jar}, ${sparql-int.jar}, ${rules.jar}, ${rmi.jar},
+        ${driver.jar}, ${querylang.jar}, ${rules.jar}, ${rmi.jar},
           ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>
@@ -1408,7 +1406,6 @@
 
       <srcfiles dir="${bin.dir}" includes="${query.jar},
           ${driver.jar}, ${querylang.jar}, ${rules.jar}, ${rmi.jar},
-          ${sparql-int.jar},
           ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}"/>
       <srcfiles dir="${dist.dir}" includes="expires.txt"/>
@@ -1684,7 +1681,7 @@
              content-mbox-jar, content-mp3-jar, content-n3-jar,
              content-rdfxml-jar,
              create-manifest, demo-jar, dtd-jar, driver-jar, dtd-jar,
-             querylang-jar, sparql-int-jar,
+             querylang-jar,
              javadoc-dist, jrdf-jar, store-jar, store-xa-jar,
              store-nodepool-jar,
              store-nodepool-memory-jar, store-nodepool-xa-jar,
@@ -1771,7 +1768,6 @@
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
@@ -1852,7 +1848,7 @@
              content-mbox-jar, content-mp3-jar, content-n3-jar,
              content-rdfxml-jar,
              demo-jar, driver-jar, dtd-jar,
-             querylang-jar, sparql-int-jar,
+             querylang-jar,
              jrdf-jar, store-jar, store-xa-jar,
              store-nodepool-jar,
              store-nodepool-memory-jar, store-nodepool-xa-jar,
@@ -1877,7 +1873,6 @@
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${sparql-int.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
