@@ -489,7 +489,7 @@
           lib/${jetty.jar}, lib/${jetty.plus.jar}, lib/${jasper.compiler.jar}, lib/${servlet-jsp.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,
           lib/${castor-xml.jar}, lib/${castor-codegen.jar}, lib/${castor-xml-schema.jar}, lib/trove-1.0.2.jar, lib/${saaj.jar},
           lib/${jakarta-oro.jar}, lib/jta-spec1_0_1.jar, lib/${jotm.jar}, lib/${jotm.jrmp.jar}, lib/${carol.jar}, lib/${howl.jar},
-          lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${mulgara-sparql.jar}, lib/${sesame-model.jar}"/>
+          lib/${jca.jar}, lib/${httpclient.jar}, lib/${commons-codec.jar}, lib/${sesame-model.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraServer"/>
     </manifest>
   </target>
@@ -543,7 +543,7 @@
         ${servlet-jsp.jar}, ${servlet.jar}, ${jasper.runtime.jar}, ${jasper.compiler.jar},
         ${lucene.jar}, ${mail.jar}, ${castor-xml.jar}, ${castor-xml-schema.jar}, ${castor-codegen.jar}, ${trove.jar},
         ${joda-time.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
-        ${commons-codec.jar}, ${emory-util.jar}, ${mulgara-sparql.jar}
+        ${commons-codec.jar}, ${emory-util.jar},
         ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
         ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
         ${axis.jar}, ${commons-discovery.jar}, ${jaxrpc.jar}, ${wsdl4j.jar},
@@ -1751,7 +1751,6 @@
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${mulgara-sparql.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${serializer.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>
