@@ -24,12 +24,9 @@
   <!-- Add the sablecc task to ant                                         -->
   <!-- =================================================================== -->
   <target name="sablecc">
-
-    <taskdef name="sablecc"
-             classname="org.sablecc.ant.taskdef.Sablecc">
-
+    <taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc">
       <classpath>
-        <fileset dir="${lib.dir}" includes="**/sablecc-2.18.2.jar"/>
+        <fileset dir="${lib.dir}" includes="${sablecc.jar}"/>
       </classpath>
     </taskdef>
   </target>
@@ -39,11 +36,8 @@
   <!-- =================================================================== -->
   <target name="jalopy">
 
-    <taskdef name="jalopy"
-             classname="de.hunsicker.jalopy.plugin.ant.AntPlugin">
-
+    <taskdef name="jalopy" classname="de.hunsicker.jalopy.plugin.ant.AntPlugin">
       <classpath>
-
         <fileset dir="${lib.dir}">
           <include name="*.jar"/>
         </fileset>
