@@ -49,15 +49,18 @@
     <mkdir dir="${querylang.obj.dir}/java"/>
   </target>
 
-  <target name="gen-querylang-parser" depends="-querylang-prepare, querylang-parser-uptodate, sablecc" unless="querylang-parser-uptodate">
+  <target name="gen-tql-parser" depends="-querylang-prepare, querylang-parser-uptodate, sablecc" unless="tql-parser-uptodate">
     <sablecc src="${querylang.src.dir}/sablecc" outputdirectory="${querylang.obj.dir}/java">
       <include name="itql.grammar"/>
     </sablecc>
-    <!-- TODO: Add in JavaCC generation -->
+  </target>
+
+  <target name="gen-sparql-parser" description="Build the JavaCC generated files">
+    <javacc target="${querylang.src.dir}/javacc/org/mulgara/sparql/parser/SparqlParser.jj" javacchome="${lib.dir}" />
   </target>
 
   <target name="querylang-parser-uptodate" depends="-prepare-build">
-    <uptodate property="querylang-parser-uptodate"
+    <uptodate property="tql-parser-uptodate"
         targetfile="${obj.dir}/jar/querylang/java/org/mulgara/itql/analysis/DepthFirstAdapter.java">
       <srcfiles dir="${querylang.src.dir}/sablecc" includes="itql.grammar"/>
     </uptodate>
@@ -72,9 +75,10 @@
     </uptodate>
   </target>
 
-  <target name="querylang-compile" depends="-querylang-prepare, gen-querylang-parser, driver-jar" description="Compiles all query language related files included generated source code">
+  <target name="querylang-compile" depends="-querylang-prepare, gen-tql-parser, gen-sparql-parser, driver-jar" description="Compiles all query language related files included generated source code">
     <copy todir="${querylang.obj.dir}/java/" preservelastmodified="yes">
       <fileset dir="${querylang.src.dir}/java/" includes="**/*.java"/>
+      <fileset dir="${querylang.src.dir}/javacc/" includes="**/*.java"/>
     </copy>
     <antcall target="-querylang-token-build-label"/>
     <javac destdir="${querylang.obj.dir}/classes" debug="on" deprecation="on" source="1.5" classpathref="querylang-classpath">
@@ -144,7 +148,6 @@
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${mulgara-sparql.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
 
