@@ -37,102 +37,64 @@ import org.mulgara.itql.ItqlInterpreterBean;
  * Test frame for model creation using iTQL.
  *
  * @created 2001-12-18
- *
  * @author <a href="http://staff.pisoftware.com/pag">Paul Gearon</a>
- *
- * @version $Revision: 1.9 $
- *
- * @modified $Date: 2005/07/03 13:03:12 $
- *
- * @maintenanceAuthor $Author: pgearon $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
- *
+ * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class LoadDataJX implements JXTestStep {
 
-  /**
-   * Get line separator.
-   */
+  /** Get line separator. */
   private static final String eol = System.getProperty("line.separator");
 
-  /**
-   * Parameter name of the model name
-   */
+  /** Parameter name of the model name */
   public final static String MODEL = "modelName";
 
-  /**
-   * Parameter name of the load command
-   */
+  /** Parameter name of the load command */
   public final static String COMMAND = "loadCommand";
 
-  /**
-   * Parameter name of the type of model
-   */
+  /** Parameter name of the type of model */
   public final static String TYPE = "modelType";
 
-  /**
-   * Parameter name of the results of operations performed prior to loading
-   */
+  /** Parameter name of the results of operations performed prior to loading */
   public final static String DROP_RESULT = "preCreateResult";
 
-  /**
-   * Parameter name of the results of the model creation
-   */
+  /** Parameter name of the results of the model creation */
   public final static String CREATE_RESULT = "createResult";
 
-  /**
-   * Parameter name of the results of the load operation
-   */
+  /** Parameter name of the results of the load operation */
   public final static String LOAD_RESULT = "loadResult";
 
-  /**
-   * Parameter name of the "Clear Model" command
-   */
+  /** Parameter name of the "Clear Model" command */
   public final static String CLEAR = "clearModel";
 
   /**
    * Execute this object. Clears the test model from the graph, then retrieve a
    * filename from the testCase properties and load it as RDF. Results of each
    * stage are stored back in the properties object.
-   *
    * @param testCase The map object containing the properties.
-   * @throws Exception EXCEPTION TO DO
+   * @throws Exception A problex executing the command.
    */
+  @SuppressWarnings("unchecked")  // necessary to deal with JXProperties being untyped
   public void eval(JXTestCase testCase) throws Exception {
 
     JXProperties props = testCase.getProperties();
-    String model = (String) props.get(MODEL);
+    String model = (String)props.get(MODEL);
 
     // Performing a load is optional
     String cmd = "";
-
-    if (props.get(COMMAND) != null) {
-
-      cmd = (String) props.get(COMMAND);
-    }
+    if (props.get(COMMAND) != null) cmd = (String)props.get(COMMAND);
 
     // The type of model is optional
     String type = "";
-
-    if (props.get(TYPE) != null) {
-
-      type = (String) props.get(TYPE);
-    }
+    if (props.get(TYPE) != null) type = (String)props.get(TYPE);
 
     String dropResult = null;
 
     ItqlInterpreterBean iTQL = new ItqlInterpreterBean();
     try {
-
       boolean clear = true;
-
       if (props.get(CLEAR) != null) {
-
         // anything that is not "true" is considered "false"
         clear = ((String) props.get(CLEAR)).equalsIgnoreCase("true");
       }
@@ -140,11 +102,8 @@ public class LoadDataJX implements JXTestStep {
       if (clear) {
         // Attempt to drop the model - may not be successful if model does not exist
         try {
-
           dropResult = iTQL.executeQueryToString("drop <" + model + "> ;");
-        }
-        catch (Exception ex) {
-
+        } catch (Exception ex) {
           System.out.println("Unable to drop model - may have not existed");
         }
       }
@@ -153,23 +112,15 @@ public class LoadDataJX implements JXTestStep {
       String createResult = "";
 
       if (type.equals("")) {
-
         createResult = iTQL.executeQueryToString("create <" + model + "> ;");
-      }
-      else {
-
-        createResult =
-            iTQL.executeQueryToString("create <" + model + "> " + "<" + type +
-            "> ;");
+      } else {
+        createResult = iTQL.executeQueryToString("create <" + model + "> " + "<" + type + "> ;");
       }
 
       // Execute the command if supplied
       String cmdResult = "";
 
-      if (!cmd.equals("")) {
-
-        cmdResult = iTQL.executeQueryToString(cmd);
-      }
+      if (!cmd.equals("")) cmdResult = iTQL.executeQueryToString(cmd);
 
       props.put(DROP_RESULT, dropResult);
       props.put(CREATE_RESULT, createResult + eol);
