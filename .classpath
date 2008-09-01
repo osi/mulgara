@@ -125,7 +125,6 @@
 	<classpathentry kind="lib" path="lib/derby.jar"/>
 	<classpathentry kind="lib" path="lib/velocity-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/emory-util-2.1-remote.jar"/>
-	<classpathentry kind="lib" path="lib/mulgara-sparql-0.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-1.5.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/sesame-model-2.1.jar"/>
