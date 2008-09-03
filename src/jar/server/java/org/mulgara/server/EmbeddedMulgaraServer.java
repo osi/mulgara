@@ -770,10 +770,15 @@ public class EmbeddedMulgaraServer {
     }
 
     // add the webapps
+    try {
 //    server.addHandler(new DefaultHandler());
-    addWebServicesWebAppContext(server);
-    addWebUIWebAppContext(server);
-    addWebQueryContext(server);
+      addWebServicesWebAppContext(server);
+      addWebUIWebAppContext(server);
+      addWebQueryContext(server);
+    } catch (IllegalStateException e) {
+      // not fatal, so just log the problem and go on
+      log.warn("Unable to start web service", e.getCause());
+    }
 
     // add our class loader as the classloader of all contexts, unless this is a webapp in which case we wrap it
     ClassLoader classLoader = this.getClass().getClassLoader();
