@@ -569,7 +569,7 @@
       <arg line="-Dorg.mulgara.test=&quot;${org.mulgara.test}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath}"/>
-      <arg line="org.mulgara.util.Bootstrap"/>
+      <arg line="org.mulgara.server.EmbeddedMulgaraServer"/>
 <!--      <arg value="-jar"/>
       <arg value="${dist.dir}/${mulgara.jar}"/> -->
 
@@ -589,7 +589,7 @@
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath}"/>
-      <arg line="org.mulgara.util.Bootstrap"/>
+      <arg line="org.mulgara.server.EmbeddedMulgaraServer"/>
 <!--      <arg value="-jar"/>
       <arg value="${dist.dir}/${mulgara.jar}"/> -->
       <arg value="-a"/>
@@ -607,7 +607,7 @@
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath}"/>
-      <arg line="org.mulgara.util.Bootstrap"/>
+      <arg line="org.mulgara.server.EmbeddedMulgaraServer"/>
 <!--      <arg value="-jar"/>
       <arg value="${dist.dir}/${mulgara.jar}"/> -->
       <arg value="-a"/>
@@ -626,7 +626,7 @@
       <arg line="-Djava.io.tmpdir=&quot;${tmp.dir}&quot;"/>
       <arg value="-cp"/>
       <arg value="${jvm-classpath-win}"/>
-      <arg line="org.mulgara.util.Bootstrap"/>
+      <arg line="org.mulgara.server.EmbeddedMulgaraServer"/>
 <!--      <arg value="-jar"/>
       <arg value="${dist.dir}\${mulgara.jar}"/> -->
       <arg value="-a"/>
