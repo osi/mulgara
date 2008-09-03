@@ -81,12 +81,16 @@ abstract class ResolverFactoryFactory
     }
 
     try {
-      Class resolverFactoryClass = Class.forName(className);
+      Class<?> resolverFactoryClass = null;
+      try {
+        resolverFactoryClass = Class.forName(className);
+      } catch (Throwable t) {
+        throw new IllegalArgumentException(className + " could not be loaded", t);
+      }
 
       // Validate that the candidate supports the ResolverFactory interface
       if (!ResolverFactory.class.isAssignableFrom(resolverFactoryClass)) {
-        throw new IllegalArgumentException(
-            className + " is not an " + ResolverFactory.class.getName());
+        throw new IllegalArgumentException(className + " is not an " + ResolverFactory.class.getName());
       }
 
       // Invoke the static ResolverFactory.newInstance method
@@ -133,7 +137,12 @@ abstract class ResolverFactoryFactory
     }
 
     try {
-      Class resolverFactoryClass = Class.forName(className);
+      Class<?> resolverFactoryClass = null;
+      try {
+        resolverFactoryClass = Class.forName(className);
+      } catch (Throwable t) {
+        throw new IllegalArgumentException(className + " could not be loaded", t);
+      }
 
       // Validate that the candidate supports the ResolverFactory interface
       if (!SystemResolverFactory.class.isAssignableFrom(resolverFactoryClass)) {
