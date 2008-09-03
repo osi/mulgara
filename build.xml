@@ -526,8 +526,6 @@
 
     <unjar src="${lib.dir}/xercesImpl.jar" dest="${obj.dir}/xerces"/>
     <unjar src="${lib.dir}/xmlParserAPIs.jar" dest="${obj.dir}/xerces"/>
-    <unjar src="${lib.dir}/jsr173_07_api.jar" dest="${obj.dir}/xerces"/>
-    <unjar src="${lib.dir}/jsr173_07_ri.jar" dest="${obj.dir}/xerces"/>
     <!-- HACK!!!!! -->
 
     <!-- build the executable jar file -->
@@ -545,7 +543,7 @@
         ${joda-time.jar}, ${commons-logging.jar}, ${commons-httpclient.jar},
         ${commons-codec.jar}, ${emory-util.jar},
         ${jotm.jar}, ${jotm.jrmp.jar}, ${carol.jar}, ${howl.jar}, ${jta.jar},
-        ${jsr.173.api.jar}, ${jsr.173.ri.jar}, ${jca.jar}, ${saaj.jar},
+        ${jca.jar}, ${saaj.jar},
         ${axis.jar}, ${commons-discovery.jar}, ${jaxrpc.jar}, ${wsdl4j.jar},
         ${jena.jar}, ${antlr.jar}, ${jakarta-oro.jar}, {jid3.jar}, lib/${sesame-model.jar}"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="${saaj.jar},
@@ -806,7 +804,6 @@
       <classpath path="${lib.dir}/${servlet.jar}"/>
       <classpath path="${lib.dir}/${servlet-jsp.jar}"/>
       <classpath path="${lib.dir}/${jid3.jar}"/>
-      <classpath path="${lib.dir}/jsr173_07_api.jar"/>
       <classpath path="${lib.dir}/${lucene.jar}"/>
       <classpath path="${lib.dir}/xmlc-all-runtime-2.2.jar"/>
       <classpath path="${lib.dir}/xom-1.0d21.jar"/>
@@ -1707,8 +1704,6 @@
 
     <unjar src="${lib.dir}/xercesImpl.jar" dest="${obj.dir}/xerces"/>
     <unjar src="${lib.dir}/xmlParserAPIs.jar" dest="${obj.dir}/xerces"/>
-    <unjar src="${lib.dir}/jsr173_07_api.jar" dest="${obj.dir}/xerces"/>
-    <unjar src="${lib.dir}/jsr173_07_ri.jar" dest="${obj.dir}/xerces"/>
 
     <!-- build the executable jar file -->
     <jar jarfile="${dist.dir}/${mulgara.jar}"
@@ -1745,8 +1740,6 @@
       <zipfileset src="${lib.dir}/${joda-time.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jsr.173.api.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${jsr.173.ri.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>

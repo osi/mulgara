@@ -141,8 +141,6 @@
       <zipfileset src="${lib.dir}/concurrent-1.3.4.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/jargs-0.2.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/jsr173_07_api.jar" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/jsr173_07_ri.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/log4j-1.2.15.jar" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>

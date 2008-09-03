@@ -75,8 +75,6 @@
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/jtidy-r7-xmlc-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/jta-spec1_0_1.jar"/>
-	<classpathentry kind="lib" path="lib/jsr173_07_ri.jar"/>
-	<classpathentry kind="lib" path="lib/jsr173_07_api.jar"/>
 	<classpathentry kind="lib" path="lib/js-1.5r3.jar"/>
 	<classpathentry kind="lib" path="lib/jotm-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/jotm_jrmp_stubs-2.0.10.jar"/>
@@ -85,7 +83,6 @@
 	<classpathentry kind="lib" path="lib/jl1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jid3-0.34.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-j2ee.jar"/>
-	<classpathentry kind="lib" path="lib/jaxrpc-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/javacc.jar"/>
 	<classpathentry kind="lib" path="lib/jasper-runtime-4.2.29.jar"/>
 	<classpathentry kind="lib" path="lib/jasper-compiler-4.2.29.jar"/>
