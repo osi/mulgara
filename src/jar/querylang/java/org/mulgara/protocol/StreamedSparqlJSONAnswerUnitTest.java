@@ -20,9 +20,7 @@ import junit.framework.*;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // Locally written packages
 import org.mulgara.query.AnswerImpl;
@@ -82,15 +80,10 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
    */
   public static Test suite() {
     TestSuite suite = new TestSuite();
-    // TODO: tests not yet written
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testEmptyConstructor"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testEmptyConstructorPretty"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testBooleanAnswer"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testBooleanAnswerPretty"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testPrettyPrint"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testCompactPrint"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testPrettyPrintVariations"));
-//    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testCompactPrintVariations"));
+    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testEmptyConstructor"));
+    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testBooleanAnswer"));
+    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testCompactPrint"));
+    suite.addTest(new StreamedSparqlJSONAnswerUnitTest("testCompactPrintVariations"));
     return suite;
   }
 
@@ -115,21 +108,6 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
 
 
   /**
-   * Tests an empty answer.
-   * @throws Exception On error
-   */
-  public void testEmptyConstructorPretty() throws Exception {
-    StreamedSparqlJSONAnswer a = new StreamedSparqlJSONAnswer(empty, output);
-    a.emit();
-    assertEquals(getEmptyP(), output.toString());
-
-    output.reset();
-    a.emit();
-    assertEquals(getEmpty(), output.toString());
-  }
-
-
-  /**
    * Tests a boolean answer.
    * @throws Exception On error
    */
@@ -142,30 +120,6 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
     output.reset();
     a.emit();
     assertEquals(getTrue(), output.toString());
-  }
-
-
-  /**
-   * Tests a boolean answer.
-   * @throws Exception On error
-   */
-  public void testBooleanAnswerPretty() throws Exception {
-    StreamedSparqlJSONAnswer a = new StreamedSparqlJSONAnswer(true, output);
-    a.emit();
-    assertEquals(getTrueP(), output.toString());
-    output.reset();
-    a.emit();
-    assertEquals(getTrue(), output.toString());
-  }
-
-
-  /**
-   * Test main structure.
-   */
-  public void testPrettyPrint() throws Exception {
-    StreamedSparqlJSONAnswer a = new StreamedSparqlJSONAnswer(answer, output);
-    a.emit();
-    assertEquals(getAnswerP(), output.toString());
   }
 
 
@@ -188,216 +142,29 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
     StreamedSparqlJSONAnswer b = new StreamedSparqlJSONAnswer(true, REL_URI, outputb);
     StreamedSparqlJSONAnswer a = new StreamedSparqlJSONAnswer(answer, REL_URI, outputa);
 
-    // No namespaces, no schema, meta set
+    // meta set
     e.emit();
     b.emit();
     a.emit();
-    assertEquals(getEmpty(false, true), output.toString());
-    assertEquals(getTrue(false, true), outputb.toString());
-    assertEquals(getAnswer(false, true), outputa.toString());
+    assertEquals(getEmpty(true), output.toString());
+    assertEquals(getTrue(true), outputb.toString());
+    assertEquals(getAnswer(true), outputa.toString());
 
-    // No namespaces, schema set, meta set
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(true, true), output.toString());
-    assertEquals(getTrue(true, true), outputb.toString());
-    assertEquals(getAnswer(true, true), outputa.toString());
-
-    // Namespaces set, schema set, meta set
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(true, true), output.toString());
-    assertEquals(getTrue(true, true), outputb.toString());
-    assertEquals(getAnswer(true, true), outputa.toString());
-
-    // Namespaces set, no schema, meta set
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(false, true), output.toString());
-    assertEquals(getTrue(false, true), outputb.toString());
-    assertEquals(getAnswer(false, true), outputa.toString());
-    
     e = new StreamedSparqlJSONAnswer(empty, output);
     b = new StreamedSparqlJSONAnswer(true, outputb);
     a = new StreamedSparqlJSONAnswer(answer, outputa);
 
-    // No namespaces, schema set, no meta
+    // no meta
     output.reset();
     outputb.reset();
     outputa.reset();
     e.emit();
     b.emit();
     a.emit();
-    assertEquals(getEmpty(true, false), output.toString());
-    assertEquals(getTrue(true, false), outputb.toString());
-    assertEquals(getAnswer(true, false), outputa.toString());
+    assertEquals(getEmpty(false), output.toString());
+    assertEquals(getTrue(false), outputb.toString());
+    assertEquals(getAnswer(false), outputa.toString());
 
-    // Namespaces set, schema set, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(true, false), output.toString());
-    assertEquals(getTrue(true, false), outputb.toString());
-    assertEquals(getAnswer(true, false), outputa.toString());
-
-    // Namespaces set, no schema, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(false, false), output.toString());
-    assertEquals(getTrue(false, false), outputb.toString());
-    assertEquals(getAnswer(false, false), outputa.toString());
-
-    // No Namespaces, no schema, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(false, false), output.toString());
-    assertEquals(getTrue(false, false), outputb.toString());
-    assertEquals(getAnswer(false, false), outputa.toString());
-
-    // No namespaces, schema set, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmpty(true, false), output.toString());
-    assertEquals(getTrue(true, false), outputb.toString());
-    assertEquals(getAnswer(true, false), outputa.toString());
-  }
-
-
-  /**
-   * Tests the variations of answers.
-   * @throws Exception On error
-   */
-  public void testPrettyPrintVariations() throws Exception {
-    StreamedSparqlJSONAnswer e = new StreamedSparqlJSONAnswer(empty, REL_URI, output);
-    StreamedSparqlJSONAnswer b = new StreamedSparqlJSONAnswer(true, REL_URI, outputb);
-    StreamedSparqlJSONAnswer a = new StreamedSparqlJSONAnswer(answer, REL_URI, outputa);
-
-    // No namespaces, no schema, meta set
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(false, true), output.toString());
-    assertEquals(getTrueP(false, true), outputb.toString());
-    assertEquals(getAnswerP(false, true), outputa.toString());
-
-    // No namespaces, schema set, meta set
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(true, true), output.toString());
-    assertEquals(getTrueP(true, true), outputb.toString());
-    assertEquals(getAnswerP(true, true), outputa.toString());
-
-    // Namespaces set, schema set, meta set
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(true, true), output.toString());
-    assertEquals(getTrueP(true, true), outputb.toString());
-    assertEquals(getAnswerP(true, true), outputa.toString());
-
-    // Namespaces set, no schema, meta set
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(false, true), output.toString());
-    assertEquals(getTrueP(false, true), outputb.toString());
-    assertEquals(getAnswerP(false, true), outputa.toString());
-    
-    e = new StreamedSparqlJSONAnswer(empty, output);
-    b = new StreamedSparqlJSONAnswer(true, outputb);
-    a = new StreamedSparqlJSONAnswer(answer, outputa);
-
-    // No namespaces, schema set, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(true, false), output.toString());
-    assertEquals(getTrueP(true, false), outputb.toString());
-    assertEquals(getAnswerP(true, false), outputa.toString());
-
-    // Namespaces set, schema set, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(true, false), output.toString());
-    assertEquals(getTrueP(true, false), outputb.toString());
-    assertEquals(getAnswerP(true, false), outputa.toString());
-
-    // Namespaces set, no schema, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(false, false), output.toString());
-    assertEquals(getTrueP(false, false), outputb.toString());
-    assertEquals(getAnswerP(false, false), outputa.toString());
-
-    // No Namespaces, no schema, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(false, false), output.toString());
-    assertEquals(getTrueP(false, false), outputb.toString());
-    assertEquals(getAnswerP(false, false), outputa.toString());
-
-    // No namespaces, schema set, no meta
-    output.reset();
-    outputb.reset();
-    outputa.reset();
-    e.emit();
-    b.emit();
-    a.emit();
-    assertEquals(getEmptyP(true, false), output.toString());
-    assertEquals(getTrueP(true, false), outputb.toString());
-    assertEquals(getAnswerP(true, false), outputa.toString());
   }
 
 
@@ -439,19 +206,11 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
   /////////////////////////////
 
   private static String getEmpty() {
-    return getEmpty(false, false);
+    return getEmpty(false);
   }
 
-  private static String getEmptyP() {
-    return getEmptyP(false, false);
-  }
-
-  private static String getEmpty(boolean schema, boolean meta) {
-    return getCommonStart(schema, meta) + EMPTY_BODY;
-  }
-
-  private static String getEmptyP(boolean schema, boolean meta) {
-    return getCommonStartP(schema, meta) + EMPTY_BODY_P;
+  private static String getEmpty(boolean meta) {
+    return getCommonStart(meta) + EMPTY_BODY;
   }
 
   ////////////////////////////
@@ -459,19 +218,11 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
   ////////////////////////////
 
   private static String getTrue() {
-    return getTrue(false, false);
+    return getTrue(false);
   }
 
-  private static String getTrueP() {
-    return getTrueP(false, false);
-  }
-
-  private static String getTrue(boolean schema, boolean meta) {
-    return getCommonStart(schema, meta) + TRUE_BODY;
-  }
-
-  private static String getTrueP(boolean schema, boolean meta) {
-    return getCommonStartP(schema, meta) + TRUE_BODY_P;
+  private static String getTrue(boolean meta) {
+    return getCommonStart(meta) + TRUE_BODY;
   }
 
   //////////////////////////////
@@ -479,44 +230,25 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
   //////////////////////////////
 
   private static String getAnswer() {
-    return getAnswer(false, false);
+    return getAnswer(false);
   }
 
-  private static String getAnswerP() {
-    return getAnswerP(false, false);
-  }
-
-  private static String getAnswer(boolean schema, boolean meta) {
-    return getShortCommonStart(schema) + ANSWER_VARS + getMeta(meta) + ANSWER_BODY;
-  }
-
-  private static String getAnswerP(boolean schema, boolean meta) {
-    return getShortCommonStartP(schema) + ANSWER_VARS_P + getMetaP(meta) + ANSWER_BODY_P;
+  private static String getAnswer(boolean meta) {
+    String result = getShortCommonStart() + ANSWER_VARS;
+    if (meta) result += ", ";
+    return result + getMeta(meta) + ANSWER_BODY;
   }
 
   ////////////////
   // common header
   ////////////////
 
-  private static String getCommonStart(boolean schema, boolean meta) {
-    return getShortCommonStart(schema) + getMeta(meta);
+  private static String getCommonStart(boolean meta) {
+    return getShortCommonStart() + getMeta(meta);
   }
 
-  private static String getCommonStartP(boolean schema, boolean meta) {
-    return getShortCommonStartP(schema) + getMetaP(meta);
-  }
-
-  private static String getShortCommonStart(boolean schema) {
+  private static String getShortCommonStart() {
     String result = DOC_HEAD + SPARQL_HEAD;
-    if (schema) result += " " + SPARQL_HEAD_ATTR;
-    result += ">" + EMPTY_HEAD;
-    return result;
-  }
-
-  private static String getShortCommonStartP(boolean schema) {
-    String result = DOC_HEAD + SPARQL_HEAD;
-    if (schema) result += "\n" + SPARQL_HEAD_INDENT + SPARQL_HEAD_ATTR;
-    result += ">\n  " + EMPTY_HEAD + "\n";
     return result;
   }
 
@@ -524,69 +256,24 @@ public class StreamedSparqlJSONAnswerUnitTest extends TestCase {
     return meta ? HEAD_META : "";
   }
 
-  private static String getMetaP(boolean meta) {
-    return meta ? HEAD_META_INDENT + HEAD_META + "\n" : "";
-  }
+  static final String DOC_HEAD = "{ ";
 
-  static final String DOC_HEAD = "<?xml version=\"1.0\"?>\n";
+  static final String SPARQL_HEAD = "\"head\": {";
 
-  static final String SPARQL_HEAD = "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\"";
+  static final String HEAD_META = "\"link\": [\"" + REL_URI + "\"]";
 
-  static final String SPARQL_HEAD_ATTR = "xsi:schemaLocation=\"http://www.w3.org/2007/SPARQL/result.xsd\"";
+  static final String EMPTY_BODY = "}, \"results\": { \"bindings\": [  ] } }";
 
-  static final String SPARQL_HEAD_INDENT = "        ";
-  
-  static final String HEAD_META = "<link href=\"" + REL_URI + "\"/>";
+  static final String TRUE_BODY = "}, \"boolean\": true }";
 
-  static final String HEAD_META_INDENT = "    ";
+  static final String ANSWER_VARS = "\"vars\": [\"x\", \"y\"]";
 
-  static final String EMPTY_HEAD = "<head>";
-
-  static final String EMPTY_BODY = "</head><results></results></sparql>";
-
-  static final String EMPTY_BODY_P = "  </head>\n" +
-      "  <results>\n" +
-      "  </results>\n" +
-      "</sparql>";
-
-  static final String TRUE_BODY = "</head><boolean>true</boolean></sparql>";
-
-  static final String TRUE_BODY_P = "  </head>\n" +
-      "  <boolean>true</boolean>\n" +
-      "</sparql>";
-
-  static final String ANSWER_VARS = "<variable name=\"x\"/><variable name=\"y\"/>";
-
-  static final String ANSWER_BODY = "</head>" +
-      "<results>" +
-      "<result><binding name=\"x\"><literal>X1</literal></binding>" +
-      "<binding name=\"y\"><uri>urn:y1</uri></binding></result>" +
-      "<result><binding name=\"x\"><literal xml:lang=\"en\">X2</literal></binding>" +
-      "<binding name=\"y\"><bnode>_node42</bnode></binding></result>" +
-      "</results>" +
-      "</sparql>";
-
-  static final String ANSWER_VARS_P = "    <variable name=\"x\"/>\n" +
-      "    <variable name=\"y\"/>\n";
-
-  static final String ANSWER_BODY_P = "  </head>\n" +
-      "  <results>\n" +
-      "    <result>\n" +
-      "      <binding name=\"x\">\n" +
-      "        <literal>X1</literal>\n" +
-      "      </binding>\n" +
-      "      <binding name=\"y\">\n" +
-      "        <uri>urn:y1</uri>\n" +
-      "      </binding>\n" +
-      "    </result>\n" +
-      "    <result>\n" +
-      "      <binding name=\"x\">\n" +
-      "        <literal xml:lang=\"en\">X2</literal>\n" +
-      "      </binding>\n" +
-      "      <binding name=\"y\">\n" +
-      "        <bnode>_node42</bnode>\n" +
-      "      </binding>\n" +
-      "    </result>\n" +
-      "  </results>\n" +
-      "</sparql>";
+  static final String ANSWER_BODY = "}, " +
+      "\"results\": { " +
+      "\"bindings\": [ " +
+      "{ \"x\": { \"type\": \"literal\", \"value\": \"X1\" }, " +
+      "\"y\": { \"type\": \"uri\", \"value\": \"urn:y1\" } }, " +
+      "{ \"x\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"X2\" }, " +
+      "\"y\": { \"type\": \"bnode\", \"value\": \"_node42\" } }" +
+      " ] } }";
 }

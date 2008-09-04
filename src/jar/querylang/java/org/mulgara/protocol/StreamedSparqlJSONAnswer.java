@@ -109,7 +109,8 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
       if (wroteVars) s.append(", ");
       s.append("\"link\": [\"").append(additionalMetadata.toString()).append("\"]");
     }
-    s.append("}, ");
+    s.append("}");
+    prependComma = true;
   }
 
   /** {@inheritDoc} */
@@ -171,7 +172,7 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
       s.append("\"type\": \"typed-literal\", \"datatype\": \"").append(literal.getDatatype().toString()).append("\", ");
     } else {
       s.append("\"type\": \"literal\", ");
-      if (literal.getLanguage() != null) s.append(" \"xml:lang\": \"").append(literal.getLanguage()).append("\", ");
+      if (literal.getLanguage() != null) s.append("\"xml:lang\": \"").append(literal.getLanguage()).append("\", ");
     }
     s.append("\"value\": \"").append(literal.getLexicalForm()).append("\"");
   }
