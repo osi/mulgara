@@ -67,14 +67,6 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
     
-    Barracuda
-    JARs:     barracuda-ant-1.2.6.jar
-              barracuda-1.2.6.jar
-              plankton-1.2.6.jar
-    URL:      http://barracudamvc.org/Barracuda/docs/index.html
-    LICENSE:  GNU Lesser General Public License
-              http://opensource.org/licenses/lgpl-license.php
-    
     Bean Scripting Framework
     JARs:     bsf-2.3.0.jar
     URL:      http://jakarta.apache.org/bsf/
@@ -88,12 +80,6 @@ I.  Open Source Components
               LGPL chosen
               http://www.gnu.org/copyleft/lesser.html
 
-    BEEPCORE 
-    JARs:     beepcore-0.9.08.jar
-    URL:      http://sourceforge.net/projects/beepcore-java
-    LICENSE:  The BSD License
-              http://opensource.org/licenses/bsd-license.php
-    
     Castor
     JARs:     castor-1.2-codegen.jar
               castor-1.2-xml.jar
@@ -109,7 +95,7 @@ I.  Open Source Components
               http://www.apache.org/licenses/LICENSE-2.0
     
     Commons HTTP Client
-    JARs:     commons-httpclient-2.0.2.jar
+    JARs:     commons-httpclient-3.1.jar
     URL:      http://jakarta.apache.org/commons/httpclient/
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
@@ -164,7 +150,7 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
 
-    Java CC 3.2
+    Java CC 4.0
     JARs:     javacc.jar
     URL:      https://javacc.dev.java.net/
     LICENSE:  BSD
@@ -239,13 +225,6 @@ I.  Open Source Components
     LICENSE:  Apache 1.1
               Code from version 0.3.4.2 has been imported and updated.
     
-    JSR-173 (Streaming API for XML "StAX")
-    JARs:     jsr173_07_api.jar
-              jsr173_07_ri.jar
-    URL:      http://jcp.org/aboutJava/communityprocess/final/jsr173/index.html
-    LICENSE:  BEA Systems Specification License (BSD-like)
-              (accessible via the above URL)
-    
     JTidy
     JARs:     jtidy-r7-xmlc-2.2.jar
     URL:      http://sourceforge.net/projects/jtidy
@@ -276,24 +255,12 @@ I.  Open Source Components
     LICENSE:  GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
  
-    SOFA
-    JARs:     sofa-1.0-alpha.jar
-    URL:      http://sofa.projects.semwebcentral.org/
-    License   GNU LGPL
-              http://www.opensource.org/licenses/lgpl-license.php
-
     Trove4j
     JARs:     trove-1.0.2.jar
     URL:      http://trove4j.sf.net/
     License   GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
     
-    Mulgara SPARQL Parser
-    JARs:     mulgara-sparql-0.0.2.jar
-    URL:      http://mulgara.org/svn/sparqlparser
-    License   Apache License Version 2.0
-              http://www.apache.org/licenses/LICENSE-2.0.txt
-
     Velocity
     JARs:     velocity-1.5.jar
     URL:      http://velocity.apache.org/
@@ -320,14 +287,6 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
     
-    XMLC
-    JARs:     xmlc-all-runtime-2.2.jar
-              xmlc-taskdef-2.2.jar
-              xmlc-xerces.jar
-    URL:      http://www.enhydra.org/tech/xmlc/index.html
-    LICENSE:  LGPL
-              http://opensource.org/licenses/lgpl-license.php
-
     EMORY UTILs
     JARs:     emory-util-2.1-remote.jar
     URL:      http://dcl.mathcs.emory.edu/php/loadPage.php?content=/util/overview.html
@@ -340,8 +299,8 @@ I.  Open Source Components
     License   GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
 
-    JavaBeans Activation Framework 1.0.2
-    JARs:     activation-1.0.2.jar
+    JavaBeans Activation Framework 1.1.1
+    JARs:     activation-1.1.1.jar
     URL:      http://java.sun.com/products/javabeans/glasgow/jaf.html
     License:  Common Development and Distribution License (CDDL) v1.0
               https://glassfish.dev.java.net/public/CDDLv1.0.html
