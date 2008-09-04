@@ -68,10 +68,6 @@
   <property file="${jar.src.dir}/util/util-build.properties"/>
   <property file="${jar.src.dir}/web/web-build.properties"/>
 
-  <property name="webui.viewer.src.dir"
-      value="${webui.src.dir}/java/org/mulgara/webui/viewer"/>
-  <property name="webui.viewer.obj.dir.classes"
-      value="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer"/>
 
   <!-- =================================================================== -->
   <!--                              Imports                                -->
@@ -141,15 +137,6 @@
   <path id="project-classpath">
 
     <path refid="common-classpath"/>
-  </path>
-
-  <path id="webui.classpath">
-
-    <pathelement path="${java.class.path}"/>
-    <pathelement path="${obj.dir}/war/webui/classes"/>
-
-    <fileset dir="${lib.dir}" includes="**/**"/>
-    <fileset dir="${dist.dir}" includes="${driver.jar}"/>
   </path>
 
   <!-- =================================================================== -->
@@ -368,10 +355,6 @@
 
     <!-- webservices.war -->
     <copy file="${obj.dir}/war/webservices.war" todir="${core.dir}"/>
-
-    <!-- jars for webui war -->
-    <copy file="${obj.dir}/war/webui/jars/${webui-logic.jar}" todir="${core.dir}"/>
-    <copy file="${obj.dir}/war/webui/jars/${webui-barracuda.jar}" todir="${core.dir}"/>
 
     <!-- driver jar for clients -->
     <copy file="${dist.dir}/${driver.jar}" todir="${core.dir}"/>
@@ -762,7 +745,7 @@
              krule-jar, rules-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
-             tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, webui-war, web-jar"
+             tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, web-jar"
     unless="javadoc-uptodate"
     description="Creates the project javadoc">
     <delete dir="${javadoc.dir}"/>
@@ -801,7 +784,6 @@
                       org.mulgara.store.tuples.*,
                       org.mulgara.store.xa.*,
                       org.mulgara.webquery.*,
-                      org.mulgara.webui.*,
                       org.mulgara.util,
                       org.mulgara.xml.*"
         private="true"
@@ -874,14 +856,12 @@
       <sourcepath path="${tuples-hybrid.src.dir}/java"/>
       <sourcepath path="${util.src.dir}/java"/>
       <sourcepath path="${util-xa.src.dir}/java"/>
-      <sourcepath path="${webui.src.dir}/java"/>
       <sourcepath path="${web.src.dir}/java"/>
       <sourcepath path="${obj.dir}/jar/config/java"/>
       <sourcepath path="${obj.dir}/jar/querylang/java"/>
       <sourcepath path="${obj.dir}/jar/query/java"/>
       <!--sourcepath path="${obj.dir}/jar/rdql/java"/-->
       <sourcepath path="${obj.dir}/jar/util/java"/>
-      <sourcepath path="${obj.dir}/war/webui/java"/>
       <link href="${j2ee.javadoc}"/>
       <link href="${java.javadoc}"/>
       <link href="${jrdf.javadoc}"/>
@@ -1439,132 +1419,6 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Compiles the Mulgara webui interface pages with XMLC                    -->
-  <!-- =================================================================== -->
-  <target name="webui-xmlc" depends="xmlc"
-      description="Compiles the Mulgara webui interface pages with XMLC">
-
-    <!-- Build the webui interface classes -->
-    <mkdir dir="${obj.dir}/war/webui/java"/>
-
-    <!-- build the webui interface classes -->
-    <xmlc sourceout="${obj.dir}/war/webui/java"
-          includes="**/*.html"
-          markup="HTML"
-          verbose="false"
-          force="no"
-          srcdir="${webui.src.dir}/template-html"/>
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- Compiles the Mulgara webui interface classes                            -->
-  <!-- =================================================================== -->
-  <target name="webui-build" depends="webui-xmlc, eventbuilder, driver-dist"
-      description="Compiles the Mulgara webui interface classes">
-
-    <!-- Build the webui interface classes -->
-    <mkdir dir="${obj.dir}/war/webui/classes"/>
-    <mkdir dir="${obj.dir}/war/webui/xlib"/>
-
-    <!-- Event class generation - also compiles the XMLC generated classes -->
-    <eventbuilder sourceout="${obj.dir}/war/webui/java"
-        descriptor="${webui.viewer.src.dir}/events/events.xml">
-    </eventbuilder>
-
-    <javac srcdir="${obj.dir}/war/webui/java"
-     destdir="${obj.dir}/war/webui/classes"
-     debug="${debug}" deprecation="on">
-      <classpath refid="webui.classpath"/>
-    </javac>
-
-    <javac srcdir="${webui.src.dir}/java"
-        destdir="${obj.dir}/war/webui/classes"
-        debug="${debug}" deprecation="on">
-      <classpath refid="webui.classpath"/>
-    </javac>
-
-    <!-- Example queries and directives -->
-    <copy todir="${obj.dir}/war/webui/classes" >
-
-      <fileset dir="${webui.src.dir}/java" >
-
-        <include name="**/*.txt"/>
-        <include name="**/*.directives"/>
-      </fileset>
-    </copy>
-
-    <!-- images -->
-    <copy todir="${obj.dir}/war/webui/xlib" >
-
-      <fileset dir="${webui.src.dir}/template-html/org/mulgara/webui/viewer" >
-
-        <exclude name="**/*.html"/>
-        <exclude name="**/*.xmlc"/>
-      </fileset>
-    </copy>
-
-    <!-- Replace tokens in example queries - leave out the <> brackets-->
-    <!-- The name of the model to work on -->
-    <replace file="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer/ExampleQueries.txt"
-       token="@@model-uri@@" value="rmi://host.name/server1#sampledata"/>
-    <replace file="${obj.dir}/war/webui/classes/org/mulgara/webui/viewer/ExampleQueries.txt"
-       token="@@data-dir@@" value="jar:file:mulgara.jar.path!/data"/>
-
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- Builds the Mulgara webui interface WAR                                  -->
-  <!-- =================================================================== -->
-  <target name="webui-war" depends="webui-build, -webui-war-uptodate"
-      description="Builds the Mulgara webui interface WAR" unless="webui.war-uptodate">
-
-    <mkdir dir="${obj.dir}/war/webui/jars"/>
-
-    <!-- Actual page classes -->
-    <jar jarfile="${obj.dir}/war/webui/jars/${webui-screens.jar}">
-      <fileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/webui/**/*HTML.class"/>
-    </jar>
-
-    <!-- Images and stylesheet - swap this jar to change badging -->
-    <jar jarfile="${obj.dir}/war/webui/jars/${webui-resources.jar}"
-      basedir="${obj.dir}/war/webui/" includes="xlib/**"/>
-
-    <!-- Barracuda related classes -->
-    <jar jarfile="${obj.dir}/war/webui/jars/${webui-barracuda.jar}"
-      basedir="${obj.dir}/war/webui/classes"
-      includes="org/mulgara/barracuda/**"/>
-
-    <!-- Logic -->
-    <jar jarfile="${obj.dir}/war/webui/jars/${webui-logic.jar}"
-      basedir="${obj.dir}/war/webui/classes"
-      includes="org/mulgara/webui/**"
-      excludes="**/*HTML.class"/>
-
-    <war warfile="${bin.dir}/${webui.war}"
-      webxml="${webui.src.dir}/WEB-INF/web.xml">
-
-      <fileset dir="${webui.src.dir}/content"/>
-      <fileset dir="${webui.src.dir}"
-        includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
-
-      <lib dir="${lib.dir}" includes="xmlc-all*.jar, *barracuda*.jar, plankton*.jar"/>
-      <lib dir="${obj.dir}/war/webui/jars" includes="*.jar"/>
-    </war>
-  </target>
-
-  <target name="-webui-war-uptodate">
-
-     <uptodate property="webui.war-uptodate" targetfile="${bin.dir}/${webui.war}">
-
-       <srcfiles dir="${dist.dir}" includes="${driver.jar}"/>
-       <srcfiles dir="${obj.dir}/war/webui/jars" includes="*.jar"/>
-       <srcfiles dir="${obj.dir}/war/webui/classes"/>
-     </uptodate>
-  </target>
-
-  <!-- =================================================================== -->
   <!-- J2EE resource adapter                                               -->
   <!-- =================================================================== -->
   <target name="mulgara-rar" depends="driver-jar, query-jar">
@@ -1752,7 +1606,6 @@
              util-jar,
              util-xa-jar,
              webservices-war,
-             webui-war,
              web-jar,
              -embedded-dist-uptodate"
           description="Creates the executable JAR for the Embedded Mulgara server"
@@ -1869,11 +1722,8 @@
 
 
       <!-- include pre-bundled webapps -->
-      <zipfileset dir="${bin.dir}" prefix="webapps"
-          includes="${webui.war}"/>
       <zipfileset dir="${obj.dir}/war" prefix="webapps"
           includes="webservices.war"/>
-      <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda-core*.jar"/>
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
       <!-- Schemas -->
@@ -1948,7 +1798,6 @@
              util-jar,
              util-xa-jar,
              webservices-war,
-             webui-war,
              web-jar,
              -embedded-dist-uptodate"
           description="Creates a JAR for the Embedded Mulgara server with none of the external libs"
@@ -2011,7 +1860,6 @@
 
 
       <!-- include pre-bundled webapps -->
-      <zipfileset dir="${bin.dir}" prefix="webapps" includes="${webui.war}"/>
       <zipfileset dir="${obj.dir}/war" prefix="webapps" includes="webservices.war"/>
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
 
@@ -2319,13 +2167,10 @@
       <zipfileset dir="${obj.dir}/jar/util/classes" includes="org/mulgara/util/conversion/**"/>
       <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="org/mulgara/server/rmi/**"/>
       <zipfileset dir="${obj.dir}/jar/server-rmi/classes" includes="edu/emory/**"/>
-	  <zipfileset dir="${obj.dir}/jar/demo-mp3/classes" includes="org/mulgara/demo/mp3/**"/>
-      <zipfileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/barracuda/**"/>
-      <zipfileset dir="${obj.dir}/war/webui/classes" includes="org/mulgara/webui/**"/>
+      <zipfileset dir="${obj.dir}/jar/demo-mp3/classes" includes="org/mulgara/demo/mp3/**"/>
       <zipfileset dir="${basedir}" includes="conf/**"/>
   	  <zipfileset dir="${obj.dir}/jar/descriptor-client/classes" includes="org/mulgara/descriptor/**" excludes="org/mulgara/descriptor/test/**"/>
       <!-- include pre-bundled webapps -->
-      <zipfileset dir="${bin.dir}" prefix="webapps" includes="${webui.war}"/>
       <zipfileset dir="${obj.dir}/war" prefix="webapps" includes="webservices.war"/>
       <zipfileset dir="${lib.dir}" prefix="lib" includes="barracuda*.jar"/>
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />

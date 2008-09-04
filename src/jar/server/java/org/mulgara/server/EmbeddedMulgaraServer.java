@@ -117,14 +117,8 @@ public class EmbeddedMulgaraServer {
   /** The Web Services path. */
   private final static String WEBSERVICES_PATH = "webservices";
 
-  /** The Web UI web application file. */
-  private final static String WEBUI_WEBAPP = "webui.war";
-
-  /** The Web UI path. */
-  private final static String WEBUI_PATH = "webui";
-
   /** The Web Query path. */
-  private final static String WEBQUERY_PATH = "webquery";
+  private final static String WEBQUERY_PATH = "webui";
 
   /** The logging category to log to. */
   protected static Logger log = Logger.getLogger(EmbeddedMulgaraServer.class.getName());
@@ -773,7 +767,6 @@ public class EmbeddedMulgaraServer {
     try {
 //    server.addHandler(new DefaultHandler());
       addWebServicesWebAppContext(server);
-      addWebUIWebAppContext(server);
       addWebQueryContext(server);
     } catch (IllegalStateException e) {
       // not fatal, so just log the problem and go on
@@ -902,26 +895,6 @@ public class EmbeddedMulgaraServer {
 
     // log that we're adding the test webapp context
     if (log.isDebugEnabled()) log.debug("Added Web Services webapp context");
-  }
-
-
-  /**
-   * Creates the Mulgara Semantic Store Query Tool (webui).
-   * @throws IOException if the driver WAR file i not readable
-   */
-  private void addWebUIWebAppContext(Server server) throws IOException {
-    if (log.isDebugEnabled()) log.debug("Adding WebUI webapp context");
-
-    // get the URL to the WebUI WAR file
-    String warPath = extractToTemp(WEBAPP_PATH + "/" + WEBUI_WEBAPP);
-
-    // load the webapp if the WAR file exists
-    if (warPath != null) {
-      // create the test webapp handler context
-      new WebAppContext(server, warPath, "/" + WEBUI_PATH);
-    } else {
-      log.warn("Could not find WebUI webapp WAR file -> not adding to servlet container");
-    }
   }
 
 

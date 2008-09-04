@@ -134,8 +134,7 @@
 
   <target name="server-http-dist"
           depends="query-jar, driver-jar, querylang-jar, util-jar, config-jar,
-                   dtd-compile, server-jar, server-http-war, javadoc-dist,
-                   webui-war"
+                   dtd-compile, server-jar, server-http-war, javadoc-dist"
           description="Performs all tasks related to finalising this server-http
                        and readying it for distribution">
 
@@ -181,8 +180,7 @@
           ${util.jar}, ${config.jar}"/>
       <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs"/>
 
-      <zipfileset dir="${bin.dir}" prefix="webapps"
-          includes="${server-http}.war, ${webui.war}"/>
+      <zipfileset dir="${bin.dir}" prefix="webapps" includes="${server-http}.war"/>
 
       <zipfileset dir="${src.docs.dir}" prefix="docs"
           includes="**/*.html, **/*.htm, **/*.gif, **/*.css, **/images/*, **/images/icons/*"/>
