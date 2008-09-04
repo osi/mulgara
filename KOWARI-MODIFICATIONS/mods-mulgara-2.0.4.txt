@@ -1,4 +1,22 @@
 ------------------------------------------------------------------------
+r1235 | pag | 2008-09-04 14:54:08 -0500 (Thu, 04 Sep 2008) | 1 line
+Changed paths:
+   D /trunk/lib/plankton-1.2.6.jar
+
+Removed the Plakton jar, since this was part of Barracuda
+------------------------------------------------------------------------
+r1234 | pag | 2008-09-04 14:39:43 -0500 (Thu, 04 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/LEGAL.txt
+
+Updated version numbers on some libs, and removed several entries now that the jars are gone
+------------------------------------------------------------------------
+r1233 | pag | 2008-09-04 14:24:03 -0500 (Thu, 04 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/KOWARI-MODIFICATIONS/mods-mulgara-2.0.4.txt
+
+Commit logs for 2.0.4 release
+------------------------------------------------------------------------
 r1232 | pag | 2008-09-04 14:10:32 -0500 (Thu, 04 Sep 2008) | 1 line
 Changed paths:
    M /trunk/build.xml
