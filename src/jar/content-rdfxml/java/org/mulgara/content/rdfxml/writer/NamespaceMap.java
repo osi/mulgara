@@ -68,7 +68,7 @@ import java.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class NamespaceMap extends HashMap<String,Object> {
+public class NamespaceMap extends HashMap<String,String> {
 
   /** For serialization */
   private static final long serialVersionUID = 1161744419591660130L;
@@ -77,7 +77,7 @@ public class NamespaceMap extends HashMap<String,Object> {
   private final static Logger logger = Logger.getLogger(NamespaceMap.class.getName());
 
   /** A mirror of this map (where keys and values are swapped) */
-  private Map<Object,String> mirror = null;
+  private Map<String,String> mirror = null;
 
   /** Prefix used to abbreviate RDF Namespace */
   private static final String RDF_PREFIX = "rdf";
@@ -94,11 +94,11 @@ public class NamespaceMap extends HashMap<String,Object> {
    */
   public NamespaceMap(Statements statements, ResolverSession session) throws GraphException {
 
-    mirror = new HashMap<Object,String>();
+    mirror = new HashMap<String,String>();
 
     //add default namespaces
-    put(RDF_PREFIX, RDF.BASE_URI);
-    put(RDFS_PREFIX, RDFS.BASE_URI);
+    put(RDF_PREFIX, RDF.BASE_URI.toString());
+    put(RDFS_PREFIX, RDFS.BASE_URI.toString());
     put("owl", "http://www.w3.org/2002/07/owl#");
     put("dc", "http://purl.org/dc/elements/1.1/");
 
@@ -314,7 +314,8 @@ public class NamespaceMap extends HashMap<String,Object> {
    * @param value Object
    * @return Object
    */
-  public Object put(String key, Object value) {
+  @Override
+  public String put(String key, String value) {
 
     mirror.put(value, key);
     return super.put(key, value);
