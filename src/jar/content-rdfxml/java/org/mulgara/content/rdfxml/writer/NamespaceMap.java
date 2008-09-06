@@ -27,26 +27,21 @@
 package org.mulgara.content.rdfxml.writer;
 
 // Java 2 standard packages
-import java.util.HashMap;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
-// Apache packages
 import org.apache.log4j.Logger;
-
-// JRDF
+import org.apache.xerces.util.XMLChar;
 import org.jrdf.graph.Node;
 import org.jrdf.graph.URIReference;
-import org.jrdf.graph.GraphException;
 import org.jrdf.vocabulary.RDF;
 import org.jrdf.vocabulary.RDFS;
-
-// Local packages
+import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
-
-import java.util.*;
 
 /**
  * Map that contains all namespaces for a set of Statements.
@@ -84,15 +79,34 @@ public class NamespaceMap extends HashMap<String,String> {
 
   /** Prefix used to abbreviate RDFS Namespace */
   private static final String RDFS_PREFIX = "rdfs";
+  
+  /**
+   * Constructor.  Pre-populates the map with prefixes for a set of default namespaces
+   * (RDF, RDFS, OWL, DC), and then populates the map with generated prefixes for all
+   * unique namespaces in the statements.
+   * 
+   * @param statements The statements which will be parsed for namespaces.
+   * @param session The session used to globalize statement URI's.
+   * @throws QueryException if an error occurred reading the statements.
+   */
+  public NamespaceMap(Statements statements, ResolverSession session) throws QueryException {
+    this(statements, session, null);
+  }
 
   /**
-   * Constructor. Populates the map with all unique namespaces in the statements.
+   * Constructor.  Pre-populates the map with prefixes for a set of default namespaces
+   * (RDF, RDFS, OWL, DC), and adds a set of user-defined initial namespace prefixes.
+   * Any initial prefix mapping which attempts to redefine a default namespace prefix, or which
+   * contains a prefix that is not a valid XML NCName, will be ignored.  It then populates 
+   * the map with generated prefixes for all unique namespaces in the statements that do not
+   * match a default or initial namespace prefix mapping.
    *
-   * @param statements Statements
-   * @param session ResolverSession
-   * @throws GraphException
+   * @param statements The statements which will be parsed for namespaces.
+   * @param session The session used to globalize statement URI's.
+   * @param initialPrefixes A set of user-defined namespace prefixes.
+   * @throws QueryException if an error occurred reading the statements.
    */
-  public NamespaceMap(Statements statements, ResolverSession session) throws GraphException {
+  public NamespaceMap(Statements statements, ResolverSession session, Map<String,URI> initialPrefixes) throws QueryException {
 
     mirror = new HashMap<String,String>();
 
@@ -101,29 +115,50 @@ public class NamespaceMap extends HashMap<String,String> {
     put(RDFS_PREFIX, RDFS.BASE_URI.toString());
     put("owl", "http://www.w3.org/2002/07/owl#");
     put("dc", "http://purl.org/dc/elements/1.1/");
+    
+    if (initialPrefixes != null) {
+      prePopulate(initialPrefixes);
+    }
 
     //read namespaces from the statements
     try {
       populate(statements, session);
     } catch (TuplesException tuplesException) {
-      throw new GraphException("Could not read statements.", tuplesException);
+      throw new QueryException("Could not read statements.", tuplesException);
     } catch (GlobalizeException globalException) {
-      throw new GraphException("Could not globalize statements.", globalException);
+      throw new QueryException("Could not globalize statements.", globalException);
+    }
+  }
+  
+  /**
+   * Pre-populates the namespace mapping with a user-defined set of initial prefixes.
+   * All prefixes are validated as XML NCNames, and prefixes for namespaces that have
+   * already been defined will be ignored.
+   * @param existingMap A mapping of prefix to namespace URI.
+   */
+  protected void prePopulate(Map<String,URI> existingMap) {
+    for (Map.Entry<String,URI> entry : existingMap.entrySet()) {
+      String prefix = entry.getKey();
+      // If the value is a valid XML namespace, it will be untouched.  If it is not a namespace, the
+      // namespace portion will be extracted and used.
+      String namespace = toNamespaceURI(entry.getValue().toString());
+      
+      if (namespace != null && !containsValue(namespace) && XMLChar.isValidNCName(prefix)) {
+        put(prefix, namespace);
+      }
     }
   }
 
   /**
-   * Evaluates the statements and adds namespace mappings for all unique
-   * namespaces.
+   * Evaluates the statements and adds namespace mappings for all unique namespaces.
    *
-   * @param statements Statements
-   * @param session ResolverSession
-   * @throws TuplesException
-   * @throws GraphException
-   * @throws GlobalizeException
+   * @param statements The statements to be parsed for namespaces.
+   * @param session ResolverSession Session used to globalize nodes from the statments.
+   * @throws TuplesException if an error occurred iterating the statements.
+   * @throws GlobalizeException if an error occurred globalizing a statement node.
    */
   private void populate(Statements statements, ResolverSession session) throws
-      TuplesException, GraphException, GlobalizeException {
+      TuplesException, GlobalizeException {
 
     Statements clonedStatements = (Statements)statements.clone();
 
@@ -167,15 +202,13 @@ public class NamespaceMap extends HashMap<String,String> {
   }
 
   /**
-   * Globalizes the node ID and evaluates it if it is an URI.
+   * Globalizes the node ID and adds it to the namespace mappings it if it is a URI.
    *
-   * @param nodeID long
-   * @param session ResolverSession
-   * @throws GlobalizeException
-   * @throws GraphException
+   * @param nodeID The local node ID.
+   * @param session Session used to globalize the node.
+   * @throws GlobalizeException if an error occurred during globalization.
    */
-  protected void evaluateAndPut(long nodeID, ResolverSession session) throws
-      GlobalizeException, GraphException {
+  protected void evaluateAndPut(long nodeID, ResolverSession session) throws GlobalizeException {
 
     //only URI's need namespace substitution
     Node node = session.globalize(nodeID);
@@ -187,12 +220,12 @@ public class NamespaceMap extends HashMap<String,String> {
   }
 
   /**
-   * Evaluates a URI and adds it to the namespace map as a namespace.
+   * Extracts the namespace from a URI, and adds the namespace to the mappings using a generated
+   * prefix if the namespace is not already part of the mappings.
    *
-   * @param uri URI
-   * @throws GraphException
+   * @param uri The URI containing a namespace to add.
    */
-  protected void addNamespaceURI(URI uri) throws GraphException {
+  protected void addNamespaceURI(URI uri) {
 
     if (uri == null) throw new IllegalArgumentException("URI argument is null.");
 
@@ -208,13 +241,14 @@ public class NamespaceMap extends HashMap<String,String> {
   }
 
   /**
-   * Extracts the root namespace from an URI.
+   * Extracts the root namespace from an URI.  The root namespace is defined here as the substring
+   * extending from the start of the URI string to the final occurrence of '/', '#', or ':', or
+   * the entire URI string if none of these characters occurs.
    *
-   * @param uri URI
-   * @throws GraphException
-   * @return String
+   * @param uri An input URI.
+   * @return The namespace of the URI, or the original URI if no namespace could be found.
    */
-  private String toNamespaceURI(String uri) throws GraphException {
+  private String toNamespaceURI(String uri) {
 
     if (uri == null) throw new IllegalArgumentException("URI argument is null.");
 
@@ -244,7 +278,7 @@ public class NamespaceMap extends HashMap<String,String> {
    * Returns the key used to represent RDF.baseURI:
    * (http://www.w3.org/1999/02/22-rdf-syntax-ns#).
    *
-   * @return String
+   * @return The RDF namespace prefix (always <code>rdf</code>).
    */
   public String getRDFPrefix() {
     return RDF_PREFIX;
@@ -252,18 +286,20 @@ public class NamespaceMap extends HashMap<String,String> {
 
   /**
    * Substitutes part of the uri with the corresponding namespace from the map.
+   * If the URI contains no local part (i.e. is a namespace itself) then the entire URI is
+   * replaced with an XML entity.
    *
-   * @param uri String
-   * @throws GraphException
-   * @return String
+   * @param uri The URI to perform substitution on.
+   * @throws QueryException if the URI's namespace is not present in the map.
+   * @return An XML QName representation of the URI suitable for use as an XML attribute name.
    */
-  public String replaceNamespace(String uri) throws GraphException {
+  public String replaceNamespace(String uri) throws QueryException {
 
     String newURI = null;
     String nsURI = toNamespaceURI(uri);
     String key = mirror.get(nsURI);
 
-    if (key == null) throw new GraphException("Namespace: " + nsURI + " has not been mapped.");
+    if (key == null) throw new QueryException("Namespace: " + nsURI + " has not been mapped.");
 
     //should all or part of the URI be replaced?
     if (uri.equals(nsURI)) {
@@ -292,9 +328,8 @@ public class NamespaceMap extends HashMap<String,String> {
    *
    * @param original original URI.
    * @return new URI with any necessary li.
-   * @throws GraphException
    */
-  private String replaceCollection(String original) throws GraphException {
+  private String replaceCollection(String original){
 
     //value to be returned
     String uri = original;
@@ -310,9 +345,9 @@ public class NamespaceMap extends HashMap<String,String> {
    * Overridden to allow for bi-directional mapping. Not intended to be called
    * outside this class.
    *
-   * @param key String
-   * @param value Object
-   * @return Object
+   * @param key The prefix string
+   * @param value The namespace URI string.
+   * @return The previous namespace URI associated with the prefix, or <code>null</code> if there was none.
    */
   @Override
   public String put(String key, String value) {

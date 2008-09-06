@@ -29,13 +29,10 @@ package org.mulgara.content.rdfxml.writer;
 // Java 2 standard packages
 import java.io.PrintWriter;
 
-// Apache packages
 import org.apache.log4j.Logger;
-
-// JRDF
-import org.jrdf.graph.GraphException;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.URIReference;
+import org.mulgara.query.QueryException;
 
 // Local packages
 
@@ -79,12 +76,8 @@ public class URIReferenceWritableStatement extends AbstractWritableStatement {
    * @param subject SubjectNode
    * @param predicate URIReference
    * @param uriReference URIReference
-   * @throws GraphException
    */
-  public URIReferenceWritableStatement(SubjectNode subject,
-                                       URIReference predicate,
-                                       URIReference uriReference)
-      throws GraphException {
+  public URIReferenceWritableStatement(SubjectNode subject, URIReference predicate, URIReference uriReference) {
 
     super(subject, predicate);
 
@@ -102,10 +95,9 @@ public class URIReferenceWritableStatement extends AbstractWritableStatement {
    *
    * @param namespaces NamespaceMap
    * @param writer PrintWriter
-   * @throws GraphException
+   * @throws QueryException
    */
-  public void write(NamespaceMap namespaces, PrintWriter writer) throws
-      GraphException {
+  public void write(NamespaceMap namespaces, PrintWriter writer) throws QueryException {
 
     //validate
     if (namespaces == null) {

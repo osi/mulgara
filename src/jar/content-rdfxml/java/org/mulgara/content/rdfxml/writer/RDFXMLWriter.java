@@ -27,23 +27,26 @@
 package org.mulgara.content.rdfxml.writer;
 
 // Java 2 standard packages
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 
-// Third party packages
-import org.apache.log4j.Logger;             // Log4J
-import org.apache.xerces.util.EncodingMap;  // Xerces XML parser
-import org.jrdf.graph.BlankNode;            // JRDF
-import org.jrdf.graph.GraphException;
+import org.apache.log4j.Logger;
+import org.apache.xerces.util.EncodingMap;
+import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.Node;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.URIReference;
-
-// Local packages
+import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
+import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.StatementsWrapperTuples;
@@ -115,10 +118,10 @@ public class RDFXMLWriter {
    * @param session ResolverSession Used to globalize nodes
    * @param writer OutputStreamWriter Destination of the RDF/XML (supports
    * character encoding)
-   * @throws GraphException
+   * @throws QueryException
    */
   synchronized public void write(Statements statements, ResolverSession session,
-      OutputStreamWriter writer) throws GraphException {
+      OutputStreamWriter writer) throws QueryException {
 
     //validate
     if (statements == null) {
@@ -157,7 +160,7 @@ public class RDFXMLWriter {
       exception.printStackTrace();
       log.error("Failed to write Statements.", exception);
 
-      throw new GraphException("Failed to write Statements.", exception);
+      throw new QueryException("Failed to write Statements.", exception);
     } finally {
       if (out != null) out.close();
     }
@@ -314,7 +317,7 @@ public class RDFXMLWriter {
    * @throws Exception
    */
   protected void writeBody(Statements statements, ResolverSession session,
-      PrintWriter out) throws Exception {
+      PrintWriter out) throws TuplesException, GlobalizeException, QueryException {
 
     assert statements != null:"Statements is null";
     assert session != null:"ResolverSession is null";
@@ -342,7 +345,7 @@ public class RDFXMLWriter {
         subjectNode = (SubjectNode) session.globalize(subject);
         //validate
         if (subjectNode == null) {
-          throw new GraphException("subject is null");
+          throw new QueryException("subject is null");
         }
         writeOpeningSubjectTag(subjectNode, out);
       }
@@ -351,17 +354,17 @@ public class RDFXMLWriter {
       Node predicateNode = session.globalize(statements.getPredicate());
       Node objectNode = session.globalize(statements.getObject());
       if (predicateNode == null) {
-        throw new GraphException("predicate is null");
+        throw new QueryException("predicate is null");
       }
       if (!(predicateNode instanceof URIReference)) {
-        throw new GraphException("PredicateNode should be of type: " +
+        throw new QueryException("PredicateNode should be of type: " +
             "URIReference, was: " + predicateNode.getClass().getName());
       }
       if (objectNode == null) {
-        throw new GraphException("object is null");
+        throw new QueryException("object is null");
       }
       if (!(objectNode instanceof ObjectNode)) {
-        throw new GraphException("ObjectNode should be of type: " +
+        throw new QueryException("ObjectNode should be of type: " +
             "ObjectNode, was: " + objectNode.getClass().getName());
       }
 
@@ -384,11 +387,10 @@ public class RDFXMLWriter {
    * @param subject SubjectNode
    * @param predicate PredicateNode
    * @param object ObjectNode
-   * @throws GraphException
+   * @throws QueryException
    */
   protected void writeStatement(NamespaceMap namespaces, PrintWriter writer,
-      SubjectNode subject, URIReference predicate,
-      ObjectNode object) throws GraphException {
+      SubjectNode subject, URIReference predicate, ObjectNode object) throws QueryException {
 
     AbstractWritableStatement statement = null;
 
@@ -403,7 +405,7 @@ public class RDFXMLWriter {
       statement = new LiteralWritableStatement(subject, predicate, (Literal)object);
     } else {
       assert(object != null):"Object should not be null";
-      throw new GraphException("Unknown ObjectNode type: " + object.getClass().getName());
+      throw new QueryException("Unknown ObjectNode type: " + object.getClass().getName());
     }
 
     assert statement != null : "WritableStatement should not be null";
@@ -417,7 +419,7 @@ public class RDFXMLWriter {
    * @param out PrintWriter
    * @throws Exception
    */
-  protected void writeOpeningSubjectTag(SubjectNode subject, PrintWriter out) throws Exception {
+  protected void writeOpeningSubjectTag(SubjectNode subject, PrintWriter out) {
 
     assert out != null : "PrintWriter is null";
 
@@ -449,7 +451,7 @@ public class RDFXMLWriter {
    * @param out PrintWriter
    * @throws Exception
    */
-  protected void writeClosingSubjectTag(PrintWriter out) throws Exception {
+  protected void writeClosingSubjectTag(PrintWriter out) {
 
     assert out != null:"PrintWriter is null";
     //print as: </rdf:Description>

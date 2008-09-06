@@ -31,21 +31,17 @@ package org.mulgara.content.rdfxml;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-// Java 2 enterprise packages
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
-// Third party packages
-import org.apache.log4j.Logger;        // Apache Log4J
-import org.jrdf.graph.GraphException;  // JRDF
-
-// Local packages
+import org.apache.log4j.Logger;
 import org.mulgara.content.Content;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerException;
 import org.mulgara.content.ModifiedException;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.content.rdfxml.writer.RDFXMLWriter;
+import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 
@@ -146,7 +142,7 @@ public class RDFXMLContentHandler implements ContentHandler
         new OutputStreamWriter(content.newOutputStream(), "utf-8")
       );
     }
-    catch (GraphException e) {
+    catch (QueryException e) {
       throw new ContentHandlerException(
         "Failed to serialize RDF/XML to " + content.getURI(), e
       );
