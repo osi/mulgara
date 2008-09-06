@@ -41,4 +41,6 @@ public class Pair<T1,T2> implements Map.Entry<T1,T2> {
   public T2 setValue(T2 value) { throw new UnsupportedOperationException("Pairs are an immutable type"); }
 
   public static <C1,C2> Pair<C1,C2> p(C1 c1, C2 c2) { return new Pair<C1,C2>(c1, c2); }
+
+  public Map<T1,T2> add(Map<T1,T2> map) { map.put(first, second); return map; }
 }
