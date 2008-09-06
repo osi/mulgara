@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@ page import="java.net.*, org.mulgara.server.EmbeddedMulgaraServer" %>
+<%@ page import="java.net.*, org.mulgara.server.HttpServices" %>
 <%
 
 String hostname = null;
@@ -8,7 +8,7 @@ String currentHostUrl = null;
 try {
 
   if (hostname == null) {
-    hostname = (String)getServletContext().getAttribute(EmbeddedMulgaraServer.BOUND_HOST_NAME_KEY);
+    hostname = (String)getServletContext().getAttribute(HttpServices.BOUND_HOST_NAME_KEY);
     
     // determine the requesting URL
     currentHostUrl = HttpUtils.getRequestURL(request).toString();
@@ -28,7 +28,7 @@ try {
 }
 
 String URL2Here = currentHostUrl.substring(0, currentHostUrl.length() - "index.jsp".length());
-String descriptorModel = (String)getServletContext().getAttribute(EmbeddedMulgaraServer.SERVER_MODEL_URI_KEY) + "#descriptors";
+String descriptorModel = (String)getServletContext().getAttribute(HttpServices.SERVER_MODEL_URI_KEY) + "#descriptors";
   
 %>
 

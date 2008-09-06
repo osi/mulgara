@@ -37,7 +37,6 @@ import java.rmi.registry.LocateRegistry;
 import java.util.*;
 
 import javax.naming.*;
-import javax.servlet.Servlet;
 import javax.xml.parsers.*;
 import org.xml.sax.SAXException;
 
@@ -51,23 +50,9 @@ import org.mulgara.config.Connector;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.StoreException;
 import org.mulgara.store.xa.SimpleXAResourceException;
-import org.mulgara.util.MortbayLogger;
-import org.mulgara.util.Reflect;
 import org.mulgara.util.TempDir;
 
 import static org.mulgara.server.ServerMBean.ServerState;
-import static org.mortbay.jetty.servlet.Context.SESSIONS;
-
-// jetty packages
-import org.mortbay.jetty.AbstractConnector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandler;
-import org.mortbay.jetty.nio.BlockingChannelConnector;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppClassLoader;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.util.MultiException;
 
 /**
  * Embedded production Mulgara server.
@@ -102,24 +87,6 @@ public class EmbeddedMulgaraServer {
   /** The request required to shutdown mulgara. */
   public final static String SHUTDOWN_MSG = "shutdownmulgara";
 
-  /** The key to the bound host name in the attribute map of the servlet context. */
-  public final static String BOUND_HOST_NAME_KEY = "boundHostname";
-
-  /** Key to the bound server model uri in the attribute map of the servlet context. */
-  public final static String SERVER_MODEL_URI_KEY = "serverModelURI";
-
-  /** The web application file path. */
-  private final static String WEBAPP_PATH = "webapps";
-
-  /** The Web Services web application file. */
-  private final static String WEBSERVICES_WEBAPP = "webservices.war";
-
-  /** The Web Services path. */
-  private final static String WEBSERVICES_PATH = "webservices";
-
-  /** The Web Query path. */
-  private final static String WEBQUERY_PATH = "webui";
-
   /** The logging category to log to. */
   protected static Logger log = Logger.getLogger(EmbeddedMulgaraServer.class.getName());
 
@@ -147,14 +114,11 @@ public class EmbeddedMulgaraServer {
   /** The system property to disable the RMI service. */
   private static final String DISABLE_RMI = "no_rmi";
 
-  /** The maximum number of acceptors that Jetty can handle. It locks above this number. */
-  private static final int WEIRD_JETTY_THREAD_LIMIT = 24;
-
   /** The Mulgara server instance. In this case, an RMIServer. */
   private ServerMBean serverManagement = null;
 
-  /** The HTTP server instance. */
-  private Server httpServer = null;
+  /** The web service container. */
+  private HttpServices webServices = null;
 
   /** The embedded Mulgara server configuration */
   private MulgaraConfig mulgaraConfig = null;
@@ -170,6 +134,9 @@ public class EmbeddedMulgaraServer {
 
   /** A flag to indicate if the server is configured to be started. */
   private boolean canStart = false;
+
+  /** A flag to indicate if the http server is configured to be started. */
+  private boolean httpEnabled;
 
   /**
    * Starts a Mulgara server and a WebServices (SOAP) server to handle SOAP queries to the
@@ -219,9 +186,9 @@ public class EmbeddedMulgaraServer {
         shutdownServer.start();
       }
   
-    } catch (MultiException me) {
-      for (Throwable e: (List<Throwable>)me.getThrowables()) {
-        log.error("MultiException", e);
+    } catch (ExceptionList el) {
+      for (Throwable e: (List<Throwable>)el.getCauses()) {
+        log.error("ExceptionList", e);
         e.printStackTrace();
       }
       System.exit(2);
@@ -404,10 +371,10 @@ public class EmbeddedMulgaraServer {
       Runtime.getRuntime().addShutdownHook(new RuntimeShutdownHook(this));
 
       // create a web service
-      if (System.getProperty(DISABLE_HTTP) == null && !mulgaraConfig.getJetty().getDisabled()) {
+      if (httpEnabled) {
         // create a HTTP server instance
         if (log.isDebugEnabled()) log.debug("Configuring HTTP server");
-        httpServer = createHttpServer();
+        webServices = new HttpServices(this, httpHostName, mulgaraConfig);
       }
     }
   }
@@ -418,13 +385,13 @@ public class EmbeddedMulgaraServer {
    * @throws IllegalStateException if this method is called before the servers have been created
    * @throws IOException if the Mulgara server cannot access its state keeping files
    * @throws NamingException if the Mulgara server cannot communicate with the RMI registry
-   * @throws MultiException if an error ocurrs while starting up the SOAP server
+   * @throws ExceptionList if an error ocurrs while starting up the SOAP server
    * @throws SimpleXAResourceException If operations on the database cannot be instigated
    * @throws Exception General catch all exception
    * @throws StoreException if the database could not be started
    */
   public void startServices() throws IOException, NamingException,
-      MultiException, SimpleXAResourceException, StoreException, Exception {
+      ExceptionList, SimpleXAResourceException, StoreException, Exception {
   
     if (serverManagement == null) throw new IllegalStateException("Servers must be created before they can be started");
   
@@ -439,9 +406,9 @@ public class EmbeddedMulgaraServer {
     ServerInfo.setLocalSessionFactory(((AbstractServer)serverManagement).getSessionFactory());
   
     // start the HTTP server if required
-    if (httpServer != null) {
+    if (webServices != null) {
       if (log.isDebugEnabled()) log.debug("Starting HTTP server");
-      httpServer.start();
+      webServices.start();
     }
   }
 
@@ -471,7 +438,7 @@ public class EmbeddedMulgaraServer {
    * Returns the Mulgara server instance.
    * @return the Mulgara server instance
    */
-  private ServerMBean getServerMBean() {
+  ServerMBean getServerMBean() {
     return serverManagement;
   }
 
@@ -489,7 +456,7 @@ public class EmbeddedMulgaraServer {
    * Returns the (RMI) name of the server.
    * @return the (RMI) name of the server
    */
-  private String getServerName() {
+  String getServerName() {
     return rmiServerName;
   }
 
@@ -500,25 +467,6 @@ public class EmbeddedMulgaraServer {
    */
   private String getPersistencePath() {
     return persistencePath;
-  }
-
-
-  /**
-   * Returns the hostname to accept HTTP requests on.
-   *
-   * @return the hostname to accept HTTP requests on
-   */
-  private String getHttpHostName() {
-    return this.httpHostName;
-  }
-
-
-  /**
-   * Returns the SOAP server instance.
-   * @return the SOAP server instance
-   */
-  private Server getHttpServer() {
-    return httpServer;
   }
 
 
@@ -603,17 +551,23 @@ public class EmbeddedMulgaraServer {
           loadLoggingConfig(mulgaraConfig.getExternalConfigPaths().getMulgaraLogging());
         }
 
-        Connector httpConnector = mulgaraConfig.getJetty().getConnector();
-
-        String httpHost = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
-        httpHostName = (httpHost != null || httpConnector == null) ? httpHost : httpConnector.getHost();
-
-        // set the port on which to accept HTTP requests
-        String httpPort = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.PORT);
-        if (httpPort != null) {
-          ServerInfo.setHttpPort(Integer.parseInt(httpPort));
+        if (System.getProperty(DISABLE_HTTP) == null && !mulgaraConfig.getJetty().getDisabled()) {
+          httpEnabled = true;
+          Connector httpConnector = mulgaraConfig.getJetty().getConnector();
+    
+          String httpHost = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
+          httpHostName = (httpHost != null || httpConnector == null) ? httpHost : httpConnector.getHost();
+    
+          // set the port on which to accept HTTP requests
+          String httpPort = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.PORT);
+          if (httpPort != null) {
+            ServerInfo.setHttpPort(Integer.parseInt(httpPort));
+          } else {
+            if (httpConnector != null) ServerInfo.setHttpPort(httpConnector.getPort());
+          }
         } else {
-          if (httpConnector != null) ServerInfo.setHttpPort(httpConnector.getPort());
+          httpEnabled = false;
+          httpHostName = "";
         }
 
         // set the (RMI) name of the server, preferencing the command line
@@ -737,55 +691,6 @@ public class EmbeddedMulgaraServer {
 
 
   /**
-   * Creates a HTTP server.
-   * @return an HTTP server
-   * @throws IOException if the server configuration cannot be found
-   * @throws SAXException if the HTTP server configuration file is invalid
-   * @throws ClassNotFoundException if the HTTP server configuration file contains a reference to an unkown class
-   * @throws NoSuchMethodException if the HTTP server configuration file contains a reference to an unkown method
-   * @throws InvocationTargetException if an error ocurrs while trying to configure the HTTP server
-   * @throws IllegalAccessException If a class loaded by the server is accessed in an unexpected way.
-   */
-  public Server createHttpServer() throws IOException, SAXException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-    if (log.isDebugEnabled()) log.debug("Creating HTTP server instance");
-
-    // Set the magic logging property for Jetty to use Log4j
-    System.setProperty(MortbayLogger.LOGGING_CLASS_PROPERTY, MortbayLogger.class.getCanonicalName());
-
-    // create and register a new HTTP server
-    Server server;
-    if (mulgaraConfig.getJetty().getConnector() == null) {
-      // create a default server
-      server = new Server(ServerInfo.getHttpPort());
-    } else {
-      // create a server with a configured connector
-      server = new Server();
-      addConnector(server);
-    }
-
-    // add the webapps
-    try {
-//    server.addHandler(new DefaultHandler());
-      addWebServicesWebAppContext(server);
-      addWebQueryContext(server);
-    } catch (IllegalStateException e) {
-      // not fatal, so just log the problem and go on
-      log.warn("Unable to start web service", e.getCause());
-    }
-
-    // add our class loader as the classloader of all contexts, unless this is a webapp in which case we wrap it
-    ClassLoader classLoader = this.getClass().getClassLoader();
-    for (Handler handler: server.getChildHandlers()) {
-      if (handler instanceof WebAppContext) ((WebAppContext)handler).setClassLoader(new WebAppClassLoader(classLoader, (WebAppContext)handler));
-      else if (handler instanceof ContextHandler) ((ContextHandler)handler).setClassLoader(classLoader);
-    }
-
-    // return the server
-    return server;
-  }
-
-
-  /**
    * Sets up any system properties needed by system components like JNDI and security.
    * @throws IOException if any files embedded within the JAR file cannot be found
    */
@@ -826,123 +731,6 @@ public class EmbeddedMulgaraServer {
       // create a security manager
       System.setSecurityManager(new RMISecurityManager());
     }
-  }
-
-
-  /**
-   * Adds a listener to the <code>httpServer</code>. The listener is created and configured
-   * according to the Jetty configuration.
-   * @param httpServer the server to add the listener to
-   * @throws UnknownHostException if an invalid hostname was specified in the Mulgara server configuration
-   */
-  private void addConnector(Server httpServer) throws UnknownHostException {
-    if (httpServer == null) throw new IllegalArgumentException("Null \"httpServer\" parameter");
-
-    if (log.isDebugEnabled()) log.debug("Adding socket listener");
-
-    // create and configure a listener
-    AbstractConnector connector = new BlockingChannelConnector();
-    if ((httpHostName != null) && !httpHostName.equals("")) {
-      connector.setHost(httpHostName);
-      if (log.isDebugEnabled()) log.debug("Servlet container listening on host " + this.getHttpHostName());
-    } else {
-      httpHostName = getResolvedLocalHost();
-      if (log.isDebugEnabled()) log.debug("Servlet container listening on all host interfaces");
-    }
-
-    // set the listener to the jetty configuration
-    Connector jettyConfig = (Connector)mulgaraConfig.getJetty().getConnector();
-    connector.setPort(ServerInfo.getHttpPort());
-
-    if (jettyConfig.hasMaxIdleTimeMs()) connector.setMaxIdleTime(jettyConfig.getMaxIdleTimeMs());
-    if (jettyConfig.hasLowResourceMaxIdleTimeMs()) connector.setLowResourceMaxIdleTime(jettyConfig.getLowResourceMaxIdleTimeMs());
-    if (jettyConfig.hasAcceptors()) {
-      int acceptors = jettyConfig.getAcceptors();
-      if (acceptors > WEIRD_JETTY_THREAD_LIMIT) {
-        log.warn("Acceptor threads set beyond HTTP Server limits. Reducing from" + acceptors + " to " + WEIRD_JETTY_THREAD_LIMIT);
-        acceptors = WEIRD_JETTY_THREAD_LIMIT;
-      }
-      connector.setAcceptors(acceptors);
-    }
-
-    // add the listener to the http server
-    httpServer.addConnector(connector);
-  }
-
-
-  /**
-   * Creates the Mulgara Descriptor UI
-   * TODO: Rebuild this as a simple servelet
-   * @throws IOException if the driver WAR file is not readable
-   */
-  private void addWebServicesWebAppContext(Server server) throws IOException {
-    // get the URL to the WAR file
-    URL webServicesWebAppURL = ClassLoader.getSystemResource(WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
-
-    if (webServicesWebAppURL == null) {
-      log.warn("Couldn't find resource: " + WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
-      return;
-    }
-
-    String warPath = extractToTemp(WEBAPP_PATH + "/" + WEBSERVICES_WEBAPP);
-    
-    // Add Descriptors and Axis
-    WebAppContext descriptorWARContext = new WebAppContext(server, warPath, "/" + WEBSERVICES_PATH);
-
-    // make some attributes available
-    descriptorWARContext.setAttribute(BOUND_HOST_NAME_KEY, ServerInfo.getBoundHostname());
-    descriptorWARContext.setAttribute(SERVER_MODEL_URI_KEY, ServerInfo.getServerURI().toString());
-
-    // log that we're adding the test webapp context
-    if (log.isDebugEnabled()) log.debug("Added Web Services webapp context");
-  }
-
-
-  /**
-   * Creates the Mulgara Semantic Store Query Tool (webui).
-   * @throws IOException if the driver WAR file i not readable
-   */
-  private void addWebQueryContext(Server server) throws IOException {
-    if (log.isDebugEnabled()) log.debug("Adding WebQuery servlet context");
-
-    // create the web query context
-    try {
-      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName("org.mulgara.webquery.QueryServlet"), getHttpHostName(), getServerName(), (AbstractServer)serverManagement);
-      new org.mortbay.jetty.servlet.Context(server, "/" + WEBQUERY_PATH, SESSIONS).addServlet(new ServletHolder(servlet), "/*");
-    } catch (ClassNotFoundException e) {
-      throw new IllegalStateException("Not configured to use the requested Query servlet");
-    }
-  }
-
-
-  /**
-   * Extracts a resource from the environment (a jar in the classpath) and writes
-   * this to a file in the working temporary directory.
-   * @param resourceName The name of the resource. This is a relative file path in the jar file.
-   * @return The absolute path of the file the resource is extracted to, or <code>null</code>
-   *         if the resource does not exist.
-   * @throws IOException If there was an error reading the resource, or writing to the extracted file.
-   */
-  private String extractToTemp(String resourceName) throws IOException {
-    // Find the resource
-    URL resourceUrl = ClassLoader.getSystemResource(resourceName);
-    if (resourceUrl == null) return null;
-
-    // open the resource and the file where it will be copied to
-    InputStream in = resourceUrl.openStream();
-    File outFile = new File(TempDir.getTempDir(), new File(resourceName).getName());
-    log.info("Extracting: " + resourceUrl + " to " + outFile);
-    OutputStream out = new FileOutputStream(outFile);
-
-    // loop to copy from the resource to the output file
-    byte[] buffer = new byte[10240];
-    int len;
-    while ((len = in.read(buffer)) >= 0) out.write(buffer, 0, len);
-    in.close();
-    out.close();
-
-    // return the file that the resource was extracted to
-    return outFile.getAbsolutePath();
   }
 
 
@@ -1173,9 +961,7 @@ public class EmbeddedMulgaraServer {
 
       // shut down the SOAP server
       try {
-        if (server.getHttpServer() != null) {
-          server.getHttpServer().stop();
-        }
+        if (server.webServices != null) server.webServices.stop();
       } catch (Exception e) {
         log.error("Couldn't destroy http server", e);
       }

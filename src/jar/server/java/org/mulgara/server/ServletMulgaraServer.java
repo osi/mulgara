@@ -38,7 +38,6 @@ import java.net.UnknownHostException;
 
 // servlet packages
 import javax.servlet.ServletException;
-import javax.servlet.SingleThreadModel;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,229 +74,147 @@ import org.mulgara.server.SessionFactoryFactory;
  * </p>
  *
  * @created 2002-03-04
- *
  * @author Tom Adams
- *
- * @version $Revision: 1.10 $
- *
- * @modified $Date: 2005/01/13 01:55:32 $ by $Author: raboczi $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy;2002 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
- *
+ * @copyright &copy;2002 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ServletMulgaraServer extends HttpServlet implements
-    SingleThreadModel {
+public class ServletMulgaraServer extends HttpServlet {
 
-  //
-  // Constants
-  //
+  /** Used for serializing - an unlikely occurance. */
+  private static final long serialVersionUID = -5680050587689401924L;
 
-  /**
-   * the logging category to log to
-   */
-  private final static Logger log = Logger.getLogger(ServletMulgaraServer.class
-      .getName());
+  /** The logging category to log to */
+  private final static Logger log = Logger.getLogger(ServletMulgaraServer.class.getName());
 
-  /**
-   * the key to retreive the Mulgara server name
-   */
+  /** the key to retreive the Mulgara server name */
   private final static String MULGARA_CONFIG_SERVERNAME = "mulgara.config.servername";
 
-  /**
-   * the key to retrieve the database persistence path
-   */
+  /** the key to retrieve the database persistence path */
   private final static String MULGARA_CONFIG_PERSISTENCE_PATH = "mulgara.config.persistencepath";
 
-  /**
-   * the key to retreive the Mulgara security policy file
-   */
-  private final static String MULGARA_SECURITY_POLICY_PATH = "mulgara.security.policy";
-
-  /**
-   * the key to retreive the Mulgara host name
-   */
+  /** the key to retreive the Mulgara host name */
   private final static String MULGARA_HOSTNAME = "mulgara.hostname";
 
-  /**
-   * the key to retreive the Mulgara LDAP security file
-   */
-  private final static String LDAP_SECURITY_PATH = "mulgara.security.ldap";
-
-  /**
-   * the key to retreive the Mulgara LDAP security file
-   */
+  /** the key to retreive the Mulgara LDAP security file */
   private final static String MULGARA_LOG4J_CONFIG = "mulgara.log4j.config";
 
-  /**
-   * the key to retreive the lucene index directory
-   */
+  /** the key to retreive the lucene index directory */
   private final static String LUCENE_INDEX_DIR = "lucene.index.dir";
 
-  //
-  // Members
-  //
 
-  /**
-   * the database of this server
-   */
+  /** the database of this server */
   private static Database database = null;
 
-  //
-  // Public API
-  //
 
   /**
    * Sets the database of this server.
-   *
    * @param database the database of this server
    */
   public static void setDatabase(Database database) {
-
     ServletMulgaraServer.database = database;
-
   }
+
 
   /**
    * Sets the database of this server.
-   *
    * @return The Database value
    */
   public static Database getDatabase() {
-
     return ServletMulgaraServer.database;
   }
 
-  //
-  // Methods overriding Servlet
-  //
 
   /**
    * Creates a new Mulgara database, and stores it in the servlet context.
-   *
-   * @throws ServletException if the Mulgara database cannot be created for some
-   *      reason
+   * @throws ServletException if the Mulgara database cannot be created for some reason
    */
   public void init() throws ServletException {
 
     BasicConfigurator.configure();
-
     try {
-
       // get the loction of the logging configuration file
-      String log4jConfigPath = this
-          .getRealPath(ServletMulgaraServer.MULGARA_LOG4J_CONFIG);
+      String log4jConfigPath = getRealPath(ServletMulgaraServer.MULGARA_LOG4J_CONFIG);
 
       //this.getResourceURL(ServletMulgaraServer.MULGARA_LOG4J_CONFIG);
-      if (log4jConfigPath == null) {
-
-        throw new IOException("Unable to retrieve log4j configuration file");
-      }
+      if (log4jConfigPath == null) throw new IOException("Unable to retrieve log4j configuration file");
 
       // load the logging configuration
-      this.loadLoggingConfig((new File(log4jConfigPath)).toURL());
-    }
-    catch (Exception e) {
-
+      loadLoggingConfig((new File(log4jConfigPath)).toURL());
+    } catch (Exception e) {
       // log the error
       log.error(e);
-
       // wrap it in a servlet exception
       throw new ServletException(e);
     }
 
     // log what we're doing
-    if (log.isInfoEnabled()) {
-
-      log.info("Initialising Mulgara server servlet");
-    }
+    if (log.isInfoEnabled()) log.info("Initialising Mulgara server servlet");
 
     // log that we've created a new server
-    if (log.isDebugEnabled()) {
-
-      log.debug("Created servlet-wrapped Mulgara server");
-    }
+    if (log.isDebugEnabled()) log.debug("Created servlet-wrapped Mulgara server");
 
     // if it we don't have one already, create a new database
     if (ServletMulgaraServer.getDatabase() == null) {
-
-      ServletMulgaraServer.setDatabase(this.createDatabase());
+      ServletMulgaraServer.setDatabase(createDatabase());
     }
 
   }
 
   /**
    * Closes the database.
-   *
    */
-  public void destroy() {
+  public synchronized void destroy() {
 
-    if (ServletMulgaraServer.getDatabase() != null) {
-
+    if (getDatabase() != null) {
       // log that we're stopping the database
-      if (log.isInfoEnabled()) {
+      if (log.isInfoEnabled()) log.info("Stopping Mulgara server");
 
-        log.info("Stopping Mulgara server");
-      }
-
-      ServletMulgaraServer.getDatabase().close();
-      ServletMulgaraServer.setDatabase(null);
+      getDatabase().close();
+      setDatabase(null);
     }
 
   }
 
+
   /**
-   * Closes the database.
-   *
-   * @throws Throwable EXCEPTION TO DO
+   * Closes the database at the last moment.
+   * @throws Throwable General catch-all for closing problems.
    */
   protected void finalize() throws Throwable {
-
-    // delgate to destroy
-    this.destroy();
+    destroy();
   }
+
 
   /**
    * As this servlet cannot handle requests (its only job is to start create a
    * database), this method always throws an exception.
-   *
-   * @param req PARAMETER TO DO
-   * @param res PARAMETER TO DO
-   * @throws ServletException always
+   * @param req The request.
+   * @param res The response to the client.
+   * @throws ServletException always thrown.
    */
-  protected void service(HttpServletRequest req, HttpServletResponse res)
-      throws ServletException {
-
+  protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException {
     throw new ServletException("Mulgara server servlet does not handle requests");
   }
 
+
   /**
    * Returns the URI of the server based on the server name.
-   *
    * @param serverName the name of the server
    * @return the URI of the server
    * @throws URISyntaxException if the URI cannot be created
    */
   private URI getServerURI(String serverName) throws URISyntaxException {
 
-    String hostname = this.getServletContext()
-        .getInitParameter(MULGARA_HOSTNAME);
+    String hostname = getServletContext().getInitParameter(MULGARA_HOSTNAME);
 
     // attempt to determine the hostname if not supplied by servlet
     if (hostname == null || hostname.trim().length() == 0) {
-
       hostname = "localhost";
       try {
-
         hostname = InetAddress.getLocalHost().getHostName();
         log.info("Obtained " + hostname + " automatically for server");
-
-      }
-      catch (Exception e) {
-
+      } catch (Exception e) {
         log.warn("Problem getting host name -> using localhost");
       }
     }
@@ -315,8 +232,7 @@ public class ServletMulgaraServer extends HttpServlet implements
    * deployment. These are then mapped to the system temp directory and the
    * user's current directory respectively by this method. </p>
    *
-   * @param aliasedPath the persistence path as it appears in the configuration
-   *      file
+   * @param aliasedPath the persistence path as it appears in the configuration file
    * @return the unaliased persistence path
    */
   private String getPersistencePath(String aliasedPath) {
@@ -325,14 +241,10 @@ public class ServletMulgaraServer extends HttpServlet implements
     String persistencePath = aliasedPath;
 
     // unalias the path (if we need to)
-    if ((aliasedPath == null) || aliasedPath.equals("")
-        || aliasedPath.equalsIgnoreCase(".")) {
-
+    if ((aliasedPath == null) || aliasedPath.equals("") || aliasedPath.equalsIgnoreCase(".")) {
       // use the current directory
       persistencePath = System.getProperty("user.dir");
-    }
-    else if (aliasedPath.equalsIgnoreCase("temp")) {
-
+    } else if (aliasedPath.equalsIgnoreCase("temp")) {
       persistencePath = System.getProperty("java.io.tmpdir");
     }
 
@@ -344,9 +256,7 @@ public class ServletMulgaraServer extends HttpServlet implements
   /**
    * Returns the real location of a file path specified by the <code>parameter</code>
    * in the servlet context.
-   *
-   * @param param the init param in the servlet context to find the real
-   *      location of
+   * @param param the init param in the servlet context to find the real location of
    * @return the real location of the given param
    */
   private String getRealPath(String param) {
@@ -356,12 +266,8 @@ public class ServletMulgaraServer extends HttpServlet implements
 
     // try to find the real path
     if (filePath != null) {
-
       // log that we've found the config file
-      if (log.isDebugEnabled()) {
-
-        log.debug("Found file location " + filePath + " for param " + param);
-      }
+      if (log.isDebugEnabled()) log.debug("Found file location " + filePath + " for param " + param);
 
       // get the real path
       filePath = this.getServletContext().getRealPath(filePath);
@@ -371,139 +277,94 @@ public class ServletMulgaraServer extends HttpServlet implements
     return filePath;
   }
 
-  // getDatabase()
-  //
-  // Internal methods
-  //
 
   /**
    * Creates a new database.
-   *
-   * @return RETURNED VALUE TO DO
-   * @throws ServletException if the database could not be created
+   * @return The created database.
+   * @throws ServletException if the database could not be created.
    */
-  private Database createDatabase() throws ServletException {
-
+  private synchronized Database createDatabase() throws ServletException {
     try {
-
       // configure the system properties
-      if (log.isDebugEnabled()) {
+      if (log.isDebugEnabled()) log.debug("Configuring system properties");
 
-        log.debug("Configuring system properties");
-      }
-
-      this.configureSystemProperties();
+      configureSystemProperties();
 
       // get params we'll need to create the server
-      String persistencePath = this.getPersistencePath(this.getServletContext()
-          .getInitParameter(MULGARA_CONFIG_PERSISTENCE_PATH));
-      String serverName = this.getServletContext().getInitParameter(
-          MULGARA_CONFIG_SERVERNAME);
+      String tmpConfiguredPath = getServletContext().getInitParameter(MULGARA_CONFIG_PERSISTENCE_PATH);
+      String persistencePath = getPersistencePath(tmpConfiguredPath);
+      String serverName = getServletContext().getInitParameter(MULGARA_CONFIG_SERVERNAME);
 
       // throw an error if anything is null
-      if (serverName == null) {
+      if (serverName == null) throw new ServletException("Server name not in deployment descriptor");
 
-        throw new ServletException("Server name not in deployment descriptor");
-      }
-
-      // end if
       // get the server's URI and the database state path
-      URI serverURI = this.getServerURI(serverName);
+      URI serverURI = getServerURI(serverName);
       File statePath = new File(new File(persistencePath), serverName);
 
       // create the state path if needed
-      if (!statePath.exists()) {
+      if (!statePath.exists()) statePath.mkdirs();
 
-        statePath.mkdirs();
-      }
-
-      // end if
       // log that we're creating a Mulgara server
-      if (log.isInfoEnabled()) {
-
-        log.info("Starting Mulgara server at " + serverURI + " in directory "
-            + statePath);
-      }
+      if (log.isInfoEnabled()) log.info("Starting Mulgara server at " + serverURI + " in directory " + statePath);
 
       // return the database
       SessionFactoryFactory factory = new SessionFactoryFactory();
+      SessionFactory sessionFactory = factory.newSessionFactory(serverURI, statePath);
 
-      SessionFactory sessionFactory = factory.newSessionFactory(serverURI,
-          statePath);
+      return (Database)sessionFactory;
 
-      return (Database) sessionFactory;
-    }
-    catch (SessionFactoryException sfe) {
+    } catch (SessionFactoryException sfe) {
       // log the error
       log.error(sfe);
-
       // wrap it in a servlet exception
       throw new ServletException(sfe);
-    }
-    catch (UnknownHostException uhe) {
-
+    } catch (UnknownHostException uhe) {
       // log the error
       log.error(uhe);
-
       // wrap it in a servlet exception
       throw new ServletException(uhe);
-    }
-    catch (IOException ioe) {
-
+    } catch (IOException ioe) {
       // log the error
       log.error(ioe);
-
       // wrap it in a servlet exception
       throw new ServletException(ioe);
-    }
-    catch (URISyntaxException use) {
-
+    } catch (URISyntaxException use) {
       // log the error
       log.error(use);
-
       // wrap it in a servlet exception
       throw new ServletException(use);
     }
-
   }
+
 
   /**
    * Sets up any system properties needed by components.
-   *
-   * @throws IOException if any files embedded within the JAR file cannot be
-   *      found
+   * @throws IOException if any files embedded within the JAR file cannot be found
    */
   private void configureSystemProperties() throws IOException {
-
     // set the system properties needed
     System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
         "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
     // set the lucene index
-    String luceneIndex = this.getServletContext().getInitParameter(
-        ServletMulgaraServer.LUCENE_INDEX_DIR);
+    String luceneIndex = this.getServletContext().getInitParameter(ServletMulgaraServer.LUCENE_INDEX_DIR);
 
     if (luceneIndex != null) {
-
       System.setProperty(ServletMulgaraServer.LUCENE_INDEX_DIR, luceneIndex);
-
     } 
   }
 
+  
   /**
    * Loads the embedded logging configuration from an external URL.
-   *
    * @param loggingConfig the URL of the logging configuration file
    */
   private void loadLoggingConfig(URL loggingConfig) {
 
     // validate the loggingConfig parameter
-    if (loggingConfig == null) {
+    if (loggingConfig == null) throw new IllegalArgumentException("Null \"loggingConfig\" parameter");
 
-      throw new IllegalArgumentException("Null \"loggingConfig\" parameter");
-    }
-
-    // end if
     // configure the logging service
     PropertyConfigurator.configure(loggingConfig);
     log.info("Using logging configuration from " + loggingConfig);
