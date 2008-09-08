@@ -245,14 +245,16 @@ class DataStruct {
     if (!prefixOnly) return;
     // move the limit out to the end
     data.limit(dataSize);
-    // read the file starting at the data, plus the header, plus the already read portion
-    file.seek(toOffset(gNode) + HEADER + MAX_DATA_SIZE);
-    // read into the buffer, filling at the point where the data had been truncated.
-    int remainingBytes = dataSize - MAX_DATA_SIZE;
-    assert remainingBytes > 0;
-    // we expect read to return everything from a file, so don't use readFully
-    int dataRead = file.read(data.array(), MAX_DATA_SIZE, remainingBytes);
-    if (dataRead != remainingBytes) throw new IOException("Unable to retrieve data from file.");
+    synchronized (file) {
+      // read the file starting at the data, plus the header, plus the already read portion
+      file.seek(toOffset(gNode) + HEADER + MAX_DATA_SIZE);
+      // read into the buffer, filling at the point where the data had been truncated.
+      int remainingBytes = dataSize - MAX_DATA_SIZE;
+      assert remainingBytes > 0;
+      // we expect read to return everything from a file, so don't use readFully
+      int dataRead = file.read(data.array(), MAX_DATA_SIZE, remainingBytes);
+      if (dataRead != remainingBytes) throw new IOException("Unable to retrieve data from file.");
+    }
   }
 
 
@@ -325,13 +327,15 @@ class DataStruct {
    * @param file The file to read the data from.
    */
   public static void getRemainingBytes(ByteBuffer data, RandomAccessFile file, long gNode) throws IOException {
-    // read the file starting at the data, plus the header, plus the already read portion
-    file.seek(toOffset(gNode) + HEADER + MAX_DATA_SIZE);
-    // read into the buffer, filling at the point where the data had been truncated.
-    int remainingBytes = data.limit() - data.position();
-    assert remainingBytes > 0;
-    int dataRead = file.read(data.array(), MAX_DATA_SIZE, remainingBytes);
-    if (dataRead != remainingBytes) throw new IOException("Unable to retrieve data from file.");
+    synchronized (file) {
+      // read the file starting at the data, plus the header, plus the already read portion
+      file.seek(toOffset(gNode) + HEADER + MAX_DATA_SIZE);
+      // read into the buffer, filling at the point where the data had been truncated.
+      int remainingBytes = data.limit() - data.position();
+      assert remainingBytes > 0;
+      int dataRead = file.read(data.array(), MAX_DATA_SIZE, remainingBytes);
+      if (dataRead != remainingBytes) throw new IOException("Unable to retrieve data from file.");
+    }
   }
 
 
