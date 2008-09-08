@@ -1936,7 +1936,6 @@
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${util.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${config.jar}" excludes="**/*.xml, META-INF/**"/>
-      <zipfileset src="${bin.dir}/${descriptor.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-local.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-spi.jar}" excludes="**/*.xml, META-INF/**"/>
