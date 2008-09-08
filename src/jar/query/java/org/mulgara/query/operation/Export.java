@@ -14,6 +14,8 @@ package org.mulgara.query.operation;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
@@ -28,6 +30,9 @@ import org.mulgara.query.QueryException;
  */
 public class Export extends DataOutputTx {
 
+  /** Optional user-defined namespace prefix mappings. */
+  private Map<String,URI> namespacePrefixes;
+  
   /**
    * Creates a new Export command, exporting data from the graph URI to a file or output stream.
    * @param graphURI The graph to export.
@@ -51,6 +56,15 @@ public class Export extends DataOutputTx {
   }
   
   /**
+   * Provide a set of namespace prefix mappings which will be used to pre-populate the namespace
+   * prefix definitions in the exported RDF/XML.
+   * @param prefixes A mapping of prefix string to namespace URI.
+   */
+  public void setNamespacePrefixes(Map<String,URI> prefixes) {
+    namespacePrefixes = new HashMap<String,URI>(prefixes);
+  }
+  
+  /**
    * Perform an export on a graph.
    * @param conn The connection to talk to the server on.
    * @return The text describing the graph that was exported.
@@ -64,7 +78,7 @@ public class Export extends DataOutputTx {
       if (isLocal()) {
         getMarshalledData(conn);
       } else {
-        conn.getSession().export(src, dest);
+        conn.getSession().export(src, dest, namespacePrefixes);
       } 
       
       if (logger.isDebugEnabled()) logger.debug("Completed backing up " + src + " to " + dest);
@@ -97,7 +111,7 @@ public class Export extends DataOutputTx {
    */
   @Override
   protected void doTx(Connection conn, OutputStream outputStream) throws QueryException {
-    conn.getSession().export(getSource(), outputStream);
+    conn.getSession().export(getSource(), outputStream, namespacePrefixes);
   }
 
 }

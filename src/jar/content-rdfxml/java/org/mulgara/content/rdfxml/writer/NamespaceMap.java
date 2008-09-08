@@ -73,6 +73,9 @@ public class NamespaceMap extends HashMap<String,String> {
 
   /** A mirror of this map (where keys and values are swapped) */
   private Map<String,String> mirror = null;
+  
+  /** A mapping of user-supplied namespace URI to prefix string */
+  private Map<String,String> userPrefixes = null;
 
   /** Prefix used to abbreviate RDF Namespace */
   private static final String RDF_PREFIX = "rdf";
@@ -96,10 +99,12 @@ public class NamespaceMap extends HashMap<String,String> {
   /**
    * Constructor.  Pre-populates the map with prefixes for a set of default namespaces
    * (RDF, RDFS, OWL, DC), and adds a set of user-defined initial namespace prefixes.
-   * Any initial prefix mapping which attempts to redefine a default namespace prefix, or which
+   * Any initial prefix mapping which attempts to redefine a default namespace or prefix, or which
    * contains a prefix that is not a valid XML NCName, will be ignored.  It then populates 
    * the map with generated prefixes for all unique namespaces in the statements that do not
-   * match a default or initial namespace prefix mapping.
+   * match a default or initial namespace prefix mapping. User-supplied namespace prefixes
+   * that do not appear in the statements will not appear in the RDF/XML.  The default namespace may
+   * be defined by including an initial mapping for the empty prefix in the namespace map.
    *
    * @param statements The statements which will be parsed for namespaces.
    * @param session The session used to globalize statement URI's.
@@ -117,7 +122,7 @@ public class NamespaceMap extends HashMap<String,String> {
     put("dc", "http://purl.org/dc/elements/1.1/");
     
     if (initialPrefixes != null) {
-      prePopulate(initialPrefixes);
+      userPrefixes = validateUserPrefixes(initialPrefixes);
     }
 
     //read namespaces from the statements
@@ -136,17 +141,45 @@ public class NamespaceMap extends HashMap<String,String> {
    * already been defined will be ignored.
    * @param existingMap A mapping of prefix to namespace URI.
    */
-  protected void prePopulate(Map<String,URI> existingMap) {
+  private Map<String,String> validateUserPrefixes(Map<String,URI> existingMap) {
+    Map<String,String> mappings = new HashMap<String,String>();
     for (Map.Entry<String,URI> entry : existingMap.entrySet()) {
       String prefix = entry.getKey();
-      // If the value is a valid XML namespace, it will be untouched.  If it is not a namespace, the
-      // namespace portion will be extracted and used.
-      String namespace = toNamespaceURI(entry.getValue().toString());
-      
-      if (namespace != null && !containsValue(namespace) && XMLChar.isValidNCName(prefix)) {
-        put(prefix, namespace);
+      if (prefix != null) {
+        // If the value is a valid XML namespace, it will be untouched.  If it is not a namespace, the
+        // namespace portion will be extracted and used.
+        String namespace = toNamespaceURI(entry.getValue().toString());
+        
+        if (namespace != null && !mappings.containsKey(namespace) && validatePrefix(prefix)) {
+          mappings.put(namespace, prefix);
+        }
       }
     }
+    
+    return mappings;
+  }
+  
+  /**
+   * Validates a user-defined prefix. A prefix is rejected if it meets any of the following conditions:
+   * <ul>
+   * <li>Is not a valid NCName according to the XML specification, or empty to represent the default namespace.</li>
+   * <li>Attempts to redefine one of the existing default prefixes (rdf, rdfs, owl, dc).</li>
+   * <li>Begins with the sequence "ns[0-9]" as this could conflict with a generated prefix.</li>
+   * </ul>
+   * @param prefix The prefix to validate.
+   * @return <code>true</code> if it is safe to include the prefix in the available namespace definitions.
+   */
+  private boolean validatePrefix(String prefix) {
+    // Only accept prefixes that can be used in XML qnames.
+    if (!(XMLChar.isValidNCName(prefix) || prefix.equals(""))) return false;
+    
+    // Don't allow existing prefixes to be redefined.
+    if (containsKey(prefix)) return false;
+    
+    // Prefixes starting with "ns1", "ns2", etc. may conflict with generated prefixes.
+    if (prefix.matches("^ns\\d")) return false;
+    
+    return true;
   }
 
   /**
@@ -236,7 +269,15 @@ public class NamespaceMap extends HashMap<String,String> {
     //only add namespace if it is new
     if ((newURI != null) && !containsValue(newURI)) {
       //add to namespaces
-      put("ns" + size(), newURI);
+      String prefix = null;
+      
+      // Look for a user-defined prefix for the new namespace.
+      if (userPrefixes != null) prefix = userPrefixes.get(newURI);
+      
+      // If no user-defined prefix exists, generate a new one.
+      if (prefix == null) prefix = "ns" + size();
+      
+      put(prefix, newURI);
     }
   }
 
@@ -311,9 +352,10 @@ public class NamespaceMap extends HashMap<String,String> {
       logger.warn("Replacing URI: " + uri + " with ENTITY: " + newURI +
           ". Namepace replacement may be invalid XML.");
     } else if (uri.startsWith(nsURI)) {
-
-      //replace namespace part with key
-      newURI = uri.replaceAll(nsURI, key + ":");
+      // URI's in the default namespace get shortened to local name only.
+      String prefix = key.length() > 0 ? key + ":" : key;
+      //replace namespace part with prefix
+      newURI = uri.replaceAll(nsURI, prefix);
     }
 
     assert newURI != null;

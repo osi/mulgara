@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -109,7 +110,7 @@ public class RDFXMLWriter {
         StatementStore.VARIABLES[2],
     };
   }
-
+  
   /**
    * Writes the contents of the JRDF Graph to a Writer in RDF/XML
    * format with the encoding specified in the opening XML tag.
@@ -122,6 +123,22 @@ public class RDFXMLWriter {
    */
   synchronized public void write(Statements statements, ResolverSession session,
       OutputStreamWriter writer) throws QueryException {
+    write(statements, session, writer, null);
+  }
+
+  /**
+   * Writes the contents of the JRDF Graph to a Writer in RDF/XML
+   * format with the encoding specified in the opening XML tag.
+   *
+   * @param statements Statements The RDF to be written.
+   * @param session ResolverSession Used to globalize nodes
+   * @param writer OutputStreamWriter Destination of the RDF/XML (supports
+   * character encoding)
+   * @param initialPrefixes A set of user-supplied namespace prefix mappings.
+   * @throws QueryException
+   */
+  synchronized public void write(Statements statements, ResolverSession session,
+      OutputStreamWriter writer, Map<String,URI> initialPrefixes) throws QueryException {
 
     //validate
     if (statements == null) {
@@ -148,7 +165,7 @@ public class RDFXMLWriter {
       statements = prepareStatements(statements);
 
       //initialize the namespaces first
-      namespaces = new NamespaceMap(statements, session);
+      namespaces = new NamespaceMap(statements, session, initialPrefixes);
       RDF_PREFIX = namespaces.getRDFPrefix();
 
       //write document
@@ -256,7 +273,7 @@ public class RDFXMLWriter {
         currentKey = keyIter.next();
         currentValue = namespaces.get(currentKey);
 
-        if ((currentKey != null) && (currentValue != null)) {
+        if ((currentKey != null) && (currentKey.length() > 0) && (currentValue != null)) {
 
           //write as: <!ENTITY ns 'http://example.org/abc#'>
           out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" + currentValue + "'>");
@@ -295,11 +312,15 @@ public class RDFXMLWriter {
         currentKey = keyIter.next();
         currentValue = namespaces.get(currentKey);
 
-        if ((currentKey != null)
-            && (currentValue != null)) {
-
-          //use entities: xmlns:ns="&ns;"
-          out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey + ";\"");
+        if ((currentKey != null) && (currentValue != null)) {
+          // For default namespace, write 'xmlns="[namespace]"'
+          // For other namespaces, write 'xmlns:[prefix]="&[prefix];"' (XML entity)
+          String xmlnsPart = "xmlns";
+          if (currentKey.length() > 0) {
+            xmlnsPart += ":" + currentKey;
+          }
+          out.print(NEWLINE + "  " + xmlnsPart + "=\"" + 
+              ((currentKey.length() > 0) ? ("&" + currentKey + ";") : currentValue) + "\"");
         }
       }
     }

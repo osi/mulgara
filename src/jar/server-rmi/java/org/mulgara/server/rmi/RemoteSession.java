@@ -144,6 +144,18 @@ interface RemoteSession extends Remote {
   
   
   /**
+   * Export the data in the specified graph using predefined namespace prefix mappings.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @param prefixes An optional mapping for pre-populating the RDF/XML namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI, Map<String,URI> prefixes) throws QueryException, RemoteException;
+  
+  
+  /**
    * Export the data in the specified graph to an output stream.
    * The database is not changed by this method.
    * 
@@ -152,6 +164,18 @@ interface RemoteSession extends Remote {
    * @throws QueryException if the export cannot be completed.
    */
   public void export(URI graphURI, OutputStream outputStream) throws QueryException, RemoteException;
+
+  /**
+   * Export the data in the specified graph to an output stream using predefined namespace prefixes.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @param prefixes An optional mapping for pre-populating the RDF/XML namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream, Map<String,URI> prefixes)
+      throws QueryException, RemoteException;
 
   /**
    * Restore the specified server.

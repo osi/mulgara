@@ -328,6 +328,26 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   
   
   /**
+   * Export the data in the specified graph using predefined namespace prefixes.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @param prefixes An optional mapping for pre-populating the RDF/XML namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI, Map<String,URI> prefixes) throws QueryException {
+    try {
+      remoteSession.export(graphURI, destinationURI, prefixes);
+      resetRetries();
+    } catch (RemoteException e) {
+      testRetry(e);
+      export(graphURI, destinationURI);
+    }
+  }
+  
+  
+  /**
    * Export the data in the specified graph to an output stream.
    * The database is not changed by this method.
    * 
@@ -338,6 +358,26 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   public void export(URI graphURI, OutputStream outputStream) throws QueryException {
     try {
       remoteSession.export(graphURI, outputStream);
+      resetRetries();
+    } catch (RemoteException e) {
+      testRetry(e);
+      export(graphURI, outputStream);
+    }
+  }
+
+
+  /**
+   * Export the data in the specified graph to an output stream using predefined namespace prefixes.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @param prefixes An optional mapping for pre-populating the RDF/XML namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream, Map<String,URI> prefixes) throws QueryException {
+    try {
+      remoteSession.export(graphURI, outputStream, prefixes);
       resetRetries();
     } catch (RemoteException e) {
       testRetry(e);

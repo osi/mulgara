@@ -224,6 +224,23 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
   }
   
   /**
+   * Export the data in the specified graph using predefined namespace prefixes.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @param prefixes An optional mapping for pre-populating the RDF/XML namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI, Map<String,URI> prefixes) throws QueryException, RemoteException {
+    try {
+      session.export(graphURI, destinationURI, prefixes);
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+  
+  /**
    * Export the data in the specified graph to an output stream.
    * The database is not changed by this method.
    * 
@@ -234,6 +251,23 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
   public void export(URI graphURI, OutputStream outputStream) throws QueryException, RemoteException {
     try {
       session.export(graphURI, outputStream);
+    } catch (Throwable t) {
+      throw convertToQueryException(t);
+    }
+  }
+
+  /**
+   * Export the data in the specified graph to an output stream using predefined namespace prefixes.
+   * The database is not changed by this method.
+   * 
+   * @param graphURI The URI of the server or model to export.
+   * @param outputStream The stream to receive the contents
+   * @param prefixes An optional mapping for pre-populating the RDF/XML namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream, Map<String,URI> prefixes) throws QueryException, RemoteException {
+    try {
+      session.export(graphURI, outputStream, prefixes);
     } catch (Throwable t) {
       throw convertToQueryException(t);
     }

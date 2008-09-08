@@ -718,7 +718,9 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     URI destinationURI = toURI(node.getDestination());
     boolean locality = node.getLocality() != null && (node.getLocality() instanceof ALocalLocality);
 
-    lastCommand = new Export(sourceURI, destinationURI, locality);
+    Export exportCommand = new Export(sourceURI, destinationURI, locality);
+    exportCommand.setNamespacePrefixes(aliasMap);
+    lastCommand = exportCommand;
   }
   
   /**

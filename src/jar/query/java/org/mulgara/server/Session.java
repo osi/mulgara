@@ -146,6 +146,21 @@ public interface Session {
   public void export(URI graphURI, URI destinationURI) throws QueryException;
   
   /**
+   * Export the data in the specified graph. The database is not changed by
+   * this method.  Does not require an exclusive lock on the database and will
+   * begin with the currently committed state.
+   * If a set of namespace prefixes is supplied, it will be used to pre-populate
+   * the namespace prefix definitions in the exported RDF/XML.
+   *
+   * @param graphURI The URI of the graph to export.
+   * @param destinationURI The URI of the file to export into.
+   * @param prefixes An optional set of user-supplied namespace prefix mappings;
+   *   may be <code>null</code> to use the generated namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, URI destinationURI, Map<String,URI> prefixes) throws QueryException;
+  
+  /**
    * Export the data in the specified graph to an output stream.
    * The database is not changed by this method.  Does not require an exclusive
    * lock on the database and will begin with the currently committed state.
@@ -155,6 +170,21 @@ public interface Session {
    * @throws QueryException if the export cannot be completed.
    */
   public void export(URI graphURI, OutputStream outputStream) throws QueryException;
+
+  /**
+   * Export the data in the specified graph to an output stream.
+   * The database is not changed by this method.  Does not require an exclusive
+   * lock on the database and will begin with the currently committed state.
+   * If a set of namespace prefixes is supplied, it will be used to pre-populate
+   * the namespace prefix definitions in the exported RDF/XML.
+   *
+   * @param graphURI The URI of the graph to export.
+   * @param outputStream The stream to receive the contents
+   * @param prefixes An optional set of user-supplied namespace prefix mappings;
+   *   may be <code>null</code> to use the generated namespace prefixes.
+   * @throws QueryException if the export cannot be completed.
+   */
+  public void export(URI graphURI, OutputStream outputStream, Map<String,URI> prefixes) throws QueryException;
 
   /**
    * Restore all the data on the server. If the database is not

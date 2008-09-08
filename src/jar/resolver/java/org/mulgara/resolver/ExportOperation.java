@@ -14,6 +14,7 @@ package org.mulgara.resolver;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.util.Map;
 
 import org.mulgara.content.rdfxml.writer.RDFXMLWriter;
 import org.mulgara.query.Constraint;
@@ -42,6 +43,7 @@ import org.mulgara.store.tuples.Tuples;
 class ExportOperation extends OutputOperation {
   
   private final URI graphURI;
+  private final Map<String,URI> prefixes;
   
   /**
    * Create an {@link Operation} which exports the contents of the specified RDF graph
@@ -55,14 +57,18 @@ class ExportOperation extends OutputOperation {
    * @param graphURI The URI of the graph to export, never <code>null</code>.
    * @param destinationURI The URI of the file to export into, may be
    *   <code>null</code> if an <var>outputStream</var> is specified
+   * @param initialPrefixes An optional set of user-supplied namespace prefix mappings;
+   *   may be <code>null</code> to use the generated namespace prefixes.
    */
-  public ExportOperation(OutputStream outputStream, URI graphURI, URI destinationURI) {
+  public ExportOperation(OutputStream outputStream, URI graphURI, URI destinationURI,
+      Map<String,URI> initialPrefixes) {
     super(outputStream, destinationURI);
     
     if (graphURI == null) {
       throw new IllegalArgumentException("Graph URI may not be null.");
     }
     this.graphURI = graphURI;
+    this.prefixes = initialPrefixes;
   }
 
   /* (non-Javadoc)
@@ -99,7 +105,7 @@ class ExportOperation extends OutputOperation {
         try {
           // TODO: Use the destination URI file suffix to determine the appropriate writer.
           RDFXMLWriter rdfWriter = new RDFXMLWriter();
-          rdfWriter.write(graphStatements, systemResolver, writer);
+          rdfWriter.write(graphStatements, systemResolver, writer, prefixes);
         } finally {
           // This will close the wrapped resolution as well.
           graphStatements.close();
