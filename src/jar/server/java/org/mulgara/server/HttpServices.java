@@ -79,6 +79,9 @@ public class HttpServices {
   /** The Web Query path. */
   private final static String WEBQUERY_PATH = "webui";
 
+  /** The sparql path. */
+  private final static String SPARQL_REST_PATH = "sparql";
+
   /** The default service path. */
   private final static String DEFAULT_SERVICE = WEBQUERY_PATH;
 
@@ -216,6 +219,9 @@ public class HttpServices {
     starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
       return addWebQueryContext(s);
     } });
+    starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
+      return addSparqlRestQueryContext(s);
+    } });
     return starters;
   }
 
@@ -307,6 +313,25 @@ public class HttpServices {
       return new Service("User Interface", webPath);
     } catch (ClassNotFoundException e) {
       throw new IllegalStateException("Not configured to use the requested Query servlet");
+    }
+  }
+
+
+  /**
+   * Creates the Mulgara REST SPARQL servlet.
+   * @throws IOException if the servlet cannot talk to the network.
+   */
+  private Service addSparqlRestQueryContext(Server server) throws IOException {
+    if (logger.isDebugEnabled()) logger.debug("Adding REST SPARQL servlet context");
+
+    // create the web query context
+    try {
+      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName("org.mulgara.protocol.http.SparqlServlet"), hostServer);
+      String webPath = "/" + SPARQL_REST_PATH;
+      new org.mortbay.jetty.servlet.Context(server, webPath, SESSIONS).addServlet(new ServletHolder(servlet), "/*");
+      return new Service("SPARQL REST Service", webPath);
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("Not configured to use the requested REST SPARQL servlet");
     }
   }
 
