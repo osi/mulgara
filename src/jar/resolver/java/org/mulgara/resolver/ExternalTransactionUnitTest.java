@@ -1837,6 +1837,8 @@ public class ExternalTransactionUnitTest extends TestCase {
           assertFalse(answer.next());
           answer.close();
           fail("query should've gotten aborted");
+        } catch (QueryException qe) {
+          logger.debug("query was aborted", qe);
         } catch (TuplesException te) {
           logger.debug("query was aborted", te);
         }
@@ -2301,6 +2303,57 @@ public class ExternalTransactionUnitTest extends TestCase {
           }
           assertTrue("transaction should've completed step2", steps[2]);
         }
+
+        int RB = XAException.XA_RBOTHER;
+        // res.start fails immediately with no error-code
+        doResourceFailureTest(4, session1, resource1, testModel, 1, -1, -1, -1, false, 0, true,
+                              1, 0, 0, 0,
+                              1, 0, 0, 0, 0, 0, 0);
+
+        // res.start fails immediately with rollback error-code
+        doResourceFailureTest(5, session1, resource1, testModel, 1, -1, -1, -1, false, RB, true,
+                              1, 0, 0, 0,
+                              1, 0, 0, 0, 0, 0, 1);
+
+        // res.end fails on suspend with unspecified error-code
+        doResourceFailureTest(6, session1, resource1, testModel, -1, 1, -1, -1, false, 0, true,
+                              1, 1, 0, 0,
+                              1, 1, 0, 0, 0, 0, 0);
+
+        // res.end fails on suspend with rollback error-code
+        doResourceFailureTest(7, session1, resource1, testModel, -1, 1, -1, -1, false, RB, true,
+                              1, 1, 0, 0,
+                              1, 1, 0, 0, 0, 0, 1);
+
+        // res.start fails on resume with unspecified error-code
+        doResourceFailureTest(8, session1, resource1, testModel, -1, -1, 1, -1, false, 0, true,
+                              1, 1, 1, 0,
+                              1, 1, 1, 0, 0, 0, 0);
+
+        // res.start fails on resume with rollback error-code
+        doResourceFailureTest(9, session1, resource1, testModel, -1, -1, 1, -1, false, RB, true,
+                              1, 1, 1, 0,
+                              1, 1, 1, 0, 0, 0, 1);
+
+        // res.end fails on end with unspecified error-code
+        doResourceFailureTest(10, session1, resource1, testModel, -1, -1, -1, 1, false, 0, false,
+                              1, 2, 1, 0,
+                              1, 2, 2, 1, 0, 0, 0);
+
+        // res.end fails on end with rollback error-code
+        doResourceFailureTest(11, session1, resource1, testModel, -1, -1, -1, 1, false, RB, false,
+                              1, 2, 1, 0,
+                              1, 2, 2, 1, 0, 0, 1);
+
+        // res.prepare fails with unspecified error-code
+        doResourceFailureTest(12, session1, resource1, testModel, -1, -1, -1, -1, true, 0, false,
+                              1, 2, 1, 0,
+                              1, 2, 2, 1, 1, 0, 1);
+
+        // res.prepare fails with rollback error-code
+        doResourceFailureTest(13, session1, resource1, testModel, -1, -1, -1, -1, true, RB, false,
+                              1, 2, 1, 0,
+                              1, 2, 2, 1, 1, 0, 0);
       } finally {
         session1.close();
       }
@@ -2309,11 +2362,76 @@ public class ExternalTransactionUnitTest extends TestCase {
     }
   }
 
-  private static class MockXAResource extends DummyXAResource {
-    private static enum State { IDLE, ACTIVE, SUSPENDED, ENDED, PREPARED, FINISHED };
+  private void doResourceFailureTest(int testNum, Session session, XAResource resource, URI testModel,
+                                     int failStartAfter, int failSuspendAfter, int failResumeAfter,
+                                     int failEndAfter, boolean failPrepare, int errorCode, boolean qryFails,
+                                     int pfStartCnt, int pfSuspendCnt, int pfResumeCnt, int pfEndCnt,
+                                     int endStartCnt, int endSuspendCnt, int endResumeCnt, int endEndCnt,
+                                     int endPrepareCnt, int endCommitCnt, int endRollbackCnt)
+      throws Exception {
+    MockFailingXAResource mockRes = new MockFailingXAResource();
+    mockRes.failStartAfter = failStartAfter >= 0 ? failStartAfter : Integer.MAX_VALUE;
+    mockRes.failSuspendAfter = failSuspendAfter >= 0 ? failSuspendAfter : Integer.MAX_VALUE;
+    mockRes.failResumeAfter = failResumeAfter >= 0 ? failResumeAfter : Integer.MAX_VALUE;
+    mockRes.failEndAfter = failEndAfter >= 0 ? failEndAfter : Integer.MAX_VALUE;
+    mockRes.failPrepare = failPrepare;
+    mockRes.errorCode = errorCode;
+    MockResolver.setNextXAResource(mockRes);
 
-    private final ThreadLocal<Xid> currTxn = new ThreadLocal<Xid>();
-    private State state = State.IDLE;
+    TestXid xid1 = new TestXid(testNum);
+    resource.start(xid1, XAResource.TMNOFLAGS);
+
+    try {
+      session.query(createQuery(testModel)).close();
+      if (qryFails)
+        fail("query should have failed");
+    } catch (TuplesException te) {
+      if (!qryFails)
+        throw te;
+      logger.debug("Caught expected exception", te);
+    } catch (QueryException qe) {
+      if (!qryFails)
+        throw qe;
+      logger.debug("Caught expected exception", qe);
+    }
+
+    assertEquals(pfStartCnt, mockRes.startCnt);
+    assertEquals(pfSuspendCnt, mockRes.suspendCnt);
+    assertEquals(pfResumeCnt, mockRes.resumeCnt);
+    assertEquals(pfEndCnt, mockRes.endCnt);
+
+    try {
+      resource.end(xid1, qryFails ? XAResource.TMFAIL : XAResource.TMSUCCESS);
+    } catch (XAException xae) {
+      if (!isRollback(xae) && xae.errorCode != XAException.XA_HEURRB)
+        throw xae;
+    }
+    try {
+      if (qryFails)
+        resource.rollback(xid1);
+      else
+        resource.commit(xid1, true);
+    } catch (XAException xae) {
+      if (xae.errorCode == XAException.XA_HEURRB)
+        resource.forget(xid1);
+      else if (!isRollback(xae) && qryFails)
+        throw xae;
+    }
+
+    assertEquals(endStartCnt, mockRes.startCnt);
+    assertEquals(endSuspendCnt, mockRes.suspendCnt);
+    assertEquals(endResumeCnt, mockRes.resumeCnt);
+    assertEquals(endEndCnt, mockRes.endCnt);
+    assertEquals(endPrepareCnt, mockRes.prepareCnt);
+    assertEquals(endCommitCnt, mockRes.commitCnt);
+    assertEquals(endRollbackCnt, mockRes.rollbackCnt);
+  }
+
+  private static class MockXAResource extends DummyXAResource {
+    protected static enum State { IDLE, ACTIVE, SUSPENDED, ENDED, PREPARED, FINISHED };
+
+    protected final ThreadLocal<Xid> currTxn = new ThreadLocal<Xid>();
+    protected State state = State.IDLE;
 
     public int startCnt = 0;
     public int resumeCnt = 0;
@@ -2402,6 +2520,40 @@ public class ExternalTransactionUnitTest extends TestCase {
       state = State.FINISHED;
 
       rollbackCnt++;
+    }
+  }
+
+  private static class MockFailingXAResource extends MockXAResource {
+    public int failStartAfter = Integer.MAX_VALUE;
+    public int failSuspendAfter = Integer.MAX_VALUE;
+    public int failResumeAfter = Integer.MAX_VALUE;
+    public int failEndAfter = Integer.MAX_VALUE;
+    public int errorCode = 0;
+    public boolean failPrepare = false;
+
+    public void start(Xid xid, int flags) throws XAException {
+      super.start(xid, flags);
+      if (startCnt >= failStartAfter || resumeCnt >= failResumeAfter) {
+        currTxn.set(null);
+        state = State.ENDED;
+        throw (errorCode != 0) ? new XAException(errorCode) : new XAException("Testing start failure");
+      }
+    }
+
+    public void end(Xid xid, int flags) throws XAException {
+      super.end(xid, flags);
+      if (endCnt >= failEndAfter || suspendCnt >= failSuspendAfter) {
+        state = State.ENDED;
+        throw (errorCode != 0) ? new XAException(errorCode) : new XAException("Testing end failure");
+      }
+    }
+
+    public int prepare(Xid xid) throws XAException {
+      super.prepare(xid);
+      if (failPrepare) {
+        throw (errorCode != 0) ? new XAException(errorCode) : new XAException("Testing prepare failure");
+      }
+      return XA_OK;
     }
   }
 

@@ -20,6 +20,7 @@ package org.mulgara.resolver;
 // Java 2 enterprise packages
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.transaction.xa.XAResource;
@@ -57,6 +58,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
 
   private Set<EnlistableResource> enlisted;
   private Set<EnlistableResource> started;
+  private Set<EnlistableResource> needRollback;
   private Set<EnlistableResource> prepared;
   private Set<EnlistableResource> committed;
   private Set<EnlistableResource> rollbacked;
@@ -85,6 +87,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
 
     this.enlisted = new HashSet<EnlistableResource>();
     this.started = new HashSet<EnlistableResource>();
+    this.needRollback = new HashSet<EnlistableResource>();
     this.prepared = new HashSet<EnlistableResource>();
     this.committed = new HashSet<EnlistableResource>();
     this.rollbacked = new HashSet<EnlistableResource>();
@@ -189,16 +192,20 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
       checkActive(MulgaraTransactionException.class);
-      activateXARes(MulgaraTransactionException.class);
       try {
-        long la = lastActive;
-        lastActive = -1;
+        activateXARes(MulgaraTransactionException.class);
+        try {
+          long la = lastActive;
+          lastActive = -1;
 
-        operation.execute(context,
-            context.getSystemResolver(),
-            metadata);
+          operation.execute(context,
+              context.getSystemResolver(),
+              metadata);
 
-        lastActive = (la != -1) ? System.currentTimeMillis() : -1;
+          lastActive = (la != -1) ? System.currentTimeMillis() : -1;
+        } finally {
+          deactivateXARes(MulgaraTransactionException.class);
+        }
       } catch (Throwable th) {
         try {
           heuristicRollback(th.toString());
@@ -206,8 +213,6 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           logger.error("Error in rollback after operation failure", ex);
         }
         throw new MulgaraTransactionException("Operation failed", th);
-      } finally {
-        deactivateXARes(MulgaraTransactionException.class);
       }
     } finally {
       releaseMutex();
@@ -218,16 +223,20 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     acquireMutex(0, false, TuplesException.class);
     try {
       checkActive(TuplesException.class);
-      activateXARes(TuplesException.class);
       try {
-        long la = lastActive;
-        lastActive = -1;
+        activateXARes(TuplesException.class);
+        try {
+          long la = lastActive;
+          lastActive = -1;
 
-        ao.execute();
+          ao.execute();
 
-        lastActive = (la != -1) ? System.currentTimeMillis() : -1;
+          lastActive = (la != -1) ? System.currentTimeMillis() : -1;
 
-        return ao.getResult();
+          return ao.getResult();
+        } finally {
+          deactivateXARes(TuplesException.class);
+        }
       } catch (Throwable th) {
         try {
           logger.warn("Error in answer operation triggered rollback", th);
@@ -236,8 +245,6 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           logger.error("Error in rollback after answer-operation failure", ex);
         }
         throw new TuplesException("Request failed", th);
-      } finally {
-        deactivateXARes(TuplesException.class);
       }
     } finally {
       releaseMutex();
@@ -295,6 +302,9 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           started.add(eres);
         }
       } catch (XAException xae) {
+        started.remove(eres);
+        if (isRollback(xae)) needRollback.add(eres);
+
         // end started resources so we're in a consistent state
         flags = wasStarted ? XAResource.TMSUSPEND : XAResource.TMFAIL;
         for (EnlistableResource eres2 : wasStarted ? started : enlisted) {
@@ -309,6 +319,8 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
             logger.error("Error ending resource '" + res2 + "' after start failure", xae2);
           }
         }
+
+        xaResState = wasStarted ? ResourceState.SUSPENDED : ResourceState.FINISHED;
 
         throw factory.newExceptionOrCause(exc, "Error starting resource '" + res + "'", xae);
       }
@@ -333,11 +345,15 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     int flags = XAResource.TMSUSPEND;
     T error = null;
 
-    for (EnlistableResource eres : started) {
+    for (Iterator<EnlistableResource> iter = started.iterator(); iter.hasNext(); ) {
+      EnlistableResource eres = iter.next();
       XAResource res = xaResources.get(eres);
       try {
         res.end(xid, flags);
       } catch (XAException xae) {
+        iter.remove();
+        if (isRollback(xae)) needRollback.add(eres);
+
         if (error == null) {
           error = factory.newExceptionOrCause(exc, "Error ending resource '" + res + "'", xae);
         } else {
@@ -361,7 +377,8 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     int flags = success ? XAResource.TMSUCCESS : XAResource.TMFAIL;
     XAException error = null;
 
-    for (EnlistableResource eres : started) {
+    for (Iterator<EnlistableResource> iter = started.iterator(); iter.hasNext(); ) {
+      EnlistableResource eres = iter.next();
       XAResource res = xaResources.get(eres);
       try {
         if (xaResState == ResourceState.SUSPENDED) {
@@ -369,6 +386,9 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
         }
         res.end(xid, flags);
       } catch (XAException xae) {
+        iter.remove();
+        if (isRollback(xae)) needRollback.add(eres);
+
         if (error == null) {
           error = xae;
         } else {
@@ -406,6 +426,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           started.add(enlistable);
         }
       } catch (XAException ex) {
+        if (isRollback(ex)) needRollback.add(enlistable);
         throw new MulgaraTransactionException("Failed to enlist resource", ex);
       }
     } finally {
@@ -464,9 +485,18 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
       lastActive = -1;
 
       endXARes(true);
-      for (EnlistableResource er : started) {
-        xaResources.get(er).prepare(xid);
-        prepared.add(er);
+      for (Iterator<EnlistableResource> iter = started.iterator(); iter.hasNext(); ) {
+        EnlistableResource er = iter.next();
+        try {
+          if (xaResources.get(er).prepare(xid) == XAResource.XA_OK) {
+            prepared.add(er);
+          } else {
+            iter.remove();
+          }
+        } catch (XAException xae) {
+          if (isRollback(xae)) iter.remove();
+          throw xae;
+        }
       }
 
       lastActive = (la != -1) ? System.currentTimeMillis() : -1;
@@ -495,6 +525,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
           logger.error("Error ending resources - attempting to rollback anyway", ex);
         }
 
+        started.addAll(needRollback);
         for (EnlistableResource er : started) {
           try {
             if (!committed.contains(er)) {
@@ -600,6 +631,10 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
 
   private void releaseMutex() {
     factory.releaseMutex();
+  }
+
+  private static boolean isRollback(XAException xae) {
+    return xae.errorCode >= XAException.XA_RBBASE && xae.errorCode <= XAException.XA_RBEND;
   }
 
   private void report(String desc) {
