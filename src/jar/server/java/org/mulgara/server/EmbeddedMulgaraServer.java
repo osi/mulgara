@@ -73,7 +73,7 @@ import static org.mulgara.server.ServerMBean.ServerState;
  * @see <a href="http://developer.java.sun.com/developer/JDCTechTips/2001/tt0327.html#jndi">
  *      <cite>JNDI lookup in distributed systems</cite> </a>
  */
-public class EmbeddedMulgaraServer {
+public class EmbeddedMulgaraServer implements SessionFactoryProvider {
 
   /** Line separator. */
   protected static final String eol = System.getProperty("line.separator");
@@ -374,7 +374,12 @@ public class EmbeddedMulgaraServer {
       if (httpEnabled) {
         // create a HTTP server instance
         if (log.isDebugEnabled()) log.debug("Configuring HTTP server");
-        webServices = new HttpServices(this, httpHostName, mulgaraConfig);
+        try {
+          webServices = new HttpServices(this, httpHostName, mulgaraConfig);
+        } catch (Exception e) {
+          log.error("Unable to start web services due to: " + e.getMessage() + " [Continuing]");
+          if (log.isDebugEnabled()) log.debug("Web Server problem", e);
+        }
       }
     }
   }
