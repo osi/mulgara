@@ -62,6 +62,8 @@ import org.mulgara.sparql.parser.cst.Node;
 import org.mulgara.sparql.parser.cst.Ordering;
 import org.mulgara.sparql.parser.cst.RDFLiteral;
 import org.mulgara.sparql.parser.cst.Triple;
+import org.mulgara.util.functional.C;
+import org.mulgara.util.functional.Fn1;
 
 /**
  * Converts a parsed SPARQL query into a Command for execution.
@@ -74,7 +76,7 @@ import org.mulgara.sparql.parser.cst.Triple;
 public class SparqlInterpreter implements Interpreter {
 
   /** The default graph to use if none has been set. */
-  private static final URI INTERNAL_DEFAULT_GRAPH_URI = URI.create("local:null");
+  private static final List<URI> INTERNAL_DEFAULT_GRAPH_URIS = Collections.singletonList(URI.create("local:null"));
 
   /** The column variables used to build a graph. */
   private static final Variable[] GRAPH_VARS = GraphAnswer.getGraphVariables();
@@ -102,14 +104,26 @@ public class SparqlInterpreter implements Interpreter {
 
 
   /** The default graph to use when none has been parsed. */
-  private URI defaultGraphUri = null;
+  private List<IRIReference> defaultGraphIris = Collections.emptyList();
 
   /**
-   * Sets the default graph to use in parsed queries.
-   * @param graph The graph URI to use as the default graph.
+   * Sets the default graphs to use in parsed queries.
+   * @param graph The graph URIs to use as the default graphs. A <code>null</code> value
+   *        is treated the same as an empty list.
+   */
+  public SparqlInterpreter setDefaultGraphUris(List<URI> graphUris) {
+    defaultGraphIris = toIRIs(graphUris);
+    return this;
+  }
+
+  /**
+   * Sets the single default graph to use in parsed queries.
+   * @param graph The graph URI to use as the default graph, or <code>null</code> if the
+   *        default graph is not desired.
    */
   public SparqlInterpreter setDefaultGraphUri(URI graphUri) {
-    defaultGraphUri = graphUri;
+    if (graphUri == null) defaultGraphIris = Collections.emptyList();
+    else defaultGraphIris = Collections.singletonList(new IRIReference(graphUri));
     return this;
   }
 
@@ -117,8 +131,16 @@ public class SparqlInterpreter implements Interpreter {
    * Gets the default graph to use when none has been parsed from the query.
    * @return The graph that parsed queries will default to when no FROM graph is supplied.
    */
-  public URI getDefaultGraphUri() {
-    return (defaultGraphUri != null) ? defaultGraphUri : INTERNAL_DEFAULT_GRAPH_URI;
+  public List<URI> getDefaultGraphUris() {
+    return defaultGraphIris.isEmpty() ? INTERNAL_DEFAULT_GRAPH_URIS : toURIs(defaultGraphIris);
+  }
+
+  /**
+   * Gets the default graph to use when none has been parsed from the query.
+   * @return The graph that parsed queries will default to when no FROM graph is supplied.
+   */
+  public List<IRIReference> getDefaultGraphIris() {
+    return defaultGraphIris.isEmpty() ? toIRIs(INTERNAL_DEFAULT_GRAPH_URIS) : defaultGraphIris;
   }
 
   /**
@@ -338,10 +360,8 @@ public class SparqlInterpreter implements Interpreter {
    */
   ModelExpression getFrom(QueryStructure queryStruct) {
     List<IRIReference> iris = queryStruct.getDefaultFroms();
-    // if there were no named graphs, then use the default
-    if (iris.isEmpty()) return new ModelResource(getDefaultGraphUri());
-    // accumulate the remaining graphs as a union
-    return graphUnion(iris);
+    // accumulate the graphs as a union, using the default if no graphs supplied
+    return graphUnion(iris.isEmpty() ? getDefaultGraphIris() : iris);
   }
 
   /**
@@ -501,5 +521,28 @@ public class SparqlInterpreter implements Interpreter {
    */
   List<? extends SelectElement> graphVariables() {
     return Arrays.asList(GRAPH_VARS);
+  }
+
+
+  /**
+   * Converts a collection of URIs to a collection of IRIReferences. If IRIReference becomes
+   * more compliant then this may throw an exception.
+   * @param uris The URI collection. If <code>null</code> then convert to an empty list.
+   * @return A new List of IRIReferences.
+   */
+  static List<IRIReference> toIRIs(Collection<URI> uris) {
+    if (uris == null) return Collections.emptyList();
+    return C.map(uris, new Fn1<URI,IRIReference>(){public IRIReference fn(URI u) {return new IRIReference(u);}});
+  }
+
+
+  /**
+   * Converts a collection of IRIReferences to a collections of URIs.
+   * @param iris The IRIReference collection. If <code>null</code> then convert to an empty list.
+   * @return A new List of URIs. These are extracted from the IRIs.
+   */
+  static List<URI> toURIs(Collection<IRIReference> iris) {
+    if (iris == null) return Collections.emptyList();
+    return C.map(iris, new Fn1<IRIReference,URI>(){public URI fn(IRIReference i) {return i.getUri();}});
   }
 }
