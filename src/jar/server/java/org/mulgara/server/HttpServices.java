@@ -80,7 +80,10 @@ public class HttpServices {
   private final static String WEBQUERY_PATH = "webui";
 
   /** The sparql path. */
-  private final static String SPARQL_REST_PATH = "sparql";
+  private final static String SPARQL_PATH = "sparql";
+
+  /** The tql path. */
+  private final static String TQL_PATH = "tql";
 
   /** The default service path. */
   private final static String DEFAULT_SERVICE = WEBQUERY_PATH;
@@ -219,8 +222,13 @@ public class HttpServices {
     starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
       return addWebQueryContext(s);
     } });
+    // expect to get the following from a config file
+    // TODO: create a decent configuration object, instead of just handing out a Server
     starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
-      return addSparqlRestQueryContext(s);
+      return addServletContext(s, "org.mulgara.protocol.http.SparqlServlet", SPARQL_PATH, "SPARQL HTTP Service");
+    } });
+    starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
+      return addServletContext(s, "org.mulgara.protocol.http.TqlServlet", TQL_PATH, "TQL HTTP Service");
     } });
     return starters;
   }
@@ -318,23 +326,28 @@ public class HttpServices {
 
 
   /**
-   * Creates the Mulgara REST SPARQL servlet.
-   * @throws IOException if the servlet cannot talk to the network.
+   * Creates a servlet that requires a Server as a constructor parameter.
+   * @param server The server needed by the servlet.
+   * @param servletClass The name of the servlet class.
+   * @param path A relative HTTP path for attaching the servlet. 
+   * @param description A description for the servlet.
+   * @return The Service running the new servlet.
+   * @throws IOException Due to problems with the file system or the network.
+   * @throws IllegalStateException if an unavailable servlet has been requested.
    */
-  private Service addSparqlRestQueryContext(Server server) throws IOException {
-    if (logger.isDebugEnabled()) logger.debug("Adding REST SPARQL servlet context");
+  private Service addServletContext(Server server, String servletClass, String path, String description) throws IOException {
+    if (logger.isDebugEnabled()) logger.debug("Adding " + description + " servlet context");
 
     // create the web query context
     try {
-      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName("org.mulgara.protocol.http.SparqlServlet"), hostServer);
-      String webPath = "/" + SPARQL_REST_PATH;
+      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName(servletClass), hostServer);
+      String webPath = "/" + path;
       new org.mortbay.jetty.servlet.Context(server, webPath, SESSIONS).addServlet(new ServletHolder(servlet), "/*");
-      return new Service("SPARQL REST Service", webPath);
+      return new Service(description, webPath);
     } catch (ClassNotFoundException e) {
-      throw new IllegalStateException("Not configured to use the requested REST SPARQL servlet");
+      throw new IllegalStateException("Not configured to use the requested servlet: " + description);
     }
   }
-
 
   /**
    * Creates the servlet used to list the other servlets.
