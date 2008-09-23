@@ -15,6 +15,7 @@ package org.mulgara.util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Maps from a known hour:minute offset for a timezone into a 6 bit code, and back.
@@ -28,6 +29,9 @@ public class Timezone {
 
   /** A mask for restricting bit patterns to a byte (removing sign extension) */
   private static final int BYTE_MASK = 0xFF;
+
+  /** The name of the timezone for Zulu time 00:00 */
+  private static final String ZULU_NAME = "UTC";
 
   /** The construct that holds the offset details */
   private HourMinute hm;
@@ -60,6 +64,14 @@ public class Timezone {
     internalCode = c;
   }
 
+  /**
+   * A convenience factory method to construct a ZULU timezone.
+   * @return a Timezone for ZULU time.
+   */
+  public static Timezone newZuluTimezone() {
+    return new Timezone(ZULU_CODE);
+  }
+
   /** Gets the hour for this timezone. */
   public int getHour() {
     return hm.hour;
@@ -73,6 +85,23 @@ public class Timezone {
   /** Gets the code for this timezone. This is guaranteed to use the top 5 bits, and set the bottom 2 to 0.*/
   public byte getCode() {
     return (byte)(internalCode << 2);
+  }
+
+  /** Indicates if this code represents Zulu. */
+  public boolean isZulu() {
+    return getCode() == ZULU_CODE;
+  }
+
+  /** @see java.lang.Object#toString() */
+  public String toString() {
+    return hm == ZULU ? "Z" : hm.toString();
+  }
+
+  /** Convert to a {@linkplain java.util.TimeZone} */
+  public TimeZone asJavaTimeZone() {
+    TimeZone tz = TimeZone.getTimeZone(ZULU_NAME);
+    tz.setRawOffset(hm.getOffset());
+    return tz;
   }
 
   /** Gets the code for the ZULU timezone. */
@@ -114,8 +143,16 @@ public class Timezone {
    * A private structure for associating an hour and minute together.
    */
   private static class HourMinute {
+
+    /** Number of milliseconds in a minute */
+    private static final int MINUTE_MILLIS = 60 * 1000;
+
+    /** Number of milliseconds in an hour */
+    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
+
     /** The hour value. */
     public final int hour;
+
     /** The minute value. */
     public final int minute;
 
@@ -123,6 +160,11 @@ public class Timezone {
     public HourMinute(int h, int m) {
       hour = h;
       minute = m;
+    }
+
+    /** Calculates a millisecond offset for this hour/minute pair */
+    public int getOffset() {
+      return hour * HOUR_MILLIS + minute * MINUTE_MILLIS;
     }
 
     /** @inheritDoc */
@@ -137,8 +179,8 @@ public class Timezone {
 
     /** @inheritDoc */
     public String toString() {
-      if (hour == 0 && minute == 0) return "00:00";
-      return String.format("%02d:%02d", hour, minute);
+      if (hour == 0 && minute == 0) return "+00:00";
+      return String.format("%+03d:%02d", hour, minute);
     }
   }
 
