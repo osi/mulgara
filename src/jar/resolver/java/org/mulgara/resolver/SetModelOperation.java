@@ -127,12 +127,14 @@ class SetModelOperation implements Operation
       throw new IllegalStateException("SetModelOperation already executed.  Cannot reexecute.");
     }
 
-    long sourceModel = systemResolver.localize(new URIReferenceImpl(srcModelURI));
     long destinationModel = systemResolver.localize(new URIReferenceImpl(destModelURI));
-
-    if (destinationModel == sourceModel) {
-      throw new QueryException("Identical source and destination: " + destModelURI);
+    try {
+      long sourceModel = systemResolver.localize(new URIReferenceImpl(srcModelURI, false));
+      if (destinationModel == sourceModel) throw new QueryException("Identical source and destination: " + destModelURI);
+    } catch (Exception e) {
+      // source and destinations cannot be equal, so ignore
     }
+
     // update the destination to the canonical form
     destinationModel = operationContext.getCanonicalModel(destinationModel);
 
