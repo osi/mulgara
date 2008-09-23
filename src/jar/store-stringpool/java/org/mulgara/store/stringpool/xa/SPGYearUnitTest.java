@@ -28,6 +28,7 @@
 package org.mulgara.store.stringpool.xa;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -72,6 +73,9 @@ public class SPGYearUnitTest extends TestCase {
 
   /** Constant valid test date */
   private static final String VALID_DATE = "2004";
+
+  /** Constant valid test date (relative value for VALID_DATE3) */
+  private static final String VALID_DATE_WEST = "2003";
 
   /** Constant valid test date (date outside of 0001 - 9999) */
   private static final String VALID_DATE2 = "200400";
@@ -148,6 +152,8 @@ public class SPGYearUnitTest extends TestCase {
    */
   public void testValid() {
 
+    boolean westOfGMT = TimeZone.getDefault().getRawOffset() < 0;
+
     // Create a new factory
     SPGYearFactory factory = new SPGYearFactory();
 
@@ -172,17 +178,18 @@ public class SPGYearUnitTest extends TestCase {
     // Format the resulting year
     String year = format.format(yearDate);
 
-    // Test the correct value is stored
+    // Test the correct value is stored - relative year, so will always be 2004
     assertTrue("GYear byte buffer value was not " + VALID_DATE +
                " as expected, was: " + year,
                ("" + year).equals(VALID_DATE));
 
     // Byte buffer to hold our date information
-    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[SPGYearImpl.getBufferSize()]);
 
     // If the previous step passed then we know the long value is what we want,
     // so store it in our buffer
     buffer.putLong(yearLong);
+    buffer.put((byte)1);
 
     // Reset the buffer for reading
     buffer.flip();
@@ -194,6 +201,7 @@ public class SPGYearUnitTest extends TestCase {
 
       log.debug("Original year long vs. stored long: " + yearLong + " vs. " +
                 buffer.getLong());
+      buffer.get();
 
       // Reset the buffer
       buffer.flip();
@@ -254,9 +262,9 @@ public class SPGYearUnitTest extends TestCase {
     gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, VALID_DATE3);
 
     // Test that the lexical form of the date is correct
-    assertTrue("GYear lexical form was not " + VALID_DATE4 +
+    assertTrue("GYear lexical form was not " + VALID_DATE3 +
                " as expected. was:" + gYear.getLexicalForm(),
-               gYear.getLexicalForm().equals(VALID_DATE4));
+               gYear.getLexicalForm().equals(VALID_DATE3));
 
     // Retrieve the byte data of the gYear object
     yearBytes = gYear.getData();
@@ -273,7 +281,8 @@ public class SPGYearUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GYear byte buffer value was not " + VALID_DATE +
                " as expected, was: " + year,
-               ("" + year).equals(VALID_DATE));
+               !westOfGMT ? ("" + year).equals(VALID_DATE)
+               : ("" + year).equals(VALID_DATE_WEST));
 
     // Create a gYear object by lexical string (testing 'Z' acceptance)
     gYear = (SPGYearImpl) factory.newSPTypedLiteral(XSD.GYEAR_URI, VALID_DATE4);
@@ -299,7 +308,8 @@ public class SPGYearUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GYear byte buffer value was not " + VALID_DATE +
                " as expected, was: " + year,
-               ("" + year).equals(VALID_DATE));
+               !westOfGMT ? ("" + year).equals(VALID_DATE)
+                   : ("" + year).equals(VALID_DATE_WEST));
   }
 
   /**

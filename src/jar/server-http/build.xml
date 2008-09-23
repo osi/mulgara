@@ -149,7 +149,7 @@
     <manifest file="${obj.dir}/META-INF/MANIFEST_Mulgara_HTTP_BOOTSTRAP.MF">
 
       <attribute name="Main-Class" value="org.mulgara.util.Bootstrap"/>
-      <attribute name="Embedded-Jar" value="lib/${driver.jar}, lib/${query.jar},lib/${querylang.jar}, lib/${rules.jar}, lib/${server.jar}, lib/${util.jar}, lib/${config.jar}, lib/activation-1.0.2.jar, lib/icu4j.jar, lib/jena-2.1.jar,lib/antlr.jar, lib/${commons-logging.jar}, lib/log4j-1.2.15.jar, lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,lib/${castor-xml.jar}, lib/${castor-xml-schema.jar}, lib/xercesImpl.jar, lib/xmlParserAPIs.jar, lib/${jrdf.jar},lib/jakarta-oro-2.0.5.jar, lib/${emory-util.jar}, lib/${sesame-model.jar}"/>
+      <attribute name="Embedded-Jar" value="lib/${driver.jar}, lib/${query.jar},lib/${querylang.jar}, lib/${rules.jar}, lib/${server.jar}, lib/${util.jar}, lib/${config.jar}, lib/activation-1.0.2.jar, lib/icu4j.jar, lib/${jena.jar}, lib/${iri.jar}, lib/antlr.jar, lib/${commons-logging.jar}, lib/log4j-1.2.15.jar, lib/mail-1.3.jar, lib/${jetty.jar},lib/${jetty.plus.jar}, lib/${jasper.runtime.jar}, lib/${servlet.jar}, lib/jargs-0.2.jar,lib/${castor-xml.jar}, lib/${castor-xml-schema.jar}, lib/xercesImpl.jar, lib/xmlParserAPIs.jar, lib/${jrdf.jar},lib/jakarta-oro-2.0.5.jar, lib/${emory-util.jar}, lib/${sesame-model.jar}"/>
       <attribute name="Embedded-Main-Class" value="org.mulgara.server.EmbeddedMulgaraHttpServer"/>
     </manifest>
 
@@ -171,7 +171,7 @@
                   includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy,
                     mulgara.policy"/>
       <zipfileset dir="${lib.dir}" prefix="lib"
-        includes="log4j*.jar, icu4j.jar, jena-*.jar, antlr*.jar, ${commons-logging.jar},
+        includes="log4j*.jar, icu4j.jar, ${jena.jar}, ${iri.jar}, antlr*.jar, ${commons-logging.jar},
           activation*.jar, jargs*.jar,
           ${jetty.jar}, ${jetty.plus.jar}, ${servlet.jar}, ${jasper.runtime.jar},
           xerces*.jar, mail-*.jar, castor*.jar, trove-*.jar, ${jrdf.jar}, ${emory-util.jar}, ${sesame-model.jar}"/>

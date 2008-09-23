@@ -28,6 +28,7 @@
 package org.mulgara.store.stringpool.xa;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -81,6 +82,9 @@ public class SPGYearMonthUnitTest extends TestCase {
 
   /** Constant valid test date (date with timezone) */
   private static final String VALID_DATE4 = "2004-01Z";
+
+  /** Constant valid test date (date with timezone) */
+  private static final String VALID_DATE4_WEST = "2003-12";
 
   /** Invalid date 1 (non-numeric characters) */
   private static final String INVALID_DATE_1 = "2004g0-01";
@@ -189,11 +193,12 @@ public class SPGYearMonthUnitTest extends TestCase {
                ("" + yearMonth).equals(VALID_DATE));
 
     // Byte buffer to hold our date information
-    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[SPGYearMonthImpl.getBufferSize()]);
 
     // If the previous step passed then we know the long value is what we want,
     // so store it in our buffer
     buffer.putLong(yearMonthLong);
+    buffer.put((byte)1);
 
     // Reset the buffer for reading
     buffer.flip();
@@ -206,6 +211,7 @@ public class SPGYearMonthUnitTest extends TestCase {
       log.debug("Original yearMonth long vs. stored long: " + yearMonthLong +
                 " vs. " +
                 buffer.getLong());
+      buffer.get();
 
       // Reset the buffer
       buffer.flip();
@@ -269,26 +275,9 @@ public class SPGYearMonthUnitTest extends TestCase {
         GYEARMONTH_URI, VALID_DATE3);
 
     // Test that the lexical form of the date is correct
-    assertTrue("GYearMonth lexical form was not " + VALID_DATE4 +
+    assertTrue("GYearMonth lexical form was not " + VALID_DATE3 +
                " as expected. was:" + gYearMonth.getLexicalForm(),
-               gYearMonth.getLexicalForm().equals(VALID_DATE4));
-
-    // Retrieve the byte data of the gYearMonth object
-    yearMonthBytes = gYearMonth.getData();
-
-    // Retrieve the long value from the buffer
-    yearMonthLong = yearMonthBytes.getLong();
-
-    // Create a date object from the yearMonth's long
-    yearMonthDate = new Date(yearMonthLong);
-
-    // Format the resulting yearMonth
-    yearMonth = format.format(yearMonthDate);
-
-    // Test the correct value is stored
-    assertTrue("GYearMonth byte buffer value was not " + VALID_DATE +
-               " as expected, was: " + yearMonth,
-               ("" + yearMonth).equals(VALID_DATE));
+               gYearMonth.getLexicalForm().equals(VALID_DATE3));
 
     // Create a gYearMonth object by lexical string (testing 'Z' acceptance)
     gYearMonth = (SPGYearMonthImpl) factory.newSPTypedLiteral(XSD.
@@ -312,10 +301,13 @@ public class SPGYearMonthUnitTest extends TestCase {
     // Format the resulting yearMonth
     yearMonth = format.format(yearMonthDate);
 
+    boolean westOfGMT = TimeZone.getDefault().getRawOffset() < 0;
+
     // Test the correct value is stored
     assertTrue("GYearMonth byte buffer value was not " + VALID_DATE +
                " as expected, was: " + yearMonth,
-               ("" + yearMonth).equals(VALID_DATE));
+               !westOfGMT ? ("" + yearMonth).equals(VALID_DATE)
+                   : ("" + yearMonth).equals(VALID_DATE4_WEST));
   }
 
   /**

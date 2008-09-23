@@ -85,14 +85,23 @@ public class SPGDayUnitTest extends TestCase {
   /** Constant valid test date (date with UTC timezone) */
   private static final String VALID_DATE3 = "---04Z";
 
-  /** A valid value for the VALID_DATE3 in TimeZones west of GMT **/ 
-  private static final String VALID_DATE3_WEST = "---03Z";
+  /** Constant valid test date (Upper/Lower bounds test) */
+  private static final String VALID_DATE4 = "---31Z";
 
-  /** Constant valid test date (Upper bounds test) */
-  private static final String VALID_DATE4 = "---31";
-  
   /** A valid value for the VALID_DATE4 in TimeZones west of GMT **/ 
   private static final String VALID_DATE4_WEST = "---30";
+
+  /** A valid value for the VALID_DATE4 in TimeZones west of GMT **/ 
+  private static final String VALID_DATE4_EAST = "---31";
+
+  /** Constant valid test date (Upper/Lower bounds test) */
+  private static final String VALID_DATE5 = "---01Z";
+
+  /** A valid value for the VALID_DATE5 in TimeZones west of GMT **/ 
+  private static final String VALID_DATE5_WEST = "---31";
+
+  /** A valid value for the VALID_DATE5 in TimeZones west of GMT **/ 
+  private static final String VALID_DATE5_EAST = "---01";
 
   /** Invalid date 1 (non-numeric characters) */
   private static final String INVALID_DATE_1 = "---2g";
@@ -166,10 +175,9 @@ public class SPGDayUnitTest extends TestCase {
    */
   public void testValid() {
 
-	// Get a TimeZone instance which will help us interpret the results.
-	TimeZone tz = TimeZone.getDefault();
-	
-	boolean westOfGMT = tz.getRawOffset() < 0;
+  	// Get a TimeZone instance which will help us interpret the results.
+  	TimeZone tz = TimeZone.getDefault();
+  	boolean westOfGMT = tz.getRawOffset() < 0;
 	
     // Create a new factory
     SPGDayFactory factory = new SPGDayFactory();
@@ -186,9 +194,7 @@ public class SPGDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GDay lexical form was not " + VALID_DATE +
                " as expected. was:" + gDay.getLexicalForm(),
-               !westOfGMT ? 
-           		   gDay.getLexicalForm().equals(VALID_DATE)
-           		   : gDay.getLexicalForm().equals( VALID_DATE_WEST ) );
+               gDay.getLexicalForm().equals(VALID_DATE));
 
     // Retrieve the byte data of the gDay object
     ByteBuffer dayBytes = gDay.getData();
@@ -205,17 +211,15 @@ public class SPGDayUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GDay byte buffer value was not " + VALID_DATE +
                " as expected, was: " + day,
-               !westOfGMT ?
-            	("" + day).equals(VALID_DATE)
-                 : ("" + day).equals(VALID_DATE_WEST)
-                 );
+            	("" + day).equals(VALID_DATE));
 
     // Byte buffer to hold our date information
-    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[SPGDayImpl.getBufferSize()]);
 
     // If the previous step passed then we know the long value is what we want,
     // so store it in our buffer
     buffer.putLong(dayLong);
+    buffer.put((byte)1);
 
     // Reset the buffer for reading
     buffer.flip();
@@ -227,6 +231,7 @@ public class SPGDayUnitTest extends TestCase {
 
       log.debug("Original day long vs. stored long: " + dayLong + " vs. " +
                 buffer.getLong());
+      buffer.get();
 
       // Reset the buffer
       buffer.flip();
@@ -237,10 +242,8 @@ public class SPGDayUnitTest extends TestCase {
 
     // Test that the lexical form of the date is correct
     assertTrue("GDay lexical form was not " + VALID_DATE +
-               " as expected. was:" +
-               gDay.getLexicalForm(),
-                  !westOfGMT ? gDay.getLexicalForm().equals(VALID_DATE)
-            		: gDay.getLexicalForm().equals(VALID_DATE_WEST ) );
+               " as expected. was:" + gDay.getLexicalForm(),
+                  gDay.getLexicalForm().equals(VALID_DATE));
 
     // Retrieve the byte data of the gDay object
     dayBytes = gDay.getData();
@@ -257,18 +260,16 @@ public class SPGDayUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GDay byte buffer value was not " + VALID_DATE +
                " as expected, was: " + day,
-               !westOfGMT ? ("" + day).equals(VALID_DATE)
-            	: ("" + day).equals(VALID_DATE_WEST ) );
+               ("" + day).equals(VALID_DATE));
 
     // Create a gDay object by lexical string (testing range acceptance)
     gDay = (SPGDayImpl) factory.newSPTypedLiteral(XSD.GDAY_URI,
                                                   VALID_DATE2);
 
     // Test that the lexical form of the date is correct
-    assertTrue("GDay lexical form was not " + VALID_DATE3 +
+    assertTrue("GDay lexical form was not " + VALID_DATE2 +
                " as expected. was:" + gDay.getLexicalForm(),
-               ! westOfGMT ? gDay.getLexicalForm().equals(VALID_DATE3)
-            	: gDay.getLexicalForm().equals(VALID_DATE3_WEST ));
+               gDay.getLexicalForm().equals(VALID_DATE2));
 
     // Retrieve the byte data of the gDay object
     dayBytes = gDay.getData();
@@ -295,8 +296,7 @@ public class SPGDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GDay lexical form was not " + VALID_DATE3 +
                " as expected. was:" + gDay.getLexicalForm(),
-               ! westOfGMT ? gDay.getLexicalForm().equals(VALID_DATE3)
-                   	: gDay.getLexicalForm().equals(VALID_DATE3_WEST ));               
+               gDay.getLexicalForm().equals(VALID_DATE3));               
 
     // Retrieve the byte data of the gDay object
     dayBytes = gDay.getData();
@@ -323,8 +323,7 @@ public class SPGDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GDay lexical form was not " + VALID_DATE4 +
                " as expected. was:" + gDay.getLexicalForm(),
-               !westOfGMT ? gDay.getLexicalForm().equals(VALID_DATE4) 
-            	 : gDay.getLexicalForm().equals(VALID_DATE4_WEST) );
+               gDay.getLexicalForm().equals(VALID_DATE4));
 
     // Retrieve the byte data of the gDay object
     dayBytes = gDay.getData();
@@ -341,8 +340,34 @@ public class SPGDayUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GDay byte buffer value was not " + VALID_DATE4 +
                " as expected, was: " + day,
-               !westOfGMT ? ("" + day).equals(VALID_DATE4)
+               !westOfGMT ? ("" + day).equals(VALID_DATE4_EAST)
             	 : ("" + day).equals(VALID_DATE4_WEST) );
+
+    // Create a gDay object by lexical string (testing timezone acceptance)
+    gDay = (SPGDayImpl) factory.newSPTypedLiteral(XSD.GDAY_URI, VALID_DATE5);
+
+    // Test that the lexical form of the date is correct
+    assertTrue("GDay lexical form was not " + VALID_DATE5 +
+               " as expected. was:" + gDay.getLexicalForm(),
+               gDay.getLexicalForm().equals(VALID_DATE5));
+
+    // Retrieve the byte data of the gDay object
+    dayBytes = gDay.getData();
+
+    // Retrieve the long value from the buffer
+    dayLong = dayBytes.getLong();
+
+    // Create a date object from the day's long
+    dayDate = new Date(dayLong);
+
+    // Format the resulting day
+    day = format.format(dayDate);
+
+    // Test the correct value is stored
+    assertTrue("GDay byte buffer value was not " + VALID_DATE5 +
+               " as expected, was: " + day,
+               !westOfGMT ? ("" + day).equals(VALID_DATE5_EAST)
+               : ("" + day).equals(VALID_DATE5_WEST) );
   }
 
   /**

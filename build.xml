@@ -512,6 +512,7 @@
       <zipfileset src="${lib.dir}/${jaxrpc.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jca.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jena.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${iri.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jetty.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jetty.plus.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jid3.jar}" excludes="META-INF/**"/>
@@ -1391,7 +1392,7 @@
       <fileset dir="${src.dir}/war/mulgara"
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
-      <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, antlr*.jar,
+        <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, ${iri.jar}, antlr*.jar,
         lucene*.jar, apache-soap-*.jar, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
       <lib dir="${bin.dir}" includes="${query.jar},
         ${driver.jar}, ${querylang.jar}, ${rules.jar}, ${rmi.jar},
@@ -1647,6 +1648,7 @@
       <zipfileset src="${lib.dir}/${jaxrpc.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jca.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jena.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${iri.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jetty.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jetty.plus.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jid3.jar}" excludes="META-INF/**"/>

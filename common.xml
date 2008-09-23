@@ -140,7 +140,7 @@
 
     <fileset dir="${lib.dir}"
              includes="log4j-*.jar, xmlParserAPIs.jar, xercesImpl.jar,
-                       jena-*.jar, jxunit*.jar, castor*.jar,
+                       ${jena.jar}, ${iri.jar}, ${icu4j.jar}, jxunit*.jar, castor*.jar,
                        mail-*.jar, activation-*.jar, apache-soap-*.jar,
                        axis-*.jar, saaj-*.jar, emory-*.jar, trove-*.jar,
                        jargs-*.jar, jetty-*.jar, jta-spec*.jar,

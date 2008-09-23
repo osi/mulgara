@@ -28,6 +28,7 @@
 package org.mulgara.store.stringpool.xa;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -72,6 +73,9 @@ public class SPGMonthUnitTest extends TestCase {
 
   /** Constant valid test date */
   private static final String VALID_DATE = "--04";
+
+  /** Constant valid test date, west of UTC */
+  private static final String VALID_DATE_WEST = "--03";
 
   /** Constant valid test date (Timezone added) */
   private static final String VALID_DATE2 = "--04-04:00";
@@ -184,11 +188,12 @@ public class SPGMonthUnitTest extends TestCase {
                ("" + month).equals(VALID_DATE));
 
     // Byte buffer to hold our date information
-    ByteBuffer buffer = ByteBuffer.wrap(new byte[Constants.SIZEOF_LONG]);
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[SPGMonthImpl.getBufferSize()]);
 
     // If the previous step passed then we know the long value is what we want,
     // so store it in our buffer
     buffer.putLong(monthLong);
+    buffer.put((byte)1);
 
     // Reset the buffer for reading
     buffer.flip();
@@ -200,6 +205,7 @@ public class SPGMonthUnitTest extends TestCase {
 
       log.debug("Original month long vs. stored long: " + monthLong + " vs. " +
                 buffer.getLong());
+      buffer.get();
 
       // Reset the buffer
       buffer.flip();
@@ -235,9 +241,9 @@ public class SPGMonthUnitTest extends TestCase {
     gMonth = (SPGMonthImpl) factory.newSPTypedLiteral(XSD.GMONTH_URI, VALID_DATE2);
 
     // Test that the lexical form of the date is correct
-    assertTrue("GMonth lexical form was not " + VALID_DATE3 +
+    assertTrue("GMonth lexical form was not " + VALID_DATE2 +
                " as expected. was:" + gMonth.getLexicalForm(),
-               gMonth.getLexicalForm().equals(VALID_DATE3));
+               gMonth.getLexicalForm().equals(VALID_DATE2));
 
     // Retrieve the byte data of the gMonth object
     monthBytes = gMonth.getData();
@@ -251,10 +257,13 @@ public class SPGMonthUnitTest extends TestCase {
     // Format the resulting month
     month = format.format(monthDate);
 
+    boolean westOfGMT = TimeZone.getDefault().getRawOffset() < 0;
+
     // Test the correct value is stored
     assertTrue("GMonth byte buffer value was not " + VALID_DATE +
                " as expected, was: " + month,
-               ("" + month).equals(VALID_DATE));
+              !westOfGMT ? ("" + month).equals(VALID_DATE)
+                  : ("" + month).equals(VALID_DATE_WEST) );
 
     // Create a gMonth object by lexical string (testing timezone acceptance)
     gMonth = (SPGMonthImpl) factory.newSPTypedLiteral(XSD.GMONTH_URI,
@@ -280,11 +289,11 @@ public class SPGMonthUnitTest extends TestCase {
     // Test the correct value is stored
     assertTrue("GMonth byte buffer value was not " + VALID_DATE +
                " as expected, was: " + month,
-               ("" + month).equals(VALID_DATE));
+               !westOfGMT ? ("" + month).equals(VALID_DATE)
+                   : ("" + month).equals(VALID_DATE_WEST) );
 
     // Create a gMonth object by lexical string (testing alternate format)
-    gMonth = (SPGMonthImpl) factory.newSPTypedLiteral(XSD.GMONTH_URI,
-        VALID_DATE4);
+    gMonth = (SPGMonthImpl) factory.newSPTypedLiteral(XSD.GMONTH_URI, VALID_DATE4);
 
     // Test that the lexical form of the date is correct
     assertTrue("GMonth lexical form was not " + VALID_DATE +

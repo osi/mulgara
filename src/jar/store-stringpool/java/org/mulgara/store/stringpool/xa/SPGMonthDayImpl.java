@@ -29,369 +29,120 @@ package org.mulgara.store.stringpool.xa;
 // Java 2 standard packages
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDMonthDayType;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 
 // Locally written packages
 import org.mulgara.query.rdf.XSD;
-import org.mulgara.store.stringpool.*;
-import org.mulgara.util.Constants;
+import org.mulgara.util.Timezone;
 
 /**
  * An SPObject that represents a specific day in a specific month of Gregorian
  * Calendars.
+ * Format: --MM-DD
  *
  * @created 2004-10-06
  *
  * @author Mark Ludlow
- *
- * @version $Revision: 1.1 $
- *
- * @modified $Date: 2005/03/11 04:15:22 $
- *
- * @maintenanceAuthor $Author: raboczi $
- *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2004 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
- *
+ * @author Paul Gearon
+ * @copyright &copy; 2004 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public final class SPGMonthDayImpl extends AbstractSPTypedLiteral {
+public final class SPGMonthDayImpl extends AbstractSPGDateTime {
 
   private final static Logger logger = Logger.getLogger(SPGMonthDayImpl.class);
-
-  /** The date representation for the monthDay */
-  private Calendar monthDay;
 
   static final int TYPE_ID = 9; // Unique ID
 
   /** URI for our gmonthDay representation */
   static final URI TYPE_URI = XSD.GMONTHDAY_URI;
 
-  /** Indicator as to whether we have a time zone or not */
-  private boolean hasTimeZone;
+  /** The number of dashes that appear without a timezone */
+  static private final int STD_DASHES = 3;
 
   /**
    * Constructs a new GMonthDay representation using a calendar object representation.
-   *
    * @param monthDayDate The gMonthDay object represented as an integer
    */
   SPGMonthDayImpl(Date monthDayDate) {
-
-    // Call the super constructor
-    super(TYPE_ID, TYPE_URI);
-
-    // Initialise the calendar object
-    monthDay = Calendar.getInstance();
-
-    // Store the monthDay date as a calendar
-    monthDay.setTime(monthDayDate);
+    super(TYPE_ID, TYPE_URI, monthDayDate);
   }
 
   /**
    * Constructs a new GMonthDay representation using a calendar object representation.
-   *
    * @param monthDayCalendar The gMonthDay object represented as a calendar
    */
-  SPGMonthDayImpl(Calendar monthDayCalendar) {
-
-    // Call the super constructor
-    super(TYPE_ID, TYPE_URI);
-
-    // Store the monthDay date as a calendar
-    monthDay = monthDayCalendar;
+  SPGMonthDayImpl(Calendar monthDayCalendar, Timezone tz) {
+    super(TYPE_ID, TYPE_URI, monthDayCalendar, tz);
   }
 
   /**
-   *
-   * Constructs a gMonthDay object which reads the monthDay value from a byte buffer as
-   * an integer.
-   *
+   * Constructs a gMonthDay object which reads the monthDay value from a byte buffer as an integer.
    * @param data The byte buffer storing the monthDay as an integer
    */
   SPGMonthDayImpl(ByteBuffer data) {
-
-    // Call the constructor using a long for the date
-    this(data.getLong());
+    super(TYPE_ID, TYPE_URI, data);
   }
 
   /**
    * Creates a new gMonthDay representation using a long value of the monthDay
    * and creating a Date object from it.
-   *
    * @param monthDayLong The monthDay as a long
    */
   SPGMonthDayImpl(long monthDayLong) {
-
-    // Use the date constructor to create a new instance
-    this(new Date(monthDayLong));
+    super(TYPE_ID, TYPE_URI, monthDayLong);
   }
 
   /**
    * Constructs a new GMonthDay object given the lexical form of a date.
-   *
    * @param lexicalForm The lexical form of the GMonthDay object
    * @return A new SPGMonthDay instance
    */
   static SPGMonthDayImpl newInstance(String lexicalForm) {
-
-    // The XSD monthDay type object we are creating
-    SPGMonthDayImpl monthDayImpl = null;
-
-    // Container for our date time object
-    XSDDateTime dateTime = null;
-
-    // Create a data type to represent a gMonthDay
-    XSDMonthDayType dataType = new XSDMonthDayType("gMonthDay");
-
-    try {
-
-      // Create a date time object to parse out our date
-      dateTime = (XSDDateTime) dataType.parseValidated(lexicalForm);
-    } catch (RuntimeException ex) {
-
-      // Since the highest level exception that can occur during parsing is the
-      // runtime exception, we should capture them and report a bad lexical
-      // formation
-      throw new IllegalArgumentException("Invalid gMonthDay lexical format: " +
-                                         lexicalForm);
+    if (lexicalForm.length() < 7 || !lexicalForm.startsWith("--") || lexicalForm.charAt(4) != '-') {
+      throw new IllegalArgumentException("Invalid gMonthDay lexical format: " + lexicalForm);
     }
 
-    // Jena wraps date values larger than 12, which we don't want, so we take
-    // the valid date (because it parsed) and check that it is within bounds
-    String dateValue = lexicalForm.substring(2, 4);
-
-    // Parse the value to an integer (We know it is a valid number)
-    int dateInt = Integer.parseInt(dateValue);
+    String monthValue = lexicalForm.substring(2, 4);
+    int monthInt = Integer.parseInt(monthValue);
 
     // Check that the value is valid
-    if (dateInt <= 0 || dateInt >= 13) {
-
+    if (monthInt <= 0 || monthInt >= 13) {
       throw new IllegalArgumentException("gMonthDay value [" + lexicalForm +
                                          "] does not have a valid month number.");
     }
-
-    // Jena uses the day value as day of year, except we want day of month so we
-    // need to perform a check that the day is within valid bounds
-    dateValue = lexicalForm.substring(5, 7);
-
-    // Parse the value to an integer (We know it is a valid number)
-    dateInt = Integer.parseInt(dateValue);
+    String dayValue = lexicalForm.substring(5, 7);
+    int dayInt = Integer.parseInt(dayValue);
 
     // Check that the value is valid
-    if (dateInt <= 0 || dateInt >= 32) {
-
+    if (dayInt <= 0 || dayInt >= 32) {
       throw new IllegalArgumentException("gMonthDay value [" + lexicalForm +
                                          "] does have a valid day number.");
     }
 
-    // Get the date/time object as a calendar
-    Calendar calendar = dateTime.asCalendar();
+    // Create a timezone for this object
+    Timezone tz = scanForTimezone(lexicalForm, STD_DASHES);
 
-    // Jena does not observe the zero based structure of the Calendar object
-    // so we need to adjust for this
-    calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1);
+    Calendar calendar = createCalendar(tz);
+
+    calendar.set(Calendar.MONTH, monthInt - 1);
+    calendar.set(Calendar.DAY_OF_MONTH, dayInt);
 
     if (logger.isDebugEnabled()) {
-
-      logger.debug("Calendar lexical string is: " +
-                   calendar.get(Calendar.YEAR) + "-" +
-                   calendar.get(Calendar.MONTH) + "-" +
-                   calendar.get(Calendar.DAY_OF_MONTH));
-      logger.debug("Calendar as date: " + calendar.getTime().toString());
+      logger.debug("Day value before calendar is: " + dayInt);
+      logger.debug("Month value before calendar is: " + monthInt);
     }
 
     // Create our object
-    monthDayImpl = new SPGMonthDayImpl(calendar);
-
-    if (lexicalForm.indexOf("Z") > 1 || lexicalForm.indexOf("-", 6) > 0 ||
-        lexicalForm.indexOf("+") > 1) {
-
-      // If we have a timezone then set the flag to be true
-      monthDayImpl.setHasTimeZone(true);
-    }
-
-    return monthDayImpl;
+    return new SPGMonthDayImpl(calendar, tz);
   }
 
-  /**
-   * A local method to set whether we have a timezone or not.
-   *
-   * @param value Whether we have a time zone or not
-   */
-  public void setHasTimeZone(boolean value) {
 
-    // Store whether we have a timezone or not
-    hasTimeZone = value;
+  protected String getFormatString() {
+    return "'--'MM-dd";
   }
 
-  /**
-   * Converts this gMonthDay object to a buffer of byte data.
-   *
-   * @return The byte representation of this gMonthDay object
-   */
-  public ByteBuffer getData() {
-
-    // Create a new byte buffer that can hold a long object
-    ByteBuffer data = ByteBuffer.allocate(Constants.SIZEOF_LONG);
-
-    // Store the date as a long value
-    data.putLong(monthDay.getTimeInMillis());
-
-    // Prepare the buffer for reading
-    data.flip();
-
-    return data;
-  }
-
-  /**
-   * Create a new comparator for comparison operations.
-   *
-   * @return The comparator to be used for comparisons
-   */
-  public SPComparator getSPComparator() {
-
-    return SPGMonthDayComparator.getInstance();
-  }
-
-  /**
-   * Convert the gMonthDay representation to a lexical string as defined by XSD
-   * datatypes.
-   *
-   * @return The lexical form of the gMonthDay object
-   */
-  public String getLexicalForm() {
-
-    // Create the default format string
-    String formatString = "'--'MM-dd";
-
-    if (hasTimeZone) {
-
-      formatString += "'Z'";
-    }
-
-    // Create a formatter to parse the date
-    SimpleDateFormat formatter = new SimpleDateFormat(formatString);
-
-    // Apply the formatting
-    return formatter.format(monthDay.getTime());
-  }
-
-  /**
-   * Compares this gMonthDay representation to another object to see if they are
-   * the same values.  First the typing is checked and then the value.
-   *
-   * @param object The object we are comparing against
-   *
-   * @return Whether the gMonthDay value is greater than (> 0), less than (< 0), or
-   *         equal to (0) this value
-   */
-  public int compareTo(SPObject object) {
-
-    // Compare types.
-    int comparison = super.compareTo(object);
-
-    // If we have not got matching types return the value
-    if (comparison != 0) return comparison;
-
-    // Compare the dates lexiocally
-    return getLexicalForm().compareTo(((SPGMonthDayImpl) object).getLexicalForm());
-  }
-
-  /**
-   * Calculate the hash code for the gMonthDay object
-   *
-   * @return The hash code for the object
-   */
-  public int hashCode() {
-
-    return monthDay.hashCode();
-  }
-
-  /**
-   * Determines whether the object is equal to the one passed in, in both type
-   * and value.  This is different to the compareTo(Object) method in the
-   * respect that it does a direct comparison, not a ranking comparison.
-   *
-   * @param object The object to compare this one to
-   *
-   * @return Whether the object is the same as this one
-   */
-  public boolean equals(Object object) {
-
-    // Check for null.
-    if (object == null) {
-
-      return false;
-    }
-
-    if (object.getClass().isInstance(this)) {
-
-      // If the object is also a gMonthDay object then compare the date
-      return ((SPGMonthDayImpl) object).getLexicalForm().equals(getLexicalForm());
-    } else {
-
-      // The object is of a different type and not equal
-      return false;
-    }
-  }
-
-  /**
-   * Implementation of an SPComparator which compares the binary representations
-   * of a GMonthDay object.
-   */
-  public static class SPGMonthDayComparator implements SPComparator {
-
-    /** Singleton instance of the comparator */
-    private static final SPGMonthDayComparator INSTANCE = new SPGMonthDayComparator();
-
-    /**
-     * Retrieves the singleton instance of this comparator.
-     *
-     * @return The comparator singleton instance
-     */
-    public static SPGMonthDayComparator getInstance() {
-
-      return INSTANCE;
-    }
-
-    /**
-     * Gives the comparator an opportunity to return an ordering where only the
-     * prefix of the binary representation of one or both SPObjects is available.
-     * If the comparator does not support this method or if an ordering can not
-     * be determined from the available data then zero (0) should be returned.
-     *
-     * @param d1 The first gMonthDay's byte buffer
-     * @param d2 The second gMonthDay's byte buffer
-     * @param d2Size The number of bytes to compare
-     *
-     * @return Whether the first prefix is greater than (> 0), less than (< 0),
-     *         or equal to (0) the other
-     */
-    public int comparePrefix(ByteBuffer d1, ByteBuffer d2, int d2Size) {
-      return 0;
-    }
-
-    /**
-     * Compares the content of a byte buffer to the other and determines whether
-     * they are equal or not.
-     *
-     * @param d1 The first byte buffer
-     * @param d2 The second byte buffer
-     * @return Whether the first buffer's content is greater than (> 0), less
-     *         than (< 0), or equal to (0) the other
-     */
-    public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
-      return AbstractSPObject.compare(d1.getLong(), d2.getLong());
-    }
-
-  }
 }
