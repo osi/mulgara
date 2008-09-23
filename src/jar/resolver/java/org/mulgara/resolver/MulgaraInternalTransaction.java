@@ -92,7 +92,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
 
   public MulgaraInternalTransaction(MulgaraInternalTransactionFactory factory, DatabaseOperationContext context)
       throws IllegalArgumentException {
-    report("Creating Transaction");
+    debugReport("Creating Transaction");
 
     try {
       if (factory == null) {
@@ -111,7 +111,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
       rollbackCause = null;
       deactivateTime = 0;
     } finally {
-      report("Finished Creating Transaction");
+      debugReport("Finished Creating Transaction");
     }
   }
 
@@ -172,7 +172,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     } catch (Throwable th) {
       throw abortTransaction("Error activating transaction", th);
     } finally {
-//      report("Leaving Activate transaction");
+//      debugReport("Leaving Activate transaction");
     }
   }
 
@@ -223,7 +223,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     } catch (Throwable th) {
       throw abortTransaction("Error deactivating transaction", th);
     } finally {
-//      report("Leaving Deactivate Transaction");
+//      debugReport("Leaving Deactivate Transaction");
     }
   }
 
@@ -232,7 +232,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   //       references a transaction object that won't be started/activated
   //       until it is first used.
   public void reference() throws MulgaraTransactionException {
-    report("Referencing Transaction");
+    debugReport("Referencing Transaction");
 
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
@@ -266,7 +266,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
         report("Error referencing transaction");
         throw implicitRollback(th);
       } finally {
-        report("Leaving Reference Transaction");
+        debugReport("Leaving Reference Transaction");
       }
     } finally {
       releaseMutex();
@@ -274,7 +274,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   public void dereference() throws MulgaraTransactionException {
-    report("Dereferencing Transaction");
+    debugReport("Dereferencing Transaction");
 
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
@@ -313,7 +313,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
       } catch (Throwable th) {
         throw implicitRollback(th);
       } finally {
-        report("Dereferenced Transaction");
+        debugReport("Dereferenced Transaction");
       }
     } finally {
       releaseMutex();
@@ -321,7 +321,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   private void startTransaction() throws MulgaraTransactionException {
-    report("Initiating transaction");
+    debugReport("Initiating transaction");
     try {
       transaction = factory.transactionStart(this);
       currentThread = Thread.currentThread();
@@ -331,7 +331,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   private void resumeTransaction() throws MulgaraTransactionException {
-//    report("Resuming transaction");
+//    debugReport("Resuming transaction");
     try {
       factory.transactionResumed(this, transaction);
       currentThread = Thread.currentThread();
@@ -341,7 +341,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   private void suspendTransaction() throws MulgaraTransactionException {
-//    report("Suspending Transaction");
+//    debugReport("Suspending Transaction");
     try {
       if (using < 1) {
         throw implicitRollback(
@@ -353,12 +353,12 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     } catch (Throwable th) {
       throw implicitRollback(th);
     } finally {
-//      report("Finished suspending transaction");
+//      debugReport("Finished suspending transaction");
     }
   }
 
   public void commitTransaction() throws MulgaraTransactionException {
-    report("Committing Transaction");
+    debugReport("Committing Transaction");
     acquireMutex(0, true, MulgaraTransactionException.class);
     try {
       try {
@@ -378,7 +378,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
         } finally { try {
           factory.transactionComplete(this);
         } finally {
-          report("Committed transaction");
+          debugReport("Committed transaction");
         } } } } }
       } catch (Throwable th) {
         errorReport("Error cleaning up transaction post-commit", th);
@@ -489,7 +489,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
    */
   @SuppressWarnings("finally")
   private MulgaraTransactionException implicitRollback(Throwable cause) throws MulgaraTransactionException {
-    report("Implicit Rollback triggered");
+    debugReport("Implicit Rollback triggered");
 
     synchronized (factory.getMutexLock()) {
       inXACompletion = true;
@@ -534,7 +534,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
         throw abortTransaction("Failed to rollback normally - see log for inititing cause", th);
       }
     } finally {
-      report("Leaving implicitRollback");
+      debugReport("Leaving implicitRollback");
     }
   }
 
@@ -590,7 +590,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
       } catch (Throwable th) {
         throw new MulgaraTransactionException(errorMessage + " - Failed to abort cleanly", th);
       } finally {
-        report("Leaving abortTransaction");
+        debugReport("Leaving abortTransaction");
       }
     } finally {
       releaseMutex();
@@ -613,7 +613,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   public void execute(Operation operation, DatabaseMetadata metadata) throws MulgaraTransactionException {
-    report("Executing Operation");
+    debugReport("Executing Operation");
 
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
@@ -629,7 +629,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
           deactivate();
         }
       } finally {
-        report("Executed Operation");
+        debugReport("Executed Operation");
       }
     } finally {
       releaseMutex();
@@ -663,7 +663,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
 
 
   public void execute(TransactionOperation to) throws MulgaraTransactionException {
-    report("Executing TransactionOperation");
+    debugReport("Executing TransactionOperation");
 
     acquireMutex(0, false, MulgaraTransactionException.class);
     try {
@@ -677,7 +677,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
           deactivate();
         }
       } finally {
-        report("Executed TransactionOperation");
+        debugReport("Executed TransactionOperation");
       }
     } finally {
       releaseMutex();
@@ -770,7 +770,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
   }
 
   protected void finalize() {
-    report("GC-finalize");
+    debugReport("GC-finalize");
     if (state != State.FINISHED && state != State.FAILED) {
       errorReport("Finalizing incomplete transaction - aborting...", null);
       try {
@@ -789,21 +789,21 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
     }
   }
 
-  private void report(String desc) {
+  private final void report(String desc) {
     if (logger.isInfoEnabled()) {
       logger.info(desc + ": " + System.identityHashCode(this) + ", state=" + state +
           ", inuse=" + inuse + ", using=" + using);
     }
   }
 
-  private void debugReport(String desc) {
+  private final void debugReport(String desc) {
     if (logger.isDebugEnabled()) {
       logger.debug(desc + ": " + System.identityHashCode(this) + ", state=" + state +
           ", inuse=" + inuse + ", using=" + using);
     }
   }
 
-  private void errorReport(String desc, Throwable cause) {
+  private final void errorReport(String desc, Throwable cause) {
     if (cause != null) {
       logger.error(desc + ": " + System.identityHashCode(this) + ", state=" + state +
           ", inuse=" + inuse + ", using=" + using, cause);
