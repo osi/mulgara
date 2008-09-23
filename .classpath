@@ -84,7 +84,7 @@
 	<classpathentry kind="lib" path="lib/emory-util-2.1-remote.jar"/>
 	<classpathentry kind="lib" path="lib/gnu-regexp-1.1.4.jar"/>
 	<classpathentry kind="lib" path="lib/howl-logger-0.1.11.jar"/>
-	<classpathentry kind="lib" path="lib/icu4j.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/jargs-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jasper-compiler-4.2.29.jar"/>
