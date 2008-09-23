@@ -28,8 +28,6 @@
 package org.mulgara.server.local;
 
 // Java APIs
-import java.io.*;
-import java.net.InetAddress;
 import java.net.URI;
 
 // Log4j
@@ -37,13 +35,6 @@ import org.apache.log4j.*;
 
 // Junit API
 import junit.framework.*;
-
-// JRDF API
-import org.jrdf.graph.GraphException;
-
-// Jena API
-import com.hp.hpl.jena.graph.test.*;
-import com.hp.hpl.jena.shared.*;
 
 // Internal Mulgara APIs
 import org.mulgara.itql.*;
@@ -72,7 +63,7 @@ import org.mulgara.server.driver.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class LocalSessionFactoryUnitTest extends MetaTestGraph {
+public class LocalSessionFactoryUnitTest extends TestCase {
 
   /**
    * init the logging class
