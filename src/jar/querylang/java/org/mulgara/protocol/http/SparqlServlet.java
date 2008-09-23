@@ -14,10 +14,6 @@ package org.mulgara.protocol.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,8 +26,6 @@ import org.mulgara.protocol.StreamedSparqlXMLObject;
 import org.mulgara.query.Answer;
 import org.mulgara.server.SessionFactoryProvider;
 import org.mulgara.sparql.SparqlInterpreter;
-import org.mulgara.util.functional.C;
-import org.mulgara.util.functional.Fn1E;
 
 /**
  * A query gateway for SPARQL.
@@ -45,20 +39,6 @@ public class SparqlServlet extends ProtocolServlet {
 
   /** Serialization ID */
   private static final long serialVersionUID = 5047396536306099528L;
-
-  /** The parameter identifying the graph. */
-  private static final String DEFAULT_GRAPH_ARG = "default-graph-uri";
-
-  /** The parameter identifying the graph. We don't set these in SPARQL yet. */
-  @SuppressWarnings("unused")
-  private static final String NAMED_GRAPH_ARG = "named-graph-uri";
-
-  /** An empty graph for those occasions when no graph is set. */
-  private static final List<URI> DEFAULT_NULL_GRAPH_LIST = Collections.singletonList(URI.create("sys:null"));
-
-  static {
-  }
-
 
   /**
    * Creates the servlet for communicating with the given server.
@@ -117,23 +97,6 @@ public class SparqlServlet extends ProtocolServlet {
     }
     interpreter.setDefaultGraphUris(getRequestedDefaultGraphs(req));
     return interpreter;
-  }
-
-
-  /**
-   * Gets the default graphs the user requested.
-   * @param req The request object from the user.
-   * @return A list of URIs for graphs. This may be null if no URIs were requested.
-   * @throws BadRequestException If a graph name was an invalid URI.
-   */
-  private List<URI> getRequestedDefaultGraphs(HttpServletRequest req) throws BadRequestException {
-    String[] defaults = req.getParameterValues(DEFAULT_GRAPH_ARG);
-    if (defaults == null) return DEFAULT_NULL_GRAPH_LIST;
-    try {
-      return C.map(defaults, new Fn1E<String,URI,URISyntaxException>(){public URI fn(String s)throws URISyntaxException{return new URI(s);}});
-    } catch (URISyntaxException e) {
-      throw new BadRequestException("Invalid URI. " + e.getMessage());
-    }
   }
 
 }

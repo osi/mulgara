@@ -14,13 +14,20 @@ package org.mulgara.protocol.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 
 import org.mulgara.connection.Connection;
 import org.mulgara.connection.SessionConnection;
@@ -31,8 +38,12 @@ import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
+import org.mulgara.query.operation.CreateGraph;
+import org.mulgara.query.operation.Load;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.SessionFactoryProvider;
+import org.mulgara.util.functional.C;
+import org.mulgara.util.functional.Fn1E;
 import org.mulgara.util.functional.Fn2;
 
 /**
@@ -78,6 +89,19 @@ public abstract class ProtocolServlet extends HttpServlet {
   /** The default output type to use. */
   protected static final String DEFAULT_OUTPUT_TYPE = OUTPUT_XML;
 
+  /** The parameter identifying the graph. */
+  protected static final String DEFAULT_GRAPH_ARG = "default-graph-uri";
+
+  /** The parameter identifying the graph. We don't set these in SPARQL yet. */
+  @SuppressWarnings("unused")
+  protected static final String NAMED_GRAPH_ARG = "named-graph-uri";
+
+  /** The name of the default graph. This is a null graph. */
+  protected static final URI DEFAULT_NULL_GRAPH = URI.create("sys:null");
+
+  /** An empty graph for those occasions when no graph is set. */
+  protected static final List<URI> DEFAULT_NULL_GRAPH_LIST = Collections.singletonList(DEFAULT_NULL_GRAPH);
+
   /** The content type of the results. */
   protected static final String CONTENT_TYPE = "application/sparql-results+xml";
 
@@ -86,6 +110,21 @@ public abstract class ProtocolServlet extends HttpServlet {
 
   /** Session value for interpreter. */
   protected static final String INTERPRETER = "session.interpreter";
+
+  /** Posted RDF data content type. */
+  protected static final String POSTED_DATA_TYPE = "multipart/form-data;";
+
+  /** The name of the posted data. */
+  protected static final String GRAPH_DATA = "graph";
+
+  /** The header used to indicate a statement count. */ //HDR_CANNOT_LOAD
+  protected static final String HDR_STMT_COUNT = "Statements-Loaded";
+
+  /** The header used to indicate a part that couldn't be loaded. */
+  protected static final String HDR_CANNOT_LOAD = "Cannot-Load";
+
+  /** A made-up scheme for data uploaded through http-put, since http means "downloaded". */
+  protected static final String HTTP_PUT_NS = "http-put://upload/";
 
   /** The server for finding a session factory. */
   private SessionFactoryProvider server;
@@ -146,19 +185,10 @@ public abstract class ProtocolServlet extends HttpServlet {
    * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    String queryStr = req.getParameter(QUERY_ARG);
+    String type = req.getContentType();
     try {
-      Command cmd = getCommand(queryStr, req);
-  
-      Object result = executeCommand(cmd, req);
-
-      String outputType = req.getParameter(OUTPUT_ARG);
-      if (result instanceof Answer) {
-        sendAnswer((Answer)result, outputType, resp);
-      } else {
-        sendStatus(result, outputType, resp);
-      }
-
+      if (type != null && type.startsWith(POSTED_DATA_TYPE)) handleDataUpload(req, resp);
+      else handleUpdateQuery(req, resp);
     } catch (ServletException e) {
       e.sendResponseTo(resp);
     }
@@ -317,12 +347,151 @@ public abstract class ProtocolServlet extends HttpServlet {
 
 
   /**
+   * Uploads data into a graph.
+   * @param req The object containing the client request to upload data.
+   * @param resp The object to respond to the client with.
+   * @throws IOException If an error occurs when communicating with the client.
+   */
+  protected void handleDataUpload(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    try {
+      // parse in the data to be uploaded
+      MimeMultiNamedPart mime = new MimeMultiNamedPart(new ServletDataSource(req, GRAPH_DATA));
+
+      // validate the request
+      if (mime.getCount() == 0) throw new BadRequestException("Request claims to have posted data, but none was supplied.");
+
+      // Get the destination graph, and ensure it exists
+      URI destGraph = getRequestedDefaultGraph(req, mime);
+      Connection conn = getConnection(req);
+      try {
+        new CreateGraph(destGraph).execute(conn);
+      } catch (QueryException e) {
+        throw new InternalErrorException("Unable to create graph: " + e.getMessage());
+      }
+
+      // upload the data
+      for (int partNr = 0; partNr < mime.getCount(); partNr++) {
+        BodyPart part = mime.getBodyPart(partNr);
+        String partName = mime.getPartName(partNr);
+        try {
+          if (!knownParam(partName)) resp.addHeader(HDR_STMT_COUNT, Long.toString(loadData(destGraph, part, conn)));
+        } catch (QueryException e) {
+          resp.addHeader(HDR_CANNOT_LOAD, partName);
+        }
+      }
+    } catch (MessagingException e) {
+      throw new BadRequestException("Unable to process received MIME data: " + e.getMessage());
+    }
+    resp.setStatus(SC_NO_CONTENT);
+  }
+
+
+  /**
+   * Respond to a request for a query that may update the data.
+   * @param req The query request object.
+   * @param resp The HTTP response object.
+   * @throws IOException If an error occurs when communicating with the client.
+   * @throws ServletException 
+   */
+  protected void handleUpdateQuery(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    String queryStr = req.getParameter(QUERY_ARG);
+    Command cmd = getCommand(queryStr, req);
+
+    Object result = executeCommand(cmd, req);
+
+    String outputType = req.getParameter(OUTPUT_ARG);
+    if (result instanceof Answer) {
+      sendAnswer((Answer)result, outputType, resp);
+    } else {
+      sendStatus(result, outputType, resp);
+    }
+  }
+
+
+  /**
+   * Load MIME data into a graph.
+   * @param graph The graph to load into.
+   * @param data The data to be loaded, with associated meta-data.
+   * @param cxt The connection to the database.
+   * @return The number of statements loaded.
+   * @throws IOException error reading from the client.
+   * @throws BadRequestException Bad data passed to the load request.
+   * @throws InternalErrorException A query exception occurred during the load operation.
+   */
+  protected long loadData(URI graph, BodyPart data, Connection cxt) throws IOException, ServletException, QueryException {
+    try {
+      URI absoluteUri = new URI(HTTP_PUT_NS + data.getFileName());
+      Load loadCmd = new Load(absoluteUri, graph, true);
+      loadCmd.setOverrideInputStream(data.getInputStream());
+      return (Long)loadCmd.execute(cxt);
+    } catch (MessagingException e) {
+      throw new BadRequestException("Unable to process data for loading: " + e.getMessage());
+    } catch (URISyntaxException e) {
+      throw new BadRequestException("Illegal filename: " + e.getInput());
+    }
+  }
+
+
+  /**
    * Gets the SPARQL interpreter for the current session,
    * creating it if it doesn't exist yet.
    * @param req The current request environment.
    * @return A connection that is tied to this HTTP session.
    */
   abstract protected Interpreter getInterpreter(HttpServletRequest req) throws BadRequestException;
+
+
+  /**
+   * Gets the default graphs the user requested.
+   * @param req The request object from the user.
+   * @return A list of URIs for graphs. This may be null if no URIs were requested.
+   * @throws BadRequestException If a graph name was an invalid URI.
+   */
+  protected List<URI> getRequestedDefaultGraphs(HttpServletRequest req) throws BadRequestException {
+    String[] defaults = req.getParameterValues(DEFAULT_GRAPH_ARG);
+    if (defaults == null) return DEFAULT_NULL_GRAPH_LIST;
+    try {
+      return C.map(defaults, new Fn1E<String,URI,URISyntaxException>(){public URI fn(String s)throws URISyntaxException{return new URI(s);}});
+    } catch (URISyntaxException e) {
+      throw new BadRequestException("Invalid URI. " + e.getMessage());
+    }
+  }
+
+
+  /**
+   * Gets the default graphs the user requested.
+   * @param req The request object from the user.
+   * @return A list of URIs for graphs. This may be null if no URIs were requested.
+   * @throws BadRequestException If a graph name was an invalid URI.
+   */
+  protected URI getRequestedDefaultGraph(HttpServletRequest req, MimeMultiNamedPart mime) throws ServletException {
+    // look in the parameters
+    String[] defaults = req.getParameterValues(DEFAULT_GRAPH_ARG);
+    if (defaults != null) {
+      if (defaults.length != 1) throw new BadRequestException("Multiple graphs requested.");
+      try {
+        return new URI(defaults[0]);
+      } catch (URISyntaxException e) {
+        throw new BadRequestException("Invalid URI. " + e.getInput());
+      }
+    }
+    // look in the mime data
+    if (mime != null) {
+      try {
+        String result = mime.getParameterString(DEFAULT_GRAPH_ARG);
+        if (result != null) {
+          try {
+            return new URI(result);
+          } catch (URISyntaxException e) {
+            throw new BadRequestException("Bad graph URI: " + result);
+          }
+        }
+      } catch (Exception e) {
+        throw new BadRequestException("Bad MIME data: " + e.getMessage());
+      }
+    }
+    return DEFAULT_NULL_GRAPH;
+  }
 
 
   /**
@@ -359,4 +528,15 @@ public abstract class ProtocolServlet extends HttpServlet {
     return cachedSessionFactory;
   }
 
+
+  /**
+   * Compare a parameter name to a set of known parameter names.
+   * @param name The name to check.
+   * @return <code>true</code> if the name is known. <code>false</code> if not known or <code>null</code>.
+   */
+  private boolean knownParam(String name) {
+    final String[] knownParams = new String[] { DEFAULT_GRAPH_ARG, NAMED_GRAPH_ARG, GRAPH_DATA };
+    for (String p: knownParams) if (p.equalsIgnoreCase(name)) return true;
+    return false;
+  }
 }
