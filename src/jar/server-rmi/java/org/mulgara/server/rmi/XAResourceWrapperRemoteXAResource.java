@@ -20,7 +20,6 @@ package org.mulgara.server.rmi;
 // Java 2 standard packages
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -30,6 +29,7 @@ import org.apache.log4j.*;
 
 // Local packages
 import org.mulgara.server.ResourceManagerInstanceAdaptor;
+import org.mulgara.util.Rmi;
 
 /**
  * Wraps an XAResource and makes it available as an RMI object.
@@ -38,11 +38,14 @@ import org.mulgara.server.ResourceManagerInstanceAdaptor;
  * @author Andrae Muys
  * @licence Apache License v2.0
  */
-public class XAResourceWrapperRemoteXAResource
-    extends UnicastRemoteObject implements RemoteXAResource {
+public class XAResourceWrapperRemoteXAResource extends Rmi implements RemoteXAResource {
+
+  /** Generated UID */
+  private static final long serialVersionUID = 1L;
+
   /** logger */
-  private static Logger logger =
-      Logger.getLogger(XAResourceWrapperRemoteXAResource.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(XAResourceWrapperRemoteXAResource.class.getName());
 
   protected final XAResource resource;
   protected final ResourceManagerInstanceAdaptor adaptor;

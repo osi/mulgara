@@ -31,6 +31,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.QueryException;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.driver.SessionFactoryFinder;
+import org.mulgara.util.Rmi;
 import org.mulgara.util.TempDir;
 
 // third party packages
@@ -41,7 +42,6 @@ import junit.framework.TestSuite;
 import java.net.URL;
 import java.util.Vector;
 import java.net.*;
-import java.rmi.server.UnicastRemoteObject;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -434,7 +434,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         new RemoteInputStreamSrvImpl(sourceURI.toURL().openStream());
 
     // prepare it for exporting
-    UnicastRemoteObject.exportObject(srv);
+    Rmi.export(srv);
 
     RemoteInputStream inputStream = new RemoteInputStream(srv);
 

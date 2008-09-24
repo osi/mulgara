@@ -29,7 +29,8 @@ package org.mulgara.rules;
 
 // Java 2 standard packages
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+
+import org.mulgara.util.Rmi;
 
 /**
  * Contains a reference to a local Rules object, while this object can be
@@ -43,7 +44,10 @@ import java.rmi.server.UnicastRemoteObject;
  * @copyright &copy; 2005 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class RulesRefImpl extends UnicastRemoteObject implements RulesRef {
+public class RulesRefImpl extends Rmi implements RulesRef {
+
+  /** Generated UID. */
+  private static final long serialVersionUID = 2797292807815290355L;
 
   /** The internal reference to the local object. */
   private Rules rules;

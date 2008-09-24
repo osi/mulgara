@@ -16,8 +16,9 @@ import java.util.*;
 import java.rmi.*;
 import java.lang.reflect.Array;
 import java.io.Serializable;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.*;
+
+import org.mulgara.util.Rmi;
 
 /**
  * Implements the remote pager by iterating on a list and moving pages of elements over RMI.
@@ -64,7 +65,7 @@ public class RemotePagerImpl<E extends Serializable> implements RemotePager<E> {
     size = collection.size();
     iter = null;
     currentPage = (E[])Array.newInstance(type, pageSize);
-    UnicastRemoteObject.exportObject(this);
+    Rmi.export(this);
   }
 
 

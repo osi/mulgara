@@ -20,8 +20,6 @@ package org.mulgara.server.rmi;
 // Java 2 standard packages
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -41,8 +39,7 @@ import org.mulgara.server.ResourceManagerInstanceAdaptor;
  */
 class RemoteXAResourceWrapperXAResource implements XAResource, ResourceManagerInstanceAdaptor {
   /** logger */
-  private static Logger logger =
-      Logger.getLogger(RemoteXAResourceWrapperXAResource.class.getName());
+  private static Logger logger = Logger.getLogger(RemoteXAResourceWrapperXAResource.class.getName());
 
   /**
    * The wrapped instance.
@@ -53,8 +50,7 @@ class RemoteXAResourceWrapperXAResource implements XAResource, ResourceManagerIn
    * Wrap a {@link RemoteAnswer} to make it into an {@link Answer}.
    *
    * @param remoteAnswer  the instance to wrap
-   * @throws IllegalArgumentException  if <var>remoteAnswer</var> is
-   *   <code>null</code>
+   * @throws IllegalArgumentException  if <var>remoteAnswer</var> is <code>null</code>
    */
   RemoteXAResourceWrapperXAResource(RemoteXAResource remoteResource) throws RemoteException {
     if (remoteResource == null) {
@@ -182,6 +178,9 @@ class RemoteXAResourceWrapperXAResource implements XAResource, ResourceManagerIn
   }
 
   private static class SerializableXid implements Xid, Serializable {
+    /** Generated UID */
+    private static final long serialVersionUID = 2421196761757350942L;
+
     private byte[] bq;
     private int fi;
     private byte[] gtid;

@@ -28,10 +28,8 @@
 package org.mulgara.server.rmi;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.URI;
 import java.rmi.*;
-import java.rmi.server.*;
 import java.util.*;
 
 // Third party packages
@@ -40,72 +38,47 @@ import org.apache.log4j.*;
 // Locally written packages
 import org.mulgara.jrdf.*;
 import org.mulgara.query.QueryException;
-import org.mulgara.server.JRDFSession;
-import org.mulgara.server.JenaSession;
 import org.mulgara.server.ServerInfo;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
+import org.mulgara.util.Rmi;
 
 /**
  * RMI wrapper for {@link SessionFactory} implementations.
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
  * @created 2001-07-14
- *
- * @version $Revision: 1.12 $
- *
- * @modified $Date: 2005/06/26 12:48:16 $
- *
- * @maintenanceAuthor $Author: pgearon $
- *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
- *
+ * @copyright &copy; 2001-2003 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class RemoteSessionFactoryImpl implements RemoteSessionFactory
-{
-  /**
-   * Logger. This is named after the classname.
-   */
-  private final static Logger logger =
-      Logger.getLogger(RemoteSessionFactoryImpl.class);
+class RemoteSessionFactoryImpl implements RemoteSessionFactory {
 
-  /**
-   * The local database.
-   */
+  /** Logger. This is named after the classname. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(RemoteSessionFactoryImpl.class);
+
+  /** The local database. */
   private SessionFactory sessionFactory;
 
-  /**
-   * The server URI used to create this factory.
-   * Used for reconnection
-   */
+  /** The server URI used to create this factory. Used for reconnection */
   private URI serverURI = null;
 
   /**
    * Set of {@link RemoteSession}s, the local copies of exported stubs. This is
    * necessary to prevent garbage collection.
    */
-  private Set remoteSessionSet = new HashSet();
+  private Set<RemoteSession> remoteSessionSet = new HashSet<RemoteSession>();
 
   /**
    * Constructor to create an RMI database server.
    *
-   * @param sessionFactory PARAMETER TO DO
+   * @param sessionFactory A local factory that this exports access to.
    * @throws IllegalArgumentException if <var>database</var> is <code>null</code>
    * @throws RemoteException if RMI communication fails
    */
-  RemoteSessionFactoryImpl(SessionFactory sessionFactory) throws
-      RemoteException {
-
+  RemoteSessionFactoryImpl(SessionFactory sessionFactory) throws RemoteException {
     // Validate "sessionFactory" parameter
-    if (sessionFactory == null) {
-
-      throw new IllegalArgumentException("Null \"sessionFactory\" parameter");
-    }
+    if (sessionFactory == null) throw new IllegalArgumentException("Null \"sessionFactory\" parameter");
 
     // Initialize fields
     this.sessionFactory = sessionFactory;
@@ -117,28 +90,29 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
 
   /**
    * {@inheritDoc RemoteSessionFactory}
-   *
-   * @return The SecurityDomain value
-   * @throws QueryException EXCEPTION TO DO
+   * @return The SecurityDomain value.
+   * @throws QueryException Error accessing the domain.
    */
   public URI getSecurityDomain() throws QueryException {
-
     return sessionFactory.getSecurityDomain();
   }
+
 
   /**
    * Get the server URI used to create the current remoteSessionFactory
    */
   public URI getServerURI()  {
-    return this.serverURI;
+    return serverURI;
   }
+
 
   /**
    * Set the server URI used to create the current remoteSessionFactory
    */
-  public void setServerURI( URI serverURI ) {
+  public void setServerURI(URI serverURI) {
     this.serverURI = serverURI;
   }
+
 
   /**
    * Get the default URI used by this server.
@@ -147,60 +121,46 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
     return ServerInfo.getServerURI();
   }
 
+
   /**
    * {@inheritDoc RemoteSessionFactory}
    *
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * @return A new remotely exported session
+   * @throws QueryException If an error occrred in the network protocol
    */
   public Session newSession() throws QueryException {
     try {
-
       // Create the session
-      RemoteSession remoteSession =
-          new RemoteSessionImpl(sessionFactory.newSession(), this);
+      RemoteSession remoteSession = new RemoteSessionImpl(sessionFactory.newSession(), this);
       remoteSessionSet.add(remoteSession);
 
-      RemoteSession exportedRemoteSession =
-          (RemoteSession) UnicastRemoteObject.exportObject(remoteSession);
+      RemoteSession exportedRemoteSession = (RemoteSession)Rmi.export(remoteSession);
 
       // Apply two wrappers to hide the RemoteExceptions of the
       // RemoteSession interface so everything looks like a Session
-      return new RemoteSessionWrapperSession(exportedRemoteSession,
-                                             this.getServerURI());
-    }
-    catch (RemoteException e) {
-
+      return new RemoteSessionWrapperSession(exportedRemoteSession, getServerURI());
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't export session", e);
     }
   }
 
   /**
    * {@inheritDoc RemoteSessionFactory}
-   *
-   * @return RETURNED VALUE TO DO
-   * @throws QueryException EXCEPTION TO DO
+   * @return A new remotely exported JRDF session
+   * @throws QueryException If an error occrred in the network protocol
    */
   public Session newJRDFSession() throws QueryException {
-
     try {
-
       // Create the session
-      RemoteSession remoteSession =
-          new RemoteJRDFSessionImpl(
-          (LocalJRDFSession) sessionFactory.newJRDFSession(), this);
+      RemoteSession remoteSession = new RemoteJRDFSessionImpl((LocalJRDFSession)sessionFactory.newJRDFSession(), this);
       remoteSessionSet.add(remoteSession);
 
-      RemoteJRDFSession exportedRemoteSession =
-          (RemoteJRDFSession) UnicastRemoteObject.exportObject(remoteSession);
+      RemoteJRDFSession exportedRemoteSession = (RemoteJRDFSession)Rmi.export(remoteSession);
 
       // Apply two wrappers to hide the RemoteExceptions of the
       // RemoteSession interface so everything looks like a Session
-      return new RemoteSessionWrapperJRDFSession(exportedRemoteSession,
-          this.getServerURI());
-    }
-    catch (RemoteException e) {
-
+      return new RemoteSessionWrapperJRDFSession(exportedRemoteSession, getServerURI());
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't export session", e);
     }
   }
@@ -208,19 +168,15 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
 
   /**
    * {@inheritDoc RemoteSessionFactory}
-  */
+   */
   public RemoteSession newRemoteSession() throws QueryException, RemoteException {
     try {
-
       // Create the session
-      RemoteSession remoteSession =
-          new RemoteSessionImpl(sessionFactory.newSession(), this);
+      RemoteSession remoteSession = new RemoteSessionImpl(sessionFactory.newSession(), this);
       remoteSessionSet.add(remoteSession);
 
-      return (RemoteSession) UnicastRemoteObject.exportObject(remoteSession);
-    }
-    catch (RemoteException e) {
-
+      return (RemoteSession)Rmi.export(remoteSession);
+    } catch (RemoteException e) {
       throw new QueryException("Couldn't export session", e);
     }
   }
@@ -228,18 +184,16 @@ class RemoteSessionFactoryImpl implements RemoteSessionFactory
 
   /**
    * {@inheritDoc RemoteSessionFactory}
-   *
-   * @throws QueryException EXCEPTION TO DO
    */
   public void removeSession(RemoteSession session)  {
-
     remoteSessionSet.remove(session);
     try {
-      UnicastRemoteObject.unexportObject(session, true);
+      Rmi.unexportObject(session, true);
     } catch ( NoSuchObjectException ex ) {
-      // do nothing
+      logger.warn("Request to remove an unknown session");
     }
   }
+
 
   /**
    * {@inheritDoc RemoteSessionFactory}

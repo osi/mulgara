@@ -29,8 +29,6 @@ package org.mulgara.server.rmi;
 
 // Java 2 standard packages
 import java.rmi.*;
-import java.util.*;
-import java.rmi.server.UnicastRemoteObject;
 
 // Third party packages
 import org.apache.log4j.*;
@@ -38,7 +36,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.ArrayAnswer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.util.MulgaraResultSet;
+import org.mulgara.util.Rmi;
 
 /**
  * Remote ITQL answer. An answer is a set of solutions, where a solution is a
@@ -61,11 +59,10 @@ import org.mulgara.util.MulgaraResultSet;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class AnswerWrapperRemoteAnswer extends UnicastRemoteObject implements
-    RemoteAnswer, Cloneable {
+public class AnswerWrapperRemoteAnswer extends Rmi implements RemoteAnswer, Cloneable {
+
   /** logger */
-  private static Logger logger =
-      Logger.getLogger(AnswerWrapperRemoteAnswer.class.getName());
+  private static Logger logger = Logger.getLogger(AnswerWrapperRemoteAnswer.class.getName());
 
   /**
    * Allow newer compiled version of the stub to operate when changes

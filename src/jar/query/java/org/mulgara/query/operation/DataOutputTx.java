@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.rmi.NoSuchObjectException;
-import java.rmi.server.UnicastRemoteObject;
 
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
+import org.mulgara.util.Rmi;
 
 import edu.emory.mathcs.util.remote.io.RemoteOutputStream;
 import edu.emory.mathcs.util.remote.io.server.impl.RemoteOutputStreamSrvImpl;
@@ -100,7 +100,7 @@ public abstract class DataOutputTx extends DataTx {
       
       // open and wrap the output stream
       srv = new RemoteOutputStreamSrvImpl(outputStream);
-      UnicastRemoteObject.exportObject(srv);
+      Rmi.export(srv);
       remoteOutputStream = new RemoteOutputStream(srv);
       
       // call back to the implementing class
@@ -117,7 +117,7 @@ public abstract class DataOutputTx extends DataTx {
       // cleanup the RMI for the output stream
       if (srv != null) {
         try {
-          UnicastRemoteObject.unexportObject(srv, false);
+          Rmi.unexportObject(srv, false);
         } catch (NoSuchObjectException ex) {};
         try {
           srv.close();

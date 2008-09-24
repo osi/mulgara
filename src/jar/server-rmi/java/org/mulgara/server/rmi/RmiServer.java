@@ -31,7 +31,6 @@ package org.mulgara.server.rmi;
 // Java 2 standard packages
 import java.net.*;
 import java.rmi.*;
-import java.rmi.server.UnicastRemoteObject;
 import javax.naming.*;
 
 // Third party packages
@@ -39,6 +38,7 @@ import org.apache.log4j.*;
 
 // Locally written packages
 import org.mulgara.server.AbstractServer;
+import org.mulgara.util.Rmi;
 
 /**
  * Java RMI server.
@@ -171,7 +171,7 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
 
     // Apply RMI wrapper to the session factory
     remoteSessionFactory = new RemoteSessionFactoryImpl(getSessionFactory());
-    exportedRemoteSessionFactory = (RemoteSessionFactory)UnicastRemoteObject.exportObject(remoteSessionFactory);
+    exportedRemoteSessionFactory = (RemoteSessionFactory)Rmi.export(remoteSessionFactory);
 
     // Bind the service to the RMI registry
     rmiRegistryContext.rebind(name, exportedRemoteSessionFactory);
@@ -185,7 +185,7 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
   protected void stopService() throws NamingException, NoSuchObjectException {
     try {
       rmiRegistryContext.unbind(name);
-      UnicastRemoteObject.unexportObject(remoteSessionFactory, true);
+      Rmi.unexportObject(remoteSessionFactory, true);
     } catch (Exception e) {
       if (e.getCause() instanceof javax.naming.ServiceUnavailableException) {
         logger.warn("RMI Server no longer available to be stopped. Abandoning.");
