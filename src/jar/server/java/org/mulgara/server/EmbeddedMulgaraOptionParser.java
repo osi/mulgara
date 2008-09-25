@@ -72,6 +72,9 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   /** option to change to the port the RMI registry listens on */
   public final static Option RMI_PORT = new StringOption('r', "rmiport");
 
+  /** option to change to the peer client port for RMI */
+  public final static Option RMI_CLIENT_PORT = new IntegerOption('t', "rmiclientport");
+
   /** option to change the port the server is bound to */
   public final static Option PORT = new StringOption('p', "port");
 
@@ -117,6 +120,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
     addOption(PORT);
     addOption(NO_RMI);
     addOption(RMI_PORT);
+    addOption(RMI_CLIENT_PORT);
     addOption(SERVER_NAME);
     addOption(PERSISTENCE_PATH);
     addOption(SMTP_SERVER);

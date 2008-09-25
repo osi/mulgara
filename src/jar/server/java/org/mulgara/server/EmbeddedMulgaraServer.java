@@ -50,6 +50,7 @@ import org.mulgara.config.Connector;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.StoreException;
 import org.mulgara.store.xa.SimpleXAResourceException;
+import org.mulgara.util.Rmi;
 import org.mulgara.util.TempDir;
 
 import static org.mulgara.server.ServerMBean.ServerState;
@@ -540,6 +541,10 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
           ServerInfo.setBoundHostname(configHost);
         }
 
+        // set up the client peer port in RMI
+        Integer rmiClientPort = (Integer)parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_CLIENT_PORT);
+        if (rmiClientPort != null) Rmi.setDefaultPort(rmiClientPort);
+
         // set the port on which the RMI registry will be created
         String rmiPortStr = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_PORT);
         int rmiPort = (rmiPortStr != null) ? Integer.parseInt(rmiPortStr) : mulgaraConfig.getRMIPort();
@@ -724,7 +729,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
 
     // only set the security policy if a RMI registry has started
     if (startedLocalRMIRegistry) {
-      if (System.getProperty("java.security.policy") == null) {
+      if (System.getProperty(SECURITY_POLICY_PROP) == null) {
         if (log.isDebugEnabled()) log.debug("Started local RMI registry -> setting security policy");
 
         URL mulgaraSecurityPolicyURL = ClassLoader.getSystemResource(RMI_SECURITY_POLICY_PATH);
@@ -769,6 +774,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
     usage.append("-o, --httphost      the hostname for HTTP requests" + eol);
     usage.append("-p, --port          the port for HTTP requests" + eol);
     usage.append("-r, --rmiport       the RMI registry port" + eol);
+    usage.append("-t, --rmiclientport the RMI client peer port" + eol);
     usage.append("-s, --servername    the (RMI) name of the server" + eol);
     usage.append("-a, --path          the path server data will persist to, specifying " + eol +
         "                    '.' or 'temp' will use the current working directory " + eol +
