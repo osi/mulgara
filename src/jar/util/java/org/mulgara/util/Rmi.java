@@ -17,6 +17,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.RemoteStub;
 import java.rmi.server.UnicastRemoteObject;
 
+import org.apache.log4j.Logger;
+
 /**
  * A utility to centralize the port handling for RMI objects.
  * This class is not set to handle different protocols. If this is needed, then the
@@ -30,11 +32,29 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class Rmi extends UnicastRemoteObject {
 
+  /** Logger */
+  private final static Logger logger = Logger.getLogger(Rmi.class.getName());
+
   /** Generation UID */
   private static final long serialVersionUID = -8087526398171872888L;
 
+  public static final String CLIENT_PEER_PORT = "mulgara.rmi.peerPort";
+
   /** The default port used for exporting objects. */
   protected static int defaultPort = 0;
+
+  // Check if a system property has been set for the default port
+  static {
+    String val = System.getProperty(CLIENT_PEER_PORT);
+    if (val != null) {
+      try {
+        defaultPort = Integer.parseInt(val);
+      } catch (NumberFormatException e) {
+        logger.warn("Unable to parse the client peer port for RMI: " + val);
+      }
+    }
+  }
+
 
   /**
    * Default constructor. Uses the default port.
