@@ -66,7 +66,7 @@ import org.mulgara.util.MemLongMapper;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-class TestResolverSession implements ResolverSession {
+public class TestResolverSession implements ResolverSession {
   /**
    * Our pretend node pool, a counter used to generate new local node values.
    */
