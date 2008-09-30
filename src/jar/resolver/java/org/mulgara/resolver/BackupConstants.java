@@ -46,12 +46,15 @@ interface BackupConstants
    * The header to put on the backup files.
    */
   final static String BACKUP_FILE_HEADER = "XA BACKUP V";
-                                                                                
+
+  /** Version number for backup files V4. */
+  final static String BACKUP_VERSION4 = "4";
+
   /**
    * Version number for backup files.
-   *
    * The changes for version 6 were to store the string pool using
    * {@link NTriples} format, and changed semantics for the meta node.
    */
-  final static String BACKUP_VERSION = "6";
+  final static String BACKUP_VERSION6 = "6";
+
 }
