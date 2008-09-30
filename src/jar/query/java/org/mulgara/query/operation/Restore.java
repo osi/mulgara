@@ -93,9 +93,13 @@ public class Restore extends DataInputTx {
       if (isLocal()) sendMarshalledData(conn, false);
       else conn.getSession().restore(src);
 
-      if (logger.isDebugEnabled()) logger.debug("Completed restoring " + dest + " from " + src);
+      String message;
+      if (dest == null) message = "Successfully restored from " + src;
+      else message = "Successfully restored " + dest + " from " + src;
+
+      if (logger.isDebugEnabled()) logger.debug(message);
   
-      return setResultMessage("Successfully restored " + dest + " from " + src);
+      return setResultMessage(message);
 
     } catch (IOException ex) {
       logger.error("Error attempting to restore: " + src, ex);
