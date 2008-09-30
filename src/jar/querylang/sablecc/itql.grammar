@@ -124,7 +124,7 @@ Productions
     {alias}     alias [target]:resource as [prefix]:identifier               |
     {aliasl}    alias                                                        |
     {apply}     apply [rules]:resource to [base]:resource [destination]:resource? |
-    {backup}    backup [source]:resource to [locality]:locality? [destination]:resource |
+    {backup}    backup [source]:resource? to [locality]:locality? [destination]:resource |
     {commit}    commit                                                       |
     {create}    create [model]:resource [model_type]:resource?               |
     {delete}    delete triple_factor from resource                           |
@@ -136,7 +136,7 @@ Productions
     {insert}    insert triple_factor into resource                           |
     {load}      load [locality]:locality? [source]:resource into [destination]:resource |
     {quit}      quit                                                         |
-    {restore}   restore [destination]:resource from [locality]:locality? [source]:resource |
+    {restore}   restore [destination]:resource? from [locality]:locality? [source]:resource |
     {rollback}  rollback                                                     |
     {select}    query                                                        |
     {set}       set set_option set_option_mode                               |

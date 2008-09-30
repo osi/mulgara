@@ -696,11 +696,16 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     if (logger.isDebugEnabled()) logger.debug("Processing backup command " + node);
 
     // get constituents of the backup command
-    URI sourceURI = toURI(node.getSource());
     URI destinationURI = toURI(node.getDestination());
     boolean locality = node.getLocality() != null && (node.getLocality() instanceof ALocalLocality);
 
-    lastCommand = new Backup(sourceURI, destinationURI, locality);
+    Token src = node.getSource();
+    if (src != null) {
+      URI sourceURI = toURI(src);
+      lastCommand = new Backup(sourceURI, destinationURI, locality);
+    } else {
+      lastCommand = new Backup(destinationURI, locality);
+    }
   }
 
   /**
@@ -734,11 +739,16 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // log the command
     if (logger.isDebugEnabled()) logger.debug("Processing restore command " + node);
 
-    URI destinationURI = toURI(node.getDestination());
     URI sourceURI = toURI(node.getSource());
     boolean locality = node.getLocality() != null && (node.getLocality() instanceof ALocalLocality);
 
-    lastCommand = new Restore(sourceURI, destinationURI, locality);
+    Token dest = node.getDestination();
+    if (dest != null) {
+      URI destinationURI = toURI(dest);
+      lastCommand = new Restore(sourceURI, destinationURI, locality);
+    } else {
+      lastCommand = new Restore(sourceURI, locality);
+    }
   }
 
   /**
