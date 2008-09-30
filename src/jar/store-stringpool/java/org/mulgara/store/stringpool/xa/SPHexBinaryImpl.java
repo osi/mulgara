@@ -46,23 +46,12 @@ import org.mulgara.store.stringpool.SPTypedLiteral;
  * Class that represents a XSD hexBinary primitive datatype.
  *
  * @created 2004-10-04
- *
  * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
- *
- * @version $Revision: 1.2 $
- *
- * @modified $Date: 2005/03/12 02:53:28 $ by $Author: newmana $
- *
  * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
- *
- * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
- *   Software Pty Ltd</a>
- *
+ * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class SPHexBinaryImpl
-    extends AbstractSPTypedLiteral
-    implements SPTypedLiteral {
+public class SPHexBinaryImpl extends AbstractSPTypedLiteral implements SPTypedLiteral {
 
   /** Logger */
   @SuppressWarnings("unused")
@@ -75,39 +64,31 @@ public class SPHexBinaryImpl
   static final URI TYPE_URI = XSD.HEX_BINARY_URI;
 
   /** The hex binary data as bytes */
-  private ByteBuffer data = null;
+  private final ByteBuffer data;
 
 
   /**
    * Constructor.
-   *
    * @param lexicalForm String must contain valid hex values [a-f][A-F][0-9]
    */
   public SPHexBinaryImpl(String lexicalForm) {
-
     super(TYPE_ID, TYPE_URI);
+    if (lexicalForm == null) throw new IllegalArgumentException("'lexicalForm' cannot be null.");
 
-    //validate
-    if (lexicalForm == null) {
-
-      throw new IllegalArgumentException("'lexicalForm' cannot be null.");
-    }
-
-    //ignore case
+    // ignore case
     String lexical = lexicalForm.toLowerCase();
 
-    //ensure that lexical falls on a boundary of 2 chars
-    if ((lexical.length() % 2) != 0) {
-
-      lexical = "0" + lexical;
-    }
+    // ensure that lexical falls on a boundary of 2 chars
+    if ((lexical.length() % 2) != 0) lexical = "0" + lexical;
 
     //pack two chars into each byte (hex digits are 4 bit)
-    data = ByteBuffer.allocate(lexical.length() / 2);
+    int capacity = lexical.length() / 2;
+    data = ByteBuffer.allocate(capacity);
     byte currentByte = 0;
     int lowChar = 0;
     int hiChar = 0;
 
+    int offset = 0;
     for (int i = lexical.length() - 1; i > 0; i -= 2) {
 
       //there will always be an even number of chars
@@ -117,47 +98,45 @@ public class SPHexBinaryImpl
       //join the hex values
       currentByte = (byte) ((hiChar << 4) | lowChar);
 
-      data.put(currentByte);
+      data.put(offset++, currentByte);
     }
+    data.rewind();
+    data.limit(offset);
   }
+
 
   /**
    * Constructor.
-   *
    * @param buffer ByteBuffer
    */
   public SPHexBinaryImpl(ByteBuffer buffer) {
-
     super(TYPE_ID, TYPE_URI);
-
     data = buffer;
   }
 
+
   /**
    * Converts a hex character [0-9][a-f][A-F] to an int.
-   *
    * @param hexChar char
    * @return int
    */
   public int hexValue(char hexChar) {
-
     return Integer.parseInt("" + hexChar, 16);
   }
 
+
   /**
    * Converts the value into a hax character. Value must be between 0 and 15
-   *
    * @param value int
    * @return char
    */
   public char hexChar(int value) {
-
     return Character.forDigit(value, 16);
   }
 
+
   /**
    * Returns a read-only ByteBuffer containing the hexBinary data
-   *
    * @return ByteBuffer
    */
   public ByteBuffer getData() {
@@ -172,22 +151,18 @@ public class SPHexBinaryImpl
 
   /**
    * Converts the data bytes into a String.
-   *
    * @return String
    */
   public String getLexicalForm() {
-
     StringBuffer lexicalForm = new StringBuffer();
-
     byte currentByte = 0;
     int hiChar = 0;
     int lowChar = 0;
 
     //start at the beginning
-    data.position(0);
+    data.rewind();
 
     while (data.limit() > data.position()) {
-
       currentByte = data.get();
 
       //get hi and low 4 bits
@@ -201,9 +176,7 @@ public class SPHexBinaryImpl
 
     //remove any trailing '0' chars (buffer will be reversed)
     int length = lexicalForm.length();
-    if ((length >= 1)
-        && (lexicalForm.charAt(length -1) == '0')) {
-
+    if ((length >= 1) && (lexicalForm.charAt(length -1) == '0')) {
       lexicalForm.deleteCharAt(length - 1);
     }
 
@@ -211,20 +184,17 @@ public class SPHexBinaryImpl
     return lexicalForm.reverse().toString();
   }
 
+
   /**
    * Compare's this SPBoolean to another object.
-   *
    * @param obj Object
    * @return int
    */
   public int compareTo(SPObject obj) {
-
     int compare = super.compareTo(obj);
-
     if (compare == 0) {
-
       //compare by lexical value
-      compare = getLexicalForm().compareTo(((SPTypedLiteral) obj).getLexicalForm());
+      compare = getLexicalForm().compareTo(((SPTypedLiteral)obj).getLexicalForm());
 
       //compare buffers
 //      ByteBuffer objData = ((SPTypedLiteral) obj).getData();
