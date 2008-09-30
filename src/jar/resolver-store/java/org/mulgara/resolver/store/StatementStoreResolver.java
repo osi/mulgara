@@ -55,6 +55,7 @@ import org.mulgara.store.xa.SimpleXAResource;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAStatementStore;
+import org.mulgara.util.LongMapper;
 
 /**
  * Resolves constraints from the Mulgara {@link StatementStore}.
@@ -68,13 +69,10 @@ import org.mulgara.store.xa.XAStatementStore;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class StatementStoreResolver implements SystemResolver
-{
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-    Logger.getLogger(StatementStoreResolver.class.getName());
+public class StatementStoreResolver implements SystemResolver {
+
+  /** Logger. */
+  private static Logger logger = Logger.getLogger(StatementStoreResolver.class.getName());
 
   /**
    * A (non) constraint that selects every statement from every model.
@@ -499,6 +497,11 @@ public class StatementStoreResolver implements SystemResolver
     return resolverSession.findGNode(spObject);
   }
 
+  /** @see org.mulgara.resolver.spi.BackupRestoreSession#getRestoreMapper() */
+  public LongMapper getRestoreMapper() throws Exception {
+    return resolverSession.getRestoreMapper();
+  }
+
   //
   // Internal methods
   //
@@ -522,4 +525,5 @@ public class StatementStoreResolver implements SystemResolver
       throw new IllegalStateException("Failed to Abort store", es);
     }
   }
+
 }

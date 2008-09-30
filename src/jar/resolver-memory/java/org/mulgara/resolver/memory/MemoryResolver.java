@@ -49,6 +49,8 @@ import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.SimpleXAResourceException;
+import org.mulgara.util.LongMapper;
+import org.mulgara.util.MemLongMapper;
 
 /**
  * Resolves constraints in models stored on the Java heap.
@@ -378,5 +380,9 @@ public class MemoryResolver implements SystemResolver {
         throw new IllegalStateException("Error aborting resolver session", es);
       }
     }
+  }
+
+  public LongMapper getRestoreMapper() throws Exception {
+    return new MemLongMapper();
   }
 }
