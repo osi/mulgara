@@ -30,6 +30,8 @@ package org.mulgara.store.nodepool.memory;
 // Third-party packages
 import org.mulgara.store.nodepool.*;
 import org.mulgara.store.xa.XANodePool;
+import org.mulgara.util.LongMapper;
+import org.mulgara.util.MemLongMapper;
 
 // log4j classes
 import org.apache.log4j.*;
@@ -171,4 +173,8 @@ public final class MemoryNodePoolImpl implements XANodePool {
   public void clear() {}
   public void clear(int phaseNumber) {}
   public int getPhaseNumber() { return 0; }
+
+  public LongMapper getNodeMapper() throws Exception {
+    return new MemLongMapper();
+  }
 }
