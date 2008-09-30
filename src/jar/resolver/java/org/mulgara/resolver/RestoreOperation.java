@@ -60,6 +60,7 @@ import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.util.IntFile;
+import org.mulgara.util.LongMapper;
 import org.mulgara.util.TempDir;
 
 /**
@@ -170,15 +171,13 @@ class RestoreOperation implements BackupConstants, Operation
     }
     String versionString = line.substring(BACKUP_FILE_HEADER.length());
 
-    if (versionString.equals(BACKUP_VERSION)) {
-      assert BACKUP_VERSION.equals("6");
+    if (versionString.equals(BACKUP_VERSION6)) {
+      assert BACKUP_VERSION6.equals("6");
       restoreDatabaseV6(resolver, resolverSession, metadata, br);
-    } else if (versionString.equals("4")) {
+    } else if (versionString.equals(BACKUP_VERSION4)) {
       restoreDatabaseV4(resolver, resolverSession, metadata, br);
     } else {
-      throw new QueryException(
-          "Unsupported backup file version: V" + versionString
-      );
+      throw new QueryException("Unsupported backup file version: V" + versionString);
     }
   }
 
@@ -567,13 +566,11 @@ class RestoreOperation implements BackupConstants, Operation
       tuples.close();
     }
 
-    // n2nMap maps from node IDs in the backup file to node IDs in the
-    // store.
-    File n2nFile = TempDir.createTempFile("n2n", null);
-    IntFile n2nMap = null;
+    // n2nMap maps from node IDs in the backup file to node IDs in the store.
+    LongMapper n2nMap = null;
 
     try {
-      n2nMap = IntFile.open(n2nFile);
+      n2nMap = resolverSession.getRestoreMapper();
 
       SPObjectFactory spof = resolverSession.getSPObjectFactory();
 
@@ -595,8 +592,7 @@ class RestoreOperation implements BackupConstants, Operation
 
       if (line == null) {
         throw new QueryException(
-            "Unexpected EOF in RDFNODES section while restoring from " +
-            "backup file: " + sourceURI
+            "Unexpected EOF in RDFNODES section while restoring from backup file: " + sourceURI
         );
       }
 
@@ -646,11 +642,7 @@ class RestoreOperation implements BackupConstants, Operation
       }
     } finally {
       try {
-        if (n2nMap != null) {
-          n2nMap.delete();
-        } else {
-          n2nFile.delete();
-        }
+        if (n2nMap != null) n2nMap.delete();
       } catch (IOException e) {
         logger.warn("I/O error on close", e);
       }
@@ -668,14 +660,20 @@ class RestoreOperation implements BackupConstants, Operation
    * @return the new node ID that the specified backup file node ID maps to.
    * @throws Exception EXCEPTION TO DO
    */
-  private static long getNode(IntFile n2nMap, long oldNode, ResolverSession resolverSession) throws Exception {
+  private static long getNode(LongMapper n2nMap, long oldNode, ResolverSession resolverSession) throws Exception {
     long newNode = n2nMap.getLong(oldNode);
 
     // IntFile.getLong() returns zero for entries that have never been
     // written to.
     if (newNode == 0) {
       newNode = resolverSession.newBlankNode();
-      n2nMap.putLong(oldNode, newNode);
+      try {
+        n2nMap.putLong(oldNode, newNode);
+      } catch (IOException e) {
+        String m = "Error allocating new blank node for oldNode=" + oldNode + ". newNode=" + newNode + ". ";
+        logger.fatal(m, e);
+        throw new IOException(m + e.getMessage());
+      }
     }
 
     return newNode;
