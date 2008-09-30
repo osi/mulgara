@@ -39,6 +39,8 @@ import org.apache.log4j.Logger;  // log4j classes
 import org.mulgara.store.nodepool.*;
 import org.mulgara.store.xa.*;
 import org.mulgara.util.Constants;
+import org.mulgara.util.IntFile;
+import org.mulgara.util.LongMapper;
 
 /**
  * A NodePool implementation which supports data integrity.
@@ -792,6 +794,11 @@ public final class XANodePoolImpl implements XANodePool {
   }
 
 
+  /** @see org.mulgara.store.xa.XANodePool#getNodeMapper() */
+  public LongMapper getNodeMapper() throws Exception {
+    return IntFile.newTempIntFile("n2n");
+  }
+
   /**
    * METHOD TO DO
    *
@@ -962,7 +969,13 @@ public final class XANodePoolImpl implements XANodePool {
     public int getPhaseNumber() {
       return phaseNumber;
     }
+
+
+    public LongMapper getNodeMapper() throws Exception {
+      throw new UnsupportedOperationException("Attempting to map newly allocated nodes of ReadOnlyNodePool");
+    }
   }
+
 
 }
 
