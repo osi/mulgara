@@ -131,7 +131,7 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
   private void backupDatabase(SystemResolver systemResolver, DatabaseMetadata metadata, Writer writer)
       throws Exception {
     // Write the backup
-    writer.write(BACKUP_FILE_HEADER + BACKUP_VERSION + '\n');
+    writer.write(BACKUP_FILE_HEADER + BACKUP_VERSION6 + '\n');
     writer.write(new Date().toString());
     writer.write('\n');
 
