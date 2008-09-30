@@ -29,6 +29,7 @@ package org.mulgara.store.xa;
 
 import org.mulgara.store.StoreException;
 import org.mulgara.store.nodepool.*;
+import org.mulgara.util.LongMapper;
 
 /**
  * Interface for transactional NodePools.
@@ -83,4 +84,10 @@ public interface XANodePool extends SimpleXAResource, ReleaseNodeListener, NodeP
    */
   public void delete() throws StoreException;
 
+  /**
+   * Creates a mapper for mapping nodes to other nodes controlled by this pool.
+   * @return A new LongMapper relevant the number space of gNodes this pool uses.
+   * @throws Exception An implementation specific error.
+   */
+  public LongMapper getNodeMapper() throws Exception;
 }
