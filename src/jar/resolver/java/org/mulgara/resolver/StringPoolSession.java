@@ -54,6 +54,7 @@ import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XANodePool;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAStringPool;
+import org.mulgara.util.LongMapper;
 import org.mulgara.util.StackTrace;
 
 /**
@@ -68,8 +69,7 @@ import org.mulgara.util.StackTrace;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class StringPoolSession implements XAResolverSession, BackupRestoreSession
-{
+public class StringPoolSession implements XAResolverSession, BackupRestoreSession {
   /** Logger.  */
   private static final Logger logger =
     Logger.getLogger(StringPoolSession.class.getName());
@@ -761,6 +761,13 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     return persistentStringPool.findGNode(spObject, persistentNodePool);
   }
 
+
+  /** @see org.mulgara.resolver.spi.BackupRestoreSession#getRestoreMapper() */
+  public LongMapper getRestoreMapper() throws Exception {
+    return persistentNodePool.getNodeMapper();
+  }
+
+
   /**
    * Used purely as a sanity check in the hope that we might catch concurrency bugs in higher layers should
    * they exist.
@@ -781,4 +788,5 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
       currentThread = null;
     }
   }
+
 }
