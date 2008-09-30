@@ -56,6 +56,7 @@ import org.mulgara.store.xa.XANodePool;
 import org.mulgara.store.xa.XAStringPool;
 import org.mulgara.store.xa.XAUtils;
 import org.mulgara.util.Constants;
+import org.mulgara.util.LongMapper;
 import org.mulgara.util.functional.Pair;
 
 import static org.mulgara.store.stringpool.xa11.DataStruct.*;
@@ -261,11 +262,13 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
   }
 
   /**
-   * @deprecated
+   * @deprecated The <var>nodePool</var> parameter must equal this. Use {@link #findGNode(SPObject, boolean)} with a true <var>create</var> parameter instead.
    * @see org.mulgara.store.stringpool.StringPool#findGNode(org.mulgara.store.stringpool.SPObject, org.mulgara.store.nodepool.NodePool)
    */
   public long findGNode(SPObject spObject, NodePool nodePool) throws StringPoolException {
-    throw new UnsupportedOperationException("Cannot manually set the node pool for an XA 1.1 store.");
+    if (nodePool != this) throw new IllegalStateException("The XA11 data store must manage its own nodes");
+    checkInitialized();
+    return currentPhase.findGNode(spObject, true);
   }
 
   /**
@@ -679,6 +682,12 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
   public long newNode() throws NodePoolException {
     long node = blankNodeAllocator.allocate();
     return informNodeListeners(node);
+  }
+
+
+  /** @see org.mulgara.store.xa.XANodePool#getNodeMapper() */
+  public LongMapper getNodeMapper() throws Exception {
+    return new BlankNodeMapper("n2n");
   }
 
 

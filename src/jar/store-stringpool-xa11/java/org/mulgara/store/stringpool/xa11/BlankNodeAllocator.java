@@ -27,6 +27,9 @@ public class BlankNodeAllocator {
   /** The bit that indicates a blank node. */
   static final long BLANK_NODE_BIT = 0x4000000000000000L;
 
+  /** The mask that can remove the BLANK_NODE_BIT. */
+  static final private long COUNTER_MASK = 0x3FFFFFFFFFFFFFFFL;
+
   /** The first valid blank node value. */
   static final long FIRST = 1;
   
@@ -133,4 +136,23 @@ public class BlankNodeAllocator {
     nextNode = committedNextNode;
   }
 
+
+  /**
+   * Convert a blank node code to a counter value.
+   * @param blankGNode The blank node value.
+   * @return A value with the blank node bit turned off.
+   */
+  public static final long nodeToCounter(long blankGNode) {
+    return blankGNode & COUNTER_MASK;
+  }
+
+
+  /**
+   * Convert a blank node code to a counter value.
+   * @param blankGNode The blank node value.
+   * @return A value with the blank node bit turned off.
+   */
+  public static final long counterToNode(long counter) {
+    return counter | BLANK_NODE_BIT;
+  }
 }

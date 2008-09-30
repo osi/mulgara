@@ -87,9 +87,8 @@ public class DataAVLComparator implements AVLComparator {
       data.rewind();
       nodeData.rewind();
       c = spComparator.comparePrefix(data, nodeData, dataSize);
-      if (c != 0) return c;
-
       data.limit(savedDataLimit);
+      if (c != 0) return c;
 
       try {
         // Retrieve the remaining bytes if any.
