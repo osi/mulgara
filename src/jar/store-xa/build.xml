@@ -23,6 +23,7 @@
     <fileset file="${store-nodepool.dist.dir}/${store-nodepool.jar}"/>
     <fileset file="${store-stringpool.dist.dir}/${store-stringpool.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${query.dist.dir}/${query.jar}"/>
   </path>
 

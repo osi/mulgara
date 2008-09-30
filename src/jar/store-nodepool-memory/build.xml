@@ -27,6 +27,7 @@
     <fileset file="${store-xa.dist.dir}/${store-xa.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <fileset file="${resolver.dist.dir}/${resolver.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
   </path>
 
   <path id="store-nodepool-memory-test-classpath">

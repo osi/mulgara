@@ -24,6 +24,7 @@
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
+    <fileset file="${util.dist.dir}/${util.jar}"/>
   </path>
 
   <path id="resolver-memory-test-classpath">
