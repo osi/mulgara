@@ -46,18 +46,8 @@ import org.mulgara.store.stringpool.SPTypedLiteral;
  * Class that represents a XSD base64Binary primitive datatype.
  *
  * @created 2004-10-04
- *
  * @author <a href="mailto:robert.turner@tucanatech.com">Robert Turner</a>
- *
- * @version $Revision: 1.2 $
- *
- * @modified $Date: 2005/03/12 02:53:28 $ by $Author: newmana $
- *
- * @company <a href="http://www.tucanatech.com/">Tucana Technologies</a>
- *
- * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
- *   Software Pty Ltd</a>
- *
+ * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class SPBase64BinaryImpl
@@ -109,6 +99,7 @@ public class SPBase64BinaryImpl
         data.put(value);
       }
     }
+    data.flip();
   }
 
   /**
