@@ -130,8 +130,14 @@ public final class MappedIntFile extends IntFile {
       mapFile(nrRegions);
     }
 
-    for (long key = prevSize; key < newSize; ++key) {
-      putLong(key, 0);
+    long key = prevSize;
+    try {
+      for (key = prevSize; key < newSize; ++key) {
+        putLong(key, 0);
+      }
+    } catch (NullPointerException e) {
+      logger.error("Out of range during resize. prevSize=" + prevSize + ", newSize=" + newSize + ", bad_offset=" + key);
+      throw new IOException("Out of range during resize. prevSize=" + prevSize + ", newSize=" + newSize + ", bad_offset=" + key);
     }
   }
 
@@ -208,7 +214,13 @@ public final class MappedIntFile extends IntFile {
         return;
       }
 
-      setSize(key + 1);
+      try {
+        setSize(key + 1);
+      } catch (IOException e) {
+        String m = "Exception mapping " + key + "=>" + l + ". ";
+        logger.fatal(m, e);
+        throw new IOException(m + e.getMessage());
+      }
     }
 
     int regionNr = (int) (key / REGION_SIZE);

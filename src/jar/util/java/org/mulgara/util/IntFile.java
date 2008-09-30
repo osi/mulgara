@@ -57,7 +57,7 @@ import org.apache.log4j.Logger;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public abstract class IntFile {
+public abstract class IntFile implements LongMapper {
 
   protected final static int SIZEOF_LONG = 8;
   protected final static int SIZEOF_INT = 4;
@@ -366,8 +366,25 @@ public abstract class IntFile {
 
 
   /**
+   * Create a temporary IntFile, using a name based on a given pattern.
+   * @param namePattern The base for the name to use.
+   * @return A new IntFile object.
+   * @throws IOException Due to a file access error.
+   */
+  public static IntFile newTempIntFile(String namePattern) throws IOException {
+    File file = null;
+    try {
+      file = TempDir.createTempFile(namePattern, null);
+      return IntFile.open(file);
+    } catch (IOException e) {
+      if (file != null) file.delete();
+      throw e;
+    }
+  }
+
+
+  /**
    * Close and optionally truncate the file.
-   *
    * @throws IOException if an I/O error occurs.
    */
   private void close(boolean truncateFile) throws IOException {
