@@ -41,6 +41,7 @@ import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.tuples.Tuples;
+import org.mulgara.util.LongMapper;
 
 /**
  * A wrapper that redirects the localizing of temporary query nodes
@@ -56,11 +57,10 @@ import org.mulgara.store.tuples.Tuples;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class PersistentResolverSession implements ResolverSession
-{
+public class PersistentResolverSession implements ResolverSession {
   /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(PersistentResolverSession.class.getName());
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(PersistentResolverSession.class.getName());
 
   /** The ResolverSession to be wraped **/
   private ResolverSession resolverSession = null;
@@ -153,5 +153,9 @@ public class PersistentResolverSession implements ResolverSession
 
   public long findGNode(SPObject spObject) throws StringPoolException {
     return resolverSession.findGNode(spObject);
+  }
+
+  public LongMapper getRestoreMapper() throws Exception {
+    return resolverSession.getRestoreMapper();
   }
 }

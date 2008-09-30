@@ -44,6 +44,7 @@ import java.net.URI;
 import org.jrdf.graph.Node;
 
 // Local packages
+import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
 import org.mulgara.store.stringpool.StringPoolException;
@@ -70,7 +71,14 @@ public class TestResolverSession implements ResolverSession {
   /**
    * Our pretend node pool, a counter used to generate new local node values.
    */
-  private long top = 0;
+  private long top = 1;
+
+  /**
+   * ID's used to reference BlankNodes (top counter for blank nodes)
+   * Will cause problems if more nodes (non-blank) than the initial value
+   * are inserted.
+   */
+  private long bNode = 1000000;
 
   /**
    * Our pretend string pool, a map from global JRDF nodes to local
@@ -115,11 +123,17 @@ public class TestResolverSession implements ResolverSession {
   public long localize(Node node) throws LocalizeException {
     Long object = map.get(node);
     if (object == null) {
-      top++;
-      map.put(node, top);
-      globalMap.put(top, node);
+      Long id = top++;  // repeating the errors of the rdf/xml writer test class
 
-      return top;
+      if (node instanceof BlankNodeImpl) {
+        id = bNode++;
+        ((BlankNodeImpl)node).setNodeId(bNode);
+      }
+
+      map.put(node, id);
+      globalMap.put(id, node);
+
+      return id;
     } else {
       return object;
     }

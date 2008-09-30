@@ -33,7 +33,6 @@ import java.io.*;
 import junit.framework.*;
 import org.mulgara.content.Content;
 import org.mulgara.content.rdfxml.RDFXMLContentHandler;
-import org.mulgara.content.rdfxml.writer.TestResolverSession;
 import org.mulgara.resolver.file.FileContent;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.util.TempDir;

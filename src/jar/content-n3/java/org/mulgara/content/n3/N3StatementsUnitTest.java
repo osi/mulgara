@@ -46,6 +46,7 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.TestResolverSession;
 
 /**
  * Test suite for {@link N3Statements}.
@@ -59,13 +60,10 @@ import org.mulgara.resolver.spi.ResolverSession;
  *   Technology Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class N3StatementsUnitTest extends TestCase
-{
-  /**
-   * Logger.
-   */
-  private static final Logger logger =
-    Logger.getLogger(N3StatementsUnitTest.class.getName());
+public class N3StatementsUnitTest extends TestCase {
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(N3StatementsUnitTest.class.getName());
 
   //
   // Constructors

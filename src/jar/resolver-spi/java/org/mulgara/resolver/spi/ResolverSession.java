@@ -34,17 +34,12 @@ import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Node;
 
 // Local packages
-import org.mulgara.store.StoreException;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.nodepool.NodePoolException;
-import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
-import org.mulgara.store.stringpool.StringPool;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.xa.SimpleXAResource;
-import org.mulgara.store.xa.SimpleXAResourceException;
 
 /**
  * A {@link Resolver}'s view of a particular session.
@@ -61,8 +56,7 @@ import org.mulgara.store.xa.SimpleXAResourceException;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface ResolverSession extends BackupRestoreSession
-{
+public interface ResolverSession extends BackupRestoreSession {
   /**
    * Convert session-local node numbers to globally valid RDF nodes.
    *
@@ -203,4 +197,5 @@ public interface ResolverSession extends BackupRestoreSession
    * refactored to no longer require it.
    */
   public long findGNode(SPObject spObject) throws StringPoolException;
+
 }

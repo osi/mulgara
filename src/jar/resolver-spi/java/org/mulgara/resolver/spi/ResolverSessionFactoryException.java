@@ -40,13 +40,15 @@ package org.mulgara.resolver.spi;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class ResolverSessionFactoryException extends Exception
-{
+public class ResolverSessionFactoryException extends Exception {
+
+  /** Generated UID */
+  private static final long serialVersionUID = -3006762480999889949L;
+
   /**
-   * @param message  diagnostic text
+   * @param message diagnostic text
    */
-  public ResolverSessionFactoryException(String message)
-  {
+  public ResolverSessionFactoryException(String message) {
     super(message);
   }
 
@@ -54,8 +56,7 @@ public class ResolverSessionFactoryException extends Exception
    * @param message  diagnostic text
    * @param cause  an exception to be chained as the reason for this one
    */
-  public ResolverSessionFactoryException(String message, Throwable cause)
-  {
+  public ResolverSessionFactoryException(String message, Throwable cause) {
     super(message, cause);
   }
 }

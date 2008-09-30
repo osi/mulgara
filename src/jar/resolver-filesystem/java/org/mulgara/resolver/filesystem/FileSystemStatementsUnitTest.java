@@ -29,22 +29,14 @@ package org.mulgara.resolver.filesystem;
 
 // Java 2 standard packages
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.net.InetAddress;
-import java.util.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 // Third party packages
 import junit.framework.*; // JUnit
 import org.apache.log4j.*; // Log4J
-import org.jrdf.vocabulary.RDF; // JRDF
 import org.jrdf.graph.Node;
 import org.apache.log4j.xml.*; // Log4J
 
@@ -52,16 +44,11 @@ import org.apache.log4j.xml.*; // Log4J
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.*;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
+import org.mulgara.resolver.spi.TestResolverSession;
 import org.mulgara.store.tuples.*;
 
 /**

@@ -43,6 +43,7 @@ import org.mulgara.content.Content;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.TestResolverSession;
 
 /**
  * Test suite for {@link RDFXMLStatements}.
