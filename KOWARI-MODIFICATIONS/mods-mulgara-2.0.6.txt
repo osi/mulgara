@@ -1,0 +1,390 @@
+------------------------------------------------------------------------
+r1295 | pag | 2008-10-06 15:09:30 -0700 (Mon, 06 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/common.properties
+
+Moving to new version number
+------------------------------------------------------------------------
+r1293 | pag | 2008-09-29 23:14:45 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/conf/mulgara-config.xml
+
+default configuration now uses XA 1.1
+------------------------------------------------------------------------
+r1292 | pag | 2008-09-29 23:14:17 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/jxdata/iTQL/data_types/binary/base64Binary/queryResult1.txt
+   M /trunk/jxdata/iTQL/data_types/binary/hexBinary/queryResult1.txt
+
+Removed erroneous trailing characters from test. These were hiding the fact that the queries were returning bad data
+------------------------------------------------------------------------
+r1291 | pag | 2008-09-29 23:13:01 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPHexBinaryImpl.java
+
+Made data access absolute during construction. This is because the object was behaving erratically - the position on the buffer was set to the limit, and could not be rewound. I could not solve this, though a watch in the debugger could make it reset when asked to (a watch could not be set until the object arrived back from the factor method.
+------------------------------------------------------------------------
+r1290 | pag | 2008-09-29 23:09:57 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPBase64BinaryImpl.java
+
+Added a flip() after building the buffer, to truncate off any extra characters that may have come about due to removing whitespace
+------------------------------------------------------------------------
+r1289 | pag | 2008-09-29 23:07:01 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-stringpool-xa11/java/org/mulgara/store/stringpool/xa11/BlankNodeAllocator.java
+   A /trunk/src/jar/store-stringpool-xa11/java/org/mulgara/store/stringpool/xa11/BlankNodeMapper.java
+   M /trunk/src/jar/store-stringpool-xa11/java/org/mulgara/store/stringpool/xa11/DataAVLComparator.java
+   M /trunk/src/jar/store-stringpool-xa11/java/org/mulgara/store/stringpool/xa11/XA11StringPoolImpl.java
+
+Added a blank node mapper to enable backup/restore to work on this stringpool
+------------------------------------------------------------------------
+r1288 | pag | 2008-09-29 23:06:14 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/RestoreOperation.java
+
+Using the new mapper factory methods to have different store types to manage node mapping
+------------------------------------------------------------------------
+r1287 | pag | 2008-09-29 23:05:05 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/BackupOperation.java
+
+Defined some static labels for backup/restore formats
+------------------------------------------------------------------------
+r1286 | pag | 2008-09-29 23:04:20 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/BackupConstants.java
+
+Defined some static labels for backup/restore formats
+------------------------------------------------------------------------
+r1285 | pag | 2008-09-29 23:02:17 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/StringPoolSession.java
+
+Added getRestoreMapper from BackupRestoreSession
+------------------------------------------------------------------------
+r1284 | pag | 2008-09-29 23:00:22 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/query/java/org/mulgara/query/operation/Restore.java
+
+Updated logging and messages
+------------------------------------------------------------------------
+r1283 | pag | 2008-09-29 22:59:34 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-xa/java/org/mulgara/store/xa/XANodePool.java
+
+Added the getNodeMapper mechanism to the interface, matching the getRestoreMapper from BackupRestoreSession
+------------------------------------------------------------------------
+r1282 | pag | 2008-09-29 22:58:16 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver-memory/build.xml
+   M /trunk/src/jar/store-nodepool-memory/build.xml
+   M /trunk/src/jar/store-xa/build.xml
+
+Added utilities to the path
+------------------------------------------------------------------------
+r1281 | pag | 2008-09-29 22:57:33 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/querylang/java/org/mulgara/itql/TqlInterpreter.java
+   M /trunk/src/jar/querylang/sablecc/itql.grammar
+
+Made the backup source, and restore destination parameters in TQL optional
+------------------------------------------------------------------------
+r1280 | pag | 2008-09-29 22:56:16 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver-memory/java/org/mulgara/resolver/memory/MemoryResolver.java
+   M /trunk/src/jar/resolver-store/java/org/mulgara/resolver/store/StatementStoreResolver.java
+
+Added the getRestoreMapper method from the BackupRestoreSession interface
+------------------------------------------------------------------------
+r1279 | pag | 2008-09-29 22:53:36 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-nodepool-xa/java/org/mulgara/store/nodepool/xa/XANodePoolImpl.java
+
+Added the getNodeMapper method from the BackupRestoreSession interface
+------------------------------------------------------------------------
+r1278 | pag | 2008-09-29 22:53:04 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-nodepool-memory/java/org/mulgara/store/nodepool/memory/MemoryNodePoolImpl.java
+
+Added the getNodeMapper method from the BackupRestoreSession interface
+------------------------------------------------------------------------
+r1277 | pag | 2008-09-29 22:51:14 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/MBoxStatementsUnitTest.java
+   D /trunk/src/jar/content-mbox/java/org/mulgara/content/mbox/TestResolverSession.java
+   M /trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/MP3StatementsUnitTest.java
+   D /trunk/src/jar/content-mp3/java/org/mulgara/content/mp3/TestResolverSession.java
+   M /trunk/src/jar/content-n3/java/org/mulgara/content/n3/N3StatementsUnitTest.java
+   D /trunk/src/jar/content-n3/java/org/mulgara/content/n3/TestResolverSession.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/RDFXMLStatementsUnitTest.java
+   D /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/TestResolverSession.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/RDFXMLWriterUnitTest.java
+   D /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/TestResolverSession.java
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/PersistentResolverSession.java
+   D /trunk/src/jar/resolver/java/org/mulgara/resolver/TestResolverSession.java
+   M /trunk/src/jar/resolver-filesystem/java/org/mulgara/resolver/filesystem/FileSystemStatementsUnitTest.java
+   D /trunk/src/jar/resolver-filesystem/java/org/mulgara/resolver/filesystem/TestResolverSession.java
+   M /trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/BackupRestoreSession.java
+   M /trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/ResolverSession.java
+   M /trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/ResolverSessionFactoryException.java
+   M /trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/TestResolverSession.java
+   D /trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/TestResolverSession.java
+
+Added a node mapper factory to the backup/restore session. Rather than duplicate an implementation of this method in every copy/pasted TestResolverSession, these were all converged into a single implementation (like they should have been in the first place)
+------------------------------------------------------------------------
+r1276 | pag | 2008-09-29 22:47:42 -0700 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/util/java/org/mulgara/util/IntFile.java
+   M /trunk/src/jar/util/java/org/mulgara/util/MappedIntFile.java
+
+Added LongMapper interface to IntFile, and created an in-memory implementation of the interface
+------------------------------------------------------------------------
+r1275 | pag | 2008-09-28 11:20:55 -0700 (Sun, 28 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/util/java/org/mulgara/util/MemLongMapper.java
+
+Trivial implementation of LongMapper
+------------------------------------------------------------------------
+r1274 | pag | 2008-09-28 11:19:03 -0700 (Sun, 28 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/util/java/org/mulgara/util/LongMapper.java
+
+Interface for mapping longs to longs
+------------------------------------------------------------------------
+r1273 | pag | 2008-09-26 16:37:24 -0700 (Fri, 26 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/TestResolverSession.java
+
+Updated this testing class to public
+------------------------------------------------------------------------
+r1272 | pag | 2008-09-26 16:35:59 -0700 (Fri, 26 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/resolver-spi/java/org/mulgara/resolver/spi/TestResolverSession.java (from /trunk/src/jar/resolver-xsd/java/org/mulgara/resolver/xsd/TestResolverSession.java:1254)
+
+An implementation of the ResolverSession interface, for testing
+------------------------------------------------------------------------
+r1271 | pag | 2008-09-25 12:14:28 -0700 (Thu, 25 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraOptionParser.java
+   M /trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraServer.java
+
+Added command line arguments for setting the RMI peer port
+------------------------------------------------------------------------
+r1270 | pag | 2008-09-25 12:14:02 -0700 (Thu, 25 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/util/java/org/mulgara/util/Rmi.java
+
+Added a mechanism for loading a default port from system properties
+------------------------------------------------------------------------
+r1269 | pag | 2008-09-24 11:47:03 -0700 (Wed, 24 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/query/java/org/mulgara/query/operation/DataInputTx.java
+   M /trunk/src/jar/query/java/org/mulgara/query/operation/DataOutputTx.java
+   M /trunk/src/jar/querylang/java/org/mulgara/itql/ItqlInterpreterBeanUnitTest.java
+   M /trunk/src/jar/resolver-distributed/java/org/mulgara/resolver/distributed/remote/RemotePagerImpl.java
+   M /trunk/src/jar/rules/java/org/mulgara/rules/RulesRefImpl.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/AnswerWrapperRemoteAnswer.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionFactoryImpl.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteXAResourceWrapperXAResource.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RmiServer.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/XAResourceWrapperRemoteXAResource.java
+   A /trunk/src/jar/util/java/org/mulgara/util/Rmi.java
+
+Changed RMI exports through UnicastRemoteObject to work through a new utility class instead. This class ignores the possibility of non-RMI transport, but that is OK as we don't expect to use this mechanism for anything but RMI anyway. The new org.mulgara.util.Rmi is now integrated, but configuration has not yet been set up to tell it to use any but the default ports.
+------------------------------------------------------------------------
+r1268 | pag | 2008-09-23 16:21:08 -0700 (Tue, 23 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/.classpath
+
+Updated reference to the icu4j library
+------------------------------------------------------------------------
+r1267 | pag | 2008-09-22 21:36:54 -0700 (Mon, 22 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/.classpath
+   M /trunk/build.properties
+   M /trunk/build.xml
+   M /trunk/common.xml
+   D /trunk/lib/icu4j.jar
+   A /trunk/lib/icu4j_3_4.jar
+   A /trunk/lib/iri-0.5.jar
+   D /trunk/lib/jena-2.1.jar
+   A /trunk/lib/jena-2.5.6.jar
+   M /trunk/src/jar/server-http/build.xml
+   A /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/AbstractSPGDateTime.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGDayImpl.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGDayUnitTest.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGMonthDayImpl.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGMonthDayUnitTest.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGMonthImpl.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGMonthUnitTest.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGYearImpl.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGYearMonthImpl.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGYearMonthUnitTest.java
+   M /trunk/src/jar/store-stringpool/java/org/mulgara/store/stringpool/xa/SPGYearUnitTest.java
+
+Updated the Jena libs (this will let us avoid Jena soon, and just keep ARP). Also found and fixed a series of bugs in the Gdate data types, where the lexical form could change depending on the entered timezone, and the timezone of the running system.
+------------------------------------------------------------------------
+r1266 | pag | 2008-09-22 21:32:14 -0700 (Mon, 22 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/MimeMultiNamedPart.java
+   M /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ProtocolServlet.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ServletDataSource.java
+   M /trunk/src/jar/querylang/java/org/mulgara/protocol/http/SparqlServlet.java
+
+Now allows RDF files to be uploaded with an HTTP PUT operation. TODO: RDF/XML files with a missing newline at the end will erroneously give an error.
+------------------------------------------------------------------------
+r1265 | pag | 2008-09-22 21:30:12 -0700 (Mon, 22 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/util/java/org/mulgara/util/Timezone.java
+
+Added methods to convert to java.util.TimeZone and to output as a string
+------------------------------------------------------------------------
+r1264 | pag | 2008-09-22 21:28:20 -0700 (Mon, 22 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/SetModelOperation.java
+
+More flexible testing on source and destination graph URIs when inserting data
+------------------------------------------------------------------------
+r1263 | pag | 2008-09-22 21:26:38 -0700 (Mon, 22 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraInternalTransaction.java
+
+Scaled back reporting to the debug level
+------------------------------------------------------------------------
+r1262 | pag | 2008-09-22 21:25:52 -0700 (Mon, 22 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/server-local/java/org/mulgara/server/local/LocalSessionFactoryUnitTest.java
+
+Removed an apparently unnecessary dependency on MetaTestGraph
+------------------------------------------------------------------------
+r1261 | pag | 2008-09-15 21:53:15 -0700 (Mon, 15 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/server/java/org/mulgara/server/HttpServices.java
+
+Added the TQL servlet, and updated servlet creation to just require the classname, description, and path where it is to be served from.
+------------------------------------------------------------------------
+r1260 | pag | 2008-09-15 21:52:09 -0700 (Mon, 15 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ProtocolServlet.java
+   M /trunk/src/jar/querylang/java/org/mulgara/protocol/http/SparqlServlet.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/TqlServlet.java
+
+Refactored the SPARQL servlet to an abstract class, and now SPARQL and TQL serlvets are simple extensions of this class. TQL is using SPARQL protocols for much of the return data, with the exception of XML query results, as this schema was already set.
+------------------------------------------------------------------------
+r1259 | ronald | 2008-09-09 02:45:25 -0700 (Tue, 09 Sep 2008) | 5 lines
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/ExternalTransactionUnitTest.java
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraExternalTransaction.java
+
+Added better exception handling for for errors from the internal XAResource's.
+This is now fairly close to the spec.
+
+Also added proper handling of XA_RDONLY return from prepare().
+
+------------------------------------------------------------------------
+r1258 | pag | 2008-09-08 23:07:51 -0700 (Mon, 08 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/StreamedSparqlJSONObject.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/StreamedSparqlXMLObject.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/BadRequestException.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/InternalErrorException.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ServiceUnavailableException.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ServletException.java
+   A /trunk/src/jar/querylang/java/org/mulgara/protocol/http/SparqlServlet.java
+   M /trunk/src/jar/server/java/org/mulgara/server/HttpServices.java
+
+Added a new servlet to execute SPARQL queries, and return the results in XML or JSON
+------------------------------------------------------------------------
+r1257 | pag | 2008-09-08 23:06:11 -0700 (Mon, 08 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/querylang/java/org/mulgara/sparql/SparqlInterpreter.java
+
+Added multiple default graphs
+------------------------------------------------------------------------
+r1256 | pag | 2008-09-08 23:02:54 -0700 (Mon, 08 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraServer.java
+
+Added the SessionFactoryProvider interface
+------------------------------------------------------------------------
+r1255 | pag | 2008-09-08 22:59:04 -0700 (Mon, 08 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/query/java/org/mulgara/server/SessionFactoryProvider.java
+
+An interface for getting an existing SessionFactoryFactory
+------------------------------------------------------------------------
+r1254 | alexhall | 2008-09-08 11:11:24 -0700 (Mon, 08 Sep 2008) | 7 lines
+Changed paths:
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/NamespaceMap.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/RDFXMLWriter.java
+   M /trunk/src/jar/query/java/org/mulgara/query/operation/Export.java
+   M /trunk/src/jar/query/java/org/mulgara/server/Session.java
+   M /trunk/src/jar/querylang/java/org/mulgara/itql/TqlInterpreter.java
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/DatabaseSession.java
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/ExportOperation.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSession.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/RemoteSessionWrapperSession.java
+   M /trunk/src/jar/server-rmi/java/org/mulgara/server/rmi/SessionWrapperRemoteSession.java
+
+Added the capability to include a set of user-supplied namespace definitions in an exported RDF/XML file.  This does not change the actual content of the exported RDF/XML, only its presentation.
+
+It is anticipated that this feature may be useful for users working with external tools (such as Protege) that use the RDF/XML namespace definitions to create human-readable prefixed URI's for display purposes.
+
+The ability to define namespace prefixes in the XML is exposed to the client in two ways:
+1. Programatically via the new setNamespacePrefixes method in the Export command.
+2. Through the TQL shell "alias" command - the TqlInterpreter adds any aliases that it knows about to the namespace definitions in the Export command.
+------------------------------------------------------------------------
+r1253 | eddie | 2008-09-08 02:19:40 -0700 (Mon, 08 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/build.xml
+
+removed reference to ${descriptor.jar} which was causing core-dist target to fail with "build.xml:1928: the archive doesn't exist". (do a "clean" first to reproduce the error).
+------------------------------------------------------------------------
+r1252 | pag | 2008-09-08 01:37:51 -0700 (Mon, 08 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/store-stringpool-xa11/java/org/mulgara/store/stringpool/xa11/DataStruct.java
+
+Was not guarding seek/reads on data.
+------------------------------------------------------------------------
+r1251 | pag | 2008-09-06 04:51:50 -0700 (Sat, 06 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/server/java/org/mulgara/server/EmbeddedMulgaraServer.java
+   A /trunk/src/jar/server/java/org/mulgara/server/ExceptionList.java
+   A /trunk/src/jar/server/java/org/mulgara/server/HttpServices.java
+   M /trunk/src/jar/server/java/org/mulgara/server/ServletMulgaraServer.java
+   M /trunk/src/war/descriptor/index.jsp
+
+Isolated Http loading into it's own classes
+------------------------------------------------------------------------
+r1250 | pag | 2008-09-06 04:50:30 -0700 (Sat, 06 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/src/jar/server/java/org/mulgara/server/ServiceListingServlet.java
+
+Created a servlet for displaying all loaded servlets
+------------------------------------------------------------------------
+r1249 | pag | 2008-09-06 04:46:25 -0700 (Sat, 06 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/util/java/org/mulgara/util/functional/Pair.java
+
+Added a method for easy addition to a Map
+------------------------------------------------------------------------
+r1248 | alexhall | 2008-09-05 23:36:22 -0700 (Fri, 05 Sep 2008) | 7 lines
+Changed paths:
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/RDFXMLContentHandler.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/AbstractWritableStatement.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/BlankNodeWritableStatement.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/LiteralWritableStatement.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/NamespaceMap.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/RDFXMLWriter.java
+   M /trunk/src/jar/content-rdfxml/java/org/mulgara/content/rdfxml/writer/URIReferenceWritableStatement.java
+
+Preparing the RDF/XML writer's namespace map to handle a user-defined set of initial prefix mappings.  Added a new constructor to NamespaceMap to pre-populate the mappings; this feature is not yet exposed to the client.
+
+This change also contains general house-keeping updates in content-rdfxml related to NamespaceMap which were not practical to separate into their own commit:
+1. Code formatting fixes.
+2. Javadoc corrections and updates.
+3. Replace references to GraphException with QueryException.  GraphException is a JRDF class which indicates an error in a JRDF operation; the RDF/XML writer is not a JRDF class and should not throw these exceptions.
+4. Exception handling: remove unnecessary "throws" clauses, and change private/protected methods to throw something more specific than Exception.
+------------------------------------------------------------------------
