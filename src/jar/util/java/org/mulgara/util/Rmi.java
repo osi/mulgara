@@ -38,14 +38,14 @@ public class Rmi extends UnicastRemoteObject {
   /** Generation UID */
   private static final long serialVersionUID = -8087526398171872888L;
 
-  public static final String CLIENT_PEER_PORT = "mulgara.rmi.peerPort";
+  public static final String CLIENT_OBJECT_PORT = "mulgara.rmi.objectPort";
 
   /** The default port used for exporting objects. */
   protected static int defaultPort = 0;
 
   // Check if a system property has been set for the default port
   static {
-    String val = System.getProperty(CLIENT_PEER_PORT);
+    String val = System.getProperty(CLIENT_OBJECT_PORT);
     if (val != null) {
       try {
         defaultPort = Integer.parseInt(val);

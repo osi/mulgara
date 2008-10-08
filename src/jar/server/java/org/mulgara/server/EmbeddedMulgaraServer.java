@@ -542,8 +542,8 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         }
 
         // set up the client peer port in RMI
-        Integer rmiClientPort = (Integer)parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_CLIENT_PORT);
-        if (rmiClientPort != null) Rmi.setDefaultPort(rmiClientPort);
+        Integer rmiObjectPort = (Integer)parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_OBJECT_PORT);
+        if (rmiObjectPort != null) Rmi.setDefaultPort(rmiObjectPort);
 
         // set the port on which the RMI registry will be created
         String rmiPortStr = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.RMI_PORT);
@@ -774,7 +774,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
     usage.append("-o, --httphost      the hostname for HTTP requests" + eol);
     usage.append("-p, --port          the port for HTTP requests" + eol);
     usage.append("-r, --rmiport       the RMI registry port" + eol);
-    usage.append("-t, --rmiclientport the RMI client peer port" + eol);
+    usage.append("-t, --rmiobjectport the RMI peer port for objects" + eol);
     usage.append("-s, --servername    the (RMI) name of the server" + eol);
     usage.append("-a, --path          the path server data will persist to, specifying " + eol +
         "                    '.' or 'temp' will use the current working directory " + eol +
