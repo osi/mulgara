@@ -387,7 +387,9 @@ public abstract class TuplesOperations {
       }
 
       // yes, there are extra variables
-      logger.debug("sorting on the common variables");
+      if (logger.isDebugEnabled()) {
+        logger.debug("sorting on the common variables: " + matchingVars);
+      }
       // re-sort the optional according to the matching variables
       // reorder the optional as necessary
       Tuples sortedOptional = reSort(optional, new ArrayList<Variable>(matchingVars));
@@ -913,7 +915,6 @@ public abstract class TuplesOperations {
         Variable var = variableList.get(varCol);
         // get the index of the variable in the tuples
         int ti = tuples.getColumnIndex(var);
-        if (ti == Tuples.UNBOUND) throw new IllegalArgumentException("Variables to sort by not found in Tuples");
         // check that it is within the prefix columns. If not, then sorting is needed
         if (ti >= varMap.length) sortNeeded = true;
         // map the tuples index of the variable to the column index

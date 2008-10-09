@@ -109,15 +109,11 @@ public interface Tuples extends Cursor, Cloneable {
   public long getRowCount() throws TuplesException;
 
   /**
-   * Accessor for the binding of a given variable within the current product
-   * term (row).
+   * Accessor for the column index of a given variable in this Tuple.
    *
-   * @param variable the variable binding to query
-   * @return the bound value, or {@link Tuples#UNBOUND} if there is no binding
-   *      within the current product term (row)
-   * @throws TuplesException if there is no current row (before first or after
-   *      last) or if <var>variable</var> isn't an element of {@link
-   *      #getVariables}
+   * @param variable The column variable to query
+   * @return The index of the named column.  Columns are indexed starting at 0.
+   * @throws TuplesException if <var>variable</var> isn't an element of {@link #getVariables()}
    */
   public int getColumnIndex(Variable variable) throws TuplesException;
 

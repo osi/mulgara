@@ -28,13 +28,14 @@
 package org.mulgara.store.tuples;
 
 // JUnit
-import junit.framework.*; // JUnit
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-// Log4J
 import org.apache.log4j.Logger;
-
-// Mulgara
 import org.mulgara.query.Variable;
+import static org.mulgara.query.filter.value.Bool.TRUE;
+import static org.mulgara.store.tuples.Tuples.UNBOUND;
 
 /**
  * Test case for {@link TuplesOperationsUnitTest}.
@@ -82,6 +83,7 @@ public class TuplesOperationsUnitTest extends TestCase {
     TestSuite suite = new TestSuite();
 
     suite.addTest(new TuplesOperationsUnitTest("testReorderedAppend"));
+    suite.addTest(new TuplesOperationsUnitTest("testOptionalJoin"));
 
     return suite;
   }
@@ -142,5 +144,36 @@ public class TuplesOperationsUnitTest extends TestCase {
     assertFalse(join.next());
 
     TuplesTestingUtil.closeTuples(new Tuples[] { join });
+  }
+  
+  public void testOptionalJoin() throws Exception {
+
+    LiteralTuples standard = new LiteralTuples(new String[] {"x", "y"}, true);
+    LiteralTuples optional = new LiteralTuples(new String[] {"y", "z"}, true);
+    
+    standard.appendTuple(new long[] { 1, 2 });
+    standard.appendTuple(new long[] { 1, 3 });
+    standard.appendTuple(new long[] { 2, 3 });
+    standard.appendTuple(new long[] { 4, 1 });
+    standard.appendTuple(new long[] { 4, 5 });
+    
+    optional.appendTuple(new long[] { 1, 6 });
+    optional.appendTuple(new long[] { 1, 7 });
+    optional.appendTuple(new long[] { 3, 8 });
+    
+    Tuples optionalJoin = TuplesOperations.optionalJoin(standard, optional, TRUE, null);
+    
+    optionalJoin.beforeFirst();
+    
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 1, 2, UNBOUND });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 1, 3, 8 });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 2, 3, 8 });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 4, 1, 6 });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 4, 1, 7 });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 4, 5, UNBOUND });
+
+    assertFalse(optionalJoin.next());
+
+    TuplesTestingUtil.closeTuples(new Tuples[] { optionalJoin });
   }
 }
