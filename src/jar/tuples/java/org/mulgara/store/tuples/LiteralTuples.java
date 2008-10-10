@@ -70,8 +70,18 @@ public class LiteralTuples extends AbstractTuples {
   private boolean[] columnContainsUnbound;
   private long[] prefix;
   private boolean sorted;
+  private boolean strictClose = false;
+  private boolean closed = false;
 
-  public LiteralTuples(String[] variableNames, boolean sorted) {
+  /**
+   * Creates an optionally sorted LiteralTuples instance, with an option for strict handling of
+   * the close operation.
+   * @param variableNames The variables for this tuples.
+   * @param sorted <code>true</code> if the rows in this tuples will be sorted.
+   * @param strictClose If <code>true</code>, an IllegalStateException will be thrown if the
+   *   tuples is closed more than once.
+   */
+  public LiteralTuples(String[] variableNames, boolean sorted, boolean strictClose) {
     List<Variable> vars = new ArrayList<Variable>();
     for (int i = 0; i < variableNames.length; i++) {
       Variable v = new Variable(variableNames[i]);
@@ -79,6 +89,17 @@ public class LiteralTuples extends AbstractTuples {
       vars.add(v);
     }
     init((Variable[]) vars.toArray(new Variable[0]), sorted);
+    this.strictClose = strictClose;
+  }
+  
+  /**
+   * Creates an optionally sorted LiteralTuples instance, which will not throw an exception
+   * if closed multiple times.  Equivalent to calling <code>LiteralTuples(variableNames, sorted, false)</code>.
+   * @param variableNames The variables for this tuples.
+   * @param sorted <code>true</code> if the rows in the tuples will be sorted.
+   */
+  public LiteralTuples(String[] variableNames, boolean sorted) {
+    this(variableNames, sorted, false);
   }
 
   /**
@@ -162,8 +183,8 @@ public class LiteralTuples extends AbstractTuples {
     return true;
   }
 
-  public List getOperands() {
-    return new ArrayList(0);
+  public List<Tuples> getOperands() {
+    return new ArrayList<Tuples>(0);
   }
 
   public RowComparator getComparator() {
@@ -219,7 +240,10 @@ public class LiteralTuples extends AbstractTuples {
   }
 
   public void close() throws TuplesException {
-    // Do nothing.
+    if (closed && strictClose) {
+      throw new IllegalStateException("Attempt to close a LiteralTuples twice.");
+    }
+    closed = true;
   }
 
   public boolean hasNoDuplicates() throws TuplesException {
