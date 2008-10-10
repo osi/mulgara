@@ -398,7 +398,7 @@ public abstract class TuplesOperations {
       try {
         return new LeftJoin(standard, sortedOptional, filter, context);
       } finally {
-        if (sortedOptional != optional) sortedOptional.close();
+        sortedOptional.close();
       }
 
     } catch (RuntimeException re) {
@@ -886,9 +886,10 @@ public abstract class TuplesOperations {
   }
 
   /**
-   * Sort into an order given by the list of variables
+   * Sort into an order given by the list of variables.  The parameter is not closed, and this
+   * method will create and return a new tuples.
    *
-   * @param tuples The parameter to sort. This will be closed if a new tuples is created.
+   * @param tuples The parameter to sort. This will be not be closed.
    * @param variableList the list of {@link Variable}s to sort by
    * @return A {@link Tuples} that meets the sort criteria. This may be the original tuples parameter.
    * @throws TuplesException if the sort operation fails
@@ -923,7 +924,7 @@ public abstract class TuplesOperations {
 
       if (!sortNeeded) {
         if (logger.isDebugEnabled()) logger.debug("No sort needed on tuples.");
-        return tuples;
+        return (Tuples)tuples.clone();
       }
       
       if (logger.isDebugEnabled()) logger.debug("Sorting on " + variableList);
@@ -936,18 +937,15 @@ public abstract class TuplesOperations {
       assert fullVarList.containsAll(Arrays.asList(tuples.getVariables()));
 
       // Reorder the columns - the projection here does not remove any columns
-      Tuples oldTuples = tuples;
-      tuples = new UnorderedProjection(tuples, fullVarList);
-      assert tuples != oldTuples;
-      oldTuples.close();
+      Tuples projectedTuples = new UnorderedProjection(tuples, fullVarList);
+      assert projectedTuples != tuples;
 
       // Perform the actual sort
-      oldTuples = tuples;
-      tuples = tuplesFactory.newTuples(tuples);
-      assert tuples != oldTuples;
-      oldTuples.close();
+      Tuples sortedTuples = tuplesFactory.newTuples(projectedTuples);
+      assert sortedTuples != projectedTuples;
+      projectedTuples.close();
 
-      return tuples;
+      return sortedTuples;
     } catch (TuplesException e) {
       throw new TuplesException("Couldn't perform projection", e);
     }

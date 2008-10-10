@@ -84,6 +84,7 @@ public class TuplesOperationsUnitTest extends TestCase {
 
     suite.addTest(new TuplesOperationsUnitTest("testReorderedAppend"));
     suite.addTest(new TuplesOperationsUnitTest("testOptionalJoin"));
+    suite.addTest(new TuplesOperationsUnitTest("testOptionalJoinWithReSort"));
 
     return suite;
   }
@@ -148,8 +149,8 @@ public class TuplesOperationsUnitTest extends TestCase {
   
   public void testOptionalJoin() throws Exception {
 
-    LiteralTuples standard = new LiteralTuples(new String[] {"x", "y"}, true);
-    LiteralTuples optional = new LiteralTuples(new String[] {"y", "z"}, true);
+    LiteralTuples standard = new LiteralTuples(new String[] {"x", "y"}, true, true);
+    LiteralTuples optional = new LiteralTuples(new String[] {"y", "z"}, true, true);
     
     standard.appendTuple(new long[] { 1, 2 });
     standard.appendTuple(new long[] { 1, 3 });
@@ -174,6 +175,35 @@ public class TuplesOperationsUnitTest extends TestCase {
 
     assertFalse(optionalJoin.next());
 
-    TuplesTestingUtil.closeTuples(new Tuples[] { optionalJoin });
+    // TuplesOperations.optionalJoin doesn't close its parameters, so close them here.
+    TuplesTestingUtil.closeTuples(new Tuples[] { optionalJoin, standard, optional });
+  }
+  
+  public void testOptionalJoinWithReSort() throws Exception {
+    LiteralTuples standard = new LiteralTuples(new String[] {"x"}, true, true);
+    LiteralTuples optional = new LiteralTuples(new String[] {"y", "x"}, true, true);
+    
+    standard.appendTuple(new long[] { 1 });
+    standard.appendTuple(new long[] { 2 });
+    standard.appendTuple(new long[] { 3 });
+    
+    optional.appendTuple(new long[] { 1, 2 });
+    optional.appendTuple(new long[] { 1, 4 });
+    optional.appendTuple(new long[] { 3, 2 });
+    optional.appendTuple(new long[] { 4, 3 });
+    
+    Tuples optionalJoin = TuplesOperations.optionalJoin(standard, optional, TRUE, null);
+    
+    optionalJoin.beforeFirst();
+    
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 1, UNBOUND });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 2, 1 });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 2, 3 });
+    TuplesTestingUtil.testTuplesRow(optionalJoin, new long[] { 3, 4 });
+
+    assertFalse(optionalJoin.next());
+
+    // TuplesOperations.optionalJoin doesn't close its parameters, so close them here.
+    TuplesTestingUtil.closeTuples(new Tuples[] { optionalJoin, standard, optional });
   }
 }
