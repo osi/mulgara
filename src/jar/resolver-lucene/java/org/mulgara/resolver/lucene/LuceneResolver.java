@@ -359,6 +359,7 @@ public class LuceneResolver implements Resolver {
       Tuples tmpTuples = new FullTextStringIndexTuples(stringIndex, constraint, resolverSession);
       Tuples tuples = TuplesOperations.sort(tmpTuples);
       tmpTuples.close();
+      stringIndex.close();
 
       return new TuplesWrapperResolution(tuples, constraint);
     } catch (TuplesException te) {
