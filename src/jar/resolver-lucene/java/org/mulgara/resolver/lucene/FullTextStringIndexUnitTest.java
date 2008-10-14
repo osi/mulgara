@@ -78,7 +78,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
   private final static Logger logger = Logger.getLogger(FullTextStringIndexUnitTest.class);
 
   /** Hold a list of test data */
-  private ArrayList theStrings = new ArrayList();
+  private List<String> theStrings = new ArrayList<String>();
 
   /**
    * Create the testing class
@@ -205,9 +205,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
     try {
       // Ensure that reverse search is enabled.
-      int stringsAdded = 0;
-      int stringsFound = 0;
-
       String document = "http://mulgara.org/mulgara/document#";
       String has = "http://mulgara.org/mulgara/document#has";
 
@@ -218,107 +215,77 @@ public class FullTextStringIndexUnitTest extends TestCase {
       index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
 
       // Add strings to the index
-      ListIterator i = theStrings.listIterator();
-      while (i.hasNext()) {
-        String literal = (String) i.next();
+      for (String literal : theStrings) {
         index.add(document, has, literal);
-        stringsAdded++;
       }
 
       // Find the strings from the index with both subject & predicate
-      i = theStrings.listIterator();
-      while (i.hasNext()) {
-        String literal = (String) i.next();
-
+      for (String literal : theStrings) {
         Hits hits = index.find(document, has, literal);
-        if (hits.length() == 0) {
-          this.fail("failed to find '" + literal + "'");
-        }
+        assertTrue("failed to find '" + literal + "'", hits.length() != 0);
       }
 
       // Find the strings from the index with only subject
-      i = theStrings.listIterator();
-      while (i.hasNext()) {
-        String literal = (String) i.next();
+      for (String literal : theStrings) {
         Hits hits = index.find(document, null, literal);
-
-        if (hits.length() == 0) {
-          this.assertTrue("failed to find '" + literal + "'", false);
-        }
+        assertTrue("failed to find '" + literal + "'", hits.length() != 0);
       }
 
       // Find the strings from the index with only predicate
-      i = theStrings.listIterator();
-      while (i.hasNext()) {
-        String literal = (String) i.next();
+      for (String literal : theStrings) {
         Hits hits = index.find(null, has, literal);
-
-        if (hits.length() == 0) {
-          this.assertTrue("failed to find '" + literal + "'", false);
-        }
+        assertTrue("failed to find '" + literal + "'", hits.length() != 0);
       }
 
       Hits result = index.find(null, null, "\"holiday\"");
 
-      this.assertTrue("Stemming match search failed - should not found " +
-          "stemmed word(" + result.length() + ")", (result.length() == 0));
+      assertEquals("Stemming match search failed", 0, result.length());
 
-      this.assertTrue("Should not be able to delete fulltext " +
-          "literal due to incorrect value",
-          index.remove(document, has, "holiday") == false);
+      assertFalse("Should not be able to delete fulltext literal due to incorrect value",
+                  index.remove(document, has, "holiday"));
 
       index.remove(document, has, "one two");
       index.remove(document, has, "one");
       index.remove(document, has, "one two three");
 
-      this.assertTrue("Presumed deleted but found 'one two'",
-          index.find(document, has, "one two").length() == 0);
-      this.assertTrue("Presumed deleted but found 'one'",
-          index.find(document, has, "one").length() == 0);
-      this.assertTrue("Presumed deleted but found 'one two three'",
-          index.find(document, has, "one two three").length() == 0);
+      assertEquals("Presumed deleted but found 'one two'", 0,
+                   index.find(document, has, "one two").length());
+      assertEquals("Presumed deleted but found 'one'", 0,
+                   index.find(document, has, "one").length());
+      assertEquals("Presumed deleted but found 'one two three'", 0,
+                   index.find(document, has, "one two three").length());
 
       // don't add empty literals
-      this.assertTrue("Adding an empty literal string should fail",
-            !index.add("subject","predicate", ""));
-      this.assertTrue("Adding an empty literal string should fail",
-            !index.add("subject","predicate", "  "));
+      assertFalse("Adding an empty literal string should fail",
+                  index.add("subject","predicate", ""));
+      assertFalse("Adding an empty literal string should fail",
+                  index.add("subject","predicate", "  "));
 
 
-      this.assertTrue(
-          "Adding a string containing slashes to the fulltext string pool",
-          index.add("subject", "predicate", "this/is/a/slash/test"));
+      assertTrue("Adding a string containing slashes to the fulltext string pool",
+                 index.add("subject", "predicate", "this/is/a/slash/test"));
 
       long returned = index.find(document, has, "?ommittee").length();
-      this.assertTrue("Reverse lookup was expecting 4 document returned found : " +
-          returned, returned == 4);
+      assertEquals("Reverse lookup was expecting 4 documents returned", 4, returned);
 
       returned = index.find(document, has, "*iv").length();
-      this.assertTrue("Reverse lookup was expecting 3 document returned found : " +
-          returned, returned == 3);
+      assertEquals("Reverse lookup was expecting 3 documents returned", 3, returned);
 
       returned = index.find(document, has, "study *roup").length();
-      this.assertTrue(
-          "Reverse lookup was expecting 26 document returned found : " + returned,
-          returned == 26);
+      assertEquals("Reverse lookup was expecting 26 documents returned", 26, returned);
 
       returned = index.find(document, has, "+study +*roup").length();
-      this.assertTrue(
-          "Reverse lookup was expecting 10 document returned found : " + returned,
-          returned == 10);
+      assertEquals("Reverse lookup was expecting 10 documents returned", 10, returned);
 
       returned = index.find(document, has, "-study +*roup").length();
-      this.assertTrue(
-          "Reverse lookup was expecting 11 document returned found : " + returned,
-          returned == 11);
+      assertEquals("Reverse lookup was expecting 11 documents returned", 11, returned);
 
       returned = index.find(document, has, "+*hrombosis").length();
-      this.assertTrue("Reverse lookup was expecting 1 document returned found : " +
-          returned, returned == 1);
+      assertEquals("Reverse lookup was expecting 1 document returned", 1, returned);
     } finally {
       if (index != null) {
         index.close();
-        this.assertTrue("Unable to remove all index files", index.removeAll());
+        assertTrue("Unable to remove all index files", index.removeAll());
       }
     }
   }
@@ -330,20 +297,13 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws Exception Test fails
    */
   public void testFullTextStringPoolwithFiles() throws Exception {
-    /*
-    File indexDir = new File(indexDirectory);
-    if (!indexDir.exists() || indexDir.canRead()) {
-      throw new Exception("Can't access: " + indexDirectory);
-    }
-    */
-
     // create a new index direcotry
     FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
 
     try {
       // make sure the index directory is empty
       index.close();
-      this.assertTrue("Unable to remove all index files", index.removeAll());
+      assertTrue("Unable to remove all index files", index.removeAll());
 
       // create a new index
       index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
@@ -357,16 +317,15 @@ public class FullTextStringIndexUnitTest extends TestCase {
       int docsAdded = 0;
 
       // Loop over the text documents locatd in the text directory
-      for (int fileNo = 0; fileNo < textDocuments.length; fileNo++) {
-        if (textDocuments[fileNo].isFile()) {
+      for (File doc : textDocuments) {
+        if (doc.isFile()) {
           // open a reader to the text file.
-          Reader reader = new InputStreamReader(new FileInputStream(textDocuments[fileNo]));
+          Reader reader = new InputStreamReader(new FileInputStream(doc));
 
           // Add the text document to the index
-          if (index.add(textDocuments[fileNo].toURI().toString(),
-              "http://mulgara.org/mulgara/Document#Content",
-              textDocuments[fileNo].toURI().toString(), reader)) {
-            logger.debug("Indexed text document " + textDocuments[fileNo].toString());
+          if (index.add(doc.toURI().toString(), "http://mulgara.org/mulgara/Document#Content",
+                        doc.toURI().toString(), reader)) {
+            logger.debug("Indexed text document " + doc.toString());
             docsAdded++;
           }
 
@@ -378,15 +337,14 @@ public class FullTextStringIndexUnitTest extends TestCase {
       logger.debug("Text documents indexed :" + docsAdded);
 
       // check if all text documents were indexed
-      this.assertTrue("Expected 114 text documents to be index", docsAdded == 114);
+      assertEquals("Expected 114 text documents to be indexed", 114, docsAdded);
 
       // Perform a search for 'supernatural' in the
       // document content predicate
       Hits hits = index.find(null, "http://mulgara.org/mulgara/Document#Content", "supernatural");
 
       // check if all text documents were indexed
-      this.assertTrue("Expected 6 hits with the word 'supernatural', " +
-          "only found " + hits.length(), hits.length() == 6);
+      assertEquals("Expected 6 hits with the word 'supernatural'", 6, hits.length());
 
       // loop through the results and remove the documents containing
       // the word 'supernatural'
@@ -404,22 +362,21 @@ public class FullTextStringIndexUnitTest extends TestCase {
       }
 
       // check the document were removed
-      this.assertTrue("Expected 6 documents to be removed'", docsRemoved == 6);
+      assertEquals("Expected 6 documents to be removed'", 6, docsRemoved);
 
       // Perform a search for 'supernatural' in the
       // document content predicate
       hits = index.find(null, "http://mulgara.org/mulgara/Document#Content", "supernatural");
 
       // check if all text documents are not present.
-      this.assertTrue("Expected 0 hits with the word 'supernatural', " +
-          "only found " + hits.length(), hits.length() == 0);
+      assertEquals("Expected 0 hits with the word 'supernatural'", 0, hits.length());
 
       logger.debug("Found supernatural in " + hits.length() + " documents");
     } finally {
       // close the fulltextstringpool
       if (index != null) {
         index.close();
-        this.assertTrue("Unable to remove all index files", index.removeAll());
+        assertTrue("Unable to remove all index files", index.removeAll());
       }
     }
   }
