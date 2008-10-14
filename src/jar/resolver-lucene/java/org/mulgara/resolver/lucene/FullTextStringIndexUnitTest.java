@@ -30,6 +30,7 @@ package org.mulgara.resolver.lucene;
 // Java 2 standard packages
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -103,7 +104,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
     TestSuite suite = new TestSuite();
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPool"));
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolwithFiles"));
-    suite.addTest(new FullTextStringIndexUnitTest("testWithoutClosing"));
 
     return suite;
   }
@@ -206,7 +206,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws Exception Test fails
    */
   public void testFullTextStringPool() throws Exception {
-    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
+    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
 
     try {
       // Ensure that reverse search is enabled.
@@ -217,12 +217,15 @@ public class FullTextStringIndexUnitTest extends TestCase {
       index.removeAllIndexes();
 
       //re-create the index
-      index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
+      index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
 
       // Add strings to the index
       for (String literal : theStrings) {
         index.add(document, has, literal);
       }
+
+      index.commit();
+      index.openReadIndex();
 
       // Find the strings from the index with both subject & predicate
       for (String literal : theStrings) {
@@ -255,6 +258,9 @@ public class FullTextStringIndexUnitTest extends TestCase {
       index.remove(document, has, "one");
       index.remove(document, has, "one two three");
 
+      index.commit();
+      index.openReadIndex();
+
       assertEquals("Presumed deleted but found 'one two'", 0,
                    index.find(document, has, "one two").length());
       assertEquals("Presumed deleted but found 'one'", 0,
@@ -268,9 +274,11 @@ public class FullTextStringIndexUnitTest extends TestCase {
       assertFalse("Adding an empty literal string should fail",
                   index.add("subject","predicate", "  "));
 
-
       assertTrue("Adding a string containing slashes to the fulltext string pool",
                  index.add("subject", "predicate", "this/is/a/slash/test"));
+
+      index.commit();
+      index.openReadIndex();
 
       long returned = index.find(document, has, "?ommittee").length();
       assertEquals("Reverse lookup was expecting 4 documents returned", 4, returned);
@@ -292,6 +300,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // test removing all documents
       index.removeAll();
+      index.commit();
+      index.openReadIndex();
 
       returned = index.find(document, has, "European").length();
       assertEquals("Got unexpected documents after removeAll:", 0, returned);
@@ -314,7 +324,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
    */
   public void testFullTextStringPoolwithFiles() throws Exception {
     // create a new index direcotry
-    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
+    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
 
     try {
       // make sure the index directory is empty
@@ -322,12 +332,16 @@ public class FullTextStringIndexUnitTest extends TestCase {
       assertTrue("Unable to remove all index files", index.removeAllIndexes());
 
       // create a new index
-      index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
+      index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
 
       logger.debug("Obtaining text text documents from " + textDirectory);
 
       File directory = new File(textDirectory);
-      File[] textDocuments = directory.listFiles();
+      File[] textDocuments = directory.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".txt");
+        }
+      });
 
       // keep a track of the number of documents added.
       int docsAdded = 0;
@@ -355,6 +369,10 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // check if all text documents were indexed
       assertEquals("Expected 114 text documents to be indexed", 114, docsAdded);
 
+      // commit the new docs
+      index.commit();
+      index.openReadIndex();
+
       // Perform a search for 'supernatural' in the
       // document content predicate
       FullTextStringIndex.Hits hits =
@@ -381,6 +399,10 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // check the document were removed
       assertEquals("Expected 6 documents to be removed'", 6, docsRemoved);
 
+      // commit the removal
+      index.commit();
+      index.openReadIndex();
+
       // Perform a search for 'supernatural' in the
       // document content predicate
       hits = index.find(null, "http://mulgara.org/mulgara/Document#Content", "supernatural");
@@ -396,24 +418,5 @@ public class FullTextStringIndexUnitTest extends TestCase {
         assertTrue("Unable to remove all index files", index.removeAllIndexes());
       }
     }
-  }
-
-  /**
-   * Test creating two text indexes.
-   *
-   * @throws Exception Test fails
-   */
-  public void testWithoutClosing() throws Exception {
-    FullTextStringIndex index, index2, index3, index4;
-
-    index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
-    index2 = new FullTextStringIndex(indexDirectory2, "fulltextsp2", true);
-    index3 = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
-    index4 = new FullTextStringIndex(indexDirectory2, "fulltextsp2", true);
-
-    index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
-    index2 = new FullTextStringIndex(indexDirectory2, "fulltextsp2", true);
-    index3 = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
-    index4 = new FullTextStringIndex(indexDirectory2, "fulltextsp2", true);
   }
 }

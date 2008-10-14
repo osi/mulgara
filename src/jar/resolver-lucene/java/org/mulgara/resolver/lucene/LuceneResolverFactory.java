@@ -162,7 +162,7 @@ public class LuceneResolverFactory implements ResolverFactory {
       throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating Lucene resolver");
     return canWrite
-      ? new LuceneResolver(modelTypeURI, resolverSession, directory)
-      : new ReadOnlyLuceneResolver(modelTypeURI, resolverSession, directory);
+      ? new LuceneResolver(modelTypeURI, resolverSession, directory, this, true)
+      : new ReadOnlyLuceneResolver(modelTypeURI, resolverSession, directory, this);
   }
 }

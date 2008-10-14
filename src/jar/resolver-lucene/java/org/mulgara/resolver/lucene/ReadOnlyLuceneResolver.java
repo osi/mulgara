@@ -70,11 +70,13 @@ public class ReadOnlyLuceneResolver extends LuceneResolver {
    * @param modelTypeURI     the URI of the lucene model type
    * @param resolverSession  the session this resolver is associated with
    * @param directory        the directory to use for the lucene indexes
+   * @param resolverFactory  the resolver-factory that created us
    * @throws IllegalArgumentException  if <var>directory</var> is <code>null</code>
    */
-  ReadOnlyLuceneResolver(URI modelTypeURI, ResolverSession resolverSession, String directory)
+  ReadOnlyLuceneResolver(URI modelTypeURI, ResolverSession resolverSession, String directory,
+                         ResolverFactory resolverFactory)
       throws ResolverFactoryException {
-    super(modelTypeURI, resolverSession, directory);
+    super(modelTypeURI, resolverSession, directory, resolverFactory, false);
   }
 
   //

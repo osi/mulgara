@@ -37,6 +37,9 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URLConnection;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.transaction.xa.XAResource;
@@ -57,15 +60,17 @@ import org.mulgara.query.LocalNode;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.resolver.spi.DummyXAResource;
+import org.mulgara.resolver.spi.AbstractXAResource;
+import org.mulgara.resolver.spi.AbstractXAResource.RMInfo;
+import org.mulgara.resolver.spi.AbstractXAResource.TxInfo;
 import org.mulgara.resolver.spi.EmptyResolution;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.Resolver;
-import org.mulgara.resolver.spi.ResolverSession;
-import org.mulgara.resolver.spi.ResolverFactoryException;
+import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.TuplesWrapperResolution;
 import org.mulgara.store.tuples.Tuples;
@@ -107,6 +112,12 @@ public class LuceneResolver implements Resolver {
 
   protected final ResolverSession resolverSession;
 
+  protected final boolean forWrites;
+
+  protected final XAResource xares;
+
+  protected final Map<Long, FullTextStringIndex> indexes = new HashMap<Long, FullTextStringIndex>();
+
   //
   // Constructors
   //
@@ -117,9 +128,12 @@ public class LuceneResolver implements Resolver {
    * @param modelTypeURI     the URI of the lucene model type
    * @param resolverSession  the session this resolver is associated with
    * @param directory        the directory to use for the lucene indexes
+   * @param resolverFactory  the resolver-factory that created us
+   * @param forWrites        whether we may be getting writes
    * @throws IllegalArgumentException  if <var>directory</var> is <code>null</code>
    */
-  LuceneResolver(URI modelTypeURI, ResolverSession resolverSession, String directory) {
+  LuceneResolver(URI modelTypeURI, ResolverSession resolverSession, String directory,
+                 ResolverFactory resolverFactory, boolean forWrites) {
     if (directory == null) {
       throw new IllegalArgumentException("Null directory in LuceneResolver");
     }
@@ -128,6 +142,8 @@ public class LuceneResolver implements Resolver {
     this.modelTypeURI = modelTypeURI;
     this.directory = directory;
     this.resolverSession = resolverSession;
+    this.forWrites = forWrites;
+    this.xares = new LuceneXAResource(10, resolverFactory, indexes.values());
   }
 
   //
@@ -150,13 +166,8 @@ public class LuceneResolver implements Resolver {
     }
   }
 
-  /**
-   * @return a {@link DummyXAResource} with a 10 second transaction timeout
-   */
   public XAResource getXAResource() {
-    return new DummyXAResource(
-        10 // seconds before transaction timeout
-        );
+    return xares;
   }
 
   /**
@@ -169,7 +180,7 @@ public class LuceneResolver implements Resolver {
     }
 
     try {
-      FullTextStringIndex stringIndex = openFullTextStringIndex(model);
+      FullTextStringIndex stringIndex = getFullTextStringIndex(model);
 
       statements.beforeFirst();
       while (statements.next()) {
@@ -311,10 +322,6 @@ public class LuceneResolver implements Resolver {
           }
         }
       }
-
-      // Flush the index
-      stringIndex.optimize();
-      stringIndex.close();
     } catch (TuplesException et) {
       throw new ResolverException("Error fetching statements", et);
     } catch (GlobalizeException eg) {
@@ -333,10 +340,7 @@ public class LuceneResolver implements Resolver {
     }
 
     try {
-      FullTextStringIndex stringIndex = openFullTextStringIndex(model);
-      stringIndex.removeAll();
-      stringIndex.optimize();
-      stringIndex.close();
+      getFullTextStringIndex(model).removeAll();
     } catch (FullTextStringIndexException ef) {
       throw new ResolverException("Query failed against string index", ef);
     }
@@ -362,11 +366,10 @@ public class LuceneResolver implements Resolver {
     }
 
     try {
-      FullTextStringIndex stringIndex = openFullTextStringIndex(((LocalNode)modelElement).getValue());
+      FullTextStringIndex stringIndex = getFullTextStringIndex(((LocalNode)modelElement).getValue());
       Tuples tmpTuples = new FullTextStringIndexTuples(stringIndex, constraint, resolverSession);
       Tuples tuples = TuplesOperations.sort(tmpTuples);
       tmpTuples.close();
-      stringIndex.close();
 
       return new TuplesWrapperResolution(tuples, constraint);
     } catch (TuplesException te) {
@@ -376,9 +379,111 @@ public class LuceneResolver implements Resolver {
     }
   }
 
-  private FullTextStringIndex openFullTextStringIndex(long model) throws FullTextStringIndexException {
-    return new FullTextStringIndex(new File(directory, Long.toString(model)).toString(), "gn"+model );
+  private FullTextStringIndex getFullTextStringIndex(long model) throws FullTextStringIndexException {
+    FullTextStringIndex index = indexes.get(model);
+    if (index == null) {
+      index = new FullTextStringIndex(new File(directory, Long.toString(model)).toString(), "gn" + model, forWrites);
+      indexes.put(model, index);
+    }
+    return index;
   }
 
-  public void abort() {}
+  public void abort() {
+    try {
+      closeIndexes(indexes.values(), false);
+    } catch (Exception e) {
+      logger.error("Error closing fulltext index", e);
+    }
+  }
+
+  private static void closeIndexes(Collection<FullTextStringIndex> indexes, boolean commit)
+      throws Exception {
+    Exception exc = null;
+
+    for (FullTextStringIndex index : indexes) {
+      try {
+        if (commit) {
+          index.optimize();
+          index.commit();
+        } else {
+          index.rollback();
+        }
+      } catch (Exception e) {
+        if (exc == null)
+          exc = e;
+        else
+          logger.error("Error rolling back fulltext index", e);
+      } finally {
+        try {
+          index.close();
+        } catch (Exception e) {
+          if (exc == null)
+            exc = e;
+          else
+            logger.error("Error closing fulltext index", e);
+        }
+      }
+    }
+
+    if (exc != null)
+      throw exc;
+  }
+
+
+  /**
+   * An XAResource to manage the lucene indexes.
+   */
+  private static class LuceneXAResource
+      extends AbstractXAResource<RMInfo<LuceneXAResource.LuceneTxInfo>,LuceneXAResource.LuceneTxInfo> {
+    /**
+     * Construct a {@link LuceneXAResource} with a specified transaction timeout.
+     *
+     * @param transactionTimeout transaction timeout period, in seconds
+     * @param resolverFactory    the resolver-factory we belong to
+     * @param indexes            the list of lucene indexes
+     */
+    public LuceneXAResource(int transactionTimeout, ResolverFactory resolverFactory, Collection<FullTextStringIndex> indexes) {
+      super(transactionTimeout, resolverFactory, new LuceneTxInfo(indexes));
+    }
+
+    protected RMInfo<LuceneTxInfo> newResourceManager() {
+      return new RMInfo<LuceneTxInfo>();
+    }
+
+    //
+    // Methods implementing XAResource
+    //
+
+    protected void doStart(LuceneTxInfo tx, int flags, boolean isNew) {
+    }
+
+    protected void doEnd(LuceneTxInfo tx, int flags) {
+    }
+
+    protected int doPrepare(LuceneTxInfo tx) throws Exception {
+      for (FullTextStringIndex index : tx.indexes)
+        index.prepare();
+      return XA_OK;
+    }
+
+    protected void doCommit(LuceneTxInfo tx) throws Exception {
+      closeIndexes(tx.indexes, true);
+    }
+
+    protected void doRollback(LuceneTxInfo tx) throws Exception {
+      closeIndexes(tx.indexes, false);
+    }
+
+    protected void doForget(LuceneTxInfo tx) {
+    }
+
+
+    static class LuceneTxInfo extends TxInfo {
+      public Collection<FullTextStringIndex> indexes;
+
+      public LuceneTxInfo(Collection<FullTextStringIndex> indexes) {
+        this.indexes = indexes;
+      }
+    }
+  }
 }

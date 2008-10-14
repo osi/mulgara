@@ -127,12 +127,6 @@ public class FullTextStringIndex {
   /** Analyzer used for writing and reading */
   private Analyzer analyzer = getAnalyzer();
 
-  /**
-   * Locking object to stop multiple threads performing inserts, deletes and
-   * optimizations are the same instance.
-   */
-  private IndexLock indexLock = new IndexLock();
-
   private String name;
 
   /**
@@ -144,12 +138,12 @@ public class FullTextStringIndex {
    * @param newName 
    * @throws FullTextStringIndexException Failure to initialize write index
    */
-  public FullTextStringIndex(String directory, String newName)
+  public FullTextStringIndex(String directory, String newName, boolean forWrites)
       throws FullTextStringIndexException {
     name = newName;
     enableReverseTextIndex = System.getProperty(
         "mulgara.textindex.reverse.enabled", "false").equalsIgnoreCase("true");
-    init(directory);
+    init(directory, forWrites);
   }
 
   /**
@@ -162,37 +156,33 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException Failure to initialize write index
    */
   public FullTextStringIndex(String directory, String newName,
-      boolean newEnableReverseTextIndex) throws FullTextStringIndexException {
+      boolean newEnableReverseTextIndex, boolean forWrites) throws FullTextStringIndexException {
     name = newName;
     enableReverseTextIndex = newEnableReverseTextIndex;
-    init(directory);
+    init(directory, forWrites);
   }
 
   /**
    * Initialize the store.
    *
    * @param directory the directory to put the index files.
+   * @param forWrites Whether to open an index writer
    * @throws FullTextStringIndexException Failure to initialize write index
    */
-  private void init(String directory) throws FullTextStringIndexException {
-    synchronized (indexLock) {
-      try {
-        Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath()).makeLock(name + ".lock");
+  private void init(String directory, boolean forWrites) throws FullTextStringIndexException {
+    try {
+      Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath()).makeLock(name + ".lock");
 
-        synchronized (lock) {
-          lock.obtain();
+      synchronized (lock) {
+        lock.obtain();
 
-          // create/open the indexes for reading and writing.
-          initialize(directory);
+        // create/open the indexes for reading and writing.
+        initialize(directory, forWrites);
 
-          //set the status to not modified
-          indexLock.setStatus(indexLock.NOT_MODIFIED);
-
-          lock.release();
-        }
-      } catch (IOException ioe) {
-        throw new FullTextStringIndexException(ioe);
+        lock.release();
       }
+    } catch (IOException ioe) {
+      throw new FullTextStringIndexException(ioe);
     }
   }
 
@@ -334,15 +324,7 @@ public class FullTextStringIndex {
       indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
       try {
-        //lock any deletes, adds and optimize from the index
-        synchronized (indexLock) {
-          // add to writer
-          indexer.addDocument(indexDocument);
-
-          // Update the status of the index
-          indexLock.setStatus(indexLock.MODIFIED);
-        }
-
+        indexer.addDocument(indexDocument);
         added = true;
       } catch (IOException ex) {
         logger.error("Unable to add fulltext string subject <" + subject + "> predicate <" +
@@ -418,15 +400,7 @@ public class FullTextStringIndex {
     indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
     try {
-      //lock any deletes, adds and optimize from the index
-      synchronized (indexLock) {
-        // add to writer
-        indexer.addDocument(indexDocument);
-
-        // Update the status of the index
-        indexLock.setStatus(indexLock.MODIFIED);
-      }
-
+      indexer.addDocument(indexDocument);
       added = true;
     } catch (IOException ex) {
       logger.error("Unable to add fulltext string subject <" + subject + "> predicate <" +
@@ -464,16 +438,8 @@ public class FullTextStringIndex {
     }
 
     try {
-      //lock any deletes, adds and optimize from the index
-      synchronized (indexLock) {
-        // add to writer
-        indexer.addDocument(indexDocument);
-
-        // Update the status of the index
-        indexLock.setStatus(indexLock.MODIFIED);
-
-        added = true;
-      }
+      indexer.addDocument(indexDocument);
+      added = true;
     } catch (IOException ex) {
       logger.error("Unable to add " + indexDocument + " to fulltext string index", ex);
       throw new FullTextStringIndexException("Unable to add " + indexDocument + " to fulltext string index", ex);
@@ -501,33 +467,27 @@ public class FullTextStringIndex {
 
     //Delete the directory if it exists
     if (luceneIndexDirectory != null) {
-      //lock any deletes, adds and optimize from the index
-      synchronized (indexLock) {
-        //Close the reading and writing indexes
-        close();
+      //Close the reading and writing indexes
+      close();
 
-        try {
-          Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath()).makeLock(name + ".lock");
+      try {
+        Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath()).makeLock(name + ".lock");
 
-          synchronized (lock) {
-            lock.obtain();
+        synchronized (lock) {
+          lock.obtain();
 
-            //Remove all files from the directory
-            for (String file : luceneIndexDirectory.list()) {
-              luceneIndexDirectory.deleteFile(file);
-            }
-
-            //Remove the directory
-            deleted = new File(indexDirectoryName).delete();
-
-            //set the status to not modified
-            indexLock.setStatus(indexLock.NOT_MODIFIED);
-
-            lock.release();
+          //Remove all files from the directory
+          for (String file : luceneIndexDirectory.list()) {
+            luceneIndexDirectory.deleteFile(file);
           }
-        } catch (IOException ioe) {
-          throw new FullTextStringIndexException(ioe);
+
+          //Remove the directory
+          deleted = new File(indexDirectoryName).delete();
+
+          lock.release();
         }
+      } catch (IOException ioe) {
+        throw new FullTextStringIndexException(ioe);
       }
     }
 
@@ -561,17 +521,8 @@ public class FullTextStringIndex {
 
     try {
       Term term = new Term(ID_KEY, key);
-
-      //lock any deletes, adds and optimize from the index
-      synchronized (indexLock) {
-        //check the status of the index
-        indexer.deleteDocuments(term);
-
-        //set the index status to modified
-        indexLock.setStatus(indexLock.MODIFIED);
-
-        removed = true; // TODO: could use docCount(), but that seems overly expensive
-      }
+      indexer.deleteDocuments(term);
+      removed = true; // TODO: could use docCount(), but that seems overly expensive
 
       if (logger.isDebugEnabled()) {
         if (removed) {
@@ -603,13 +554,7 @@ public class FullTextStringIndex {
     try {
       QueryParser parser = new QueryParser(ID_KEY, analyzer);
       parser.setAllowLeadingWildcard(true);
-      synchronized (indexLock) {
-        //check the status of the index
-        indexer.deleteDocuments(parser.parse("*"));
-
-        //set the index status to modified
-        indexLock.setStatus(indexLock.MODIFIED);
-      }
+      indexer.deleteDocuments(parser.parse("*"));
     } catch (ParseException ex) {
       logger.error("Unexpected internal error", ex);
       throw new FullTextStringIndexException("Unexpected internal error", ex);
@@ -626,6 +571,10 @@ public class FullTextStringIndex {
    *      index.
    */
   public void close() throws FullTextStringIndexException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Closing fulltext indexes");
+    }
+
     try {
       if (indexer != null) {
         indexer.close();
@@ -648,22 +597,14 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException If there was a problem reading from or writing to the disk.
    */
   public void optimize() throws FullTextStringIndexException {
-    // debug logging
-    if (logger.isDebugEnabled()) {
-      logger.debug("Optimizing fulltext string pool indexes to disk");
+    if (indexer == null) return;
+
+    if (logger.isInfoEnabled()) {
+      logger.info("Optimizing fulltext index at " + indexDirectoryName + " please wait...");
     }
 
     try {
-      //lock any deletes, adds and optimize from the index
-      synchronized (indexLock) {
-        logger.info("Optimizing fulltext index at " + indexDirectoryName + " please wait...");
-
-        //Optimize the indexes
-        indexer.optimize();
-
-        //set the index status to modified
-        indexLock.setStatus(indexLock.MODIFIED);
-      }
+      indexer.optimize();
     } catch (IOException ex) {
       logger.error("Unable to optimize existing fulltext string pool index", ex);
       throw new FullTextStringIndexException("Unable to optimize existing fulltext string pool index", ex);
@@ -733,22 +674,6 @@ public class FullTextStringIndex {
         }
       }
 
-      //wait for locks performing deletes, adds and optimizes
-      synchronized (indexLock) {
-        //check the status of the index
-        if (indexLock.getStatus() == indexLock.MODIFIED) {
-          // flush the changes
-          if (indexer != null)
-            indexer.commit();
-
-          // re-open the read index
-          openReadIndex();
-
-          //set the index status to not modified
-          indexLock.setStatus(indexLock.NOT_MODIFIED);
-        }
-      }
-
       //Perform query
       indexSearcher.search(bQuery, hits = new Hits(indexSearcher.getIndexReader()));
 
@@ -791,22 +716,6 @@ public class FullTextStringIndex {
         logger.debug("Searching the fulltext string index pool with query " + query.toString(LITERAL_KEY));
       }
 
-      //wait for locks performing deletes, adds and optimizes
-      synchronized (indexLock) {
-        //check the status of the index
-        if (indexLock.getStatus() == indexLock.MODIFIED) {
-          // flush the changes
-          if (indexer != null)
-            indexer.commit();
-
-          // re-open the read index
-          openReadIndex();
-
-          //set the index status to not modified
-          indexLock.setStatus(indexLock.NOT_MODIFIED);
-        }
-      }
-
       //Perform query
       indexSearcher.search(query, hits = new Hits(indexSearcher.getIndexReader()));
     } catch (IOException ex) {
@@ -822,10 +731,11 @@ public class FullTextStringIndex {
    * indexes if they do not exist.
    *
    * @param directory Directory of the index to be initialized
+   * @param forWrites Whether to open an index writer
    * @throws FullTextStringIndexException IOException occurs while trying to
    *      locate or create the indexes
    */
-  private void initialize(String directory) throws FullTextStringIndexException {
+  private void initialize(String directory, boolean forWrites) throws FullTextStringIndexException {
     // debug logging
     if (logger.isDebugEnabled()) {
       logger.debug("Initialization of FullTextStringIndex to directory to " + directory);
@@ -859,7 +769,7 @@ public class FullTextStringIndex {
     }
 
     // ensure the directory is writeable
-    if (!indexDirectory.canWrite()) {
+    if (forWrites && !indexDirectory.canWrite()) {
       indexDirectory = null;
       logger.fatal("The fulltext string index directory '" + directory + "' is not writeable!");
       throw new FullTextStringIndexException("The fulltext string index directory '" + directory +
@@ -876,25 +786,27 @@ public class FullTextStringIndex {
     assert luceneIndexDirectory != null;
 
     // Open the index for writing
-    try {
-      openWriteIndex();
-    } catch (LockObtainFailedException lofe) {
-      logger.warn("Failed to obtain fulltext index directory lock; forcibly unlocking and trying again", lofe);
-
-      /* If it fails once try and unlock the directory and try again. This shouldn't happen
-       * unless mulgara was shut down abruptly since mulgara has a single writer lock.
-       */
-      try {
-        IndexWriter.unlock(luceneIndexDirectory);
-      } catch (IOException ioe) {
-        throw new FullTextStringIndexException("Failed to unlock directory: " + luceneIndexDirectory, ioe);
-      }
-
-      // Try again - let it fail this time.
+    if (forWrites) {
       try {
         openWriteIndex();
-      } catch (LockObtainFailedException lofe2) {
-        throw new FullTextStringIndexException(lofe2);
+      } catch (LockObtainFailedException lofe) {
+        logger.warn("Failed to obtain fulltext index directory lock; forcibly unlocking and trying again", lofe);
+
+        /* If it fails once try and unlock the directory and try again. This shouldn't happen
+         * unless mulgara was shut down abruptly since mulgara has a single writer lock.
+         */
+        try {
+          IndexWriter.unlock(luceneIndexDirectory);
+        } catch (IOException ioe) {
+          throw new FullTextStringIndexException("Failed to unlock directory: " + luceneIndexDirectory, ioe);
+        }
+
+        // Try again - let it fail this time.
+        try {
+          openWriteIndex();
+        } catch (LockObtainFailedException lofe2) {
+          throw new FullTextStringIndexException(lofe2);
+        }
       }
     }
 
@@ -934,11 +846,11 @@ public class FullTextStringIndex {
   }
 
   /**
-   * Open the index on disk for reading.
+   * (Re)open the index on disk for reading.
    *
    * @throws FullTextStringIndexException if there is an error whilst opening the index.
    */
-  private void openReadIndex() throws FullTextStringIndexException {
+  void openReadIndex() throws FullTextStringIndexException {
     // debug logging
     if (logger.isDebugEnabled()) {
       logger.debug("Opening index for IndexSearcher");
@@ -967,6 +879,30 @@ public class FullTextStringIndex {
       }
       throw new FullTextStringIndexException("Unable to open existing fulltext index for reading", ex);
     }
+  }
+
+  public void prepare() throws IOException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Preparing fulltext indexes");
+    }
+
+    if (indexer != null) indexer.prepareCommit();
+  }
+
+  public void rollback() throws IOException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Rolling back fulltext indexes");
+    }
+
+    if (indexer != null) indexer.rollback();
+  }
+
+  public void commit() throws IOException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Comitting fulltext indexes");
+    }
+
+    if (indexer != null) indexer.commit();
   }
 
   /**
@@ -1009,24 +945,6 @@ public class FullTextStringIndex {
 
       closed = true;
       reader.decRef();
-    }
-  }
-
-  /**
-   * Locking object to stop multiple threads performing inserts, deletes and
-   * optimizations are the same instance.
-   */
-  private static class IndexLock {
-    final static int MODIFIED = 1;
-    final static int NOT_MODIFIED = 0;
-    private int status = NOT_MODIFIED;
-
-    public void setStatus(int status) {
-      this.status = status;
-    }
-
-    public int getStatus() {
-      return status;
     }
   }
 }
