@@ -29,9 +29,10 @@ package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 // Log4J
 import org.apache.log4j.Logger;
@@ -49,13 +50,15 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.Lock;
+import org.apache.lucene.store.LockObtainFailedException;
 
 import org.mulgara.util.TempDir;
 
@@ -120,9 +123,6 @@ public class FullTextStringIndex {
   /** The index searcher */
   private IndexSearcher indexSearcher;
 
-  /** The index to perform deletions */
-  private IndexReader indexDelete;
-
   /** Analyzer used for writing and reading */
   private Analyzer analyzer = getAnalyzer();
 
@@ -176,7 +176,7 @@ public class FullTextStringIndex {
   private void init(String directory) throws FullTextStringIndexException {
     synchronized (indexLock) {
       try {
-        Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath(), false).makeLock(name);
+        Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath()).makeLock(name + ".lock");
 
         synchronized (lock) {
           lock.obtain();
@@ -312,25 +312,25 @@ public class FullTextStringIndex {
 
       // Add the literal value to the predicate field and tokenize it for
       // fulltext searching
-      indexDocument.add(new Field(LITERAL_KEY, literal, Field.Store.YES, Field.Index.TOKENIZED));
+      indexDocument.add(new Field(LITERAL_KEY, literal, Field.Store.YES, Field.Index.ANALYZED));
 
       // Add the literal value to the predicate field and tokenize it for
       // fulltext searching in reverse order
       if (enableReverseTextIndex) {
         indexDocument.add(new Field(REVERSE_LITERAL_KEY,
-            (new StringBuilder(literal).reverse()).toString(), Field.Store.YES, Field.Index.TOKENIZED));
+            (new StringBuilder(literal).reverse()).toString(), Field.Store.YES, Field.Index.ANALYZED));
       }
 
       // Add the actual literal, do not tokenize it. Required for exact
       // matching. ie. removal
       indexDocument.add(new Field(ID_KEY,
-          createKey(subject, predicate, literal), Field.Store.YES, Field.Index.UN_TOKENIZED));
+          createKey(subject, predicate, literal), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
       // Add the predicate, do not tokenize it, required for exact matching
-      indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.UN_TOKENIZED));
+      indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
       // Add the subject, do not tokenize it, required for exact matching
-      indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.UN_TOKENIZED));
+      indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
       try {
         //lock any deletes, adds and optimize from the index
@@ -408,13 +408,13 @@ public class FullTextStringIndex {
     // Add the resource label, do not tokenize it. Required for exact
     // matching. ie. removal
     indexDocument.add(new Field(ID_KEY,
-        createKey(subject, predicate, resource), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        createKey(subject, predicate, resource), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
     // Add the predicate, do not tokenize it, required for exact matching
-    indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.UN_TOKENIZED));
+    indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
     // Add the subject, do not tokenize it, required for exact matching
-    indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.UN_TOKENIZED));
+    indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
     try {
       //lock any deletes, adds and optimize from the index
@@ -505,7 +505,7 @@ public class FullTextStringIndex {
         close();
 
         try {
-          Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath(), false).makeLock(name);
+          Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath()).makeLock(name + ".lock");
 
           synchronized (lock) {
             lock.obtain();
@@ -563,20 +563,12 @@ public class FullTextStringIndex {
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
         //check the status of the index
-        if (indexLock.getStatus() == indexLock.MODIFIED) {
-          // re-open the read index - the read index performs deletions
-          // 25-2-03 - Leave the current index open.
-          // Closing it will currupt any existing hits that
-          // are currently open.
-          // openReadIndex();
-        }
-
-        int deleted = indexDelete.deleteDocuments(term);
+        indexer.deleteDocuments(term);
 
         //set the index status to modified
         indexLock.setStatus(indexLock.MODIFIED);
 
-        removed = (deleted > 0);
+        removed = true; // TODO: could use docCount(), but that seems overly expensive
       }
 
       if (logger.isDebugEnabled()) {
@@ -610,11 +602,6 @@ public class FullTextStringIndex {
       if (indexSearcher != null) {
         indexSearcher.close();
         indexSearcher = null;
-      }
-
-      if (indexDelete != null) {
-        indexDelete.close();
-        indexDelete = null;
       }
     } catch (IOException ex) {
       logger.error("Unable to close fulltext string pool indexes", ex);
@@ -717,6 +704,10 @@ public class FullTextStringIndex {
       synchronized (indexLock) {
         //check the status of the index
         if (indexLock.getStatus() == indexLock.MODIFIED) {
+          // flush the changes
+          if (indexer != null)
+            indexer.commit();
+
           // re-open the read index
           openReadIndex();
 
@@ -726,7 +717,7 @@ public class FullTextStringIndex {
       }
 
       //Perform query
-      hits = indexSearcher.search(bQuery);
+      indexSearcher.search(bQuery, hits = new Hits(indexSearcher.getIndexReader()));
 
       if (logger.isDebugEnabled()) {
         logger.debug("Got hits: " + hits.length());
@@ -745,7 +736,7 @@ public class FullTextStringIndex {
   /**
    * Execute a query against the string pool. The constants {@link
    * #SUBJECT_KEY}, {@link #PREDICATE_KEY}, {@link #LITERAL_KEY} should be used
-       * in the query to reference the relevant index filds if the index was created
+   * in the query to reference the relevant index filds if the index was created
    * by queries. Use the method {@link #getAnalyzer()} to get the analyzer
    * used by this class.
    *
@@ -771,6 +762,10 @@ public class FullTextStringIndex {
       synchronized (indexLock) {
         //check the status of the index
         if (indexLock.getStatus() == indexLock.MODIFIED) {
+          // flush the changes
+          if (indexer != null)
+            indexer.commit();
+
           // re-open the read index
           openReadIndex();
 
@@ -780,7 +775,7 @@ public class FullTextStringIndex {
       }
 
       //Perform query
-      hits = indexSearcher.search(query);
+      indexSearcher.search(query, hits = new Hits(indexSearcher.getIndexReader()));
     } catch (IOException ex) {
       logger.error("Unable to read results for query '" + query.toString(LITERAL_KEY) + "'", ex);
       throw new FullTextStringIndexException("Unable to read results for query '" + query.toString(LITERAL_KEY) + "'", ex);
@@ -825,9 +820,9 @@ public class FullTextStringIndex {
     // ensure the index directory is a directory
     if (!indexDirectory.isDirectory()) {
       indexDirectory = null;
-      logger.fatal("The fulltext string index directory '" + directory + "' does not exist!");
+      logger.fatal("The fulltext string index directory '" + directory + "' is not a directory!");
       throw new FullTextStringIndexException("The fulltext string index index directory '" +
-                                             indexDirectory + "' does not exist!");
+                                             directory + "' is not a directory!");
     }
 
     // ensure the directory is writeable
@@ -840,7 +835,7 @@ public class FullTextStringIndex {
 
     // Create lucene directory.
     try {
-      luceneIndexDirectory = FSDirectory.getDirectory(directory, false);
+      luceneIndexDirectory = FSDirectory.getDirectory(directory);
     } catch (IOException ioe) {
       throw new FullTextStringIndexException(ioe);
     }
@@ -850,16 +845,24 @@ public class FullTextStringIndex {
     // Open the index for writing
     try {
       openWriteIndex();
-    } catch (LockFailedException lfe) {
-      // If it fails once try and unlock the directory and try again.
+    } catch (LockObtainFailedException lofe) {
+      logger.warn("Failed to obtain fulltext index directory lock; forcibly unlocking and trying again", lofe);
+
+      /* If it fails once try and unlock the directory and try again. This shouldn't happen
+       * unless mulgara was shut down abruptly since mulgara has a single writer lock.
+       */
       try {
-        IndexReader.unlock(luceneIndexDirectory);
+        IndexWriter.unlock(luceneIndexDirectory);
       } catch (IOException ioe) {
         throw new FullTextStringIndexException("Failed to unlock directory: " + luceneIndexDirectory, ioe);
       }
 
       // Try again - let it fail this time.
-      openWriteIndex();
+      try {
+        openWriteIndex();
+      } catch (LockObtainFailedException lofe2) {
+        throw new FullTextStringIndexException(lofe2);
+      }
     }
 
     // Open the index for reading
@@ -874,59 +877,33 @@ public class FullTextStringIndex {
   /**
    * Open the index on disk for writing.
    *
-   * @throws FullTextStringIndexException if there is an error whilst opening
-   *      the index.
+   * @throws FullTextStringIndexException if there is an error whilst opening the index.
+   * @throws LockObtainFailedException if the index is locked by another writer
    */
-  private void openWriteIndex() throws FullTextStringIndexException {
+  private void openWriteIndex() throws FullTextStringIndexException, LockObtainFailedException {
     // debug logging
     if (logger.isDebugEnabled()) {
-      logger.debug("Opening index for IndexWriter and IndexReader (deletions): " +
-                   luceneIndexDirectory);
+      logger.debug("Opening index for IndexWriter: " + luceneIndexDirectory);
     }
 
-    // Create a new index.
-    if (indexer == null) {
-      // Try to use an existing index.
-      try {
-        indexer = new IndexWriter(luceneIndexDirectory, analyzer, false);
-      } catch (FileNotFoundException fnfe) {
-        // File not found means that it doesn't exist - create a new one.
-        if (logger.isDebugEnabled()) {
-          logger.error("Failed to open read only, opening with write enabled: " +
-                       luceneIndexDirectory, fnfe);
-        }
+    if (indexer != null) {
+      logger.error("Tried to create a new fulltext string index writer when one already exists");
+      throw new FullTextStringIndexException("Tried to create a new fulltext string index writer when one already exists");
+    }
 
-        // Try to create a new index.
-        try {
-          luceneIndexDirectory = FSDirectory.getDirectory(indexDirectoryName, true);
-          indexer = new IndexWriter(luceneIndexDirectory, analyzer, true);
-        } catch (IOException ioe) {
-          if (ioe.getMessage().indexOf("couldn't delete") >= 0) {
-            throw new LockFailedException(ioe);
-          }
-
-          logger.error("Unable to new existing fulltext string pool: " + luceneIndexDirectory, ioe);
-          throw new FullTextStringIndexException("Unable to open new fulltext string pool", ioe);
-        }
-      } catch (IOException ioe) {
-        // If the IOE was because of the lock failing report it.
-        if (ioe.getMessage().indexOf("Lock obtain") >= 0) {
-          throw new LockFailedException(ioe);
-        }
-
-        throw new FullTextStringIndexException("Unable to create existing fulltext string pool index", ioe);
-      }
-    } else {
-      logger.error("Tried to create a new fulltext string index when there already exists one");
-      throw new FullTextStringIndexException("Tried to create a new indexer when there already exists one");
+    try {
+      indexer = new IndexWriter(luceneIndexDirectory, analyzer, IndexWriter.MaxFieldLength.LIMITED);
+    } catch (LockObtainFailedException lofe) {
+      throw lofe;
+    } catch (IOException ioe) {
+      throw new FullTextStringIndexException("Unable to open fulltext string pool index", ioe);
     }
   }
 
   /**
-   * Open the index on disk for reading and deleting
+   * Open the index on disk for reading.
    *
-   * @throws FullTextStringIndexException if there is an error whilst opening
-   *      the index.
+   * @throws FullTextStringIndexException if there is an error whilst opening the index.
    */
   private void openReadIndex() throws FullTextStringIndexException {
     // debug logging
@@ -934,25 +911,71 @@ public class FullTextStringIndex {
       logger.debug("Opening index for IndexSearcher");
     }
 
-    optimize();
-
+    IndexReader reader = null;
     try {
       if (indexSearcher != null) {
-        indexSearcher.close();
-        indexSearcher = null;
+        IndexReader oldReader = indexSearcher.getIndexReader();
+        reader = oldReader.reopen();
+        if (reader != oldReader) {
+          oldReader.close();
+        }
+        indexSearcher = null;   // Note: don't need to close the searcher
+      } else {
+        reader = IndexReader.open(luceneIndexDirectory, true);
       }
 
-      if (indexDelete != null) {
-        indexDelete.close();
-        indexDelete = null;
-      }
-
-      // Try to use existing index.
-      indexDelete = indexDelete.open(luceneIndexDirectory);
-      indexSearcher = new IndexSearcher(indexDelete);
+      indexSearcher = new IndexSearcher(reader);
     } catch (IOException ex) {
-      logger.error("Unable to open existing fulltext string pool index for searching", ex);
-      throw new FullTextStringIndexException("Unable to open existing fulltext string pool index for reading", ex);
+      logger.error("Unable to open existing fulltext index for searching", ex);
+      try {
+        if (reader != null && indexSearcher == null) reader.close();
+      } catch (IOException ioe2) {
+        logger.error("Error closing existing fulltext index reader", ioe2);
+      }
+      throw new FullTextStringIndexException("Unable to open existing fulltext index for reading", ex);
+    }
+  }
+
+  /**
+   * Lucene Hits has been deprecated, so this is our simple version thereof. Since we always
+   * read all results, this is more efficient too.
+   *
+   * <p>TODO: since we collect all hits in memory (just id and score, not actual Document's),
+   * we could have problems with very large results. However, jdk 1.5 memory usage seems to be
+   * around 20B/entry on 32-bit and 33B/entry on 64-bit systems for the hits array, allowing us
+   * to handle 1M hits without too much trouble.
+   */
+  public static class Hits extends HitCollector {
+    private final IndexReader reader;
+    private final List<ScoreDoc> hits = new ArrayList<ScoreDoc>();
+    private boolean closed = false;
+
+    public Hits(IndexReader reader) {
+      this.reader = reader;
+      reader.incRef();
+    }
+
+    public void collect(int doc, float score) {
+      if (score > 0.0f) hits.add(new ScoreDoc(doc, score));
+    }
+
+    public final int length() {
+      return hits.size();
+    }
+
+    public final Document doc(int n) throws IOException {
+      return reader.document(hits.get(n).doc);
+    }
+
+    public final float score(int n) throws IOException {
+      return hits.get(n).score;
+    }
+
+    public void close() throws IOException {
+      if (closed) return;
+
+      closed = true;
+      reader.decRef();
     }
   }
 

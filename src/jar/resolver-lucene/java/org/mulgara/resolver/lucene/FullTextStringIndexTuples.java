@@ -32,14 +32,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // Third party packages
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Hits;
 
 // JRDf
 import org.jrdf.graph.URIReference;
@@ -50,7 +47,6 @@ import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
@@ -98,7 +94,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
   /**
    * The native Lucene query result to represent as a {@link Tuples}.
    */
-  private Hits hits;
+  private FullTextStringIndex.Hits hits;
 
   /**
    * The current document within the {@link #hits}.
@@ -221,8 +217,12 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
     nextDocumentIndex = 0;
   }
 
-  public void close() {
-    // No op.
+  public void close() throws TuplesException {
+    try {
+      hits.close();
+    } catch (IOException ioe) {
+      throw new TuplesException("Error closing fulltext index hits", ioe);
+    }
   }
 
   public long getColumnValue(int column) throws TuplesException {

@@ -26,7 +26,7 @@
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
 
-    <fileset file="${lib.dir}/${lucene.jar}"/>
+    <fileset file="${lib.dir}/${lucene.core.jar}"/>
   </path>
 
   <path id="resolver-lucene-test-classpath">

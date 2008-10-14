@@ -521,7 +521,7 @@
       <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${lucene.core.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>
@@ -812,7 +812,7 @@
       <classpath path="${lib.dir}/${servlet.jar}"/>
       <classpath path="${lib.dir}/${servlet-jsp.jar}"/>
       <classpath path="${lib.dir}/${jid3.jar}"/>
-      <classpath path="${lib.dir}/${lucene.jar}"/>
+      <classpath path="${lib.dir}/${lucene.core.jar}"/>
       <classpath path="${lib.dir}/xmlc-all-runtime-2.2.jar"/>
       <classpath path="${lib.dir}/xom-1.0d21.jar"/>
       <sourcepath path="${ant-task.src.dir}/java"/>
@@ -1657,7 +1657,7 @@
       <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${lucene.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${lucene.core.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${serializer.jar}" excludes="META-INF/**"/>
