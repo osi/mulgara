@@ -28,14 +28,20 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.io.*;
-import java.nio.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 // 3rd party
-import junit.framework.*;
-import org.apache.log4j.*;
-import org.apache.lucene.search.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.log4j.Logger;
+import org.apache.lucene.search.Hits;
 
 import org.mulgara.util.TempDir;
 

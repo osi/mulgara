@@ -30,22 +30,47 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.io.*;
-import java.net.*;
-import javax.activation.*;
-import javax.transaction.xa.*;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URLConnection;
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.transaction.xa.XAResource;
 
 // Log4j
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 
 // JRDF
-import org.jrdf.graph.*;
+import org.jrdf.graph.BlankNode;
+import org.jrdf.graph.Node;
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.URIReference;
 
 // Locally written packages
-import org.mulgara.query.*;
-import org.mulgara.resolver.spi.*;
-import org.mulgara.store.tuples.*;
-import org.mulgara.util.conversion.html.*;
+import org.mulgara.query.Constraint;
+import org.mulgara.query.ConstraintElement;
+import org.mulgara.query.LocalNode;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.Variable;
+import org.mulgara.resolver.spi.DummyXAResource;
+import org.mulgara.resolver.spi.EmptyResolution;
+import org.mulgara.resolver.spi.GlobalizeException;
+import org.mulgara.resolver.spi.LocalizeException;
+import org.mulgara.resolver.spi.Resolution;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.ResolverFactoryException;
+import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.Statements;
+import org.mulgara.resolver.spi.TuplesWrapperResolution;
+import org.mulgara.store.tuples.Tuples;
+import org.mulgara.store.tuples.TuplesOperations;
+import org.mulgara.util.conversion.html.HtmlToTextConverter;
 
 /**
  * Resolves constraints in models defined by static RDF documents.
