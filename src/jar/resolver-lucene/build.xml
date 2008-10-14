@@ -105,7 +105,7 @@
 
     <antcall target="component-test">
 
-      <param name="classpath.id" value="resolver-lucene-classpath"/>
+      <param name="classpath.id" value="resolver-lucene-test-classpath"/>
       <param name="dir" value="${resolver-lucene.src.dir}"/>
       <param name="jar" value="${resolver-lucene.jar}"/>
     </antcall>
