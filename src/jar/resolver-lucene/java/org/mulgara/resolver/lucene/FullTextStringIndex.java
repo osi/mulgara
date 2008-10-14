@@ -72,74 +72,47 @@ import org.mulgara.util.TempDir;
  */
 public class FullTextStringIndex {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger logger =
-      Logger.getLogger(FullTextStringIndex.class.getName());
+  /** Logger. This is named after the class. */
+  private final static Logger logger = Logger.getLogger(FullTextStringIndex.class);
 
-  /**
-   * The field name for the actual literal
-   */
+  /** The field name for the actual literal */
   public final static String ID_KEY = "id";
 
-  /**
-   * The field name for the stemmed literal
-   */
+  /** The field name for the stemmed literal */
   public final static String LITERAL_KEY = "stemmedliteral";
 
-  /**
-   * The field name for the actual subject
-   */
+  /** The field name for the actual subject */
   public final static String SUBJECT_KEY = "subject";
 
-  /**
-   * The field name for the actual predicate
-   */
+  /** The field name for the actual predicate */
   public final static String PREDICATE_KEY = "predicate";
 
-  /**
-   * The field name for the reverse literal
-   */
+  /** The field name for the reverse literal */
   public final static String REVERSE_LITERAL_KEY = "reverseliteral";
 
-  /**
-   * Disable reverse literal lookup
-   */
+  /** Disable reverse literal lookup */
   private static boolean enableReverseTextIndex;
 
   //
   // Constants
   //
 
-  /**
-   * The Directory for Lucene.
-   */
+  /** The Directory for Lucene.  */
   private Directory luceneIndexDirectory;
 
-  /**
-   * The name of the directory
-   */
+  /** The name of the directory */
   private String indexDirectoryName;
 
-  /**
-   * The index writer
-   */
+  /** The index writer */
   private IndexWriter indexer;
 
-  /**
-   * The index searcher
-   */
+  /** The index searcher */
   private IndexSearcher indexSearcher;
 
-  /**
-   * The index to perform deletions
-   */
+  /** The index to perform deletions */
   private IndexReader indexDelete;
 
-  /**
-   *  Analyzer used for writing and reading
-   */
+  /** Analyzer used for writing and reading */
   private Analyzer analyzer = getAnalyzer();
 
   /**
@@ -156,11 +129,11 @@ public class FullTextStringIndex {
    * will default to "false" if not set.
    *
    * @param directory the directory to put the index files.
+   * @param newName 
    * @throws FullTextStringIndexException Failure to initialize write index
    */
   public FullTextStringIndex(String directory, String newName)
       throws FullTextStringIndexException {
-
     name = newName;
     enableReverseTextIndex = System.getProperty(
         "mulgara.textindex.reverse.enabled", "false").equalsIgnoreCase("true");
@@ -171,13 +144,13 @@ public class FullTextStringIndex {
    * Constructor for the FullTextStringIndex object
    *
    * @param directory the directory to put the index files.
+   * @param newName 
    * @param newEnableReverseTextIndex true if you can begin Lucene queries with
    *      wildcards.
    * @throws FullTextStringIndexException Failure to initialize write index
    */
   public FullTextStringIndex(String directory, String newName,
       boolean newEnableReverseTextIndex) throws FullTextStringIndexException {
-
     name = newName;
     enableReverseTextIndex = newEnableReverseTextIndex;
     init(directory);
@@ -190,14 +163,11 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException Failure to initialize write index
    */
   private void init(String directory) throws FullTextStringIndexException {
-
     synchronized (indexLock) {
       try {
-        Lock lock = FSDirectory.getDirectory(
-            TempDir.getTempDir().getPath(), false
-        ).makeLock(name);
+        Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath(), false).makeLock(name);
 
-        synchronized(lock) {
+        synchronized (lock) {
           lock.obtain();
 
           // create/open the indexes for reading and writing.
@@ -208,9 +178,7 @@ public class FullTextStringIndex {
 
           lock.release();
         }
-      }
-      catch (IOException ioe) {
-
+      } catch (IOException ioe) {
         throw new FullTextStringIndexException(ioe);
       }
     }
@@ -222,15 +190,8 @@ public class FullTextStringIndex {
    * @return The analyzer used.
    */
   public static Analyzer getAnalyzer() {
-
     return new StandardAnalyzer();
   }
-
-  /**
-   * Gets the static
-   * @param literal String
-   * @return boolean
-   */
 
   /**
    * Determine if the literal search string contains a leading wildcard.
@@ -239,7 +200,6 @@ public class FullTextStringIndex {
    * @return The LeadingWildcard value
    */
   private static boolean isLeadingWildcard(String literal) {
-
     return (literal.startsWith("?") || literal.startsWith("*") ||
         (literal.indexOf(" *") >= 0) || (literal.indexOf(" ?") >= 0) ||
         (literal.indexOf("-*") >= 0) || (literal.indexOf("-?") >= 0) ||
@@ -256,11 +216,9 @@ public class FullTextStringIndex {
    * @param literal PARAMETER TO DO
    * @return RETURNED VALUE TO DO
    */
-  private static String createKey(String subject, String predicate,
-      String literal) {
-
-    return String.valueOf(subject.hashCode()) +
-        String.valueOf(predicate.hashCode()) + String.valueOf(literal.hashCode());
+  private static String createKey(String subject, String predicate, String literal) {
+    return String.valueOf(subject.hashCode()) + String.valueOf(predicate.hashCode()) +
+           String.valueOf(literal.hashCode());
   }
 
   /**
@@ -271,49 +229,38 @@ public class FullTextStringIndex {
    * @return RETURNED VALUE TO DO
    */
   private static String reverseLiteralSearch(String literal) {
-
     String newReversedString = null;
 
     // does it contain any +'s or -'s in the search request?
-    if ( (literal.indexOf("+") >= 0) || (literal.indexOf("-") >= 0)) {
-
+    if ((literal.indexOf("+") >= 0) || (literal.indexOf("-") >= 0)) {
       StringBuffer searchReversed = new StringBuffer();
       String[] tokens = literal.split(" ");
 
       for (int i = tokens.length - 1; i >= 0; i--) {
-
         StringBuffer reversedStringBuff = new StringBuffer(tokens[i]).reverse();
 
-        char lastChar =
-            reversedStringBuff.charAt(reversedStringBuff.length() - 1);
+        char lastChar = reversedStringBuff.charAt(reversedStringBuff.length() - 1);
 
         // move the + || - to the start of the reversed string
-        if ( (lastChar == '+') || (lastChar == '-')) {
-
-          reversedStringBuff.deleteCharAt(reversedStringBuff.length() - 1)
-              .insert(0, lastChar);
+        if ((lastChar == '+') || (lastChar == '-')) {
+          reversedStringBuff.deleteCharAt(reversedStringBuff.length() - 1).insert(0, lastChar);
         }
 
         searchReversed.append(reversedStringBuff);
 
         if (i != 0) {
-
           searchReversed.append(" ");
         }
       }
 
       newReversedString = searchReversed.toString();
-    }
-    else {
-
+    } else {
       // perform a simple reverse
       newReversedString = (new StringBuffer(literal).reverse()).toString();
     }
 
     if (logger.isDebugEnabled()) {
-
-      logger.debug("Reversed literal search from : " + literal + " to " +
-          newReversedString);
+      logger.debug("Reversed literal search from : " + literal + " to " + newReversedString);
     }
 
     return newReversedString;
@@ -330,15 +277,12 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException Failure to add string due to an
    *      IOException
    */
-  public boolean add(String subject, String predicate,
-      String literal) throws FullTextStringIndexException {
-
-    if ( literal == null   ||
-         subject == null   || subject.length() == 0 ||
-         predicate == null || predicate.length() == 0) {
-
-      throw new FullTextStringIndexException(
-          "Subject, predicate or literal has " + "not been supplied a value");
+  public boolean add(String subject, String predicate, String literal) throws FullTextStringIndexException {
+    if (literal == null   ||
+        subject == null   || subject.length() == 0 ||
+        predicate == null || predicate.length() == 0) {
+      throw new FullTextStringIndexException("Subject, predicate or literal has " +
+                                             "not been supplied a value");
     }
 
     boolean added = false;
@@ -346,14 +290,11 @@ public class FullTextStringIndex {
     // Warn for an empty literal
     if (literal.trim().length() == 0) {
       logger.warn("Ignoring empty literal");
-    }
-    else {
-
+    } else {
       // debug logging
       if (logger.isDebugEnabled()) {
-
-        logger.debug("Adding subject <" + subject + "> predicate <" + predicate +
-            "> " + " literal <'" + literal + "'> to fulltext string index");
+        logger.debug("Adding subject <" + subject + "> predicate <" + predicate + "> literal <'" +
+                     literal + "'> to fulltext string index");
       }
 
       Document indexDocument = new Document();
@@ -365,7 +306,6 @@ public class FullTextStringIndex {
       // Add the literal value to the predicate field and tokenize it for
       // fulltext searching in reverse order
       if (enableReverseTextIndex) {
-
         indexDocument.add(new Field(REVERSE_LITERAL_KEY,
             (new StringBuffer(literal).reverse()).toString(), Field.Store.YES, Field.Index.TOKENIZED));
       }
@@ -382,10 +322,8 @@ public class FullTextStringIndex {
       indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.UN_TOKENIZED));
 
       try {
-
         //lock any deletes, adds and optimize from the index
         synchronized (indexLock) {
-
           // add to writer
           indexer.addDocument(indexDocument);
 
@@ -394,12 +332,9 @@ public class FullTextStringIndex {
         }
 
         added = true;
-      }
-      catch (IOException ex) {
-
-        logger.error("Unable to add fulltext string subject <" + subject +
-            "> predicate <" + predicate + "> literal <'" + literal +
-            "'> to fulltext string index", ex);
+      } catch (IOException ex) {
+        logger.error("Unable to add fulltext string subject <" + subject + "> predicate <" +
+                     predicate + "> literal <'" + literal + "'> to fulltext string index", ex);
         throw new FullTextStringIndexException(
             "Unable to add fulltext string subject <" + subject + "> predicate <" +
             predicate + "> literal <'" + literal + "'> to fulltext string index",
@@ -423,30 +358,25 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException Failure to add string due to an
    *      IOException
    */
-  public boolean add(String subject, String predicate, String resource,
-      Reader reader) throws FullTextStringIndexException {
-
+  public boolean add(String subject, String predicate, String resource, Reader reader)
+      throws FullTextStringIndexException {
     // Validate "subject" parameter
-    if ( (subject == null) || (subject.length() == 0)) {
-
+    if ((subject == null) || (subject.length() == 0)) {
       throw new FullTextStringIndexException("No \"subject\" parameter");
     }
 
     // Validate "predicate" parameter
-    if ( (predicate == null) || (predicate.length() == 0)) {
-
+    if ((predicate == null) || (predicate.length() == 0)) {
       throw new FullTextStringIndexException("No \"predicate\" parameter");
     }
 
     // Validate "resource" parameter
-    if ( (resource == null) || (resource.length() == 0)) {
-
+    if ((resource == null) || (resource.length() == 0)) {
       throw new FullTextStringIndexException("No \"resource\" parameter");
     }
 
     // Validate "reader" parameter
     if (reader == null) {
-
       throw new FullTextStringIndexException("Null \"reader\" parameter");
     }
 
@@ -454,9 +384,8 @@ public class FullTextStringIndex {
 
     // debug logging
     if (logger.isDebugEnabled()) {
-
-      logger.debug("Adding subject <" + subject + "> predicate <" + predicate +
-          "> resource <" + resource + "> to fulltext string index");
+      logger.debug("Adding subject <" + subject + "> predicate <" + predicate + "> resource <" +
+                   resource + "> to fulltext string index");
     }
 
     Document indexDocument = new Document();
@@ -477,10 +406,8 @@ public class FullTextStringIndex {
     indexDocument.add(new Field(SUBJECT_KEY, subject, Field.Store.YES, Field.Index.UN_TOKENIZED));
 
     try {
-
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
-
         // add to writer
         indexer.addDocument(indexDocument);
 
@@ -489,12 +416,9 @@ public class FullTextStringIndex {
       }
 
       added = true;
-    }
-    catch (IOException ex) {
-
-      logger.error("Unable to add fulltext string subject <" + subject +
-          "> predicate <" + predicate + "> resource <" + resource +
-          "> to fulltext string index", ex);
+    } catch (IOException ex) {
+      logger.error("Unable to add fulltext string subject <" + subject + "> predicate <" +
+                   predicate + "> resource <" + resource + "> to fulltext string index", ex);
       throw new FullTextStringIndexException(
           "Unable to add fulltext string subject <" + subject + "> predicate <" +
           predicate + "> resource <" + resource + "> to fulltext string index",
@@ -515,29 +439,21 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException Failure to add string due to an
    *      IOException
    */
-  public boolean add(Document indexDocument) throws
-      FullTextStringIndexException {
-
+  public boolean add(Document indexDocument) throws FullTextStringIndexException {
     if (indexDocument == null) {
-
-      throw new FullTextStringIndexException(
-          "The document to be indexed was null.");
+      throw new FullTextStringIndexException("The document to be indexed was null.");
     }
 
     boolean added = false;
 
     // debug logging
     if (logger.isDebugEnabled()) {
-
-      logger.debug("Adding document " + indexDocument +
-          " to fulltext string index");
+      logger.debug("Adding document " + indexDocument + " to fulltext string index");
     }
 
     try {
-
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
-
         // add to writer
         indexer.addDocument(indexDocument);
 
@@ -546,13 +462,9 @@ public class FullTextStringIndex {
 
         added = true;
       }
-    }
-    catch (IOException ex) {
-
-      logger.error("Unable to add " + indexDocument +
-          " to fulltext string index", ex);
-      throw new FullTextStringIndexException("Unable to add " + indexDocument +
-          " to fulltext string index", ex);
+    } catch (IOException ex) {
+      logger.error("Unable to add " + indexDocument + " to fulltext string index", ex);
+      throw new FullTextStringIndexException("Unable to add " + indexDocument + " to fulltext string index", ex);
     }
 
     return added;
@@ -567,7 +479,6 @@ public class FullTextStringIndex {
    *      close the indexes
    */
   public boolean removeAll() throws FullTextStringIndexException {
-
     // debug logging
     if (logger.isDebugEnabled()) {
       logger.debug("Removing all indexes from " + luceneIndexDirectory.toString());
@@ -577,28 +488,20 @@ public class FullTextStringIndex {
 
     //Delete the directory if it exists
     if (luceneIndexDirectory != null) {
-
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
-
         //Close the reading and writing indexes
         this.close();
 
         try {
+          Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath(), false).makeLock(name);
 
-          Lock lock = FSDirectory.getDirectory(
-              TempDir.getTempDir().getPath(), false
-          ).makeLock(name);
-
-          synchronized(lock) {
-
+          synchronized (lock) {
             lock.obtain();
 
             //Remove all files from the directory
             String[] files = luceneIndexDirectory.list();
-
             for (int i = 0; i < files.length; i++) {
-
               luceneIndexDirectory.deleteFile(files[i]);
             }
 
@@ -610,9 +513,7 @@ public class FullTextStringIndex {
 
             lock.release();
           }
-        }
-        catch (IOException ioe) {
-
+        } catch (IOException ioe) {
           throw new FullTextStringIndexException(ioe);
         }
       }
@@ -631,35 +532,28 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException An IOException occurs on index
    *      modification
    */
-  public boolean remove(String subject, String predicate,
-      String literal) throws FullTextStringIndexException {
-
+  public boolean remove(String subject, String predicate, String literal)
+      throws FullTextStringIndexException {
     boolean removed = false;
-
-    if ( (literal == null) ||
+    if ((literal == null) ||
         (literal.length() == 0) ||
         (subject == null) ||
         (subject.length() == 0) ||
         (predicate == null) ||
         (predicate.length() == 0)) {
-
-      throw new FullTextStringIndexException(
-          "Subject, predicate or literal has " + "not been supplied a value");
+      throw new FullTextStringIndexException("Subject, predicate or literal has not been supplied a value");
     }
 
     //Create the composite key for searching
     String key = this.createKey(subject, predicate, literal);
 
     try {
-
       Term term = new Term(ID_KEY, key);
 
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
-
         //check the status of the index
         if (indexLock.getStatus() == indexLock.MODIFIED) {
-
           // re-open the read index - the read index performs deletions
           // 25-2-03 - Leave the current index open.
           // Closing it will currupt any existing hits that
@@ -676,23 +570,15 @@ public class FullTextStringIndex {
       }
 
       if (logger.isDebugEnabled()) {
-
         if (removed) {
-
           logger.debug("Removed key '" + key + "' from fulltext string pool");
-        }
-        else {
-
-          logger.debug("Unable to removed string '" + key +
-              "' from fulltext string pool");
+        } else {
+          logger.debug("Unable to removed string '" + key + "' from fulltext string pool");
         }
       }
-    }
-    catch (IOException ex) {
-
+    } catch (IOException ex) {
       logger.error("Unable to delete the string '" + key + "'", ex);
-      throw new FullTextStringIndexException("Unable to delete the string '" +
-          key + "'", ex);
+      throw new FullTextStringIndexException("Unable to delete the string '" + key + "'", ex);
     }
 
     return removed;
@@ -705,9 +591,7 @@ public class FullTextStringIndex {
    *      index.
    */
   public void close() throws FullTextStringIndexException {
-
     try {
-
       if (indexer != null) {
         indexer.close();
         indexer = null;
@@ -722,37 +606,27 @@ public class FullTextStringIndex {
         indexDelete.close();
         indexDelete = null;
       }
-    }
-    catch (IOException ex) {
-
+    } catch (IOException ex) {
       logger.error("Unable to close fulltext string pool indexes", ex);
-      throw new FullTextStringIndexException(
-          "Unable to close fulltext string pool indexes",
-          ex);
+      throw new FullTextStringIndexException("Unable to close fulltext string pool indexes", ex);
     }
   }
 
   /**
    * Optimize the index and then flush it to disk.
    *
-       * @throws FullTextStringIndexException If there was a problem reading from or
-   *      writing to the disk.
+   * @throws FullTextStringIndexException If there was a problem reading from or writing to the disk.
    */
   public void optimize() throws FullTextStringIndexException {
-
     // debug logging
     if (logger.isDebugEnabled()) {
-
       logger.debug("Optimizing fulltext string pool indexes to disk");
     }
 
     try {
-
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
-
-        logger.info("Optimizing fulltext index at " + this.indexDirectoryName +
-            " please wait...");
+        logger.info("Optimizing fulltext index at " + this.indexDirectoryName + " please wait...");
 
         //Optimize the indexes
         indexer.optimize();
@@ -760,13 +634,9 @@ public class FullTextStringIndex {
         //set the index status to modified
         indexLock.setStatus(indexLock.MODIFIED);
       }
-    }
-    catch (IOException ex) {
-
+    } catch (IOException ex) {
       logger.error("Unable to optimize existing fulltext string pool index", ex);
-      throw new FullTextStringIndexException(
-          "Unable to optimize existing fulltext " + "string pool index",
-          ex);
+      throw new FullTextStringIndexException("Unable to optimize existing fulltext string pool index", ex);
     }
   }
 
@@ -782,25 +652,19 @@ public class FullTextStringIndex {
    * @return Object containing the hits
    * @throws FullTextStringIndexException IOException occurs on reading index
    */
-  public Hits find(String subject, String predicate,
-      String literal) throws FullTextStringIndexException {
-
+  public Hits find(String subject, String predicate, String literal) throws FullTextStringIndexException {
     if ((literal == null) || (literal.length() == 0)) {
-
-      throw new FullTextStringIndexException(
-          "Literal has not been supplied a value");
+      throw new FullTextStringIndexException("Literal has not been supplied a value");
     }
 
     Hits hits = null;
     BooleanQuery bQuery = new BooleanQuery();
 
     try {
-
       // debug logging
       if (logger.isDebugEnabled()) {
-        logger.debug("Searching the fulltext string index pool with " +
-            " subject :" + subject + " predicate :" + predicate + " literal :" +
-            literal);
+        logger.debug("Searching the fulltext string index pool with  subject :" + subject +
+                     " predicate :" + predicate + " literal :" + literal);
       }
 
       if ((subject != null) && (subject.length() > 0)) {
@@ -809,8 +673,7 @@ public class FullTextStringIndex {
       }
 
       if ((predicate != null) && (predicate.length() > 0)) {
-        TermQuery tPredicate =
-            new TermQuery(new Term(PREDICATE_KEY, predicate));
+        TermQuery tPredicate = new TermQuery(new Term(PREDICATE_KEY, predicate));
         bQuery.add(tPredicate, BooleanClause.Occur.MUST);
       }
 
@@ -821,8 +684,7 @@ public class FullTextStringIndex {
         literal = reverseLiteralSearch(literal);
         QueryParser parser = new QueryParser(REVERSE_LITERAL_KEY, analyzer);
         qliteral = parser.parse(literal);
-      }
-      else {
+      } else {
         QueryParser parser = new QueryParser(LITERAL_KEY, analyzer);
         qliteral = parser.parse(literal);
       }
@@ -832,28 +694,19 @@ public class FullTextStringIndex {
 
       // debug logging
       if (logger.isDebugEnabled()) {
-
-        if ( (literal.startsWith("*") || literal.startsWith("?")) &&
-            enableReverseTextIndex) {
-
-          logger.debug(
-              "Searching the fulltext string index pool with parsed query as " +
-              bQuery.toString(REVERSE_LITERAL_KEY));
-        }
-        else {
-
-          logger.debug(
-              "Searching the fulltext string index pool with parsed query as " +
-              bQuery.toString(LITERAL_KEY));
+        if ((literal.startsWith("*") || literal.startsWith("?")) && enableReverseTextIndex) {
+          logger.debug("Searching the fulltext string index pool with parsed query as " +
+                       bQuery.toString(REVERSE_LITERAL_KEY));
+        } else {
+          logger.debug("Searching the fulltext string index pool with parsed query as " +
+                       bQuery.toString(LITERAL_KEY));
         }
       }
 
       //wait for locks performing deletes, adds and optimizes
       synchronized (indexLock) {
-
         //check the status of the index
         if (indexLock.getStatus() == indexLock.MODIFIED) {
-
           // re-open the read index
           openReadIndex();
 
@@ -866,25 +719,14 @@ public class FullTextStringIndex {
       hits = indexSearcher.search(bQuery);
 
       if (logger.isDebugEnabled()) {
-
         logger.debug("Got hits: " + hits.length());
       }
-    }
-    catch (IOException ex) {
-
-      logger.error("Unable to read results for query '" +
-          bQuery.toString(LITERAL_KEY) + "'", ex);
-      throw new FullTextStringIndexException(
-          "Unable to read results for query '" + bQuery.toString(LITERAL_KEY) +
-          "'",
-          ex);
-    }
-    catch (org.apache.lucene.queryParser.ParseException ex) {
-
-      logger.error("Unable to parse query '" + bQuery.toString(LITERAL_KEY) +
-          "'", ex);
-      throw new FullTextStringIndexException("Unable to parse query '" +
-          bQuery.toString(LITERAL_KEY) + "'", ex);
+    } catch (IOException ex) {
+      logger.error("Unable to read results for query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
+      throw new FullTextStringIndexException("Unable to read results for query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
+    } catch (org.apache.lucene.queryParser.ParseException ex) {
+      logger.error("Unable to parse query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
+      throw new FullTextStringIndexException("Unable to parse query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
     }
 
     return hits;
@@ -903,29 +745,22 @@ public class FullTextStringIndex {
    * @throws FullTextStringIndexException EXCEPTION TO DO
    */
   public Hits find(Query query) throws FullTextStringIndexException {
-
     if (query == null) {
-
       throw new FullTextStringIndexException("The query may not be null.");
     }
 
     Hits hits = null;
 
     try {
-
       // debug logging
       if (logger.isDebugEnabled()) {
-
-        logger.debug("Searching the fulltext string index pool with query " +
-            query.toString(LITERAL_KEY));
+        logger.debug("Searching the fulltext string index pool with query " + query.toString(LITERAL_KEY));
       }
 
       //wait for locks performing deletes, adds and optimizes
       synchronized (indexLock) {
-
         //check the status of the index
         if (indexLock.getStatus() == indexLock.MODIFIED) {
-
           // re-open the read index
           openReadIndex();
 
@@ -936,15 +771,9 @@ public class FullTextStringIndex {
 
       //Perform query
       hits = indexSearcher.search(query);
-    }
-    catch (IOException ex) {
-
-      logger.error("Unable to read results for query '" +
-          query.toString(LITERAL_KEY) + "'", ex);
-      throw new FullTextStringIndexException(
-          "Unable to read results for query '" + query.toString(LITERAL_KEY) +
-          "'",
-          ex);
+    } catch (IOException ex) {
+      logger.error("Unable to read results for query '" + query.toString(LITERAL_KEY) + "'", ex);
+      throw new FullTextStringIndexException("Unable to read results for query '" + query.toString(LITERAL_KEY) + "'", ex);
     }
 
     return hits;
@@ -959,11 +788,9 @@ public class FullTextStringIndex {
    *      locate or create the indexes
    */
   private void initialize(String directory) throws FullTextStringIndexException {
-
     // debug logging
     if (logger.isDebugEnabled()) {
-      logger.debug("Initialization of FullTextStringIndex to directory to " +
-          directory);
+      logger.debug("Initialization of FullTextStringIndex to directory to " + directory);
     }
 
     File indexDirectory;
@@ -971,12 +798,9 @@ public class FullTextStringIndex {
     try {
       indexDirectoryName = directory;
       indexDirectory = new File(directory);
-    }
-    catch (Exception ex) {
-      logger.error("Exception when initializing fulltext string index " +
-          "directory", ex);
-      throw new FullTextStringIndexException("Exception when initializing " +
-          "fulltext " + "string index directory", ex);
+    } catch (Exception ex) {
+      logger.error("Exception when initializing fulltext string index directory", ex);
+      throw new FullTextStringIndexException("Exception when initializing fulltext string index directory", ex);
     }
 
     // Ensure index is flushed to disk before reading config.
@@ -984,7 +808,6 @@ public class FullTextStringIndex {
 
     // does the directory exist?
     if (!indexDirectory.exists()) {
-
       // no, make it
       indexDirectory.mkdirs();
     }
@@ -992,28 +815,23 @@ public class FullTextStringIndex {
     // ensure the index directory is a directory
     if (!indexDirectory.isDirectory()) {
       indexDirectory = null;
-      logger.fatal("The fulltext string index directory '" + directory +
-          "' does not exist!");
-      throw new FullTextStringIndexException(
-          "The fulltext string index index directory '" + indexDirectory +
-          "' does not exist!");
+      logger.fatal("The fulltext string index directory '" + directory + "' does not exist!");
+      throw new FullTextStringIndexException("The fulltext string index index directory '" +
+                                             indexDirectory + "' does not exist!");
     }
 
     // ensure the directory is writeable
     if (!indexDirectory.canWrite()) {
       indexDirectory = null;
-      logger.fatal("The fulltext string index directory '" + directory +
-          "' is not writeable!");
-      throw new FullTextStringIndexException(
-          "The fulltext string index directory '" + directory +
-          "' is not writeable!");
+      logger.fatal("The fulltext string index directory '" + directory + "' is not writeable!");
+      throw new FullTextStringIndexException("The fulltext string index directory '" + directory +
+                                             "' is not writeable!");
     }
 
     // Create lucene directory.
     try {
       luceneIndexDirectory = FSDirectory.getDirectory(directory, false);
-    }
-    catch (IOException ioe) {
+    } catch (IOException ioe) {
       throw new FullTextStringIndexException(ioe);
     }
 
@@ -1022,16 +840,12 @@ public class FullTextStringIndex {
     // Open the index for writing
     try {
       openWriteIndex();
-    }
-    catch (LockFailedException lfe) {
-
+    } catch (LockFailedException lfe) {
       // If it fails once try and unlock the directory and try again.
       try {
         IndexReader.unlock(luceneIndexDirectory);
-      }
-      catch (IOException ioe) {
-        throw new FullTextStringIndexException("Failed to unlock directory: " +
-            luceneIndexDirectory, ioe);
+      } catch (IOException ioe) {
+        throw new FullTextStringIndexException("Failed to unlock directory: " + luceneIndexDirectory, ioe);
       }
 
       // Try again - let it fail this time.
@@ -1054,62 +868,47 @@ public class FullTextStringIndex {
    *      the index.
    */
   private void openWriteIndex() throws FullTextStringIndexException {
-
     // debug logging
     if (logger.isDebugEnabled()) {
-      logger.debug("Opening index for IndexWriter and IndexReader " +
-          "(deletions): " + luceneIndexDirectory);
+      logger.debug("Opening index for IndexWriter and IndexReader (deletions): " +
+                   luceneIndexDirectory);
     }
 
     // Create a new index.
     if (indexer == null) {
-
       // Try to use an existing index.
       try {
         indexer = new IndexWriter(luceneIndexDirectory, analyzer, false);
-      }
-      catch (FileNotFoundException fnfe) {
-
+      } catch (FileNotFoundException fnfe) {
         // File not found means that it doesn't exist - create a new one.
         if (logger.isDebugEnabled()) {
-          logger.error("Failed to open read only, opening with write " +
-              "enabled: " + luceneIndexDirectory, fnfe);
+          logger.error("Failed to open read only, opening with write enabled: " +
+                       luceneIndexDirectory, fnfe);
         }
 
         // Try to create a new index.
         try {
-          luceneIndexDirectory = FSDirectory.getDirectory(indexDirectoryName,
-              true);
+          luceneIndexDirectory = FSDirectory.getDirectory(indexDirectoryName, true);
           indexer = new IndexWriter(luceneIndexDirectory, analyzer, true);
-        }
-        catch (IOException ioe) {
-
+        } catch (IOException ioe) {
           if (ioe.getMessage().indexOf("couldn't delete") >= 0) {
             throw new LockFailedException(ioe);
           }
 
-          logger.error("Unable to new existing fulltext string pool: " +
-              luceneIndexDirectory, ioe);
-          throw new FullTextStringIndexException("Unable to open " +
-              "new fulltext string pool", ioe);
+          logger.error("Unable to new existing fulltext string pool: " + luceneIndexDirectory, ioe);
+          throw new FullTextStringIndexException("Unable to open new fulltext string pool", ioe);
         }
-      }
-      catch (IOException ioe) {
-
+      } catch (IOException ioe) {
         // If the IOE was because of the lock failing report it.
         if (ioe.getMessage().indexOf("Lock obtain") >= 0) {
           throw new LockFailedException(ioe);
         }
 
-        throw new FullTextStringIndexException("Unable to create existing " +
-            "fulltext string pool index", ioe);
+        throw new FullTextStringIndexException("Unable to create existing fulltext string pool index", ioe);
       }
-    }
-    else {
-      logger.error("Tried to create a new fulltext string index when " +
-          "there already exists one");
-      throw new FullTextStringIndexException(
-          "Tried to create a new indexer when " + "there already exists one");
+    } else {
+      logger.error("Tried to create a new fulltext string index when there already exists one");
+      throw new FullTextStringIndexException("Tried to create a new indexer when there already exists one");
     }
   }
 
@@ -1120,25 +919,20 @@ public class FullTextStringIndex {
    *      the index.
    */
   private void openReadIndex() throws FullTextStringIndexException {
-
     // debug logging
     if (logger.isDebugEnabled()) {
-
       logger.debug("Opening index for IndexSearcher");
     }
 
     optimize();
 
     try {
-
       if (indexSearcher != null) {
-
         indexSearcher.close();
         indexSearcher = null;
       }
 
       if (indexDelete != null) {
-
         indexDelete.close();
         indexDelete = null;
       }
@@ -1146,14 +940,9 @@ public class FullTextStringIndex {
       // Try to use existing index.
       indexDelete = indexDelete.open(luceneIndexDirectory);
       indexSearcher = new IndexSearcher(indexDelete);
-    }
-    catch (IOException ex) {
-
-      logger.error("Unable to open existing fulltext string pool " +
-          "index for searching", ex);
-      throw new FullTextStringIndexException(
-          "Unable to open existing fulltext " + "string pool index for reading",
-          ex);
+    } catch (IOException ex) {
+      logger.error("Unable to open existing fulltext string pool index for searching", ex);
+      throw new FullTextStringIndexException("Unable to open existing fulltext string pool index for reading", ex);
     }
   }
 
@@ -1162,20 +951,15 @@ public class FullTextStringIndex {
    * optimizations are the same instance.
    */
   private class IndexLock {
-
     final static int MODIFIED = 1;
-
     final static int NOT_MODIFIED = 0;
-
     private int status = NOT_MODIFIED;
 
     public void setStatus(int status) {
-
       this.status = status;
     }
 
     public int getStatus() {
-
       return this.status;
     }
   }

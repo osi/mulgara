@@ -61,35 +61,23 @@ import org.mulgara.util.TempDir;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class FullTextStringIndexUnitTest extends TestCase {
-
-  /**
-   * Directory for the indexes
-   */
+  /** Directory for the indexes */
   private final static String indexDirectory =
       TempDir.getTempDir().getPath() + File.separator + "fulltextsp";
 
-  /**
-   * Directory for the indexes *
-   */
+  /** Directory for the indexes * */
   private final static String indexDirectory2 =
       TempDir.getTempDir().getPath() + File.separator + "fulltextsp2";
 
-  /**
-   * The directory containing the text documents
-   */
+  /** The directory containing the text documents */
   private final static String textDirectory =
       System.getProperty("cvs.root") + File.separator + "data" + File.separator +
       "fullTextTestData";
 
-  /**
-   * Logger.
-   */
-  private final static Logger logger =
-      Logger.getLogger(FullTextStringIndexUnitTest.class.getName());
+  /** Logger */
+  private final static Logger logger = Logger.getLogger(FullTextStringIndexUnitTest.class);
 
-  /**
-   * Hold a list of test data
-   */
+  /** Hold a list of test data */
   private ArrayList theStrings = new ArrayList();
 
   /**
@@ -107,7 +95,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @return The test suite to run.
    */
   public static Test suite() {
-
     TestSuite suite = new TestSuite();
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPool"));
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolwithFiles"));
@@ -122,7 +109,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @param args The command line arguments
    */
   public static void main(String[] args) {
-
     junit.textui.TestRunner.run(suite());
   }
 
@@ -132,7 +118,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws IOException Description of Exception
    */
   public void setUp() throws IOException {
-
     //Populate a list of strings
     theStrings.add("AACP Pneumothorax Consensus Group");
     theStrings.add("ALS-HPS Steering Group");
@@ -207,7 +192,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws IOException Description of Exception
    */
   public void tearDown() throws IOException {
-
   }
 
   /**
@@ -217,12 +201,9 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws Exception Test fails
    */
   public void testFullTextStringPool() throws Exception {
-
-    FullTextStringIndex index = new FullTextStringIndex(indexDirectory,
-        "fulltextsp", true);
+    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
 
     try {
-
       // Ensure that reverse search is enabled.
       int stringsAdded = 0;
       int stringsFound = 0;
@@ -238,9 +219,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // Add strings to the index
       ListIterator i = theStrings.listIterator();
-
       while (i.hasNext()) {
-
         String literal = (String) i.next();
         index.add(document, has, literal);
         stringsAdded++;
@@ -248,43 +227,33 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // Find the strings from the index with both subject & predicate
       i = theStrings.listIterator();
-
       while (i.hasNext()) {
-
         String literal = (String) i.next();
 
         Hits hits = index.find(document, has, literal);
-
         if (hits.length() == 0) {
-
           this.fail("failed to find '" + literal + "'");
         }
       }
 
       // Find the strings from the index with only subject
       i = theStrings.listIterator();
-
       while (i.hasNext()) {
-
         String literal = (String) i.next();
         Hits hits = index.find(document, null, literal);
 
         if (hits.length() == 0) {
-
           this.assertTrue("failed to find '" + literal + "'", false);
         }
       }
 
       // Find the strings from the index with only predicate
       i = theStrings.listIterator();
-
       while (i.hasNext()) {
-
         String literal = (String) i.next();
         Hits hits = index.find(null, has, literal);
 
         if (hits.length() == 0) {
-
           this.assertTrue("failed to find '" + literal + "'", false);
         }
       }
@@ -346,9 +315,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
       returned = index.find(document, has, "+*hrombosis").length();
       this.assertTrue("Reverse lookup was expecting 1 document returned found : " +
           returned, returned == 1);
-    }
-    finally {
-
+    } finally {
       if (index != null) {
         index.close();
         this.assertTrue("Unable to remove all index files", index.removeAll());
@@ -363,22 +330,17 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws Exception Test fails
    */
   public void testFullTextStringPoolwithFiles() throws Exception {
-
     /*
     File indexDir = new File(indexDirectory);
-
     if (!indexDir.exists() || indexDir.canRead()) {
-
       throw new Exception("Can't access: " + indexDirectory);
     }
     */
 
     // create a new index direcotry
-    FullTextStringIndex index = new FullTextStringIndex(indexDirectory,
-        "fulltextsp", true);
+    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
 
     try {
-
       // make sure the index directory is empty
       index.close();
       this.assertTrue("Unable to remove all index files", index.removeAll());
@@ -396,20 +358,15 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // Loop over the text documents locatd in the text directory
       for (int fileNo = 0; fileNo < textDocuments.length; fileNo++) {
-
         if (textDocuments[fileNo].isFile()) {
-
           // open a reader to the text file.
-          Reader reader =
-              new InputStreamReader(new FileInputStream(textDocuments[fileNo]));
+          Reader reader = new InputStreamReader(new FileInputStream(textDocuments[fileNo]));
 
           // Add the text document to the index
           if (index.add(textDocuments[fileNo].toURI().toString(),
               "http://mulgara.org/mulgara/Document#Content",
               textDocuments[fileNo].toURI().toString(), reader)) {
-
-            logger.debug("Indexed text document " +
-                textDocuments[fileNo].toString());
+            logger.debug("Indexed text document " + textDocuments[fileNo].toString());
             docsAdded++;
           }
 
@@ -425,8 +382,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // Perform a search for 'supernatural' in the
       // document content predicate
-      Hits hits = index.find(null, "http://mulgara.org/mulgara/Document#Content",
-          "supernatural");
+      Hits hits = index.find(null, "http://mulgara.org/mulgara/Document#Content", "supernatural");
 
       // check if all text documents were indexed
       this.assertTrue("Expected 6 hits with the word 'supernatural', " +
@@ -437,15 +393,12 @@ public class FullTextStringIndexUnitTest extends TestCase {
       int docsRemoved = 0;
 
       for (int docNo = 0; docNo < hits.length(); docNo++) {
-
-        String uri =
-            hits.doc(docNo).getField(FullTextStringIndex.SUBJECT_KEY).stringValue();
+        String uri = hits.doc(docNo).getField(FullTextStringIndex.SUBJECT_KEY).stringValue();
 
         logger.debug("Found supernatural in :" + uri);
 
         // Remove the text documents from the index
         if (index.remove(uri, "http://mulgara.org/mulgara/Document#Content", uri)) {
-
           docsRemoved++;
         }
       }
@@ -455,18 +408,14 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // Perform a search for 'supernatural' in the
       // document content predicate
-      hits =
-          index.find(null, "http://mulgara.org/mulgara/Document#Content",
-          "supernatural");
+      hits = index.find(null, "http://mulgara.org/mulgara/Document#Content", "supernatural");
 
       // check if all text documents are not present.
       this.assertTrue("Expected 0 hits with the word 'supernatural', " +
           "only found " + hits.length(), hits.length() == 0);
 
       logger.debug("Found supernatural in " + hits.length() + " documents");
-    }
-    finally {
-
+    } finally {
       // close the fulltextstringpool
       if (index != null) {
         index.close();
@@ -481,7 +430,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws Exception Test fails
    */
   public void testWithoutClosing() throws Exception {
-
     FullTextStringIndex index, index2, index3, index4;
 
     index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);

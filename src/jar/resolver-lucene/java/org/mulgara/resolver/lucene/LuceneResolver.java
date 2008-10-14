@@ -139,12 +139,11 @@ public class LuceneResolver implements Resolver {
   /**
    * Insert or delete RDF statements in a model at a URL.
    */
-  public void modifyModel(long model, Statements statements,
-      boolean occurs) throws ResolverException {
+  public void modifyModel(long model, Statements statements, boolean occurs)
+      throws ResolverException {
     if (logger.isDebugEnabled()) {
       logger.debug("Modify URL model " + model);
     }
-
 
     try {
       FullTextStringIndex stringIndex = openFullTextStringIndex(model);

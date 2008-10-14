@@ -90,8 +90,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
   static {
     try {
       LUCENE_SCORE_URI = new URI("lucene:score");
-    }
-    catch (URISyntaxException e) {
+    } catch (URISyntaxException e) {
       throw new ExceptionInInitializerError("Failed to create required URIs");
     }
   }
@@ -157,14 +156,12 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
       if (subjectElement instanceof Variable) {
         variableList.add(subjectElement);
         luceneKeyList.add(FullTextStringIndex.SUBJECT_KEY);
-      }
-      else if (subjectElement instanceof LocalNode) {
+      } else if (subjectElement instanceof LocalNode) {
         try {
           URIReference subjectURI = (URIReference) session.globalize(((
               LocalNode) subjectElement).getValue());
           subject = subjectURI.getURI().toString();
-        }
-        catch (ClassCastException ec) {
+        } catch (ClassCastException ec) {
           throw new QueryException("Bad subject in Lucene constraint", ec);
         }
       }
@@ -175,14 +172,12 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
       if (predicateElement instanceof Variable) {
         variableList.add(predicateElement);
         luceneKeyList.add(FullTextStringIndex.PREDICATE_KEY);
-      }
-      else if (predicateElement instanceof LocalNode) {
+      } else if (predicateElement instanceof LocalNode) {
         try {
           URIReference predicateURI = (URIReference) session.globalize(((
               LocalNode) predicateElement).getValue());
           predicate = predicateURI.getURI().toString();
-        }
-        catch (ClassCastException ec) {
+        } catch (ClassCastException ec) {
           throw new QueryException("Bad predicate in Lucene constraint", ec);
         }
       }
@@ -194,11 +189,9 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
         LiteralImpl objectLiteral = (LiteralImpl) session.globalize(((LocalNode)
             objectElement).getValue());
         object = objectLiteral.getLexicalForm();
-      }
-      catch (ClassCastException e) {
-        throw new QueryException(
-            "The object of any rdf:object statement in a mulgara:LuceneModel " +
-            "must be a literal.", e);
+      } catch (ClassCastException e) {
+        throw new QueryException("The object of any rdf:object statement in a mulgara:LuceneModel " +
+                                 "must be a literal.", e);
       }
 
       // Add the synthesized $score column
@@ -206,17 +199,14 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
       // variableList.add(new Variable(SCORE_COLUMN));
 
       if (logger.isInfoEnabled()) {
-        logger.info("Searching for " + subject + " : " + predicate + " : " +
-            object);
+        logger.info("Searching for " + subject + " : " + predicate + " : " + object);
       }
       // Initialize fields
       hits = fullTextStringIndex.find(subject, predicate, object);
       setVariables(variableList);
-    }
-    catch (GlobalizeException e) {
+    } catch (GlobalizeException e) {
       throw new QueryException("Couldn't globalize constraint elements", e);
-    }
-    catch (FullTextStringIndexException e) {
+    } catch (FullTextStringIndexException e) {
       throw new QueryException("Couldn't generate answer from text index", e);
     }
   }
@@ -255,8 +245,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
                 }
          */
         return session.localize(new URIReferenceImpl(uri));
-      }
-      else if (column == luceneKeyList.size()) {
+      } else if (column == luceneKeyList.size()) {
         // Generate the $score column
         /* I believe this requires access to the session string-pool. So this will
          * probably have to be delegated to the ResolverSession.localize method as
@@ -267,19 +256,15 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
          */
         return session.localize(new LiteralImpl(hits.score(nextDocumentIndex -
             1)));
-      }
-      else {
+      } else {
         throw new TuplesException("Column " + column + " does not exist");
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new TuplesException("Couldn't get column " + column + " value", e);
-    }
-    catch (LocalizeException e) {
+    } catch (LocalizeException e) {
       throw new TuplesException("Couldn't localize column " + column + " value",
           e);
-    }
-    catch (URISyntaxException e) {
+    } catch (URISyntaxException e) {
       throw new TuplesException("Couldn't get column " + column + " value", e);
     }
   }
@@ -318,13 +303,11 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
       if (nextDocumentIndex < getRowCount()) {
         document = hits.doc(nextDocumentIndex++);
         return true;
-      }
-      else {
+      } else {
         document = null;
         return false;
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new TuplesException("Couldn't obtain next Lucene hit", e);
     }
   }
