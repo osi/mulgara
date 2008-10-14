@@ -214,7 +214,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
       String has = "http://mulgara.org/mulgara/document#has";
 
       //Clean any existing indexes.
-      index.removeAll();
+      index.removeAllIndexes();
 
       //re-create the index
       index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
@@ -289,10 +289,19 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       returned = index.find(document, has, "+*hrombosis").length();
       assertEquals("Reverse lookup was expecting 1 document returned", 1, returned);
+
+      // test removing all documents
+      index.removeAll();
+
+      returned = index.find(document, has, "European").length();
+      assertEquals("Got unexpected documents after removeAll:", 0, returned);
+
+      returned = index.find(document, has, "+study +*roup").length();
+      assertEquals("Got unexpected documents after removeAll:", 0, returned);
     } finally {
       if (index != null) {
         index.close();
-        assertTrue("Unable to remove all index files", index.removeAll());
+        assertTrue("Unable to remove all index files", index.removeAllIndexes());
       }
     }
   }
@@ -310,7 +319,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
     try {
       // make sure the index directory is empty
       index.close();
-      assertTrue("Unable to remove all index files", index.removeAll());
+      assertTrue("Unable to remove all index files", index.removeAllIndexes());
 
       // create a new index
       index = new FullTextStringIndex(indexDirectory, "fulltextsp", true);
@@ -384,7 +393,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // close the fulltextstringpool
       if (index != null) {
         index.close();
-        assertTrue("Unable to remove all index files", index.removeAll());
+        assertTrue("Unable to remove all index files", index.removeAllIndexes());
       }
     }
   }

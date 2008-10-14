@@ -329,7 +329,16 @@ public class LuceneResolver implements Resolver {
    */
   public void removeModel(long model) throws ResolverException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Remove memory model " + model);
+      logger.debug("Removing full-text model " + model);
+    }
+
+    try {
+      FullTextStringIndex stringIndex = openFullTextStringIndex(model);
+      stringIndex.removeAll();
+      stringIndex.optimize();
+      stringIndex.close();
+    } catch (FullTextStringIndexException ef) {
+      throw new ResolverException("Query failed against string index", ef);
     }
   }
 

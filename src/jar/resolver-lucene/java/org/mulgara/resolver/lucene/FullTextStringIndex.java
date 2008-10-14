@@ -48,6 +48,7 @@ import org.apache.lucene.index.Term;
 
 // Lucene text indexer
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.HitCollector;
@@ -483,13 +484,14 @@ public class FullTextStringIndex {
 
   /**
    * Remove all index files from the current initialised directory WARNING : All
-   * files are removed in the specified directory.
+   * files are removed in the specified directory. See {@link #removeAll} for an
+   * alternate solution.
    *
    * @return return true if successful at removing all index files
    * @throws FullTextStringIndexException Exception occurs when attempting to
    *      close the indexes
    */
-  public boolean removeAll() throws FullTextStringIndexException {
+  public boolean removeAllIndexes() throws FullTextStringIndexException {
     // debug logging
     if (logger.isDebugEnabled()) {
       logger.debug("Removing all indexes from " + luceneIndexDirectory.toString());
@@ -584,6 +586,37 @@ public class FullTextStringIndex {
     }
 
     return removed;
+  }
+
+  /**
+   * Remove all entries in the string pool. Unlike {@link removeAllIndexes}, this may be
+   * called while readers are active. However, this method may be very slow.
+   *
+   * @throws FullTextStringIndexException Exception occurs when attempting to remove the documents
+   */
+  public void removeAll() throws FullTextStringIndexException {
+    // debug logging
+    if (logger.isDebugEnabled()) {
+      logger.debug("Removing all documents from " + luceneIndexDirectory.toString());
+    }
+
+    try {
+      QueryParser parser = new QueryParser(ID_KEY, analyzer);
+      parser.setAllowLeadingWildcard(true);
+      synchronized (indexLock) {
+        //check the status of the index
+        indexer.deleteDocuments(parser.parse("*"));
+
+        //set the index status to modified
+        indexLock.setStatus(indexLock.MODIFIED);
+      }
+    } catch (ParseException ex) {
+      logger.error("Unexpected internal error", ex);
+      throw new FullTextStringIndexException("Unexpected internal error", ex);
+    } catch (IOException ex) {
+      logger.error("Unable to delete all documents", ex);
+      throw new FullTextStringIndexException("Unable to delete all documents", ex);
+    }
   }
 
   /**
@@ -725,7 +758,7 @@ public class FullTextStringIndex {
     } catch (IOException ex) {
       logger.error("Unable to read results for query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
       throw new FullTextStringIndexException("Unable to read results for query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
-    } catch (org.apache.lucene.queryParser.ParseException ex) {
+    } catch (ParseException ex) {
       logger.error("Unable to parse query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
       throw new FullTextStringIndexException("Unable to parse query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
     }
