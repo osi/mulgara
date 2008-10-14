@@ -66,8 +66,6 @@ public class LuceneResolverFactory implements ResolverFactory {
 
   private String directory;
   private URI modelTypeURI;
-  private long rdfType;
-  private long systemModel;
 
   //
   // Constructors
@@ -89,10 +87,6 @@ public class LuceneResolverFactory implements ResolverFactory {
 
       // Initialize fields
       directory = initializer.getDirectory().toString();
-
-      rdfType = initializer.preallocate(new URIReferenceImpl(RDF.TYPE));
-
-      systemModel = initializer.getSystemModel();
 
       // Claim mulgara:LuceneModel
       initializer.addModelType(modelTypeURI, this);
@@ -168,7 +162,7 @@ public class LuceneResolverFactory implements ResolverFactory {
       throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating Lucene resolver");
     return canWrite
-      ? new LuceneResolver(systemResolver, rdfType, systemModel, modelTypeURI, resolverSession, directory)
-      : new ReadOnlyLuceneResolver(systemResolver, rdfType, systemModel, modelTypeURI, resolverSession, directory);
+      ? new LuceneResolver(modelTypeURI, resolverSession, directory)
+      : new ReadOnlyLuceneResolver(modelTypeURI, resolverSession, directory);
   }
 }
