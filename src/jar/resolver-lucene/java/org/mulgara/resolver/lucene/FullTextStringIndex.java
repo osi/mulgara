@@ -28,22 +28,34 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
 
 // Log4J
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 
 // Third party packages
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.standard.*;
-import org.apache.lucene.document.*;
-import org.apache.lucene.index.*;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 
 // Lucene text indexer
-import org.apache.lucene.queryParser.*;
-import org.apache.lucene.search.*;
-import org.apache.lucene.store.*;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.Lock;
 
 import org.mulgara.util.TempDir;
 
@@ -71,7 +83,6 @@ import org.mulgara.util.TempDir;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class FullTextStringIndex {
-
   /** Logger. This is named after the class. */
   private final static Logger logger = Logger.getLogger(FullTextStringIndex.class);
 
@@ -233,11 +244,11 @@ public class FullTextStringIndex {
 
     // does it contain any +'s or -'s in the search request?
     if ((literal.indexOf("+") >= 0) || (literal.indexOf("-") >= 0)) {
-      StringBuffer searchReversed = new StringBuffer();
+      StringBuilder searchReversed = new StringBuilder();
       String[] tokens = literal.split(" ");
 
       for (int i = tokens.length - 1; i >= 0; i--) {
-        StringBuffer reversedStringBuff = new StringBuffer(tokens[i]).reverse();
+        StringBuilder reversedStringBuff = new StringBuilder(tokens[i]).reverse();
 
         char lastChar = reversedStringBuff.charAt(reversedStringBuff.length() - 1);
 
@@ -256,7 +267,7 @@ public class FullTextStringIndex {
       newReversedString = searchReversed.toString();
     } else {
       // perform a simple reverse
-      newReversedString = (new StringBuffer(literal).reverse()).toString();
+      newReversedString = (new StringBuilder(literal).reverse()).toString();
     }
 
     if (logger.isDebugEnabled()) {
@@ -307,13 +318,13 @@ public class FullTextStringIndex {
       // fulltext searching in reverse order
       if (enableReverseTextIndex) {
         indexDocument.add(new Field(REVERSE_LITERAL_KEY,
-            (new StringBuffer(literal).reverse()).toString(), Field.Store.YES, Field.Index.TOKENIZED));
+            (new StringBuilder(literal).reverse()).toString(), Field.Store.YES, Field.Index.TOKENIZED));
       }
 
       // Add the actual literal, do not tokenize it. Required for exact
       // matching. ie. removal
       indexDocument.add(new Field(ID_KEY,
-          this.createKey(subject, predicate, literal), Field.Store.YES, Field.Index.UN_TOKENIZED));
+          createKey(subject, predicate, literal), Field.Store.YES, Field.Index.UN_TOKENIZED));
 
       // Add the predicate, do not tokenize it, required for exact matching
       indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -397,7 +408,7 @@ public class FullTextStringIndex {
     // Add the resource label, do not tokenize it. Required for exact
     // matching. ie. removal
     indexDocument.add(new Field(ID_KEY,
-        this.createKey(subject, predicate, resource), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        createKey(subject, predicate, resource), Field.Store.YES, Field.Index.UN_TOKENIZED));
 
     // Add the predicate, do not tokenize it, required for exact matching
     indexDocument.add(new Field(PREDICATE_KEY, predicate, Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -491,7 +502,7 @@ public class FullTextStringIndex {
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
         //Close the reading and writing indexes
-        this.close();
+        close();
 
         try {
           Lock lock = FSDirectory.getDirectory(TempDir.getTempDir().getPath(), false).makeLock(name);
@@ -500,9 +511,8 @@ public class FullTextStringIndex {
             lock.obtain();
 
             //Remove all files from the directory
-            String[] files = luceneIndexDirectory.list();
-            for (int i = 0; i < files.length; i++) {
-              luceneIndexDirectory.deleteFile(files[i]);
+            for (String file : luceneIndexDirectory.list()) {
+              luceneIndexDirectory.deleteFile(file);
             }
 
             //Remove the directory
@@ -545,7 +555,7 @@ public class FullTextStringIndex {
     }
 
     //Create the composite key for searching
-    String key = this.createKey(subject, predicate, literal);
+    String key = createKey(subject, predicate, literal);
 
     try {
       Term term = new Term(ID_KEY, key);
@@ -626,7 +636,7 @@ public class FullTextStringIndex {
     try {
       //lock any deletes, adds and optimize from the index
       synchronized (indexLock) {
-        logger.info("Optimizing fulltext index at " + this.indexDirectoryName + " please wait...");
+        logger.info("Optimizing fulltext index at " + indexDirectoryName + " please wait...");
 
         //Optimize the indexes
         indexer.optimize();
@@ -804,7 +814,7 @@ public class FullTextStringIndex {
     }
 
     // Ensure index is flushed to disk before reading config.
-    this.close();
+    close();
 
     // does the directory exist?
     if (!indexDirectory.exists()) {
@@ -950,7 +960,7 @@ public class FullTextStringIndex {
    * Locking object to stop multiple threads performing inserts, deletes and
    * optimizations are the same instance.
    */
-  private class IndexLock {
+  private static class IndexLock {
     final static int MODIFIED = 1;
     final static int NOT_MODIFIED = 0;
     private int status = NOT_MODIFIED;
@@ -960,7 +970,7 @@ public class FullTextStringIndex {
     }
 
     public int getStatus() {
-      return this.status;
+      return status;
     }
   }
 }
