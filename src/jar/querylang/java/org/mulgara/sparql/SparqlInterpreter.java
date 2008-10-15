@@ -181,18 +181,25 @@ public class SparqlInterpreter implements Interpreter {
     } catch (ParseException pe) {
       throw new MulgaraParserException(pe);
     }
+    Query result = null;
     switch (struct.getType()) {
       case select:
-        return buildSelectQuery(struct);
+        result = buildSelectQuery(struct);
+        break;
       case construct:
-        return buildConstructQuery(struct);
+        result = buildConstructQuery(struct);
+        break;
       case describe:
-        return buildDescribeQuery(struct);
+        result = buildDescribeQuery(struct);
+        break;
       case ask:
-        return buildAskQuery(struct);
+        result = buildAskQuery(struct);
+        break;
       default:
         throw new MulgaraParserException("Unknown query type: " + struct.getType().name());
     }
+    result.setText(queryString);
+    return result;
   }
 
   /**
