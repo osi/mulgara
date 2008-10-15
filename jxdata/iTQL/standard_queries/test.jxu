@@ -276,7 +276,7 @@
   <set name="query" value="
     insert &lt;http://test.com/&gt;
       &lt;http://cdls.nstl.gov.cn/cdls2/w3c/2003/Metadata/elements/title&gt;
-      &apos;test2 escape char &lt;&apos; into &lt;rmi://localhost/server1#nomodelexistswiththisname&gt; ; "/>
+      &apos;test2 escape char &lt;&apos; into &lt;rmi://localhost/server1#nographexistswiththisname&gt; ; "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult17.txt" name="queryResult">
@@ -298,7 +298,7 @@
   <set name="query" value="
     insert &lt;http://test.com/&gt;
       &lt;http://cdls.nstl.gov.cn/cdls2/w3c/2003/Metadata/elements/title&gt;
-      &apos;test2 escape char &lt;&apos; into &lt;@server2@#nomodelexistswiththisname&gt; ; "/>
+      &apos;test2 escape char &lt;&apos; into &lt;@server2@#nographexistswiththisname&gt; ; "/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="queryResult19.txt" name="queryResult">

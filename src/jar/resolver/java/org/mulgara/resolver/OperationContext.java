@@ -57,16 +57,16 @@ public interface OperationContext {
 
   /**
    * Find a {@link ResolverFactory} capable of generating a {#link Resolver} to
-   * manipulate a specified model.
+   * manipulate a specified graph.
    *
-   * @param model  any model
+   * @param graph  any graph
    * @return  a {@link ResolverFactory} capable of generating
-   *   {@link Resolver}s which can manipulate the <var>model</var>, never
+   *   {@link Resolver}s which can manipulate the <var>graph</var>, never
    *   <code>null</code>
    * @throws QueryException if the <var>model</var> isn't a supported type or
    *   protocol
    */
-  public ResolverFactory findModelResolverFactory(long model)
+  public ResolverFactory findModelResolverFactory(long graph)
     throws QueryException;
 
   /**

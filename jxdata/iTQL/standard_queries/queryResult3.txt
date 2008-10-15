@@ -1,4 +1,4 @@
 ItqlInterpreter error - Query failed
 Caused by: (MulgaraTransactionException) Transaction rollback triggered
 Caused by: (QueryException) Error resolving [$pmid http://mulgara.org/mulgara/Document#subject "Birds" $_from] from @server@#badmodel
-Caused by: (QueryException) @server@#badmodel is not a Model
+Caused by: (QueryException) @server@#badmodel is not a Graph
