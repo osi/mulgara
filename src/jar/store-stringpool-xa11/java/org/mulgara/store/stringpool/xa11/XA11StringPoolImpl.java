@@ -1093,9 +1093,6 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
    */
   final class ReadOnlyStringPool implements XAStringPool {
 
-    /** The phase this string pool is associated with. */
-    TreePhase phase;
-
     /** Releases resources held by the string pool. Not used. */
     public void close() throws StringPoolException {
       throw new UnsupportedOperationException("Trying to close a read-only string pool.");
@@ -1186,7 +1183,7 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
 
     public long findGNode(SPObject spObject, boolean create) throws StringPoolException {
       if (create) throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
-      return phase.findGNode(spObject, false);
+      return XA11StringPoolImpl.this.findGNode(spObject, false);
     }
 
   }
