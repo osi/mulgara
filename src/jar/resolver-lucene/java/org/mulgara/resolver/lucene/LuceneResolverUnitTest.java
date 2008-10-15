@@ -138,6 +138,9 @@ public class LuceneResolverUnitTest extends TestCase {
     }
   }
 
+  private synchronized Query parseQuery(String q) throws Exception {
+    return (Query) ti.parseCommand(q);
+  }
 
   /**
    * The teardown method for JUnit
@@ -165,8 +168,8 @@ public class LuceneResolverUnitTest extends TestCase {
       // Run the queries
       try {
         String q = "select $x from <foo:bar> where $x <foo:hasText> 'American' in <" + modelURI + ">;";
-        Query qry1 = (Query) ti.parseCommand(q);
-        Query qry2 = (Query) ti.parseCommand(q);
+        Query qry1 = parseQuery(q);
+        Query qry2 = parseQuery(q);
 
         Answer answer1 = session.query(qry1);
         Answer answer2 = session.query(qry1);
@@ -214,7 +217,7 @@ public class LuceneResolverUnitTest extends TestCase {
 
                 // Evaluate the query
                 String q = "select $x from <foo:bar> where $x <foo:hasText> 'Study' in <" + modelURI + ">;";
-                Answer answer = session2.query((Query) ti.parseCommand(q));
+                Answer answer = session2.query(parseQuery(q));
 
                 compareResults(expectedStudyResults(), answer);
                 answer.close();
@@ -249,7 +252,7 @@ public class LuceneResolverUnitTest extends TestCase {
         }
 
         String q = "select $x from <foo:bar> where $x <foo:hasText> 'Group' in <" + modelURI + ">;";
-        Answer answer = session1.query((Query) ti.parseCommand(q));
+        Answer answer = session1.query(parseQuery(q));
 
         compareResults(expectedGroupResults(), answer);
         answer.close();
@@ -293,7 +296,7 @@ public class LuceneResolverUnitTest extends TestCase {
 
         // run query before second txn starts
         String q = "select $x from <foo:bar> where $x <foo:hasText> 'Group' in <" + modelURI + ">;";
-        Answer answer = session1.query((Query) ti.parseCommand(q));
+        Answer answer = session1.query(parseQuery(q));
 
         compareResults(expectedGroupResults(), answer);
         answer.close();
@@ -319,7 +322,9 @@ public class LuceneResolverUnitTest extends TestCase {
                 }
 
                 String q = "insert <foo:nodeX> <foo:hasText> 'Another Group text' into <" + modelURI + ">;";
-                session2.insert(modelURI, ((Modification) ti.parseCommand(q)).getStatements());
+                synchronized (LuceneResolverUnitTest.this) {
+                  session2.insert(modelURI, ((Modification) ti.parseCommand(q)).getStatements());
+                }
 
                 synchronized (flag) {
                   flag[0] = true;
@@ -348,7 +353,7 @@ public class LuceneResolverUnitTest extends TestCase {
         }
 
         // run query before insert
-        answer = session1.query((Query) ti.parseCommand(q));
+        answer = session1.query(parseQuery(q));
         compareResults(expectedGroupResults(), answer);
         answer.close();
 
@@ -362,7 +367,7 @@ public class LuceneResolverUnitTest extends TestCase {
         }
 
         // run query after insert and before commit
-        answer = session1.query((Query) ti.parseCommand(q));
+        answer = session1.query(parseQuery(q));
         compareResults(expectedGroupResults(), answer);
         answer.close();
 
@@ -381,7 +386,7 @@ public class LuceneResolverUnitTest extends TestCase {
         assertFalse("second transaction should've terminated", t2.isAlive());
 
         // run query after commit
-        answer = session1.query((Query) ti.parseCommand(q));
+        answer = session1.query(parseQuery(q));
         compareResults(expectedGroupResults(), answer);
         answer.close();
 
@@ -393,7 +398,7 @@ public class LuceneResolverUnitTest extends TestCase {
         xid1 = new TestXid(3);
         resource1.start(xid1, XAResource.TMNOFLAGS);
 
-        answer = session1.query((Query) ti.parseCommand(q));
+        answer = session1.query(parseQuery(q));
         compareResults(concat(expectedGroupResults(), new String[][] { { "foo:nodeX" } }), answer);
         answer.close();
 
