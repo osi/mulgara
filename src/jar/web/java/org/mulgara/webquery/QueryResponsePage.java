@@ -314,7 +314,7 @@ public class QueryResponsePage {
     try {
       URI graphUri = new URI("rmi", tagMap.get(HOSTNAME_TAG), "/" + tagMap.get(SERVERNAME_TAG), "sampledata");
       QueryParams params = new QueryParams();
-      params.add(MODEL_ARG, graphUri.toString());
+      params.add(GRAPH_ARG, graphUri.toString());
       String text;
       if (n instanceof URIReference) {
         params.add(QUERY_RESOURCE_ARG, n.toString());

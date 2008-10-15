@@ -12,15 +12,15 @@
   // Put the selected example query into the query text area. The graph
   // name is also inserted in to the query.
   function setQuery() {
-    // Must have a Model URI
-    if (document.QueryForm.ModelURI.value == '') {
-      alert('Please enter a Model URI and then select the query again');
-      document.QueryForm.ModelURI.focus;
+    // Must have a Graph URI
+    if (document.QueryForm.GraphURI.value == '') {
+      alert('Please enter a Graph URI and then select the query again');
+      document.QueryForm.GraphURI.focus;
       return;
     }
     var index = document.QueryForm.ExampleQuery.selectedIndex;
     var exampleText = document.QueryForm.ExampleQuery[index].value;
-    var graphURI= document.QueryForm.ModelURI.value;
+    var graphURI= document.QueryForm.GraphURI.value;
     // Add the graph name
     var queryString = exampleText.replace(/-graph-/gi, graphURI);
     document.QueryForm.QueryText.value = queryString;
@@ -58,7 +58,7 @@
               <table class="queryTable" summary="Enter a query">
                 <tr>
                   <td><strong>Graph URI:</strong> </td>
-                  <td><input name="ModelURI" size="60" type="text" value="@@graph@@"> </td>
+                  <td><input name="GraphURI" size="60" type="text" value="@@graph@@"> </td>
                 </tr>
                 <tr>
                   <td><strong>Example Queries:</strong> </td>

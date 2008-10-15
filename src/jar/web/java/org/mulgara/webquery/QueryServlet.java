@@ -15,6 +15,7 @@ package org.mulgara.webquery;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,8 +39,11 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
 import org.mulgara.server.AbstractServer;
 import org.mulgara.server.SessionFactory;
+import org.mulgara.sparql.SparqlInterpreter;
+import org.mulgara.util.SparqlUtil;
 import org.mulgara.util.StackTrace;
 import org.mulgara.util.functional.C;
+import org.mulgara.util.functional.Fn;
 import org.mulgara.util.functional.Fn1E;
 import org.mulgara.util.functional.Pair;
 
@@ -67,17 +71,23 @@ public class QueryServlet extends HttpServlet {
   /** Session value for database connection. */
   private static final String CONNECTION = "session.connection";
 
-  /** Session value for interpreter. */
-  private static final String INTERPRETER = "session.interpreter";
+  /** Session value for the TQL interpreter. */
+  private static final String TQL_INTERPRETER = "session.tql.interpreter";
+
+  /** Session value for the SPARQL interpreter. */
+  private static final String SPARQL_INTERPRETER = "session.sparql.interpreter";
 
   /** The name of the host for the application. */
-  private String hostname;
+  private final String hostname;
 
   /** The name of the server for the application. */
-  private String servername;
+  private final String servername;
 
   /** The server for finding a session factory. */
-  private AbstractServer server;
+  private final AbstractServer server;
+
+  /** The default graph URI to use. */
+  private final String defaultGraphUri;
 
   /** Session factory for accessing the database. */
   private SessionFactory cachedSessionFactory;
@@ -105,6 +115,7 @@ public class QueryServlet extends HttpServlet {
     if (path == null) throw new IOException("Resource not found: " + ResourceFile.RESOURCES + TEMPLATE);
     templatePath = path.toString();
     resourcePath = templatePath.split("!")[0];
+    defaultGraphUri = "rmi://" + hostname + "/" + servername + "#sampledata";
   }
 
 
@@ -130,7 +141,7 @@ public class QueryServlet extends HttpServlet {
 
       // check for some parameters
       String resultOrdinal = req.getParameter(RESULT_ORD_ARG);
-      String queryGetGraph = req.getParameter(MODEL_ARG);
+      String queryGetGraph = req.getParameter(GRAPH_ARG);
 
       // return the appropriate page for the given parameters
       if (resultOrdinal != null) {
@@ -155,7 +166,7 @@ public class QueryServlet extends HttpServlet {
       return;
     }
     
-    doQuery(req, resp, req.getParameter(MODEL_ARG));
+    doQuery(req, resp, req.getParameter(GRAPH_ARG));
   }
 
 
@@ -207,7 +218,7 @@ public class QueryServlet extends HttpServlet {
       // record how long this takes
       time = System.currentTimeMillis();
       final Connection c = getConnection(req);
-      cmds = getInterpreter(req).parseCommands(command);
+      cmds = getInterpreter(req, command, graphUri).parseCommands(command);
       results = C.map(cmds, new Fn1E<Command,Object,Exception>() { public Object fn(Command cmd) throws Exception { return cmd.execute(c); } });
       time = System.currentTimeMillis() - time;
     } catch (MulgaraParserException mpe) {
@@ -259,7 +270,7 @@ public class QueryServlet extends HttpServlet {
     
     // Get the tags to use in the page template
     Map<String,String> templateTags = getTemplateTagMap();
-    templateTags.put(GRAPH_TAG, defaultGraph(req.getParameter(MODEL_ARG)));
+    templateTags.put(GRAPH_TAG, defaultGraph(req.getParameter(GRAPH_ARG)));
     
     // Generate the page
     QueryResponsePage page = new QueryResponsePage(req, resp, templateTags);
@@ -324,6 +335,7 @@ public class QueryServlet extends HttpServlet {
     Map<Answer,Pair<Long,Command>> oldResultData = (Map<Answer,Pair<Long,Command>>)req.getSession().getAttribute(UNFINISHED_RESULTS);
     return (oldResultData == null) ? null : oldResultData;
   }
+
 
   /**
    * Analyse the request parameters and work out what kind of query to generate.
@@ -408,23 +420,67 @@ public class QueryServlet extends HttpServlet {
    */
   private String defaultGraph(String graphParam) {
     if (graphParam != null && graphParam.length() > 0) return graphParam;
-    return "rmi://" + hostname + "/" + servername + "#sampledata";
+    return defaultGraphUri;
   }
 
 
   /**
    * Gets the interpreter for the current session, creating it if it doesn't exist yet.
    * @param req The current request environment.
+   * @param cmd The command the interpreter will be used on.
+   * @param graphUri The string form of the URI for the default graph to use in the interpreter.
    * @return A connection that is tied to this HTTP session.
+   * @throws RequestException An internal error occured with the default graph URI.
    */
-  private Interpreter getInterpreter(HttpServletRequest req) {
+  private Interpreter getInterpreter(HttpServletRequest req, String cmd, String graphUri) throws RequestException {
+    RegInterpreter ri = getRegInterpreter(cmd);
     HttpSession httpSession = req.getSession();
-    Interpreter interpreter = (Interpreter)httpSession.getAttribute(INTERPRETER);
+    Interpreter interpreter = (Interpreter)httpSession.getAttribute(ri.getRegString());
     if (interpreter == null) {
-      interpreter = new TqlInterpreter();
-      httpSession.setAttribute(INTERPRETER, interpreter);
+      interpreter = ri.getInterpreterFactory().fn();
+      httpSession.setAttribute(ri.getRegString(), interpreter);
     }
+    setDefaultGraph(interpreter, graphUri);
     return interpreter;
+  }
+
+
+  /**
+   * Sets the default graph on an interpreter
+   * @param i The interpreter to set the default graph for.
+   * @param graph The graph to use with the interpreter.
+   * @throws RequestException An internal error where a valid graph could not be refered to.
+   */
+  private void setDefaultGraph(Interpreter i, String graph) throws RequestException {
+    // set the default graph, if applicable
+    try {
+      if (graph != null && !"".equals(graph)) i.setDefaultGraphUri(graph);
+    } catch (Exception e) {
+      try {
+        i.setDefaultGraphUri(defaultGraphUri);
+      } catch (URISyntaxException e1) {
+        throw new RequestException("Unable to create URI for: " + defaultGraphUri, e1);
+      }
+    }
+  }
+
+  /**
+   * Gets a factory for creating an interpreter, along with the name for that type of interpreter
+   * to be registered under
+   * @param query The query to determine the interpreter type
+   * @return An interpreter constructor and name
+   */
+  private RegInterpreter getRegInterpreter(String query) {
+    Fn<Interpreter> factory = null;
+    String attr = null;
+    if (SparqlUtil.looksLikeSparql(query)) {
+      factory = new Fn<Interpreter>(){ public Interpreter fn(){ return new SparqlInterpreter(); }};
+      attr = SPARQL_INTERPRETER;
+    } else {
+      factory = new Fn<Interpreter>(){ public Interpreter fn() { return new TqlInterpreter(); }};
+      attr = TQL_INTERPRETER;
+    }
+    return new RegInterpreter(factory, attr);
   }
 
 
@@ -474,4 +530,31 @@ public class QueryServlet extends HttpServlet {
     return path.substring(dot);
   }
 
+  /**
+   * Registerable Interpreter. This contains a factory for an interpreter, plus the name it should
+   * be registered under.
+   */
+  private static class RegInterpreter {
+    /** The interpreter factory */
+    private final Fn<Interpreter> intFactory;
+
+    /** The registration name for the interpreter built from the factory */
+    private final String regString;
+
+    /** Create a link between an interpreter factory and the name it should be registered under */
+    public RegInterpreter(Fn<Interpreter> intFactory, String regString) {
+      this.intFactory = intFactory;
+      this.regString = regString;
+    }
+
+    /** Get the method for creating an interpreter */
+    public Fn<Interpreter> getInterpreterFactory() {
+      return intFactory;
+    }
+
+    /** Get the name constructed interpreters should be created under */
+    public String getRegString() {
+      return regString;
+    }
+  }
 }

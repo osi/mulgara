@@ -61,8 +61,8 @@ public class Template {
   /** The name of the field holding the query text to execute. */
   public static final String QUERY_TEXT_ARG = "QueryText";
 
-  /** The ModelURI argument for URL parameters. */
-  public static final String MODEL_ARG = "ModelURI";
+  /** The GraphURI argument for URL parameters. */
+  public static final String GRAPH_ARG = "GraphURI";
 
   /** The QueryResource argument for URL parameters. */
   public static final String QUERY_RESOURCE_ARG = "QueryResource";
