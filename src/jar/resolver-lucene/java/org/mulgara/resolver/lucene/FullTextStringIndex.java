@@ -53,6 +53,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -541,7 +542,9 @@ public class FullTextStringIndex {
 
   /**
    * Remove all entries in the string pool. Unlike {@link removeAllIndexes}, this may be
-   * called while readers are active. However, this method may be very slow.
+   * called while readers are active. However, this method may be very slow. Also note
+   * that this will <strong>not</strong> remove entries that have been added as part of
+   * the current transaction!
    *
    * @throws FullTextStringIndexException Exception occurs when attempting to remove the documents
    */
@@ -552,12 +555,7 @@ public class FullTextStringIndex {
     }
 
     try {
-      QueryParser parser = new QueryParser(ID_KEY, analyzer);
-      parser.setAllowLeadingWildcard(true);
-      indexer.deleteDocuments(parser.parse("*"));
-    } catch (ParseException ex) {
-      logger.error("Unexpected internal error", ex);
-      throw new FullTextStringIndexException("Unexpected internal error", ex);
+      indexer.deleteDocuments(new MatchAllDocsQuery());
     } catch (IOException ex) {
       logger.error("Unable to delete all documents", ex);
       throw new FullTextStringIndexException("Unable to delete all documents", ex);
