@@ -181,7 +181,7 @@ public final class TripleAVLFile {
       }
 
       // find the middle of this range
-      int middle = (left + right) / 2;
+      int middle = (left + right) >>> 1;
       // determine if the required triple is above or below the middle
       int c = comp.compare(triple, triples, middle);
 
