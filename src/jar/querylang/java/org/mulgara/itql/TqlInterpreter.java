@@ -59,10 +59,11 @@ import org.mulgara.server.Session;
 
 /**
  * Interactive TQL (ITQL) command interpreter.
- * <p>
  * Performs parsing and converting TQL requests to query objects for execution;
  * Based on ItqlInterpreter.
- * </p>
+ * 
+ * <em>This class is non-reentrant. Parsing should be serialized, or else use a new TqlInterpreters
+ * for each thread.</em>
  *
  * @created 2007-08-09
  * @author Paul Gearon
@@ -1045,6 +1046,18 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    */
   public Map<String,URI> getAliasMap() {
     return aliasMap;
+  }
+
+
+  /** @see org.mulgara.parser.Interpreter#setDefaultGraphUri(java.lang.String) */
+  public Interpreter setDefaultGraphUri(String graph) throws URISyntaxException {
+    return this;
+  }
+
+
+  /** @see org.mulgara.parser.Interpreter#setDefaultGraphUri(java.net.URI) */
+  public Interpreter setDefaultGraphUri(URI graph) {
+    return this;
   }
 
 

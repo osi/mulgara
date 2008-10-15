@@ -14,9 +14,11 @@ package org.mulgara.sparql;
 import static org.jrdf.vocabulary.RDF.TYPE;
 import static org.jrdf.vocabulary.RDFS.LITERAL;
 import static org.mulgara.query.rdf.Mulgara.NODE_TYPE_GRAPH;
+import static org.mulgara.query.rdf.Mulgara.NULL_GRAPH;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -76,7 +78,7 @@ import org.mulgara.util.functional.Fn1;
 public class SparqlInterpreter implements Interpreter {
 
   /** The default graph to use if none has been set. */
-  private static final List<URI> INTERNAL_DEFAULT_GRAPH_URIS = Collections.singletonList(URI.create("local:null"));
+  private static final List<URI> INTERNAL_DEFAULT_GRAPH_URIS = Collections.singletonList(URI.create(NULL_GRAPH));
 
   /** The column variables used to build a graph. */
   private static final Variable[] GRAPH_VARS = GraphAnswer.getGraphVariables();
@@ -118,13 +120,23 @@ public class SparqlInterpreter implements Interpreter {
 
   /**
    * Sets the single default graph to use in parsed queries.
-   * @param graph The graph URI to use as the default graph, or <code>null</code> if the
+   * @param graphUri The graph URI to use as the default graph, or <code>null</code> if the
    *        default graph is not desired.
    */
   public SparqlInterpreter setDefaultGraphUri(URI graphUri) {
     if (graphUri == null) defaultGraphIris = Collections.emptyList();
     else defaultGraphIris = Collections.singletonList(new IRIReference(graphUri));
     return this;
+  }
+
+  /**
+   * Sets the single default graph to use in parsed queries.
+   * @param graph The graph URI to use as the default graph, or <code>null</code> if the
+   *        default graph is not desired.
+   * @throws URISyntaxException The graph was not a valid URI.
+   */
+  public SparqlInterpreter setDefaultGraphUri(String graph) throws URISyntaxException {
+    return setDefaultGraphUri(new URI(graph));
   }
 
   /**

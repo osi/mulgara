@@ -1,6 +1,8 @@
 package org.mulgara.parser;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 
@@ -67,37 +69,51 @@ public interface Interpreter {
   public static final String FOAF_NS = "http://xmlns.com/foaf/0.1/";
 
   /**
-  * Parses the given TQL command.
-  *
-  * @param command the command to parse in TQL syntax
-  * @return An AST for the command
-  * @throws MulgaraParserException if the syntax of the command is incorrect
-  * @throws MulgaraLexerException if the syntax of the command is incorrect
-  * @throws IOException if the <var>command</var> cannot be parsed
-  * @throws IllegalArgumentException if the <var>command</var> is <code>null</code>
-  */
+   * Parses the given TQL command.
+   * @param command the command to parse in TQL syntax
+   * @return An AST for the command
+   * @throws MulgaraParserException if the syntax of the command is incorrect
+   * @throws MulgaraLexerException if the syntax of the command is incorrect
+   * @throws IOException if the <var>command</var> cannot be parsed
+   * @throws IllegalArgumentException if the <var>command</var> is <code>null</code>
+   */
   public Command parseCommand(String command) throws MulgaraParserException, MulgaraLexerException, IllegalArgumentException, IOException;
   
   /**
-  * Parses the given TQL command.
-  *
-  * @param command the command to parse in TQL syntax
-  * @return A {@link List} of ASTs, one for each command
-  * @throws MulgaraParserException if the syntax of the command is incorrect
-  * @throws MulgaraLexerException if the syntax of the command is incorrect
-  * @throws IOException if the <var>command</var> cannot be parsed
-  * @throws IllegalArgumentException if the <var>command</var> is <code>null</code>
-  */
+   * Parses the given TQL command.
+   * @param command the command to parse in TQL syntax
+   * @return A {@link List} of ASTs, one for each command
+   * @throws MulgaraParserException if the syntax of the command is incorrect
+   * @throws MulgaraLexerException if the syntax of the command is incorrect
+   * @throws IOException if the <var>command</var> cannot be parsed
+   * @throws IllegalArgumentException if the <var>command</var> is <code>null</code>
+   */
   public List<Command> parseCommands(String command) throws MulgaraParserException, MulgaraLexerException, IOException, IllegalArgumentException;
   
   /**
-  * Parse a string into a {@link Query}. Convenience method over parseCommand.
-  *
-  * @param queryString a string containing an ITQL query
-  * @return the corresponding {@link Query} instance
-  * @throws IOException if <var>queryString</var> can't be buffered.
-  * @throws MulgaraLexerException if <var>queryString</var> can't be tokenized.
-  * @throws MulgaraParserException if <var>queryString</var> is not syntactic.
-  */
+   * Parse a string into a {@link Query}. Convenience method over parseCommand.
+   * @param queryString a string containing an ITQL query
+   * @return the corresponding {@link Query} instance
+   * @throws IOException if <var>queryString</var> can't be buffered.
+   * @throws MulgaraLexerException if <var>queryString</var> can't be tokenized.
+   * @throws MulgaraParserException if <var>queryString</var> is not syntactic.
+   */
   public Query parseQuery(String queryString) throws IOException, MulgaraLexerException, MulgaraParserException;
+
+  /**
+   * Sets the default graph to use when one is not specified. May not be supported by the protocol
+   * in which case it should be ignored.
+   * @param graph A string with the URI of the graph to use by default.
+   * @return The current interpreter object. This is returned to facilitate chaining of commands.
+   * @throws URISyntaxException If the <var>graph</var> could not be interpreted as a valid URI.
+   */
+  public Interpreter setDefaultGraphUri(String graph) throws URISyntaxException;
+
+  /**
+   * Sets the default graph to use when one is not specified. May not be supported by the protocol
+   * in which case it should be ignored.
+   * @param graph A string with the URI of the graph to use by default.
+   * @return The current interpreter object. This is returned to facilitate chaining of commands.
+   */
+  public Interpreter setDefaultGraphUri(URI graph);
 }
