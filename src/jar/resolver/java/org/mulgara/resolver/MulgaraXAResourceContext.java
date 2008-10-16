@@ -81,7 +81,7 @@ public class MulgaraXAResourceContext {
   private final UUID uniqueId;
 
   MulgaraXAResourceContext(MulgaraExternalTransactionFactory factory, DatabaseSession session) {
-    logger.info("Creating MulgaraXAResource");
+    if (logger.isDebugEnabled()) logger.debug("Creating MulgaraXAResource");
     this.factory = factory;
     this.session = session;
     this.xa2xid = new Assoc1toNMap<MulgaraExternalTransaction, Xid>();
@@ -113,7 +113,7 @@ public class MulgaraXAResourceContext {
       factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
-        logger.info("Performing commit: " + parseXid(xid));
+        if (logger.isDebugEnabled()) logger.debug("Performing commit: " + parseXid(xid));
         MulgaraExternalTransaction xa = xa2xid.get1(xid);
         if (xa == null) {
           throw new XAException(XAException.XAER_NOTA);
@@ -180,7 +180,7 @@ public class MulgaraXAResourceContext {
       factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
-        logger.info("Performing end(" + formatFlags(flags) + "): " + parseXid(xid));
+        if (logger.isDebugEnabled()) logger.debug("Performing end(" + formatFlags(flags) + "): " + parseXid(xid));
         MulgaraExternalTransaction xa = xa2xid.get1(xid);
         if (xa == null) {
           throw new XAException(XAException.XAER_NOTA);
@@ -218,7 +218,7 @@ public class MulgaraXAResourceContext {
       factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
-        logger.info("Performing forget: " + parseXid(xid));
+        if (logger.isDebugEnabled()) logger.debug("Performing forget: " + parseXid(xid));
         MulgaraExternalTransaction xa = xa2xid.get1(xid);
         if (xa == null) {
           throw new XAException(XAException.XAER_NOTA);
@@ -243,7 +243,7 @@ public class MulgaraXAResourceContext {
     public int getTransactionTimeout() throws XAException {
       factory.acquireMutex(0, XAException.class);
       try {
-        logger.info("Performing getTransactionTimeout");
+        if (logger.isDebugEnabled()) logger.debug("Performing getTransactionTimeout");
         return (int) (session.getTransactionTimeout() / 1000);
       } finally {
         factory.releaseMutex();
@@ -253,7 +253,7 @@ public class MulgaraXAResourceContext {
     public boolean isSameRM(XAResource xares) throws XAException {
       factory.acquireMutex(0, XAException.class);
       try {
-        logger.info("Performing isSameRM");
+        if (logger.isDebugEnabled()) logger.debug("Performing isSameRM");
         if (!xares.getClass().equals(MulgaraXAResource.class)) {
           return false;
         } else {
@@ -272,7 +272,7 @@ public class MulgaraXAResourceContext {
       factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
-        logger.info("Performing prepare: " + parseXid(xid));
+        if (logger.isDebugEnabled()) logger.debug("Performing prepare: " + parseXid(xid));
         MulgaraExternalTransaction xa = xa2xid.get1(xid);
         if (xa == null) {
           throw new XAException(XAException.XAER_NOTA);
@@ -296,7 +296,7 @@ public class MulgaraXAResourceContext {
     public Xid[] recover(int flag) throws XAException {
       factory.acquireMutex(0, XAException.class);
       try {
-        logger.info("Performing recover");
+        if (logger.isDebugEnabled()) logger.debug("Performing recover");
         return new Xid[] {};
       } finally {
         factory.releaseMutex();
@@ -308,7 +308,7 @@ public class MulgaraXAResourceContext {
       factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
-        logger.info("Performing rollback: " + parseXid(xid));
+        if (logger.isDebugEnabled()) logger.debug("Performing rollback: " + parseXid(xid));
         MulgaraExternalTransaction xa = xa2xid.get1(xid);
         if (xa == null) {
           throw new XAException(XAException.XAER_NOTA);
@@ -344,7 +344,7 @@ public class MulgaraXAResourceContext {
 
       factory.acquireMutex(0, XAException.class);
       try {
-        logger.info("Performing setTransactionTimeout");
+        if (logger.isDebugEnabled()) logger.debug("Performing setTransactionTimeout");
         session.setTransactionTimeout(seconds * 1000L);
         return true;
       } finally {
@@ -357,7 +357,7 @@ public class MulgaraXAResourceContext {
       factory.acquireMutex(0, XAException.class);
       try {
         xid = convertXid(xid);
-        logger.info("Performing start(" + formatFlags(flags) + "): " + parseXid(xid));
+        if (logger.isDebugEnabled()) logger.debug("Performing start(" + formatFlags(flags) + "): " + parseXid(xid));
         switch (flags) {
           case TMNOFLAGS:
             if (xa2xid.containsN(xid)) {

@@ -253,7 +253,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
         explicitXA = null;
         if (autoCommit) {
           // AutoCommit on -> on === no-op.  Log info.
-          logger.info("Attempting to set autocommit true without setting it false");
+          if (logger.isDebugEnabled()) logger.debug("Attempting to set autocommit true without setting it false");
         } else {
           // AutoCommit on -> off == Start new transaction.
           getTransaction(true); // Set's writeTransaction.
@@ -275,7 +275,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     acquireMutex(0, MulgaraTransactionException.class);
     try {
       try {
-        logger.info("Beginning Transaction");
+        if (logger.isDebugEnabled()) logger.debug("Beginning Transaction");
         if (activeTransactions.get(Thread.currentThread()) != null) {
           throw new MulgaraTransactionException(
               "Attempt to start transaction in thread with exiting active transaction.");

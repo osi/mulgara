@@ -232,8 +232,8 @@ public class TransactionalAnswer implements Answer {
   }
 
   private void report(String desc) {
-    if (logger.isInfoEnabled()) {
-      logger.info(desc + ": " + System.identityHashCode(this) + ", xa=" + System.identityHashCode(transaction));
+    if (logger.isDebugEnabled()) {
+      logger.debug(desc + ": " + System.identityHashCode(this) + ", xa=" + System.identityHashCode(transaction));
     }
   }
 
