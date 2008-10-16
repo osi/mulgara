@@ -292,7 +292,7 @@ public class FullTextStringIndex {
 
     // Warn for an empty literal
     if (literal.trim().length() == 0) {
-      logger.warn("Ignoring empty literal");
+      if (logger.isDebugEnabled()) logger.debug("Ignoring empty literal");
     } else {
       // debug logging
       if (logger.isDebugEnabled()) {

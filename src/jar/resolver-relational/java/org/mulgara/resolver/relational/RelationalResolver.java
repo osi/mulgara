@@ -251,10 +251,7 @@ public class RelationalResolver implements Resolver {
 
     // Verify our model node is a local node
     if (!(modelElem instanceof LocalNode)) {
-      if (logger.isInfoEnabled()) {
-        logger.info("Ignoring non-local model in constraint " + constraint);
-      }
-
+      if (logger.isDebugEnabled()) logger.debug("Ignoring non-local model in constraint " + constraint);
       return new EmptyResolution(constraint, false);
     }
 

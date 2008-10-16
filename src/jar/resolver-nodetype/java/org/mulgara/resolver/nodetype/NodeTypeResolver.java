@@ -209,7 +209,7 @@ public class NodeTypeResolver implements Resolver
       throw new IllegalArgumentException("Null \"constraint\" parameter");
     }
     if (!(constraint.getModel() instanceof LocalNode)) {
-      logger.warn("Ignoring solutions for non-local graph " + constraint);
+      if (logger.isDebugEnabled()) logger.warn("Ignoring solutions for non-local graph " + constraint);
       return new EmptyResolution(constraint, false);
     }
 

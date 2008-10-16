@@ -207,7 +207,7 @@ public class XSDResolver implements Resolver {
     }
 
     if (constraint.getModel() instanceof Variable) {
-      logger.warn("Ignoring solutions for " + constraint);
+      if (logger.isDebugEnabled()) logger.debug("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
 

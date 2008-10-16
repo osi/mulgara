@@ -342,7 +342,7 @@ public class FileSystemResolver implements Resolver {
 
     // Verify our model node is a local node
     if (!(modelElem instanceof LocalNode)) {
-      log.warn("Ignoring solutions for " + constraint);
+      if (log.isDebugEnabled()) log.debug("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
 

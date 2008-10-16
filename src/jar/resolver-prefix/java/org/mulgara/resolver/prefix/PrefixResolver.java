@@ -179,7 +179,7 @@ public class PrefixResolver implements Resolver
     }
 
     if (!(constraint.getModel() instanceof LocalNode)) {
-      logger.warn("Ignoring solutions for " + constraint);
+      if (logger.isDebugEnabled()) logger.debug("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
 

@@ -242,7 +242,7 @@ public class ViewResolver implements Resolver, ViewMarker
     }
     ConstraintElement modelElem = constraint.getModel();
     if (!(modelElem instanceof LocalNode)) {
-      logger.warn("Ignoring solutions for " + constraint);
+      if (logger.isDebugEnabled()) logger.debug("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     }
 
