@@ -307,12 +307,13 @@ public class QueryResponsePage {
 
   /**
    * Gets the URL used for the sample data.
-   * @return A URL for the sample data, expressed in the template as:
+   * @return A URL for the sample data, expressed by default in the template as:
    *         rmi://@@hostname@@/@@servername@@#sampledata
    */
   private Anchor getElementQuery(Node n) throws IOException {
     try {
-      URI graphUri = new URI("rmi", tagMap.get(HOSTNAME_TAG), "/" + tagMap.get(SERVERNAME_TAG), "sampledata");
+      // borrow this info out of the tag map
+      URI graphUri = new URI(tagMap.get(GRAPH_TAG));
       QueryParams params = new QueryParams();
       params.add(GRAPH_ARG, graphUri.toString());
       String text;
