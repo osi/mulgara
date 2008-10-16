@@ -38,6 +38,27 @@ public class Text extends HtmlElement {
 
 
   /**
+   * Creates a text element from an entity object.
+   * @param e The entity to use in this object.
+   */
+  public Text(HtmlElement.Entity e) {
+    super(-1);
+    buffer = new StringBuilder(e.toString());
+  }
+
+
+  /**
+   * Appends new text from an entity to this element.
+   * @param e The entity to append to this element.
+   * @return The current instance.
+   */
+  public Text append(HtmlElement.Entity e) {
+    buffer.append(e.toString());
+    return this;
+  }
+
+
+  /**
    * Creates a text element from an arbitrary object.
    * @param obj The object to convert to text for this element.
    */

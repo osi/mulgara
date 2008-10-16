@@ -84,6 +84,18 @@ public class SparqlUtilUnitTest extends TestCase {
     assertTrue(SparqlUtil.looksLikeSparql(s1));
     assertTrue(SparqlUtil.looksLikeSparql(s1.toUpperCase()));
 
+    s1 = "select * where { ?x ?y ?z }";
+    assertTrue(SparqlUtil.looksLikeSparql(s1));
+    assertTrue(SparqlUtil.looksLikeSparql(s1.toUpperCase()));
+
+    s1 = "select *{?x ?y ?z}";
+    assertTrue(SparqlUtil.looksLikeSparql(s1));
+    assertTrue(SparqlUtil.looksLikeSparql(s1.toUpperCase()));
+
+    s1 = "select * {?x ?y ?z}";
+    assertTrue(SparqlUtil.looksLikeSparql(s1));
+    assertTrue(SparqlUtil.looksLikeSparql(s1.toUpperCase()));
+
     s1 = "select ?x ?y from <rmi://localhost/server1#> where { ?x ?y 'select ?x ?y ?z from <rmi://localhost/server1#> where { ?x ?y ?z }' }";
     assertTrue(SparqlUtil.looksLikeSparql(s1));
     assertTrue(SparqlUtil.looksLikeSparql(s1.toUpperCase()));

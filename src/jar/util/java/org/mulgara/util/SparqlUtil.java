@@ -66,7 +66,12 @@ public class SparqlUtil {
 
     // look for the "WHERE" clause
     m = firstWherePattern.matcher(query);
-    if (!m.find()) return false;
+
+    // SPARQL allows WHERE to be skipped
+    // there should be a {. If not, then either interpreter will give an error
+    if (!m.find()) return true;
+
+    // WHERE exists, so look for the {
     return query.charAt(m.end()) == '{';
   }
 }
