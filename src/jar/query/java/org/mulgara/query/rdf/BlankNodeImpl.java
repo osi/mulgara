@@ -71,6 +71,10 @@ public class BlankNodeImpl
 
   private String stringValue;
 
+  /** The mask that can remove the BLANK_NODE_BIT on nodes that use it. */
+  static final private long COUNTER_MASK = 0x3FFFFFFFFFFFFFFFL;
+
+
   /**
    * Create an empty blank node.  Just a place holder.
    */
@@ -87,7 +91,7 @@ public class BlankNodeImpl
    */
   public BlankNodeImpl(long newNodeId) {
     nodeId = newNodeId;
-    stringValue = "node" + nodeId;
+    stringValue = "node" + printable(nodeId);
   }
 
 
@@ -106,7 +110,7 @@ public class BlankNodeImpl
    */
   public void setNodeId(long nodeId) {
     this.nodeId = nodeId;
-    stringValue = "node" + nodeId;
+    stringValue = "node" + printable(nodeId);
   }
 
 
@@ -155,10 +159,15 @@ public class BlankNodeImpl
    * @return the string value of the uri and node id.
    */
   public String toString() {
-    return "_node" + nodeId;
+    return "_node" + printable(nodeId);
   }
 
   public String getID() {
     return stringValue;
+  }
+
+  /** Strips off the blank node bit for blank nodes that use it. */
+  private long printable(long l) {
+    return l > 0 ? COUNTER_MASK & l : l;
   }
 }
