@@ -1,4 +1,37 @@
 ------------------------------------------------------------------------
+r1330 | pag | 2008-10-16 14:03:23 -0500 (Thu, 16 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraInternalTransactionFactory.java
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/MulgaraXAResourceContext.java
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/TransactionalAnswer.java
+
+Changed various pieces of logging data from info to debug
+------------------------------------------------------------------------
+r1329 | pag | 2008-10-16 14:01:36 -0500 (Thu, 16 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/resolver/java/org/mulgara/resolver/OrderByRowComparator.java
+
+Handling negative numbers. Based on a patch submitted by David Smith
+------------------------------------------------------------------------
+r1328 | pag | 2008-10-16 14:00:24 -0500 (Thu, 16 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/util/java/org/mulgara/util/SparqlUtil.java
+   M /trunk/src/jar/util/java/org/mulgara/util/SparqlUtilUnitTest.java
+
+Better handling for edge cases when detecting SPARQL vs TQL
+------------------------------------------------------------------------
+r1327 | pag | 2008-10-16 13:59:59 -0500 (Thu, 16 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/src/jar/web/java/org/mulgara/webquery/QueryResponsePage.java
+
+Using the user specified graph in result links
+------------------------------------------------------------------------
+r1325 | pag | 2008-10-16 00:30:21 -0500 (Thu, 16 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/KOWARI-MODIFICATIONS/mods-mulgara-2.0.6.txt
+
+New updates needed before 2.0.6 could be released
+------------------------------------------------------------------------
 r1324 | pag | 2008-10-16 00:24:28 -0500 (Thu, 16 Oct 2008) | 1 line
 Changed paths:
    M /trunk/src/jar/util/java/org/mulgara/util/SparqlUtil.java
