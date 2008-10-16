@@ -364,10 +364,8 @@ public abstract class TuplesOperations {
       // get the matching columns
       Set<Variable> matchingVars = getMatchingVars(standard, optional);
       // check for empty parameters
-      if (standard.getRowCardinality() == Cursor.ZERO) {
-        logger.debug("Nothing to the left of an optional");
-        return (Tuples)standard.clone();
-      }
+      if (standard.getRowCardinality() == Cursor.ZERO && logger.isDebugEnabled()) logger.debug("Nothing to the left of an optional");
+
       if (optional.getRowCardinality() == Cursor.ZERO) {
         // need to return standard, projected out to the extra variables
         if (optional.getNumberOfVariables() == 0) {
@@ -378,12 +376,16 @@ public abstract class TuplesOperations {
         }
       }
 
+      // If the Optional clause does not constrain the RHS
+      // then this is the equivalent to a normal join as a cartesian product
+      if (matchingVars.isEmpty()) return join(standard, optional);
+
       // check if there are variables which should not be considered when sorting
       if (!checkForExtraVariables(optional, matchingVars)) {
         // there were no extra variables in the optional
         logger.debug("All variables needed");
-        // if all variables match, then this is an inner join
-        return join(standard, optional);
+        // if all variables match, then the result is the same as the LHS
+        return (Tuples)standard.clone();
       }
 
       // yes, there are extra variables
@@ -897,7 +899,7 @@ public abstract class TuplesOperations {
   public static Tuples reSort(Tuples tuples, List<Variable> variableList) throws TuplesException {
     try {
       // if there is nothing to sort on, then tuples meets the criteria
-      if ((variableList == null) || (variableList.size() == 0)) return tuples;
+      if ((variableList == null) || (variableList.size() == 0)) return (Tuples)tuples.clone();
 
       // if there is nothing to sort, then just return that nothing
       if (tuples.isUnconstrained()) {
@@ -919,7 +921,7 @@ public abstract class TuplesOperations {
         // check that it is within the prefix columns. If not, then sorting is needed
         if (ti >= varMap.length) sortNeeded = true;
         // map the tuples index of the variable to the column index
-        varMap[varCol++] = ti;
+        varMap[varCol] = ti;
       }
 
       if (!sortNeeded) {
