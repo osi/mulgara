@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class SparqlUtil {
 
   /** A pattern for extracting the first word from a query */
-  static Pattern firstWordPattern = Pattern.compile("^\\s*([^\\{\\s]+)");
+  static Pattern firstWordPattern = Pattern.compile("^\\s*([^\\{\\s\\*\\?\\$]+)");
 
   /** A pattern for finding the first WHERE expression */
   static Pattern firstWherePattern = Pattern.compile("\\s+where\\s*", Pattern.CASE_INSENSITIVE);
@@ -71,7 +71,10 @@ public class SparqlUtil {
     // there should be a {. If not, then either interpreter will give an error
     if (!m.find()) return true;
 
-    // WHERE exists, so look for the {
-    return query.charAt(m.end()) == '{';
+    // WHERE exists, look for the first {
+    int firstBrace = query.indexOf('{', SELECT.length() + 1);
+
+    // make sure the brace exists, and is either part of this WHERE or was the first in the string
+    return firstBrace > 0 && firstBrace <= m.end();
   }
 }
