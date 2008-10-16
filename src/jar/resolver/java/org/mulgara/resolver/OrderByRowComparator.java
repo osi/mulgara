@@ -347,38 +347,22 @@ public class OrderByRowComparator implements RowComparator {
     if (rdfNode instanceof Literal) {
       String text = ((Literal) rdfNode).getLexicalForm();
 
-      // Check if the string is a number.
-      int len = text.length();
-      boolean isNumber = true;
-      boolean hasDecimalPoint = false;
+      if (logger.isDebugEnabled()) logger.debug("Checking if " + text + " is a number");
 
-      if (logger.isDebugEnabled()) {
+      if (text.length() > 0) {
+        char ch = text.charAt(0);
 
-        logger.debug("Checking if " + text + " is a number");
-      }
-
-      // Check if the string is empty
-      isNumber = len > 0;
-
-      for (int i = 0; i < len; ++i) {
-        char ch = text.charAt(i);
-        if (ch == '.') {
-          if (hasDecimalPoint) {
-            // A number can't have two decimal points.
-            isNumber = false;
-            break;
+        // if it smells like a numeric (and not a DateTime)
+        if (((ch >= '0' && ch <= '9') || ch == '.' || ch == '+' || ch == '-') && text.indexOf('T') < 0) {
+          // The floating parser accepts numbers ending in d or f, but we don't 
+          ch = text.charAt(text.length() - 1);
+          if (ch != 'f' && ch != 'F' && ch != 'd' && ch != 'D') {
+            try {
+              // try to return as a number, using autoboxing
+              return Float.parseFloat(text);
+            } catch (NumberFormatException ex) { /* not a number - fall through */ }
           }
-
-          hasDecimalPoint = true;
-        } else if ( (ch < '0') || (ch > '9')) {
-          // A char which is not a digit.
-          isNumber = false;
-          break;
         }
-      }
-
-      if (isNumber) {
-        return new Float(text);
       }
 
       return text;
