@@ -422,8 +422,8 @@ public class PIErrorHandler implements ErrorHandler, ErrorListener {
   private static Exception getWrappedException(Object e) {
     Class c = e.getClass();
     try {
-      Method m = c.getMethod("getException", null);
-      return (Exception)m.invoke(e, null);
+      Method m = c.getMethod("getException");
+      return (Exception)m.invoke(e);
     } catch (Exception nse) {
       return null;
     }
