@@ -172,7 +172,7 @@ public class LuceneResolverUnitTest extends TestCase {
         Query qry2 = parseQuery(q);
 
         Answer answer1 = session.query(qry1);
-        Answer answer2 = session.query(qry1);
+        Answer answer2 = session.query(qry2);
 
         compareResults(answer1, answer2);
 
