@@ -73,7 +73,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
     synchronized (resourceManagers) {
       @SuppressWarnings("unchecked")
-      R rmgr = (R) resourceManagers.get(resolverFactory);
+      R rmgr = (R)resourceManagers.get(resolverFactory);
       if (rmgr == null)
         resourceManagers.put(resolverFactory, rmgr = newResourceManager());
       this.resourceManager = rmgr;

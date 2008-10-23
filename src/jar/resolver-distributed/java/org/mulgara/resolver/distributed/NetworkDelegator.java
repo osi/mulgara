@@ -91,7 +91,7 @@ public class NetworkDelegator implements Delegator {
    */
   public Resolution resolve(Constraint localConstraint, LocalNode localModel) throws QueryException, ResolverException {
     // globalize the model
-    URIReferenceImpl modelRef = getModelRef(localModel); 
+    URIReferenceImpl modelRef = getModelRef(localModel);
 
     URI serverUri = getServerUri(modelRef);
     logger.debug("Querying for: " + localConstraint + " in model: " + modelRef + " on server: " + serverUri);
@@ -164,8 +164,8 @@ public class NetworkDelegator implements Delegator {
   protected URIReferenceImpl getModelRef(LocalNode localModel) throws ResolverException {
     return getModelRef(localModel.getValue());
   }
-  
-  
+
+
   /**
    * Convert a model gNode into a URIReferenceImpl.
    * @param modelGNode The gNode to convert.
@@ -185,7 +185,7 @@ public class NetworkDelegator implements Delegator {
    * Create a query for a single constraint.
    * @param constraint The local constraint to query for.
    * @return The globalized query, looking for the single constraint.
-   * @throws ResolverException There was an error globalizing the constraint elements. 
+   * @throws ResolverException There was an error globalizing the constraint elements.
    */
   @SuppressWarnings("unchecked")
   protected Query globalizedQuery(Constraint localConstraint, URIReferenceImpl model) throws ResolverException {
