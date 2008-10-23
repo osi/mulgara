@@ -63,14 +63,13 @@ public class ShortGlobalStatementSet extends AbstractSet<Triple> implements Seri
     data = new ArrayList<Triple>((int)rowCount);
     // populate the array
     statements.beforeFirst();
-    int i = 0;
     while (statements.next()) {
       Triple t = new TripleImpl(
           (SubjectNode)session.globalize(statements.getSubject()),
           (PredicateNode)session.globalize(statements.getPredicate()),
           (ObjectNode)session.globalize(statements.getObject())
       );
-      data.set(i++, t);
+      data.add(t);
     }
   }
 
