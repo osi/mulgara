@@ -2179,7 +2179,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         resource1.commit(xid1, true);
         assertEquals(1, mockRes.startCnt);
         assertEquals(3, mockRes.suspendCnt);
-        assertEquals(3, mockRes.resumeCnt);
+        assertEquals(2, mockRes.resumeCnt);
         assertEquals(1, mockRes.endCnt);
         assertEquals(1, mockRes.prepareCnt);
         assertEquals(1, mockRes.commitCnt);
@@ -2207,7 +2207,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         resource1.commit(xid1, true);
         assertEquals(1, mockRes.startCnt);
         assertEquals(2, mockRes.suspendCnt);
-        assertEquals(2, mockRes.resumeCnt);
+        assertEquals(1, mockRes.resumeCnt);
         assertEquals(1, mockRes.endCnt);
         assertEquals(1, mockRes.prepareCnt);
         assertEquals(1, mockRes.commitCnt);
@@ -2257,7 +2257,7 @@ public class ExternalTransactionUnitTest extends TestCase {
               theRes.rollback(theXid);
               assertEquals(1, theMockRes.startCnt);
               assertEquals(6, theMockRes.suspendCnt);
-              assertEquals(6, theMockRes.resumeCnt);
+              assertEquals(5, theMockRes.resumeCnt);
               assertEquals(1, theMockRes.endCnt);
               assertEquals(0, theMockRes.prepareCnt);
               assertEquals(0, theMockRes.commitCnt);
@@ -2338,22 +2338,22 @@ public class ExternalTransactionUnitTest extends TestCase {
         // res.end fails on end with unspecified error-code
         doResourceFailureTest(10, session1, resource1, testModel, -1, -1, -1, 1, false, 0, false,
                               1, 2, 1, 0,
-                              1, 2, 2, 1, 0, 0, 0);
+                              1, 2, 1, 1, 0, 0, 0);
 
         // res.end fails on end with rollback error-code
         doResourceFailureTest(11, session1, resource1, testModel, -1, -1, -1, 1, false, RB, false,
                               1, 2, 1, 0,
-                              1, 2, 2, 1, 0, 0, 1);
+                              1, 2, 1, 1, 0, 0, 1);
 
         // res.prepare fails with unspecified error-code
         doResourceFailureTest(12, session1, resource1, testModel, -1, -1, -1, -1, true, 0, false,
                               1, 2, 1, 0,
-                              1, 2, 2, 1, 1, 0, 1);
+                              1, 2, 1, 1, 1, 0, 1);
 
         // res.prepare fails with rollback error-code
         doResourceFailureTest(13, session1, resource1, testModel, -1, -1, -1, -1, true, RB, false,
                               1, 2, 1, 0,
-                              1, 2, 2, 1, 1, 0, 0);
+                              1, 2, 1, 1, 1, 0, 0);
       } finally {
         session1.close();
       }
@@ -2464,13 +2464,15 @@ public class ExternalTransactionUnitTest extends TestCase {
     public void end(Xid xid, int flags) throws XAException {
       super.end(xid, flags);
 
-      if (!xid.equals(currTxn.get())) {
-        throw new XAException("mismatched transaction end");
-      }
-      currTxn.set(null);
+      if (!(state == State.SUSPENDED && (flags == XAResource.TMSUCCESS || flags == XAResource.TMFAIL))) {
+        if (!xid.equals(currTxn.get())) {
+          throw new XAException("mismatched transaction end");
+        }
+        currTxn.set(null);
 
-      if (state != State.ACTIVE) {
-        throw new XAException("resource not active: " + state);
+        if (state != State.ACTIVE) {
+          throw new XAException("resource not active: " + state);
+        }
       }
       state = (flags == XAResource.TMSUSPEND) ? State.SUSPENDED : State.ENDED;
 

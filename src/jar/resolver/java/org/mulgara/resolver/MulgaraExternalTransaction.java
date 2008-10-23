@@ -381,9 +381,6 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
       EnlistableResource eres = iter.next();
       XAResource res = xaResources.get(eres);
       try {
-        if (xaResState == ResourceState.SUSPENDED) {
-          res.start(xid, XAResource.TMRESUME);
-        }
         res.end(xid, flags);
       } catch (XAException xae) {
         iter.remove();
