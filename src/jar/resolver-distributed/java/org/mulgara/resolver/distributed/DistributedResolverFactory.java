@@ -14,7 +14,9 @@
 package org.mulgara.resolver.distributed;
 
 // Java 2 standard packages
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -38,10 +40,9 @@ import org.mulgara.resolver.spi.InitializerException;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class DistributedResolverFactory implements ResolverFactory
-{
+public class DistributedResolverFactory implements ResolverFactory {
   /** Logger. */
-  private static Logger logger = Logger.getLogger(DistributedResolverFactory.class.getName());
+  private static Logger logger = Logger.getLogger(DistributedResolverFactory.class);
 
   /** Collection of constructed resolvers. */
   private Collection<DistributedResolver> openResolvers = new HashSet<DistributedResolver>();
@@ -95,8 +96,8 @@ public class DistributedResolverFactory implements ResolverFactory
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
-  
-  
+
+
   /**
    * {@inheritDoc}
    * @return <code>true</code> - any constraint can be resolved against a remote server.
