@@ -182,18 +182,18 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
     T tx = getTxn(xid, "commit");
 
-    try {
-      if (onePhase) {
+    if (onePhase) {
+      try {
         int sts = doPrepare(tx);
         if (sts == XA_RDONLY) {
           transactionCompleted(tx);
           return;
         }
+      } catch (Throwable th) {
+        logger.error("Attempt to prepare in onePhaseCommit failed.", th);
+        rollback(xid);
+        throw (XAException)new XAException(XAException.XA_RBROLLBACK).initCause(th);
       }
-    } catch (Throwable th) {
-      logger.error("Attempt to prepare in onePhaseCommit failed.", th);
-      rollback(xid);
-      throw new XAException(XAException.XA_RBROLLBACK);
     }
 
     boolean clean = true;
