@@ -164,8 +164,9 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
     try {
       int sts = doPrepare(tx);
-      if (sts == XA_RDONLY)
-        resourceManager.transactions.remove(new XidWrapper(xid));
+      if (sts == XA_RDONLY) {
+        transactionCompleted(tx);
+      }
       return sts;
     } catch (Throwable t) {
       logger.warn("Attempt to prepare failed", t);
@@ -185,7 +186,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       if (onePhase) {
         int sts = doPrepare(tx);
         if (sts == XA_RDONLY) {
-          resourceManager.transactions.remove(new XidWrapper(xid));
+          transactionCompleted(tx);
           return;
         }
       }
@@ -211,7 +212,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       throw new XAException(XAException.XAER_RMERR);
     } finally {
       if (clean) {
-        resourceManager.transactions.remove(new XidWrapper(xid));
+        transactionCompleted(tx);
       }
     }
   }
@@ -239,7 +240,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       throw new XAException(XAException.XAER_RMERR);
     } finally {
       if (clean) {
-        resourceManager.transactions.remove(new XidWrapper(xid));
+        transactionCompleted(tx);
       }
     }
   }
@@ -265,7 +266,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       throw new XAException(XAException.XAER_RMERR);
     } finally {
       if (clean) {
-        resourceManager.transactions.remove(new XidWrapper(xid));
+        transactionCompleted(tx);
       }
     }
   }
@@ -319,7 +320,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
     if (t instanceof XAException) {
       XAException xae = (XAException)t;
       if (xae.errorCode == XAException.XAER_RMFAIL || doneOnRb && isRollback(xae)) {
-        resourceManager.transactions.remove(new XidWrapper(tx.xid));
+        transactionCompleted(tx);
       }
       throw xae;
     }
@@ -379,6 +380,15 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
    */
   protected abstract void doForget(T tx) throws Exception;
 
+  /**
+   * This is invoked whenever a transaction has fully completed. Subclasses may override this but
+   * must make sure to always invoke <code>super.transactionCompleted()</code>.
+   *
+   * @param tx the transaction that completed.
+   */
+  protected void transactionCompleted(T tx) {
+    resourceManager.transactions.remove(new XidWrapper(tx.xid));
+  }
 
   /** The resource-manager info */
   public static class RMInfo<T extends TxInfo> {
