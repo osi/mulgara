@@ -26,10 +26,8 @@ import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
 import org.mulgara.server.ServerInfo;
 import org.mulgara.server.NonRemoteSessionException;
-import org.mulgara.server.driver.SessionFactoryFinder;
 import org.mulgara.server.driver.SessionFactoryFinderException;
 import org.mulgara.resolver.distributed.remote.StatementSetFactory;
 import org.mulgara.resolver.spi.GlobalizeException;
@@ -71,14 +69,11 @@ public class NetworkDelegator implements Delegator {
   /** The transaction coordinator with which to register new XAResource's */
   private final TransactionCoordinator txCord;
 
-  /** A cache of distributed sessions. */
-  private Map<URI,Session> sessionCache = new HashMap<URI,Session>();
+  /** The session cache to use. */
+  private final SessionCache sessionCache;
 
-  /**
-   * A cache of distributed session factories.
-   * Each entry matches an entry in sessionCache, but a separate set for cleaner code.
-   */
-  private List<SessionFactory> factoryCache = new ArrayList<SessionFactory>();
+  /** The map of distributed sessions. */
+  private Map<URI,Session> sessionMap = new HashMap<URI,Session>();
 
 
   /**
@@ -86,11 +81,14 @@ public class NetworkDelegator implements Delegator {
    * @param session The session to delegate resolution through.
    * @param forWrite Whether to open this for writes or for read-only
    * @param txCord the transaction-coordinator being used
+   * @param sessionCache the session cache to use
    */
-  public NetworkDelegator(ResolverSession session, boolean forWrite, TransactionCoordinator txCord) {
+  public NetworkDelegator(ResolverSession session, boolean forWrite, TransactionCoordinator txCord,
+                          SessionCache sessionCache) {
     this.session = session;
     this.forWrite = forWrite;
     this.txCord = txCord;
+    this.sessionCache = sessionCache;
   }
 
 
@@ -313,7 +311,7 @@ public class NetworkDelegator implements Delegator {
    * @throws QueryException Thrown when the session cannot be created.
    */
   protected Session getServerSession(URI serverUri) throws QueryException {
-    Session session = sessionCache.get(serverUri);
+    Session session = sessionMap.get(serverUri);
     return (session != null) ? session : newSession(serverUri);
   }
 
@@ -326,13 +324,9 @@ public class NetworkDelegator implements Delegator {
    */
   protected Session newSession(URI serverUri) throws QueryException {
     try {
-      // The factory won't be in the cache, as a corresponding session would have already been created.
-      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverUri, true);
-      factoryCache.add(sessionFactory);
-
-      // now create the session
-      Session session = sessionFactory.newSession();
-      sessionCache.put(serverUri, session);
+      // get a new session
+      Session session = sessionCache.getSession(serverUri);
+      sessionMap.put(serverUri, session);
 
       // get the XAResource and enlist it
       txCord.enlistResource(forWrite ? session.getXAResource() : session.getReadOnlyXAResource());
@@ -349,22 +343,11 @@ public class NetworkDelegator implements Delegator {
   }
 
   /**
-   * Close all sessions and factories used by this delegator.
+   * Return all sessions used by this delegator.
    */
   public void close() {
-    for (Session s: sessionCache.values()) {
-      try {
-        s.close();
-      } catch (QueryException qe) {
-        logger.error("Exception while closing session", qe);
-      }
-    }
-    for (SessionFactory sf: factoryCache) {
-      try {
-        sf.close();
-      } catch (QueryException qe) {
-        logger.error("Exception while closing session", qe);
-      }
+    for (Map.Entry<URI,Session> e : sessionMap.entrySet()) {
+      sessionCache.returnSession(e.getKey(), e.getValue());
     }
   }
 }

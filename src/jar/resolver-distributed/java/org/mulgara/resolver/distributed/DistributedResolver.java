@@ -57,18 +57,19 @@ public class DistributedResolver implements Resolver, TransactionCoordinator {
    * @param resolverSession the session this resolver is associated with.
    * @param resolverFactory the factory this resolver is associated with.
    * @param canWrite        whether the current transaction is read-only or r/w
+   * @param sessionCache    the session cache to use
    * @throws IllegalArgumentException if <var>resolverSession</var> is <code>null</code>
    * @throws ResolverFactoryException if the superclass is unable to handle its arguments
    */
   DistributedResolver(ResolverSession resolverSession, ResolverFactory resolverFactory,
-                      boolean canWrite) throws ResolverFactoryException {
+                      boolean canWrite, SessionCache sessionCache) throws ResolverFactoryException {
 
     if (logger.isDebugEnabled()) logger.debug("Instantiating a distributed resolver");
 
     // Validate "resolverSession" parameter
     if (resolverSession == null) throw new IllegalArgumentException( "Null \"resolverSession\" parameter");
 
-    delegator = new NetworkDelegator(resolverSession, canWrite, this);
+    delegator = new NetworkDelegator(resolverSession, canWrite, this, sessionCache);
     xares = new DistributedXAResource(10, resolverFactory, delegator);
   }
 

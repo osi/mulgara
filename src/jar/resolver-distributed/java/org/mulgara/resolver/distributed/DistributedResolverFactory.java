@@ -47,6 +47,9 @@ public class DistributedResolverFactory implements ResolverFactory {
   /** Protocols which are handled by the served resolver. */
   private static final Set<String> protocols = new HashSet<String>(Arrays.asList("rmi"));
 
+  /** The session cache to use */
+  private final SessionCache sessionCache = new SessionCache();
+
   /**
    * Instantiate a {@link DistributedResolverFactory}.
    * @param initializer The system initializer to be registered with.
@@ -68,6 +71,7 @@ public class DistributedResolverFactory implements ResolverFactory {
    * {@inheritDoc ResolverFactory}
    */
   public void close() {
+    sessionCache.close();
   }
 
   /**
@@ -124,7 +128,7 @@ public class DistributedResolverFactory implements ResolverFactory {
       logger.debug("Creating new distributed resolver");
       if (canWrite) logger.debug("Expecting to write to distributed resolver.");
     }
-    return new DistributedResolver(resolverSession, this, canWrite);
+    return new DistributedResolver(resolverSession, this, canWrite, sessionCache);
   }
 
 
