@@ -327,4 +327,23 @@ public class NetworkDelegator implements Delegator {
     }
   }
 
+  /**
+   * Close all sessions and factories used by this delegator.
+   */
+  public void close() {
+    for (Session s: sessionCache.values()) {
+      try {
+        s.close();
+      } catch (QueryException qe) {
+        logger.error("Exception while closing session", qe);
+      }
+    }
+    for (SessionFactory sf: factoryCache) {
+      try {
+        sf.close();
+      } catch (QueryException qe) {
+        logger.error("Exception while closing session", qe);
+      }
+    }
+  }
 }

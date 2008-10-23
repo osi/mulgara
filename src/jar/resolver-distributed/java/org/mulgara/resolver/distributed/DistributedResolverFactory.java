@@ -44,9 +44,6 @@ public class DistributedResolverFactory implements ResolverFactory {
   /** Logger. */
   private static Logger logger = Logger.getLogger(DistributedResolverFactory.class);
 
-  /** Collection of constructed resolvers. */
-  private Collection<DistributedResolver> openResolvers = new HashSet<DistributedResolver>();
-
   /** Protocols which are handled by the served resolver. */
   private static final Set<String> protocols = new HashSet<String>(Arrays.asList("rmi"));
 
@@ -71,8 +68,6 @@ public class DistributedResolverFactory implements ResolverFactory {
    * {@inheritDoc ResolverFactory}
    */
   public void close() {
-    logger.debug("Closing distributed resolvers");
-    for (DistributedResolver r: openResolvers) r.close();
   }
 
   /**
@@ -125,11 +120,11 @@ public class DistributedResolverFactory implements ResolverFactory {
   ) throws ResolverFactoryException {
 
     if (resolverSession == null) throw new IllegalArgumentException("No session provided for the resolver!");
-    logger.debug("Creating new distributed resolver");
-    if (canWrite) logger.debug("Expecting to write to distributed resolver.");
-    DistributedResolver r = new DistributedResolver(resolverSession);
-    openResolvers.add(r);
-    return r;
+    if (logger.isDebugEnabled()) {
+      logger.debug("Creating new distributed resolver");
+      if (canWrite) logger.debug("Expecting to write to distributed resolver.");
+    }
+    return new DistributedResolver(resolverSession);
   }
 
 

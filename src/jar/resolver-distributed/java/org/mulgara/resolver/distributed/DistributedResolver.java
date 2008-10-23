@@ -15,7 +15,9 @@ package org.mulgara.resolver.distributed;
 // Java 2 standard packages
 import java.net.*;
 import java.util.*;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -51,12 +53,8 @@ public class DistributedResolver implements Resolver {
   /** The delegator that resolves the constraint on another server.  */
   private final Delegator delegator;
 
-  /** A map of servers to sessions.  This acts as a cache, and also so we may close the sessions.  */
-  private Map<URI,Session> serverToSession = new HashMap<URI,Session>();
-
-  /** A collections of session factories.  This is so we may close these factories.  */
-  private Collection<SessionFactory> sessionFactories = new HashSet<SessionFactory>();
-
+  /** our xa-resource */
+  private final XAResource xares;
 
 
   /**
@@ -73,6 +71,16 @@ public class DistributedResolver implements Resolver {
     if (resolverSession == null) throw new IllegalArgumentException( "Null \"resolverSession\" parameter");
 
     delegator = new NetworkDelegator(resolverSession);
+
+    xares = new DummyXAResource() {
+      public void commit(Xid xid, boolean onePhase) throws XAException {
+        delegator.close();
+      }
+
+      public void rollback(Xid xid) throws XAException {
+        delegator.close();
+      }
+    };
   }
 
 
@@ -87,18 +95,13 @@ public class DistributedResolver implements Resolver {
 
   /**
    * Expose a callback object for enlistment by a transaction manager.
-   * Uses a dumy xa resource for the moment, but may need to create a fully
-   * functional xa resource which is mapped to a session.
    *
    * @return an {@link XAResource} that can be used by a transaction manager to
    *   coordinate this resolver's participation in a distributed transaction.
-   *   For now this is a {@link DummyXAResource} with a 10 second transaction timeout
    * @see javax.resource.spi.ManagedConnection#getXAResource
    */
   public XAResource getXAResource() {
-    return new DummyXAResource(
-      10  // seconds before transaction timeout
-    );
+    return xares;
   }
 
 
@@ -147,7 +150,7 @@ public class DistributedResolver implements Resolver {
     if (constraint == null) throw new IllegalArgumentException();
     ConstraintElement modelElement = constraint.getElement(3);
     if (!(modelElement instanceof LocalNode)) throw new QueryException("Constraint not set to a distributed model.");
-    
+
     try {
       return delegator.resolve(constraint, (LocalNode)modelElement);
     } catch (ResolverException re) {
@@ -156,28 +159,7 @@ public class DistributedResolver implements Resolver {
   }
 
 
-  /**
-   * Close all sessions and factories used by this resolver.
-   */
-  public void close() {
-    for (Session s: serverToSession.values()) {
-      try {
-        s.close();
-      } catch (QueryException qe) {
-        logger.error("Exception while closing session", qe);
-      }
-    }
-    for (SessionFactory sf: sessionFactories) {
-      try {
-        sf.close();
-      } catch (QueryException qe) {
-        logger.error("Exception while closing session", qe);
-      }
-    }
-  }
-
-
   public void abort() {
-    // no-op
+    delegator.close();
   }
 }

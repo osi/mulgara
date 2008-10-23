@@ -59,4 +59,9 @@ public interface Delegator {
    * @throws QueryException There was an error removing data at the remote end.
    */
   public void remove(long model, Statements statements) throws ResolverException, QueryException;
+
+  /**
+   * Close the delegator.
+   */
+  public void close();
 }
