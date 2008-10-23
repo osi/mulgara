@@ -48,15 +48,7 @@ public class DistributedResolverFactory implements ResolverFactory {
   private Collection<DistributedResolver> openResolvers = new HashSet<DistributedResolver>();
 
   /** Protocols which are handled by the served resolver. */
-  private static final String[] protocols = new String[] { "rmi" };
-
-  /** Set of the handled protocols. */
-  private static Set<String> protocolSet = new HashSet<String>();
-
-  // initialize the set to contain the elements of the array
-  static {
-    for (String p: protocols) protocolSet.add(p);
-  }
+  private static final Set<String> protocols = new HashSet<String>(Arrays.asList("rmi"));
 
   /**
    * Instantiate a {@link DistributedResolverFactory}.
@@ -72,7 +64,6 @@ public class DistributedResolverFactory implements ResolverFactory {
     // Claim the protocols supported by the resolver, and initialize the local protocol set
     for (String p: protocols) {
       initializer.addProtocol(p, this);
-      protocolSet.add(p);
     }
   }
 
@@ -147,6 +138,6 @@ public class DistributedResolverFactory implements ResolverFactory {
    * @return A set of the recognized protocols.
    */
   public static Set<String> getProtocols() {
-    return protocolSet;
+    return protocols;
   }
 }
