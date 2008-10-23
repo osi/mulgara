@@ -139,8 +139,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       doStart(tx, flags, isNew);
     } catch (Throwable t) {
       logger.warn("Failed to do start", t);
-      resourceManager.transactions.remove(new XidWrapper(xid));
-      throw new XAException(XAException.XAER_RMFAIL);
+      reThrow(t, tx, false);
     }
   }
 
@@ -155,8 +154,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       doEnd(tx, flags);
     } catch (Throwable t) {
       logger.warn("Failed to do end", t);
-      resourceManager.transactions.remove(new XidWrapper(xid));
-      throw new XAException(XAException.XAER_RMFAIL);
+      reThrow(t, tx, false);
     }
   }
 
@@ -320,6 +318,28 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
     logger.error("Attempting to " + op + " unknown transaction: xid=" + formatXid(xid));
     throw new XAException(XAException.XAER_NOTA);
+  }
+
+  /**
+   * Rethrow the caught exception. If it is not an <var>XAException</var> then it is wrapped in an
+   * XAException. This method never returns normally.
+   *
+   * @param t         the exception to rethrow.
+   * @param tx        the current transaction
+   * @param doneOnRb  whether this transaction should be considered completed if <var>t</var>
+   *                  indicates a rollback.
+   * @throws XAException always
+   */
+  protected void reThrow(Throwable t, T tx, boolean doneOnRb) throws XAException {
+    if (t instanceof XAException) {
+      XAException xae = (XAException)t;
+      if (xae.errorCode == XAException.XAER_RMFAIL || doneOnRb && isRollback(xae)) {
+        resourceManager.transactions.remove(new XidWrapper(tx.xid));
+      }
+      throw xae;
+    }
+
+    throw (XAException)new XAException(XAException.XAER_RMERR).initCause(t);
   }
 
   /** 
