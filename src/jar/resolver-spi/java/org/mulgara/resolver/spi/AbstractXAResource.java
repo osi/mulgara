@@ -149,11 +149,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       logger.debug("End xid=" + formatXid(xid) + " flags=" + formatFlags(flags));
     }
 
-    T tx = resourceManager.transactions.get(new XidWrapper(xid));
-    if (tx == null) {
-      logger.error("Attempting to end unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
+    T tx = getTxn(xid, "end");
 
     try {
       doEnd(tx, flags);
@@ -169,11 +165,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       logger.debug("Prepare xid=" + formatXid(xid));
     }
 
-    T tx = resourceManager.transactions.get(new XidWrapper(xid));
-    if (tx == null) {
-      logger.error("Attempting to prepare unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
+    T tx = getTxn(xid, "prepare");
 
     if (tx.rollback) {
       logger.info("Attempting to prepare in failed transaction");
@@ -198,11 +190,8 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       logger.debug("Commit xid=" + formatXid(xid) + " onePhase=" + onePhase);
     }
 
-    T tx = resourceManager.transactions.get(new XidWrapper(xid));
-    if (tx == null) {
-      logger.error("Attempting to commit unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
+    T tx = getTxn(xid, "commit");
+
     if (tx.rollback) {
       logger.error("Attempting to commit in failed transaction");
       rollback(xid);
@@ -249,11 +238,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       logger.debug("Rollback xid=" + formatXid(xid));
     }
 
-    T tx = resourceManager.transactions.get(new XidWrapper(xid));
-    if (tx == null) {
-      logger.error("Attempting to rollback unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
+    T tx = getTxn(xid, "roll back");
 
     boolean clean = true;
     try {
@@ -281,11 +266,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       logger.debug("Forget xid=" + formatXid(xid));
     }
 
-    T tx = resourceManager.transactions.get(new XidWrapper(xid));
-    if (tx == null) {
-      logger.error("Attempting to forget unknown transaction.");
-      throw new XAException(XAException.XAER_NOTA);
-    }
+    T tx = getTxn(xid, "forget");
 
     boolean clean = true;
     try {
@@ -323,6 +304,22 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
     }
 
     return same;
+  }
+
+  /**
+   * Look up the transaction-info object.
+   *
+   * @param xid the xid
+   * @param op  the current operation - used for error messages
+   * @return the transaction-info object
+   * @throws XAException if no transaction-info could be found for the given xid
+   */
+  protected T getTxn(Xid xid, String op) throws XAException {
+    T tx = resourceManager.transactions.get(new XidWrapper(xid));
+    if (tx != null) return tx;
+
+    logger.error("Attempting to " + op + " unknown transaction: xid=" + formatXid(xid));
+    throw new XAException(XAException.XAER_NOTA);
   }
 
   /** 
