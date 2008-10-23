@@ -374,11 +374,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
    */
   protected abstract void doForget(T tx) throws Exception;
 
-  private static boolean isHeuristic(XAException xae) {
-    return (xae.errorCode == XAException.XA_HEURHAZ || xae.errorCode == XAException.XA_HEURCOM ||
-            xae.errorCode == XAException.XA_HEURRB  || xae.errorCode == XAException.XA_HEURMIX);
-  }
-
 
   /** The resource-manager info */
   public static class RMInfo<T extends TxInfo> {

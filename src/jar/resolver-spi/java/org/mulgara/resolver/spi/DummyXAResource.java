@@ -175,6 +175,39 @@ public class DummyXAResource implements XAResource
   //
 
   /**
+   * @param t the exception
+   * @return true if <var>t</var> is an XAException that represents a heuristic completion
+   */
+  public static boolean isHeuristic(Throwable t) {
+    return (t instanceof XAException) && isHeuristic(((XAException)t).errorCode);
+  }
+
+  /**
+   * @param errorCode the xa error code
+   * @return true if <var>errorCode</var> represents a heuristic completion
+   */
+  public static boolean isHeuristic(int errorCode) {
+    return (errorCode == XAException.XA_HEURHAZ || errorCode == XAException.XA_HEURCOM ||
+            errorCode == XAException.XA_HEURRB  || errorCode == XAException.XA_HEURMIX);
+  }
+
+  /**
+   * @param t the exception
+   * @return true if <var>t</var> is an XAException that represents a rollback
+   */
+  public static boolean isRollback(Throwable t) {
+    return (t instanceof XAException) && isRollback(((XAException)t).errorCode);
+  }
+
+  /**
+   * @param errorCode the xa error code
+   * @return true if <var>errorCode</var> represents a rollback
+   */
+  public static boolean isRollback(int errorCode) {
+    return (errorCode >= XAException.XA_RBBASE && errorCode <= XAException.XA_RBEND);
+  }
+
+  /**
    * Format an xid for printing.
    *
    * @param xid the xid to format
