@@ -280,7 +280,8 @@ public class NetworkDelegator implements Delegator {
     String host = modelUri.getHost();
     if (ServerInfo.getHostnameAliases().contains(host)) {
       // on the same machine.  Check if the server is different.
-      if (ServerInfo.getServerURI().getPath().equals(modelUri.getPath())) {
+      URI serverUri = ServerInfo.getServerURI();
+      if (serverUri != null && serverUri.getPath().equals(modelUri.getPath())) {
         throw new ResolverException("Attempt to resolve a local model through the distributed resolver.");
       }
     }
