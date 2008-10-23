@@ -98,7 +98,8 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       logger.debug("Start xid=" + formatXid(xid) + " flags=" + formatFlags(flags));
     }
 
-    T tx = resourceManager.transactions.get(new XidWrapper(xid));
+    xid = new XidWrapper(xid);
+    T tx = resourceManager.transactions.get(xid);
     boolean isNew = false;
 
     switch (flags) {
@@ -121,7 +122,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
       case XAResource.TMJOIN:
         if (tx == null) {
-          resourceManager.transactions.put(new XidWrapper(xid), tx = newTransactionInfo());
+          resourceManager.transactions.put(xid, tx = newTransactionInfo());
           tx.xid = xid;
           isNew = true;
         }
@@ -387,14 +388,13 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
    * @param tx the transaction that completed.
    */
   protected void transactionCompleted(T tx) {
-    resourceManager.transactions.remove(new XidWrapper(tx.xid));
+    resourceManager.transactions.remove(tx.xid);
   }
 
   /** The resource-manager info */
   public static class RMInfo<T extends TxInfo> {
     /** the list of active transactions */
-    public final Map<XidWrapper,T> transactions =
-      Collections.synchronizedMap(new HashMap<XidWrapper,T>());
+    public final Map<Xid,T> transactions = Collections.synchronizedMap(new HashMap<Xid,T>());
   }
 
   /** The info pertaining to a single transaction */
@@ -409,7 +409,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
    * them as keys in a map we need to wrap them with something that implements
    * them based on the individual fields of the Xid.
    */
-  public static class XidWrapper {
+  public static class XidWrapper implements Xid {
     private final Xid xid;
     private final int hash;
 
@@ -418,23 +418,28 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       this.hash = Arrays.hashCode(xid.getBranchQualifier());
     }
 
+    public int getFormatId() {
+      return xid.getFormatId();
+    }
+
+    public byte[] getGlobalTransactionId() {
+      return xid.getGlobalTransactionId();
+    }
+
+    public byte[] getBranchQualifier() {
+      return xid.getBranchQualifier();
+    }
+
     public int hashCode() {
       return hash;
     }
 
     public boolean equals(Object other) {
-      Xid o;
+      if (other == this) return true;
+      if (!(other instanceof Xid)) return false;
 
-      if (other instanceof XidWrapper) {
-        o = ((XidWrapper)other).xid;
-      } else if (other instanceof Xid) {
-        o = (Xid)other;
-      } else {
-        return false;
-      }
+      Xid o = (Xid)other;
 
-      if (o == xid)
-        return true;
       return o.getFormatId() == xid.getFormatId() &&
              Arrays.equals(o.getGlobalTransactionId(), xid.getGlobalTransactionId()) &&
              Arrays.equals(o. getBranchQualifier(), xid. getBranchQualifier());
