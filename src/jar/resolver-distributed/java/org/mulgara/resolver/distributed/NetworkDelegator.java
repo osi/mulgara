@@ -47,6 +47,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import javax.transaction.xa.XAException;
+
 /**
  * Resolve a constraint across a socket.
  *
@@ -61,7 +63,13 @@ public class NetworkDelegator implements Delegator {
   private static Logger logger = Logger.getLogger(NetworkDelegator.class.getName());
 
   /** The session to delegate resolutions through. */
-  private ResolverSession session;
+  private final ResolverSession session;
+
+  /** Whether the current transaction is r/w or r/o. */
+  private final boolean forWrite;
+
+  /** The transaction coordinator with which to register new XAResource's */
+  private final TransactionCoordinator txCord;
 
   /** A cache of distributed sessions. */
   private Map<URI,Session> sessionCache = new HashMap<URI,Session>();
@@ -76,9 +84,13 @@ public class NetworkDelegator implements Delegator {
   /**
    * Constructs a delegator, using a given session.
    * @param session The session to delegate resolution through.
+   * @param forWrite Whether to open this for writes or for read-only
+   * @param txCord the transaction-coordinator being used
    */
-  public NetworkDelegator(ResolverSession session) {
+  public NetworkDelegator(ResolverSession session, boolean forWrite, TransactionCoordinator txCord) {
     this.session = session;
+    this.forWrite = forWrite;
+    this.txCord = txCord;
   }
 
 
@@ -316,14 +328,22 @@ public class NetworkDelegator implements Delegator {
       // The factory won't be in the cache, as a corresponding session would have already been created.
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverUri, true);
       factoryCache.add(sessionFactory);
+
       // now create the session
       Session session = sessionFactory.newSession();
       sessionCache.put(serverUri, session);
+
+      // get the XAResource and enlist it
+      txCord.enlistResource(forWrite ? session.getXAResource() : session.getReadOnlyXAResource());
+
+      // done
       return session;
     } catch (NonRemoteSessionException nrse) {
       throw new QueryException("State Error: non-local URI was mapped to a local session", nrse);
     } catch (SessionFactoryFinderException sffe) {
       throw new QueryException("Unable to get a session to the server", sffe);
+    } catch (XAException xae) {
+      throw new QueryException("Error enlisting xaresource", xae);
     }
   }
 

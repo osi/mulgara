@@ -124,7 +124,7 @@ public class DistributedResolverFactory implements ResolverFactory {
       logger.debug("Creating new distributed resolver");
       if (canWrite) logger.debug("Expecting to write to distributed resolver.");
     }
-    return new DistributedResolver(resolverSession);
+    return new DistributedResolver(resolverSession, this, canWrite);
   }
 
 

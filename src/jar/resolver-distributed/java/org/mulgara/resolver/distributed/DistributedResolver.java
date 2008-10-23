@@ -13,11 +13,9 @@
 package org.mulgara.resolver.distributed;
 
 // Java 2 standard packages
-import java.net.*;
-import java.util.*;
+import java.net.URI;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -27,15 +25,13 @@ import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.LocalNode;
 import org.mulgara.query.QueryException;
-import org.mulgara.resolver.spi.DummyXAResource;
 import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
 
 /**
  * Resolves constraints accessible through a session.
@@ -45,42 +41,35 @@ import org.mulgara.server.SessionFactory;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class DistributedResolver implements Resolver {
-
+public class DistributedResolver implements Resolver, TransactionCoordinator {
   /** Logger. */
-  private static Logger logger = Logger.getLogger(DistributedResolver.class.getName());
+  private static Logger logger = Logger.getLogger(DistributedResolver.class);
 
   /** The delegator that resolves the constraint on another server.  */
   private final Delegator delegator;
 
   /** our xa-resource */
-  private final XAResource xares;
+  private final DistributedXAResource xares;
 
 
   /**
    * Construct a Distributed Resolver.
    * @param resolverSession the session this resolver is associated with.
+   * @param resolverFactory the factory this resolver is associated with.
+   * @param canWrite        whether the current transaction is read-only or r/w
    * @throws IllegalArgumentException if <var>resolverSession</var> is <code>null</code>
    * @throws ResolverFactoryException if the superclass is unable to handle its arguments
    */
-  DistributedResolver(ResolverSession resolverSession) throws ResolverFactoryException {
+  DistributedResolver(ResolverSession resolverSession, ResolverFactory resolverFactory,
+                      boolean canWrite) throws ResolverFactoryException {
 
     if (logger.isDebugEnabled()) logger.debug("Instantiating a distributed resolver");
 
     // Validate "resolverSession" parameter
     if (resolverSession == null) throw new IllegalArgumentException( "Null \"resolverSession\" parameter");
 
-    delegator = new NetworkDelegator(resolverSession);
-
-    xares = new DummyXAResource() {
-      public void commit(Xid xid, boolean onePhase) throws XAException {
-        delegator.close();
-      }
-
-      public void rollback(Xid xid) throws XAException {
-        delegator.close();
-      }
-    };
+    delegator = new NetworkDelegator(resolverSession, canWrite, this);
+    xares = new DistributedXAResource(10, resolverFactory, delegator);
   }
 
 
@@ -161,5 +150,51 @@ public class DistributedResolver implements Resolver {
 
   public void abort() {
     delegator.close();
+  }
+
+
+  public void enlistResource(XAResource xares) throws XAException {
+    this.xares.enlistResource(xares);
+  }
+
+  /**
+   * An XAResource which encapsulates and delegates to the all the remote XAResource's.
+   *
+   * <p>Note that this can never be really correct because it's basically impossible to get
+   * the <var>isSameRM</var> semantics correct when proxying multiple XAResource's.
+   */
+  private static class DistributedXAResource extends MultiXAResource {
+    private final Delegator delegator;
+
+    /**
+     * Construct a {@link DistributedXAResource} with a specified transaction timeout.
+     *
+     * @param transactionTimeout transaction timeout period, in seconds
+     * @param resolverFactory    the resolver-factory we belong to
+     * @param delegator          the delegator being used
+     */
+    public DistributedXAResource(int transactionTimeout, ResolverFactory resolverFactory,
+                                 Delegator delegator) {
+      super(transactionTimeout, resolverFactory);
+      this.delegator = delegator;
+    }
+
+    protected DistributedTxInfo newTransactionInfo() {
+      DistributedTxInfo txInfo = new DistributedTxInfo();
+      txInfo.delegator = delegator;
+      return txInfo;
+    }
+
+    protected void transactionCompleted(MultiXAResource.MultiTxInfo tx) {
+      try {
+        ((DistributedTxInfo) tx).delegator.close();
+      } finally {
+        super.transactionCompleted(tx);
+      }
+    }
+
+    static class DistributedTxInfo extends MultiXAResource.MultiTxInfo {
+      public Delegator delegator;
+    }
   }
 }
