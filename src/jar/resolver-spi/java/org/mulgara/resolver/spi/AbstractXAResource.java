@@ -209,7 +209,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       // inconsistent state.
       // Make sure the exception is logged.
       logger.fatal("Failed to commit resource in transaction " + formatXid(xid), th);
-      throw new XAException(XAException.XAER_RMERR);
+      throw (XAException)new XAException(XAException.XAER_RMERR).initCause(th);
     } finally {
       if (clean) {
         transactionCompleted(tx);
@@ -237,7 +237,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       // inconsistent state.
       // Make sure the exception is logged.
       logger.fatal("Failed to rollback resource in transaction " + formatXid(xid), th);
-      throw new XAException(XAException.XAER_RMERR);
+      throw (XAException)new XAException(XAException.XAER_RMERR).initCause(th);
     } finally {
       if (clean) {
         transactionCompleted(tx);
@@ -263,7 +263,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
     } catch (Throwable th) {
       logger.error("Failed to forget transaction " + formatXid(xid), th);
       clean = false;
-      throw new XAException(XAException.XAER_RMERR);
+      throw (XAException)new XAException(XAException.XAER_RMERR).initCause(th);
     } finally {
       if (clean) {
         transactionCompleted(tx);
