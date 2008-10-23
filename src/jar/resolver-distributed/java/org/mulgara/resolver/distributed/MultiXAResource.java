@@ -381,6 +381,13 @@ public class MultiXAResource
         r.forget(txInfo.xid);
         iter.remove();
       } catch (Throwable t) {
+        if (isCompleted(t)) {
+          logger.debug("transaction " + formatXid(txInfo.xid) + " was not active on resource '" +
+                       r + "'", t);
+          iter.remove();
+          continue;
+        }
+
         if (exc == null) {
           exc = t;
         } else {
