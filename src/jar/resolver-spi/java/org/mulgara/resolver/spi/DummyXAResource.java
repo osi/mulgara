@@ -175,6 +175,17 @@ public class DummyXAResource implements XAResource
   //
 
   /**
+   * Format an xid for printing.
+   *
+   * @param xid the xid to format
+   * @return a string representation of the xid
+   */
+  protected static final String formatXid(Xid xid) {
+    return "[" + xid.getFormatId() + ":" + Arrays.hashCode(xid.getGlobalTransactionId()) + ":" +
+           Arrays.hashCode(xid.getBranchQualifier()) + "]";
+  }
+
+  /**
    * Format bitmasks defined by {@link XAResource}.
    *
    * @param flags  a bitmask composed from the constants defined in {@link XAResource}

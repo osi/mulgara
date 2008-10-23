@@ -95,8 +95,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
   public void start(Xid xid, int flags) throws XAException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Start xid=" + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
-      logger.debug("xid.format=" + xid.getFormatId() + " xid.gblTxId=" + Arrays.toString(xid.getGlobalTransactionId()) + " xid.brnchQual=" + Arrays.toString(xid.getBranchQualifier()));
+      logger.debug("Start xid=" + formatXid(xid) + " flags=" + formatFlags(flags));
     }
 
     T tx = resourceManager.transactions.get(new XidWrapper(xid));
@@ -109,14 +108,13 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
           throw new XAException(XAException.XAER_NOTA);
         }
         if (logger.isDebugEnabled()) {
-          logger.debug("Resuming transaction on xid=" + System.identityHashCode(xid));
+          logger.debug("Resuming transaction on xid=" + formatXid(xid));
         }
         break;
 
       case XAResource.TMNOFLAGS:
         if (tx != null) {
-          logger.warn("Received plain start for existing tx");
-          logger.warn("xid.format=" + xid.getFormatId() + " xid.gblTxId=" + Arrays.toString(xid.getGlobalTransactionId()) + " xid.brnchQual=" + Arrays.toString(xid.getBranchQualifier()));
+          logger.warn("Received plain start for existing tx: xid=" + formatXid(xid));
           throw new XAException(XAException.XAER_DUPID);
         }
         // fallthrough
@@ -133,7 +131,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
         // XXX: is this correct? Or should we actually roll back here?
         if (tx != null)
           tx.rollback = true;
-        logger.error("Unrecognised flags in start: xid=" + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+        logger.error("Unrecognised flags in start: xid=" + formatXid(xid) + " flags=" + formatFlags(flags));
         throw new XAException(XAException.XAER_INVAL);
     }
 
@@ -148,7 +146,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
   public void end(Xid xid, int flags) throws XAException {
     if (logger.isDebugEnabled()) {
-      logger.debug("End xid=" + System.identityHashCode(xid) + " flags=" + formatFlags(flags));
+      logger.debug("End xid=" + formatXid(xid) + " flags=" + formatFlags(flags));
     }
 
     T tx = resourceManager.transactions.get(new XidWrapper(xid));
@@ -168,7 +166,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
   public int prepare(Xid xid) throws XAException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Prepare xid=" + System.identityHashCode(xid));
+      logger.debug("Prepare xid=" + formatXid(xid));
     }
 
     T tx = resourceManager.transactions.get(new XidWrapper(xid));
@@ -197,7 +195,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
   public void commit(Xid xid, boolean onePhase) throws XAException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Commit xid=" + System.identityHashCode(xid) + " onePhase=" + onePhase);
+      logger.debug("Commit xid=" + formatXid(xid) + " onePhase=" + onePhase);
     }
 
     T tx = resourceManager.transactions.get(new XidWrapper(xid));
@@ -237,7 +235,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       // This is a serious problem since the database is now in an
       // inconsistent state.
       // Make sure the exception is logged.
-      logger.fatal("Failed to commit resource in transaction " + xid, th);
+      logger.fatal("Failed to commit resource in transaction " + formatXid(xid), th);
       throw new XAException(XAException.XAER_RMERR);
     } finally {
       if (clean) {
@@ -248,7 +246,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
   public void rollback(Xid xid) throws XAException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Rollback xid=" + System.identityHashCode(xid));
+      logger.debug("Rollback xid=" + formatXid(xid));
     }
 
     T tx = resourceManager.transactions.get(new XidWrapper(xid));
@@ -269,7 +267,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       // This is a serious problem since the database is now in an
       // inconsistent state.
       // Make sure the exception is logged.
-      logger.fatal("Failed to rollback resource in transaction " + xid, th);
+      logger.fatal("Failed to rollback resource in transaction " + formatXid(xid), th);
       throw new XAException(XAException.XAER_RMERR);
     } finally {
       if (clean) {
@@ -280,7 +278,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
   public void forget(Xid xid) throws XAException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Forget xid=" + System.identityHashCode(xid));
+      logger.debug("Forget xid=" + formatXid(xid));
     }
 
     T tx = resourceManager.transactions.get(new XidWrapper(xid));
@@ -298,7 +296,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       }
       throw xae;
     } catch (Throwable th) {
-      logger.error("Failed to forget transaction " + xid, th);
+      logger.error("Failed to forget transaction " + formatXid(xid), th);
       clean = false;
       throw new XAException(XAException.XAER_RMERR);
     } finally {
