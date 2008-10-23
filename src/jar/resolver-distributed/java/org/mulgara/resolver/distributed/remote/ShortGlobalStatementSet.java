@@ -36,7 +36,7 @@ import org.mulgara.resolver.spi.Statements;
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
 public class ShortGlobalStatementSet extends AbstractSet<Triple> implements Serializable {
-  
+
   /**
    * Allow newer compiled version of the stub to operate when changes
    * have not occurred with the class.
@@ -44,12 +44,12 @@ public class ShortGlobalStatementSet extends AbstractSet<Triple> implements Seri
    * deleted.
    */
   private static final long serialVersionUID = 896369800817370415L;
-  
-  
+
+
   /** Internally, use a list as this has a shorter serialization. */
   private ArrayList<Triple> data;
-  
-  
+
+
   /**
    * Builds the set of Triple data, containing globalized triples.
    * @param statements Contains the data for the set.  This must not contain duplicates.
