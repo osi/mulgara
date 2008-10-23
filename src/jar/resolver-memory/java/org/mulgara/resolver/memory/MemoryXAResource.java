@@ -49,6 +49,8 @@ import org.mulgara.store.xa.XAResolverSession;
  */
 public class MemoryXAResource
     extends AbstractXAResource<RMInfo<MemoryXAResource.MemoryTxInfo>,MemoryXAResource.MemoryTxInfo> {
+  private final XAResolverSession session;
+
   //
   // Constructor
   //
@@ -63,14 +65,15 @@ public class MemoryXAResource
   public MemoryXAResource(int transactionTimeout,
                           XAResolverSession session,
                           ResolverFactory resolverFactory) {
-    super(transactionTimeout, resolverFactory, newTxInfo(session));
+    super(transactionTimeout, resolverFactory);
+    this.session = session;
   }
 
   protected RMInfo<MemoryTxInfo> newResourceManager() {
     return new RMInfo<MemoryTxInfo>();
   }
 
-  private static MemoryTxInfo newTxInfo(XAResolverSession session) {
+  protected MemoryTxInfo newTransactionInfo() {
     MemoryTxInfo ti = new MemoryTxInfo();
     ti.session = session;
     return ti;

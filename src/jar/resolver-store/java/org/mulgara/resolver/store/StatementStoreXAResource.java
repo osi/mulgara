@@ -66,6 +66,10 @@ public class StatementStoreXAResource
   // Set of session's that have been prepared.
   public static Set<XAResolverSession> preparing = new HashSet<XAResolverSession>();
 
+  private final XAResolverSession session;
+
+  private final SimpleXAResource[] resources;
+
   //
   // Constructor
   //
@@ -82,15 +86,16 @@ public class StatementStoreXAResource
                                   XAResolverSession session,
                                   SimpleXAResource[] resources,
                                   ResolverFactory resolverFactory) {
-    super(transactionTimeout, resolverFactory, newTxInfo(session, resources));
+    super(transactionTimeout, resolverFactory);
+    this.session = session;
+    this.resources = resources;
   }
 
   protected RMInfo<StatementStoreTxInfo> newResourceManager() {
     return new RMInfo<StatementStoreTxInfo>();
   }
 
-  private static StatementStoreTxInfo newTxInfo(XAResolverSession session,
-                                                SimpleXAResource[] resources) {
+  protected StatementStoreTxInfo newTransactionInfo() {
     StatementStoreTxInfo ti = new StatementStoreTxInfo();
     ti.session = session;
     ti.resources = resources;

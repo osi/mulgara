@@ -435,6 +435,8 @@ public class LuceneResolver implements Resolver {
    */
   private static class LuceneXAResource
       extends AbstractXAResource<RMInfo<LuceneXAResource.LuceneTxInfo>,LuceneXAResource.LuceneTxInfo> {
+    private final Collection<FullTextStringIndex> indexes;
+
     /**
      * Construct a {@link LuceneXAResource} with a specified transaction timeout.
      *
@@ -443,11 +445,18 @@ public class LuceneResolver implements Resolver {
      * @param indexes            the list of lucene indexes
      */
     public LuceneXAResource(int transactionTimeout, ResolverFactory resolverFactory, Collection<FullTextStringIndex> indexes) {
-      super(transactionTimeout, resolverFactory, new LuceneTxInfo(indexes));
+      super(transactionTimeout, resolverFactory);
+      this.indexes = indexes;
     }
 
     protected RMInfo<LuceneTxInfo> newResourceManager() {
       return new RMInfo<LuceneTxInfo>();
+    }
+
+    protected LuceneTxInfo newTransactionInfo() {
+      LuceneTxInfo txInfo = new LuceneTxInfo();
+      txInfo.indexes = indexes;
+      return txInfo;
     }
 
     //
@@ -480,10 +489,6 @@ public class LuceneResolver implements Resolver {
 
     static class LuceneTxInfo extends TxInfo {
       public Collection<FullTextStringIndex> indexes;
-
-      public LuceneTxInfo(Collection<FullTextStringIndex> indexes) {
-        this.indexes = indexes;
-      }
     }
   }
 }

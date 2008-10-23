@@ -52,7 +52,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
     new WeakHashMap<ResolverFactory,RMInfo<? extends TxInfo>>();
 
   protected final R resourceManager;
-  protected final T tmpTxInfo;
 
 
   //
@@ -64,11 +63,8 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
    *
    * @param transactionTimeout  transaction timeout period, in seconds
    * @param resolverFactory     the resolver-factory we belong to
-   * @param txInfo              the initial transaction-info
    */
-  public AbstractXAResource(int transactionTimeout,
-                            ResolverFactory resolverFactory,
-                            T txInfo) {
+  public AbstractXAResource(int transactionTimeout, ResolverFactory resolverFactory) {
     super(transactionTimeout);
 
     synchronized (resourceManagers) {
@@ -78,8 +74,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
         resourceManagers.put(resolverFactory, rmgr = newResourceManager());
       this.resourceManager = rmgr;
     }
-
-    this.tmpTxInfo = txInfo;
   }
 
   /**
@@ -88,6 +82,12 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
    * given resolver-factory.
    */
   protected abstract R newResourceManager();
+
+  /**
+   * Create a new transaction-info instance. This is invoked whenever a new
+   * transaction is started.
+   */
+  protected abstract T newTransactionInfo();
 
   //
   // Methods implementing XAResource
@@ -121,7 +121,7 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
       case XAResource.TMJOIN:
         if (tx == null) {
-          resourceManager.transactions.put(new XidWrapper(xid), tx = tmpTxInfo);
+          resourceManager.transactions.put(new XidWrapper(xid), tx = newTransactionInfo());
           tx.xid = xid;
           isNew = true;
         }
