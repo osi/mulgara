@@ -128,9 +128,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
         break;
 
       default:
-        // XXX: is this correct? Or should we actually roll back here?
-        if (tx != null)
-          tx.rollback = true;
         logger.error("Unrecognised flags in start: xid=" + formatXid(xid) + " flags=" + formatFlags(flags));
         throw new XAException(XAException.XAER_INVAL);
     }
@@ -165,12 +162,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
 
     T tx = getTxn(xid, "prepare");
 
-    if (tx.rollback) {
-      logger.info("Attempting to prepare in failed transaction");
-      rollback(xid);
-      throw new XAException(XAException.XA_RBROLLBACK);
-    }
-
     try {
       int sts = doPrepare(tx);
       if (sts == XA_RDONLY)
@@ -178,8 +169,8 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
       return sts;
     } catch (Throwable t) {
       logger.warn("Attempt to prepare failed", t);
-      rollback(xid);
-      throw new XAException(XAException.XA_RBROLLBACK);
+      reThrow(t, tx, true);
+      throw new Error("dummy for the compiler - never reached");
     }
   }
 
@@ -189,12 +180,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
     }
 
     T tx = getTxn(xid, "commit");
-
-    if (tx.rollback) {
-      logger.error("Attempting to commit in failed transaction");
-      rollback(xid);
-      throw new XAException(XAException.XA_RBROLLBACK);
-    }
 
     try {
       if (onePhase) {
@@ -406,8 +391,6 @@ public abstract class AbstractXAResource<R extends AbstractXAResource.RMInfo<T>,
   public static class TxInfo {
     /** the underlying Xid of this transaction; not valid till the first start() */
     public Xid xid;
-    /** true if this transaction has been marked for rollback */
-    public boolean rollback;
   }
 
   /**
