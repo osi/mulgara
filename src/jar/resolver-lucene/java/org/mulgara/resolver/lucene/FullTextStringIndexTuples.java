@@ -31,6 +31,7 @@ package org.mulgara.resolver.lucene;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,8 +123,8 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
    */
   private long rowCount = -1;
 
-  private final List variableList = new ArrayList(3);
-  private final List luceneKeyList = new ArrayList(3);
+  private final List<Variable> variableList = new ArrayList<Variable>(3);
+  private final List<String> luceneKeyList = new ArrayList<String>(3);
 
   private Constraint constraint;
 
@@ -154,7 +155,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
       String subject = null;
       ConstraintElement subjectElement = constraint.getElement(0);
       if (subjectElement instanceof Variable) {
-        variableList.add(subjectElement);
+        variableList.add((Variable)subjectElement);
         luceneKeyList.add(FullTextStringIndex.SUBJECT_KEY);
       } else if (subjectElement instanceof LocalNode) {
         try {
@@ -170,7 +171,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
       String predicate = null;
       ConstraintElement predicateElement = constraint.getElement(1);
       if (predicateElement instanceof Variable) {
-        variableList.add(predicateElement);
+        variableList.add((Variable)predicateElement);
         luceneKeyList.add(FullTextStringIndex.PREDICATE_KEY);
       } else if (predicateElement instanceof LocalNode) {
         try {
@@ -297,8 +298,8 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     return false;
   }
 
-  public List getOperands() {
-    return new ArrayList(0);
+  public List<Tuples> getOperands() {
+    return Collections.<Tuples>emptyList();
   }
 
   public boolean next() throws TuplesException {
