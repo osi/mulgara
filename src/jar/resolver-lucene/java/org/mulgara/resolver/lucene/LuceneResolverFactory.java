@@ -28,16 +28,20 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.net.*;
+import java.net.URI;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
 import org.mulgara.query.rdf.Mulgara;
-import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.spi.*;
+import org.mulgara.resolver.spi.InitializerException;
+import org.mulgara.resolver.spi.NoSystemResolverFactoryException;
+import org.mulgara.resolver.spi.Resolver;
+import org.mulgara.resolver.spi.ResolverFactory;
+import org.mulgara.resolver.spi.ResolverFactoryException;
+import org.mulgara.resolver.spi.ResolverFactoryInitializer;
+import org.mulgara.resolver.spi.ResolverSession;
 
 /**
  * Resolves constraints in models defined by static RDF documents.
@@ -60,9 +64,8 @@ import org.mulgara.resolver.spi.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class LuceneResolverFactory implements ResolverFactory {
-
   /** Logger. */
-  private static Logger logger = Logger.getLogger(LuceneResolverFactory.class.getName());
+  private static final Logger logger = Logger.getLogger(LuceneResolverFactory.class);
 
   private String directory;
   private URI modelTypeURI;
@@ -125,7 +128,7 @@ public class LuceneResolverFactory implements ResolverFactory {
    * @return <code>null</code> - no default graphs for this resolver
    */
   public Graph[] getDefaultGraphs() { return null; }
-  
+
   /**
    * {@inheritDoc}
    * @return <code>false</code> - this graph does not support exports.
@@ -142,9 +145,8 @@ public class LuceneResolverFactory implements ResolverFactory {
    * @throws InitializerException if the XML Schema resources
    *   can't be found or created
    */
-  public static ResolverFactory newInstance(
-      ResolverFactoryInitializer resolverFactoryInitializer
-      ) throws InitializerException {
+  public static ResolverFactory newInstance(ResolverFactoryInitializer resolverFactoryInitializer)
+      throws InitializerException {
     if (logger.isDebugEnabled()) logger.debug("Creating Lucene resolver factory");
     return new LuceneResolverFactory(resolverFactoryInitializer);
   }

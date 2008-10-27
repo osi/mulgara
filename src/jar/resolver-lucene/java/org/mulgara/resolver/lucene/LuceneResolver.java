@@ -98,9 +98,8 @@ import org.mulgara.util.conversion.html.HtmlToTextConverter;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class LuceneResolver implements Resolver {
-
   /** Logger.  */
-  private static Logger logger = Logger.getLogger(LuceneResolver.class.getName());
+  private static final Logger logger = Logger.getLogger(LuceneResolver.class);
 
   /**
    * The preallocated node identifying the type of temporary model to create
@@ -360,8 +359,7 @@ public class LuceneResolver implements Resolver {
     if (modelElement instanceof Variable) {
       if (logger.isDebugEnabled()) logger.debug("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
-    }
-    else if (!(modelElement instanceof LocalNode)) {
+    } else if (!(modelElement instanceof LocalNode)) {
       throw new QueryException("Failed to localize Lucene Model before resolution " + constraint);
     }
 

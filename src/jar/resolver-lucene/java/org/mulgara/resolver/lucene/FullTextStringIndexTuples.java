@@ -42,8 +42,14 @@ import org.apache.lucene.document.Document;
 import org.jrdf.graph.URIReference;
 
 // local packages
-import org.mulgara.query.*;
-import org.mulgara.query.rdf.*;
+import org.mulgara.query.Constraint;
+import org.mulgara.query.ConstraintElement;
+import org.mulgara.query.LocalNode;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.Variable;
+import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.Resolution;
@@ -71,9 +77,7 @@ import org.mulgara.store.tuples.Tuples;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
-    Cloneable {
-
+class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cloneable {
   /** Logger.  */
   private final static Logger logger = Logger.getLogger(FullTextStringIndexTuples.class);
 
@@ -254,8 +258,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution,
          Float.toString(hits.score(nextDocumentIndex - 1)), XSD.DOUBLE_URI,
                     "", true);
          */
-        return session.localize(new LiteralImpl(hits.score(nextDocumentIndex -
-            1)));
+        return session.localize(new LiteralImpl(hits.score(nextDocumentIndex - 1)));
       } else {
         throw new TuplesException("Column " + column + " does not exist");
       }

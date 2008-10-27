@@ -28,13 +28,18 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.net.*;
+import java.net.URI;
 
 // Third party packages
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.resolver.spi.*;
+import org.mulgara.resolver.spi.LocalizeException;
+import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.ResolverFactory;
+import org.mulgara.resolver.spi.ResolverFactoryException;
+import org.mulgara.resolver.spi.ResolverSession;
+import org.mulgara.resolver.spi.Statements;
 
 /**
  * Resolves constraints in models defined by static RDF documents.
@@ -58,7 +63,8 @@ import org.mulgara.resolver.spi.*;
  */
 public class ReadOnlyLuceneResolver extends LuceneResolver {
   /** Logger.  */
-  private static Logger logger = Logger.getLogger(ReadOnlyLuceneResolver.class.getName());
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(ReadOnlyLuceneResolver.class);
 
   //
   // Constructors

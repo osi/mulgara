@@ -418,7 +418,7 @@ public class FullTextStringIndex {
   /**
    * Add a document into the fulltext string pool. The constants {@link
    * #SUBJECT_KEY}, {@link #PREDICATE_KEY}, {@link #LITERAL_KEY} should be used
-       * in the query to reference the relevant index fields if the index is to read
+   * in the query to reference the relevant index fields if the index is to read
    * by queries.
    *
    * @param indexDocument The document to be indexed.
