@@ -67,8 +67,9 @@ public class LuceneResolverFactory implements ResolverFactory {
   /** Logger. */
   private static final Logger logger = Logger.getLogger(LuceneResolverFactory.class);
 
+  public static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "LuceneModel");
+
   private String directory;
-  private URI modelTypeURI;
 
   //
   // Constructors
@@ -85,9 +86,6 @@ public class LuceneResolverFactory implements ResolverFactory {
     }
 
     try {
-      modelTypeURI = URI.create(Mulgara.NAMESPACE + "LuceneModel");
-      assert modelTypeURI != null;
-
       // Initialize fields
       directory = initializer.getDirectory().toString();
 
