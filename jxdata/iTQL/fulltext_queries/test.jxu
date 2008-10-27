@@ -304,6 +304,64 @@
     <fail>Output failed.  Check badQuery16Result.xml for output.</fail>
   </ifEqual>
 
+  <!-- Query Lucene model with score -->
+  <set name="query"
+    value="select $pmid $title $score from &lt;@server@#model1&gt;
+           where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title and
+           $pmid &lt;http://mulgara.org/mulgara#search&gt; $x in &lt;@server@#fulltext2&gt; and
+           $x &lt;http://mulgara.org/mulgara/Document#title&gt; 'Diseases' in &lt;@server@#fulltext2&gt; and
+           $x &lt;http://mulgara.org/mulgara#score&gt; $score in &lt;@server@#fulltext2&gt;
+           order by $pmid $title;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <subst name="queryResult" regexp="1\.67[0-9]*" value="1.67"/>
+  <subst name="queryResult" regexp="1\.38[0-9]*" value="1.38"/>
+  <ifEqual converse="true" file="queryResult17.txt" name="queryResult">
+    <save name="queryResult" file="badQuery17Result.xml"/>
+    <fail>Output failed.  Check badQuery17Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Query Lucene model with 2 scores in disjunction -->
+  <set name="query"
+    value="select $pmid $title $sc1 $sc2 from &lt;@server@#model1&gt;
+           where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title and
+           (($pmid &lt;http://mulgara.org/mulgara#search&gt; $x in &lt;@server@#fulltext2&gt; and
+             $x &lt;http://mulgara.org/mulgara/Document#title&gt; 'Diseases' in &lt;@server@#fulltext2&gt; and
+             $x &lt;http://mulgara.org/mulgara#score&gt; $sc1 in &lt;@server@#fulltext2&gt;) or
+            ($pmid &lt;http://mulgara.org/mulgara#search&gt; $y in &lt;@server@#fulltext2&gt; and
+             $y &lt;http://mulgara.org/mulgara/Document#title&gt; 'Heart*' in &lt;@server@#fulltext2&gt; and
+             $y &lt;http://mulgara.org/mulgara#score&gt; $sc2 in &lt;@server@#fulltext2&gt;))
+           order by $pmid $title;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <subst name="queryResult" regexp="1\.67[0-9]*" value="1.67"/>
+  <subst name="queryResult" regexp="1\.38[0-9]*" value="1.38"/>
+  <subst name="queryResult" regexp="2\.75[0-9]*" value="2.75"/>
+  <ifEqual converse="true" file="queryResult18.txt" name="queryResult">
+    <save name="queryResult" file="badQuery18Result.xml"/>
+    <fail>Output failed.  Check badQuery18Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Query Lucene model with 2 scores in conjunction -->
+  <set name="query"
+    value="select $pmid $title $sc1 $sc2 from &lt;@server@#model1&gt;
+           where $pmid &lt;http://mulgara.org/mulgara/Document#title&gt; $title and
+           $pmid &lt;http://mulgara.org/mulgara#search&gt; $x in &lt;@server@#fulltext2&gt; and
+           $x &lt;http://mulgara.org/mulgara/Document#title&gt; 'Diseases*' in &lt;@server@#fulltext2&gt; and
+           $x &lt;http://mulgara.org/mulgara#score&gt; $sc1 in &lt;@server@#fulltext2&gt; and
+           $pmid &lt;http://mulgara.org/mulgara#search&gt; $y in &lt;@server@#fulltext2&gt; and
+           $y &lt;http://mulgara.org/mulgara/Document#title&gt; 'pheno*' in &lt;@server@#fulltext2&gt; and
+           $y &lt;http://mulgara.org/mulgara#score&gt; $sc2 in &lt;@server@#fulltext2&gt;
+           order by $pmid $title;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <subst name="queryResult" regexp="1\.38[0-9]*" value="1.38"/>
+  <subst name="queryResult" regexp="1\.04[0-9]*" value="1.04"/>
+  <ifEqual converse="true" file="queryResult19.txt" name="queryResult">
+    <save name="queryResult" file="badQuery19Result.xml"/>
+    <fail>Output failed.  Check badQuery19Result.xml for output.</fail>
+  </ifEqual>
+
   <!-- Drop the fulltext model -->
   <set name="query"
     value="drop &lt;@server@#model1&gt; ;

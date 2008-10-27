@@ -82,20 +82,6 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   /** Logger.  */
   private final static Logger logger = Logger.getLogger(FullTextStringIndexTuples.class);
 
-  /** Description of the Field */
-  private final static String SCORE_COLUMN = "score";
-
-  /** Description of the Field */
-  private final static URI LUCENE_SCORE_URI;
-
-  static {
-    try {
-      LUCENE_SCORE_URI = new URI("lucene:score");
-    } catch (URISyntaxException e) {
-      throw new ExceptionInInitializerError("Failed to create required URIs");
-    }
-  }
-
   /**
    * The native Lucene query result to represent as a {@link Tuples}.
    */
@@ -126,7 +112,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   private final List<Variable> variableList = new ArrayList<Variable>(3);
   private final List<String> luceneKeyList = new ArrayList<String>(3);
 
-  private Constraint constraint;
+  private LuceneConstraint constraint;
 
   //
   // Constructor
@@ -146,14 +132,19 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
    * @throws QueryException if the set of triples couldn't be determined
    */
   FullTextStringIndexTuples(FullTextStringIndex fullTextStringIndex,
-      Constraint constraint, ResolverSession session) throws QueryException {
+      LuceneConstraint constraint, ResolverSession session) throws QueryException {
     this.session = session;
     this.constraint = constraint;
 
     try {
       // Validate and globalize subject
       String subject = null;
-      ConstraintElement subjectElement = constraint.getElement(0);
+      ConstraintElement subjectElement = constraint.getSubject();
+      if (subjectElement == null) {
+        // backwards compat with simple constraint
+        subjectElement = constraint.getBindingVar();
+      }
+
       if (subjectElement instanceof Variable) {
         variableList.add((Variable)subjectElement);
         luceneKeyList.add(FullTextStringIndex.SUBJECT_KEY);
@@ -169,7 +160,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
 
       // Validate and globalize predicate
       String predicate = null;
-      ConstraintElement predicateElement = constraint.getElement(1);
+      ConstraintElement predicateElement = constraint.getPredicate();
       if (predicateElement instanceof Variable) {
         variableList.add((Variable)predicateElement);
         luceneKeyList.add(FullTextStringIndex.PREDICATE_KEY);
@@ -185,7 +176,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
 
       // Validate and globalize object
       String object;
-      ConstraintElement objectElement = constraint.getElement(2);
+      ConstraintElement objectElement = constraint.getObject();
       try {
         LiteralImpl objectLiteral = (LiteralImpl) session.globalize(((LocalNode)
             objectElement).getValue());
@@ -195,9 +186,11 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
                                  "must be a literal.", e);
       }
 
-      // Add the synthesized $score column
-      // Removed as it causes failure to join.
-      // variableList.add(new Variable(SCORE_COLUMN));
+      // Get the score variable
+      Variable score = constraint.getScoreVar();
+      if (score != null) {
+        variableList.add(score);
+      }
 
       if (logger.isInfoEnabled()) {
         logger.info("Searching for " + subject + " : " + predicate + " : " + object);
@@ -234,31 +227,9 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     try {
       if (column >= 0 && column < luceneKeyList.size()) {
         URI uri = new URI(document.get((String) luceneKeyList.get(column)));
-        /* I believe this is just localizing the uri in either the global or query
-         * string pools.  So just attempt to localize and let the ResolverSession
-         * worry about where to localize it.
-                long node = session.getGlobalResource(uri, false);
-                if (node == NodePool.NONE) {
-
-                  // Attempt to get the resource from the query.
-                  node = session.getQueryResource(uri, true);
-
-                  // This should basically never happen.
-                  if (node == NodePool.NONE) {
-         throw new TuplesException("Can't generate absent resource");
-                  }
-                }
-         */
         return session.localize(new URIReferenceImpl(uri));
       } else if (column == luceneKeyList.size()) {
-        // Generate the $score column
-        /* I believe this requires access to the session string-pool. So this will
-         * probably have to be delegated to the ResolverSession.localize method as
-         * well.
-                return session.getQueryLiteral(
-         Float.toString(hits.score(nextDocumentIndex - 1)), XSD.DOUBLE_URI,
-                    "", true);
-         */
+        // Generate the score column
         return session.localize(new LiteralImpl(hits.score(nextDocumentIndex - 1)));
       } else {
         throw new TuplesException("Column " + column + " does not exist");

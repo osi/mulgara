@@ -70,7 +70,7 @@
   </target>
 
   <target name="resolver-lucene-compile"
-          depends="-resolver-lucene-prepare, resolver-spi-jar"
+          depends="-resolver-lucene-prepare, resolver-spi-jar, resolver-jar, server-local-jar"
           description="Compiles all resolver-lucene related files included
                        generated source code">
 

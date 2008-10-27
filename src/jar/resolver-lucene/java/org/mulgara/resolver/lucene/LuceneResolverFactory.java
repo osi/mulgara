@@ -68,6 +68,8 @@ public class LuceneResolverFactory implements ResolverFactory {
   private static final Logger logger = Logger.getLogger(LuceneResolverFactory.class);
 
   public static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "LuceneModel");
+  public static final URI searchURI = URI.create(Mulgara.NAMESPACE + "search");
+  public static final URI scoreURI = URI.create(Mulgara.NAMESPACE + "score");
 
   private String directory;
 
@@ -95,6 +97,12 @@ public class LuceneResolverFactory implements ResolverFactory {
     } catch (NoSystemResolverFactoryException en) {
       throw new InitializerException("Unable to obtain system resolver", en);
     }
+
+    // Register LuceneConstraint
+    initializer.registerNewConstraint(new LuceneConstraintDescriptor());
+
+    // Register the LuceneConstraint's transformation
+    initializer.addSymbolicTransformation(new LuceneTransformer(modelTypeURI, searchURI, scoreURI));
   }
 
   //

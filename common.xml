@@ -477,7 +477,7 @@
                                             ${server-rmi.jar}"/>
         <fileset dir="${lib.dir}" includes="xerces*.jar, xmlParserAPIs.jar,
                                             xmlc-xerces.jar, jxunit*.jar,
-                                            junit.jar"/>
+                                            jakarta-regexp*.jar, junit.jar"/>
       </classpath>
 
       <test name="net.sourceforge.jxunit.JXTestCase" haltonfailure="no"

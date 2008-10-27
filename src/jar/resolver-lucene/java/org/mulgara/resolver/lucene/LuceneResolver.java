@@ -355,6 +355,7 @@ public class LuceneResolver implements Resolver {
       logger.debug("Resolve " + constraint);
     }
 
+    // check the model
     ConstraintElement modelElement = constraint.getModel();
     if (modelElement instanceof Variable) {
       if (logger.isDebugEnabled()) logger.debug("Ignoring solutions for " + constraint);
@@ -363,9 +364,17 @@ public class LuceneResolver implements Resolver {
       throw new QueryException("Failed to localize Lucene Model before resolution " + constraint);
     }
 
+    /* temporary hack because $_from is not resolved before transformation occurs, and hence
+     * no LuceneConstraint's are created when doing ... from <lucene-model> where ... .
+     */
+    if (!(constraint instanceof LuceneConstraint)) {
+      constraint = new LuceneConstraint(constraint);
+    }
+
+    // generate the tuples
     try {
       FullTextStringIndex stringIndex = getFullTextStringIndex(((LocalNode)modelElement).getValue());
-      Tuples tmpTuples = new FullTextStringIndexTuples(stringIndex, constraint, resolverSession);
+      Tuples tmpTuples = new FullTextStringIndexTuples(stringIndex, (LuceneConstraint) constraint, resolverSession);
       Tuples tuples = TuplesOperations.sort(tmpTuples);
       tmpTuples.close();
 
