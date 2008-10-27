@@ -206,7 +206,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
    * @throws Exception Test fails
    */
   public void testFullTextStringPool() throws Exception {
-    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
+    LuceneIndexerCache cache = new LuceneIndexerCache(indexDirectory);
+    FullTextStringIndex index = null;
 
     try {
       // Ensure that reverse search is enabled.
@@ -214,10 +215,12 @@ public class FullTextStringIndexUnitTest extends TestCase {
       String has = "http://mulgara.org/mulgara/document#has";
 
       //Clean any existing indexes.
-      index.removeAllIndexes();
+      cache.removeAllIndexes();
+      cache.close();
+      cache = new LuceneIndexerCache(indexDirectory);
 
-      //re-create the index
-      index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
+      //create the index
+      index = new FullTextStringIndex(cache, true, true);
 
       // Add strings to the index
       for (String literal : theStrings) {
@@ -225,7 +228,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
       }
 
       index.commit();
-      index.openReadIndex();
+      index.close();
+      index = new FullTextStringIndex(cache, true, true);
 
       // Find the strings from the index with both subject & predicate
       for (String literal : theStrings) {
@@ -259,7 +263,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
       index.remove(document, has, "one two three");
 
       index.commit();
-      index.openReadIndex();
+      index.close();
+      index = new FullTextStringIndex(cache, true, true);
 
       assertEquals("Presumed deleted but found 'one two'", 0,
                    index.find(document, has, "one two").length());
@@ -278,7 +283,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
                  index.add("subject", "predicate", "this/is/a/slash/test"));
 
       index.commit();
-      index.openReadIndex();
+      index.close();
+      index = new FullTextStringIndex(cache, true, true);
 
       long returned = index.find(document, has, "?ommittee").length();
       assertEquals("Reverse lookup was expecting 4 documents returned", 4, returned);
@@ -301,7 +307,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // test removing all documents
       index.removeAll();
       index.commit();
-      index.openReadIndex();
+      index.close();
+      index = new FullTextStringIndex(cache, true, true);
 
       returned = index.find(document, has, "European").length();
       assertEquals("Got unexpected documents after removeAll:", 0, returned);
@@ -311,7 +318,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
     } finally {
       if (index != null) {
         index.close();
-        assertTrue("Unable to remove all index files", index.removeAllIndexes());
+        cache.close();
+        assertTrue("Unable to remove all index files", cache.removeAllIndexes());
       }
     }
   }
@@ -324,15 +332,17 @@ public class FullTextStringIndexUnitTest extends TestCase {
    */
   public void testFullTextStringPoolwithFiles() throws Exception {
     // create a new index direcotry
-    FullTextStringIndex index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
+    LuceneIndexerCache cache = new LuceneIndexerCache(indexDirectory);
+    FullTextStringIndex index = null;
 
     try {
       // make sure the index directory is empty
-      index.close();
-      assertTrue("Unable to remove all index files", index.removeAllIndexes());
+      assertTrue("Unable to remove all index files", cache.removeAllIndexes());
+      cache.close();
+      cache = new LuceneIndexerCache(indexDirectory);
 
       // create a new index
-      index = new FullTextStringIndex(indexDirectory, "fulltextsp", true, true);
+      index = new FullTextStringIndex(cache, true, true);
 
       logger.debug("Obtaining text text documents from " + textDirectory);
 
@@ -371,7 +381,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // commit the new docs
       index.commit();
-      index.openReadIndex();
+      index.close();
+      index = new FullTextStringIndex(cache, true, true);
 
       // Perform a search for 'supernatural' in the
       // document content predicate
@@ -401,7 +412,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       // commit the removal
       index.commit();
-      index.openReadIndex();
+      index.close();
+      index = new FullTextStringIndex(cache, true, true);
 
       // Perform a search for 'supernatural' in the
       // document content predicate
@@ -415,7 +427,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // close the fulltextstringpool
       if (index != null) {
         index.close();
-        assertTrue("Unable to remove all index files", index.removeAllIndexes());
+        cache.close();
+        assertTrue("Unable to remove all index files", cache.removeAllIndexes());
       }
     }
   }

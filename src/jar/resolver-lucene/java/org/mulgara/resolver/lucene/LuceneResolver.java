@@ -30,7 +30,6 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -107,9 +106,9 @@ public class LuceneResolver implements Resolver {
    */
   protected final URI modelTypeURI;
 
-  protected final String directory;
-
   protected final ResolverSession resolverSession;
+
+  protected final LuceneResolverFactory resolverFactory;
 
   protected final boolean forWrites;
 
@@ -126,21 +125,15 @@ public class LuceneResolver implements Resolver {
    *
    * @param modelTypeURI     the URI of the lucene model type
    * @param resolverSession  the session this resolver is associated with
-   * @param directory        the directory to use for the lucene indexes
    * @param resolverFactory  the resolver-factory that created us
    * @param forWrites        whether we may be getting writes
-   * @throws IllegalArgumentException  if <var>directory</var> is <code>null</code>
    */
-  LuceneResolver(URI modelTypeURI, ResolverSession resolverSession, String directory,
-                 ResolverFactory resolverFactory, boolean forWrites) {
-    if (directory == null) {
-      throw new IllegalArgumentException("Null directory in LuceneResolver");
-    }
-
+  LuceneResolver(URI modelTypeURI, ResolverSession resolverSession,
+                 LuceneResolverFactory resolverFactory, boolean forWrites) {
     // Initialize fields
     this.modelTypeURI = modelTypeURI;
-    this.directory = directory;
     this.resolverSession = resolverSession;
+    this.resolverFactory = resolverFactory;
     this.forWrites = forWrites;
     this.xares = new LuceneXAResource(10, resolverFactory, indexes.values());
   }
@@ -325,6 +318,8 @@ public class LuceneResolver implements Resolver {
       throw new ResolverException("Error fetching statements", et);
     } catch (GlobalizeException eg) {
       throw new ResolverException("Error localizing statements", eg);
+    } catch (IOException ioe) {
+      throw new ResolverException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
       throw new ResolverException("Error in string index", ef);
     }
@@ -340,6 +335,8 @@ public class LuceneResolver implements Resolver {
 
     try {
       getFullTextStringIndex(model).removeAll();
+    } catch (IOException ioe) {
+      throw new ResolverException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
       throw new ResolverException("Query failed against string index", ef);
     }
@@ -381,15 +378,18 @@ public class LuceneResolver implements Resolver {
       return new TuplesWrapperResolution(tuples, constraint);
     } catch (TuplesException te) {
       throw new QueryException("Failed to sort tuples and close", te);
+    } catch (IOException ioe) {
+      throw new QueryException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
       throw new QueryException("Query failed against string index", ef);
     }
   }
 
-  private FullTextStringIndex getFullTextStringIndex(long model) throws FullTextStringIndexException {
+  private FullTextStringIndex getFullTextStringIndex(long model)
+      throws FullTextStringIndexException, IOException {
     FullTextStringIndex index = indexes.get(model);
     if (index == null) {
-      index = new FullTextStringIndex(new File(directory, Long.toString(model)).toString(), "gn" + model, forWrites);
+      index = new FullTextStringIndex(resolverFactory.getIndexerCache(Long.toString(model)), forWrites);
       indexes.put(model, index);
     }
     return index;

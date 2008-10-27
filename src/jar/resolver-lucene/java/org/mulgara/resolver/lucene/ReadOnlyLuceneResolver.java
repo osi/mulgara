@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 // Locally written packages
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverException;
-import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
@@ -75,14 +74,13 @@ public class ReadOnlyLuceneResolver extends LuceneResolver {
    *
    * @param modelTypeURI     the URI of the lucene model type
    * @param resolverSession  the session this resolver is associated with
-   * @param directory        the directory to use for the lucene indexes
    * @param resolverFactory  the resolver-factory that created us
    * @throws IllegalArgumentException  if <var>directory</var> is <code>null</code>
    */
-  ReadOnlyLuceneResolver(URI modelTypeURI, ResolverSession resolverSession, String directory,
-                         ResolverFactory resolverFactory)
+  ReadOnlyLuceneResolver(URI modelTypeURI, ResolverSession resolverSession,
+                         LuceneResolverFactory resolverFactory)
       throws ResolverFactoryException {
-    super(modelTypeURI, resolverSession, directory, resolverFactory, false);
+    super(modelTypeURI, resolverSession, resolverFactory, false);
   }
 
   //

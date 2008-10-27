@@ -28,7 +28,11 @@
 package org.mulgara.resolver.lucene;
 
 // Java 2 standard packages
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -71,6 +75,7 @@ public class LuceneResolverFactory implements ResolverFactory {
   public static final URI searchURI = URI.create(Mulgara.NAMESPACE + "search");
   public static final URI scoreURI = URI.create(Mulgara.NAMESPACE + "score");
 
+  private final Map<String,LuceneIndexerCache> indexerCaches = new HashMap<String,LuceneIndexerCache>();
   private String directory;
 
   //
@@ -109,24 +114,23 @@ public class LuceneResolverFactory implements ResolverFactory {
   // Methods implementing ResolverFactory
   //
 
-  /**
-   * {@inheritDoc ResolverFactory}
-   *
-   * This is actually a non-operation, because the only persistent resources
-   * are outside the database.
-   */
   public void close() {
-    // null implementation
+    for (LuceneIndexerCache cache : indexerCaches.values()) {
+      cache.close();
+    }
+    indexerCaches.clear();
   }
 
-  /**
-   * {@inheritDoc ResolverFactory}
-   *
-   * This is actually a non-operation, because the only persistent resources
-   * are outside the database.
-   */
   public void delete() {
-    // null implementation
+    for (LuceneIndexerCache cache : indexerCaches.values()) {
+      cache.close();
+      try {
+        cache.removeAllIndexes();
+      } catch (IOException ioe) {
+        logger.warn("Error deleting lucene index " + cache.getDirectory());
+      }
+    }
+    indexerCaches.clear();
   }
 
   /**
@@ -170,7 +174,25 @@ public class LuceneResolverFactory implements ResolverFactory {
       throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating Lucene resolver");
     return canWrite
-      ? new LuceneResolver(modelTypeURI, resolverSession, directory, this, true)
-      : new ReadOnlyLuceneResolver(modelTypeURI, resolverSession, directory, this);
+      ? new LuceneResolver(modelTypeURI, resolverSession, this, true)
+      : new ReadOnlyLuceneResolver(modelTypeURI, resolverSession, this);
+  }
+
+  /**
+   * Get an indexer-cache for the given model.
+   *
+   * @param model the model to the indexer-cache for
+   * @return the indexer-cache
+   * @throws IOException if an error occurred creating an indexer-cache
+   */
+  LuceneIndexerCache getIndexerCache(String model) throws IOException {
+    synchronized (indexerCaches) {
+      LuceneIndexerCache cache = indexerCaches.get(model);
+      if (cache == null) {
+        indexerCaches.put(model, cache = new LuceneIndexerCache(new File(directory, model).toString()));
+      }
+
+      return cache;
+    }
   }
 }
