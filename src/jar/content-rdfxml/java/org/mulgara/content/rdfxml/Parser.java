@@ -228,10 +228,10 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
     this.resolverSession = resolverSession;
 
     // Configure the RDF/XML parser
-    arp.setEmbedding(true);
-    arp.setLaxErrorMode();
-    arp.setErrorHandler(this);
-    arp.setStatementHandler(this);
+    arp.getOptions().setEmbedding(true);
+    arp.getOptions().setLaxErrorMode();
+    arp.getHandlers().setErrorHandler(this);
+    arp.getHandlers().setStatementHandler(this);
 
     // is info enabled
     isInfoEnabled = logger.isInfoEnabled();
