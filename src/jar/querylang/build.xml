@@ -146,6 +146,7 @@
       <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jline.jar}" excludes="META-INF/**"/>
     </jar>
   </target>
 

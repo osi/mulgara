@@ -106,6 +106,13 @@ public class ItqlOptionParser extends CmdLineParser {
    */
   public final static Option SCRIPT =
       new CmdLineParser.Option.StringOption('s', "script");
+  
+  
+  /**
+   * option to specify a remote host to query for model names
+   */
+  public final static Option REMOTE =
+      new CmdLineParser.Option.StringOption('r', "remote");
 
   //
   // Constants
@@ -160,12 +167,13 @@ public class ItqlOptionParser extends CmdLineParser {
 
     // add the options
     this.addOption(HELP);
-
+    this.addOption(GUI);
     this.addOption(NO_LOAD);
     this.addOption(POST_SCRIPT);
     this.addOption(PRE_SCRIPT);
     this.addOption(LOG_CONFIG);
     this.addOption(SCRIPT);
+    this.addOption(REMOTE);
   }
 
   // ItqlOptionParser()
