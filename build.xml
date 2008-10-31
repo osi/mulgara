@@ -1930,6 +1930,7 @@
     <jar jarfile="${dist.dir}/${mulgara-core.jar}">
       <zipfileset dir="${conf.dir}" prefix="conf" includes="mulgara-config-core.xml, log4j-mulgara.xml, mulgara-rmi.policy, mulgara.policy"/>
       <zipfileset file="${conf.dir}/core/mulgara-x-config.xml" prefix="conf"/>
+      <zipfileset src="${bin.dir}/${client-jrdf.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${query.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${querylang.jar}" excludes="**/*.xml, META-INF/**"/>
