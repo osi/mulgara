@@ -747,7 +747,7 @@
              store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
              tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, web-jar"
-    unless="javadoc-uptodate"
+    unless="javadoc.uptodate"
     description="Creates the project javadoc">
     <delete dir="${javadoc.dir}"/>
     <mkdir dir="${javadoc.dir}"/>
