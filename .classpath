@@ -97,6 +97,7 @@
 	<classpathentry kind="lib" path="lib/jetty-util-6.1.11.jar"/>
 	<classpathentry kind="lib" path="lib/jid3-0.34.jar"/>
 	<classpathentry kind="lib" path="lib/jl1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jline-0.9.94.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-1.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/jotm-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/jotm_jrmp_stubs-2.0.10.jar"/>
