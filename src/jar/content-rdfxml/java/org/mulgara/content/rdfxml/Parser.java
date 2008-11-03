@@ -368,9 +368,8 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
    * @param e The exception being handled.
    */
   public synchronized void error(SAXParseException e) {
-    exception = e;
-    logger.error("Error, " + e.getLineNumber() + ", column " +
-                 e.getColumnNumber() + ": " + e.getMessage(), e);
+    logger.warn("Recoverable error, line " + e.getLineNumber() + ", column " +
+                e.getColumnNumber() + ": " + e.getMessage(), e);
   }
 
   /**
