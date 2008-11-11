@@ -712,6 +712,7 @@ public class FullTextStringIndex {
       logger.debug("Rolling back fulltext indexes");
     }
 
+    closeIndexers = true;
     if (indexer != null) indexer.rollback();
   }
 

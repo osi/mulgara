@@ -104,6 +104,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
     TestSuite suite = new TestSuite();
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPool"));
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolwithFiles"));
+    suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolTransactions"));
 
     return suite;
   }
@@ -215,8 +216,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
       String has = "http://mulgara.org/mulgara/document#has";
 
       //Clean any existing indexes.
-      cache.removeAllIndexes();
       cache.close();
+      cache.removeAllIndexes();
       cache = new LuceneIndexerCache(indexDirectory);
 
       //create the index
@@ -337,8 +338,8 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
     try {
       // make sure the index directory is empty
-      assertTrue("Unable to remove all index files", cache.removeAllIndexes());
       cache.close();
+      assertTrue("Unable to remove all index files", cache.removeAllIndexes());
       cache = new LuceneIndexerCache(indexDirectory);
 
       // create a new index
@@ -430,6 +431,79 @@ public class FullTextStringIndexUnitTest extends TestCase {
         cache.close();
         assertTrue("Unable to remove all index files", cache.removeAllIndexes());
       }
+    }
+  }
+
+  /**
+   * Test commit and rollback, with and without a prepare.
+   *
+   * @throws Exception Test fails
+   */
+  public void testFullTextStringPoolTransactions() throws Exception {
+    doTestFullTextStringPoolTransactions(false);
+    doTestFullTextStringPoolTransactions(true);
+  }
+
+  private void doTestFullTextStringPoolTransactions(boolean prepare) throws Exception {
+    // create a new index direcotry
+    LuceneIndexerCache cache = new LuceneIndexerCache(indexDirectory);
+    FullTextStringIndex index = null;
+
+    String document = "http://mulgara.org/mulgara/document#";
+    String has = "http://mulgara.org/mulgara/document#has";
+
+    try {
+      //Clean any existing indexes.
+      cache.close();
+      cache.removeAllIndexes();
+      cache = new LuceneIndexerCache(indexDirectory);
+
+      //create the index
+      index = new FullTextStringIndex(cache, true, false);
+
+      // Add strings to the index
+      for (String literal : theStrings) {
+        index.add(document, has, literal);
+      }
+
+      // roll back
+      if (prepare)
+        index.prepare();
+      index.rollback();
+      index.close();
+
+      // ensure strings are not there
+      index = new FullTextStringIndex(cache, true, false);
+
+      for (String literal : theStrings) {
+        FullTextStringIndex.Hits hits = index.find(document, has, literal);
+        assertTrue("Unexpectedly found '" + literal + "'", hits.length() == 0);
+      }
+
+      // add strings to index again
+      for (String literal : theStrings) {
+        index.add(document, has, literal);
+      }
+
+      // this time commit
+      if (prepare)
+        index.prepare();
+      index.commit();
+      index.close();
+
+      // ensure strings are there now
+      index = new FullTextStringIndex(cache, true, false);
+
+      for (String literal : theStrings) {
+        FullTextStringIndex.Hits hits = index.find(document, has, literal);
+        assertTrue("Did not find '" + literal + "'", hits.length() != 0);
+      }
+    } finally {
+      // close the fulltextstringpool
+      if (index != null)
+        index.close();
+      cache.close();
+      assertTrue("Unable to remove all index files", cache.removeAllIndexes());
     }
   }
 }
