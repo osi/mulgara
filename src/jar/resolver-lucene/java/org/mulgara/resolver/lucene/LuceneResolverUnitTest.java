@@ -81,7 +81,7 @@ public class LuceneResolverUnitTest extends TestCase {
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new LuceneResolverUnitTest("testConcurrentQuery"));
-    suite.addTest(new LuceneResolverUnitTest("testConcurrentReadTransction"));
+    suite.addTest(new LuceneResolverUnitTest("testConcurrentReadTransaction"));
     suite.addTest(new LuceneResolverUnitTest("testTransactionIsolation"));
     suite.addTest(new LuceneResolverUnitTest("testLuceneConstraint"));
 
@@ -201,7 +201,7 @@ public class LuceneResolverUnitTest extends TestCase {
   /**
    * Two queries, in concurrent transactions.
    */
-  public void testConcurrentReadTransction() throws Exception {
+  public void testConcurrentReadTransaction() throws Exception {
     logger.info("Testing concurrentReadTransaction");
 
     try {
