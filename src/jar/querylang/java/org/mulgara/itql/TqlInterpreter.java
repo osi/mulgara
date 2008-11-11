@@ -207,6 +207,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     try {
       lexer.add(command);
     } catch (LexerException le) {
+      flush();
       throw new MulgaraLexerException(le.getMessage(), le);
     }
     // test that this is a single command
@@ -271,6 +272,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     try {
       lexer.add(command);
     } catch (LexerException le) {
+      flush();
       throw new MulgaraLexerException(le);
     }
 
