@@ -175,7 +175,7 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
   public long getRowUpperBound() throws TuplesException {
     BigInteger rowCount = BigInteger.valueOf(lhs.getRowUpperBound());
     rowCount = rowCount.multiply(BigInteger.valueOf(rhs.getRowUpperBound()));
-    return rowCount.longValue();
+    return rowCount.bitLength() > 63 ? Long.MAX_VALUE : rowCount.longValue();
   }
 
 
