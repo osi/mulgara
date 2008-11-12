@@ -222,10 +222,6 @@ public final class MappedBlockFile extends AbstractBlockFile {
     for (int i = 0; i < nrMappedRegions; ++i) {
       mappedByteBuffers[i].force();
     }
-
-    super.force();
-
-    // force file metadata
   }
 
   /**

@@ -290,8 +290,6 @@ public final class MappedIntFile extends IntFile {
     for (int i = 0; i < nrMappedRegions; ++i) {
       mappedByteBuffers[i].force();
     }
-
-    super.force();
   }
 
   /**
