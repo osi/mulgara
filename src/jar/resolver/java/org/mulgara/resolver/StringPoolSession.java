@@ -55,6 +55,7 @@ import org.mulgara.store.xa.XANodePool;
 import org.mulgara.store.xa.XAResolverSession;
 import org.mulgara.store.xa.XAStringPool;
 import org.mulgara.util.LongMapper;
+import org.mulgara.util.QueryParams;
 import org.mulgara.util.StackTrace;
 
 /**
@@ -98,6 +99,9 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
   static final int WRITE_MASK = 1;
   /** Extracts STORE_FLAG */
   static final int STORE_MASK = 2;
+
+  /** The name of the graph parameter in a URI */
+  static final String GRAPH = "graph";
 
   /** The unique {@link URI} naming this database. */
   private final URI databaseURI;
@@ -693,8 +697,11 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
             // Construct a new relative uri with just the fragment and
             // optional query string.
             SPObjectFactory spObjectFactory = persistentStringPool.getSPObjectFactory();
+            QueryParams query = QueryParams.decode(uri);
+            String gName = query.get(GRAPH);
             try {
-              spObject = spObjectFactory.newSPURI(new URI(null, null, null, uri.getQuery(), fragment));
+              if (gName != null) spObject = spObjectFactory.newSPURI(new URI(gName));
+              else spObject = spObjectFactory.newSPURI(new URI(null, null, null, uri.getQuery(), fragment));
             } catch (URISyntaxException ex) {
               logger.warn("Cannot create relative URI with fragment:\"" + fragment + "\"", ex);
             }

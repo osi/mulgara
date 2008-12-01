@@ -59,6 +59,7 @@ import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.server.Session;
+import org.mulgara.util.URIUtil;
 
 
 /**
@@ -1079,7 +1080,6 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    * @throws QueryException if the <code>rawVariableList</code> cannot be parsed
    *      into a list of {@link org.mulgara.query.Variable}s
    */
-  @SuppressWarnings("unchecked")
   List<SelectElement> buildVariableList(LinkedList<PElement> rawVariableList) throws
       QueryException, URISyntaxException {
   

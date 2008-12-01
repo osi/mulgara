@@ -39,6 +39,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.query.operation.Command;
+import org.mulgara.util.QueryParams;
 import org.mulgara.util.functional.Pair;
 import org.mulgara.webquery.html.Anchor;
 import org.mulgara.webquery.html.HtmlElement;

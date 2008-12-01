@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Mulgara-1.0</name>
+	<name>Mulgara-trunk</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -18,7 +18,7 @@
 		<link>
 			<name>descriptor-client</name>
 			<type>2</type>
-			<location>obj/jar/descriptor-client</location>
+			<locationURI>obj/jar/descriptor-client</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

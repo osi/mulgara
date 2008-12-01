@@ -311,6 +311,8 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
     if (node >= nextGNodeValue) return null;
     try {
       return new DataStruct(gNodeToDataReadOnly, node).getSPObject();
+    } catch (IllegalArgumentException iae) {
+      throw new StringPoolException("Bad node data. gNode = " + node, iae);
     } catch (IOException ioe) {
       throw new StringPoolException("Unable to load data from data pool.", ioe);
     }

@@ -1,10 +1,4 @@
 /*
- * $Header$
- * $Revision: 624 $
- * $Date: 2006-06-24 21:02:12 +1000 (Sat, 24 Jun 2006) $
- *
- * ====================================================================
- *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2003, 2004 The JRDF Project.  All rights reserved.
@@ -63,18 +57,15 @@ package org.jrdf.graph;
 import java.io.Serializable;
 import java.net.URI;
 
-import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.util.URIUtil;
 
 /**
  * A base implementation of an RDF {@link URIReference}.
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  * @author Andrew Newman
- *
- * @version $Revision: 624 $
+ * @author Paul Gearon
  */
-public abstract class AbstractURIReference extends URIImpl implements URIReference,
-    Serializable {
+public abstract class AbstractURIReference implements org.openrdf.model.URI, URIReference, Serializable {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -84,27 +75,22 @@ public abstract class AbstractURIReference extends URIImpl implements URIReferen
    */
   private static final long serialVersionUID = 8034954863132812197L;
 
-  /**
-   * The URI of the node.
-   */
+  /** The URI of the node. */
   private URI uri;
+
+  /** An index indicating the first character of the local name in the URI string, -1 if not yet set. */
+  private int localNameIdx = -1;
 
   /**
    * Constructor.
-   *
    * Enforces a non-<code>null</code> and absolute <var>newUri</var> parameter.
-   *
    * @param newUri the URI to use in creation.
    * @throws IllegalArgumentException if <var>newUri</var> is <code>null</code> or
    *     not absolute
    */
   protected AbstractURIReference(URI newUri) {
-    super(newUri.toString());
-
     // Validate "newUri" parameter
-    if (null == newUri) {
-      throw new IllegalArgumentException("Null \"newUri\" parameter");
-    }
+    if (null == newUri) throw new IllegalArgumentException("Null \"newUri\" parameter");
 
     if (!newUri.isAbsolute()) {
       throw new IllegalArgumentException("\"" + newUri + "\" is not absolute");
@@ -116,22 +102,16 @@ public abstract class AbstractURIReference extends URIImpl implements URIReferen
 
   /**
    * Constructor.
-   *
    * Enforces a non-<code>null</code> parameter.  Use only for applications
    * where enforcement of valid URIs is too expensive or not necessary.
-   *
    * @param newUri the URI to use in creation.
    * @param validate whether to enforce valid RDF URIs.
    * @throws IllegalArgumentException if <var>newUri</var> is not absolute and
    *   validate is true.
    */
   protected AbstractURIReference(URI newUri, boolean validate) {
-    super(newUri.toString());
-
     // Validate "newUri" parameter
-    if (null == newUri) {
-      throw new IllegalArgumentException("Null \"newUri\" parameter");
-    }
+    if (null == newUri) throw new IllegalArgumentException("Null \"newUri\" parameter");
 
     if (validate && !newUri.isAbsolute()) {
       throw new IllegalArgumentException("\"" + newUri + "\" is not absolute");
@@ -143,7 +123,6 @@ public abstract class AbstractURIReference extends URIImpl implements URIReferen
 
   /**
    * The {@link URI} identifiying this resource.
-   *
    * @return the {@link URI} identifying this resource.
    */
   public URI getURI() {
@@ -152,10 +131,69 @@ public abstract class AbstractURIReference extends URIImpl implements URIReferen
 
   /**
    * Accept a call from a TypedNodeVisitor.
-   *
    * @param visitor the object doing the visiting.
    */
   public void accept(TypedNodeVisitor visitor) {
     visitor.visitURIReference(this);
+  }
+
+  /**
+   * Returns the String-representation of this URI.
+   * @return The String-representation of this URI.
+   */
+  public String toString() {
+    return uri.toString();
+  }
+
+  /**
+   * Returns the String-representation of this URI.
+   * @return The String-representation of this URI.
+   */
+  public String stringValue() {
+    return uri.toString();
+  }
+
+  /**
+   * Gets the namespace of this URI. The namespace is defined as per the
+   * algorithm described in the class documentation.
+   * @return The URI's namespace.
+   */
+  public String getNamespace() {
+    if (!uri.isAbsolute()) return "";
+    if (localNameIdx < 0) localNameIdx = URIUtil.getLocalNameIndex(uri.toString());
+    return uri.toString().substring(0, localNameIdx);
+  }
+
+  /**
+   * Gets the local name of this URI. The local name is defined as per the
+   * algorithm described in the class documentation.
+   * @return The URI's local name.
+   */
+  public String getLocalName() {
+    if (!uri.isAbsolute()) return uri.toString();
+    if (localNameIdx < 0) localNameIdx = URIUtil.getLocalNameIndex(uri.toString());
+    return uri.toString().substring(localNameIdx);
+  }
+
+  /**
+   * Compares a URI object to another object.
+   * @param o The object to compare this URI to.
+   * @return <tt>true</tt> if the other object is an instance of {@link URI}
+   *         and their String-representations are equal, <tt>false</tt>
+   *         otherwise.
+   */
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof org.openrdf.model.URI)) return false;
+    return toString().equals(o.toString());
+  }
+
+  /**
+   * The hash code of a URI is defined as the hash code of its
+   * String-representation: <tt>toString().hashCode</tt>.
+   * @return A hash code for the URI.
+   */
+  public int hashCode() {
+    return uri.hashCode();
   }
 }

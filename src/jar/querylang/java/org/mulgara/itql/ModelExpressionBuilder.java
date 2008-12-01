@@ -54,6 +54,7 @@ import org.mulgara.query.ModelResource;
 import org.mulgara.query.ModelUnion;
 import org.mulgara.query.QueryException;
 import org.mulgara.util.ServerURIHandler;
+import org.mulgara.util.URIUtil;
 
 /**
  * Builds model expressions using input from the iTQL command interpreter.

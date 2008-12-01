@@ -32,6 +32,7 @@ import org.mulgara.server.Session;
 import org.mulgara.server.ServerInfo;
 import org.mulgara.server.NonRemoteSessionException;
 import org.mulgara.server.driver.SessionFactoryFinderException;
+import org.mulgara.util.URIUtil;
 import org.mulgara.resolver.distributed.remote.StatementSetFactory;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.Resolution;
@@ -106,13 +107,16 @@ public class NetworkDelegator implements Delegator {
     URIReferenceImpl modelRef = getModelRef(localModel);
 
     URI serverUri = getServerUri(modelRef);
-    logger.debug("Querying for: " + localConstraint + " in model: " + modelRef + " on server: " + serverUri);
-
-    Answer ans = getServerSession(serverUri).query(globalizedQuery(localConstraint, modelRef));
     try {
+      modelRef = new URIReferenceImpl(URIUtil.localizeGraphUri(modelRef.getURI()));
+      logger.debug("Querying for: " + localConstraint + " in model: " + modelRef + " on server: " + serverUri);
+  
+      Answer ans = getServerSession(serverUri).query(globalizedQuery(localConstraint, modelRef));
       return new AnswerResolution(serverUri, session, ans, localConstraint);
     } catch (TuplesException te) {
       throw new ResolverException("Localization failed", te);
+    } catch (URISyntaxException qe) {
+      throw new QueryException("Bad graph URI provided for resolution", qe);
     }
   }
 

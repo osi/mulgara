@@ -14,20 +14,35 @@
  * limitations under the License.
  */
 
-package org.mulgara.itql;
+package org.mulgara.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
 /**
- * A set of methods for managing common URI operations.
+ * Utilities for working with URIs in Mulgara.
  *
- * @created 2007-08-09
+ * @created Nov 26, 2008
  * @author Paul Gearon
- * @copyright &copy; 2007 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
 public class URIUtil {
+
+  /** The parameter name for the graph. */
+  private static final String GRAPH = "graph";
+
+  /**
+   * Convert a graph to a localized form, if it is defined for localizing.
+   * @param uri The URI to convert.
+   * @return A reference to a local graph URI. This will be the uriRef if it does not require localizing.
+   * @throws QueryException If the local graph has an illegal name.
+   */
+  public static URI localizeGraphUri(URI uri) throws URISyntaxException {
+    QueryParams params = QueryParams.decode(uri);
+    String graphName = params.get(GRAPH);
+    return (graphName == null) ? uri : new URI(graphName);
+  }
+
 
   /**
    * Replace an alias in a URI, if one is recognized.
