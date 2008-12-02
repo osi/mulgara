@@ -354,12 +354,13 @@ public class OrderByRowComparator implements RowComparator {
 
         // if it smells like a numeric (and not a DateTime)
         if (((ch >= '0' && ch <= '9') || ch == '.' || ch == '+' || ch == '-') && text.indexOf('T') < 0) {
-          // The floating parser accepts numbers ending in d or f, but we don't 
-          ch = text.charAt(text.length() - 1);
+          // The floating parser accepts numbers ending in d or f, but we don't
+          String num = text.trim();
+          ch = num.charAt(num.length() - 1);
           if (ch != 'f' && ch != 'F' && ch != 'd' && ch != 'D') {
             try {
               // try to return as a number, using autoboxing
-              return Float.parseFloat(text);
+              return Float.parseFloat(num);
             } catch (NumberFormatException ex) { /* not a number - fall through */ }
           }
         }
