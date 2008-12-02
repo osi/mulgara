@@ -82,7 +82,7 @@ import org.mulgara.util.StackTrace;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-@SuppressWarnings({ "unchecked", "unchecked", "unchecked" })
+@SuppressWarnings({ "unchecked"})
 class LocalQueryResolver implements QueryEvaluationContext {
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(LocalQueryResolver.class.getName());
