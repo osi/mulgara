@@ -417,8 +417,8 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
 
       URI graphTypeURI = findGraphTypeURI(canGraph);
 
-      if (logger.isInfoEnabled()) {
-        logger.info("Mapped " + graphURI + " via " + rawGraph + ":" + canGraph + " to GraphTypeURI: " + graphTypeURI);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Mapped " + graphURI + " via " + rawGraph + ":" + canGraph + " to GraphTypeURI: " + graphTypeURI);
       }
 
       return graphTypeURI;
