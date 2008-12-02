@@ -649,10 +649,10 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
       String scheme = uri.getScheme();
       String fragment = uri.getFragment();
 
-      if (scheme != null && scheme.equals(databaseURI.getScheme()) && fragment != null ) {
+      if (scheme != null && scheme.equals(databaseURI.getScheme())) {
         if (databaseURI.isOpaque()) {
           // databaseURI is opaque.
-          if (uri.isOpaque()) {
+          if (fragment != null && uri.isOpaque()) {
             // Get the query string.
             // We have to do it this way for opaque URIs.
             String ssp = uri.getSchemeSpecificPart();
@@ -699,11 +699,18 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
             SPObjectFactory spObjectFactory = persistentStringPool.getSPObjectFactory();
             QueryParams query = QueryParams.decode(uri);
             String gName = query.get(GRAPH);
-            try {
-              if (gName != null) spObject = spObjectFactory.newSPURI(new URI(gName));
-              else spObject = spObjectFactory.newSPURI(new URI(null, null, null, uri.getQuery(), fragment));
-            } catch (URISyntaxException ex) {
-              logger.warn("Cannot create relative URI with fragment:\"" + fragment + "\"", ex);
+            if (gName != null) {
+              try {
+                spObject = spObjectFactory.newSPURI(new URI(gName));
+              } catch (URISyntaxException ex) {
+                logger.warn("Cannot extract a valid URI from:\"" + gName + "\"", ex);
+              }
+            } else if (fragment != null) {
+              try {
+                spObject = spObjectFactory.newSPURI(new URI(null, null, null, uri.getQuery(), fragment));
+              } catch (URISyntaxException ex) {
+                logger.warn("Cannot create relative URI with fragment:\"" + fragment + "\"", ex);
+              }
             }
           }
         }
