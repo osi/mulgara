@@ -70,11 +70,9 @@ import org.mulgara.resolver.spi.SymbolicTransformationContext;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class IntervalTransformationUnitTest extends TestCase
-{
+public class IntervalTransformationUnitTest extends TestCase {
   /** Logger */
-  private static Logger logger =
-    Logger.getLogger(IntervalTransformationUnitTest.class.getName());
+  private static Logger logger = Logger.getLogger(IntervalTransformationUnitTest.class);
 
   private URIReferenceImpl greaterThan;
 
@@ -115,8 +113,7 @@ public class IntervalTransformationUnitTest extends TestCase
    *
    * @param name the name of the test
    */
-  public IntervalTransformationUnitTest(String name)
-  {
+  public IntervalTransformationUnitTest(String name) {
     super(name);
   }
 
@@ -125,8 +122,7 @@ public class IntervalTransformationUnitTest extends TestCase
    *
    * @return the test suite
    */
-  public static Test suite()
-  {
+  public static Test suite() {
     TestSuite suite = new TestSuite();
 
     suite.addTest(new IntervalTransformationUnitTest("test1Transform"));
@@ -143,8 +139,7 @@ public class IntervalTransformationUnitTest extends TestCase
   /**
    * Create test instance.
    */
-  public void setUp() throws Exception
-  {
+  public void setUp() throws Exception {
     greaterThan     = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "lt"));
     lessThan        = new URIReferenceImpl(new URI(Mulgara.NAMESPACE + "gt"));
 
@@ -174,8 +169,7 @@ public class IntervalTransformationUnitTest extends TestCase
    *
    * @param args the command line arguments
    */
-  public static void main(String[] args)
-  {
+  public static void main(String[] args) {
     junit.textui.TestRunner.run(suite());
   }
 
@@ -186,8 +180,7 @@ public class IntervalTransformationUnitTest extends TestCase
   /**
    * Test #1 for the {@link IntervalTransformation#transform} method.
    */
-  public void test1Transform() throws Exception
-  {
+  public void test1Transform() throws Exception {
     try {
       intervalTransformation.transformExpression(context, (ConstraintExpression) null);
       fail("Expected an IllegalArgumentException");
@@ -200,8 +193,7 @@ public class IntervalTransformationUnitTest extends TestCase
   /**
    * Test #2 for the {@link IntervalTransformation#transform} method.
    */
-  public void test2Transform() throws Exception
-  {
+  public void test2Transform() throws Exception {
     assertNull(intervalTransformation.transformExpression(context, ConstraintTrue.INSTANCE));
   }
 
@@ -210,8 +202,7 @@ public class IntervalTransformationUnitTest extends TestCase
    *
    * This transforms a single {@link ConstraintImpl}.
    */
-  public void test3Transform() throws Exception
-  {
+  public void test3Transform() throws Exception {
     Variable x = new Variable("x");
 
     assertEquals(
@@ -231,8 +222,7 @@ public class IntervalTransformationUnitTest extends TestCase
    *
    * This transforms a single {@link ConstraintConjunction}.
    */
-  public void test4Transform() throws Exception
-  {
+  public void test4Transform() throws Exception {
     Variable x = new Variable("x");
 
     assertEquals(new IntervalConstraint(
@@ -255,8 +245,7 @@ public class IntervalTransformationUnitTest extends TestCase
    * This transforms a {@link ConstraintConjunction} containing
    * {@link IntervalConstraint}s over different variables.
    */
-  public void test5Transform() throws Exception
-  {
+  public void test5Transform() throws Exception {
     Variable x = new Variable("x");
     Variable y = new Variable("y");
 
@@ -296,8 +285,7 @@ public class IntervalTransformationUnitTest extends TestCase
    * This checks that xsd models will be transformed in the presence of
    * non-xsd models which will be preserved.
    */
-  public void test7PreserveNonXSD() throws Exception
-  {
+  public void test7PreserveNonXSD() throws Exception {
     Variable x = new Variable("x");
 
     assertEquals(
