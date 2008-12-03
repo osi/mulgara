@@ -13,21 +13,13 @@
 package org.mulgara.resolver.spi;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.mulgara.query.Constraint;
-import org.mulgara.query.ConstraintConjunction;
-import org.mulgara.query.ConstraintDifference;
-import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintFilter;
 import org.mulgara.query.ConstraintImpl;
-import org.mulgara.query.ConstraintIn;
-import org.mulgara.query.ConstraintOperation;
-import org.mulgara.query.ConstraintOptionalJoin;
 import org.mulgara.query.Variable;
 import org.mulgara.query.filter.And;
 import org.mulgara.query.filter.Filter;
@@ -43,90 +35,35 @@ import org.mulgara.query.filter.value.Var;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class DuplicateVariableTransformer implements SymbolicTransformation {
-
-  /**
-   * @see org.mulgara.resolver.spi.SymbolicTransformation#transform(org.mulgara.resolver.spi.SymbolicTransformationContext, org.mulgara.resolver.spi.MutableLocalQuery)
-   */
-  public void transform(SymbolicTransformationContext context, MutableLocalQuery mutableLocalQuery)
-        throws SymbolicTransformationException {
-    ConstraintExpression expr = mutableLocalQuery.getConstraintExpression();
-    ConstraintExpression trans = transformExpr(expr);
-
-    if (expr != trans) {
-      mutableLocalQuery.setConstraintExpression(trans);
-    }
-  }
-
-  public ConstraintExpression transformExpr(ConstraintExpression expr) throws SymbolicTransformationException {
-    // explicitly handle all the recursive types
-    if (expr instanceof ConstraintFilter) return transformFilter(expr);
-    if (expr instanceof ConstraintIn) return transformIn(expr);
-    if (expr instanceof ConstraintOperation) return transformOperation(expr);
-    // do the actual work of this transformer
-    if (expr instanceof Constraint) return transformConstraint(expr);
-    // By default we do not recognise the constraint type, so pass it unchanged.
-    return expr;
-  }
-
-  ConstraintFilter transformFilter(ConstraintExpression expr) throws SymbolicTransformationException {
-    ConstraintFilter filter = (ConstraintFilter)expr;
-    ConstraintExpression inner = filter.getUnfilteredConstraint();
-    ConstraintExpression tx = transformExpr(inner);
-    return (tx == inner) ? filter : new ConstraintFilter(tx, filter.getFilter());
-  }
-  
-  ConstraintIn transformIn(ConstraintExpression expr) throws SymbolicTransformationException {
-    ConstraintIn in = (ConstraintIn)expr;
-    ConstraintExpression inner = in.getConstraintParam();
-    ConstraintExpression tx = transformExpr(inner);
-    return (tx == inner) ? in : new ConstraintIn(tx, in.getGraph());
-  }
-
-  ConstraintOperation transformOperation(ConstraintExpression expr) throws SymbolicTransformationException {
-    ConstraintOperation operation = (ConstraintOperation)expr;
-    List<ConstraintExpression> ops = operation.getElements();
-    List<ConstraintExpression> newOps = new ArrayList<ConstraintExpression>(ops.size());
-    boolean changed = false;
-    for (ConstraintExpression op: ops) {
-      ConstraintExpression tx = transformExpr(op);
-      newOps.add(tx);
-      if (tx != op) changed = true;
-    }
-    if (changed) {
-      OpType operationType = OpType.getType(operation);
-      if (operationType == null) throw new SymbolicTransformationException("Encountered an unknown operation type: " + operation.getClass());
-      return operationType.newOp(newOps);
-    }
-    return operation; 
-  }
-
+public class DuplicateVariableTransformer extends AbstractSymbolicTransformer {
   /**
    * All the work of this class is performed in this method. It ignores general constraints,
    * and converts a ConstraintImpls with repeated variables into a conjunction of terms
    * which have non-repeating variables, joined in an equivalent way to the original constraint.
-   * @param expr The expression to transform.
+   * @param c The constraint to transform.
    * @return The original constraint, or else a new equivalent conjunction if expr contains
    *         a repeated variable.
    * @throws SymbolicTransformationException If there is an error in the constraint structure.
    */
-  ConstraintExpression transformConstraint(ConstraintExpression expr) throws SymbolicTransformationException {
-    if (!((Constraint)expr).isRepeating()) return (Constraint)expr;
-    ConstraintImpl cnstr = (ConstraintImpl)expr;
+  @Override
+  protected ConstraintExpression transformConstraint(SymbolicTransformationContext context, Constraint c)
+      throws SymbolicTransformationException {
+    if (!c.isRepeating()) return c;
+    ConstraintImpl cnstr = (ConstraintImpl)c;
     VarFreq vf = new VarFreq(cnstr);
 
     // build the equivalent term
     ConstraintElement[] elements = buildElements(cnstr, vf);
-    expr = new ConstraintImpl(elements[0], elements[1], elements[2], elements[3]);
+    c = new ConstraintImpl(elements[0], elements[1], elements[2], elements[3]);
 
     // if there was only a pair then return it as a simple filter
-    if (vf.frequency == 2) return new ConstraintFilter(expr, createSameTermPair(vf.repeatedVar, 1));
+    if (vf.frequency == 2) return new ConstraintFilter(c, createSameTermPair(vf.repeatedVar, 1));
 
     // build a conjunction of filters
     int matches = vf.frequency - 1;
     Filter[] sameTerms = new Filter[matches];
     for (int f = 0; f < matches; f++) sameTerms[f] = createSameTermPair(vf.repeatedVar, f + 1);
-    return new ConstraintFilter(expr, new And(sameTerms));
+    return new ConstraintFilter(c, new And(sameTerms));
   }
 
   /**
@@ -221,36 +158,6 @@ public class DuplicateVariableTransformer implements SymbolicTransformation {
       assert (vars.contains(repeatedVar));
       this.frequency = frequency;
       this.repeatedVar = repeatedVar;
-    }
-  }
-
-  /**
-   * This enum enumerates the ConstraintOperation types. It has been built to deal with
-   * the fact that constructors for the various types cannot be passed as a lambda.
-   * It also provides a map for the enumerated types to their enumerations, making it
-   * easy for an operation to get to an appropriate constructor.
-   */
-  private static enum OpType {
-    difference {
-      ConstraintOperation newOp(List<ConstraintExpression> ops) { return new ConstraintDifference(ops.get(0), ops.get(1)); }
-    },
-    optional {
-      ConstraintOperation newOp(List<ConstraintExpression> ops) { return new ConstraintOptionalJoin(ops.get(0), ops.get(1)); }
-    },
-    conjunction {
-      ConstraintOperation newOp(List<ConstraintExpression> ops) { return new ConstraintConjunction(ops); }
-    },
-    disjunction {
-      ConstraintOperation newOp(List<ConstraintExpression> ops) { return new ConstraintDisjunction(ops); }
-    };
-    abstract ConstraintOperation newOp(List<ConstraintExpression> ops);
-    private static Map<Class<? extends ConstraintOperation>, OpType> opMap = new HashMap<Class<? extends ConstraintOperation>, OpType>();
-    public static OpType getType(ConstraintOperation op) { return opMap.get(op.getClass()); }
-    static {
-      opMap.put(ConstraintDifference.class, difference);
-      opMap.put(ConstraintOptionalJoin.class, optional);
-      opMap.put(ConstraintConjunction.class, conjunction);
-      opMap.put(ConstraintDisjunction.class, disjunction);
     }
   }
 }
