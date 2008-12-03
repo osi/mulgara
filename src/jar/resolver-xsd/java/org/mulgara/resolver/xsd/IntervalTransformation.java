@@ -263,9 +263,8 @@ class IntervalTransformation extends AbstractSymbolicTransformer {
         bound = new Bound(value, false);
       }
     } else {
-      if (constraint.getElement(2) instanceof Variable) {
-        logger.debug("Object is a variable, returning original");
-        // Is this right, surely the above should be not-instanceof !?
+      if (!(constraint.getElement(2) instanceof Variable)) {
+        logger.debug("Neither Subject nor Object are Variables, returning original");
         return constraint;
       } else {
         variable = (Variable) constraint.getElement(2);

@@ -132,6 +132,8 @@ public class IntervalTransformationUnitTest extends TestCase {
     suite.addTest(new IntervalTransformationUnitTest("test5Transform"));
     suite.addTest(new IntervalTransformationUnitTest("test6IgnoreNonXSD"));
     suite.addTest(new IntervalTransformationUnitTest("test7PreserveNonXSD"));
+    suite.addTest(new IntervalTransformationUnitTest("test8IgnoreNoVars"));
+    suite.addTest(new IntervalTransformationUnitTest("test9IgnoreAllVars"));
 
     return suite;
   }
@@ -304,5 +306,25 @@ public class IntervalTransformationUnitTest extends TestCase {
         }))
       )
     );
+  }
+
+  /**
+   * Test #8 for the {@link IntervalTransformation#transform} method.
+   *
+   * This checks that constraints with no variables will not be transformed.
+   */
+  public void test8IgnoreNoVars() throws Exception {
+    ConstraintImpl ci = new ConstraintImpl(new LiteralImpl(2), lessThan, new LiteralImpl(3), xsdModel);
+    assertSame(ci, intervalTransformation.transformExpression(context, ci));
+  }
+
+  /**
+   * Test #9 for the {@link IntervalTransformation#transform} method.
+   *
+   * This checks that constraints with variables in both subj and obj will not be transformed.
+   */
+  public void test9IgnoreAllVars() throws Exception {
+    ConstraintImpl ci = new ConstraintImpl(new Variable("x"), lessThan, new Variable("y"), xsdModel);
+    assertSame(ci, intervalTransformation.transformExpression(context, ci));
   }
 }
