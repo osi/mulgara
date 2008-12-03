@@ -58,7 +58,6 @@ import org.jrdf.graph.URIReference;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.Value;
 import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
@@ -123,7 +122,7 @@ public class RelationalConstraint implements Constraint {
     this.predConstraints = new HashMap<ConstraintElement,List<Constraint>>();
   }
 
-  public RelationalConstraint(ConstraintImpl constraint) {
+  public RelationalConstraint(Constraint constraint) {
     this();
 
     conjoinWith(constraint);
@@ -145,7 +144,7 @@ public class RelationalConstraint implements Constraint {
     }
   }
 
-  public void conjoinWith(ConstraintImpl constraint) {
+  public void conjoinWith(Constraint constraint) {
     preliminaries(constraint);
 
     if (constraint.getElement(1).equals(rdftype)) {

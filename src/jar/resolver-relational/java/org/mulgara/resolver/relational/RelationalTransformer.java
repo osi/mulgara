@@ -52,18 +52,17 @@ import java.util.Map;
 
 import org.jrdf.graph.URIReference;
 
-import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.ConstraintImpl;
+import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintConjunction;
-import org.mulgara.query.ConstraintDisjunction;
+import org.mulgara.query.ConstraintElement;
+import org.mulgara.query.ConstraintExpression;
+import org.mulgara.query.ConstraintOperation;
 import org.mulgara.query.QueryException;
-import org.mulgara.resolver.spi.MutableLocalQuery;
-import org.mulgara.resolver.spi.SymbolicTransformation;
+import org.mulgara.resolver.spi.AbstractSymbolicTransformer;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SymbolicTransformationException;
 
-public class RelationalTransformer implements SymbolicTransformation {
+public class RelationalTransformer extends AbstractSymbolicTransformer {
   /** Logger */
   private static Logger logger = Logger.getLogger(RelationalTransformer.class);
 
@@ -73,32 +72,19 @@ public class RelationalTransformer implements SymbolicTransformation {
     this.modelTypeURI = modelTypeURI;
   }
 
-  public void transform(SymbolicTransformationContext context, MutableLocalQuery query)
-      throws SymbolicTransformationException {
-
-    ConstraintExpression expr = query.getConstraintExpression();
-    ConstraintExpression trans = transformExpr(context, expr);
-
-    if (expr != trans) {
-      query.setConstraintExpression(trans);
-    }
-  }
-
-  public ConstraintExpression transformExpr(SymbolicTransformationContext context, ConstraintExpression expr) throws SymbolicTransformationException {
-    if (expr instanceof ConstraintImpl) {
-      return transformMatch(context, (ConstraintImpl)expr);
-    }
-    if (expr instanceof ConstraintConjunction) {
+  @Override
+  protected ConstraintExpression transformOperation(SymbolicTransformationContext context,
+                                                    ConstraintOperation expr)
+        throws SymbolicTransformationException {
+    if (expr instanceof ConstraintConjunction)
       return transformConj(context, (ConstraintConjunction)expr);
-    }
-    if (expr instanceof ConstraintDisjunction) {
-      return transformDisj(context, (ConstraintDisjunction)expr);
-    }
-
-    return expr;
+    return super.transformOperation(context, expr);
   }
 
-  public ConstraintExpression transformMatch(SymbolicTransformationContext context, ConstraintImpl c) throws SymbolicTransformationException {
+  @Override
+  protected ConstraintExpression transformConstraint(SymbolicTransformationContext context, Constraint c) throws SymbolicTransformationException {
+    if (c instanceof RelationalConstraint) return c;
+
     try {
       ConstraintElement ce = c.getModel();
       if (ce instanceof URIReference) {
@@ -132,7 +118,7 @@ public class RelationalTransformer implements SymbolicTransformation {
         }
         rcArgs.add(rc);
       } else {
-        ConstraintExpression trans = (ConstraintExpression)transformExpr(context, arg);
+        ConstraintExpression trans = transformExpression(context, arg);
         retainedArgs.add(trans);
         if (arg != trans) {
           transformed = true;
@@ -163,21 +149,5 @@ public class RelationalTransformer implements SymbolicTransformation {
     } else {
       return cc;
     }
-  }
-
-  public ConstraintExpression transformDisj(SymbolicTransformationContext context, ConstraintDisjunction cd) throws SymbolicTransformationException {
-    List transArgs = new ArrayList();
-    boolean transformed = false;
-    Iterator i = cd.getElements().iterator();
-    while (i.hasNext()) {
-      ConstraintExpression ce = (ConstraintExpression)i.next();
-      ConstraintExpression trans = transformExpr(context, ce);
-      if (trans != ce) {
-        transformed = true;
-      }
-      transArgs.add(trans);
-    }
-
-    return transformed ? new ConstraintDisjunction(transArgs) : cd;
   }
 }

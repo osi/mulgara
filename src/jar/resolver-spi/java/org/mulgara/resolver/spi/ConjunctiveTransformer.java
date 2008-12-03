@@ -55,7 +55,6 @@ import java.net.URI;
 
 import org.jrdf.graph.URIReference;
 
-import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Variable;
@@ -63,9 +62,6 @@ import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintConjunction;
 import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.QueryException;
-import org.mulgara.resolver.spi.SymbolicTransformation;
-import org.mulgara.resolver.spi.SymbolicTransformationContext;
-import org.mulgara.resolver.spi.SymbolicTransformationException;
 
 /**
  * A transformer that works on the basis of combining multiple conjoined constraints
@@ -77,8 +73,7 @@ import org.mulgara.resolver.spi.SymbolicTransformationException;
  *      Australian Commonwealth Government, Department of Defence</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public abstract class ConjunctiveTransformer implements SymbolicTransformation
-{
+public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer {
   /** Logger */
   private static final Logger logger = Logger.getLogger(ConjunctiveTransformer.class.getName());
 
@@ -90,34 +85,17 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
 
   public abstract ConstraintExpression constructConstraintExpression(ConstraintElement model, Map byVarSubject, Map byConstSubject) throws SymbolicTransformationException;
 
-  public void transform(SymbolicTransformationContext context, MutableLocalQuery query)
-      throws SymbolicTransformationException {
 
-    ConstraintExpression expr = query.getConstraintExpression();
-    ConstraintExpression trans = transformExpr(context, expr);
-
-    if (expr != trans) {
-      query.setConstraintExpression(trans);
-    }
-  }
-
-
-  public ConstraintExpression transformExpr(SymbolicTransformationContext context, ConstraintExpression expr) throws SymbolicTransformationException {
-
+  @Override
+  public ConstraintExpression transformExpression(SymbolicTransformationContext context, ConstraintExpression expr) throws SymbolicTransformationException {
     // This is the main case.
     if (expr instanceof ConstraintConjunction) {
       return transformConj(context, (ConstraintConjunction)expr);
     }
 
-    // In the case of a Disjunction we need to attempt to transform it's arguments
-    // should the query be in sum of product form.
-    if (expr instanceof ConstraintDisjunction) {
-      return transformDisj(context, (ConstraintDisjunction)expr);
-    }
-
     // A single constraint could still be transformed as a singleton conjunction.
     // Therefore pack in conjunction, attempt transform, and check to see if it was.
-    if (expr instanceof ConstraintImpl) {
+    if (expr instanceof Constraint) {
       ConstraintConjunction conj = new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] { expr }));
       ConstraintConjunction trans = transformConj(context, conj);
       if (conj == trans) {
@@ -127,10 +105,17 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
       }
     }
 
-    // By default we do not recognise the constraint type, so pass it unchanged.
-    return expr;
+    // all else go through the default handling
+    return super.transformExpression(context, expr);
   }
 
+
+  @Override
+  protected ConstraintExpression transformConstraint(SymbolicTransformationContext context,
+                                                     Constraint c)
+      throws SymbolicTransformationException {
+    return c;
+  }
 
   public ConstraintConjunction transformConj(SymbolicTransformationContext context, ConstraintConjunction cc) throws SymbolicTransformationException {
 
@@ -168,7 +153,7 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
       if (arg instanceof ConstraintConjunction) {
         acc = transformConj(context, (ConstraintConjunction)arg, acc);
       } else if (arg instanceof ConstraintDisjunction) {
-        ConstraintExpression expr = transformDisj(context, (ConstraintDisjunction)arg);
+        ConstraintExpression expr = transformOperation(context, (ConstraintDisjunction)arg);
         acc.accumulate(expr);
       } else {
         acc.accumulate(arg);
@@ -178,24 +163,6 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
     return acc;
   }
 
-
-  public ConstraintExpression transformDisj(SymbolicTransformationContext context, ConstraintDisjunction cd) throws SymbolicTransformationException {
-
-    List transArgs = new ArrayList();
-    boolean transformed = false;
-    Iterator i = cd.getElements().iterator();
-    while (i.hasNext()) {
-      ConstraintExpression ce = (ConstraintExpression)i.next();
-      ConstraintExpression trans = transformExpr(context, ce);
-      if (trans != ce) {
-        transformed = true;
-      }
-      transArgs.add(trans);
-    }
-
-    return transformed ? new ConstraintDisjunction(transArgs) : cd;
-  }
-  
 
   private class ConjAccumulator {
     private SymbolicTransformationContext context;
@@ -214,8 +181,8 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
 
 
     public void accumulate(ConstraintExpression arg) throws SymbolicTransformationException {
-      if (arg instanceof ConstraintImpl) {
-        accumulateConstraint((ConstraintImpl)arg);
+      if (arg instanceof Constraint) {
+        accumulateConstraint((Constraint)arg);
       } else if (arg instanceof ConstraintConjunction) {
         throw new IllegalStateException("ConstraintConjunction should have been handled by caller");
       } else {
@@ -223,7 +190,7 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
       }
     }
 
-    private void accumulateConstraint(ConstraintImpl arg) throws SymbolicTransformationException {
+    private void accumulateConstraint(Constraint arg) throws SymbolicTransformationException {
       try {
         ConstraintElement model = arg.getModel();
         if (model instanceof URIReference) {
@@ -248,7 +215,7 @@ public abstract class ConjunctiveTransformer implements SymbolicTransformation
     }
 
 
-    private void insertByModel(ConstraintElement model, Map target, ConstraintImpl arg) {
+    private void insertByModel(ConstraintElement model, Map target, Constraint arg) {
       Map bySubject = (Map)target.get(model);
       if (bySubject == null) {
         bySubject = new HashMap();

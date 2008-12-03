@@ -28,15 +28,14 @@ import java.util.Map;
 
 import org.jrdf.graph.URIReference;
 
+import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.ConstraintConjunction;
-import org.mulgara.query.ConstraintDisjunction;
+import org.mulgara.query.ConstraintOperation;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.spi.MutableLocalQuery;
-import org.mulgara.resolver.spi.SymbolicTransformation;
+import org.mulgara.resolver.spi.AbstractSymbolicTransformer;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SymbolicTransformationException;
 
@@ -53,7 +52,7 @@ import org.mulgara.resolver.spi.SymbolicTransformationException;
  * @author Ronald Tschalär
  * @licence Apache License v2.0
  */
-public class LuceneTransformer implements SymbolicTransformation {
+public class LuceneTransformer extends AbstractSymbolicTransformer {
   private static final Logger logger = Logger.getLogger(LuceneTransformer.class);
 
   private final URI modelTypeURI;
@@ -73,36 +72,27 @@ public class LuceneTransformer implements SymbolicTransformation {
     scorePred = new URIReferenceImpl(scorePredUri);
   }
 
-  public void transform(SymbolicTransformationContext context, MutableLocalQuery query)
-      throws SymbolicTransformationException {
-    ConstraintExpression expr = query.getConstraintExpression();
-    ConstraintExpression trans = transformExpr(context, expr);
-
-    if (expr != trans) {
-      query.setConstraintExpression(trans);
-    }
-  }
-
-  private ConstraintExpression transformExpr(SymbolicTransformationContext context, ConstraintExpression expr) throws SymbolicTransformationException {
-    if (expr instanceof ConstraintImpl) {
-      return transformConstr(context, (ConstraintImpl)expr);
-    }
-    if (expr instanceof ConstraintConjunction) {
+  @Override
+  protected ConstraintExpression transformOperation(SymbolicTransformationContext context,
+                                                    ConstraintOperation expr)
+        throws SymbolicTransformationException {
+    if (expr instanceof ConstraintConjunction)
       return transformConj(context, (ConstraintConjunction)expr);
-    }
-    if (expr instanceof ConstraintDisjunction) {
-      return transformDisj(context, (ConstraintDisjunction)expr);
-    }
-
-    return expr;
+    return super.transformOperation(context, expr);
   }
 
-  private ConstraintExpression transformConstr(SymbolicTransformationContext context, ConstraintImpl c) throws SymbolicTransformationException {
+  @Override
+  protected ConstraintExpression transformConstraint(SymbolicTransformationContext context,
+                                                     Constraint c)
+      throws SymbolicTransformationException {
+    if (c instanceof LuceneConstraint) return c;
+
     try {
       ConstraintElement ce = c.getModel();
       if (ce instanceof URIReference) {
         URI constraintModelType = context.mapToModelTypeURI(((URIReference)ce).getURI());
         if (constraintModelType != null && constraintModelType.equals(modelTypeURI)) {
+          if (logger.isTraceEnabled()) logger.trace("Creating LC for: " + c);
           return new LuceneConstraint(c, searchPred, scorePred);
         }
       }
@@ -112,7 +102,7 @@ public class LuceneTransformer implements SymbolicTransformation {
     }
   }
 
-  public ConstraintExpression transformConj(SymbolicTransformationContext context, ConstraintConjunction cc) throws SymbolicTransformationException {
+  private ConstraintConjunction transformConj(SymbolicTransformationContext context, ConstraintConjunction cc) throws SymbolicTransformationException {
     List<ConstraintExpression> retainedArgs = new ArrayList<ConstraintExpression>();
     Map<ConstraintElement, List<LuceneConstraint>> luceneArgs =
                                     new HashMap<ConstraintElement, List<LuceneConstraint>>();
@@ -120,7 +110,7 @@ public class LuceneTransformer implements SymbolicTransformation {
     boolean transformed = false;
 
     for (ConstraintExpression arg : cc.getElements()) {
-      ConstraintExpression trans = transformExpr(context, arg);
+      ConstraintExpression trans = transformExpression(context, arg);
       if (trans != arg) {
         transformed = true;
       }
@@ -140,6 +130,7 @@ public class LuceneTransformer implements SymbolicTransformation {
           cumulative.add(lc);
         } else {
           cumulative.iterator().next().conjoinWith(lc);
+          if (logger.isTraceEnabled()) logger.trace("Updated LC with: " + cumulative.iterator().next() + "; result: " + lc);
           transformed = true;
         }
       } else {
@@ -159,19 +150,5 @@ public class LuceneTransformer implements SymbolicTransformation {
     } else {
       return cc;
     }
-  }
-
-  private ConstraintExpression transformDisj(SymbolicTransformationContext context, ConstraintDisjunction cd) throws SymbolicTransformationException {
-    List<ConstraintExpression> transArgs = new ArrayList<ConstraintExpression>();
-    boolean transformed = false;
-    for (ConstraintExpression ce : cd.getElements()) {
-      ConstraintExpression trans = transformExpr(context, ce);
-      if (trans != ce) {
-        transformed = true;
-      }
-      transArgs.add(trans);
-    }
-
-    return transformed ? new ConstraintDisjunction(transArgs) : cd;
   }
 }

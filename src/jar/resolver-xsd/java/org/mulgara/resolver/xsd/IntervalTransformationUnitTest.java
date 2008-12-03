@@ -182,8 +182,7 @@ public class IntervalTransformationUnitTest extends TestCase {
    */
   public void test1Transform() throws Exception {
     try {
-      intervalTransformation.transformExpression(context, (ConstraintExpression) null);
-      fail("Expected an IllegalArgumentException");
+      assertNull(intervalTransformation.transformExpression(context, (ConstraintExpression) null));
     }
     catch (IllegalArgumentException e) {
       // expected
@@ -194,7 +193,7 @@ public class IntervalTransformationUnitTest extends TestCase {
    * Test #2 for the {@link IntervalTransformation#transform} method.
    */
   public void test2Transform() throws Exception {
-    assertNull(intervalTransformation.transformExpression(context, ConstraintTrue.INSTANCE));
+    assertSame(ConstraintTrue.INSTANCE, intervalTransformation.transformExpression(context, ConstraintTrue.INSTANCE));
   }
 
   /**
@@ -270,13 +269,11 @@ public class IntervalTransformationUnitTest extends TestCase {
     Variable x = new Variable("x");
     Variable y = new Variable("y");
 
-    assertEquals(
-      intervalTransformation.transformExpression(context, new ConstraintConjunction(
+    ConstraintConjunction cc = new ConstraintConjunction(
           new ConstraintImpl(x, greaterThan, new LiteralImpl(2), nonXSDModel),
           new ConstraintImpl(y, lessThan, new LiteralImpl(3), nonXSDModel)
-        )
-      ),
-      null);
+        );
+    assertSame(cc, intervalTransformation.transformExpression(context, cc));
   }
 
   /**

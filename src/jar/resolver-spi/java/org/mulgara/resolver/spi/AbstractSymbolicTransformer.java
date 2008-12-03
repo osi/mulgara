@@ -45,7 +45,7 @@ public abstract class AbstractSymbolicTransformer implements SymbolicTransformat
     if (logger.isTraceEnabled()) logger.trace("Transforming query: " + mutableLocalQuery.getConstraintExpression());
 
     ConstraintExpression expr = mutableLocalQuery.getConstraintExpression();
-    ConstraintExpression trans = transformExpr(context, expr);
+    ConstraintExpression trans = transformExpression(context, expr);
 
     if (logger.isTraceEnabled()) logger.trace("Transform result: " + (expr != trans ? trans : "-no-change-"));
 
@@ -63,8 +63,8 @@ public abstract class AbstractSymbolicTransformer implements SymbolicTransformat
    * @return a new expression is something was changed, or <var>expr</var> if nothing was changed.
    * @throws SymbolicTransformationException If there is an error applying the transform
    */
-  protected ConstraintExpression transformExpr(SymbolicTransformationContext context,
-                                               ConstraintExpression expr)
+  public ConstraintExpression transformExpression(SymbolicTransformationContext context,
+                                                  ConstraintExpression expr)
         throws SymbolicTransformationException {
     // explicitly handle all the recursive types
     if (expr instanceof ConstraintFilter) return transformFilter(context, (ConstraintFilter)expr);
@@ -77,7 +77,7 @@ public abstract class AbstractSymbolicTransformer implements SymbolicTransformat
   }
 
   /**
-   * Transform the filtered constraint. This invokes {@link #transformExpr} on the inner constraint.
+   * Transform the filtered constraint. This invokes {@link #transformExpression} on the inner constraint.
    *
    * @param context the current transformation context
    * @param filter the constraint filter to transform
@@ -88,12 +88,12 @@ public abstract class AbstractSymbolicTransformer implements SymbolicTransformat
                                                  ConstraintFilter filter)
         throws SymbolicTransformationException {
     ConstraintExpression inner = filter.getUnfilteredConstraint();
-    ConstraintExpression tx = transformExpr(context, inner);
+    ConstraintExpression tx = transformExpression(context, inner);
     return (tx == inner) ? filter : new ConstraintFilter(tx, filter.getFilter());
   }
 
   /**
-   * Transform the in constraint. This invokes {@link #transformExpr} on the inner constraint.
+   * Transform the in constraint. This invokes {@link #transformExpression} on the inner constraint.
    *
    * @param context the current transformation context
    * @param in the in-constraint to transform
@@ -103,12 +103,12 @@ public abstract class AbstractSymbolicTransformer implements SymbolicTransformat
   protected ConstraintExpression transformIn(SymbolicTransformationContext context, ConstraintIn in)
         throws SymbolicTransformationException {
     ConstraintExpression inner = in.getConstraintParam();
-    ConstraintExpression tx = transformExpr(context, inner);
+    ConstraintExpression tx = transformExpression(context, inner);
     return (tx == inner) ? in : new ConstraintIn(tx, in.getGraph());
   }
 
   /**
-   * Transform the constraint-operation. This invokes {@link #transformExpr} on all the inner
+   * Transform the constraint-operation. This invokes {@link #transformExpression} on all the inner
    * constraints.
    *
    * @param context the current transformation context
@@ -124,7 +124,7 @@ public abstract class AbstractSymbolicTransformer implements SymbolicTransformat
     boolean changed = false;
 
     for (ConstraintExpression op: ops) {
-      ConstraintExpression tx = transformExpr(context, op);
+      ConstraintExpression tx = transformExpression(context, op);
       newOps.add(tx);
       if (tx != op) changed = true;
     }
