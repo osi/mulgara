@@ -70,6 +70,13 @@ public interface ModelExpression extends Cloneable, Serializable {
   public Set<URI> getDatabaseURIs();
 
   /**
+   * Calculate the graphs involved in this expression.
+   *
+   * @return a set containing the {@link URI}s of the graphs
+   */
+  public Set<URI> getGraphURIs();
+
+  /**
    * Clones sets of models in the rhs and lhs objects.
    */
   public Object clone();

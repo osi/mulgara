@@ -181,4 +181,28 @@ public class C {
     return arg.isEmpty() ? null : arg.get(arg.size() - 1);
   }
 
+  /**
+   * Returns the first item from a Collection. This is a simple wrapper for {@link LinkedList#getFirst()}
+   * @param <T1> The element type.
+   * @param arg The list.
+   * @return The first element in the list.
+   * @throws NoSuchElementException If the list is empty.
+   */
+  public static <T1> T1 first(LinkedList<T1> arg) throws NoSuchElementException {
+    return arg.getFirst();
+  }
+
+  /**
+   * Returns the first item from an Iterable.
+   * @param <T1> The element type.
+   * @param arg The iterable collection.
+   * @return The first element in the collection.
+   * @throws NoSuchElementException If the collection is empty.
+   */
+  public static <T1> T1 first(Collection<T1> arg) throws NoSuchElementException {
+    if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getFirst();
+    if (arg.isEmpty()) throw new NoSuchElementException("Empty Collection");
+    return arg.iterator().next();
+  }
+
 }

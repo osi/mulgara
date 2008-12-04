@@ -70,6 +70,7 @@ public class ModelLiteral implements Model {
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(ModelLiteral.class);
 
   /**
@@ -121,10 +122,15 @@ public class ModelLiteral implements Model {
   /**
    * @return an empty {@link Set}
    */
-  @SuppressWarnings("unchecked")
   public Set<URI> getDatabaseURIs() {
+    return Collections.emptySet();
+  }
 
-    return (Set<URI>)Collections.EMPTY_SET;
+  /**
+   * @return an empty {@link Set}
+   */
+  public Set<URI> getGraphURIs() {
+    return Collections.emptySet();
   }
 
   //

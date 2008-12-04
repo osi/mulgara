@@ -62,9 +62,8 @@ public class ModelPartition extends ModelOperation {
    */
   static final long serialVersionUID = 8660358035003409731L;
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(ModelPartition.class);
 
   //

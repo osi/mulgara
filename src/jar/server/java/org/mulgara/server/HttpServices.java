@@ -79,6 +79,9 @@ public class HttpServices {
   /** The Web Query path. */
   private final static String WEBQUERY_PATH = "webui";
 
+  /** The Web Tutorial path. */
+  private final static String WEBTUTORIAL_PATH = "tutorial";
+
   /** The sparql path. */
   private final static String SPARQL_PATH = "sparql";
 
@@ -220,7 +223,10 @@ public class HttpServices {
       return addWebServicesWebAppContext(s);
     } });
     starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
-      return addWebQueryContext(s);
+      return addWebQueryContext(s, "User Interface", "org.mulgara.webquery.QueryServlet", WEBQUERY_PATH);
+    } });
+    starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
+      return addWebQueryContext(s, "User Tutorial", "org.mulgara.webquery.TutorialServlet", WEBTUTORIAL_PATH);
     } });
     // expect to get the following from a config file
     // TODO: create a decent configuration object, instead of just handing out a Server
@@ -305,22 +311,22 @@ public class HttpServices {
 
 
   /**
-   * Creates the Mulgara Semantic Store Query Tool (webui).
+   * Creates and registers a web servlet.
    * @throws IOException if the servlet cannot talk to the network.
    */
-  private Service addWebQueryContext(Server server) throws IOException {
-    if (logger.isDebugEnabled()) logger.debug("Adding WebQuery servlet context");
+  private Service addWebQueryContext(Server server, String name, String servletClass, String servletPath) throws IOException {
+    if (logger.isDebugEnabled()) logger.debug("Adding Web servlet context: " + name);
 
-    // create the web query context
+    // create the web context
     try {
       AbstractServer serverMBean = (AbstractServer)hostServer.getServerMBean();
       String rmiName = hostServer.getServerName();
-      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName("org.mulgara.webquery.QueryServlet"), hostName, rmiName, serverMBean);
-      String webPath = "/" + WEBQUERY_PATH;
+      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName(servletClass), hostName, rmiName, serverMBean);
+      String webPath = "/" + servletPath;
       new org.mortbay.jetty.servlet.Context(server, webPath, SESSIONS).addServlet(new ServletHolder(servlet), "/*");
-      return new Service("User Interface", webPath);
+      return new Service(name, webPath);
     } catch (ClassNotFoundException e) {
-      throw new IllegalStateException("Not configured to use the requested Query servlet");
+      throw new IllegalStateException("Not configured to use the requested servlet: " + name + "(" + servletClass + ")");
     }
   }
 

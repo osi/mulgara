@@ -19,6 +19,7 @@ package org.mulgara.webquery;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -36,8 +37,10 @@ import org.mulgara.connection.Connection;
 import org.mulgara.connection.SessionConnection;
 import org.mulgara.itql.TqlInterpreter;
 import org.mulgara.parser.Interpreter;
+import org.mulgara.parser.MulgaraLexerException;
 import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.Answer;
+import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
@@ -90,12 +93,12 @@ public class QueryServlet extends HttpServlet {
   private final AbstractServer server;
 
   /** The default graph URI to use. */
-  private final String defaultGraphUri;
+  private String defaultGraphUri;
 
   /** Session factory for accessing the database. */
   private SessionFactory cachedSessionFactory;
 
-  /** The path down to the TEMPLATE resource. */
+  /** The path down to the template resource. */
   private String templatePath;
 
   /** The path prefix for resources. */
@@ -114,8 +117,8 @@ public class QueryServlet extends HttpServlet {
     this.servername = servername;
     this.cachedSessionFactory = null;
     this.server = server;
-    URL path = getClass().getClassLoader().getResource(ResourceFile.RESOURCES + TEMPLATE);
-    if (path == null) throw new IOException("Resource not found: " + ResourceFile.RESOURCES + TEMPLATE);
+    URL path = getClass().getClassLoader().getResource(ResourceFile.RESOURCES + getTemplateFile());
+    if (path == null) throw new IOException("Resource not found: " + ResourceFile.RESOURCES + getTemplateFile());
     templatePath = path.toString();
     resourcePath = templatePath.split("!")[0];
     defaultGraphUri = "rmi://" + hostname + "/" + servername + "#sampledata";
@@ -189,7 +192,7 @@ public class QueryServlet extends HttpServlet {
    */
   private void outputStandardTemplate(HttpServletResponse resp) throws IOException {
     PrintWriter out = resp.getWriter();
-    new ResourceTextFile(TEMPLATE, getTemplateTags()).sendTo(out);
+    new ResourceTextFile(getTemplateFile(), getTemplateTags()).sendTo(out);
     out.close();
   }
 
@@ -235,11 +238,19 @@ public class QueryServlet extends HttpServlet {
       return;
     }
 
+    // Use the first graph mentioned as the future default
+    for (Command c: cmds) {
+      if (c instanceof Query) {
+        updateDefaultGraph(c);
+        break;
+      }
+    }
+
     // Get the tags to use in the page template
     Map<String,String> templateTags = getTemplateTagMap();
     templateTags.put(GRAPH_TAG, defaultGraph(graphUri));
     // Generate the page
-    QueryResponsePage page = new QueryResponsePage(req, resp, templateTags);
+    QueryResponsePage page = new QueryResponsePage(req, resp, templateTags, getTemplateHeaderFile(), getTemplateTailFile());
     page.writeResults(time, cmds, results);
   }
 
@@ -276,7 +287,7 @@ public class QueryServlet extends HttpServlet {
     templateTags.put(GRAPH_TAG, defaultGraph(req.getParameter(GRAPH_ARG)));
     
     // Generate the page
-    QueryResponsePage page = new QueryResponsePage(req, resp, templateTags);
+    QueryResponsePage page = new QueryResponsePage(req, resp, templateTags, getTemplateHeaderFile(), getTemplateTailFile());
     page.writeResult(unfinishedResults.get(remaining).second(), remaining);
   }
 
@@ -417,6 +428,16 @@ public class QueryServlet extends HttpServlet {
 
 
   /**
+   * Updates the default graph URI to one found in a Query.
+   * @param cmd A Command that contains a query.
+   */
+  private void updateDefaultGraph(Command cmd) {
+    assert cmd instanceof Query;
+    Set<URI> graphs = ((Query)cmd).getModelExpression().getGraphURIs();
+    if (!graphs.isEmpty()) defaultGraphUri = C.first(graphs).toString();
+  }
+
+  /**
    * Creates the default graph name for the sample data.
    * @param The graph name that the user has already set.
    * @return The default graph name to use when no graph has been set.
@@ -480,7 +501,7 @@ public class QueryServlet extends HttpServlet {
       factory = new Fn<Interpreter>(){ public Interpreter fn(){ return new SparqlInterpreter(); }};
       attr = SPARQL_INTERPRETER;
     } else {
-      factory = new Fn<Interpreter>(){ public Interpreter fn() { return new TqlInterpreter(); }};
+      factory = new Fn<Interpreter>(){ public Interpreter fn() { return new TerminatingTqlInterpreter(); }};
       attr = TQL_INTERPRETER;
     }
     return new RegInterpreter(factory, attr);
@@ -523,15 +544,43 @@ public class QueryServlet extends HttpServlet {
 
 
   /**
+   * Get the name of the file to be used for the template.
+   * @return The absolute file path, with a root set at the resource directory.
+   */
+  protected String getTemplateFile() {
+    return TEMPLATE;
+  }
+
+
+  /**
+   * Get the name of the file to be used for the header template.
+   * @return The absolute file path, with a root set at the resource directory.
+   */
+  protected String getTemplateHeaderFile() {
+    return TEMPLATE_HEAD;
+  }
+
+
+  /**
+   * Get the name of the file to be used for the footer template.
+   * @return The absolute file path, with a root set at the resource directory.
+   */
+  protected String getTemplateTailFile() {
+    return TEMPLATE_TAIL;
+  }
+
+
+  /**
    * Returns the filename extension for a given path.
    * @param path The path to get the extension for.
    * @return The extension, including the . character. If there is no extension, then an empty string.
    */
-  private String getExtension(String path) {
+  private static String getExtension(String path) {
     int dot = path.lastIndexOf('.');
     if (dot < 0) return "";
     return path.substring(dot);
   }
+
 
   /**
    * Registerable Interpreter. This contains a factory for an interpreter, plus the name it should
@@ -560,4 +609,26 @@ public class QueryServlet extends HttpServlet {
       return regString;
     }
   }
+
+
+  /**
+   * Extension of TQL interpreter that will automatically terminate any
+   * commands that are not already terminated.
+   */
+  private static class TerminatingTqlInterpreter extends TqlInterpreter {
+
+    /** The terminating character. */
+    private static final String TERMINATOR = ";";
+
+    /**
+     * Calls TqlInterpreter#parseCommands(String) with a guaranteed termination of ";".
+     * @see TqlInterpreter#parseCommands(String)
+     */
+    public List<Command> parseCommands(String command) throws MulgaraParserException, MulgaraLexerException, IOException {
+      command = command.trim();
+      if (!command.endsWith(TERMINATOR)) command += TERMINATOR;
+      return super.parseCommands(command);
+    }
+  }
+
 }

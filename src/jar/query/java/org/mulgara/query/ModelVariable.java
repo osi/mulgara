@@ -62,9 +62,16 @@ public class ModelVariable implements Model {
    * Gets a set of database URIs to operate against.
    * @return We don't know what is in the variable, so return the empty {@link Set}
    */
-  @SuppressWarnings("unchecked")
   public Set<URI> getDatabaseURIs() {
-    return (Set<URI>)Collections.EMPTY_SET;
+    return Collections.emptySet();
+  }
+
+  /**
+   * Gets a set of graph URIs this represents.
+   * @return We don't know what is in the variable, so return the empty {@link Set}
+   */
+  public Set<URI> getGraphURIs() {
+    return Collections.emptySet();
   }
 
   //

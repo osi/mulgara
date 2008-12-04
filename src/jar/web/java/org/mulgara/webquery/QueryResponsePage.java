@@ -79,6 +79,12 @@ public class QueryResponsePage {
   /** The structure for sending the page back to the client. */
   HttpServletResponse response;
 
+  /** The absolute file path of the template header, with the root set to the resource directory. */
+  final String templateHeadFile;
+
+  /** The absolute file path of the template footer, with the root set to the resource directory. */
+  final String templateTailFile;
+
   /** A map of tags to the values that should replace them. */
   Map<String,String> tagMap;
 
@@ -105,10 +111,12 @@ public class QueryResponsePage {
    * @param tagMap A map of tags to the values that should replace them
    */
   @SuppressWarnings("unchecked")
-  public QueryResponsePage(HttpServletRequest req, HttpServletResponse resp, Map<String,String> tagMap) {
+  public QueryResponsePage(HttpServletRequest req, HttpServletResponse resp, Map<String,String> tagMap, String headFile, String tailFile) {
     this.request = req;
     this.response = resp;
     this.tagMap = tagMap;
+    this.templateHeadFile = headFile;
+    this.templateTailFile = tailFile;
     this.unfinishedResults = (Map<Answer,Pair<Long,Command>>)req.getSession().getAttribute(UNFINISHED_RESULTS);
   }
 
@@ -140,7 +148,7 @@ public class QueryResponsePage {
     response.setHeader("pragma", "no-cache");
     PrintWriter output = getOutput();
     // write the head of the page
-    new ResourceTextFile(TEMPLATE_HEAD, tagMap).sendTo(output);
+    new ResourceTextFile(templateHeadFile, tagMap).sendTo(output);
 
     // summarise the results first
     writeResultSummary(time, results.size());
@@ -154,7 +162,7 @@ public class QueryResponsePage {
     if (r.hasNext()) response.sendError(SC_INTERNAL_SERVER_ERROR, "Internal error: results do not match queries.");
 
     // write the tail of the page
-    new ResourceTextFile(TEMPLATE_TAIL).sendTo(output);
+    new ResourceTextFile(templateTailFile).sendTo(output);
 
     output.close();
   }

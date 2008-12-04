@@ -120,6 +120,20 @@ public abstract class ModelOperation implements ModelExpression {
     return databaseURIs;
   }
 
+  /**
+   * Calculate the graphs involved in this expression.
+   *
+   * @return a set containing the {@link URI}s of the graphs
+   */
+  public Set<URI> getGraphURIs() {
+    
+    Set<URI> graphURIs = new HashSet<URI>();
+    graphURIs.addAll(lhs.getGraphURIs());
+    graphURIs.addAll(rhs.getGraphURIs());
+
+    return graphURIs;
+  }
+
   //
   // Additional API
   //

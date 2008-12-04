@@ -34,8 +34,6 @@ import java.util.*;
 // Third party packages
 import org.apache.log4j.Logger;
 
-// Local packages
-import org.mulgara.query.rdf.URIReferenceImpl;
 
 /**
  * A leaf expression containing the {@link URL} of an RDF model.
@@ -65,15 +63,11 @@ public class ModelResource implements Model {
    */
   static final long serialVersionUID = -5673467065206144337L;
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger logger =
-      Logger.getLogger(ModelResource.class.getName());
+  /** Logger. This is named after the class. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(ModelResource.class.getName());
 
-  /**
-   * The {@link URI} of the RDF model.
-   */
+  /** The {@link URI} of the RDF model. */
   private URI uri;
 
   //
@@ -130,6 +124,11 @@ public class ModelResource implements Model {
       throw new RuntimeException("Couldn't truncate model URI " + uri + " to obtain a database URI");
     }
 
+  }
+
+  /** @see org.mulgara.query.ModelExpression#getGraphURIs() */
+  public Set<URI> getGraphURIs() {
+    return Collections.singleton(uri);
   }
 
   //
@@ -216,4 +215,5 @@ public class ModelResource implements Model {
       throw new RuntimeException("ModelResource not cloneable");
     }
   }
+
 }
