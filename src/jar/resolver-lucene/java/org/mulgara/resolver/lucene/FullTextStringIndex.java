@@ -438,7 +438,6 @@ public class FullTextStringIndex {
       throws FullTextStringIndexException {
     boolean removed = false;
     if ((literal == null) ||
-        (literal.length() == 0) ||
         (subject == null) ||
         (subject.length() == 0) ||
         (predicate == null) ||

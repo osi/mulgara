@@ -103,6 +103,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPool"));
+    suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolCornerCases"));
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolwithFiles"));
     suite.addTest(new FullTextStringIndexUnitTest("testFullTextStringPoolTransactions"));
 
@@ -316,6 +317,103 @@ public class FullTextStringIndexUnitTest extends TestCase {
 
       returned = index.find(document, has, "+study +*roup").length();
       assertEquals("Got unexpected documents after removeAll:", 0, returned);
+    } finally {
+      if (index != null) {
+        index.close();
+        cache.close();
+        assertTrue("Unable to remove all index files", cache.removeAllIndexes());
+      }
+    }
+  }
+
+
+  /**
+   * Test corner cases (null subject, object, predicate, etc).
+   *
+   * @throws Exception Test fails
+   */
+  public void testFullTextStringPoolCornerCases() throws Exception {
+    LuceneIndexerCache cache = new LuceneIndexerCache(indexDirectory);
+    FullTextStringIndex index = null;
+
+    try {
+      String document = "http://mulgara.org/mulgara/document#";
+      String has = "http://mulgara.org/mulgara/document#has";
+
+      //Clean any existing indexes.
+      cache.close();
+      cache.removeAllIndexes();
+      cache = new LuceneIndexerCache(indexDirectory);
+
+      //create the index
+      index = new FullTextStringIndex(cache, true, true);
+
+      // Add strings to the index
+      try {
+        index.add(null, has, "foo");
+        fail("exception expected for adding null subject");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.add(document, null, "foo");
+        fail("exception expected for adding null predicate");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.add(document, has, null);
+        fail("exception expected for adding null literal");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.add("", has, "foo");
+        fail("exception expected for adding empty subject");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.add(document, "", "foo");
+        fail("exception expected for adding empty predicate");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      index.add(document, has, "");
+
+      // remove strings from the index
+      try {
+        index.remove(null, has, "foo");
+        fail("exception expected for removing null subject");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.remove(document, null, "foo");
+        fail("exception expected for removing null predicate");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.remove(document, has, null);
+        fail("exception expected for removing null literal");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.remove("", has, "foo");
+        fail("exception expected for removing empty subject");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      try {
+        index.remove(document, "", "foo");
+        fail("exception expected for removing empty predicate");
+      } catch (FullTextStringIndexException ftsie) {
+      }
+
+      index.remove(document, has, "");
+
     } finally {
       if (index != null) {
         index.close();
