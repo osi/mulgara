@@ -230,14 +230,14 @@ public class TqlSession {
    * Indicates if we should use the Swing shell or not
    */
   boolean useSwingShell() {
-	  return useSwing;
+    return useSwing;
   }
 
   /**
    *  Returns the host to query for model names
    */
   String getModelHost() {
-	  return host;
+    return host;
   }
   
   /**
@@ -358,119 +358,113 @@ public class TqlSession {
   }
 
 
-  /**
-   * Create a UI and start it up.  Returns when the GUI has been exited.
-   */
-  private void runInterface() {
-	  runInterface(false);
-  }
-  
   private void runInterface(boolean useSwing) {
-	  
-	  if(useSwing) {
-		  // Create the UI.
-		  JFrame mainWindow = new JFrame(SHELL_NAME);
-		  mainWindow.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		  mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    
+    if(useSwing) {
+      // Create the UI.
+      JFrame mainWindow = new JFrame(SHELL_NAME);
+      mainWindow.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		  gui = new TqlSessionUI(this, System.in, System.out);
-		  mainWindow.getContentPane().add(gui);
+      gui = new TqlSessionUI(this, System.in, System.out);
+      mainWindow.getContentPane().add(gui);
 
-		  if (log.isInfoEnabled()) log.info("Starting TQL interpreter");
+      if (log.isInfoEnabled()) log.info("Starting TQL interpreter");
 
-		  motdInitialization();
+      motdInitialization();
 
-		  // Start the application, by making the UI visible
-		  mainWindow.setVisible(true);
-	  } else {
-			try {
-				ConsoleReader reader = new ConsoleReader();		
-				File historyFile = getHistoryFile();
-				History history = reader.getHistory();
-				history.setHistoryFile(historyFile);
-				history.setMaxSize(50);
-				reader.setBellEnabled(false);
-				reader.setDebug(new PrintWriter(new FileWriter("writer.debug", true)));
-				reader.addCompletor(new GraphNameCompletor(prefetchModels(getModelHost())));
+      // Start the application, by making the UI visible
+      mainWindow.setVisible(true);
+    } else {
+      try {
+        ConsoleReader reader = new ConsoleReader();    
+        File historyFile = getHistoryFile();
+        History history = reader.getHistory();
+        history.setHistoryFile(historyFile);
+        history.setMaxSize(50);
+        reader.setBellEnabled(false);
+        reader.setDebug(new PrintWriter(new FileWriter("writer.debug", true)));
+        reader.addCompletor(new GraphNameCompletor(prefetchModels(getModelHost())));
 
-				String line;
-				PrintWriter out = new PrintWriter(System.out);
+        String line;
+        PrintWriter out = new PrintWriter(System.out);
 
-				while ((line = reader.readLine(PS1)) != null) {
-					executeCommand(line);
+        while ((line = reader.readLine(PS1)) != null) {
+          executeCommand(line);
 
-					List<Answer> answers = getLastAnswers();
-					List<String> messages = getLastMessages();
+          List<Answer> answers = getLastAnswers();
+          List<String> messages = getLastMessages();
 
-					if (answers.isEmpty()) {
-						for (String message: messages) out.println(message);
-					} else {
-						int answerIndex = 0;
+          if (answers.isEmpty()) {
+            for (String message: messages) out.println(message);
+          } else {
+            int answerIndex = 0;
 
-						while (answerIndex < answers.size()) {
-							String lastMessage = (String)messages.get(answerIndex);
-							
-							try {
-								// Assume the same number of answers and messages
-								Answer answer = answers.get(answerIndex);
+            while (answerIndex < answers.size()) {
+              @SuppressWarnings("unused")
+              String lastMessage = (String)messages.get(answerIndex);
+              
+              try {
+                // Assume the same number of answers and messages
+                Answer answer = answers.get(answerIndex);
 
-								// If there's more than one answer print a heading.
-								if (answers.size() > 1) {
-									out.println();
-									// If there's more than one answer add an extra line before the heading.
-									out.println("Executing Query " + (answerIndex+1));
-								}
-								
-								// print the results
-								if (answer != null) {
-									boolean hasAnswers = true;
+                // If there's more than one answer print a heading.
+                if (answers.size() > 1) {
+                  out.println();
+                  // If there's more than one answer add an extra line before the heading.
+                  out.println("Executing Query " + (answerIndex+1));
+                }
+                
+                // print the results
+                if (answer != null) {
+                  boolean hasAnswers = true;
 
-									long rowCount = 0;
-									answer.beforeFirst();
-									if (answer.isUnconstrained()) {
-										out.println("[ true ]");
-										rowCount = 1;
-									} else {
-										if (!answer.next()) {
-											out.print("No results returned.");
-											hasAnswers = false;
-										} else {
-											do {
-												rowCount++;
-												out.print("[ ");
-												for (int index = 0; index < answer.getNumberOfVariables(); index++) {
-													Object object = answer.getObject(index);
-													assert(object instanceof Answer) ||
-													(object instanceof Node  ) ||
-													(object == null);
-													out.print(String.valueOf(object));
-													if (index < (answer.getNumberOfVariables() - 1)) out.print(", ");
-												}
-												out.println(" ]");
-											} while (answer.next());
-										}
-									}
-									if (hasAnswers) out.println(rowCount + " rows returned.");
-									answerIndex++;
-									answer.close();
-									out.flush();
+                  long rowCount = 0;
+                  answer.beforeFirst();
+                  if (answer.isUnconstrained()) {
+                    out.println("[ true ]");
+                    rowCount = 1;
+                  } else {
+                    if (!answer.next()) {
+                      out.print("No results returned.");
+                      hasAnswers = false;
+                    } else {
+                      do {
+                        rowCount++;
+                        out.print("[ ");
+                        for (int index = 0; index < answer.getNumberOfVariables(); index++) {
+                          Object object = answer.getObject(index);
+                          assert(object instanceof Answer) ||
+                          (object instanceof Node  ) ||
+                          (object == null);
+                          out.print(String.valueOf(object));
+                          if (index < (answer.getNumberOfVariables() - 1)) out.print(", ");
+                        }
+                        out.println(" ]");
+                      } while (answer.next());
+                    }
+                  }
+                  if (hasAnswers) out.println(rowCount + " rows returned.");
+                  answerIndex++;
+                  answer.close();
+                  out.flush();
 
-									if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
-										break;
-									}
-								}							
-							} catch(TuplesException te ) {
-								te.printStackTrace();
-							}
-						}
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+                  if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
+                    break;
+                  }
+                }              
+              } catch(TuplesException te ) {
+                te.printStackTrace();
+              }
+            }
+          }
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
-		  
-	  }
+      
+    }
 
     if (log.isInfoEnabled()) log.info("Stopping TQL interpreter");
     if (log.isDebugEnabled()) log.debug("Executed post-loading script");
@@ -481,9 +475,9 @@ public class TqlSession {
    * 
    */
   private File getHistoryFile() {
-	  // TODO: Generalize this process
-	  File retValue = new File(System.getProperty("user.home") + File.separator + ".itqllog");
-	  return retValue;
+    // TODO: Generalize this process
+    File retValue = new File(System.getProperty("user.home") + File.separator + ".itqllog");
+    return retValue;
   }
 
 
@@ -528,26 +522,26 @@ public class TqlSession {
    */
   
   private List<String> prefetchModels(String hostname) {
-	  List<String> retValue = new ArrayList<String>();
-	  StringBuffer sb = new StringBuffer();
-	  sb.append("select $model from <rmi://");
-	  sb.append(hostname);
-	  sb.append("/server1#> where $model $p $o;");
-	  
-	  try {
-		  executeCommand(sb.toString());
-		  List<Answer> models = getLastAnswers();
+    List<String> retValue = new ArrayList<String>();
+    StringBuffer sb = new StringBuffer();
+    sb.append("select $model from <rmi://");
+    sb.append(hostname);
+    sb.append("/server1#> where $model $p $o;");
+    
+    try {
+      executeCommand(sb.toString());
+      List<Answer> models = getLastAnswers();
 
-		  for(Answer a : models) {
-			  while(a.next()) {
-				  retValue.add(a.getObject(0).toString());
-			  }
-		  }
-	  } catch(Throwable t) {
-		  t.printStackTrace();
-	  }
-	  
-	  return retValue;
+      for(Answer a : models) {
+        while(a.next()) {
+          retValue.add(a.getObject(0).toString());
+        }
+      }
+    } catch(Throwable t) {
+      t.printStackTrace();
+    }
+    
+    return retValue;
   }
 
 
@@ -658,7 +652,7 @@ public class TqlSession {
         
         String modelHost = (String) parser.getOptionValue(ItqlOptionParser.REMOTE);
         if(modelHost != null) {
-        	host = modelHost;
+          host = modelHost;
         }
 
         // load an external interpreter configuration file
