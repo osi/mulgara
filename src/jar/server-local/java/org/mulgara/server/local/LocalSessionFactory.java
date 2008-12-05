@@ -41,7 +41,7 @@ import org.apache.log4j.*;
 
 // Locally written packages
 import java.lang.reflect.*;
-import org.mulgara.query.ModelLiteral;
+import org.mulgara.query.GraphLiteral;
 import org.mulgara.query.QueryException;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;

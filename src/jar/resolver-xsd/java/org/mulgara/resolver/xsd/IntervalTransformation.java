@@ -238,7 +238,7 @@ class IntervalTransformation extends AbstractSymbolicTransformer {
       throw new SymbolicTransformationException("Unable to check model on constraint", eq);
     }
 
-    logger.debug("Model suitable for IntervalTransformation");
+    logger.debug("Graph suitable for IntervalTransformation");
 
     // Figure out the direction of bounding, assuming [$var op value] order
     if (constraint.getElement(1).equals(lessThan)) {

@@ -146,7 +146,6 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
    * where this class was run.</p>
    * @param args command line arguments
    */
-  @SuppressWarnings("unchecked")
   public static void main(String[] args) {
     // report the version and build number
     System.out.println("@@build.label@@");

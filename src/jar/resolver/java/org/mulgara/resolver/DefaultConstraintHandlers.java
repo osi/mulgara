@@ -59,10 +59,10 @@ import org.mulgara.query.filter.value.Var;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintLocalization;
-import org.mulgara.resolver.spi.ConstraintModelRewrite;
+import org.mulgara.resolver.spi.ConstraintGraphRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.ConstraintVariableRewrite;
-import org.mulgara.resolver.spi.ModelResolutionHandler;
+import org.mulgara.resolver.spi.GraphResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
@@ -95,13 +95,13 @@ class DefaultConstraintHandlers
   static void initializeModelResolutionHandlers() {
     ConstraintOperations.addModelResolutionHandlers(new NVPair[]
       {
-        new NVPair(ModelUnion.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
+        new NVPair(GraphUnion.class, new GraphResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr,
                                 Constraint constraint) throws Exception {
             Tuples lhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint);
+                resolveModelExpression(context, ((GraphOperation)modelExpr).getLHS(), constraint);
             Tuples rhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint);
+                resolveModelExpression(context, ((GraphOperation)modelExpr).getRHS(), constraint);
             try {
               return TuplesOperations.append(lhs, rhs);
             } finally {
@@ -110,13 +110,13 @@ class DefaultConstraintHandlers
             }
           }
         }),
-        new NVPair(ModelIntersection.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
+        new NVPair(GraphIntersection.class, new GraphResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr,
                                 Constraint constraint) throws Exception {
             Tuples lhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getLHS(), constraint);
+                resolveModelExpression(context, ((GraphOperation)modelExpr).getLHS(), constraint);
             Tuples rhs = ConstraintOperations.
-                resolveModelExpression(context, ((ModelOperation)modelExpr).getRHS(), constraint);
+                resolveModelExpression(context, ((GraphOperation)modelExpr).getRHS(), constraint);
             try {
               return TuplesOperations.join(lhs, rhs);
             } finally {
@@ -125,16 +125,16 @@ class DefaultConstraintHandlers
             }
           }
         }),
-        new NVPair(ModelResource.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
+        new NVPair(GraphResource.class, new GraphResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr,
                                 Constraint constraint) throws Exception {
-            return context.resolve((ModelResource)modelExpr, (Constraint)constraint);
+            return context.resolve((GraphResource)modelExpr, (Constraint)constraint);
           }
         }),
-        new NVPair(ModelVariable.class, new ModelResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr,
+        new NVPair(GraphVariable.class, new GraphResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr,
                                 Constraint constraint) throws Exception {
-            Variable modelVar = ((ModelVariable)modelExpr).getVariable();
+            Variable modelVar = ((GraphVariable)modelExpr).getVariable();
             if (constraint.getVariables().contains(modelVar)) {
               // need to change the re-write and wrap the result in a filter
               Variable newVar = new Variable("*" + modelVar.getName() + "0");
@@ -158,7 +158,7 @@ class DefaultConstraintHandlers
     ConstraintOperations.addConstraintResolutionHandlers(new NVPair[]
       {
         new NVPair(ConstraintConjunction.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             List l =
                 context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
             try {
@@ -172,7 +172,7 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(ConstraintDisjunction.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             List l =
                 context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
             try {
@@ -186,7 +186,7 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(ConstraintDifference.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             List args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
             assert args.size() == 2;
             try {
@@ -198,7 +198,7 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(ConstraintOptionalJoin.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             List<Tuples> args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
             assert args.size() == 2;
             try {
@@ -210,27 +210,27 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(ConstraintIs.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             ConstraintIs constraint = (ConstraintIs)constraintExpr;
             return TuplesOperations.assign((Variable)context.localize(constraint.getVariable()),
                                            ((LocalNode)context.localize(constraint.getValueNode())).getValue());
           }
         }),
         new NVPair(ConstraintImpl.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             ConstraintImpl constraint = (ConstraintImpl)constraintExpr;
             ConstraintElement constraintElem = constraint.getModel();
             assert constraintElem != null;
             if (constraintElem.equals(Variable.FROM)) {
               return ConstraintOperations.resolveModelExpression(context, modelExpr, constraint);
             } else if (constraintElem instanceof URIReference) {
-              return ConstraintOperations.resolveModelExpression(context, new ModelResource(((URIReference)constraintElem).getURI()), constraint);
+              return ConstraintOperations.resolveModelExpression(context, new GraphResource(((URIReference)constraintElem).getURI()), constraint);
             } else if (constraintElem instanceof LocalNode) {
               return context.resolve(null, constraint);
             } else if (constraintElem instanceof Variable) {
               for (int i = 0; i < 3; i++) {
                 if (constraintElem.equals(constraint.getElement(i))) {
-                  ModelVariable modelVar = new ModelVariable((Variable)constraintElem);
+                  GraphVariable modelVar = new GraphVariable((Variable)constraintElem);
                   return ConstraintOperations.resolveModelExpression(context, modelVar, constraint);
                 }
               }
@@ -242,12 +242,12 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(WalkConstraint.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             return WalkFunction.walk(context, (WalkConstraint)constraintExpr, modelExpr, context.getResolverSession());
           }
         }),
         new NVPair(SingleTransitiveConstraint.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             SingleTransitiveConstraint constraint = (SingleTransitiveConstraint)constraintExpr;
             if (constraint.isAnchored()) {
               return DirectTransitiveFunction.infer(context, constraint, modelExpr, context.getResolverSession());
@@ -257,12 +257,12 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(TransitiveConstraint.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             return ExhaustiveTransitiveFunction.infer(context, (TransitiveConstraint)constraintExpr, modelExpr, context.getResolverSession());
           }
         }),
         new NVPair(ConstraintFilter.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             Tuples unfiltered = ConstraintOperations.resolveConstraintExpression(context, modelExpr, ((ConstraintFilter)constraintExpr).getUnfilteredConstraint());
             try {
               return TuplesOperations.filter(unfiltered, ((ConstraintFilter)constraintExpr).getFilter(), context);
@@ -272,14 +272,14 @@ class DefaultConstraintHandlers
           }
         }),
         new NVPair(ConstraintIn.class, new ConstraintResolutionHandler() {
-          public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             ConstraintIn constraint = (ConstraintIn)constraintExpr;
-            ModelExpression graph;
+            GraphExpression graph;
             if (constraint.getGraph() instanceof URIReferenceImpl) {
-              graph = new ModelResource(((URIReferenceImpl)constraint.getGraph()).getURI());
+              graph = new GraphResource(((URIReferenceImpl)constraint.getGraph()).getURI());
             } else {
               assert constraint.getGraph() instanceof Variable;
-              graph = new ModelVariable((Variable)constraint.getGraph());
+              graph = new GraphVariable((Variable)constraint.getGraph());
             }
             return ConstraintOperations.resolveConstraintExpression(context, graph, constraint.getConstraintParam());
           }
@@ -358,7 +358,7 @@ class DefaultConstraintHandlers
   static void initializeConstraintModelRewrites() {
     ConstraintOperations.addConstraintModelRewrites(new NVPair[]
       {
-        new NVPair(ConstraintImpl.class, new ConstraintModelRewrite() {
+        new NVPair(ConstraintImpl.class, new ConstraintGraphRewrite() {
           public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception {
             return new ConstraintImpl(constraint.getElement(0), constraint.getElement(1), constraint.getElement(2), newModel);
           }

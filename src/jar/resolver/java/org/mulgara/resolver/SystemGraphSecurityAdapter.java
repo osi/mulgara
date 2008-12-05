@@ -51,7 +51,7 @@ import org.mulgara.store.nodepool.NodePool;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-class SystemModelSecurityAdapter extends NullSecurityAdapter
+class SystemGraphSecurityAdapter extends NullSecurityAdapter
 {
   /**
    * The preallocated node representing the system model.
@@ -63,7 +63,7 @@ class SystemModelSecurityAdapter extends NullSecurityAdapter
    *
    * @param systemModel  the preallocated node representing the system model
    */
-  SystemModelSecurityAdapter(long systemModel)
+  SystemGraphSecurityAdapter(long systemModel)
   {
     assert systemModel != NodePool.NONE;
 

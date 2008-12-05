@@ -120,7 +120,7 @@ public class JarResolver extends ContentResolver {
 
       // Check that our node is a URIReference
       throw new ResolverException(
-          "Model parameter " + globalModel + " isn't a URI reference");
+          "Graph parameter " + globalModel + " isn't a URI reference");
     }
 
     // Get the URI from the globalised node

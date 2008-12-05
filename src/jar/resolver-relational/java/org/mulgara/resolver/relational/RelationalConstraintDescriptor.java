@@ -50,7 +50,7 @@ import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintDescriptor;
 import org.mulgara.resolver.spi.ConstraintLocalization;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Constraint;
@@ -72,7 +72,7 @@ public class RelationalConstraintDescriptor implements ConstraintDescriptor, Con
 
 
   public Tuples resolve(QueryEvaluationContext queryContext,
-                        ModelExpression modelExpr,
+                        GraphExpression modelExpr,
                         ConstraintExpression constraintExpr) throws Exception {
     assert constraintExpr instanceof Constraint;
     return ConstraintOperations.resolveModelExpression(queryContext, modelExpr, (Constraint)constraintExpr);

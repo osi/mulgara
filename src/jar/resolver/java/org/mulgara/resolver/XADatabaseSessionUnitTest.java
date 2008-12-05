@@ -133,11 +133,11 @@ public class XADatabaseSessionUnitTest extends TestCase {
   };
 
 
-  protected static final ModelResource[] models;
+  protected static final GraphResource[] models;
   static {
-    models = new ModelResource[modelURIs.length];
+    models = new GraphResource[modelURIs.length];
     for (int i = 0; i < modelURIs.length; i++) {
-      models[i] = new ModelResource(modelURIs[i]);
+      models[i] = new GraphResource(modelURIs[i]);
     }
   };
 
@@ -582,7 +582,7 @@ public class XADatabaseSessionUnitTest extends TestCase {
       Session session = database.newSession();
       for (int i = 1; i < modelURIs.length; i++) {
         session.createModel(modelURIs[i], modelTypeURI);
-        session.setModel(modelURIs[i], new ModelResource(modelDataURIs[i]));
+        session.setModel(modelURIs[i], new GraphResource(modelDataURIs[i]));
       }
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded XA store model URI", e);

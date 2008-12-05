@@ -38,7 +38,7 @@ import java.net.*;
 import org.jrdf.graph.Triple;
 import org.mulgara.query.AskQuery;
 import org.mulgara.query.ConstructQuery;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.rules.InitializerException;
@@ -235,25 +235,25 @@ interface RemoteSession extends Remote {
    * Define the contents of a model.
    *
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    * @throws RemoteException EXCEPTION TO DO
    */
   public long setModel(URI uri,
-      ModelExpression modelExpression) throws QueryException, RemoteException;
+      GraphExpression graphExpression) throws QueryException, RemoteException;
 
   /**
    * Define the contents of a model via an inputstream.
    *
    * @param inputStream a remote inputstream
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
   public long setModel(InputStream inputStream, URI uri,
-                      ModelExpression modelExpression) throws QueryException,
+                      GraphExpression graphExpression) throws QueryException,
       RemoteException;
 
   /**

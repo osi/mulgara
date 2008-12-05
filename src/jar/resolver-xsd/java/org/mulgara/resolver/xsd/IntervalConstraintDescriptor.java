@@ -83,7 +83,7 @@ public class IntervalConstraintDescriptor implements ConstraintDescriptor {
    *   an {@link IntervalConstraint}
    */
   public Tuples resolve(QueryEvaluationContext queryEvaluationContext,
-                        ModelExpression        modelExpression,
+                        GraphExpression        graphExpression,
                         ConstraintExpression   constraintExpression)
     throws Exception {
 

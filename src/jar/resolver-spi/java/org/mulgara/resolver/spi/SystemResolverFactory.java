@@ -35,7 +35,7 @@ import org.jrdf.graph.URIReference;
 
 // Local packages
 import org.mulgara.query.Constraint;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.QueryException;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;

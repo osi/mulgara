@@ -136,7 +136,7 @@ public class MemoryResolver implements SystemResolver {
       throws ResolverFactoryException {
     // Validate "modelType" parameter
     if (modelTypeURI == null) {
-      throw new IllegalArgumentException("Model type can't be null");
+      throw new IllegalArgumentException("Graph type can't be null");
     }
 
     // Initialize fields

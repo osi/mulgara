@@ -145,7 +145,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
     }
     catch (TuplesException tuplesException) {
 
-      throw new GraphException("Failed to determine if Model contains Triple.",
+      throw new GraphException("Failed to determine if Graph contains Triple.",
           tuplesException);
     }
     finally {
@@ -186,7 +186,7 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
 
       Query query = new Query(
           Arrays.asList(vars),             // variable list
-          new ModelResource(modelURI),     // model expression
+          new GraphResource(modelURI),     // model expression
           constraint,                      // constraint expr
           null,                            // no having
           (List<Order>)Collections.EMPTY_LIST,          // no ordering

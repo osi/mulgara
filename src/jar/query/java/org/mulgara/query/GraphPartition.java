@@ -27,29 +27,32 @@
 
 package org.mulgara.query;
 
-import java.net.*;
-import java.util.*;
-import java.io.Serializable;
+
+// Third party packages
+import org.apache.log4j.Logger;
 
 /**
- * An expression whose leaves are the {@link URL}s of RDF models.
+ * A model expression composed of the union of two subexpressions.
  *
- * Currently this doesn't handle compound expressions, only simple models.
  *
- * @created 12/Aug/2001
+ * @created 2002-05-20
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
  * @version $Revision: 1.8 $
  *
- * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
+ * @modified $Date: 2005/01/05 04:58:20 $
  *
- * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
+ * @maintenanceAuthor $Author: newmana $
+ *
+ * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
+ *
+ * @copyright &copy; 2002-2004 <A href="http://www.PIsoftware.com/">Plugged In
+ *      Software Pty Ltd</A>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface ModelExpression extends Cloneable, Serializable {
+public class GraphPartition extends GraphOperation {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -57,27 +60,33 @@ public interface ModelExpression extends Cloneable, Serializable {
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  static final long serialVersionUID = -7760184436366431348L;
+  static final long serialVersionUID = 8660358035003409731L;
+
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(GraphPartition.class);
+
+  //
+  // Constructor
+  //
 
   /**
-   * Calculate the databases involved in this expression. Bear in mind that
-   * different models may reside on the same database. The idea of this function
-   * is to test for when only one database is involved, and we're able to
-   * transmit a query to that database for remove processing.
+   * Construct a model union.
    *
-   * @return a set containing the {@link URI}s of the databases
+   * @param lhs a non-<code>null</code> model expression
+   * @param rhs another non-<code>null</code> model expression
    */
-  public Set<URI> getDatabaseURIs();
+  public GraphPartition(GraphExpression lhs, GraphExpression rhs) {
+    super(lhs, rhs);
+  }
 
   /**
-   * Calculate the graphs involved in this expression.
+   * Legible representation
    *
-   * @return a set containing the {@link URI}s of the graphs
+   * @return RETURNED VALUE TO DO
    */
-  public Set<URI> getGraphURIs();
+  public String toString() {
 
-  /**
-   * Clones sets of models in the rhs and lhs objects.
-   */
-  public Object clone();
+    return "(" + getLHS() + " par " + getRHS() + ")";
+  }
 }

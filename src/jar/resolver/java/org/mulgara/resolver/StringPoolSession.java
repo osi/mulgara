@@ -610,7 +610,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     ) {
       URI uri = ((SPURI)spObject).getURI();
       if (!uri.isAbsolute()) {
-        // Model URIs are stored as a relative URI containing only a fragment.
+        // Graph URIs are stored as a relative URI containing only a fragment.
         // Relative URIs with both a query string and a fragment are also used
         // for views.
 

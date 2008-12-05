@@ -42,17 +42,17 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
-class ModelExistsOperation implements Operation
+class GraphExistsOperation implements Operation
 {
   /** Logger.  */
-  private static final Logger logger = Logger.getLogger(ModelExistsOperation.class.getName());
+  private static final Logger logger = Logger.getLogger(GraphExistsOperation.class.getName());
 
   private URI modelURI = null;
 
   private boolean result;
 
 
-  ModelExistsOperation(URI modelURI) {
+  GraphExistsOperation(URI modelURI) {
     this.modelURI = modelURI;
   }
 

@@ -24,40 +24,54 @@
  * Original Code Source Code for Your Modifications.]
  *
  */
-
-package org.mulgara.resolver.spi;
+package org.mulgara.store.exporter;
 
 // Java 2 standard packages
-import javax.transaction.xa.XAResource;
-import java.net.URI;
+import java.io.*;
 
 // Local packages
-import org.mulgara.query.Constraint;
-import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.QueryException;
+import org.jrdf.graph.GraphException;
+import org.jrdf.graph.Graph;
 
 /**
- * Used to constrain a given constraint to a specified model
+ * A Writer used to write a serialization for a Mulgara model.
  *
- * @created 2003-12-01
- * @author <a href="http://www.pisoftware.com/andrae">Andrae Muys</a>
- * @version $Revision: 1.9 $
- * @modified $Date: 2005/05/03 08:11:44 $ 
- * @maintenanceAuthor $Author: amuys $
- * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- * @copyright &copy;2003-2004 <a href="http://www.pisoftware.com/">Plugged In
+ * @created 2004-02-23
+ *
+ * @author <a href="mailto:pag@tucanatech.com">Paul Gearon</a>
+ *
+ * @version $Revision: 1.8 $
+ *
+ * @modified $Date: 2005/01/05 04:58:25 $
+ *
+ * @maintenanceAuthor $Author: newmana $
+ *
+ * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
+ *
+ * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
  *      Software Pty Ltd</a>
+ *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
+public interface GraphWriter {
 
-public interface ConstraintModelRewrite
-{
   /**
-   * Rewrite this constraintExpression to access the specified model
+   * Writes the contents of the JRDFGraph to a PrintWriter in RDF/XML format.
    *
-   * @param newModel  the model with which to constrain the constraint
-   * @param constraint the constraint to constrain
+   * @param graph JRDF Graph containing the Statements to be written.
+   * @param writer PrintWriter Where to write the statements.
+   * @throws GraphException
    */
-    public Constraint rewrite(ConstraintElement newModel,
-                              Constraint constraint) throws Exception;
+  public void write(Graph graph, PrintWriter writer) throws GraphException;
+
+  /**
+   * Writes the contents of the JRDFGraph to a PrintWriter in RDF/XML format
+   * with the encoding specified in the opening XML tag.
+   *
+   * @param graph JRDF Graph
+   * @param writer PrintWriter
+   * @throws GraphException
+   */
+  public void write(Graph graph, OutputStreamWriter writer) throws GraphException;
+
 }

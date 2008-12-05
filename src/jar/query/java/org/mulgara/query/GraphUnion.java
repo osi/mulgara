@@ -24,54 +24,58 @@
  * Original Code Source Code for Your Modifications.]
  *
  */
-package org.mulgara.store.exporter;
 
-// Java 2 standard packages
-import java.io.*;
-
-// Local packages
-import org.jrdf.graph.GraphException;
-import org.jrdf.graph.Graph;
+package org.mulgara.query;
 
 /**
- * A Writer used to write a serialization for a Mulgara model.
+ * A model expression composed of the union of two subexpressions.
  *
- * @created 2004-02-23
+ * @created 2001-08-12
  *
- * @author <a href="mailto:pag@tucanatech.com">Paul Gearon</a>
+ * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
  * @version $Revision: 1.8 $
  *
- * @modified $Date: 2005/01/05 04:58:25 $
+ * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
  *
  * @maintenanceAuthor $Author: newmana $
  *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
+ * @copyright &copy;2001-2004
+ *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface ModelWriter {
+public class GraphUnion extends GraphOperation {
 
   /**
-   * Writes the contents of the JRDFGraph to a PrintWriter in RDF/XML format.
-   *
-   * @param graph JRDF Graph containing the Statements to be written.
-   * @param writer PrintWriter Where to write the statements.
-   * @throws GraphException
+   * Allow newer compiled version of the stub to operate when changes
+   * have not occurred with the class.
+   * NOTE : update this serialVersionUID when a method or a public member is
+   * deleted.
    */
-  public void write(Graph graph, PrintWriter writer) throws GraphException;
+  static final long serialVersionUID = -2658255434397870185L;
+
+  //
+  // Constructor
+  //
 
   /**
-   * Writes the contents of the JRDFGraph to a PrintWriter in RDF/XML format
-   * with the encoding specified in the opening XML tag.
+   * Construct a model union.
    *
-   * @param graph JRDF Graph
-   * @param writer PrintWriter
-   * @throws GraphException
+   * @param lhs a non-<code>null</code> model expression
+   * @param rhs another non-<code>null</code> model expression
    */
-  public void write(Graph graph, OutputStreamWriter writer) throws GraphException;
+  public GraphUnion(GraphExpression lhs, GraphExpression rhs) {
+    super(lhs, rhs);
+  }
 
+  /**
+   * Legible representation
+   *
+   * @return RETURNED VALUE TO DO
+   */
+  public String toString() {
+
+    return "(" + getLHS() + " union " + getRHS() + ")";
+  }
 }

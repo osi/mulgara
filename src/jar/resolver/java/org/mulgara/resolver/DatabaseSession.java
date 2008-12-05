@@ -304,7 +304,7 @@ class DatabaseSession implements Session {
    * Used by Database *only* to bootstrap the system model on DB startup.
    */
   long bootstrapSystemModel(DatabaseMetadataImpl metadata) throws QueryException {
-    logger.debug("Bootstrapping System Model");
+    logger.debug("Bootstrapping System Graph");
     BootstrapOperation operation = new BootstrapOperation(metadata);
     execute(operation, "Failed to bootstrap system-model");
     systemResolverFactory.setDatabaseMetadata(metadata);
@@ -507,9 +507,9 @@ class DatabaseSession implements Session {
 
 
   public void createModel(URI modelURI, URI modelTypeURI) throws QueryException {
-    if (logger.isDebugEnabled()) logger.debug("Creating Model " + modelURI + " with type " + modelTypeURI);
+    if (logger.isDebugEnabled()) logger.debug("Creating Graph " + modelURI + " with type " + modelTypeURI);
 
-    execute(new CreateModelOperation(modelURI, modelTypeURI),
+    execute(new CreateGraphOperation(modelURI, modelTypeURI),
             "Could not commit creation of model " + modelURI + " of type " + modelTypeURI);
   }
 
@@ -527,12 +527,12 @@ class DatabaseSession implements Session {
     if (logger.isDebugEnabled()) logger.debug("REMOVE MODEL: " + modelURI);
     if (modelURI == null) throw new IllegalArgumentException("Null 'modelURI' parameter");
 
-    execute(new RemoveModelOperation(modelURI), "Unable to remove " + modelURI);
+    execute(new RemoveGraphOperation(modelURI), "Unable to remove " + modelURI);
   }
 
 
   public boolean modelExists(URI modelURI) throws QueryException {
-    ModelExistsOperation operation = new ModelExistsOperation(modelURI);
+    GraphExistsOperation operation = new GraphExistsOperation(modelURI);
     execute(operation, "Failed to determine model existence");
     return operation.getResult();
   }
@@ -541,12 +541,12 @@ class DatabaseSession implements Session {
   /**
    * Define the contents of a model.
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return RETURNED VALUE TO DO
    * @throws QueryException if the model can't be modified
    */
-  public synchronized long setModel(URI uri, ModelExpression modelExpression) throws QueryException {
-    return this.setModel(null, uri, modelExpression);
+  public synchronized long setModel(URI uri, GraphExpression graphExpression) throws QueryException {
+    return this.setModel(null, uri, graphExpression);
   }
 
 
@@ -554,34 +554,34 @@ class DatabaseSession implements Session {
    * Define the contents of a model via an inputstream
    * @param inputStream a remote inputstream
    * @param destinationModelURI the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return RETURNED VALUE TO DO
    * @throws QueryException if the model can't be modified
    */
   public synchronized long setModel(InputStream inputStream,
-      URI destinationModelURI, ModelExpression modelExpression) throws QueryException {
+      URI destinationModelURI, GraphExpression graphExpression) throws QueryException {
     if (logger.isDebugEnabled()) {
-      logger.debug("SET-MODEL " + destinationModelURI + " to " + modelExpression + " from " + inputStream);
+      logger.debug("SET-MODEL " + destinationModelURI + " to " + graphExpression + " from " + inputStream);
     }
 
     // Validate parameters
     if (destinationModelURI == null) {
       throw new IllegalArgumentException("Null 'destinationModelURI' parameter");
-    } else if (modelExpression == null) {
+    } else if (graphExpression == null) {
       throw new IllegalArgumentException("Null 'modelExpression' parameter");
     }
 
     // Convert the model expression into the source model URI
-    if (!(modelExpression instanceof ModelResource)) {
-      throw new QueryException("Unsupported model expression " + modelExpression + " (" + modelExpression.getClass() + ")");
+    if (!(graphExpression instanceof GraphResource)) {
+      throw new QueryException("Unsupported model expression " + graphExpression + " (" + graphExpression.getClass() + ")");
     }
-    assert modelExpression instanceof ModelResource;
+    assert graphExpression instanceof GraphResource;
 
-    URI sourceModelURI = ((ModelResource)modelExpression).getURI();
+    URI sourceModelURI = ((GraphResource)graphExpression).getURI();
     assert sourceModelURI != null;
 
     // Perform the operation
-    SetModelOperation op = new SetModelOperation(sourceModelURI, destinationModelURI,
+    SetGraphOperation op = new SetGraphOperation(sourceModelURI, destinationModelURI,
                                   inputStream, contentHandlers, this);
     // preExcecute is a rather ugly hack, get rid of it once we support re-entrant transactions.
     if (op.preExecute()) {
@@ -725,7 +725,7 @@ class DatabaseSession implements Session {
     if (logger.isDebugEnabled()) logger.debug("Modifying (ins:" + insert + ") : " + modelURI);
     if (logger.isTraceEnabled()) logger.trace("Modifying statements: " + statements);
 
-    execute(new ModifyModelOperation(modelURI, statements, insert), "Could not commit modify");
+    execute(new ModifyGraphOperation(modelURI, statements, insert), "Could not commit modify");
   }
 
 
@@ -734,7 +734,7 @@ class DatabaseSession implements Session {
       logger.debug((insert ? "INSERT" : "DELETE") + " QUERY: " + query + " into " + modelURI);
     }
 
-    execute(new ModifyModelOperation(modelURI, query, insert, this), "Unable to modify " + modelURI);
+    execute(new ModifyGraphOperation(modelURI, query, insert, this), "Unable to modify " + modelURI);
   }
 
 

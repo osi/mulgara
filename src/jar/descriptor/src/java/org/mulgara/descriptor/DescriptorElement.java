@@ -241,7 +241,7 @@ public class DescriptorElement {
 
         String errorString = "Could not find parameters for (" +
                                       descURL +
-            ") RDF is probably not loaded into the Descriptor Model";
+            ") RDF is probably not loaded into the Descriptor Graph";
         log.error(errorString);
         throw new DescriptorException(errorString);
       }

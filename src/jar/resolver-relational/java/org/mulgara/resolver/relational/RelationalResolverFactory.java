@@ -81,7 +81,7 @@ public class RelationalResolverFactory implements ResolverFactory {
   /** Node id for the relational model type */
   private long relationalModelTypeNode;
 
-  /** The URL associated with the Relational Model type.  */
+  /** The URL associated with the Relational Graph type.  */
   private static final URI modelTypeURI = URI.create(Mulgara.NAMESPACE + "RelationalModel");
 
 

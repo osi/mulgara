@@ -88,7 +88,7 @@ public class ReadOnlyLuceneResolver extends LuceneResolver {
   //
 
   /**
-   * Model creation is not allowed the via this read-only view.
+   * Graph creation is not allowed the via this read-only view.
    *
    * @throws ResolverException always
    */
@@ -98,7 +98,7 @@ public class ReadOnlyLuceneResolver extends LuceneResolver {
   }
 
   /**
-   * Model modification is not supported via this read-only view.
+   * Graph modification is not supported via this read-only view.
    *
    * @throws ResolverException always
    */
@@ -108,7 +108,7 @@ public class ReadOnlyLuceneResolver extends LuceneResolver {
   }
 
   /**
-   * Model deletion is not supported via this read-only view.
+   * Graph deletion is not supported via this read-only view.
    *
    * @throws ResolverException always
    */

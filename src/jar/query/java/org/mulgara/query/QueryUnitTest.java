@@ -101,7 +101,7 @@ public class QueryUnitTest extends TestCase {
   public void setUp() throws Exception {
     query = new Query(
         Arrays.asList(new SelectElement[] { new Variable("x") }), // variable list
-        new ModelResource(new URI("x:m")),      // model expression
+        new GraphResource(new URI("x:m")),      // model expression
         new ConstraintImpl(new Variable("x"),   // constraint expression
         new URIReferenceImpl(new URI("x:p")),
         new LiteralImpl("o")),
@@ -147,7 +147,7 @@ public class QueryUnitTest extends TestCase {
     // Compose test instances
     Query query2 = new Query(
         Arrays.asList(new SelectElement[] { new Variable("x") }), // variable list
-        new ModelResource(new URI("x:m")),      // model expression
+        new GraphResource(new URI("x:m")),      // model expression
         new ConstraintImpl(new Variable("x"),   // constraint expression
         new URIReferenceImpl(new URI("x:p")),
         new LiteralImpl("o")),

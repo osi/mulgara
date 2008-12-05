@@ -137,7 +137,7 @@ public class PropertiesTable extends JTable {
   }
 
   /**
-   * Returns the Model to be used to modify Table.
+   * Returns the Graph to be used to modify Table.
    * @return DefaultTableModel
    */
   private DefaultTableModel getTableModel() {

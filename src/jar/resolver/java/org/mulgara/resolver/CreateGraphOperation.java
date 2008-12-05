@@ -53,10 +53,10 @@ import org.mulgara.store.nodepool.NodePool;
  * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana  Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class CreateModelOperation implements Operation {
+class CreateGraphOperation implements Operation {
   /** Logger. This is named after the class. */
   @SuppressWarnings("unused")
-  private static final Logger logger = Logger.getLogger(CreateModelOperation.class.getName());
+  private static final Logger logger = Logger.getLogger(CreateGraphOperation.class.getName());
 
   /** The URI of the model to be created. */
   private final URI graphURI;
@@ -73,7 +73,7 @@ class CreateModelOperation implements Operation {
    *       <code>null</code> for the same type as the system graph (<code>#</code>)
    * @throws IllegalArgumentException if <var>graphURI</var> is <code>null</code>
    */
-  CreateModelOperation(URI graphURI, URI graphTypeURI) throws QueryException {
+  CreateGraphOperation(URI graphURI, URI graphTypeURI) throws QueryException {
     // Validate "graphURI" parameter
     if (graphURI == null) throw new IllegalArgumentException("Null \"graphURI\" parameter");
     if (!graphURI.isOpaque() && fragmentScheme(graphURI) && graphURI.getFragment() == null) {
@@ -225,7 +225,7 @@ class CreateModelOperation implements Operation {
 
     if (badModelURI) {
       throw new QueryException(
-          "Model URI is not relative to the database URI (graphURI:\"" +
+          "Graph URI is not relative to the database URI (graphURI:\"" +
           graphURI + "\", databaseURI:\"" + databaseURI + "\")"
       );
     }

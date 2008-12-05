@@ -31,11 +31,11 @@ package org.mulgara.content;
 import org.mulgara.content.Content;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerException;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.server.Session;
 
 /**
- * Interface for loading Content into a Model (ModelExpression). Similar to a
+ * Interface for loading Content into a Graph (GraphExpression). Similar to a
  * {@link ContentHandler} but is reponsible for inserting global statements
  * directly into the destination.
  *
@@ -61,15 +61,15 @@ import org.mulgara.server.Session;
 public interface ContentLoader extends ContentHandler {
   /**
    * Processes and Loads the content and inserts the statements into the
-   * ModelResource.
+   * GraphResource.
    *
    * @param content Content
-   * @param destination ModelResource
+   * @param destination GraphResource
    * @param session Session
    * @throws ContentHandlerException
    * @return long The number of statements loaded
    */
-  public long load(Content content, ModelResource destination,
+  public long load(Content content, GraphResource destination,
       Session session) throws ContentHandlerException;
 
 }

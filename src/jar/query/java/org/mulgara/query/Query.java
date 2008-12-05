@@ -82,7 +82,7 @@ public class Query implements Cloneable, Serializable, Command {
   private List<SelectElement> mutableVariableList;
 
   /** The model expression. It corresponds to the <code>from</code> clause. */
-  private ModelExpression modelExpression;
+  private GraphExpression graphExpression;
 
   /** The constraint expression.  It corresponds to the <code>where</code> clause. */
   private ConstraintExpression constraintExpression;
@@ -126,7 +126,7 @@ public class Query implements Cloneable, Serializable, Command {
    *     in the solution (i.e. columns of the result {@link Answer});
    *     <code>null</code> indicates that all columns are to be retained.
    *     This is a list of: Variable; ConstantValue; Count; Subquery.
-   * @param modelExpression an expression defining the model to query, never
+   * @param graphExpression an expression defining the model to query, never
    *     <code>null</code>
    * @param constraintExpression an expression defining the constraints to
    *     satisfy, never <code>null</code>
@@ -142,18 +142,18 @@ public class Query implements Cloneable, Serializable, Command {
    *     {@link UnconstrainedAnswer} for no constraints; never
    *     <code>null</code> is
    * @throws IllegalArgumentException if <var>limit</var> or <var>offset</var>
-   *     are negative, or if <var>modelExpression</var>,
+   *     are negative, or if <var>graphExpression</var>,
    *     <var>constraintExpression</var>, <var>orderList<var> or
    *     <var>answer</var> are <code>null</code>
    */
-  public Query(List<? extends SelectElement> variableList, ModelExpression modelExpression,
+  public Query(List<? extends SelectElement> variableList, GraphExpression graphExpression,
       ConstraintExpression constraintExpression,
       ConstraintHaving havingExpression, List<Order> orderList, Integer limit,
       int offset, Answer answer) {
 
     // Validate parameters
-    if (modelExpression == null) {
-      throw new IllegalArgumentException("Null \"modelExpression\" parameter");
+    if (graphExpression == null) {
+      throw new IllegalArgumentException("Null \"graphExpression\" parameter");
     } else if (constraintExpression == null) {
       throw new IllegalArgumentException("Null \"constraintExpression\" parameter");
     } else if ((limit != null) && (limit.intValue() < 0)) {
@@ -183,7 +183,7 @@ public class Query implements Cloneable, Serializable, Command {
     // Initialize fields
     this.mutableVariableList = (variableList == null) ? null : new ArrayList<SelectElement>(variableList);
     this.variableList = (variableList == null) ? null : Collections.unmodifiableList(mutableVariableList);
-    this.modelExpression = modelExpression;
+    this.graphExpression = graphExpression;
     this.constraintExpression = constraintExpression;
     this.havingConstraint = havingExpression;
     this.orderList = Collections.unmodifiableList(new ArrayList<Order>(orderList));
@@ -200,7 +200,7 @@ public class Query implements Cloneable, Serializable, Command {
   public Query(Query query, ConstraintExpression where) {
     this.mutableVariableList = query.mutableVariableList;
     this.variableList = query.variableList;
-    this.modelExpression = query.modelExpression;
+    this.graphExpression = query.graphExpression;
     this.constraintExpression = where;
     this.havingConstraint = query.havingConstraint;
     this.orderList = query.orderList;
@@ -251,7 +251,7 @@ public class Query implements Cloneable, Serializable, Command {
       }
       cloned.mutableVariableList = Collections.unmodifiableList(cloned.variableList);
     }
-    cloned.modelExpression = modelExpression;  // FIXME: should be cloned
+    cloned.graphExpression = graphExpression;  // FIXME: should be cloned
     cloned.answer = (Answer)answer.clone();
 
     // Copy immutable fields by reference
@@ -297,11 +297,11 @@ public class Query implements Cloneable, Serializable, Command {
 
 
   /**
-   * Accessor for the <code>modelExpression</code> property.
-   * @return a {@link ModelExpression}, or <code>null</code> to indicate the empty model
+   * Accessor for the <code>graphExpression</code> property.
+   * @return a {@link GraphExpression}, or <code>null</code> to indicate the empty model
    */
-  public ModelExpression getModelExpression() {
-    return modelExpression;
+  public GraphExpression getModelExpression() {
+    return graphExpression;
   }
 
 
@@ -364,10 +364,10 @@ public class Query implements Cloneable, Serializable, Command {
     // Check the variableList field
     if (!variableList.equals(query.variableList)) return false;
 
-    // Check the modelExpression field
-    if ((modelExpression == null) ?
-        (query.modelExpression != null) :
-        (!modelExpression.equals(query.modelExpression))) {
+    // Check the graphExpression field
+    if ((graphExpression == null) ?
+        (query.graphExpression != null) :
+        (!graphExpression.equals(query.graphExpression))) {
       return false;
     }
 
@@ -450,7 +450,7 @@ public class Query implements Cloneable, Serializable, Command {
     }
 
     // FROM
-    buffer.append("FROM ").append(modelExpression);
+    buffer.append("FROM ").append(graphExpression);
 
     // WHERE
     buffer.append(" WHERE ").append(constraintExpression);

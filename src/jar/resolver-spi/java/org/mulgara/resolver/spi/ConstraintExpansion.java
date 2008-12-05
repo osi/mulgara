@@ -33,7 +33,7 @@ import java.net.URI;
 
 // Local packages
 import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.QueryException;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
@@ -53,6 +53,6 @@ import org.mulgara.store.tuples.Tuples;
 public interface ConstraintExpansion
 {
     public Tuples expand(QueryEvaluationContext queryContext,
-                         ModelExpression modelExpr,
+                         GraphExpression modelExpr,
                          ConstraintExpression constraintExpr) throws Exception;
 }

@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 
 // JRDF
 import org.jrdf.graph.*;
+import org.jrdf.graph.Graph;
 import org.jrdf.util.ClosableIterator;
 
 // Locally written packages
@@ -45,7 +46,7 @@ import org.mulgara.server.*;
 
 /**
  * A {@link org.jrdf.graph.Graph} contained within this database. Represents a
- * Model/Resolver via an URI and a Session.
+ * Graph/Resolver via an URI and a Session.
  *
  * @created 2004-10-12
  *
@@ -78,7 +79,7 @@ public class JRDFGraph implements Graph {
   private LocalJRDFSession session = null;
 
   /**
-   * Model URI.
+   * Graph URI.
    */
   private URI graphURI = null;
 

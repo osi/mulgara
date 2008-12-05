@@ -129,13 +129,13 @@ public class XSDResolver implements Resolver {
   }
 
   /**
-   * @param modelResource  a model identified in the <code>FROM</code> clause
+   * @param graphResource  a model identified in the <code>FROM</code> clause
    * @return <code>true</code> only if this resource is the unique XML Schema
    *   model
    * @throws QueryException always, because it's not implemented
    * @deprecated XSDResolver.canResolve is not implemented
    */
-  public boolean canResolve(ModelResource modelResource) throws QueryException {
+  public boolean canResolve(GraphResource graphResource) throws QueryException {
 
     throw new QueryException(getClass() + ".canResolve not implemented");
   }

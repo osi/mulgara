@@ -100,7 +100,7 @@ public abstract class ExhaustiveTransitiveFunction extends TransitiveFunction {
    *      from various query resolutions.
    */
   public static Tuples infer(QueryEvaluationContext query, SingleTransitiveConstraint constraint,
-      ModelExpression modelExpression, ResolverSession session)
+      GraphExpression graphExpression, ResolverSession session)
       throws QueryException, TuplesException {
 
     if (logger.isDebugEnabled()) {
@@ -130,7 +130,7 @@ public abstract class ExhaustiveTransitiveFunction extends TransitiveFunction {
       Constraint predConstraint = constraint.getTransConstraint();
 
       // ask for all statements for this predicate
-      initialTuples = query.resolve(modelExpression, predConstraint);
+      initialTuples = query.resolve(graphExpression, predConstraint);
 
       // prepare to iterate through anchor, or set of all predicate statements
       initialTuples.beforeFirst();
@@ -248,7 +248,7 @@ public abstract class ExhaustiveTransitiveFunction extends TransitiveFunction {
    *      from various query resolutions.
    */
   public static Tuples infer(QueryEvaluationContext query, TransitiveConstraint constraint,
-      ModelExpression modelExpression, ResolverSession session)
+      GraphExpression graphExpression, ResolverSession session)
       throws QueryException, TuplesException {
 
     if (logger.isDebugEnabled()) {
@@ -304,7 +304,7 @@ public abstract class ExhaustiveTransitiveFunction extends TransitiveFunction {
 
       // Walk down the graph getting all the statements for the given predicate
       initialTuples = WalkFunction.walk(query, walkConstraint,
-          modelExpression, session);
+          graphExpression, session);
 
       // prepare to iterate through anchor, or set of all predicate statements
       initialTuples.beforeFirst();

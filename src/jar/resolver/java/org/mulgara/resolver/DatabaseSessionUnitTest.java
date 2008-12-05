@@ -87,22 +87,22 @@ public class DatabaseSessionUnitTest extends TestCase {
 
   private TestDef test;
 
-  protected static final ModelResource[] models;
+  protected static final GraphResource[] models;
   static {
     try {
-      models = new ModelResource[] {
-        new ModelResource(new URI("local:database#")),
-        new ModelResource(new File("data/test-model1.rdf").toURI()),
-        new ModelResource(new File("data/test-model2.rdf").toURI()),
-        new ModelResource(new File("data/test-model3.rdf").toURI()),
-        new ModelResource(new File("data/test-model4.rdf").toURI()),
-        new ModelResource(new File("data/test-model5.rdf").toURI()),
-        new ModelResource(new File("data/test-model6.rdf").toURI()),
-        new ModelResource(new File("data/test-model7.rdf").toURI()),
-        new ModelResource(new File("data/test-model8.rdf").toURI()),
-        new ModelResource(new File("data/test-model9.rdf").toURI()),
-        new ModelResource(new File("data/test-model10.rdf").toURI()),
-        new ModelResource(new File("data/test-model11.rdf").toURI()),
+      models = new GraphResource[] {
+        new GraphResource(new URI("local:database#")),
+        new GraphResource(new File("data/test-model1.rdf").toURI()),
+        new GraphResource(new File("data/test-model2.rdf").toURI()),
+        new GraphResource(new File("data/test-model3.rdf").toURI()),
+        new GraphResource(new File("data/test-model4.rdf").toURI()),
+        new GraphResource(new File("data/test-model5.rdf").toURI()),
+        new GraphResource(new File("data/test-model6.rdf").toURI()),
+        new GraphResource(new File("data/test-model7.rdf").toURI()),
+        new GraphResource(new File("data/test-model8.rdf").toURI()),
+        new GraphResource(new File("data/test-model9.rdf").toURI()),
+        new GraphResource(new File("data/test-model10.rdf").toURI()),
+        new GraphResource(new File("data/test-model11.rdf").toURI()),
       };
     } catch (URISyntaxException eu) {
       throw new IllegalArgumentException("Initialising ModelResources");

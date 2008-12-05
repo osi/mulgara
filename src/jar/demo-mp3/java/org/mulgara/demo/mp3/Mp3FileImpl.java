@@ -77,10 +77,10 @@ public class Mp3FileImpl implements Mp3File {
   /** Used to execute iTQL queries */
   private ItqlInterpreterBean bean = null;
 
-  /** Model where the Mp3 metadata is stored */
+  /** Graph where the Mp3 metadata is stored */
   private Mp3Model model = null;
 
-  /** Model where schema information is stored */
+  /** Graph where schema information is stored */
   private SchemaModel schemaModel = null;
 
   /** Used to determine if this Mp3 is ready first use. */

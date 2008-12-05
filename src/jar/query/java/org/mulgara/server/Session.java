@@ -41,7 +41,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.AskQuery;
 import org.mulgara.query.ConstructQuery;
 import org.mulgara.query.GraphAnswer;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.Mulgara;
@@ -278,14 +278,14 @@ public interface Session {
   public boolean modelExists(URI uri) throws QueryException;
 
   /**
-   * Define the contents of a model via a {@link ModelExpression}
+   * Define the contents of a model via a {@link GraphExpression}
    *
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
-  public long setModel(URI uri, ModelExpression modelExpression)
+  public long setModel(URI uri, GraphExpression graphExpression)
     throws QueryException;
 
   /**
@@ -293,12 +293,12 @@ public interface Session {
    *
    * @param inputStream a remote inputstream
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
   public long setModel(InputStream inputStream, URI uri,
-      ModelExpression modelExpression) throws QueryException;
+      GraphExpression graphExpression) throws QueryException;
 
   /**
    * Extract {@link Rules} from the data found in a model.

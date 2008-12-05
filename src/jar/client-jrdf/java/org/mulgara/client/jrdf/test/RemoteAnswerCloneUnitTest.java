@@ -27,18 +27,15 @@
 
 package org.mulgara.client.jrdf.test;
 
-import java.io.*;
 
 import org.jrdf.graph.*;
-import org.jrdf.vocabulary.*;
+import org.jrdf.graph.Graph;
 
 // Third party packages
 import junit.framework.*;
 import java.net.*;
 import java.util.*;
-import org.jrdf.graph.mem.*;
 import org.mulgara.client.jrdf.*;
-import org.mulgara.jrdf.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.TripleImpl;
@@ -109,11 +106,11 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
   public Graph newGraph() throws Exception {
 
     //reset graph
-    this.dropModel(this.modelURI);
-    this.createModel(this.modelURI);
+    dropModel(modelURI);
+    createModel(modelURI);
 
     //create and return graph
-    return AbstractGraphFactory.createGraph(this.serverURI, this.modelURI);
+    return AbstractGraphFactory.createGraph(serverURI, modelURI);
   }
 
   /**
@@ -151,40 +148,40 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
     try {
 
       //test answer with entire graph
-      Answer answer = this.session.find(this.modelURI, null, null, null);
-      this.testClone(answer);
+      Answer answer = session.find(modelURI, null, null, null);
+      testClone(answer);
 
       //test constrained answers
-      Answer constrainedS = this.session.find(this.modelURI, this.reference1,
+      Answer constrainedS = session.find(modelURI, reference1,
           null, null);
-      this.testClone(constrainedS);
+      testClone(constrainedS);
 
-      Answer constrainedP = this.session.find(this.modelURI, null,
-          this.reference1, null);
-      this.testClone(constrainedP);
+      Answer constrainedP = session.find(modelURI, null,
+          reference1, null);
+      testClone(constrainedP);
 
-      Triple constrainedTripleO = new TripleImpl(null, null, this.reference1);
-      Answer constrainedO = this.session.find(this.modelURI,
+      Triple constrainedTripleO = new TripleImpl(null, null, reference1);
+      Answer constrainedO = session.find(modelURI,
           constrainedTripleO.getSubject(), constrainedTripleO.getPredicate(),
           constrainedTripleO.getObject());
-      this.testClone(constrainedO);
+      testClone(constrainedO);
 
-      Answer constrainedSP = this.session.find(this.modelURI, this.reference1,
-          this.reference1, null);
-      this.testClone(constrainedSP);
+      Answer constrainedSP = session.find(modelURI, reference1,
+          reference1, null);
+      testClone(constrainedSP);
 
-      Answer constrainedPO = this.session.find(this.modelURI, null,
-          this.reference1, this.reference1);
-      this.testClone(constrainedPO);
+      Answer constrainedPO = session.find(modelURI, null,
+          reference1, reference1);
+      testClone(constrainedPO);
 
-      Answer constrainedOS = this.session.find(this.modelURI, this.reference1,
-          null, this.reference1);
-      this.testClone(constrainedOS);
+      Answer constrainedOS = session.find(modelURI, reference1,
+          null, reference1);
+      testClone(constrainedOS);
 
       //test unconstrained answer
-      Answer unconstrained = this.session.find(this.modelURI, this.reference1,
-          this.reference1, this.reference1);
-      this.testClone(unconstrained);
+      Answer unconstrained = session.find(modelURI, reference1,
+          reference1, reference1);
+      testClone(unconstrained);
     } catch (Exception exception) {
 
       exception.printStackTrace();
@@ -244,38 +241,38 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
     try {
 
       //test answer with entire graph
-      Answer answer = this.session.find(this.modelURI, null, null, null);
-      this.testCloneOfClones(answer);
+      Answer answer = session.find(modelURI, null, null, null);
+      testCloneOfClones(answer);
 
       //test constrained answers
-      Answer constrainedS = this.session.find(this.modelURI, this.reference1,
+      Answer constrainedS = session.find(modelURI, reference1,
           null, null);
-      this.testCloneOfClones(constrainedS);
+      testCloneOfClones(constrainedS);
 
-      Answer constrainedP = this.session.find(this.modelURI, null,
-          this.reference1, null);
-      this.testCloneOfClones(constrainedP);
+      Answer constrainedP = session.find(modelURI, null,
+          reference1, null);
+      testCloneOfClones(constrainedP);
 
-      Answer constrainedO = this.session.find(this.modelURI, null, null,
-          this.reference1);
-      this.testCloneOfClones(constrainedO);
+      Answer constrainedO = session.find(modelURI, null, null,
+          reference1);
+      testCloneOfClones(constrainedO);
 
-      Answer constrainedSP = this.session.find(this.modelURI, this.reference1,
-          this.reference1, null);
-      this.testCloneOfClones(constrainedSP);
+      Answer constrainedSP = session.find(modelURI, reference1,
+          reference1, null);
+      testCloneOfClones(constrainedSP);
 
-      Answer constrainedPO = this.session.find(this.modelURI, null,
-          this.reference1, this.reference1);
-      this.testCloneOfClones(constrainedPO);
+      Answer constrainedPO = session.find(modelURI, null,
+          reference1, reference1);
+      testCloneOfClones(constrainedPO);
 
-      Answer constrainedOS = this.session.find(this.modelURI, this.reference1,
-          null, this.reference1);
-      this.testCloneOfClones(constrainedOS);
+      Answer constrainedOS = session.find(modelURI, reference1,
+          null, reference1);
+      testCloneOfClones(constrainedOS);
 
       //test unconstrained answer
-      Answer unconstrained = this.session.find(this.modelURI, this.reference1,
-          this.reference1, this.reference1);
-      this.testCloneOfClones(unconstrained);
+      Answer unconstrained = session.find(modelURI, reference1,
+          reference1, reference1);
+      testCloneOfClones(unconstrained);
     } catch (Exception exception) {
 
       exception.printStackTrace();
@@ -297,10 +294,10 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
     Answer answerCloneCloneClone = (Answer) answerCloneClone.clone();
 
     //test each level (also closes)
-    this.testClone(original);
-    this.testClone(answerClone);
-    this.testClone(answerCloneClone);
-    this.testClone(answerCloneCloneClone);
+    testClone(original);
+    testClone(answerClone);
+    testClone(answerCloneClone);
+    testClone(answerCloneCloneClone);
   }
 
   /**
@@ -310,7 +307,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
    */
   private void populate() throws Exception {
 
-    Set triples = new HashSet();
+    Set<Triple> triples = new HashSet<Triple>();
 
     //create triples that can be searched for
     triples.add(new TripleImpl(reference1, reference1, literal));
@@ -342,7 +339,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
     }
 
     //insert
-    this.session.insert(this.modelURI, triples);
+    session.insert(modelURI, triples);
 
   }
 
@@ -359,35 +356,31 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
     try {
 
       String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-      this.serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
-      this.modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
+      serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
+      modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
 
       //get session
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(
-          this.serverURI, true);
-      this.session = (JRDFSession) sessionFactory.newJRDFSession();
+          serverURI, true);
+      session = (JRDFSession) sessionFactory.newJRDFSession();
 
       //create test triples
-      this.reference1 = new URIReferenceImpl(new URI("http://mulgara.org/mulgara#testReference"));
-      this.reference2 = new URIReferenceImpl(new URI("http://mulgara.org/mulgara#testReference2"));
-      this.literal = new LiteralImpl("test Literal");
+      reference1 = new URIReferenceImpl(new URI("http://mulgara.org/mulgara#testReference"));
+      reference2 = new URIReferenceImpl(new URI("http://mulgara.org/mulgara#testReference2"));
+      literal = new LiteralImpl("test Literal");
 
       //initialize model
-      this.createModel(this.modelURI);
-      this.populate();
+      createModel(modelURI);
+      populate();
 
       //let superclass set up too
       super.setUp();
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
 
       //try to tear down first
       try {
-
         tearDown();
-      }
-      finally {
-
+      } catch (Throwable t) {
         throw exception;
       }
     }
@@ -400,7 +393,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
    */
   public void tearDown() throws Exception {
 
-    this.dropModel(this.modelURI);
+    dropModel(modelURI);
 
     //allow super to close down too
     super.tearDown();
@@ -414,7 +407,7 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
    */
   private void createModel(URI modelURI) throws Exception {
 
-    this.session.createModel(modelURI, new URI("http://mulgara.org/mulgara#Model"));
+    session.createModel(modelURI, new URI("http://mulgara.org/mulgara#Model"));
   }
 
   /**
@@ -425,6 +418,6 @@ public class RemoteAnswerCloneUnitTest extends TestCase {
    */
   private void dropModel(URI modelURI) throws Exception {
 
-    this.session.removeModel(modelURI);
+    session.removeModel(modelURI);
   }
 }

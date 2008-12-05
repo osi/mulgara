@@ -30,7 +30,7 @@ package org.mulgara.resolver.spi;
 import java.net.URI;
 
 /**
- * A {@link Resolver} that is currently hosting the System Model.
+ * A {@link Resolver} that is currently hosting the System Graph.
  *
  * @created 2004-03-28
  * @author <a href="http://staff.pisoftware.com/andrae">Andrae Muys</a>

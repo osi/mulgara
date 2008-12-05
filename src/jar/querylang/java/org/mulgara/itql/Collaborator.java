@@ -785,7 +785,7 @@ public class Collaborator {
     }
 
     if (initialized == false) {
-      // Model has not been initialized
+      // Graph has not been initialized
       initialized = createModel();
     } else {
       log.debug("Collaborator model already initialized at " + SERVER + MODEL);

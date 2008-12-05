@@ -111,7 +111,7 @@ public class SessionGraphProxy implements RemoteGraphProxy {
 
     if (modelURI == null) {
 
-      throw new GraphException("Model URI cannot be null.");
+      throw new GraphException("Graph URI cannot be null.");
     }
 
     //initialize members

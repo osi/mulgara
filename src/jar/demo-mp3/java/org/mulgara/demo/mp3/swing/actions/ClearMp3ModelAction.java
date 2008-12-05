@@ -86,7 +86,7 @@ public class ClearMp3ModelAction extends AbstractMp3Action {
       Mp3Controller controller = getMp3Controller();
       Mp3Model mp3Model = controller.getMp3Model();
       if (confirmClear(mp3Model.getResource())) {
-        getStatusPanel().startProcessing("Clearing Mp3 Model...");
+        getStatusPanel().startProcessing("Clearing Mp3 Graph...");
         mp3Model.clear();
         //underlying model/data has changed
         getSearchPanel().constraintsHaveChanged();
@@ -95,7 +95,7 @@ public class ClearMp3ModelAction extends AbstractMp3Action {
     }
     catch (Exception exception) {
       getStatusPanel().stopProcessingError("Error(s) occurred while clearing " +
-          "Mp3 Model");
+          "Mp3 Graph");
       ExceptionHandler.handleException(exception);
     }
   }
@@ -109,7 +109,7 @@ public class ClearMp3ModelAction extends AbstractMp3Action {
    */
   private boolean confirmClear(URIReference model) {
     String message = "Are you sure you want to delete all statements from " +
-        NEWLINE + "the following Model: " + NEWLINE +  model + "?";
+        NEWLINE + "the following Graph: " + NEWLINE +  model + "?";
     int decision = JOptionPane.showConfirmDialog(super.getSearchPanel(), message,
         "Confirm Clear Mp3 Metadata", JOptionPane.YES_NO_OPTION);
     //was 'Yes' chosen

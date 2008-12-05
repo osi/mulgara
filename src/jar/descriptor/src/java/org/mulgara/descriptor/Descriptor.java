@@ -295,9 +295,9 @@ public class Descriptor {
 
 
   /**
-   * Get the descriptor Model URI
+   * Get the descriptor Graph URI
    *
-   * @return the Descriptor Model URI as a string;
+   * @return the Descriptor Graph URI as a string;
    */
    public static String getModelURIString() {
     return ServerInfo.getServerURI() + "#" + DEFAULT_DESCRIPTOR_MODEL;
@@ -935,12 +935,12 @@ public class Descriptor {
 
       if (log.isDebugEnabled()) {
 
-        log.debug("Using descriptor Model URI is : " + descriptorModelURI);
+        log.debug("Using descriptor Graph URI is : " + descriptorModelURI);
       }
     }
     catch (URISyntaxException use) {
 
-      throw new DescriptorException("Descriptor Model URI: " +
+      throw new DescriptorException("Descriptor Graph URI: " +
           descriptorModelString +
           " is not a valid URI", use);
     }

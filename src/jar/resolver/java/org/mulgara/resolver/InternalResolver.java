@@ -234,7 +234,7 @@ class InternalResolver implements Resolver, ViewMarker
         if (resolution.next()) {
           long modelType = resolution.getColumnValue(
                              resolution.getColumnIndex(modelTypeVariable));
-          if (resolution.next()) {           throw new ResolverException("Model " + model + " has more than one type!");
+          if (resolution.next()) {           throw new ResolverException("Graph " + model + " has more than one type!");
           }
 
           return modelType;

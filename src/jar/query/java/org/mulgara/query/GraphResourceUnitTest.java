@@ -37,7 +37,7 @@ import junit.framework.*;
 import org.apache.log4j.Logger;
 
 /**
- * Tests the functionality of ModelResource.
+ * Tests the functionality of GraphResource.
  *
  * @created 2004-04-15
  *
@@ -54,19 +54,19 @@ import org.apache.log4j.Logger;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelResourceUnitTest extends TestCase {
+public class GraphResourceUnitTest extends TestCase {
 
   /**
    * Logger.
    */
-  private static final Logger logger = Logger.getLogger(ModelResourceUnitTest.class);
+  private static final Logger logger = Logger.getLogger(GraphResourceUnitTest.class);
 
   /**
    * Construct a new unit test.
    *
    * @param name the name of the test
    */
-  public ModelResourceUnitTest(String name) {
+  public GraphResourceUnitTest(String name) {
 
     super(name);
   }
@@ -79,8 +79,8 @@ public class ModelResourceUnitTest extends TestCase {
   public static Test suite() {
 
     TestSuite suite = new TestSuite();
-    suite.addTest(new ModelResourceUnitTest("testEquals"));
-    suite.addTest(new ModelResourceUnitTest("testClone"));
+    suite.addTest(new GraphResourceUnitTest("testEquals"));
+    suite.addTest(new GraphResourceUnitTest("testClone"));
     return suite;
   }
 
@@ -105,11 +105,11 @@ public class ModelResourceUnitTest extends TestCase {
 
     try {
 
-      ModelResource res1 = new ModelResource(new URI("rmi://foo/server1#_"));
-      ModelResource res2 = new ModelResource(new URI("rmi://foo/server1#"));
-      ModelResource res3 = new ModelResource(new URI("rmi://foo/server1#"));
+      GraphResource res1 = new GraphResource(new URI("rmi://foo/server1#_"));
+      GraphResource res2 = new GraphResource(new URI("rmi://foo/server1#"));
+      GraphResource res3 = new GraphResource(new URI("rmi://foo/server1#"));
 
-      assertEquals("Two ModelResource with the same RMI protcol should " +
+      assertEquals("Two GraphResource with the same RMI protcol should " +
           "resolve to the same server", res1.getDatabaseURIs(),
           res2.getDatabaseURIs());
 
@@ -131,8 +131,8 @@ public class ModelResourceUnitTest extends TestCase {
 
     try {
 
-      ModelResource res1 = new ModelResource(new URI("rmi://foo/server1#_"));
-      ModelResource res2 = (ModelResource) res1.clone();
+      GraphResource res1 = new GraphResource(new URI("rmi://foo/server1#_"));
+      GraphResource res2 = (GraphResource) res1.clone();
 
       assertNotSame("Resources should be different instances", res1, res2);
       assertTrue("Resources should be equal", res1.equals(res2));

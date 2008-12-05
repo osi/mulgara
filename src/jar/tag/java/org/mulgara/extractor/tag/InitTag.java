@@ -295,7 +295,7 @@ public class InitTag extends TagSupport {
 
       if (model == null) {
 
-        throw new JspTagException("init: Model URI cannot be null");
+        throw new JspTagException("init: Graph URI cannot be null");
       }
 
       // end if

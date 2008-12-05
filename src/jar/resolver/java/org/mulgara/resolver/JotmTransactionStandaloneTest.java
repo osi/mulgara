@@ -194,7 +194,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
 
       try {
         try {
-          session.setModel(modelURI, new ModelResource(fileURI));
+          session.setModel(modelURI, new GraphResource(fileURI));
         } finally {
           session.close();
         }
@@ -224,7 +224,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
       txManager.getTransaction().enlistResource(session.getXAResource());
 
       try {
-        session.setModel(modelURI, new ModelResource(fileURI));
+        session.setModel(modelURI, new GraphResource(fileURI));
         txManager.commit();
       } finally {
         session.close();
@@ -500,7 +500,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -517,7 +517,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
               new URIReferenceImpl(new URI("test:p03")),
               objectVariable),
@@ -583,7 +583,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -600,7 +600,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
               new URIReferenceImpl(new URI("test:p03")),
               objectVariable),
@@ -684,7 +684,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
 
         // Perform update
         rwResource.start(xid3, XAResource.TMNOFLAGS);
-        session.setModel(model3URI, new ModelResource(fileURI));
+        session.setModel(model3URI, new GraphResource(fileURI));
         rwResource.end(xid3, XAResource.TMSUSPEND);
 
         // Check uncommitted change not visible
@@ -789,7 +789,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
 
           // Perform update
           rwResource.start(xid2, XAResource.TMNOFLAGS);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
           rwResource.end(xid2, XAResource.TMSUSPEND);
 
           // Check uncommitted change not visible
@@ -848,7 +848,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
 
           // Perform update with autocommit off
           session1.setAutoCommit(false);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
 
           // Check uncommitted change not visible
           roResource.start(xid2, XAResource.TMNOFLAGS);
@@ -936,7 +936,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         resource1.commit(new TestXid(1), true);
 
         resource1.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1036,7 +1036,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         resource1.commit(new TestXid(1), true);
 
         resource1.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1131,7 +1131,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         session1.createModel(model3URI, null);
 
         session1.setAutoCommit(false);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1241,7 +1241,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         resource1.commit(new TestXid(1), true);
 
         resource1.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1337,7 +1337,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         session1.createModel(model3URI, null);
 
         session1.setAutoCommit(false);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1446,7 +1446,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         rwResource.commit(new TestXid(1), true);
 
         rwResource.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session.setModel(model3URI, new ModelResource(fileURI));
+        session.setModel(model3URI, new GraphResource(fileURI));
         rwResource.end(new TestXid(2), XAResource.TMSUSPEND);
 
         roResource.start(new TestXid(3), XAResource.TMNOFLAGS);
@@ -1518,7 +1518,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
 
     return new Query(
       selectList,                                       // SELECT
-      new ModelResource(model),                         // FROM
+      new GraphResource(model),                         // FROM
       new ConstraintImpl(subjectVariable,               // WHERE
                      predicateVariable,
                      objectVariable),

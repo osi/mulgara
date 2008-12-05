@@ -391,7 +391,7 @@ public class TqlSession {
 				history.setMaxSize(50);
 				reader.setBellEnabled(false);
 				reader.setDebug(new PrintWriter(new FileWriter("writer.debug", true)));
-				reader.addCompletor(new ModelNameCompletor(prefetchModels(getModelHost())));
+				reader.addCompletor(new GraphNameCompletor(prefetchModels(getModelHost())));
 
 				String line;
 				PrintWriter out = new PrintWriter(System.out);

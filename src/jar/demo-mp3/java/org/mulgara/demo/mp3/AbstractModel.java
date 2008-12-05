@@ -54,7 +54,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import java.net.URLEncoder;
 
 /**
- * Base class for Model.
+ * Base class for Graph.
  *
  * @created 2004-12-03
  *
@@ -93,13 +93,13 @@ public abstract class AbstractModel implements Model {
   /** Used to perform queries */
   private ItqlInterpreterBean bean = null;
 
-  /** The Resource that the Model represents */
+  /** The Resource that the Graph represents */
   private URIReference resource = null;
 
-  /** Used to determine if the Model has been initialized */
+  /** Used to determine if the Graph has been initialized */
   private boolean initialized = false;
 
-  /** Type of the Model */
+  /** Type of the Graph */
   private URIReference type = null;
 
   /**
@@ -140,7 +140,7 @@ public abstract class AbstractModel implements Model {
   }
 
   /**
-   * Sets the Model's type.
+   * Sets the Graph's type.
    * @param model URIReference
    */
   public void setType(URIReference type) {
@@ -148,7 +148,7 @@ public abstract class AbstractModel implements Model {
   }
 
   /**
-   * Returns the Resource URI that represents the Model's type.
+   * Returns the Resource URI that represents the Graph's type.
    * @return URIReference
    */
   public URIReference getType() {
@@ -178,7 +178,7 @@ public abstract class AbstractModel implements Model {
   }
 
   /**
-   * Creates the Model with the specified type, or the default Model type if
+   * Creates the Graph with the specified type, or the default Graph type if
    * 'type' null.
    *
    * @param type URIReference
@@ -187,7 +187,7 @@ public abstract class AbstractModel implements Model {
   public void create() throws QueryException {
     checkInitialized();
     try {
-      String typeURI = (type == null) ? Mulgara.NAMESPACE + "Model" :
+      String typeURI = (type == null) ? Mulgara.NAMESPACE + "Graph" :
           type.getURI().toString();
       getBean().executeUpdate("create <" + getResource().getURI() + "> " +
           "<" + typeURI + "> ;");
@@ -214,7 +214,7 @@ public abstract class AbstractModel implements Model {
   }
 
   /**
-   * Drops the Model and then re-creates it.
+   * Drops the Graph and then re-creates it.
    *
    * @throws QueryException
    */
@@ -291,7 +291,7 @@ public abstract class AbstractModel implements Model {
   }
 
   /**
-   * Throw an Exception if the Model has not been initialized.
+   * Throw an Exception if the Graph has not been initialized.
    * @throws IllegalStateException
    */
   protected void checkInitialized() throws IllegalStateException {
@@ -300,7 +300,7 @@ public abstract class AbstractModel implements Model {
         initialized = true;
       }
       else {
-        throw new IllegalStateException("Model has not been Initialized.");
+        throw new IllegalStateException("Graph has not been Initialized.");
       }
     }
   }

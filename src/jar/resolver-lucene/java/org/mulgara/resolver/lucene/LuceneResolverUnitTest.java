@@ -40,7 +40,7 @@ import org.mulgara.itql.TqlInterpreter;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ConstraintConjunction;
 import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.Query;
 import org.mulgara.query.Variable;
 import org.mulgara.query.operation.Modification;
@@ -175,7 +175,7 @@ public class LuceneResolverUnitTest extends TestCase {
         session.removeModel(modelURI);
       }
       session.createModel(modelURI, luceneModelType);
-      session.setModel(modelURI, new ModelResource(fileURI));
+      session.setModel(modelURI, new GraphResource(fileURI));
 
       // Run the queries
       try {

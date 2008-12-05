@@ -41,7 +41,7 @@ import edu.emory.mathcs.util.remote.io.*;
 
 // Locally written packages
 import org.mulgara.query.Answer;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 

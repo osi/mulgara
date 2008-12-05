@@ -92,7 +92,7 @@ public abstract class DirectTransitiveFunction extends TransitiveFunction {
    * @param constraint a constraint describing a transitive predicate with a
    *      supported model type fourth element of the constraint is not a Variable
    *      or is a Variable with the name _from.
-   * @param modelExpression the ModelExpression to resolve the constraint against.
+   * @param graphExpression the GraphExpression to resolve the constraint against.
    * @param session the resolverSession against which to localize nodes.
    * @return the answer satisfying the <var>constraint</var>
    * @throws QueryException if the <var>constraint</var> has a model of an
@@ -101,7 +101,7 @@ public abstract class DirectTransitiveFunction extends TransitiveFunction {
    *      from various query resolutions.
    */
   public static Tuples infer(QueryEvaluationContext query, SingleTransitiveConstraint constraint,
-                             ModelExpression modelExpression, ResolverSession session)
+                             GraphExpression graphExpression, ResolverSession session)
       throws QueryException, TuplesException {
     if (logger.isDebugEnabled()) {
       logger.debug("Transitive Constraint is anchored");
@@ -129,7 +129,7 @@ public abstract class DirectTransitiveFunction extends TransitiveFunction {
     Constraint predConstraint = constraint.getTransConstraint();
 
     // ask for all statements for this predicate
-    Tuples initialTuples = query.resolve(modelExpression, predConstraint);
+    Tuples initialTuples = query.resolve(graphExpression, predConstraint);
 
     // prepare to iterate through anchor
     initialTuples.beforeFirst();
@@ -188,7 +188,7 @@ public abstract class DirectTransitiveFunction extends TransitiveFunction {
     }
 
     // find *all* statements with the given predicate
-    Tuples predTuples = query.resolve(modelExpression, openConstraint);
+    Tuples predTuples = query.resolve(graphExpression, openConstraint);
 
     // set up the final result [$x] built from [$x predicate anchor] or [anchor predicate $x]
     LiteralTuples inferredResult = new LiteralTuples(new Variable[] {variable});

@@ -49,7 +49,7 @@ import org.apache.log4j.*;
 // locally written packages
 import org.mulgara.query.Answer;
 import org.mulgara.query.ConstraintConjunction;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -135,7 +135,7 @@ public class TestResolverUnitTest extends TestCase {
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
-      new ModelResource(systemModelURI),                                        // FROM
+      new GraphResource(systemModelURI),                                        // FROM
       new TestConstraint(new Variable("a"), new Variable("b"), "test:a", ""),   // WHERE
       null,                                                                     // HAVING
       Arrays.asList(new Order[]
@@ -182,7 +182,7 @@ public class TestResolverUnitTest extends TestCase {
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
-      new ModelResource(systemModelURI),                                        // FROM
+      new GraphResource(systemModelURI),                                        // FROM
       new TestConstraint(new Variable("a"), new Variable("c"), "test:b", ""),   // WHERE
       null,                                                                     // HAVING
       Arrays.asList(new Order[]
@@ -227,7 +227,7 @@ public class TestResolverUnitTest extends TestCase {
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
-      new ModelResource(systemModelURI),                                        // FROM
+      new GraphResource(systemModelURI),                                        // FROM
       new ConstraintConjunction( 																								// WHERE
 				new TestConstraint(new Variable("a"), new Variable("c"), "test:b", ""),
 				new TestConstraint(new Variable("a"), new Variable("b"), "test:a", "")),
@@ -278,7 +278,7 @@ public class TestResolverUnitTest extends TestCase {
 
     Answer answer = session.query(new Query(
       variables,                                                                // SELECT
-      new ModelResource(systemModelURI),                                        // FROM
+      new GraphResource(systemModelURI),                                        // FROM
       new ConstraintConjunction( 																								// WHERE
 				new TestConstraint(new Variable("a"), new Variable("c"), "test:b", "a"),
 				new TestConstraint(new Variable("a"), new Variable("b"), "test:a", "")),
@@ -330,7 +330,7 @@ public class TestResolverUnitTest extends TestCase {
 		try {
 			session.query(new Query(
 				variables,                                                                // SELECT
-				new ModelResource(systemModelURI),                                        // FROM
+				new GraphResource(systemModelURI),                                        // FROM
 				new ConstraintConjunction( 																								// WHERE
 					new TestConstraint(new Variable("a"), new Variable("c"), "test:b", "b"), // non-prefix variable causes failure
 					new TestConstraint(new Variable("a"), new Variable("b"), "test:a", "")),

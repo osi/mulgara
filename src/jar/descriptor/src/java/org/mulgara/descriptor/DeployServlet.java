@@ -449,7 +449,7 @@ public class DeployServlet extends HttpServlet {
     if (clearLocalDescriptors) {
 
       query.append(
-          "# create,drop,create avoids Model not found exceptions" + eol);
+          "# create,drop,create avoids Graph not found exceptions" + eol);
       query.append("create <" + modelURIString + ">;" + eol);
       query.append("drop <" + modelURIString + ">;" + eol);
       query.append("create <" + modelURIString + ">;" + eol);

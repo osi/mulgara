@@ -75,7 +75,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
     /** Listener used to notify caller of events */
     private Mp3ModelListener listener = null;
 
-    /** Model where Schema information is stored */
+    /** Graph where Schema information is stored */
     private SchemaModel schemaModel = null;
 
     /**
@@ -119,7 +119,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
     }
 
     /**
-     * Sets the Model used to store Schema Information.
+     * Sets the Graph used to store Schema Information.
      * 
      * @param schemaModel
      *            SchemaModel
@@ -134,7 +134,7 @@ public class Mp3ModelImpl extends AbstractModel implements Mp3Model {
     }
 
     /**
-     * Returns the Model used to store Schema Information.
+     * Returns the Graph used to store Schema Information.
      * 
      * @return SchemaModel
      */

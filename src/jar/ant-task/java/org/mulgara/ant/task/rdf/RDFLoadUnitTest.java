@@ -278,7 +278,7 @@ public class RDFLoadUnitTest extends TestCase {
     answer.beforeFirst();
 
     if (answer.isUnconstrained() || !answer.next()) {
-      fail("Model was not created!");
+      fail("Graph was not created!");
     }
     assertEquals("Query should not return multiple answers", list.size(), 1);
     answer.close();
@@ -297,7 +297,7 @@ public class RDFLoadUnitTest extends TestCase {
     answer.beforeFirst();
 
     if (answer.next()) {
-      fail("Model was not dropped!");
+      fail("Graph was not dropped!");
     }
     assertEquals("Query should not return multiple answers", list.size(), 1);
     answer.close();
@@ -307,7 +307,7 @@ public class RDFLoadUnitTest extends TestCase {
 
     try {
       load.createModel();
-      fail("Model creation should have failed");
+      fail("Graph creation should have failed");
     } catch (BuildException be) {
     }
 
@@ -317,7 +317,7 @@ public class RDFLoadUnitTest extends TestCase {
     try {
       load.interpreter = null;
       load.execute();
-      fail("Model creation should have failed");
+      fail("Graph creation should have failed");
     } catch (BuildException be) {
     }
   }

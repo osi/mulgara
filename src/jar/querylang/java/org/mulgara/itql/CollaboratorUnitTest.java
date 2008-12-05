@@ -161,7 +161,7 @@ public class CollaboratorUnitTest extends TestCase {
       assertTrue("Failed to create collaborator model", collaborator.createModel());
     } catch (SOAPException ex) {
       ex.printStackTrace();
-      fail("Model tests failed " + ex.getMessage());
+      fail("Graph tests failed " + ex.getMessage());
     }
   }
 

@@ -34,13 +34,13 @@ public class AskQuery extends Query {
   /**
    * Creates an ASK query.
    * @param variableList The variables in the result to check for.
-   * @param modelExpression The source of the data to query.
+   * @param graphExpression The source of the data to query.
    * @param constraintExpression The WHERE clause to test.
    */
   @SuppressWarnings("unchecked")
-  public AskQuery(List<? extends SelectElement> variableList, ModelExpression modelExpression,
+  public AskQuery(List<? extends SelectElement> variableList, GraphExpression graphExpression,
         ConstraintExpression constraintExpression) {
-    super(variableList, modelExpression, constraintExpression,
+    super(variableList, graphExpression, constraintExpression,
         null, // no having
         (List<Order>)Collections.EMPTY_LIST, // no ordering
         null, // no limit

@@ -16,11 +16,11 @@ import java.util.List;
 
 import jline.Completor;
 
-public class ModelNameCompletor implements Completor {
+public class GraphNameCompletor implements Completor {
 	
 	private List<String> modelNames;
 	
-	public ModelNameCompletor(List<String> modelNames) {
+	public GraphNameCompletor(List<String> modelNames) {
 		this.modelNames = modelNames;
 	}
 

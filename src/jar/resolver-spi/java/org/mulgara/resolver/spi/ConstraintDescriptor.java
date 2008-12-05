@@ -54,7 +54,7 @@ import org.mulgara.query.Constraint;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface ConstraintDescriptor extends ConstraintResolutionHandler, ConstraintModelRewrite {
+public interface ConstraintDescriptor extends ConstraintResolutionHandler, ConstraintGraphRewrite {
 
   public Class<? extends Constraint> getConstraintClass();
 
@@ -62,6 +62,6 @@ public interface ConstraintDescriptor extends ConstraintResolutionHandler, Const
   // methods imported from the super-interfaces.
   /*
   public Constraint rewrite(ConstraintElement newModel, Constraint constraint) throws Exception;
-  public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception;
+  public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception;
   */
 }

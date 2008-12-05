@@ -55,14 +55,14 @@ public class TestDef {
   public String name;
   public String[] resolvers;
   public List<Variable> selectList;
-  public ModelExpression model;
+  public GraphExpression model;
   public ConstraintExpression query;
   public List<List<Object>> results;
   public String errorString;
 
   @SuppressWarnings("unchecked")
   public TestDef(String name, String[] resolvers, TestQuery query,
-                 ModelExpression model, List results, String errorString) {
+                 GraphExpression model, List results, String errorString) {
     this.name = name;
     this.resolvers = resolvers;
     this.model = model;
@@ -85,9 +85,9 @@ public class TestDef {
 
   static public class Parser {
     private ConstraintElement[] elements;
-    private ModelResource[] models;
+    private GraphResource[] models;
 
-    public Parser(ConstraintElement[] elements, ModelResource[] models) {
+    public Parser(ConstraintElement[] elements, GraphResource[] models) {
       this.elements = elements;
       this.models = models;
     }
@@ -113,7 +113,7 @@ public class TestDef {
     }
 
 
-    private ModelExpression parseModel(StringTokenizer tokenizer) {
+    private GraphExpression parseModel(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
 
       if ("(".equals(token)) {
@@ -126,34 +126,34 @@ public class TestDef {
     }
 
 
-    private ModelOperation parseModelOperation(StringTokenizer tokenizer) {
+    private GraphOperation parseModelOperation(StringTokenizer tokenizer) {
       String token = getToken(tokenizer);
-      ModelExpression lhs = parseModel(tokenizer);
-      ModelExpression rhs = parseModel(tokenizer);
+      GraphExpression lhs = parseModel(tokenizer);
+      GraphExpression rhs = parseModel(tokenizer);
       String terminator = getToken(tokenizer);
       if (!")".equals(terminator)) {
-        throw new IllegalArgumentException("Unterminated ModelOperation " + terminator);
+        throw new IllegalArgumentException("Unterminated GraphOperation " + terminator);
       }
       if ("union".equals(token)) {
-        return new ModelUnion(lhs, rhs);
+        return new GraphUnion(lhs, rhs);
       }
       if ("intersect".equals(token)) {
-        return new ModelIntersection(lhs, rhs);
+        return new GraphIntersection(lhs, rhs);
       }
-      throw new IllegalArgumentException("Unknown ModelOperation " + token);
+      throw new IllegalArgumentException("Unknown GraphOperation " + token);
     }
 
 
-    private ModelResource parseModelResource(String token) {
+    private GraphResource parseModelResource(String token) {
       try {
         int index = Integer.parseInt(token.substring(1));
         if (index > models.length) {
-          throw new IllegalArgumentException("Invalid ModelResource index " + index);
+          throw new IllegalArgumentException("Invalid GraphResource index " + index);
         }
 
         return models[index];
       } catch (NumberFormatException en) {
-        throw new IllegalArgumentException("Invalid ModelResource descriptor" + token);
+        throw new IllegalArgumentException("Invalid GraphResource descriptor" + token);
       }
     }
 

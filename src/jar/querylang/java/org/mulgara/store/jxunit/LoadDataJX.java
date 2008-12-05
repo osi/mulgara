@@ -65,7 +65,7 @@ public class LoadDataJX implements JXTestStep {
   /** Parameter name of the results of the load operation */
   public final static String LOAD_RESULT = "loadResult";
 
-  /** Parameter name of the "Clear Model" command */
+  /** Parameter name of the "Clear Graph" command */
   public final static String CLEAR = "clearModel";
 
   /**

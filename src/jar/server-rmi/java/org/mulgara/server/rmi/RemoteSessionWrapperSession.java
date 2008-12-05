@@ -46,7 +46,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.AskQuery;
 import org.mulgara.query.ConstructQuery;
 import org.mulgara.query.GraphAnswer;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.rules.RulesRef;
@@ -133,19 +133,19 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    * Sets the contents of a model, via a model expression.
    *
    * @param uri The name of the model to set.
-   * @param modelExpression The expression describing the data to put in the model.
+   * @param graphExpression The expression describing the data to put in the model.
    * @return The number of statements inserted into the model.
    * @throws QueryException An error getting data for the model, or inserting into the new model.
    */
-  public long setModel(URI uri, ModelExpression modelExpression) throws QueryException {
+  public long setModel(URI uri, GraphExpression graphExpression) throws QueryException {
 
     try {
-      long r = remoteSession.setModel(uri, modelExpression);
+      long r = remoteSession.setModel(uri, graphExpression);
       resetRetries();
       return r;
     } catch (RemoteException e) {
       testRetry(e);
-      return setModel(uri, modelExpression);
+      return setModel(uri, graphExpression);
     }
   }
 
@@ -155,20 +155,20 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    *
    * @param inputStream a remote inputstream
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
-  public long setModel(InputStream inputStream, URI uri, ModelExpression modelExpression) throws QueryException {
+  public long setModel(InputStream inputStream, URI uri, GraphExpression graphExpression) throws QueryException {
 
     try {
 
-      long r = remoteSession.setModel(inputStream, uri, modelExpression);
+      long r = remoteSession.setModel(inputStream, uri, graphExpression);
       resetRetries();
       return r;
     } catch (RemoteException e) {
       testRetry(e);
-      return setModel(inputStream, uri, modelExpression);
+      return setModel(inputStream, uri, graphExpression);
     }
   }
 

@@ -111,7 +111,7 @@ public class HttpResolver extends ContentResolver {
 
     if (!(globalModel instanceof URIReference)) {
       // Check that our node is a URIReference
-      throw new ResolverException("Model parameter " + globalModel + " isn't a URI reference");
+      throw new ResolverException("Graph parameter " + globalModel + " isn't a URI reference");
     }
 
     // Get the URI from the globalised node

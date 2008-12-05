@@ -44,7 +44,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.ArrayAnswer;
 import org.mulgara.query.AskQuery;
 import org.mulgara.query.ConstructQuery;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -93,17 +93,17 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
   }
 
   /**
-   * Sets the Model attribute of the SessionWrapperRemoteSession object
+   * Sets the Graph attribute of the SessionWrapperRemoteSession object
    *
-   * @param uri The new Model value
-   * @param modelExpression The new Model value
+   * @param uri The new Graph value
+   * @param graphExpression The new Graph value
    * @return RETURNED VALUE TO DO
    * @throws QueryException EXCEPTION TO DO
    * @throws RemoteException EXCEPTION TO DO
    */
-  public long setModel(URI uri, ModelExpression modelExpression) throws QueryException, RemoteException {
+  public long setModel(URI uri, GraphExpression graphExpression) throws QueryException, RemoteException {
     try {
-      return session.setModel(uri, modelExpression);
+      return session.setModel(uri, graphExpression);
     } catch (Throwable t) {
       throw convertToQueryException(t);
     }
@@ -114,13 +114,13 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    *
    * @param inputStream a remote inputstream
    * @param uri the {@link URI} of the model to be redefined
-   * @param modelExpression the new content for the model
+   * @param graphExpression the new content for the model
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
-  public long setModel(InputStream inputStream, URI uri, ModelExpression modelExpression) throws QueryException {
+  public long setModel(InputStream inputStream, URI uri, GraphExpression graphExpression) throws QueryException {
     try {
-      return session.setModel(inputStream, uri, modelExpression);
+      return session.setModel(inputStream, uri, graphExpression);
     } catch (Throwable t) {
       throw convertToQueryException(t);
     }

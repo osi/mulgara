@@ -112,14 +112,14 @@ public class ConstraintFalse implements ConstraintExpression {
   /**
    * METHOD TO DO
    *
-   * @param modelExpression PARAMETER TO DO
+   * @param graphExpression PARAMETER TO DO
    * @param transformation PARAMETER TO DO
    * @param modelProperty PARAMETER TO DO
    * @param systemModel PARAMETER TO DO
    * @param variableFactory PARAMETER TO DO
    * @return RETURNED VALUE TO DO
    */
-  public ConstraintExpression from(ModelExpression modelExpression,
+  public ConstraintExpression from(GraphExpression graphExpression,
       Transformation transformation, Value modelProperty, Value systemModel,
       VariableFactory variableFactory) {
     return this;

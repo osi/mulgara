@@ -25,34 +25,35 @@
  *
  */
 
-package org.mulgara.resolver.spi;
-
-// Java 2 standard packages
-import javax.transaction.xa.XAResource;
-import java.net.URI;
-
-// Local packages
-import org.mulgara.query.Constraint;
-import org.mulgara.query.ModelExpression;
-import org.mulgara.query.QueryException;
-import org.mulgara.resolver.spi.QueryEvaluationContext;
-import org.mulgara.store.tuples.Tuples;
+package org.mulgara.query;
 
 /**
- * @created 2003-12-01
- * @author <a href="http://www.pisoftware.com/andrae">Andrae Muys</a>
- * @version $Revision: 1.1 $
- * @modified $Date: 2005/04/17 03:00:40 $ 
- * @maintenanceAuthor $Author: pgearon $
- * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- * @copyright &copy;2003-2004 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
+ * A simple model expression involving a set of RDF statements.
+ *
+ * @created 2001-10-02
+ *
+ * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
+ *
+ * @version $Revision: 1.8 $
+ *
+ * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
+ *
+ * @maintenanceAuthor $Author: newmana $
+ *
+ * @copyright &copy;2001-2003
+ *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
+ *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
+public interface Graph extends GraphExpression {
 
-public interface ModelResolutionHandler
-{
-    public Tuples resolve(QueryEvaluationContext queryContext,
-                         ModelExpression modelExpr,
-                         Constraint constraint) throws Exception;
+  /**
+   * Allow newer compiled version of the stub to operate when changes
+   * have not occurred with the class.
+   * NOTE : update this serialVersionUID when a method or a public member is
+   * deleted.
+   */
+  static final long serialVersionUID = -4054403807442867450L;
+
+  // no additional specification
 }

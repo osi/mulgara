@@ -44,9 +44,9 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.resolver.spi.ConstraintDescriptor;
-import org.mulgara.resolver.spi.ConstraintModelRewrite;
+import org.mulgara.resolver.spi.ConstraintGraphRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
@@ -70,7 +70,7 @@ class PrimitiveConstraintDescriptor implements ConstraintDescriptor {
 
   private Class<? extends Constraint> constraintClass;
   private ConstraintResolutionHandler resolutionHandler;
-  private ConstraintModelRewrite rewriteHandler;
+  private ConstraintGraphRewrite rewriteHandler;
 
   /**
    * @param constraintClass  the class of the constraint described
@@ -81,7 +81,7 @@ class PrimitiveConstraintDescriptor implements ConstraintDescriptor {
    * @throws IllegalArgumentException if <var>constraintClass</var> is <code>null</code>
    */
   PrimitiveConstraintDescriptor(Class<? extends Constraint> constraintClass,
-        ConstraintResolutionHandler resolutionHandler, ConstraintModelRewrite rewriteHandler) {
+        ConstraintResolutionHandler resolutionHandler, ConstraintGraphRewrite rewriteHandler) {
 
     // Validate parameters
     if (!ConstraintExpression.class.isAssignableFrom(constraintClass)) {
@@ -107,7 +107,7 @@ class PrimitiveConstraintDescriptor implements ConstraintDescriptor {
   }
 
 
-  public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+  public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
     if (rewriteHandler == null) {
       throw new IllegalStateException("Attempt to resolve model for " + constraintClass + " no handler registered");
     }

@@ -63,7 +63,7 @@ import org.mulgara.resolver.spi.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class ModifyModelOperation implements Operation
+class ModifyGraphOperation implements Operation
 {
   /**
    * Logger.
@@ -71,7 +71,7 @@ class ModifyModelOperation implements Operation
    * This is named after the class.
    */
   private static final Logger logger =
-    Logger.getLogger(ModifyModelOperation.class.getName());
+    Logger.getLogger(ModifyGraphOperation.class.getName());
 
   /**
    * The URI of the model to be removed.
@@ -111,7 +111,7 @@ class ModifyModelOperation implements Operation
    * @throws IllegalArgumentException if <var>modelURI</var> or
    *   <var>tripleSet</var> are <code>null</code>
    */
-  ModifyModelOperation(URI modelURI, Set<? extends Triple> tripleSet, boolean insert)
+  ModifyGraphOperation(URI modelURI, Set<? extends Triple> tripleSet, boolean insert)
   {
     // Validate "modelURI" parameter
     if (modelURI == null) {
@@ -143,7 +143,7 @@ class ModifyModelOperation implements Operation
    * @throws QueryException if <var>query</var> doesn't have exactly three
    *   variables in its <code>SELECT</code> clause
    */
-  ModifyModelOperation(URI modelURI, Query query, boolean insert,
+  ModifyGraphOperation(URI modelURI, Query query, boolean insert,
                        DatabaseSession databaseSession)
     throws QueryException
   {

@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelResource implements Model {
+public class GraphResource implements Graph {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -65,7 +65,7 @@ public class ModelResource implements Model {
 
   /** Logger. This is named after the class. */
   @SuppressWarnings("unused")
-  private final static Logger logger = Logger.getLogger(ModelResource.class.getName());
+  private final static Logger logger = Logger.getLogger(GraphResource.class.getName());
 
   /** The {@link URI} of the RDF model. */
   private URI uri;
@@ -80,7 +80,7 @@ public class ModelResource implements Model {
    * @param uri the {@link URI} of the model to query
    * @throws IllegalArgumentException if <var>url</var> is <code>null</code>
    */
-  public ModelResource(URI uri) {
+  public GraphResource(URI uri) {
 
     // Validate "uri" parameter
     if (uri == null) {
@@ -93,7 +93,7 @@ public class ModelResource implements Model {
   }
 
   //
-  // Methods implementing ModelExpression
+  // Methods implementing GraphExpression
   //
 
   /**
@@ -126,7 +126,7 @@ public class ModelResource implements Model {
 
   }
 
-  /** @see org.mulgara.query.ModelExpression#getGraphURIs() */
+  /** @see org.mulgara.query.GraphExpression#getGraphURIs() */
   public Set<URI> getGraphURIs() {
     return Collections.singleton(uri);
   }
@@ -164,10 +164,10 @@ public class ModelResource implements Model {
   //
 
   /**
-   * Return true if the URIs of a ModelResource are equal.
+   * Return true if the URIs of a GraphResource are equal.
    *
-   * @param object ModelResource to test equality.
-   * @return true if the URIs of a ModelResource are equal.
+   * @param object GraphResource to test equality.
+   * @return true if the URIs of a GraphResource are equal.
    */
   public boolean equals(Object object) {
 
@@ -178,7 +178,7 @@ public class ModelResource implements Model {
 
     try {
 
-      ModelResource tmpModelResource = (ModelResource) object;
+      GraphResource tmpModelResource = (GraphResource) object;
       return getURI().equals(tmpModelResource.getURI());
     }
     catch (ClassCastException cce) {
@@ -206,13 +206,13 @@ public class ModelResource implements Model {
 
     try {
 
-      ModelResource cloned = (ModelResource) super.clone();
+      GraphResource cloned = (GraphResource) super.clone();
       cloned.uri = getURI();
       return cloned;
     }
     catch (CloneNotSupportedException e) {
 
-      throw new RuntimeException("ModelResource not cloneable");
+      throw new RuntimeException("GraphResource not cloneable");
     }
   }
 

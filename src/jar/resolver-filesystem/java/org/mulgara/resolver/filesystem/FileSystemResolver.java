@@ -127,7 +127,7 @@ public class FileSystemResolver implements Resolver {
     // Validate "modelType" parameter
     if (modelTypeURI == null) {
 
-      throw new IllegalArgumentException("Model type can't be null");
+      throw new IllegalArgumentException("Graph type can't be null");
     }
 
     // Store the global variable values
@@ -359,7 +359,7 @@ public class FileSystemResolver implements Resolver {
           definitionURI(model)));
     } catch (LocalizeException localiseException) {
 
-      throw new QueryException("Model " + model +
+      throw new QueryException("Graph " + model +
                                " did not exist in FileSystem" +
                                " expansion", localiseException);
     } catch (ResolverException resolverException) {

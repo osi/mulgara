@@ -203,7 +203,7 @@ public class Database implements SessionFactory
   /**
    * The set of {@link SecurityAdapter} instances.
    *
-   * This will always contain the {@link SystemModelSecurityAdapter} which
+   * This will always contain the {@link SystemGraphSecurityAdapter} which
    * safeguards the system model (<code>#</code>).  It will additionally
    * contain any additional adapters registered via the
    * {@link #addSecurityAdapter} method.
@@ -233,7 +233,7 @@ public class Database implements SessionFactory
     Collections.unmodifiableList(symbolicTransformationList);
 
   /**
-   * Model type to use to cache of external models.
+   * Graph type to use to cache of external models.
    */
   private final URI temporaryModelTypeURI;
 
@@ -811,7 +811,7 @@ public class Database implements SessionFactory
 
     // Add the mandatory security adapter that protects the system model
     securityAdapterList.add(
-      new SystemModelSecurityAdapter(metadata.getSystemModelNode())
+      new SystemGraphSecurityAdapter(metadata.getSystemModelNode())
     );
 
     addSymbolicTransformation(new DuplicateVariableTransformer());
@@ -1062,7 +1062,7 @@ public class Database implements SessionFactory
       // check if the other resolver factory is actually the current one
       InternalResolverFactory rf = internalResolverFactoryMap.get(modelTypeURI);
       if (!rf.resolverFactory.getClass().equals(resolverFactory.getClass())) {
-        throw new InitializerException("Model type " + modelTypeURI + " is already registered to " + rf.resolverFactory);
+        throw new InitializerException("Graph type " + modelTypeURI + " is already registered to " + rf.resolverFactory);
       } else {
         // already registered
         return;
@@ -1250,7 +1250,7 @@ public class Database implements SessionFactory
           transactionManager,
           transactionManagerFactory,
           Collections.singletonList(
-            (SecurityAdapter)new SystemModelSecurityAdapter(metadata.getSystemModelNode())
+            (SecurityAdapter)new SystemGraphSecurityAdapter(metadata.getSystemModelNode())
           ),
           unmodifiableSymbolicTransformationList,
           spSessionFactory,
@@ -1281,7 +1281,7 @@ public class Database implements SessionFactory
           transactionManager,
           transactionManagerFactory,
           Collections.singletonList(
-            new SystemModelSecurityAdapter(metadata.getSystemModelNode())
+            new SystemGraphSecurityAdapter(metadata.getSystemModelNode())
           ),
           unmodifiableSymbolicTransformationList,
           jrdfSessionFactory,

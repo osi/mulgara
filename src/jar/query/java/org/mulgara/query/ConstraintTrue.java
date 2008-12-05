@@ -110,14 +110,14 @@ public class ConstraintTrue implements ConstraintExpression {
   /**
    * Converts an expression to be made against a new source. In this case, nothing need change.
    *
-   * @param modelExpression ignored
+   * @param graphExpression ignored
    * @param transformation ignored
    * @param modelProperty ignored
    * @param systemModel ignored
    * @param variableFactory ignored
    * @return The current constraint.
    */
-  public ConstraintExpression from(ModelExpression modelExpression,
+  public ConstraintExpression from(GraphExpression graphExpression,
       Transformation transformation, Value modelProperty, Value systemModel,
       VariableFactory variableFactory) {
     return this;

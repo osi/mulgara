@@ -93,7 +93,7 @@ public abstract class WalkFunction {
    * @param predConstraint a constraint describing a predicate to traverse with
    *     a supported model type fourth element of the constraint is not a Variable
    *     or is a Variable with the name _from.
-   * @param modelExpression  the Graph to resolve the constraint against if the
+   * @param graphExpression  the Graph to resolve the constraint against if the
    *     fourth element of the constraint is a Variable with the name _from.
    * @return the answer satisfying the <var>constraint</var>
    * @throws QueryException if the <var>constraint</var> has a model of an
@@ -102,7 +102,7 @@ public abstract class WalkFunction {
    *     from various query resolutions.
    */
   public static Tuples walk(QueryEvaluationContext query, WalkConstraint predConstraint,
-      ModelExpression modelExpression, ResolverSession session)
+      GraphExpression graphExpression, ResolverSession session)
       throws QueryException, TuplesException {
 
     if (logger.isDebugEnabled()) {
@@ -149,7 +149,7 @@ public abstract class WalkFunction {
     try {
 
       // ask for all statements for this predicate
-      initialTuples = query.resolve(modelExpression, predConstraint.getAnchoredConstraint());
+      initialTuples = query.resolve(graphExpression, predConstraint.getAnchoredConstraint());
 
       // prepare to iterate through anchor
       initialTuples.beforeFirst();
@@ -232,7 +232,7 @@ public abstract class WalkFunction {
       }
 
       // find *all* statements with the given predicate
-      predTuples = query.resolve(modelExpression, openConstraint);
+      predTuples = query.resolve(graphExpression, openConstraint);
 
       // remember that the current value has been visited
       Set visited = new HashSet();

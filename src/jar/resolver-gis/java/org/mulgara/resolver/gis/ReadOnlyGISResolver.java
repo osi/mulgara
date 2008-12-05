@@ -87,7 +87,7 @@ public class ReadOnlyGISResolver implements Resolver {
   /** Used to handle content/manage content handlers */
   protected ContentHandlerManager contentManager;
 
-  /** Model type supported by this resolver */
+  /** Graph type supported by this resolver */
   public static final URI MODEL_TYPE = URI.create(Mulgara.NAMESPACE + "GISModel");
 
   /** Node ID for rdf:type */

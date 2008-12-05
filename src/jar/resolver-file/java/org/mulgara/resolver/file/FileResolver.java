@@ -102,7 +102,7 @@ public class FileResolver extends ContentResolver
       Node globalModel = resolverSession.globalize(model);
       if (!(globalModel instanceof URIReference)) {
         throw new ResolverException(
-          "Model parameter " + globalModel + " isn't a URI reference");
+          "Graph parameter " + globalModel + " isn't a URI reference");
       }
       modelURI = ((URIReference) globalModel).getURI();
     } catch (GlobalizeException e) {

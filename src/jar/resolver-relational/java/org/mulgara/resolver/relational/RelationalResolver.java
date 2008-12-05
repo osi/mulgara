@@ -134,7 +134,7 @@ public class RelationalResolver implements Resolver {
       throws ResolverFactoryException {
 
     if (modelTypeURI == null) {
-      throw new IllegalArgumentException("Model type can't be null");
+      throw new IllegalArgumentException("Graph type can't be null");
     }
 
     // Store the global variable values
@@ -266,7 +266,7 @@ public class RelationalResolver implements Resolver {
       defModel = resolverSession.lookupPersistent(new URIReferenceImpl(
           definitionURI(model)));
     } catch (LocalizeException localiseException) {
-      throw new QueryException("Model " + model +
+      throw new QueryException("Graph " + model +
                                " did not exist in Relational" +
                                " expansion", localiseException);
     } catch (ResolverException resolverException) {

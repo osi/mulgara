@@ -79,7 +79,7 @@ public interface Mp3Model extends Model {
       QueryException, IllegalArgumentException;
 
   /**
-   * Sets the Model used to store Schema Information.
+   * Sets the Graph used to store Schema Information.
    * @param schemaModel SchemaModel
    * @throws IllegalArgumentException
    */
@@ -87,7 +87,7 @@ public interface Mp3Model extends Model {
       IllegalArgumentException;
 
   /**
-   * Returns the Model used to store Schema Information.
+   * Returns the Graph used to store Schema Information.
    * @return SchemaModel
    */
   public SchemaModel getSchemaModel();

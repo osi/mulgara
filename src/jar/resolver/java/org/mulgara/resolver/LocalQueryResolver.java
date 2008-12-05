@@ -103,7 +103,7 @@ class LocalQueryResolver implements QueryEvaluationContext {
     this.resolverSession = resolverSession;
   }
 
-  public List<Tuples> resolveConstraintOperation(ModelExpression modelExpr,
+  public List<Tuples> resolveConstraintOperation(GraphExpression modelExpr,
                                          ConstraintOperation constraintOper)
       throws QueryException {
 
@@ -162,16 +162,16 @@ class LocalQueryResolver implements QueryEvaluationContext {
    * Localize and resolve the leaf node of the <code>FROM</code> and
    * <code>WHERE</code> clause product.
    *
-   * @param modelResource  the <code>FROM<code> clause to resolve, never
+   * @param graphResource  the <code>FROM<code> clause to resolve, never
    *   <code>null</codE>
    * @param constraint  the <code>WHERE</code> clause to resolve, which must
    *   have {@link Variable#FROM} as its fourth element, and never be
    *   <code>null</code>
    * @throws QueryException if resolution can't be obtained
    */
-  public Tuples resolve(ModelResource modelResource, Constraint constraint) throws QueryException
+  public Tuples resolve(GraphResource graphResource, Constraint constraint) throws QueryException
   {
-    assert modelResource != null || !constraint.getModel().equals(Variable.FROM);
+    assert graphResource != null || !constraint.getModel().equals(Variable.FROM);
     assert constraint != null;
 
     // Delegate constraint resolution back to the database session
@@ -181,25 +181,25 @@ class LocalQueryResolver implements QueryEvaluationContext {
       if (localized.getModel().equals(Variable.FROM)) {
         // create the URIReferenceImpl without checking if it is absolute
         localized = ConstraintOperations.rewriteConstraintModel(
-            localize(new URIReferenceImpl(modelResource.getURI(), false)), localized);
+            localize(new URIReferenceImpl(graphResource.getURI(), false)), localized);
       }
 
       Tuples result = operationContext.resolve(localized);
 
       return result;
     } catch (LocalizeException e) {
-      throw new QueryException("Unable to resolve FROM " + modelResource +
+      throw new QueryException("Unable to resolve FROM " + graphResource +
                                " WHERE " + constraint, e);
     } catch (QueryException eq) {
-      throw new QueryException("Error resolving " + constraint + " from " + modelResource, eq);
+      throw new QueryException("Error resolving " + constraint + " from " + graphResource, eq);
     } catch (Exception e) {
-      throw new QueryException("Unexpected error resolving " + constraint + " from " + modelResource, e);
+      throw new QueryException("Unexpected error resolving " + constraint + " from " + graphResource, e);
     }
   }
 
 
-  public Tuples resolve(ModelExpression modelExpression, ConstraintExpression constraintExpression) throws QueryException {
-    return ConstraintOperations.resolveConstraintExpression(this, modelExpression, constraintExpression);
+  public Tuples resolve(GraphExpression graphExpression, ConstraintExpression constraintExpression) throws QueryException {
+    return ConstraintOperations.resolveConstraintExpression(this, graphExpression, constraintExpression);
   }
 
 

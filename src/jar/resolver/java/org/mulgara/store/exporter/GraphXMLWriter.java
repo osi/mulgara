@@ -73,13 +73,13 @@ import org.mulgara.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelXMLWriter
-    implements ModelWriter {
+public class GraphXMLWriter
+    implements GraphWriter {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(ModelXMLWriter.class.
+  private final static Logger log = Logger.getLogger(GraphXMLWriter.class.
       getName());
 
   /** Prefix used to abbreviate RDF Namespace */
@@ -97,7 +97,7 @@ public class ModelXMLWriter
   /**
    * Default Constructor
    */
-  public ModelXMLWriter() {
+  public GraphXMLWriter() {
   }
 
   /**
@@ -129,7 +129,7 @@ public class ModelXMLWriter
     }
     catch (IOException ioException) {
 
-      throw new GraphException("Could not write Model.", ioException);
+      throw new GraphException("Could not write Graph.", ioException);
     }
   }
 
@@ -166,7 +166,7 @@ public class ModelXMLWriter
     }
     catch (IOException ioException) {
 
-      throw new GraphException("Could not write Model.", ioException);
+      throw new GraphException("Could not write Graph.", ioException);
     }
   }
 
@@ -331,7 +331,7 @@ public class ModelXMLWriter
   }
 
   /**
-   * Writes the Model's statements as RDF/XML to the print Writer.
+   * Writes the Graph's statements as RDF/XML to the print Writer.
    *
    * @param out PrintWriter
    * @throws IOException
@@ -381,7 +381,7 @@ public class ModelXMLWriter
     else {
 
       //message for exception to be thrown
-      String message = "Could not write Model. Invlaid arguments provided. ";
+      String message = "Could not write Graph. Invlaid arguments provided. ";
 
       if (out == null) {
 

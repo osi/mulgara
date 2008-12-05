@@ -358,7 +358,7 @@ public class LuceneResolver implements Resolver {
       if (logger.isDebugEnabled()) logger.debug("Ignoring solutions for " + constraint);
       return new EmptyResolution(constraint, false);
     } else if (!(modelElement instanceof LocalNode)) {
-      throw new QueryException("Failed to localize Lucene Model before resolution " + constraint);
+      throw new QueryException("Failed to localize Lucene Graph before resolution " + constraint);
     }
 
     /* temporary hack because $_from is not resolved before transformation occurs, and hence

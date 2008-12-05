@@ -27,32 +27,25 @@
 
 package org.mulgara.query;
 
-
-// Third party packages
-import org.apache.log4j.Logger;
-
 /**
- * A model expression composed of the union of two subexpressions.
+ * A model expression composed of the intersection of two subexpressions.
  *
- *
- * @created 2002-05-20
+ * @created 2001-09-04
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
  * @version $Revision: 1.8 $
  *
- * @modified $Date: 2005/01/05 04:58:20 $
+ * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
  *
  * @maintenanceAuthor $Author: newmana $
  *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2002-2004 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
+ * @copyright &copy;2001-2003
+ *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelPartition extends ModelOperation {
+public class GraphIntersection extends GraphOperation {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -60,23 +53,19 @@ public class ModelPartition extends ModelOperation {
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  static final long serialVersionUID = 8660358035003409731L;
-
-  /** Logger. */
-  @SuppressWarnings("unused")
-  private final static Logger logger = Logger.getLogger(ModelPartition.class);
+  static final long serialVersionUID = -5897664547668612754L;
 
   //
   // Constructor
   //
 
   /**
-   * Construct a model union.
+   * Construct a model intersection.
    *
    * @param lhs a non-<code>null</code> model expression
    * @param rhs another non-<code>null</code> model expression
    */
-  public ModelPartition(ModelExpression lhs, ModelExpression rhs) {
+  public GraphIntersection(GraphExpression lhs, GraphExpression rhs) {
     super(lhs, rhs);
   }
 
@@ -86,7 +75,6 @@ public class ModelPartition extends ModelOperation {
    * @return RETURNED VALUE TO DO
    */
   public String toString() {
-
-    return "(" + getLHS() + " par " + getRHS() + ")";
+    return "(" + getLHS() + " intersect " + getRHS() + ")";
   }
 }

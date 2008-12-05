@@ -45,9 +45,9 @@ import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.ConstraintIs;
 import org.mulgara.query.ConstructQuery;
 import org.mulgara.query.GraphAnswer;
-import org.mulgara.query.ModelExpression;
-import org.mulgara.query.ModelResource;
-import org.mulgara.query.ModelUnion;
+import org.mulgara.query.GraphExpression;
+import org.mulgara.query.GraphResource;
+import org.mulgara.query.GraphUnion;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.SelectElement;
@@ -225,7 +225,7 @@ public class SparqlInterpreter implements Interpreter {
    */
   Query buildSelectQuery(QueryStructure queryStruct) throws MulgaraParserException {
     List<? extends SelectElement> selection = getSelection(queryStruct);
-    ModelExpression defaultGraphs = getFrom(queryStruct);
+    GraphExpression defaultGraphs = getFrom(queryStruct);
     ConstraintExpression whereClause = getWhere(queryStruct);
     if (whereClause == null) throw new MulgaraParserException("SELECT query must have a WHERE clause");
     List<Order> orderBy = getOrdering(queryStruct);
@@ -245,7 +245,7 @@ public class SparqlInterpreter implements Interpreter {
     List<Variable> selection = new ArrayList<Variable>();
     Collection<org.mulgara.sparql.parser.cst.Variable> allVars = queryStruct.getAllVariables();
     for (org.mulgara.sparql.parser.cst.Variable v: allVars) selection.add(new Variable(v.getName()));
-    ModelExpression defaultGraphs = getFrom(queryStruct);
+    GraphExpression defaultGraphs = getFrom(queryStruct);
     ConstraintExpression whereClause = getWhere(queryStruct);
     if (whereClause == null) throw new MulgaraParserException("ASK query must have a WHERE clause");
     return new AskQuery(selection, defaultGraphs, whereClause);
@@ -262,7 +262,7 @@ public class SparqlInterpreter implements Interpreter {
     if (selection.size() % 3 != 0) {
       throw new MulgaraParserException("CONSTRUCT queries require a multiple of 3 nodes in the template.");
     }
-    ModelExpression defaultGraphs = getFrom(queryStruct);
+    GraphExpression defaultGraphs = getFrom(queryStruct);
     ConstraintExpression whereClause = getWhere(queryStruct);
     if (whereClause == null) throw new MulgaraParserException("CONSTRUCT query must have a WHERE clause");
     List<Order> orderBy = getOrdering(queryStruct);
@@ -283,7 +283,7 @@ public class SparqlInterpreter implements Interpreter {
     List<? extends SelectElement> described = getSelection(queryStruct);
     ConstraintExpression whereClause = distributeIntoWhereClause(described, getWhere(queryStruct));
     whereClause = constraintToNonBlank(whereClause);
-    ModelExpression defaultGraphs = getFrom(queryStruct);
+    GraphExpression defaultGraphs = getFrom(queryStruct);
     // Ignore the order since its behavior is unspecified for DESCRIBE.
     //List<Order> orderBy = getOrdering(queryStruct);
     List<Order> orderBy = new ArrayList<Order>(0);
@@ -376,12 +376,12 @@ public class SparqlInterpreter implements Interpreter {
   }
 
   /**
-   * Gets the graph expression ({@link ModelExpression}) the represents the FROM clause, or the default
+   * Gets the graph expression ({@link GraphExpression}) the represents the FROM clause, or the default
    * graph if none was provided.
    * @param queryStruct The structure to query for the FROM clause.
-   * @return A ModelExpression containing all the required graphs as a union. TODO: this should be a merge.
+   * @return A GraphExpression containing all the required graphs as a union. TODO: this should be a merge.
    */
-  ModelExpression getFrom(QueryStructure queryStruct) {
+  GraphExpression getFrom(QueryStructure queryStruct) {
     List<IRIReference> iris = queryStruct.getDefaultFroms();
     // accumulate the graphs as a union, using the default if no graphs supplied
     return graphUnion(iris.isEmpty() ? getDefaultGraphIris() : iris);
@@ -391,17 +391,17 @@ public class SparqlInterpreter implements Interpreter {
    * Convert a list of IRIs into a model resource union of minimal depth. This recurses through construction
    * of a tree of binary unions, rather than creating a linear linked list of unions.
    * @param iris The list to convert.
-   * @return A ModelExpression which is a union of all the elements in the list,
-   *   or a {@link ModelResource} if the list contains only one element.
+   * @return A GraphExpression which is a union of all the elements in the list,
+   *   or a {@link GraphResource} if the list contains only one element.
    */
-  private ModelExpression graphUnion(List<IRIReference> iris) {
+  private GraphExpression graphUnion(List<IRIReference> iris) {
     int listSize = iris.size();
     // terminate on singleton lists
-    if (listSize == 1) return new ModelResource(iris.get(0).getUri());
+    if (listSize == 1) return new GraphResource(iris.get(0).getUri());
     // short circuit for 2 element lists - optimization
-    if (listSize == 2) return new ModelUnion(new ModelResource(iris.get(0).getUri()), new ModelResource(iris.get(1).getUri()));
+    if (listSize == 2) return new GraphUnion(new GraphResource(iris.get(0).getUri()), new GraphResource(iris.get(1).getUri()));
     // general case
-    return new ModelUnion(graphUnion(iris.subList(0, listSize / 2)), graphUnion(iris.subList(listSize / 2, listSize)));
+    return new GraphUnion(graphUnion(iris.subList(0, listSize / 2)), graphUnion(iris.subList(listSize / 2, listSize)));
   }
 
   /**

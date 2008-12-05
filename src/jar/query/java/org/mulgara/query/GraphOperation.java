@@ -51,7 +51,7 @@ import java.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public abstract class ModelOperation implements ModelExpression {
+public abstract class GraphOperation implements GraphExpression {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -64,12 +64,12 @@ public abstract class ModelOperation implements ModelExpression {
   /**
    * The two operands.
    */
-  private ModelExpression lhs;
+  private GraphExpression lhs;
 
   /**
    * The two operands.
    */
-  private ModelExpression rhs;
+  private GraphExpression rhs;
 
   //
   // Constructor
@@ -83,7 +83,7 @@ public abstract class ModelOperation implements ModelExpression {
    * @param lhs a non-<code>null</code> model expression
    * @param rhs another non-<code>null</code> model expression
    */
-  protected ModelOperation(ModelExpression lhs, ModelExpression rhs) {
+  protected GraphOperation(GraphExpression lhs, GraphExpression rhs) {
 
     // Validate "lhs" parameter
     if (lhs == null) {
@@ -103,11 +103,11 @@ public abstract class ModelOperation implements ModelExpression {
   }
 
   //
-  // Methods implementing the ModelExpression abstract class
+  // Methods implementing the GraphExpression abstract class
   //
 
   /**
-   * Gets the DatabaseURIs attribute of the ModelOperation object
+   * Gets the DatabaseURIs attribute of the GraphOperation object
    *
    * @return The DatabaseURIs value
    */
@@ -143,7 +143,7 @@ public abstract class ModelOperation implements ModelExpression {
    *
    * @return The LHS value
    */
-  public ModelExpression getLHS() {
+  public GraphExpression getLHS() {
 
     return lhs;
   }
@@ -153,7 +153,7 @@ public abstract class ModelOperation implements ModelExpression {
    *
    * @return The RHS value
    */
-  public ModelExpression getRHS() {
+  public GraphExpression getRHS() {
 
     return rhs;
   }
@@ -167,16 +167,16 @@ public abstract class ModelOperation implements ModelExpression {
    */
   public boolean equals(Object m) {
     
-    if (!(m instanceof ModelOperation)) return false;
+    if (!(m instanceof GraphOperation)) return false;
     if ((m == null) || !m.getClass().equals(getClass())) return false;
     if (m == this) return true;
 
     Class<?> type = m.getClass();
 
-    Set<ModelExpression> otherExpressions = new HashSet<ModelExpression>();
-    ((ModelOperation)m).flattenExpression(otherExpressions, type);
+    Set<GraphExpression> otherExpressions = new HashSet<GraphExpression>();
+    ((GraphOperation)m).flattenExpression(otherExpressions, type);
 
-    Set<ModelExpression> myExpressions = new HashSet<ModelExpression>();
+    Set<GraphExpression> myExpressions = new HashSet<GraphExpression>();
     flattenExpression(myExpressions, type);
 
     return myExpressions.equals(otherExpressions);
@@ -189,7 +189,7 @@ public abstract class ModelOperation implements ModelExpression {
    */
   public int hashCode() {
 
-    Set<ModelExpression> myExpressions = new HashSet<ModelExpression>();
+    Set<GraphExpression> myExpressions = new HashSet<GraphExpression>();
     flattenExpression(myExpressions, getClass());
 
     return (getClass().hashCode() * 7) + myExpressions.hashCode();
@@ -203,16 +203,16 @@ public abstract class ModelOperation implements ModelExpression {
    *        operated on in the same way.
    * @param type The class representing the operation type.
    */
-  private void flattenExpression(Set<ModelExpression> expressions, Class<?> type) {
+  private void flattenExpression(Set<GraphExpression> expressions, Class<?> type) {
 
     if (lhs.getClass().equals(type)) {
-      ((ModelOperation)lhs).flattenExpression(expressions, type);
+      ((GraphOperation)lhs).flattenExpression(expressions, type);
     } else {
       expressions.add(lhs);
     }
 
     if (rhs.getClass().equals(type)) {
-      ((ModelOperation)rhs).flattenExpression(expressions, type);
+      ((GraphOperation)rhs).flattenExpression(expressions, type);
     } else {
       expressions.add(rhs);
     }
@@ -224,15 +224,15 @@ public abstract class ModelOperation implements ModelExpression {
   public Object clone() {
 
     try {
-      ModelOperation cloned = (ModelOperation)super.clone();
+      GraphOperation cloned = (GraphOperation)super.clone();
 
       // Copy database URIs.
-      cloned.lhs = (ModelExpression)lhs.clone();
-      cloned.rhs = (ModelExpression)rhs.clone();
+      cloned.lhs = (GraphExpression)lhs.clone();
+      cloned.rhs = (GraphExpression)rhs.clone();
 
       return cloned;
     } catch (CloneNotSupportedException e) {
-      throw new RuntimeException("ModelOperation subclass " + getClass() + " not cloneable");
+      throw new RuntimeException("GraphOperation subclass " + getClass() + " not cloneable");
     }
   }
 

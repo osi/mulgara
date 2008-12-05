@@ -60,7 +60,7 @@ import org.mulgara.store.nodepool.NodePool;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class RemoveModelOperation implements Operation
+class RemoveGraphOperation implements Operation
 {
   /**
    * Logger.
@@ -68,7 +68,7 @@ class RemoveModelOperation implements Operation
    * This is named after the class.
    */
   private static final Logger logger =
-    Logger.getLogger(RemoveModelOperation.class.getName());
+    Logger.getLogger(RemoveGraphOperation.class.getName());
 
   /**
    * The URI of the model to be removed.
@@ -87,7 +87,7 @@ class RemoveModelOperation implements Operation
    * @throws IllegalArgumentException if <var>modelURI</var> is
    *   <code>null</code>
    */
-  RemoveModelOperation(URI modelURI)
+  RemoveGraphOperation(URI modelURI)
   {
     // Validate "modelURI" parameter
     if (modelURI == null) {

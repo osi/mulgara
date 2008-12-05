@@ -47,11 +47,11 @@ import org.mulgara.itql.node.PModelExpression;
 import org.mulgara.itql.node.PModelFactor;
 import org.mulgara.itql.node.PModelPart;
 import org.mulgara.itql.node.PModelTerm;
-import org.mulgara.query.ModelExpression;
-import org.mulgara.query.ModelIntersection;
-import org.mulgara.query.ModelPartition;
-import org.mulgara.query.ModelResource;
-import org.mulgara.query.ModelUnion;
+import org.mulgara.query.GraphExpression;
+import org.mulgara.query.GraphIntersection;
+import org.mulgara.query.GraphPartition;
+import org.mulgara.query.GraphResource;
+import org.mulgara.query.GraphUnion;
 import org.mulgara.query.QueryException;
 import org.mulgara.util.ServerURIHandler;
 import org.mulgara.util.URIUtil;
@@ -74,7 +74,7 @@ import org.mulgara.util.URIUtil;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelExpressionBuilder {
+public class GraphExpressionBuilder {
 
   //
   // Constants
@@ -84,14 +84,14 @@ public class ModelExpressionBuilder {
    * the category to log to
    */
   private final static Logger logger =
-    Logger.getLogger(ModelExpressionBuilder.class.getName());
+    Logger.getLogger(GraphExpressionBuilder.class.getName());
 
   //
   // Public API (methods overridden from ExpressionBuilder)
   //
 
   /**
-   * Builds a {@link org.mulgara.query.ModelExpression} object from a {@link
+   * Builds a {@link org.mulgara.query.GraphExpression} object from a {@link
    * org.mulgara.itql.node.PModelExpression}, using an <code>aliasMap</code>
    * to resolve aliases.
    *
@@ -106,7 +106,7 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  public static ModelExpression build(Map<String,URI> aliasMap,
+  public static GraphExpression build(Map<String,URI> aliasMap,
     PModelExpression expression) throws QueryException, URISyntaxException {
 
     // validate aliasMap parameter
@@ -129,7 +129,7 @@ public class ModelExpressionBuilder {
     }
 
     // build the model expression from the parser input
-    ModelExpression modelExpression = buildModelExpression(expression, aliasMap);
+    GraphExpression graphExpression = buildModelExpression(expression, aliasMap);
 
     // logger that we've building successfully built a model expression
     if (logger.isDebugEnabled()) {
@@ -137,7 +137,7 @@ public class ModelExpressionBuilder {
     }
 
     // return the model expression
-    return modelExpression;
+    return graphExpression;
   }
 
   // build()
@@ -146,11 +146,11 @@ public class ModelExpressionBuilder {
   //
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.query.GraphExpression} from a
    * {@link org.mulgara.itql.node.PModelExpression}.
    *
    * @param rawModelExpression a raw model expression from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
+   * @return a {@link org.mulgara.query.GraphExpression} suitable for use in
    *      creating a {@link org.mulgara.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
@@ -158,7 +158,7 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  private static ModelExpression buildModelExpression(
+  private static GraphExpression buildModelExpression(
     PModelExpression rawModelExpression, Map<String,URI> aliasMap)
     throws QueryException, URISyntaxException {
 
@@ -176,7 +176,7 @@ public class ModelExpressionBuilder {
     }
 
     // create a new model expression that we can return
-    ModelExpression modelExpression = null;
+    GraphExpression graphExpression = null;
 
     // drill down to find its constituents
     if (rawModelExpression instanceof AOrModelExpression) {
@@ -201,8 +201,8 @@ public class ModelExpressionBuilder {
       }
 
       // get the LHS and RHS operands of the union
-      ModelExpression lhs = buildModelExpression(orModelExpression, aliasMap);
-      ModelExpression rhs = buildModelExpression(modelTerm, aliasMap);
+      GraphExpression lhs = buildModelExpression(orModelExpression, aliasMap);
+      GraphExpression rhs = buildModelExpression(modelTerm, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -211,7 +211,7 @@ public class ModelExpressionBuilder {
       }
 
       // apply the union
-      modelExpression = new ModelUnion(lhs, rhs);
+      graphExpression = new GraphUnion(lhs, rhs);
     } else if (rawModelExpression instanceof ATermModelExpression) {
 
       // logger that we've got a term model expression
@@ -228,12 +228,12 @@ public class ModelExpressionBuilder {
       }
 
       // drill down into the model term
-      modelExpression = buildModelExpression(modelTerm, aliasMap);
+      graphExpression = buildModelExpression(modelTerm, aliasMap);
     }
 
     // end if
     // we should not be returning null
-    if (modelExpression == null) {
+    if (graphExpression == null) {
 
       throw new QueryException("Unable to parse ITQL model expression " +
         "into a valid model expression");
@@ -242,21 +242,21 @@ public class ModelExpressionBuilder {
     // end if
     // logger that we've created a model expression
     if (logger.isDebugEnabled()) {
-      logger.debug("Created model expression " + modelExpression);
+      logger.debug("Created model expression " + graphExpression);
     }
 
     // return the built up expression
-    return modelExpression;
+    return graphExpression;
   }
 
   // buildModelExpression()
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.query.GraphExpression} from a
    * {@link org.mulgara.itql.node.PModelTerm}.
    *
    * @param rawModelTerm a raw model term from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
+   * @return a {@link org.mulgara.query.GraphExpression} suitable for use in
    *      creating a {@link org.mulgara.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
@@ -264,7 +264,7 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  private static ModelExpression buildModelExpression(
+  private static GraphExpression buildModelExpression(
       PModelTerm rawModelTerm, Map<String,URI> aliasMap
     ) throws QueryException, URISyntaxException {
 
@@ -282,7 +282,7 @@ public class ModelExpressionBuilder {
     }
 
     // create a new model expression that we can return
-    ModelExpression modelExpression = null;
+    GraphExpression graphExpression = null;
 
     // drill down into the model term
     if (rawModelTerm instanceof APartModelTerm) {
@@ -301,7 +301,7 @@ public class ModelExpressionBuilder {
       }
 
       // drill down into the model part
-      modelExpression = buildModelExpression(modelPart, aliasMap);
+      graphExpression = buildModelExpression(modelPart, aliasMap);
 
     } else if (rawModelTerm instanceof AAndModelTerm) {
 
@@ -323,8 +323,8 @@ public class ModelExpressionBuilder {
       }
 
       // get the LHS and RHS operands of the intersection
-      ModelExpression lhs = buildModelExpression(modelTerm, aliasMap);
-      ModelExpression rhs = buildModelExpression(modelPart, aliasMap);
+      GraphExpression lhs = buildModelExpression(modelTerm, aliasMap);
+      GraphExpression rhs = buildModelExpression(modelPart, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -333,12 +333,12 @@ public class ModelExpressionBuilder {
       }
 
       // apply the intersection
-      modelExpression = new ModelIntersection(lhs, rhs);
+      graphExpression = new GraphIntersection(lhs, rhs);
     }
 
     // end if
     // we should not be returning null
-    if (modelExpression == null) {
+    if (graphExpression == null) {
 
       throw new QueryException("Unable to parse ITQL model term into a valid model expression");
     }
@@ -346,21 +346,21 @@ public class ModelExpressionBuilder {
     // end if
     // logger that we've created a model expression
     if (logger.isDebugEnabled()) {
-      logger.debug("Created model expression " + modelExpression);
+      logger.debug("Created model expression " + graphExpression);
     }
 
     // return the built up expression
-    return modelExpression;
+    return graphExpression;
   }
 
   // buildModelExpression()
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.query.GraphExpression} from a
    * {@link org.mulgara.itql.node.PModelPart}.
    *
    * @param rawModelPart a raw model part from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
+   * @return a {@link org.mulgara.query.GraphExpression} suitable for use in
    *      creating a {@link org.mulgara.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
@@ -368,7 +368,7 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  private static ModelExpression buildModelExpression(
+  private static GraphExpression buildModelExpression(
       PModelPart rawModelPart, Map<String,URI> aliasMap
     ) throws QueryException, URISyntaxException {
 
@@ -385,7 +385,7 @@ public class ModelExpressionBuilder {
     }
 
     // create a new model expression that we can return
-    ModelExpression modelExpression = null;
+    GraphExpression graphExpression = null;
 
     // drill down into the model term
     if (rawModelPart instanceof AFactorModelPart) {
@@ -404,7 +404,7 @@ public class ModelExpressionBuilder {
       }
 
       // drill down into the model part
-      modelExpression = buildModelExpression(modelFactor, aliasMap);
+      graphExpression = buildModelExpression(modelFactor, aliasMap);
     } else if (rawModelPart instanceof AXorModelPart) {
 
       // logger that we've got a AND model term
@@ -424,8 +424,8 @@ public class ModelExpressionBuilder {
       }
 
       // get the LHS and RHS operands of the intersection
-      ModelExpression lhs = buildModelExpression(modelPart, aliasMap);
-      ModelExpression rhs = buildModelExpression(modelFactor, aliasMap);
+      GraphExpression lhs = buildModelExpression(modelPart, aliasMap);
+      GraphExpression rhs = buildModelExpression(modelFactor, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -434,12 +434,12 @@ public class ModelExpressionBuilder {
       }
 
       // apply the intersection
-      modelExpression = new ModelPartition(lhs, rhs);
+      graphExpression = new GraphPartition(lhs, rhs);
     }
 
     // end if
     // we should not be returning null
-    if (modelExpression == null) {
+    if (graphExpression == null) {
 
       throw new QueryException("Unable to parse ITQL model term into a valid model expression");
     }
@@ -447,21 +447,21 @@ public class ModelExpressionBuilder {
     // end if
     // logger that we've created a model expression
     if (logger.isDebugEnabled()) {
-      logger.debug("Created model expression " + modelExpression);
+      logger.debug("Created model expression " + graphExpression);
     }
 
     // return the built up expression
-    return modelExpression;
+    return graphExpression;
   }
 
   // buildModelExpression()
 
   /**
-   * Recursively builds a {@link org.mulgara.query.ModelExpression} from a
+   * Recursively builds a {@link org.mulgara.query.GraphExpression} from a
    * {@link org.mulgara.itql.node.PModelFactor}.
    *
    * @param rawModelFactor a raw model factor from the parser
-   * @return a {@link org.mulgara.query.ModelExpression} suitable for use in
+   * @return a {@link org.mulgara.query.GraphExpression} suitable for use in
    *      creating a {@link org.mulgara.query.Query}
    * @throws QueryException if <code>rawModelExpression</code> does not
    *      represent a valid query
@@ -469,7 +469,7 @@ public class ModelExpressionBuilder {
    *      a resource whose text violates <a
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
-  private static ModelExpression buildModelExpression(
+  private static GraphExpression buildModelExpression(
         PModelFactor rawModelFactor, Map<String,URI> aliasMap
       ) throws QueryException, URISyntaxException {
 
@@ -486,7 +486,7 @@ public class ModelExpressionBuilder {
     }
 
     // create a new model expression that we can return
-    ModelExpression modelExpression = null;
+    GraphExpression graphExpression = null;
 
     // drill down into the model term
     if (rawModelFactor instanceof AResourceModelFactor) {
@@ -506,7 +506,7 @@ public class ModelExpressionBuilder {
 
       // this resource is what we're looking for
       URI modelURI = URIUtil.convertToURI(resource, aliasMap);
-      modelExpression = new ModelResource(ServerURIHandler.removePort(modelURI));
+      graphExpression = new GraphResource(ServerURIHandler.removePort(modelURI));
     } else if (rawModelFactor instanceof AExpressionModelFactor) {
 
       // logger that we've got an expression model factor
@@ -519,16 +519,16 @@ public class ModelExpressionBuilder {
 
       // logger that we're recursing with a model expression
       if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with model factor " + modelExpression);
+        logger.debug("Recursing with model factor " + graphExpression);
       }
 
       // build the model expression
-      modelExpression = buildModelExpression(embeddedModelExpression, aliasMap);
+      graphExpression = buildModelExpression(embeddedModelExpression, aliasMap);
     }
 
     // end if
     // we should not be returning null
-    if (modelExpression == null) {
+    if (graphExpression == null) {
 
       throw new QueryException("Unable to parse ITQL model factor " +
         "into a valid model expression");
@@ -537,15 +537,15 @@ public class ModelExpressionBuilder {
     // end if
     // logger that we've created a model expression
     if (logger.isDebugEnabled()) {
-      logger.debug("Created model expression " + modelExpression);
+      logger.debug("Created model expression " + graphExpression);
     }
 
     // return the built up expression
-    return modelExpression;
+    return graphExpression;
   }
 
   // buildModelExpression()
 }
 
 
-// ModelExpressionBuilder
+// GraphExpressionBuilder

@@ -41,7 +41,7 @@ import org.jrdf.vocabulary.RDFS;
 import org.mulgara.query.QueryException;
 
 /**
- * Represents a Model containg RDF schema statements.
+ * Represents a Graph containg RDF schema statements.
  *
  * @created 2004-12-03
  *

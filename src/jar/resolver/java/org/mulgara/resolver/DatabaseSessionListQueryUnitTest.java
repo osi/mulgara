@@ -290,7 +290,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
     };
 
     //from <modelURI>
-    ModelResource model = new ModelResource(modelURI);
+    GraphResource model = new GraphResource(modelURI);
 
     //where $s $p $o
     ConstraintImpl varConstraint = new ConstraintImpl(vars[0], vars[1], vars[2]);
@@ -332,19 +332,19 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
   }
 
   /**
-   * Creates the Model.
+   * Creates the Graph.
    *
    * @param modelURI URI
    * @param session Session
    * @throws Exception
    */
   private void createModel(URI modelURI, Session session) throws Exception {
-//    session.createModel(modelURI, new URI(Mulgara.NAMESPACE + "Model"));
+//    session.createModel(modelURI, new URI(Mulgara.NAMESPACE + "Graph"));
     session.createModel(modelURI, memoryModelURI);
   }
 
   /**
-   * Drops the Model.
+   * Drops the Graph.
    *
    * @param modelURI URI
    * @param session Session

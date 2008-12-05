@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 
 /**
  * An AST element for server-based commands.
@@ -31,7 +31,7 @@ public abstract class ServerCommand implements Command {
   private String textualForm;
 
   /** The graph being referred to on the server. */
-  private final ModelResource serverGraph;
+  private final GraphResource serverGraph;
   
   /** The message set by the result of this command. */
   private String resultMessage;
@@ -41,7 +41,7 @@ public abstract class ServerCommand implements Command {
    * @param serverGraphUri The URI of the graph.
    */
   public ServerCommand(URI serverGraphUri) {
-    serverGraph = (serverGraphUri != null) ? new ModelResource(serverGraphUri) : null;
+    serverGraph = (serverGraphUri != null) ? new GraphResource(serverGraphUri) : null;
     resultMessage = "";
   }
   

@@ -41,10 +41,10 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.ConstraintBindingHandler;
 import org.mulgara.resolver.spi.ConstraintLocalization;
-import org.mulgara.resolver.spi.ConstraintModelRewrite;
+import org.mulgara.resolver.spi.ConstraintGraphRewrite;
 import org.mulgara.resolver.spi.ConstraintResolutionHandler;
 import org.mulgara.resolver.spi.ConstraintVariableRewrite;
-import org.mulgara.resolver.spi.ModelResolutionHandler;
+import org.mulgara.resolver.spi.GraphResolutionHandler;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.util.NVPair;
@@ -102,12 +102,12 @@ public class ConstraintOperations
 
   static void addModelResolutionHandlers(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, modelResolutionHandlers,
-             ModelExpression.class, ModelResolutionHandler.class);
+             GraphExpression.class, GraphResolutionHandler.class);
   }
 
   static void addConstraintModelRewrites(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
     addToMap(resolutionHandlers, constraintModelRewrites,
-             ConstraintExpression.class, ConstraintModelRewrite.class);
+             ConstraintExpression.class, ConstraintGraphRewrite.class);
   }
 
   static void addConstraintVariableRewrites(NVPair<Class<? extends ConstraintExpression>,Object>[] resolutionHandlers) throws RuntimeException {
@@ -146,21 +146,21 @@ public class ConstraintOperations
   }
 
 
-  public static Tuples resolveModelExpression(QueryEvaluationContext context, ModelExpression modelExpr,
+  public static Tuples resolveModelExpression(QueryEvaluationContext context, GraphExpression modelExpr,
                                       Constraint constraint) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
-        logger.debug("Resolving " + constraint + " against ModelExpression[" + modelExpr.getClass() + "]");
+        logger.debug("Resolving " + constraint + " against GraphExpression[" + modelExpr.getClass() + "]");
       }
 
-      ModelResolutionHandler op = (ModelResolutionHandler)modelResolutionHandlers.get(modelExpr.getClass());
+      GraphResolutionHandler op = (GraphResolutionHandler)modelResolutionHandlers.get(modelExpr.getClass());
       if (op == null) {
-        throw new QueryException("Unknown ModelExpression type: " + modelExpr.getClass() + " known types: " + modelResolutionHandlers.keySet());
+        throw new QueryException("Unknown GraphExpression type: " + modelExpr.getClass() + " known types: " + modelResolutionHandlers.keySet());
       }
       Tuples result = op.resolve(context, modelExpr, constraint);
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Resolved " + constraint + " against ModelExpression[" + modelExpr.getClass() + "] to: " + result);
+        logger.debug("Resolved " + constraint + " against GraphExpression[" + modelExpr.getClass() + "] to: " + result);
       }
 
       return result;
@@ -173,7 +173,7 @@ public class ConstraintOperations
 
 
   public static Tuples resolveConstraintExpression(QueryEvaluationContext context,
-      ModelExpression modelExpr, ConstraintExpression constraintExpr) throws QueryException {
+      GraphExpression modelExpr, ConstraintExpression constraintExpr) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("Resolving ConstraintExpression[" + constraintExpr.getClass() + "]");
@@ -251,17 +251,17 @@ public class ConstraintOperations
       Constraint constraint) throws QueryException {
     try {
       if (logger.isDebugEnabled()) {
-        logger.debug("Rewriting Model" + newModel + " in " + constraint);
+        logger.debug("Rewriting Graph" + newModel + " in " + constraint);
       }
 
-      ConstraintModelRewrite op = (ConstraintModelRewrite)constraintModelRewrites.get(constraint.getClass());
+      ConstraintGraphRewrite op = (ConstraintGraphRewrite)constraintModelRewrites.get(constraint.getClass());
       if (op == null) {
         throw new QueryException("Unknown Constraint type: " + constraint.getClass() + " known types: " + constraintModelRewrites.keySet());
       }
       Constraint result = op.rewrite(newModel, constraint);
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Rewrote Model" + newModel + " in " + constraint + " to " + result);
+        logger.debug("Rewrote Graph" + newModel + " in " + constraint + " to " + result);
       }
 
       return result;

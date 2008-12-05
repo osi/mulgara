@@ -553,7 +553,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // get the name of the model to create
     URI graphURI = toURI(node.getModel());
 
-    // get the type of model to create; default to mulgara:Model is unspecified
+    // get the type of model to create; default to mulgara:Graph is unspecified
     URI graphTypeURI = (node.getModelType() == null)
         ? Session.MULGARA_GRAPH_URI
         : toURI(node.getModelType());
@@ -563,7 +563,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
     graphURI = getCanonicalUriAlias(graphURI);
 
-    if (logger.isDebugEnabled()) logger.debug("Model is alias for " + graphURI);
+    if (logger.isDebugEnabled()) logger.debug("Graph is alias for " + graphURI);
 
     lastCommand = new CreateGraph(graphURI, graphTypeURI);
   }
@@ -891,8 +891,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     PModelExpression rawModelExpression = fromClause.getModelExpression();
     if (logger.isDebugEnabled()) logger.debug("Building model expression from " + rawModelExpression);
     // parse the text into a model expression
-    ModelExpression modelExpression = ModelExpressionBuilder.build(this.getAliasMap(), rawModelExpression);
-    if (logger.isDebugEnabled()) logger.debug("Built model expression " + modelExpression);
+    GraphExpression graphExpression = GraphExpressionBuilder.build(this.getAliasMap(), rawModelExpression);
+    if (logger.isDebugEnabled()) logger.debug("Built model expression " + graphExpression);
   
     // get the constraint expression from the parser
     PConstraintExpression rawConstraintExpression = whereClause.getConstraintExpression();
@@ -920,7 +920,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     }
   
     // build a query using the information we've obtained from the parser
-    return new Query(variableList, modelExpression, constraintExpression,
+    return new Query(variableList, graphExpression, constraintExpression,
         havingExpression, orderList, limit, offset, new UnconstrainedAnswer());
   }
 

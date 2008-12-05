@@ -115,7 +115,7 @@ public class TestResolver implements Resolver {
    * Remove the file containing the model.
    */
   public void removeModel(long model) throws ResolverException {
-    throw new ResolverException("Model removal not supported in TestResolver");
+    throw new ResolverException("Graph removal not supported in TestResolver");
   }
 
   /**

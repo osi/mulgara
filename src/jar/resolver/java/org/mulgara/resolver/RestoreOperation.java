@@ -380,7 +380,7 @@ class RestoreOperation implements BackupConstants, Operation
         if (meta == emptyGroupNode) {
           // Statements in the EMPTY_GROUP.
           if (node1 == tksIntModelNode) {
-            // Set up a mapping from each V4 Group node to (multiple) Model
+            // Set up a mapping from each V4 Group node to (multiple) Graph
             // nodes.
             Long groupL = new Long(node0);
             Set modelSet = (Set)g2mMap.get(groupL);

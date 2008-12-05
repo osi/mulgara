@@ -17,7 +17,7 @@ import java.net.URI;
 
 import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.rdf.Mulgara;
 
@@ -37,8 +37,8 @@ public class Load extends DataInputTx {
   /** Dummy source model URI to pass to the server when overriding with local stream. */
   protected static final URI DUMMY_RDF_SOURCE = URI.create(Mulgara.NAMESPACE+"locally-sourced-inputStream.rdf");
   
-  /** Model resource form of the source URI */
-  private final ModelResource srcRsc;
+  /** Graph resource form of the source URI */
+  private final GraphResource srcRsc;
   
   /**
    * Build a load operation, loading data from one URI into a graph specified by another URI.
@@ -52,7 +52,7 @@ public class Load extends DataInputTx {
     // Validate arguments.
     if (graphURI == null) throw new IllegalArgumentException("Need a valid destination graph URI");
     
-    srcRsc = new ModelResource(source == null ? DUMMY_RDF_SOURCE : source);
+    srcRsc = new GraphResource(source == null ? DUMMY_RDF_SOURCE : source);
   }
 
 

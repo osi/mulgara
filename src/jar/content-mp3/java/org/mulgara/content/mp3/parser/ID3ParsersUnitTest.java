@@ -326,7 +326,7 @@ public class ID3ParsersUnitTest extends TestCase {
           // Obtain the next triple
           Triple triple = (Triple) iterator.next();
 
-          log.debug(">> Model triple [" + triple.getSubject() +
+          log.debug(">> Graph triple [" + triple.getSubject() +
               ", " + triple.getPredicate() + ", " +
               triple.getObject() + "]");
         }
@@ -567,7 +567,7 @@ public class ID3ParsersUnitTest extends TestCase {
 
           // Get the next triple
           Triple triple = (Triple) iterator.next();
-          System.err.println(">> Model triple [" + triple.getSubject() + ", " +
+          System.err.println(">> Graph triple [" + triple.getSubject() + ", " +
                     triple.getPredicate() + ", " + triple.getObject() + "]");
         }
       } catch (GraphException graphException) {

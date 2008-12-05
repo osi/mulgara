@@ -68,7 +68,7 @@ public class Mp3List extends JList {
    */
   private final static Logger log = Logger.getLogger(Mp3List.class.getName());
 
-  /** Model used to store list items */
+  /** Graph used to store list items */
   private DefaultListModel model = null;
 
   /** Renders the Mp3Files */

@@ -63,19 +63,19 @@ import org.mulgara.store.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelN3Writer implements ModelWriter {
+public class GraphN3Writer implements GraphWriter {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(ModelN3Writer.class.
+  private final static Logger log = Logger.getLogger(GraphN3Writer.class.
       getName());
 
 
   /**
    * Default Constructor
    */
-  public ModelN3Writer() {
+  public GraphN3Writer() {
   }
 
 
@@ -98,7 +98,7 @@ public class ModelN3Writer implements ModelWriter {
     }
     catch (IOException ioException) {
 
-      throw new GraphException("Could not write Model.", ioException);
+      throw new GraphException("Could not write Graph.", ioException);
     }
   }
 
@@ -140,7 +140,7 @@ public class ModelN3Writer implements ModelWriter {
 
 
   /**
-   * Writes the Model's statements as N3 to the print Writer.
+   * Writes the Graph's statements as N3 to the print Writer.
    *
    * @param graph Graph Graph containing the Statements to be written.
    * @param out PrintWriter
@@ -169,7 +169,7 @@ public class ModelN3Writer implements ModelWriter {
     } else {
 
       //message for exception to be thrown
-      String message = "Could not write Model. Invlaid arguments provided. ";
+      String message = "Could not write Graph. Invlaid arguments provided. ";
 
       if (out == null) {
         message += "Writer is null. ";

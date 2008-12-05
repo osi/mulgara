@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 
 import org.mulgara.query.Answer;
 import org.mulgara.query.ConstraintImpl;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.SelectElement;
@@ -83,7 +83,7 @@ public class ConnectionFactoryUnitTest extends TestCase {
 
     query = new Query(
       selectList,                                       // SELECT
-      new ModelResource(URI.create("rmi://localhost/server1#")), // FROM
+      new GraphResource(URI.create("rmi://localhost/server1#")), // FROM
       new ConstraintImpl(subjectVariable,               // WHERE
                      predicateVariable,
                      objectVariable),

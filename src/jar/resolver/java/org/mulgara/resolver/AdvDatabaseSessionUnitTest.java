@@ -59,7 +59,7 @@ import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.ConstraintIs;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
@@ -231,7 +231,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
       Session session = database.newSession();
       try {
         session.createModel(modelURI, null);
-        session.setModel(modelURI, new ModelResource(fileURI));
+        session.setModel(modelURI, new GraphResource(fileURI));
       } finally {
         session.close();
       }
@@ -301,7 +301,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -318,7 +318,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
               new URIReferenceImpl(new URI("test:p03")),
               objectVariable),
@@ -376,7 +376,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -393,7 +393,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
               new URIReferenceImpl(new URI("test:p03")),
               objectVariable),
@@ -552,7 +552,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         try {
           session1.createModel(model3URI, null);
           session1.setAutoCommit(false);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
 
           // Evaluate the query
           Answer answer = session2.query(createQuery(model3URI));
@@ -590,7 +590,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         try {
           session1.createModel(model3URI, null);
           session1.setAutoCommit(false);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
 
           // Evaluate the query
           Answer answer = session2.query(createQuery(model3URI));
@@ -630,7 +630,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         try {
           session1.createModel(model3URI, null);
           session1.setAutoCommit(false);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
 
           // Evaluate the query
           Answer answer = session2.query(createQuery(model3URI));
@@ -684,7 +684,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         Session session2 = database.newSession();
         try {
           session1.createModel(model4URI, null);
-          session1.setModel(model4URI, new ModelResource(fileURI));
+          session1.setModel(model4URI, new GraphResource(fileURI));
 
           // Check data loaded
           Answer answer = session1.query(createQuery(model4URI));
@@ -771,7 +771,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
       try {
         session1.createModel(model3URI, null);
         session1.setAutoCommit(false);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -864,7 +864,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
       try {
         session1.createModel(model3URI, null);
         session1.setAutoCommit(false);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         Thread t2 = new Thread("tx2Test") {
           public void run() {
@@ -984,7 +984,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         };
         t2.start();
 
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
         logger.debug("Sleeping for 1sec");
         Thread.sleep(1000);
         logger.debug("Slept for 1sec");
@@ -1042,7 +1042,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         };
         t2.start();
 
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
         logger.debug("Sleeping for 1sec");
         Thread.sleep(1000);
         logger.debug("Slept for 1sec");
@@ -1218,7 +1218,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
       Session session = database.newSession();
       try {
         session.createModel(model5URI, null);
-        session.setModel(model5URI, new ModelResource(fileURI));
+        session.setModel(model5URI, new GraphResource(fileURI));
 
         Variable varA   = new Variable("a");
         Variable varB   = new Variable("b");
@@ -1231,7 +1231,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         // Check data loaded
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(model5URI),                      // FROM
+          new GraphResource(model5URI),                      // FROM
           new ConstraintConjunction(Arrays.asList(
               new ConstraintExpression[] {
                   new ConstraintImpl(varB,
@@ -1327,7 +1327,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         // verify second setAutoCommit(false) is a no-op
         session.createModel(model3URI, null);
         session.setAutoCommit(false);
-        session.setModel(model3URI, new ModelResource(new File("data/xatest-model1.rdf").toURI()));
+        session.setModel(model3URI, new GraphResource(new File("data/xatest-model1.rdf").toURI()));
         session.setAutoCommit(false);
         session.commit();
 
@@ -1673,7 +1673,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
 
     return new Query(
       selectList,                                       // SELECT
-      new ModelResource(model),                         // FROM
+      new GraphResource(model),                         // FROM
       new ConstraintImpl(subjectVariable,               // WHERE
                      predicateVariable,
                      objectVariable),

@@ -65,7 +65,7 @@ import org.mulgara.resolver.spi.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class SetModelOperation implements Operation
+class SetGraphOperation implements Operation
 {
   /**
    * Logger.
@@ -73,7 +73,7 @@ class SetModelOperation implements Operation
    * This is named after the class.
    */
   private static final Logger logger =
-    Logger.getLogger(SetModelOperation.class.getName());
+    Logger.getLogger(SetGraphOperation.class.getName());
 
   private final URI         srcModelURI;
   private final URI         destModelURI;
@@ -101,7 +101,7 @@ class SetModelOperation implements Operation
    * @param inputStream  a stream containing the content at the <var>srcModelURI</var>
    *   or <code>null</code> if the content must be fetched
    */
-  SetModelOperation(URI         srcModelURI,
+  SetGraphOperation(URI         srcModelURI,
                     URI         destModelURI,
                     InputStream inputStream,
                     ContentHandlerManager contentHandlers,
@@ -124,7 +124,7 @@ class SetModelOperation implements Operation
   {
     // A prior call to execute will have set statementCount >= 0.
     if (statementCount != -1) {
-      throw new IllegalStateException("SetModelOperation already executed.  Cannot reexecute.");
+      throw new IllegalStateException("SetGraphOperation already executed.  Cannot reexecute.");
     }
 
     long destinationModel = systemResolver.localize(new URIReferenceImpl(destModelURI));
@@ -220,7 +220,7 @@ class SetModelOperation implements Operation
 
     if (loader != null) {
       try {
-        statementCount = loader.load(content, new ModelResource(destModelURI), databaseSession);
+        statementCount = loader.load(content, new GraphResource(destModelURI), databaseSession);
 
         return false; // notifies caller that a call to execute will fail.
       } catch (ContentHandlerException handlerException) {

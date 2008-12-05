@@ -276,7 +276,7 @@ public class ExternalTransactionUnitTest extends TestCase {
       Xid xid = new TestXid(1);
       resource.start(xid, XAResource.TMNOFLAGS);
       try {
-        session.setModel(modelURI, new ModelResource(fileURI));
+        session.setModel(modelURI, new GraphResource(fileURI));
         resource.end(xid, XAResource.TMSUCCESS);
         resource.prepare(xid);
         resource.commit(xid, false);
@@ -600,7 +600,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -617,7 +617,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
               new URIReferenceImpl(new URI("test:p03")),
               objectVariable),
@@ -681,7 +681,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),
@@ -698,7 +698,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         // Evaluate the query
         Answer answer = session.query(new Query(
           selectList,                                       // SELECT
-          new ModelResource(modelURI),                      // FROM
+          new GraphResource(modelURI),                      // FROM
           new ConstraintImpl(subjectVariable,               // WHERE
               new URIReferenceImpl(new URI("test:p03")),
               objectVariable),
@@ -782,7 +782,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
         // Perform update
         rwResource.start(xid3, XAResource.TMNOFLAGS);
-        session.setModel(model3URI, new ModelResource(fileURI));
+        session.setModel(model3URI, new GraphResource(fileURI));
         rwResource.end(xid3, XAResource.TMSUSPEND);
 
         // Check uncommitted change not visible
@@ -887,7 +887,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
           // Perform update
           rwResource.start(xid2, XAResource.TMNOFLAGS);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
           rwResource.end(xid2, XAResource.TMSUSPEND);
 
           // Check uncommitted change not visible
@@ -946,7 +946,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
           // Perform update with autocommit off
           session1.setAutoCommit(false);
-          session1.setModel(model3URI, new ModelResource(fileURI));
+          session1.setModel(model3URI, new GraphResource(fileURI));
 
           // Check uncommitted change not visible
           roResource.start(xid2, XAResource.TMNOFLAGS);
@@ -1034,7 +1034,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         resource1.commit(new TestXid(1), true);
 
         resource1.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1134,7 +1134,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         resource1.commit(new TestXid(1), true);
 
         resource1.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1229,7 +1229,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         session1.createModel(model3URI, null);
 
         session1.setAutoCommit(false);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1339,7 +1339,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         resource1.commit(new TestXid(1), true);
 
         resource1.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1435,7 +1435,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         session1.createModel(model3URI, null);
 
         session1.setAutoCommit(false);
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
 
         final boolean[] tx2Started = new boolean[] { false };
 
@@ -1544,7 +1544,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         rwResource.commit(new TestXid(1), true);
 
         rwResource.start(new TestXid(2), XAResource.TMNOFLAGS);
-        session.setModel(model3URI, new ModelResource(fileURI));
+        session.setModel(model3URI, new GraphResource(fileURI));
         rwResource.end(new TestXid(2), XAResource.TMSUSPEND);
 
         roResource.start(new TestXid(3), XAResource.TMNOFLAGS);
@@ -1596,7 +1596,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         session1.createModel(model4URI, null);
 
         session1.setAutoCommit(false);
-        session1.setModel(model4URI, new ModelResource(fileURI));
+        session1.setModel(model4URI, new GraphResource(fileURI));
 
         session1.commit();
         session1.close();
@@ -1665,7 +1665,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         };
         t2.start();
 
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
         logger.debug("Sleeping for 1sec");
         Thread.sleep(1000);
         logger.debug("Slept for 1sec");
@@ -1732,7 +1732,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         };
         t2.start();
 
-        session1.setModel(model3URI, new ModelResource(fileURI));
+        session1.setModel(model3URI, new GraphResource(fileURI));
         logger.debug("Sleeping for 1sec");
         Thread.sleep(1000);
         logger.debug("Slept for 1sec");
@@ -2576,7 +2576,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
     return new Query(
       selectList,                                       // SELECT
-      new ModelResource(model),                         // FROM
+      new GraphResource(model),                         // FROM
       new ConstraintImpl(subjectVariable,               // WHERE
                      predicateVariable,
                      objectVariable),

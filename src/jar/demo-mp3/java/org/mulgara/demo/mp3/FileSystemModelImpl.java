@@ -248,7 +248,7 @@ public class FileSystemModelImpl extends AbstractModel implements
   }
 
   /**
-   * Returns a Resource representing the Definition Model Resource
+   * Returns a Resource representing the Definition Graph Resource
    *
    * @return URIReference
    * @throws URISyntaxException

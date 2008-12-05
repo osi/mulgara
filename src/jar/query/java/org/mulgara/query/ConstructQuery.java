@@ -34,10 +34,10 @@ public class ConstructQuery extends Query {
   private static final long serialVersionUID = -6024259961466362580L;
 
   @SuppressWarnings("unchecked")
-  public ConstructQuery(List<? extends SelectElement> variableList, ModelExpression modelExpression,
+  public ConstructQuery(List<? extends SelectElement> variableList, GraphExpression graphExpression,
         ConstraintExpression constraintExpression,
         List<Order> orderList, Integer limit, int offset) {
-    super(variableList, modelExpression, constraintExpression,
+    super(variableList, graphExpression, constraintExpression,
         null, // no having
         orderList,
         limit,

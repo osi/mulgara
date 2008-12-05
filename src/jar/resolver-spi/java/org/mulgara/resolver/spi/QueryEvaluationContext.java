@@ -72,19 +72,19 @@ public interface QueryEvaluationContext {
    * Localize and resolve the leaf node of the <code>FROM</code> and
    * <code>WHERE</code> clause product.
    *
-   * @param modelResource  the <code>FROM</code> clause to resolve, never
+   * @param graphResource  the <code>FROM</code> clause to resolve, never
    *   <code>null</code>
    * @param constraint  the <code>WHERE</code> clause to resolve, which must
    *   have {@link Variable#FROM} as its fourth element, and never be
    *   <code>null</code>
    * @throws QueryException if resolution can't be obtained
    */
-  public Tuples resolve(ModelResource modelResource, Constraint constraint) throws QueryException;
+  public Tuples resolve(GraphResource graphResource, Constraint constraint) throws QueryException;
 
-  public Tuples resolve(ModelExpression modelExpression, ConstraintExpression constraintExpression) throws QueryException;
+  public Tuples resolve(GraphExpression graphExpression, ConstraintExpression constraintExpression) throws QueryException;
 
   public ResolverSession getResolverSession();
 
-  public List<Tuples> resolveConstraintOperation(ModelExpression modelExpr,
+  public List<Tuples> resolveConstraintOperation(GraphExpression modelExpr,
                                         ConstraintOperation constraintOper) throws QueryException;
 }

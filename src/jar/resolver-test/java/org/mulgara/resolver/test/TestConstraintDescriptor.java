@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ModelExpression;
+import org.mulgara.query.GraphExpression;
 import org.mulgara.resolver.spi.ConstraintDescriptor;
 import org.mulgara.resolver.spi.QueryEvaluationContext;
 import org.mulgara.store.tuples.Tuples;
@@ -77,7 +77,7 @@ public class TestConstraintDescriptor implements ConstraintDescriptor {
   }
 
 
-  public Tuples resolve(QueryEvaluationContext context, ModelExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+  public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
     if (constraintExpr instanceof TestConstraint) {
       // FIXME: Need to find a clean way of enlisting the resolver in the transaction.
       // This will involve changes to LocalQueryResolver (the QEC/context passed to this method).

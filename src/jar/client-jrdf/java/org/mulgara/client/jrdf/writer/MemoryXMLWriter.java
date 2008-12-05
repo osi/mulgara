@@ -42,7 +42,7 @@ import org.jrdf.vocabulary.*;
 import org.jrdf.graph.GraphException;
 import org.jrdf.util.ClosableIterator;
 import org.jrdf.graph.*;
-//import org.mulgara.store.exporter.ModelXMLWriter;
+//import org.mulgara.store.exporter.GraphXMLWriter;
 import org.mulgara.client.jrdf.util.*;
 import org.mulgara.util.StringUtil;
 
@@ -116,7 +116,7 @@ public class MemoryXMLWriter {
     }
     catch (IOException ioException) {
 
-      throw new GraphException("Could not write Model.", ioException);
+      throw new GraphException("Could not write Graph.", ioException);
     }
   }
 
@@ -147,7 +147,7 @@ public class MemoryXMLWriter {
     }
     catch (IOException ioException) {
 
-      throw new GraphException("Could not write Model.", ioException);
+      throw new GraphException("Could not write Graph.", ioException);
     }
   }
 
@@ -313,7 +313,7 @@ public class MemoryXMLWriter {
   }
 
   /**
-   * Writes the Model's statements as RDF/XML to the print Writer.
+   * Writes the Graph's statements as RDF/XML to the print Writer.
    *
    * @param graph Graph
    * @param out PrintWriter
@@ -360,7 +360,7 @@ public class MemoryXMLWriter {
     else {
 
       //message for exception to be thrown
-      String message = "Could not write Model. Invlaid arguments provided. ";
+      String message = "Could not write Graph. Invlaid arguments provided. ";
 
       if (out == null) {
 

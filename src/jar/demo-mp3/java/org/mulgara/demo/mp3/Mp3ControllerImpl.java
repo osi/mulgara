@@ -86,13 +86,13 @@ public class Mp3ControllerImpl extends Mp3Controller {
   /** Where the fsModel stores it's information */
   private URIReference fsModelResource = null;
 
-  /** Type of Model to store Mp3s information */
+  /** Type of Graph to store Mp3s information */
   private URIReference mp3ModelType = null;
 
-  /** Type of Model to store Schema information */
+  /** Type of Graph to store Schema information */
   private URIReference schemaModelType = null;
 
-  /** Type of Model to store FileSystem information */
+  /** Type of Graph to store FileSystem information */
   private URIReference fsModelType = null;
 
   /** Returned by getMp3Model */
@@ -213,8 +213,8 @@ public class Mp3ControllerImpl extends Mp3Controller {
   }
 
   /**
-   * Closes the Model
-   * @param model Model
+   * Closes the Graph
+   * @param model Graph
    */
   private void close(Model model) {
     if (model != null) {

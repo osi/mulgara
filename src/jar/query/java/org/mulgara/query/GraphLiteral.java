@@ -57,7 +57,7 @@ import org.xml.sax.InputSource;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelLiteral implements Model {
+public class GraphLiteral implements Graph {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -71,7 +71,7 @@ public class ModelLiteral implements Model {
    * Logger. This is named after the class.
    */
   @SuppressWarnings("unused")
-  private final static Logger logger = Logger.getLogger(ModelLiteral.class);
+  private final static Logger logger = Logger.getLogger(GraphLiteral.class);
 
   /**
    * The content of the model, an RDF syntax byte sequence.
@@ -95,7 +95,7 @@ public class ModelLiteral implements Model {
    * @throws TransformerConfigurationException EXCEPTION TO DO
    * @throws TransformerException EXCEPTION TO DO
    */
-  public ModelLiteral(Source source) throws TransformerConfigurationException,
+  public GraphLiteral(Source source) throws TransformerConfigurationException,
       TransformerException {
 
     // Validate "source" parameter
@@ -116,7 +116,7 @@ public class ModelLiteral implements Model {
   }
 
   //
-  // Methods implementing ModelExpression
+  // Methods implementing GraphExpression
   //
 
   /**
@@ -138,7 +138,7 @@ public class ModelLiteral implements Model {
   //
 
   /**
-   * Gets the InputSource attribute of the ModelLiteral object
+   * Gets the InputSource attribute of the GraphLiteral object
    *
    * @return The InputSource value
    */
@@ -180,7 +180,7 @@ public class ModelLiteral implements Model {
       return true;
     }
 
-    if (! (object instanceof ModelLiteral)) {
+    if (! (object instanceof GraphLiteral)) {
 
       return false;
     }
@@ -196,12 +196,12 @@ public class ModelLiteral implements Model {
 
     try {
 
-      ModelLiteral cloned = (ModelLiteral) super.clone();
+      GraphLiteral cloned = (GraphLiteral) super.clone();
       return cloned;
     }
     catch (CloneNotSupportedException e) {
       throw new RuntimeException(
-          "ModelLiteral not cloneable"
+          "GraphLiteral not cloneable"
           );
     }
   }

@@ -297,7 +297,7 @@ public class BrowserPanel extends JPanel {
   }
 
   /**
-   * Registers the Constraint Listener with the Model.
+   * Registers the Constraint Listener with the Graph.
    * @param listener ConstraintListener
    * @throws IllegalArgumentException
    */

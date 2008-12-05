@@ -131,7 +131,7 @@ public class StatementStoreResolver implements SystemResolver {
   {
     // Validate parameters
     if (modelTypeURI == null) {
-      throw new IllegalArgumentException("Model type can't be Null");
+      throw new IllegalArgumentException("Graph type can't be Null");
     }
     if (statementStore == null) {
       throw new IllegalArgumentException("Null 'statementStore' parameter");
@@ -163,7 +163,7 @@ public class StatementStoreResolver implements SystemResolver {
   {
     // Validate parameters
     if (modelTypeURI == null) {
-      throw new IllegalArgumentException("Model type can't be Null");
+      throw new IllegalArgumentException("Graph type can't be Null");
     }
     if (statementStore == null) {
       throw new IllegalArgumentException("Null 'statementStore' parameter");
@@ -315,7 +315,7 @@ public class StatementStoreResolver implements SystemResolver {
       Node node = resolverSession.globalize(model);
       if (!(node instanceof URIReference)) {
         throw new ResolverException(
-          "Model " + model + " is " + node + ", not a URI reference");
+          "Graph " + model + " is " + node + ", not a URI reference");
       }
       modelURIReference = (URIReference) node;
     } catch (GlobalizeException e) {

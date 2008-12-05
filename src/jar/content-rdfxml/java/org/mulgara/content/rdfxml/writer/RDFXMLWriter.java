@@ -330,7 +330,7 @@ public class RDFXMLWriter {
   }
 
   /**
-   * Writes the Model's statements as RDF/XML to the print Writer.
+   * Writes the Graph's statements as RDF/XML to the print Writer.
    *
    * @param statements Statements
    * @param session ResolverSession

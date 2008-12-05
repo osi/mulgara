@@ -21,7 +21,7 @@ import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.LocalNode;
-import org.mulgara.query.ModelResource;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -216,7 +216,7 @@ public class NetworkDelegator implements Delegator {
     // convert the variable set to a variable list - add types via unchecked casts
     List<Variable> variables = new ArrayList<Variable>((Set<Variable>)globalConstraint.getVariables());
     // build the new query
-    return new Query(variables, new ModelResource(model.getURI()), globalConstraint, null, Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
+    return new Query(variables, new GraphResource(model.getURI()), globalConstraint, null, Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
   }
 
 

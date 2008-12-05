@@ -25,57 +25,39 @@
  *
  */
 
-package org.mulgara.query;
+package org.mulgara.resolver.spi;
+
+// Java 2 standard packages
+import javax.transaction.xa.XAResource;
+import java.net.URI;
+
+// Local packages
+import org.mulgara.query.Constraint;
+import org.mulgara.query.ConstraintElement;
+import org.mulgara.query.QueryException;
 
 /**
- * A model expression composed of the union of two subexpressions.
+ * Used to constrain a given constraint to a specified model
  *
- * @created 2001-08-12
- *
- * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @copyright &copy;2001-2004
- *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
- *
+ * @created 2003-12-01
+ * @author <a href="http://www.pisoftware.com/andrae">Andrae Muys</a>
+ * @version $Revision: 1.9 $
+ * @modified $Date: 2005/05/03 08:11:44 $ 
+ * @maintenanceAuthor $Author: amuys $
+ * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
+ * @copyright &copy;2003-2004 <a href="http://www.pisoftware.com/">Plugged In
+ *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelUnion extends ModelOperation {
 
+public interface ConstraintGraphRewrite
+{
   /**
-   * Allow newer compiled version of the stub to operate when changes
-   * have not occurred with the class.
-   * NOTE : update this serialVersionUID when a method or a public member is
-   * deleted.
-   */
-  static final long serialVersionUID = -2658255434397870185L;
-
-  //
-  // Constructor
-  //
-
-  /**
-   * Construct a model union.
+   * Rewrite this constraintExpression to access the specified model
    *
-   * @param lhs a non-<code>null</code> model expression
-   * @param rhs another non-<code>null</code> model expression
+   * @param newModel  the model with which to constrain the constraint
+   * @param constraint the constraint to constrain
    */
-  public ModelUnion(ModelExpression lhs, ModelExpression rhs) {
-    super(lhs, rhs);
-  }
-
-  /**
-   * Legible representation
-   *
-   * @return RETURNED VALUE TO DO
-   */
-  public String toString() {
-
-    return "(" + getLHS() + " union " + getRHS() + ")";
-  }
+    public Constraint rewrite(ConstraintElement newModel,
+                              Constraint constraint) throws Exception;
 }

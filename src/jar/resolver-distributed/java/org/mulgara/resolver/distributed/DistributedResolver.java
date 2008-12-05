@@ -78,7 +78,7 @@ public class DistributedResolver implements Resolver, TransactionCoordinator {
 
 
   /**
-   * Model creation method.  Not supported in this resolver.
+   * Graph creation method.  Not supported in this resolver.
    * @throws ResolverException The server should not ask this resolver to create a model.
    */
   public void createModel(long model, URI modelType) throws ResolverException {

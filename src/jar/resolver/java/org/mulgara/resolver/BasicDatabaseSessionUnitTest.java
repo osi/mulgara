@@ -195,7 +195,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
         // Evaluate the query
         Answer answer = new ArrayAnswer(session.query(new Query(
             selectList,                         // SELECT
-            new ModelResource(systemModelURI),  // FROM
+            new GraphResource(systemModelURI),  // FROM
             new ConstraintImpl(subjectVariable, // WHERE
                            predicateVariable,
                            objectVariable),
@@ -245,7 +245,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
       Session session = database.newSession();
       try {
         session.createModel(modelURI, null);
-        session.setModel(modelURI, new ModelResource(fileURI));
+        session.setModel(modelURI, new GraphResource(fileURI));
         session.removeModel(modelURI);
       } finally {
         session.close();
@@ -284,8 +284,8 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
         // Evaluate the query
         new ArrayAnswer(session.query(new Query(
           selectList,                                       // SELECT
-          new ModelUnion(new ModelResource(dcFileURI),      // FROM
-                         new ModelResource(rdfsFileURI)),
+          new GraphUnion(new GraphResource(dcFileURI),      // FROM
+                         new GraphResource(rdfsFileURI)),
           new ConstraintImpl(subjectVariable,               // WHERE
                          predicateVariable,
                          objectVariable),

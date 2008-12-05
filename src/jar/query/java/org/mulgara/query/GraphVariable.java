@@ -27,14 +27,14 @@ import org.apache.log4j.Logger;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class ModelVariable implements Model {
+public class GraphVariable implements Graph {
 
   /** Used for serializing. */
   static final long serialVersionUID = 5132086338306266830L;
 
   /** Logger. */
   @SuppressWarnings("unused")
-  private final static Logger logger = Logger.getLogger(ModelVariable.class);
+  private final static Logger logger = Logger.getLogger(GraphVariable.class);
 
   /** The variable for the graph */
   private Variable variable;
@@ -49,13 +49,13 @@ public class ModelVariable implements Model {
    * @param uri the {@link URI} of the model to query
    * @throws IllegalArgumentException if <var>url</var> is <code>null</code>
    */
-  public ModelVariable(Variable variable) {
+  public GraphVariable(Variable variable) {
     if (variable == null) throw new IllegalArgumentException("Null variable parameter");
     this.variable = variable;
   }
 
   //
-  // Methods implementing ModelExpression
+  // Methods implementing GraphExpression
   //
 
   /**
@@ -103,16 +103,16 @@ public class ModelVariable implements Model {
   //
 
   /**
-   * Return true if the variables of a ModelVariable are equal.
-   * @param object ModelVariable to test equality.
-   * @return true if the variables of a ModelVariable are equal.
+   * Return true if the variables of a GraphVariable are equal.
+   * @param object GraphVariable to test equality.
+   * @return true if the variables of a GraphVariable are equal.
    */
   public boolean equals(Object object) {
     if (object == null) return false;
     if (object == this) return true;
 
-    if (!(object instanceof ModelVariable)) return false;
-    ModelVariable modelVar = (ModelVariable)object;
+    if (!(object instanceof GraphVariable)) return false;
+    GraphVariable modelVar = (GraphVariable)object;
     return variable.equals(modelVar.variable);
   }
 
@@ -130,11 +130,11 @@ public class ModelVariable implements Model {
    */
   public Object clone() {
     try {
-      ModelVariable cloned = (ModelVariable)super.clone();
+      GraphVariable cloned = (GraphVariable)super.clone();
       cloned.variable = variable;
       return cloned;
     } catch (CloneNotSupportedException e) {
-      throw new RuntimeException("ModelVariable not cloneable");
+      throw new RuntimeException("GraphVariable not cloneable");
     }
   }
 

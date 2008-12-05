@@ -81,10 +81,10 @@ public abstract class AbstractId3Tag implements Id3Tag {
   /** Used to perform queries */
   private ItqlInterpreterBean bean = null;
 
-  /** Model containing the Mp3 instance data */
+  /** Graph containing the Mp3 instance data */
   private Mp3Model model = null;
 
-  /** Model containing Schema information */
+  /** Graph containing Schema information */
   private SchemaModel schemaModel = null;
 
   /** Mp3File that this Tag represents. */

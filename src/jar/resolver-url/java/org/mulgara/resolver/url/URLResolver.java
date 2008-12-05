@@ -138,7 +138,7 @@ public class URLResolver implements Resolver {
       Node globalModel = resolverSession.globalize(model);
       if (!(globalModel instanceof URIReference)) {
         throw new ResolverException(
-            "Model parameter " + globalModel + " isn't a URI reference");
+            "Graph parameter " + globalModel + " isn't a URI reference");
       }
       modelURIReference = (URIReference) globalModel;
     }
@@ -241,7 +241,7 @@ public class URLResolver implements Resolver {
       Node globalModel = resolverSession.globalize(model);
       if (!(globalModel instanceof URIReference)) {
         throw new ResolverException(
-            "Model parameter " + globalModel + " isn't a URI reference");
+            "Graph parameter " + globalModel + " isn't a URI reference");
       }
       modelURIReference = (URIReference) globalModel;
     }

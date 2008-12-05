@@ -111,7 +111,7 @@ public class ViewResolver implements Resolver, ViewMarker
 
     // Validate "modelType" parameter
     if (modelTypeURI == null) {
-      throw new IllegalArgumentException("Model type can't be null");
+      throw new IllegalArgumentException("Graph type can't be null");
     }
     this.resolverSession = resolverSession;
     this.systemResolver = systemResolver;
@@ -257,7 +257,7 @@ public class ViewResolver implements Resolver, ViewMarker
 
       return definition.resolve(constraint, session);
     } catch (LocalizeException el) {
-      throw new QueryException("Model " + model + " did not exist in view expansion", el);
+      throw new QueryException("Graph " + model + " did not exist in view expansion", el);
     } catch (ResolverException er) {
       throw new QueryException("Failed to build view definition uri", er.getCause());
     }

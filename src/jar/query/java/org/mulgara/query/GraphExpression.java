@@ -27,10 +27,16 @@
 
 package org.mulgara.query;
 
+import java.net.*;
+import java.util.*;
+import java.io.Serializable;
+
 /**
- * A model expression composed of the intersection of two subexpressions.
+ * An expression whose leaves are the {@link URL}s of RDF models.
  *
- * @created 2001-09-04
+ * Currently this doesn't handle compound expressions, only simple models.
+ *
+ * @created 12/Aug/2001
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  *
@@ -38,14 +44,12 @@ package org.mulgara.query;
  *
  * @modified $Date: 2005/01/05 04:58:20 $ by $Author: newmana $
  *
- * @maintenanceAuthor $Author: newmana $
- *
- * @copyright &copy;2001-2003
- *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
+ * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
+ *      Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ModelIntersection extends ModelOperation {
+public interface GraphExpression extends Cloneable, Serializable {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -53,28 +57,27 @@ public class ModelIntersection extends ModelOperation {
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  static final long serialVersionUID = -5897664547668612754L;
-
-  //
-  // Constructor
-  //
+  static final long serialVersionUID = -7760184436366431348L;
 
   /**
-   * Construct a model intersection.
+   * Calculate the databases involved in this expression. Bear in mind that
+   * different models may reside on the same database. The idea of this function
+   * is to test for when only one database is involved, and we're able to
+   * transmit a query to that database for remove processing.
    *
-   * @param lhs a non-<code>null</code> model expression
-   * @param rhs another non-<code>null</code> model expression
+   * @return a set containing the {@link URI}s of the databases
    */
-  public ModelIntersection(ModelExpression lhs, ModelExpression rhs) {
-    super(lhs, rhs);
-  }
+  public Set<URI> getDatabaseURIs();
 
   /**
-   * Legible representation
+   * Calculate the graphs involved in this expression.
    *
-   * @return RETURNED VALUE TO DO
+   * @return a set containing the {@link URI}s of the graphs
    */
-  public String toString() {
-    return "(" + getLHS() + " intersect " + getRHS() + ")";
-  }
+  public Set<URI> getGraphURIs();
+
+  /**
+   * Clones sets of models in the rhs and lhs objects.
+   */
+  public Object clone();
 }

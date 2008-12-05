@@ -370,7 +370,7 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testLoadRelationalDef() throws Exception {
     Session session = database.newSession();
     try {
-      session.setModel(testModelDefURI, new ModelResource(new File("data/ISWC-d2rq.rdf").toURI()));
+      session.setModel(testModelDefURI, new GraphResource(new File("data/ISWC-d2rq.rdf").toURI()));
     } finally {
       session.close();
     }
@@ -385,7 +385,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintImpl(new Variable("s"),
                              new URIReferenceImpl(RDF.TYPE),
                              new URIReferenceImpl(new URI("http://annotation.semanticweb.org/iswc/iswc.daml#Person")),
@@ -422,7 +422,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -465,7 +465,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new Variable("s"),
@@ -506,7 +506,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new URIReferenceImpl(new URI("http://www.smith.id/albert")),
@@ -548,7 +548,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new Variable("s"),
@@ -595,7 +595,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintImpl(new Variable("s"),
                              new URIReferenceImpl(RDF.TYPE),
                              new URIReferenceImpl(new URI("http://annotation.semanticweb.org/iswc/iswc.daml#Conference")),
@@ -632,7 +632,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -676,7 +676,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -718,7 +718,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -797,7 +797,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
               {
                 new ConstraintImpl(new Variable("s"),
@@ -842,7 +842,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
               {
                 new ConstraintImpl(new Variable("s"),
@@ -891,7 +891,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
               {
                 new ConstraintImpl(new Variable("s"),
@@ -955,7 +955,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1001,7 +1001,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new Variable("s"),
@@ -1042,7 +1042,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[]
             {
                 new ConstraintImpl(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper3")),
@@ -1085,7 +1085,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1150,7 +1150,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1220,7 +1220,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("p"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1272,7 +1272,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("per"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1335,7 +1335,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("per"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1390,7 +1390,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),
@@ -1441,7 +1441,7 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testLoadRelationalDef2() throws Exception {
     Session session = database.newSession();
     try {
-      session.setModel(testModel2DefURI, new ModelResource(new File("data/ISWC-d2rq.rdf").toURI()));
+      session.setModel(testModel2DefURI, new GraphResource(new File("data/ISWC-d2rq.rdf").toURI()));
     } finally {
       session.close();
     }
@@ -1459,7 +1459,7 @@ public class RelationalResolverUnitTest extends TestCase {
 
       Answer answer = session.query(new Query(
           selectList,          // SELECT
-          new ModelResource(systemModelURI),               // FROM
+          new GraphResource(systemModelURI),               // FROM
           new ConstraintConjunction(Arrays.asList(new ConstraintExpression[] {
               new ConstraintImpl(new Variable("s"),
                                  new URIReferenceImpl(RDF.TYPE),

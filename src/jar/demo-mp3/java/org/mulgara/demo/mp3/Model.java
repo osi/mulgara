@@ -39,7 +39,7 @@ import java.util.*;
 import org.jrdf.util.*;
 
 /**
- * Generic methods for Model management.
+ * Generic methods for Graph management.
  *
  * @created 2004-12-03
  *
@@ -61,7 +61,7 @@ import org.jrdf.util.*;
 public interface Model {
 
   /**
-   * Initializes the Model.
+   * Initializes the Graph.
    *
    * @param context ModelContext
    * @throws Exception
@@ -81,13 +81,13 @@ public interface Model {
   public URIReference getResource();
 
   /**
-   * Sets the Model's type.
+   * Sets the Graph's type.
    * @param model URIReference
    */
   public void setType(URIReference type);
 
   /**
-   * Returns the Resource URI that represents the Model's type.
+   * Returns the Resource URI that represents the Graph's type.
    * @return URIReference
    */
   public URIReference getType();
@@ -116,7 +116,7 @@ public interface Model {
   public ClosableIterator query(String query) throws Exception;
 
   /**
-   * Creates the Model with the type set by setType(), or the default Model
+   * Creates the Graph with the type set by setType(), or the default Graph
    * type if 'type' null (or not set).
    * @throws QueryException
    */
@@ -130,7 +130,7 @@ public interface Model {
   public void delete() throws QueryException;
 
   /**
-   * Deletes all statements in the Model.
+   * Deletes all statements in the Graph.
    *
    * @throws QueryException
    */
@@ -142,7 +142,7 @@ public interface Model {
   public void close();
 
   /**
-   * Returns true if the Model has been initialized.
+   * Returns true if the Graph has been initialized.
    * @return boolean
    */
   public boolean hasInitialized();

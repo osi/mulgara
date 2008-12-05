@@ -32,9 +32,9 @@ import org.mulgara.query.ConstantValue;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintHaving;
-import org.mulgara.query.ModelExpression;
-import org.mulgara.query.ModelResource;
-import org.mulgara.query.ModelUnion;
+import org.mulgara.query.GraphExpression;
+import org.mulgara.query.GraphResource;
+import org.mulgara.query.GraphUnion;
 import org.mulgara.query.Order;
 import org.mulgara.query.Query;
 import org.mulgara.query.SelectElement;
@@ -68,7 +68,7 @@ public class QueryStruct implements Serializable {
   private List<SelectElement> variables;
 
   /** The model expresison for the query. */
-  private ModelExpression models;
+  private GraphExpression models;
 
   /** The where clause of the query. */
   private ConstraintExpression where;
@@ -181,7 +181,7 @@ public class QueryStruct implements Serializable {
    * @param modelUri The URI of the model for the query.
    */
   public void setModelExpression(URI modelUri) {
-    this.models = new ModelResource(modelUri);
+    this.models = new GraphResource(modelUri);
   }
 
 
@@ -195,7 +195,7 @@ public class QueryStruct implements Serializable {
     if (firstModelUri.equals(secondModelUri)) {
       setModelExpression(firstModelUri);
     } else {
-      this.models = new ModelUnion(new ModelResource(firstModelUri), new ModelResource(secondModelUri));
+      this.models = new GraphUnion(new GraphResource(firstModelUri), new GraphResource(secondModelUri));
     }
   }
 
