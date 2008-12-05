@@ -305,8 +305,8 @@ public class LuceneResolver implements Resolver {
               }
             }
           } catch (FullTextStringIndexException e) {
-            throw new ResolverException("Unable to add '" + literal +
-                "' to full text string index", e);
+            throw new ResolverException("Unable to " + (occurs ? "add" : "delete") + "'" +
+                                        literal + "' to full text string index", e);
           }
         } else {
           if (logger.isInfoEnabled()) {
