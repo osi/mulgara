@@ -40,6 +40,7 @@ import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
+import org.mulgara.util.QueryParams;
 
 /**
  * An {@link Operation} that implements the {@link Session#createModel} method.
@@ -57,6 +58,9 @@ class CreateGraphOperation implements Operation {
   /** Logger. This is named after the class. */
   @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(CreateGraphOperation.class.getName());
+
+  /** The parameter used for describing subgraphs within a URI. */
+  static final String GRAPH = "graph";
 
   /** The URI of the model to be created. */
   private final URI graphURI;
@@ -175,18 +179,18 @@ class CreateGraphOperation implements Operation {
    * @throws QueryException
    */
   private void verifyGraphUri(URI graphURI, DatabaseMetadata metadata) throws QueryException {
-    // only both if this is a scheme which uses fragments - for the moment only RMI
-    if (!fragmentScheme(graphURI)) return;
+    // only check if this is a scheme which can use fragments - for the moment only RMI
+    if (!fragmentSchemes.contains(graphURI)) return;
 
     boolean badModelURI = true;
     URI databaseURI = metadata.getURI();
     String scheme = graphURI.getScheme();
     String fragment = graphURI.getFragment();
 
-    if (scheme != null && scheme.equals(databaseURI.getScheme()) && fragment != null) {
+    if (scheme != null && scheme.equals(databaseURI.getScheme())) {
       if (databaseURI.isOpaque()) {
         // databaseURI is opaque.
-        if (graphURI.isOpaque()) {
+        if (graphURI.isOpaque() && fragment != null) {
           // Strip out the query string.
           String ssp = graphURI.getSchemeSpecificPart();
           int qIndex = ssp.indexOf('?');
@@ -216,7 +220,8 @@ class CreateGraphOperation implements Operation {
             )
         ) {
           // graphURI is relative to databaseURI.
-          badModelURI = false;
+          // only good if we have a fragment OR we have a graph parameter
+          if (fragment != null || hasSubgraph(graphURI)) badModelURI = false;
         }
       }
     } else {
@@ -239,11 +244,21 @@ class CreateGraphOperation implements Operation {
   }
 
   /**
-   * Test if the given URI is in a scheme which differentiates graphs based on fragments.
+   * Test if the given URI is in a scheme which differentiates graphs based on fragments
+   * and there is no sub-graph name encoded in the URI.
    * @param graphUri The URI to test for the graph.
    * @return <code>true</code> only of the URI is in the known graph schemes.
    */
-  private static boolean fragmentScheme(URI graphUri) {
-    return fragmentSchemes.contains(graphUri.getScheme());
+  private static boolean fragmentScheme(URI u) {
+    return fragmentSchemes.contains(u.getScheme()) && !hasSubgraph(u);
+  }
+
+  /**
+   * Check if a graph URI contains another graph name.
+   * @param graphURI The URI to test.
+   * @return <code>true</code> if the URI contains the name of another graph.
+   */
+  private static boolean hasSubgraph(URI graphURI) {
+    return QueryParams.decode(graphURI).getNames().contains(GRAPH);
   }
 }
