@@ -116,6 +116,13 @@ public interface Connection {
 
 
   /**
+   * Tests if this connection is over a network protocol.
+   * @return <code>true</code> if this connection is being executed over a network protocol.
+   */
+  public boolean isRemote();
+
+
+  /**
    * Starts and commits transactions on this connection, by turning the autocommit
    * flag on and off. 
    * @param autocommit <code>true</code> if the flag is to be on.

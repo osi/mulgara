@@ -89,6 +89,12 @@ public class Restore extends DataInputTx {
     URI src = getSource();
     URI dest = getDestination();
     if (serverTest(dest)) throw new QueryException("Cannot restore to a graph. Must be a server URI.");
+
+    if (isLocal() && !conn.isRemote()) {
+      logger.error("Used a LOCAL modifier when restoring <" + src + "> to <" + dest + "> on a non-remote server.");
+      throw new QueryException("LOCAL modifier is not valid for RESTORE command when not using a client-server connection.");
+    }
+
     try {
       if (isLocal()) sendMarshalledData(conn, false);
       else conn.getSession().restore(src);

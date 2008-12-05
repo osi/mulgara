@@ -75,6 +75,12 @@ public class Load extends DataInputTx {
   public Object execute(Connection conn) throws QueryException {
     URI src = getSource();
     URI dest = getDestination();
+
+    if (isLocal() && !conn.isRemote()) {
+      logger.error("Used a LOCAL modifier when loading <" + src + "> to <" + dest + "> on a non-remote server.");
+      throw new QueryException("LOCAL modifier is not valid for LOAD command when not using a client-server connection.");
+    }
+
     try {
       long stmtCount = isLocal() ? sendMarshalledData(conn, true) : conn.getSession().setModel(dest, srcRsc);
       if (logger.isDebugEnabled()) logger.debug("Loaded " + stmtCount + " statements from " + src + " into " + dest);

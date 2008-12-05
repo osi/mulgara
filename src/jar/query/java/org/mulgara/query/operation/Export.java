@@ -73,7 +73,12 @@ public class Export extends DataOutputTx {
   public Object execute(Connection conn) throws QueryException {
     URI src = getSource();
     URI dest = getDestination();
-    
+
+    if (isLocal() && !conn.isRemote()) {
+      logger.error("Used a LOCAL modifier when exporting <" + src + "> to <" + dest + "> on a non-remote server.");
+      throw new QueryException("LOCAL modifier is not valid for EXPORT command when not using a client-server connection.");
+    }
+
     try {
       if (isLocal()) {
         getMarshalledData(conn);

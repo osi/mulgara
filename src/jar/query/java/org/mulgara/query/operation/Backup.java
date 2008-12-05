@@ -96,7 +96,12 @@ public class Backup extends DataOutputTx {
     URI src = getSource();
     URI dest = getDestination();
     if (serverTest(src)) throw new QueryException("Cannot back up a graph. Must be a server URI.");
-    
+
+    if (isLocal() && !conn.isRemote()) {
+      logger.error("Used a LOCAL modifier when backing up <" + src + "> to <" + dest + "> on a non-remote server.");
+      throw new QueryException("LOCAL modifier is not valid for BACKUP command when not using a client-server connection.");
+    }
+
     try {
       if (isLocal()) {
         getMarshalledData(conn);

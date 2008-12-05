@@ -54,7 +54,6 @@ import org.mulgara.util.Rmi;
 class RemoteSessionFactoryImpl implements RemoteSessionFactory {
 
   /** Logger. This is named after the classname. */
-  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(RemoteSessionFactoryImpl.class);
 
   /** The local database. */

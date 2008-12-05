@@ -289,5 +289,14 @@ public class SessionConnection extends CommandExecutor implements Connection {
     }
     assert session != null;
   }
+
+
+  /**
+   * Tests if the Connection is being conducted over a network.
+   * @return <code>true</code> if the underlying session is not local.
+   */
+  public boolean isRemote() {
+    return session != null && !session.isLocal();
+  }
   
 }

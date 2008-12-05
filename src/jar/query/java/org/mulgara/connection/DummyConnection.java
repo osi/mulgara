@@ -101,5 +101,13 @@ public class DummyConnection extends CommandExecutor implements Connection {
    */
   public void dispose() throws QueryException {
   }
+
+
+  /**
+   * Always returns <code>false</code>.
+   */
+  public boolean isRemote() {
+    return false;
+  }
   
 }
