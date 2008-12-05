@@ -108,4 +108,24 @@ public class StackTrace {
     t.printStackTrace(new PrintWriter(strWriter));
     return strWriter.toString();
   }
+
+  /**
+   * Gets the base of the cause chain.
+   * @param t The Throwable to get the cause from.
+   * @return The base of the cause chain for the throwable.
+   */
+  public static Throwable getReason(Throwable t) {
+    while (t.getCause() != null) t = t.getCause();
+    return t;
+  }
+
+  /**
+   * Gets the message from the base cause for a Throwable.
+   * @param t The throwable to get the base of the cause chain for.
+   * @return The message from the base case.
+   */
+  public static String getReasonMessage(Throwable t) {
+    return getReason(t).getMessage();
+  }
+
 }

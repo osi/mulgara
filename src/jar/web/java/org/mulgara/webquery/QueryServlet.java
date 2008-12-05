@@ -230,11 +230,14 @@ public class QueryServlet extends HttpServlet {
     } catch (MulgaraParserException mpe) {
       resp.sendError(SC_BAD_REQUEST, "Error parsing command: " + mpe.getMessage());
       return;
+    } catch (RequestException re) {
+      resp.sendError(SC_BAD_REQUEST, "Error processing request: " + re.getMessage());
+      return;
     } catch (IllegalStateException ise) {
       resp.sendError(SC_SERVICE_UNAVAILABLE, ise.getMessage());
       return;
     } catch (Exception e) {
-      resp.sendError(SC_BAD_REQUEST, "Error executing command: " + StackTrace.throwableToString(e));
+      resp.sendError(SC_BAD_REQUEST, "Error executing command. Reason: " + StackTrace.getReasonMessage(e));
       return;
     }
 
