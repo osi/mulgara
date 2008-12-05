@@ -96,6 +96,11 @@ public abstract class MulgaraTransactionFactory {
     synchronized (getMutexLock()) {
       timeoutTasks.put(transaction, new XAReaper(transaction, now + txnTimeout, idleTimeout, now));
     }
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Timeouts set for transaction " + System.identityHashCode(transaction) +
+                   ": idleTimeout=" + idleTimeout + ", txnTimeout=" + txnTimeout);
+    }
   }
 
   protected void transactionComplete(MulgaraTransaction transaction) throws MulgaraTransactionException {
