@@ -59,6 +59,9 @@ import org.mulgara.util.functional.Fn2;
  */
 public abstract class ProtocolServlet extends HttpServlet {
 
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = -6510062000251611536L;
+
   /**
    * Internal type definition of a function that takes "something" and an output stream,
    * and returns a {@link StreamedAnswer}
@@ -96,7 +99,6 @@ public abstract class ProtocolServlet extends HttpServlet {
   protected static final String DEFAULT_GRAPH_ARG = "default-graph-uri";
 
   /** The parameter identifying the graph. We don't set these in SPARQL yet. */
-  @SuppressWarnings("unused")
   protected static final String NAMED_GRAPH_ARG = "named-graph-uri";
 
   /** The name of the default graph. This is a null graph. */
