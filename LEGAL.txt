@@ -137,6 +137,12 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
 
+    Jakarta Regexp
+    JARs:     jakarta-regexp-1.5.jar
+    URL:      http://jakarta.apache.org/regexp/
+    LICENSE:  Apache Software License, v2.0
+              http://www.apache.org/licenses/LICENSE-2.0
+
     JArgs
     JARs:     jargs-0.2.jar
     URL:      http://jargs.sourceforge.net/
@@ -220,6 +226,12 @@ I.  Open Source Components
     License:  Common Development and Distribution License (CDDL) v1.0
               http://www.sun.com/cddl/cddl.html
 
+    JLine
+    JARS:     jline-0.9.94.jar
+    URL:      http://jline.sourceforge.net/
+    License:  BSD
+              http://www.opensource.org/licenses/bsd-license.php
+
     JRDF
     URL:      http://jrdf.sourceforge.net/
     LICENSE:  Apache 1.1
@@ -255,6 +267,12 @@ I.  Open Source Components
     LICENSE:  GNU LGPL
               http://www.opensource.org/licenses/lgpl-license.php
  
+    Sesame Model
+    JARs:     sesame-model-2.2.1.jar
+    URL:      http://www.openrdf.org/
+    LICENSE:  Aduna BSD-style license.
+              http://www.openrdf.org/license.jsp
+
     Trove4j
     JARs:     trove-1.0.2.jar
     URL:      http://trove4j.sf.net/
