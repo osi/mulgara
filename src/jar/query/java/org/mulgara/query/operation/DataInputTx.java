@@ -43,7 +43,7 @@ public abstract class DataInputTx extends DataTx {
   private static final String ZIP_EXTENSION = ".zip";
 
   /** A stream to enable an API to load or restore data directly. */
-  private InputStream overrideInputStream = null;
+  protected InputStream overrideInputStream = null;
   
   /**
    * Create a new data transfer command for moving data into a graph or server.

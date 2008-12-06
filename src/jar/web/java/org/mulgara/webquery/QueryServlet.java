@@ -22,12 +22,15 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,11 +42,15 @@ import org.mulgara.itql.TqlInterpreter;
 import org.mulgara.parser.Interpreter;
 import org.mulgara.parser.MulgaraLexerException;
 import org.mulgara.parser.MulgaraParserException;
+import org.mulgara.protocol.http.MimeMultiNamedPart;
+import org.mulgara.protocol.http.ServletDataSource;
 import org.mulgara.query.Answer;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
+import org.mulgara.query.operation.CreateGraph;
+import org.mulgara.query.operation.Load;
 import org.mulgara.server.AbstractServer;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.sparql.SparqlInterpreter;
@@ -82,6 +89,12 @@ public class QueryServlet extends HttpServlet {
 
   /** Session value for the SPARQL interpreter. */
   private static final String SPARQL_INTERPRETER = "session.sparql.interpreter";
+
+  /** Posted RDF data content type. */
+  protected static final String POSTED_DATA_TYPE = "multipart/form-data;";
+
+  /** A made-up scheme for data uploaded through http-put, since http means "downloaded". */
+  protected static final String HTTP_PUT_NS = "http-put://upload/";
 
   /** The name of the host for the application. */
   private final String hostname;
@@ -171,7 +184,9 @@ public class QueryServlet extends HttpServlet {
       resp.sendError(SC_BAD_REQUEST, "Sent a command to the wrong page.");
       return;
     }
-    
+
+    String type = req.getContentType();
+    if (type != null && type.startsWith(POSTED_DATA_TYPE)) handleDataUpload(req, resp);
     doQuery(req, resp, req.getParameter(GRAPH_ARG));
   }
 
@@ -292,6 +307,125 @@ public class QueryServlet extends HttpServlet {
     // Generate the page
     QueryResponsePage page = new QueryResponsePage(req, resp, templateTags, getTemplateHeaderFile(), getTemplateTailFile());
     page.writeResult(unfinishedResults.get(remaining).second(), remaining);
+  }
+
+
+  /**
+   * Do the work of extracting data to be uploaded, and put it in the requested graph. Create the graph if needed.
+   * @param req The HTTP request containing the file.
+   * @param resp The response back to the submitting client.
+   * @throws IOException Due to an error reading the input stream, or writing to the response stream.
+   */
+  private void handleDataUpload(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    try {
+      // parse in the data to be uploaded
+      MimeMultiNamedPart mime = new MimeMultiNamedPart(new ServletDataSource(req, UPLOAD_GRAPH_ARG));
+
+      // validate the request
+      if (mime.getCount() == 0) throw new RequestException("Request claims to have posted data, but none was supplied.");
+
+      long time = System.currentTimeMillis();
+
+      // Get the destination graph, and ensure it exists
+      URI destGraph = getRequestedGraph(req, mime);
+      Connection conn = getConnection(req);
+      try {
+        new CreateGraph(destGraph).execute(conn);
+      } catch (QueryException e) {
+        throw new RequestException("Unable to create graph: " + e.getMessage());
+      }
+
+      // upload the data
+      Command loadCommand = null;
+      for (int partNr = 0; partNr < mime.getCount(); partNr++) {
+        BodyPart part = mime.getBodyPart(partNr);
+        String partName = mime.getPartName(partNr);
+        try {
+          if (UPLOAD_FILE_ARG.equalsIgnoreCase(partName)) {
+            loadCommand = loadData(destGraph, part, conn);
+            break;
+          }
+        } catch (QueryException e) {
+          throw new RequestException("Unable to load data: " + partName);
+        }
+      }
+
+      time = System.currentTimeMillis() - time;
+
+      // Get the tags to use in the page template
+      Map<String,String> templateTags = getTemplateTagMap();
+      templateTags.put(GRAPH_TAG, defaultGraph(destGraph.toString()));
+
+      // Generate the page
+      QueryResponsePage page = new QueryResponsePage(req, resp, templateTags, getTemplateHeaderFile(), getTemplateTailFile());
+      page.writeResults(time, Collections.singletonList(loadCommand), Collections.singletonList((Object)""));
+
+    } catch (MessagingException e) {
+      resp.sendError(SC_BAD_REQUEST, "Unable to process received MIME data: " + e.getMessage());
+    } catch (RequestException re) {
+      resp.sendError(SC_BAD_REQUEST, re.getMessage());
+    }
+  }
+
+
+  /**
+   * Gets the graph parameter from the MIME data.
+   * @param req The request object from the user.
+   * @return The URI for the requested graph.
+   * @throws RequestException If a graph name was an invalid URI or was not present in the request.
+   */
+  protected URI getRequestedGraph(HttpServletRequest req, MimeMultiNamedPart mime) throws RequestException {
+    // look in the parameters
+    String[] graphArgs = req.getParameterValues(UPLOAD_GRAPH_ARG);
+    if (graphArgs != null) {
+      if (graphArgs.length != 1) throw new RequestException("Multiple graphs requested.");
+      try {
+        return new URI(graphArgs[0]);
+      } catch (URISyntaxException e) {
+        throw new RequestException("Invalid URI for upload graph. " + e.getInput());
+      }
+    }
+    // look in the mime data
+    if (mime != null) {
+      try {
+        String result = mime.getParameterString(UPLOAD_GRAPH_ARG);
+        if (result != null) {
+          try {
+            return new URI(result);
+          } catch (URISyntaxException e) {
+            throw new RequestException("Invalid URI for upload graph <" + e.getInput() + ">: " + result);
+          }
+        }
+      } catch (Exception e) {
+        throw new RequestException("Bad MIME data in upload request: " + e.getMessage());
+      }
+    }
+    throw new RequestException("No graph argument provided.");
+  }
+
+
+  /**
+   * Load MIME data into a graph.
+   * @param graph The graph to load into.
+   * @param data The data to be loaded, with associated meta-data.
+   * @param cxt The connection to the database.
+   * @return The Command that did the loading.
+   * @throws IOException error reading from the client.
+   * @throws RequestException Bad data passed to the load request.
+   * @throws QueryException A query exception occurred during the load operation.
+   */
+  protected Load loadData(URI graph, BodyPart data, Connection cxt) throws RequestException, IOException, QueryException {
+    try {
+      URI absoluteUri = new URI(HTTP_PUT_NS + data.getFileName());
+      Load loadCmd = new Load(absoluteUri, graph, true);
+      loadCmd.setOverrideInputStream(data.getInputStream());
+      loadCmd.execute(cxt);
+      return loadCmd;
+    } catch (MessagingException e) {
+      throw new RequestException("Unable to process data for loading: " + e.getMessage());
+    } catch (URISyntaxException e) {
+      throw new RequestException("Illegal filename: " + e.getInput());
+    }
   }
 
 
@@ -570,6 +704,18 @@ public class QueryServlet extends HttpServlet {
    */
   protected String getTemplateTailFile() {
     return TEMPLATE_TAIL;
+  }
+
+
+  /**
+   * Compare a parameter name to a set of known parameter names used for uploading.
+   * @param name The name to check.
+   * @return <code>true</code> if the name is known. <code>false</code> if not known or <code>null</code>.
+   */
+  private boolean knownUploadParam(String name) {
+    final String[] knownParams = new String[] { UPLOAD_GRAPH_ARG };
+    for (String p: knownParams) if (p.equalsIgnoreCase(name)) return true;
+    return false;
   }
 
 

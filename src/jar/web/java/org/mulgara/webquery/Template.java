@@ -76,6 +76,12 @@ public class Template {
   /** The ResultOrdinal argument for URL parameters. */
   public static final String RESULT_ORD_ARG = "ResultOrdinal";
 
+  /** The URI of a graph to be uploaded into. */
+  public static final String UPLOAD_GRAPH_ARG = "UploadGraph";
+
+  /** The path of a file to be uploaded. */
+  public static final String UPLOAD_FILE_ARG = "UploadFile";
+
   /** A label out of the CSS file. That file could be structurally generated, but for no good reason. */
   public static final String CSS_LARGE = "styleLarge";
 

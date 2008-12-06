@@ -28,7 +28,7 @@ import org.mulgara.query.GraphResource;
 public abstract class ServerCommand implements Command {
 
   /** The text used to create this command. */
-  private String textualForm;
+  private String textualForm = "";
 
   /** The graph being referred to on the server. */
   private final GraphResource serverGraph;

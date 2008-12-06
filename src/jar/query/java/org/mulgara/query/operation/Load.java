@@ -76,7 +76,7 @@ public class Load extends DataInputTx {
     URI src = getSource();
     URI dest = getDestination();
 
-    if (isLocal() && !conn.isRemote()) {
+    if (isLocal() && !conn.isRemote() && overrideInputStream == null) {
       logger.error("Used a LOCAL modifier when loading <" + src + "> to <" + dest + "> on a non-remote server.");
       throw new QueryException("LOCAL modifier is not valid for LOAD command when not using a client-server connection.");
     }
@@ -105,6 +105,17 @@ public class Load extends DataInputTx {
   @Override
   protected Long doTx(Connection conn, InputStream inputStream) throws QueryException {
     return conn.getSession().setModel(inputStream, getDestination(), srcRsc);
+  }
+
+
+  /**
+   * Get the text of the command, or generate a virtual command if no text was parsed.
+   * @return The query that created this command, or a generated query if no query exists.
+   */
+  public String getText() {
+    String text = super.getText();
+    if (text == null || text.length() == 0) text = "load " + getSource() + " into <" + getDestination() + ">";
+    return text;
   }
 
 }
