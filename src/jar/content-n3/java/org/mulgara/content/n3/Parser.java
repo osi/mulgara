@@ -49,6 +49,7 @@ import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
+import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
 import org.mulgara.content.Content;
@@ -393,6 +394,8 @@ class Parser extends Thread implements N3ParserEventHandler {
         }
       case N3Parser.URIREF:
         return toURIReference(ast.toString());
+      case N3Parser.KW_A:
+        return toURIReference(RDF.TYPE);
       default:
         throw new Error("Unsupported N3 parser token type: " + ast.getType());
     }
@@ -404,6 +407,10 @@ class Parser extends Thread implements N3ParserEventHandler {
     } catch (URISyntaxException e) {
       throw new Error("Invalid URI reference generated", e);
     }
+  }
+
+  private URIReference toURIReference(URI u) {
+    return new URIReferenceImpl(u);
   }
 
   /**
