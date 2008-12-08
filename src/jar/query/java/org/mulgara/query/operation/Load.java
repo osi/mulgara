@@ -114,7 +114,7 @@ public class Load extends DataInputTx {
    */
   public String getText() {
     String text = super.getText();
-    if (text == null || text.length() == 0) text = "load " + getSource() + " into <" + getDestination() + ">";
+    if (text == null || text.length() == 0) text = "load <" + getSource() + "> into <" + getDestination() + ">";
     return text;
   }
 
