@@ -261,7 +261,7 @@ public class ConstraintOperations
       Constraint result = op.rewrite(newModel, constraint);
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Rewrote Graph" + newModel + " in " + constraint + " to " + result);
+        logger.debug("Rewrote Graph " + newModel + " in " + constraint + " to " + result);
       }
 
       return result;
