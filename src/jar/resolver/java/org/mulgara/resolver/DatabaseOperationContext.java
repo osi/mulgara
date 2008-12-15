@@ -573,7 +573,8 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     String newHost = metadata.getSystemModelURI().getHost();
     // update the URI
     try {
-      URI newGraphURI = new URI(uri.getScheme(), newHost, uri.getPath(), uri.getFragment());
+      URI newGraphURI = new URI(uri.getScheme(), uri.getUserInfo(), newHost, uri.getPort(),
+                                uri.getPath(), uri.getQuery(), uri.getFragment());
       logger.debug("Changing graph URI from " + uri + " to " + newGraphURI);
 
       return new URIReferenceImpl(newGraphURI);
