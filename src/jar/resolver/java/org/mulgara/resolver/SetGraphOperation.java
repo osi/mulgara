@@ -30,11 +30,9 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import java.io.*;
 import java.net.URI;
-import java.util.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
 
 // Local packages
 import org.mulgara.content.Content;
