@@ -712,6 +712,7 @@ public class QueryServlet extends HttpServlet {
    * @param name The name to check.
    * @return <code>true</code> if the name is known. <code>false</code> if not known or <code>null</code>.
    */
+  @SuppressWarnings("unused")
   private boolean knownUploadParam(String name) {
     final String[] knownParams = new String[] { UPLOAD_GRAPH_ARG };
     for (String p: knownParams) if (p.equalsIgnoreCase(name)) return true;
