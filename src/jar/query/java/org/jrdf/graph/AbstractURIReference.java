@@ -194,6 +194,6 @@ public abstract class AbstractURIReference implements org.openrdf.model.URI, URI
    * @return A hash code for the URI.
    */
   public int hashCode() {
-    return uri.hashCode();
+    return toString().hashCode();
   }
 }
