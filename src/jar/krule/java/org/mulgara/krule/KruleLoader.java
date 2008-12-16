@@ -227,11 +227,11 @@ public class KruleLoader implements RuleLoader {
 
     rules = null;
     try {
-      logger.debug("Initializing for rule queries.");
+      if (logger.isDebugEnabled()) logger.debug("Initializing for rule queries.");
       // load the objects
       loadRdfObjects();
 
-      logger.debug("Querying for rules");
+      if (logger.isDebugEnabled()) logger.debug("Querying for rules");
       rules = findRules();
       // set the target model
       rules.setTargetModel(destModel);
@@ -273,21 +273,21 @@ public class KruleLoader implements RuleLoader {
   private void loadRdfObjects() throws QueryException, TuplesException, InitializerException, KruleStructureException {
     // get all the URIReferences
     findUriReferences();
-    logger.debug("Got URI References");
+    if (logger.isDebugEnabled()) logger.debug("Got URI References");
     findVarReferences();
-    logger.debug("Got Variable references");
+    if (logger.isDebugEnabled()) logger.debug("Got Variable references");
     findLiteralReferences();
-    logger.debug("Got Literal references");
+    if (logger.isDebugEnabled()) logger.debug("Got Literal references");
 
     // pre-load all constraints
     loadSimpleConstraints();
-    logger.debug("Got simple constraints");
+    if (logger.isDebugEnabled()) logger.debug("Got simple constraints");
     loadTransitiveConstraints();
-    logger.debug("Got transitive constraints");
+    if (logger.isDebugEnabled()) logger.debug("Got transitive constraints");
     loadJoinConstraints();
-    logger.debug("Got join constraints");
+    if (logger.isDebugEnabled()) logger.debug("Got join constraints");
     loadHavingConstraints();
-    logger.debug("Got having constraints");
+    if (logger.isDebugEnabled()) logger.debug("Got having constraints");
   }
 
 
@@ -304,11 +304,11 @@ public class KruleLoader implements RuleLoader {
       // find all of the rules
       query = interpreter.parseQuery("select $rule from <" + ruleModel + "> where $rule <rdf:type> <krule:Rule> ;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query attempted while finding rules.", e);
     }
     
     Answer ruleAnswer = query(query);
-    logger.debug("Got response for rule query");
+    if (logger.isDebugEnabled()) logger.debug("Got response for rule query");
 
     // create the rule structure for all the rules
     RuleStructure rules = new RuleStructure();
@@ -322,7 +322,7 @@ public class KruleLoader implements RuleLoader {
     } finally {
       ruleAnswer.close();
     }
-    logger.debug("Created rules" + rules.toString());
+    if (logger.isDebugEnabled()) logger.debug("Created rules" + rules.toString());
     return rules;
   }
 
@@ -339,7 +339,7 @@ public class KruleLoader implements RuleLoader {
     try {
       query = interpreter.parseQuery("select $src $dest from <" + ruleModel + "> where $src <krule:triggers> $dest ;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while finding triggers.", e);
     }
 
     Answer answer = query(query);
@@ -349,7 +349,7 @@ public class KruleLoader implements RuleLoader {
       while (answer.next()) {
         String src = answer.getObject(0).toString();
         String dest = answer.getObject(1).toString();
-        logger.debug("Linking <" + src + "> -> <" + dest + ">");
+        if (logger.isDebugEnabled()) logger.debug("Linking <" + src + "> -> <" + dest + ">");
         rules.setTrigger(src, dest);
       }
     } finally {
@@ -368,13 +368,13 @@ public class KruleLoader implements RuleLoader {
    * @throws InitializerException When there is an intialization error.
    */
   private void loadQueries() throws TuplesException, QueryException, KruleStructureException, InitializerException {
-    logger.debug("Loading Queries");
+    if (logger.isDebugEnabled()) logger.debug("Loading Queries");
     // go through the rules to set their queries
     Iterator<Rule> ri = rules.getRuleIterator();
     while (ri.hasNext()) {
       Rule rule = ri.next();
 
-      logger.debug("Reading query for rule: " + rule.getName());
+      if (logger.isDebugEnabled()) logger.debug("Reading query for rule: " + rule.getName());
       Query query;
       try {
         // get the query data for this rule
@@ -383,7 +383,7 @@ public class KruleLoader implements RuleLoader {
             " $vs $pre $v and $pre <mulgara:prefix> <rdf:_> in <"+ PREFIX_GRAPH +
             "> and $v <rdf:type> $t ;");
       } catch (Exception e) {
-        throw new QueryException("Invalid query.", e);
+        throw new QueryException("Invalid query while getting rule queries.", e);
       }
       Answer answer = query(query);
 
@@ -394,17 +394,17 @@ public class KruleLoader implements RuleLoader {
       URIReference[] types = new URIReference[3];
       try {
         while (answer.next()) {
-          logger.debug("Getting element from " + answer.getObject(0));
+          if (logger.isDebugEnabled()) logger.debug("Getting element from " + answer.getObject(0));
           // work out the position of the element.  Subject=0 Predicate=1 Object=2
           int seqNr = Integer.parseInt(answer.getObject(0).toString().substring(prefixLength)) - 1;
-          logger.debug("parsed: " + seqNr);
+          if (logger.isDebugEnabled()) logger.debug("parsed: " + seqNr);
           if (seqNr > elements.length) {
-            throw new KruleStructureException("Rule " + rule.getName() + " has too many insertion elements");
+            throw new KruleStructureException("Rule " + rule.getName() + " has too many insertion elements. Found sequence number: " + seqNr);
           }
           // get the selection element and its type
           elements[seqNr] = (URIReference)answer.getObject(1);
           types[seqNr] = (URIReference)answer.getObject(2);
-          logger.debug("Nr: " + seqNr + ", v: " + elements[seqNr] + ", type: " + types[seqNr]);
+          if (logger.isDebugEnabled()) logger.debug("Nr: " + seqNr + ", v: " + elements[seqNr] + ", type: " + types[seqNr]);
         }
       } finally {
         answer.close();
@@ -431,36 +431,32 @@ public class KruleLoader implements RuleLoader {
         query = interpreter.parseQuery("select $w from <" + ruleModel +
             "> where <" + rule.getName() + "> <krule:hasQuery> $q and $q <krule:hasWhereClause> $w;");
       } catch (Exception e) {
-        throw new QueryException("Invalid query.", e);
+        throw new QueryException("Invalid query reading WHERE clause for rule: " + rule.getName(), e);
       }
       answer = query(query);
 
       try {
         // attach the correct constraint tree to the query structure
         if (answer.next()) {
-          logger.debug("Setting where clause for rule: " + rule.getName() + "");
+          if (logger.isDebugEnabled()) logger.debug("Setting where clause for rule: " + rule.getName() + "");
           Node whereClauseNode = (Node)answer.getObject(0);
-          logger.debug("Where clause is: " + whereClauseNode);
+          if (logger.isDebugEnabled()) logger.debug("Where clause is: " + whereClauseNode);
           ConstraintExpression ce = (ConstraintExpression)constraintMap.get(whereClauseNode);
-          logger.debug("where clause expression: " + ce);
-          if (ce == null) {
-            throw new KruleStructureException("Rule " + rule.getName() + " has no where clause");
-          }
+          if (logger.isDebugEnabled()) logger.debug("where clause expression: " + ce);
+          if (ce == null) throw new KruleStructureException("Rule " + rule.getName() + " has no where clause");
           queryStruct.setWhereClause(ce);
         }
 
-        if (answer.next()) {
-          throw new KruleStructureException("Rule " + rule.getName() + " has more than one query");
-        }
+        if (answer.next()) throw new KruleStructureException("Rule " + rule.getName() + " has more than one query");
       } finally {
         answer.close();
       }
 
-      logger.debug("Setting models for the query");
+      if (logger.isDebugEnabled()) logger.debug("Setting models for the query");
       // set the models
       queryStruct.setModelExpression(baseModel, destModel);
 
-      logger.debug("Setting query structure for the rule");
+      if (logger.isDebugEnabled()) logger.debug("Setting query structure for the rule");
       // create a new query and set it for the rule
       rule.setQueryStruct(queryStruct);
     }
@@ -477,7 +473,7 @@ public class KruleLoader implements RuleLoader {
    * @throws InitializerException When there is an intialization error.
    */
   private Set<org.jrdf.graph.Triple> findAxioms() throws TuplesException, QueryException, KruleStructureException, InitializerException {
-    logger.debug("Loading Axioms");
+    if (logger.isDebugEnabled()) logger.debug("Loading Axioms");
 
     Query query;
     try {
@@ -486,7 +482,7 @@ public class KruleLoader implements RuleLoader {
           "> where $axiom <rdf:type> <krule:Axiom> and $axiom <krule:subject> $s" +
           " and $axiom <krule:predicate> $p and $axiom <krule:object> $o;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while finding axioms.", e);
     }
     Answer answer = query(query);
 
@@ -537,16 +533,13 @@ public class KruleLoader implements RuleLoader {
    */
   private Map<String,URI> newAliases() {
     aliases = new HashMap<String,URI>();
-    try {
-      aliases.put("rdf", new URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-      aliases.put("rdfs", new URI("http://www.w3.org/2000/01/rdf-schema#"));
-      aliases.put("owl", new URI("http://www.w3.org/2002/07/owl#"));
-      aliases.put("mulgara", new URI("http://mulgara.org/mulgara#"));
-      aliases.put("krule", new URI("http://mulgara.org/owl/krule/#"));
-    } catch (URISyntaxException e) {
-      /* get those aliases which we could */
-      logger.error("Error defining internal aliases: ", e);
-    }
+    aliases.put("rdf", URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
+    aliases.put("rdfs", URI.create("http://www.w3.org/2000/01/rdf-schema#"));
+    aliases.put("owl", URI.create("http://www.w3.org/2002/07/owl#"));
+    aliases.put("mulgara", URI.create("http://mulgara.org/mulgara#"));
+    aliases.put("krule", URI.create("http://mulgara.org/owl/krule/#"));
+    aliases.put("foaf", URI.create("http://xmlns.com/foaf/0.1/"));
+    aliases.put("skos", URI.create("http://www.w3.org/2004/02/skos/core#"));
     return aliases;
   }
 
@@ -559,7 +552,7 @@ public class KruleLoader implements RuleLoader {
    * @throws InitializerException There was an error in the method preconditions.
    */
   private void findUriReferences() throws TuplesException, QueryException, InitializerException {
-    logger.debug("Querying for URI reference objects.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for URI reference objects.");
 
     Query query;
     try {
@@ -567,11 +560,11 @@ public class KruleLoader implements RuleLoader {
       query = interpreter.parseQuery("select $ref $uri from <" +
           ruleModel + "> where $ref <rdf:type> <krule:URIReference> and $ref <rdf:value> $uri ;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while looking for URI references.", e);
     }
     
     Answer answer = query(query);
-    logger.debug("Found all URI references.");
+    if (logger.isDebugEnabled()) logger.debug("Found all URI references.");
 
     // create the mapping
     uriReferences = new HashMap<URIReference,URIReference>();
@@ -580,13 +573,13 @@ public class KruleLoader implements RuleLoader {
       while (answer.next()) {
         URIReference ref = (URIReference)answer.getObject(0);
         URIReference uri = (URIReference)answer.getObject(1);
-        logger.debug("Mapping <" + ref + "> to <" + uri + ">");
+        if (logger.isDebugEnabled()) logger.debug("Mapping <" + ref + "> to <" + uri + ">");
         uriReferences.put(ref, uri);
       }
     } finally {
       answer.close();
     }
-    logger.debug("Mapped all URI references.");
+    if (logger.isDebugEnabled()) logger.debug("Mapped all URI references.");
   }
 
 
@@ -598,7 +591,7 @@ public class KruleLoader implements RuleLoader {
    * @throws InitializerException There was an error in the method preconditions.
    */
   private void findVarReferences() throws TuplesException, QueryException, InitializerException {
-    logger.debug("Querying for variable reference objects.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for variable reference objects.");
 
     Query query;
     try {
@@ -606,11 +599,11 @@ public class KruleLoader implements RuleLoader {
       query = interpreter.parseQuery("select $ref $name from <" +
           ruleModel + "> where $ref <rdf:type> <krule:Variable> and $ref <krule:name> $name ;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while finding variable references.", e);
     }
     
     Answer answer = query(query);
-    logger.debug("Found all variable references.");
+    if (logger.isDebugEnabled()) logger.debug("Found all variable references.");
 
     // create the mapping
     varReferences = new HashMap<URIReference,Variable>();
@@ -619,13 +612,13 @@ public class KruleLoader implements RuleLoader {
       while (answer.next()) {
         URIReference ref = (URIReference)answer.getObject(0);
         Literal name = (Literal)answer.getObject(1);
-        logger.debug("Mapping <" + ref + "> to <" + name + ">");
+        if (logger.isDebugEnabled()) logger.debug("Mapping <" + ref + "> to <" + name + ">");
         varReferences.put(ref, new Variable(name.toString()));
       }
     } finally {
       answer.close();
     }
-    logger.debug("Mapped all Variable references.");
+    if (logger.isDebugEnabled()) logger.debug("Mapped all Variable references.");
   }
 
 
@@ -637,7 +630,7 @@ public class KruleLoader implements RuleLoader {
    * @throws InitializerException There was an error in the method preconditions.
    */
   private void findLiteralReferences() throws TuplesException, QueryException, InitializerException {
-    logger.debug("Querying for Literal objects.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for Literal objects.");
 
     Query query;
     try {
@@ -645,11 +638,11 @@ public class KruleLoader implements RuleLoader {
       query = interpreter.parseQuery("select $lit $str from <" +
           ruleModel + "> where $lit <rdf:type> <krule:Literal> and $lit <rdf:value> $str ;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while looking for literal references.", e);
     }
     
     Answer answer = query(query);
-    logger.debug("Found all Literals.");
+    if (logger.isDebugEnabled()) logger.debug("Found all Literals.");
 
     // create the mapping
     literalReferences = new HashMap<Node,Literal>();
@@ -658,13 +651,13 @@ public class KruleLoader implements RuleLoader {
       while (answer.next()) {
         Node litRef = (Node)answer.getObject(0);
         Literal lit = (Literal)answer.getObject(1);
-        logger.debug("Mapping <" + litRef + "> to <" + lit + ">");
+        if (logger.isDebugEnabled()) logger.debug("Mapping <" + litRef + "> to <" + lit + ">");
         literalReferences.put(litRef, lit);
       }
     } finally {
       answer.close();
     }
-    logger.debug("Mapped all Literals.");
+    if (logger.isDebugEnabled()) logger.debug("Mapped all Literals.");
   }
 
 
@@ -676,7 +669,7 @@ public class KruleLoader implements RuleLoader {
    * @throws KruleStructureException There was an error in the krule model.
    */
   private void loadSimpleConstraints() throws KruleStructureException, TuplesException, QueryException {
-    logger.debug("Querying for Simple constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for Simple constraints.");
 
     Query query;
     try {
@@ -686,11 +679,11 @@ public class KruleLoader implements RuleLoader {
           "($p <mulgara:is> <krule:hasSubject> or $p <mulgara:is> <krule:hasPredicate> or " +
           "$p <mulgara:is> <krule:hasObject> or $p <mulgara:is> <krule:hasModel>);");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while looking for simple constraints.", e);
     }
 
     Answer answer = query(query);
-    logger.debug("Found all simple constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Found all simple constraints.");
 
     // create a mapping of URIs to simple constraint structures
     Map<Node,Map<Node,Node>> simpleConstraints = new HashMap<Node,Map<Node,Node>>();
@@ -700,14 +693,14 @@ public class KruleLoader implements RuleLoader {
         Node constraintNode = (Node)answer.getObject(0);
         URIReference predicate = (URIReference)answer.getObject(1);
         Node object = (Node)answer.getObject(2);
-        logger.debug("setting <" + constraintNode + ">.<" + predicate + "> = " + object);
+        if (logger.isDebugEnabled()) logger.debug("setting <" + constraintNode + ">.<" + predicate + "> = " + object);
         addProperty(simpleConstraints, constraintNode, predicate, object);
       }
     } finally {
       answer.close();
     }
 
-    logger.debug("Mapped all constraints to their property/values");
+    if (logger.isDebugEnabled()) logger.debug("Mapped all constraints to their property/values");
 
     // collect all property/values together into constraints
     for (Map.Entry<Node,Map<Node,Node>> entry: simpleConstraints.entrySet()) {
@@ -724,10 +717,10 @@ public class KruleLoader implements RuleLoader {
       // build the appropriate constraint
       // add it to the map
       if (from == null) {
-        logger.debug("Creating <" + constraintNode + "> as (<" + s + "> <" + p + "> <" + o +">)");
+        if (logger.isDebugEnabled()) logger.debug("Creating <" + constraintNode + "> as (<" + s + "> <" + p + "> <" + o +">)");
         constraintMap.put(constraintNode, ConstraintFactory.newConstraint(s, p, o));
       } else {
-        logger.debug("Creating <" + constraintNode + "> as (<" + s + "> <" + p + "> <" + o +">) in <" + from + ">");
+        if (logger.isDebugEnabled()) logger.debug("Creating <" + constraintNode + "> as (<" + s + "> <" + p + "> <" + o +">) in <" + from + ">");
         constraintMap.put(constraintNode, ConstraintFactory.newConstraint(s, p, o, convertToElement(from)));
       }
     }
@@ -743,7 +736,7 @@ public class KruleLoader implements RuleLoader {
    */
   private void loadJoinConstraints() throws KruleStructureException, TuplesException, QueryException {
     // build constraints in place, recursively constructing child constraints until all are found
-    logger.debug("Querying for Join constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for Join constraints.");
 
     Query query;
     try {
@@ -752,11 +745,11 @@ public class KruleLoader implements RuleLoader {
           "> where $constraint <krule:argument> $constraint2 and $constraint <rdf:type> $type and " +
           "($type <mulgara:is> <krule:ConstraintConjunction> or $type <mulgara:is> <krule:ConstraintDisjunction>);");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while looking for join constraints.", e);
     }
 
     Answer answer = query(query);
-    logger.debug("Found all join constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Found all join constraints.");
 
     // accumulate all the constraint links and types
 
@@ -772,7 +765,7 @@ public class KruleLoader implements RuleLoader {
         Node constraintNode = (Node)answer.getObject(0);
         Node constraintNode2 = (Node)answer.getObject(1);
         URIReference type = (URIReference)answer.getObject(2);
-        logger.debug("constraint (" + type + ")<" + constraintNode + "> -> <" + constraintNode2 + ">");
+        if (logger.isDebugEnabled()) logger.debug("constraint (" + type + ")<" + constraintNode + "> -> <" + constraintNode2 + ">");
         // map the constraint to its argument
         addLink(constraintLinks, constraintNode, constraintNode2);
         // map the type
@@ -782,7 +775,7 @@ public class KruleLoader implements RuleLoader {
       answer.close();
     }
 
-    logger.debug("mapping join constraint RDF nodes to join constraint objects");
+    if (logger.isDebugEnabled()) logger.debug("mapping join constraint RDF nodes to join constraint objects");
     // collect all arguments together into constraints and map the node to the constraint
     for (Map.Entry<Node,Set<Node>> entry: constraintLinks.entrySet()) {
       // get the constraint node in question
@@ -794,33 +787,31 @@ public class KruleLoader implements RuleLoader {
         Set<Node> args = entry.getValue();
         // get the constraint's type
         Node type = joinTypes.get(constraintNode);
-        if (type == null) {
-        	  throw new KruleStructureException("No type available on join constraint");
-        }
+        if (type == null) throw new KruleStructureException("No type (AND/OR) available on join constraint: " + constraintNode);
         // convert the RDF nodes to constraints
         List<ConstraintExpression> constraintArgs = getConstraints(args, constraintLinks, joinTypes);
         ConstraintExpression joinConstraint = newJoinConstraint(type, constraintArgs);
-        logger.debug("mapped " + constraintNode + " -> " + joinConstraint);
+        if (logger.isDebugEnabled()) logger.debug("mapped " + constraintNode + " -> " + joinConstraint);
         // build the join constraint, and map the node to it
         constraintMap.put(constraintNode, joinConstraint);
       } else {
-        logger.debug("constraint <" + constraintNode + "> already exists");
+        if (logger.isDebugEnabled()) logger.debug("constraint <" + constraintNode + "> already exists");
       }
     }
     // every key should now be mapped to a constraint object
-    logger.debug("mapped all constraint nodes to constraints");
+    if (logger.isDebugEnabled()) logger.debug("mapped all constraint nodes to constraints");
   }
 
 
   /**
-   * Finds all having constraints.
+   * Finds all having constraints. This is included for completeness, but we don't do it yet.
    *
    * @throws TuplesException There was an error retrieving data from the model.
    * @throws QueryException There was an error querying the model.
    * @throws KruleStructureException There was an error querying the model.
    */
   private void loadHavingConstraints() throws KruleStructureException, TuplesException, QueryException {
-    logger.debug("Querying for Having constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for Having constraints.");
 
     Query query;
     try {
@@ -828,16 +819,14 @@ public class KruleLoader implements RuleLoader {
       query = interpreter.parseQuery("select $constraint from <" + ruleModel +
           "> where $rule <krule:hasHavingClause> $constraint;");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while searching on having clauses.", e);
     }
 
     Answer answer = query(query);
-    logger.debug("Found all having constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Found all having constraints.");
 
     try {
-      if (answer.next()) {
-        throw new KruleStructureException("Having structures not implemented");
-      }
+      if (answer.next()) throw new KruleStructureException("Having structures not yet implemented");
     } finally {
       answer.close();
     }
@@ -852,7 +841,7 @@ public class KruleLoader implements RuleLoader {
    * @throws KruleStructureException There was an error in the krule model.
    */
   private void loadTransitiveConstraints() throws KruleStructureException, TuplesException, QueryException {
-    logger.debug("Querying for Transitive constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Querying for Transitive constraints.");
 
     Query query;
     try {
@@ -861,11 +850,11 @@ public class KruleLoader implements RuleLoader {
           "> where $c <rdf:type> <krule:TransitiveConstraint> and $c $p $arg and " +
           "($p <mulgara:is> <krule:transitiveArgument> or $p <mulgara:is> <krule:anchorArgument>);");
     } catch (Exception e) {
-      throw new QueryException("Invalid query.", e);
+      throw new QueryException("Invalid query while querying for transitive constraints.", e);
     }
     Answer answer = query(query);
 
-    logger.debug("Retrieved all transitive constraints.");
+    if (logger.isDebugEnabled()) logger.debug("Retrieved all transitive constraints.");
 
     // set up a mapping of constraints to predicate/SimpleConstraint pairs
     Map<Node,Map<Node,Node>> transMap = new HashMap<Node,Map<Node,Node>>();
@@ -877,12 +866,12 @@ public class KruleLoader implements RuleLoader {
         URIReference predicate = (URIReference)answer.getObject(1);
         Node argument = (Node)answer.getObject(2);
         addProperty(transMap, transConstraint, predicate, argument);
-        logger.debug("mapping <" + transConstraint + "> to <" + predicate + ">.<" + argument +">");
+        if (logger.isDebugEnabled()) logger.debug("mapping <" + transConstraint + "> to <" + predicate + ">.<" + argument +">");
       }
     } finally {
       answer.close();
     }
-    logger.debug("Mapped all transitive properties");
+    if (logger.isDebugEnabled()) logger.debug("Mapped all transitive properties");
 
     // build a new transconstraint for each transitive constraint node
     for (Map.Entry<Node,Map<Node,Node>> tEntry: transMap.entrySet()) {
@@ -892,28 +881,26 @@ public class KruleLoader implements RuleLoader {
       // build the constraint based on the arguments
       if (arguments.size() == 1) {
         Node sc = arguments.get(TRANSITIVE_ARGUMENT);
-        if (sc == null) {
-          throw new KruleStructureException("Transitive argument not correct");
-        }
-        logger.debug("Mapping transitive constraint <" + constraintNode +"> to <" + sc +">");
+        if (sc == null) throw new KruleStructureException("Transitive argument not correct in: " + constraintNode + " " + arguments);
+        if (logger.isDebugEnabled()) logger.debug("Mapping transitive constraint <" + constraintNode +"> to <" + sc +">");
         // get the simple constraint and build the transitive constraint around it
         constraint = new SingleTransitiveConstraint((Constraint)constraintMap.get(sc));
       } else if (arguments.size() == 2) {
         Node sc = arguments.get(TRANSITIVE_ARGUMENT);
         Node anchor = arguments.get(ANCHOR_ARGUMENT);
         if (sc == null || anchor == null) {
-          throw new KruleStructureException("Transitive arguments not correct");
+          throw new KruleStructureException("Transitive arguments not correct for: " + constraintNode + " " + arguments);
         }
-        logger.debug("Mapping transitive constraint <" + constraintNode +"> to <" + sc +">,<" + anchor + ">");
+        if (logger.isDebugEnabled()) logger.debug("Mapping transitive constraint <" + constraintNode +"> to <" + sc +">,<" + anchor + ">");
         // get the simple constraint and build the transitive constraint around it
         constraint = new TransitiveConstraint((Constraint)constraintMap.get(anchor), (Constraint)constraintMap.get(sc));
       } else {
-        throw new KruleStructureException("Expected 1 or 2 arguments for Transitive constraint, got: " + arguments.size());
+        throw new KruleStructureException("Expected 1 or 2 arguments for Transitive constraint (" + constraintNode + "), got: " + arguments.size());
       }
       // map the transitive constraint node to the transitive constraint
       constraintMap.put(constraintNode, constraint);
     }
-    logger.debug("Mapped all transitive constraints");
+    if (logger.isDebugEnabled()) logger.debug("Mapped all transitive constraints");
   }
 
 
@@ -931,7 +918,7 @@ public class KruleLoader implements RuleLoader {
    * @throws KruleStructureException There was an error in the RDF data structure.
    */
   private List<ConstraintExpression> getConstraints(Set<Node> constraints, Map<Node,Set<Node>> constraintLinks, Map<Node,URIReference> typeMap) throws KruleStructureException {
-    logger.debug("converting nodes to constraint list: " + constraints);
+    if (logger.isDebugEnabled()) logger.debug("converting nodes to constraint list: " + constraints);
 
     // build the return list
     List<ConstraintExpression> cList = new ArrayList<ConstraintExpression>();
@@ -942,11 +929,11 @@ public class KruleLoader implements RuleLoader {
     }
     // go through the arguments
     for (Node cNode: constraints) {
-      logger.debug("converting: " + cNode);
+      if (logger.isDebugEnabled()) logger.debug("converting: " + cNode);
       // get the constraint expression object
       ConstraintExpression constraintExpr = (ConstraintExpression)constraintMap.get(cNode);
       if (constraintExpr == null) {
-        logger.debug(cNode.toString() + " not yet mapped to constraint");
+        if (logger.isDebugEnabled()) logger.debug(cNode.toString() + " not yet mapped to constraint");
         // constraint expression object does not yet exist, get its arguments
         Set<Node> constraintArgNodes = constraintLinks.get(cNode);
         // build the constraint expression - get the arguments as a list of constraints
@@ -978,7 +965,7 @@ public class KruleLoader implements RuleLoader {
     } else if (type.equals(CONSTRAINT_DISJUNCTION)) {
       return new ConstraintDisjunction(args);
     }
-    throw new KruleStructureException("Unknown constraint type: " + type);
+    throw new KruleStructureException("Unknown join constraint type (not AND/OR): " + type);
   }
 
 
@@ -989,27 +976,22 @@ public class KruleLoader implements RuleLoader {
    * @throws KruleStructureException If node cannot be converted.
    */
   private ConstraintElement convertToElement(Node node) throws KruleStructureException {
-    logger.debug("converting " + node + " to ConstraintElement");
+    if (logger.isDebugEnabled()) logger.debug("converting " + node + " to ConstraintElement");
     // check that this is a named node
     if (node instanceof URIReference) {
       // get the referred node
       URIReferenceImpl ref = (URIReferenceImpl)uriReferences.get(node);
-      if (ref != null) {
-        return ref;
-      }
+      if (ref != null) return ref;
       // not referred, so look in the variables
-      Variable var = (Variable)varReferences.get(node);
-      if (var != null) {
-        return var;
-      }
+      Variable var = varReferences.get(node);
+      if (var != null) return var;
+      throw new KruleStructureException("Unrecognized URI (" + node + ") in constraint. Was not declared to reference a URI nor a variable.");
     } else {
       // This could be an anonymous Literal
       LiteralImpl lit = (LiteralImpl)literalReferences.get(node);
-      if (lit != null) {
-        return lit;
-      }
+      if (lit != null) return lit;
+      throw new KruleStructureException("Unrecognized literal (" + lit + ") in constraint. Was not declared to reference a literal.");
     }
-    throw new KruleStructureException("Invalid constraint element: " + node);
   }
 
 
