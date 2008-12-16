@@ -96,12 +96,14 @@ public abstract class DataInputTx extends DataTx {
   protected long sendMarshalledData(Connection conn, boolean compressable) throws QueryException, IOException {
     if (logger.isInfoEnabled()) logger.info("Sending local resource : " + getSource());
 
+    InputStream inputStream = getLocalInputStream(compressable);
+
+    // If the connection is local, then no need to wrap
+    if (!conn.isRemote()) return doTx(conn, inputStream);
+
     RemoteInputStreamSrvImpl srv = null;
     RemoteInputStream remoteInputStream = null;
     try {
-
-      InputStream inputStream = getLocalInputStream(compressable);
-
       // open and wrap the inputstream
       srv = new RemoteInputStreamSrvImpl(inputStream);
       Rmi.export(srv);
@@ -134,7 +136,7 @@ public abstract class DataInputTx extends DataTx {
    * @throws QueryException If no valid data source was set.
    * @throws IOException If an error occurred opening the local source.
    */
-  private InputStream getLocalInputStream(boolean compressable) throws QueryException, IOException {
+  protected InputStream getLocalInputStream(boolean compressable) throws QueryException, IOException {
     // Use provided input stream if there is one.
     InputStream stream = overrideInputStream;
     
