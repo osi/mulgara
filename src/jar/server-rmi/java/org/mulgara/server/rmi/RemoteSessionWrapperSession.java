@@ -507,7 +507,6 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   /**
    * {@inheritDoc}
    */
-  @SuppressWarnings("unchecked")
   public List<Answer> query(List<Query> queries) throws QueryException {
 
     try {
@@ -699,10 +698,12 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
     try {
       RulesRef ref = remoteSession.buildRules(ruleModel, baseModel, destModel);
-      logger.info("got rules from RMI");
+      if (logger.isDebugEnabled()) logger.debug("got rules from RMI");
       return ref;
     } catch (RemoteException re) {
-      throw new org.mulgara.rules.InitializerException("Java RMI reconnection failure", re);
+      Throwable cause = re.getCause();
+      if (cause != null) throw new org.mulgara.rules.InitializerException("Unable to load rules: " + cause.getMessage(), cause);
+      throw new org.mulgara.rules.InitializerException("Unable to load rules", re);
     }
   }
 
@@ -714,7 +715,9 @@ class RemoteSessionWrapperSession implements Serializable, Session {
     try {
       remoteSession.applyRules(rules);
     } catch (RemoteException re) {
-      throw new QueryException("Java RMI reconnection failure", re);
+      Throwable cause = re.getCause();
+      if (cause != null) throw new QueryException("Error applying rules: " + cause.getMessage(), cause);
+      throw new QueryException("Error applying rules", re);
     }
   }
 
