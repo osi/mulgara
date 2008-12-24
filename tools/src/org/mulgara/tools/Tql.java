@@ -37,7 +37,7 @@ public class Tql {
   private static final URI HOST = URI.create("rmi://localhost/server1");
 
   /**
-   * Run a set of SPARQL queries against a local server.
+   * Run a set of TQL queries against a local server.
    * @param args A list of filenames containing the queries to run.
    * @throws Exception Any kind of exception is just displayed on stderr, without any handling.
    */
