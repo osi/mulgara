@@ -52,7 +52,7 @@ public class Or extends NAryOperatorFilter {
       result = filters.get(0).test(context);
     } catch (QueryException e) {
       // true on the RHS gives true
-      if (!testList(context, tail(filters))) return true;
+      if (testList(context, tail(filters))) return true;
       throw e;
     }
     return result || testList(context, tail(filters));

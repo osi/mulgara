@@ -108,7 +108,9 @@ public class OrUnitTest extends AbstractLogicUnitTest {
       new Node[] {falseLiteral, new BlankNodeImpl(1001)},
       new Node[] {trueLiteral, new BlankNodeImpl(1002)},
       new Node[] {falseLiteral, null},
-      new Node[] {trueLiteral, null}
+      new Node[] {trueLiteral, null},
+      new Node[] {null, falseLiteral},
+      new Node[] {null, trueLiteral}
     };
     TestContext c = new TestContext(new String[] {"x", "y"}, rows);
     c.beforeFirst();
@@ -170,6 +172,15 @@ public class OrUnitTest extends AbstractLogicUnitTest {
     assertTrue(t.equals(fn));
 
     // The unbounds
+    assertTrue(c.next());
+    try {
+      fn.getValue();
+      fail("Logic operation on an unbound");
+    } catch (QueryException qe) { }
+
+    assertTrue(c.next());
+    assertTrue(t.equals(fn));
+
     assertTrue(c.next());
     try {
       fn.getValue();
