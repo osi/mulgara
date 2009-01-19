@@ -284,7 +284,8 @@ public class QueryResponsePage {
       // got to the end of this result, so clean it up
       resultFinished(result);
     } catch (TuplesException e) {
-      throw new IOException("Error accessing the results of the query: " + e.getMessage());
+      throw (IOException)
+        new IOException("Error accessing the results of the query: " + e.getMessage()).initCause(e);
     }
     return resultTable;
   }
@@ -338,7 +339,7 @@ public class QueryResponsePage {
       }
       return new Anchor(new URI(EXECUTE_LINK + "?" + params), text);
     } catch (URISyntaxException e) {
-      throw new IOException("Bad data returned from server");
+      throw (IOException) new IOException("Bad data returned from server").initCause(e);
     }
   }
 
@@ -374,7 +375,8 @@ public class QueryResponsePage {
       a.addAttr(Attr.TITLE, "Forward to next page of results");
       return new TableRow(new TableData(a).addAttr(Attr.COLSPAN, width));
     } catch (URISyntaxException e) {
-      throw new IOException("Unabled to emit a relative URL: " + e.getMessage());
+      throw (IOException)
+          new IOException("Unabled to emit a relative URL: " + e.getMessage()).initCause(e);
     }
   }
 
