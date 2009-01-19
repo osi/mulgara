@@ -474,7 +474,7 @@ public class UnboundJoin extends AbstractTuples {
     for (int j = 0; j < operandBinding[i].length; j++) {
       if (fooOperand[i][j] == PREFIX) {
         // Variable first bound to a next method parameter prefix column passed to beforeFirst.
-        operandBinding[i][j] = (j < prefix.length) ? prefix[fooColumn[i][j]] : Tuples.UNBOUND;
+        operandBinding[i][j] = (fooColumn[i][j] < prefix.length) ? prefix[fooColumn[i][j]] : Tuples.UNBOUND;
       } else {
         // Variable first bound to a leftward operand column
         operandBinding[i][j] = operands[fooOperand[i][j]].getColumnValue(fooColumn[i][j]);
