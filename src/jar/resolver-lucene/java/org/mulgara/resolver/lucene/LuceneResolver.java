@@ -114,7 +114,8 @@ public class LuceneResolver implements Resolver {
 
   protected final XAResource xares;
 
-  protected final Map<Long, FullTextStringIndex> indexes = new HashMap<Long, FullTextStringIndex>();
+  // for abort() only
+  protected Collection<FullTextStringIndex> indexes;
 
   //
   // Constructors
@@ -135,7 +136,7 @@ public class LuceneResolver implements Resolver {
     this.resolverSession = resolverSession;
     this.resolverFactory = resolverFactory;
     this.forWrites = forWrites;
-    this.xares = new LuceneXAResource(10, resolverFactory, indexes.values());
+    this.xares = new LuceneXAResource(10, resolverFactory, this);
   }
 
   //
@@ -387,17 +388,17 @@ public class LuceneResolver implements Resolver {
 
   private FullTextStringIndex getFullTextStringIndex(long model)
       throws FullTextStringIndexException, IOException {
-    FullTextStringIndex index = indexes.get(model);
+    FullTextStringIndex index = LuceneXAResource.getCurrentIndexes().get(model);
     if (index == null) {
       index = new FullTextStringIndex(resolverFactory.getIndexerCache(Long.toString(model)), forWrites);
-      indexes.put(model, index);
+      LuceneXAResource.getCurrentIndexes().put(model, index);
     }
     return index;
   }
 
   public void abort() {
     try {
-      closeIndexes(indexes.values(), false);
+      closeIndexes(indexes, false);
     } catch (Exception e) {
       logger.error("Error closing fulltext index", e);
     }
@@ -442,18 +443,18 @@ public class LuceneResolver implements Resolver {
    */
   private static class LuceneXAResource
       extends AbstractXAResource<RMInfo<LuceneXAResource.LuceneTxInfo>,LuceneXAResource.LuceneTxInfo> {
-    private final Collection<FullTextStringIndex> indexes;
+    private static final ThreadLocal<Map<Long, FullTextStringIndex>> currentIndexes = new ThreadLocal<Map<Long, FullTextStringIndex>>();
+    private final LuceneResolver resolver;
 
     /**
      * Construct a {@link LuceneXAResource} with a specified transaction timeout.
      *
      * @param transactionTimeout transaction timeout period, in seconds
      * @param resolverFactory    the resolver-factory we belong to
-     * @param indexes            the list of lucene indexes
      */
-    public LuceneXAResource(int transactionTimeout, ResolverFactory resolverFactory, Collection<FullTextStringIndex> indexes) {
+    public LuceneXAResource(int transactionTimeout, ResolverFactory resolverFactory, LuceneResolver resolver) {
       super(transactionTimeout, resolverFactory);
-      this.indexes = indexes;
+      this.resolver = resolver;
     }
 
     protected RMInfo<LuceneTxInfo> newResourceManager() {
@@ -461,9 +462,11 @@ public class LuceneResolver implements Resolver {
     }
 
     protected LuceneTxInfo newTransactionInfo() {
-      LuceneTxInfo txInfo = new LuceneTxInfo();
-      txInfo.indexes = indexes;
-      return txInfo;
+      return new LuceneTxInfo();
+    }
+
+    public static Map<Long, FullTextStringIndex> getCurrentIndexes() {
+      return currentIndexes.get();
     }
 
     //
@@ -471,31 +474,44 @@ public class LuceneResolver implements Resolver {
     //
 
     protected void doStart(LuceneTxInfo tx, int flags, boolean isNew) {
+      currentIndexes.set(tx.indexes);
+      resolver.indexes = tx.indexes.values();
     }
 
     protected void doEnd(LuceneTxInfo tx, int flags) {
+      currentIndexes.set(null);
     }
 
     protected int doPrepare(LuceneTxInfo tx) throws Exception {
-      for (FullTextStringIndex index : tx.indexes)
+      for (FullTextStringIndex index : tx.indexes.values())
         index.prepare();
       return XA_OK;
     }
 
     protected void doCommit(LuceneTxInfo tx) throws Exception {
-      closeIndexes(tx.indexes, true);
+      closeIndexes(tx.indexes.values(), true);
+      tx.indexes.clear();       // so transactionCompleted does not close a second time
     }
 
     protected void doRollback(LuceneTxInfo tx) throws Exception {
-      closeIndexes(tx.indexes, false);
+      closeIndexes(tx.indexes.values(), false);
+      tx.indexes.clear();       // so transactionCompleted does not close a second time
     }
 
     protected void doForget(LuceneTxInfo tx) {
     }
 
+    protected void transactionCompleted(LuceneTxInfo tx) {
+      super.transactionCompleted(tx);
+      try {
+        closeIndexes(tx.indexes.values(), false);
+      } catch (Exception e) {
+        logger.error("Error closing fulltext index", e);
+      }
+    }
 
     static class LuceneTxInfo extends TxInfo {
-      public Collection<FullTextStringIndex> indexes;
+      public final Map<Long, FullTextStringIndex> indexes = new HashMap<Long, FullTextStringIndex>();
     }
   }
 }
