@@ -28,7 +28,8 @@
 package org.mulgara.util;
 
 // Java 2 standard packages
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -38,30 +39,18 @@ import org.apache.log4j.Logger;
  * Manages the creation of temporary files in a controlled location.
  *
  * @created 2004-12-03
- *
  * @author David Makepeace
- *
  * @version $Revision: 1.9 $
- *
  * @modified $Date: 2005/01/05 04:59:29 $
- *
  * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
+ * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public final class TempDir {
-
-  /**
-   * Logger.
-   */
-  private final static Logger logger = Logger.getLogger(TempDir.class);
-
-  private static final File systemTempDir =
-      new File(System.getProperty("java.io.tmpdir"));
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(TempDir.class);
+  private static final File systemTempDir = new File(System.getProperty("java.io.tmpdir"));
 
   private static File tempDir = null;
 
@@ -69,9 +58,7 @@ public final class TempDir {
   public static synchronized File getTempDir() {
     if (tempDir == null) {
       // Initialize tempDir.
-      File dir = new File(
-          systemTempDir, "mulgara_" + System.getProperty("user.name")
-      );
+      File dir = new File(systemTempDir, "mulgara_" + System.getProperty("user.name"));
       dir.mkdirs();
       if (dir.isDirectory()) {
         tempDir = dir;
@@ -85,9 +72,7 @@ public final class TempDir {
       // The temporary directory has gone away!  This is a fatal error because,
       // for security reasons, we don't want to just revert to using the system
       // temporary directory.
-      logger.error(
-          "The temporary directory no longer exists!  (" + tempDir + ")"
-      );
+      logger.error("The temporary directory no longer exists!  (" + tempDir + ")");
       System.exit(1);
     }
 
@@ -100,9 +85,7 @@ public final class TempDir {
       throw new IllegalArgumentException("dir is null");
     }
     if (!dir.isDirectory()) {
-      throw new IllegalArgumentException(
-          "dir (" + dir + ") is not a directory"
-      );
+      throw new IllegalArgumentException("dir (" + dir + ") is not a directory");
     }
     tempDir = dir;
   }
@@ -111,10 +94,7 @@ public final class TempDir {
   /**
    * Creates an empty file in the current mulgara temp directory.
    */
-  public static synchronized File createTempFile(
-      String prefix, String suffix
-  ) throws IOException {
+  public static synchronized File createTempFile(String prefix, String suffix) throws IOException {
     return File.createTempFile(prefix, suffix, getTempDir());
   }
-
 }
