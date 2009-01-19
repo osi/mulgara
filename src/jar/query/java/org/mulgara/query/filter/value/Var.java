@@ -233,6 +233,9 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
    * @throws QueryException Indicates an error getting data out of the context.
    */
   public long resolveLocal() throws QueryException {
+    if (!getLocalContext().isBound(varIndex)) {
+      throw new QueryException("Resolving unbound variable: " + name);
+    }
     return getLocalContext().getColumnValue(varIndex);
   }
 

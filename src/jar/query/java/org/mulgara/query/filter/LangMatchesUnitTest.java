@@ -189,7 +189,7 @@ public class LangMatchesUnitTest extends TestCase {
           assertTrue(f.equals(fn));
           fail("No exception when testing an unbound value");
         } catch (QueryException qe) {
-          assertTrue(qe.getMessage().startsWith("Unbound column"));
+          assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }
         break;
         

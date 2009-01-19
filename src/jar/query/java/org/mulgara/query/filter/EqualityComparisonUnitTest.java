@@ -280,19 +280,19 @@ public class EqualityComparisonUnitTest extends TestCase {
           assertTrue(f.equals(eq));
           fail("No exception when testing an unbound value for equality");
         } catch (QueryException qe) {
-          assertTrue(qe.getMessage().startsWith("Unbound column"));
+          assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }
         try {
           assertTrue(f.equals(same));
           fail("No exception when testing an unbound value for equivalency");
         } catch (QueryException qe) {
-          assertTrue(qe.getMessage().startsWith("Unbound column"));
+          assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }
         try {
           assertTrue(f.equals(ne));
           fail("No exception when testing an unbound value for inequality");
         } catch (QueryException qe) {
-          assertTrue(qe.getMessage().startsWith("Unbound column"));
+          assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }
         break;
         
