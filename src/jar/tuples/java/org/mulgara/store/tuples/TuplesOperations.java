@@ -266,7 +266,7 @@ public abstract class TuplesOperations {
           if (logger.isDebugEnabled()) {
             logger.debug("return UnboundJoin");
           }
-          Tuples result = new UnboundJoin((Tuples[]) sorted.toArray(new Tuples[0]));
+          Tuples result = new UnboundJoin(sorted.toArray(new Tuples[sorted.size()]));
           closeOperands(sorted);
           return result;
       }
