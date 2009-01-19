@@ -735,7 +735,7 @@ public class FullTextStringIndex {
    * around 20B/entry on 32-bit and 33B/entry on 64-bit systems for the hits array, allowing us
    * to handle 1M hits without too much trouble.
    */
-  public static class Hits extends HitCollector {
+  public static class Hits extends HitCollector implements Cloneable {
     private final IndexReader reader;
     private final List<ScoreDoc> hits = new ArrayList<ScoreDoc>();
     private boolean closed = false;
@@ -766,6 +766,15 @@ public class FullTextStringIndex {
 
       closed = true;
       reader.decRef();
+    }
+
+    public Hits clone() {
+      reader.incRef();
+      try {
+        return (Hits) super.clone();
+      } catch (CloneNotSupportedException e) {
+        throw new Error(getClass() + " doesn't support clone, which it must", e);
+      }
     }
   }
 }

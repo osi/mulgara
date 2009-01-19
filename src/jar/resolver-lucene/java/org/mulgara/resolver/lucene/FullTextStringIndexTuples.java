@@ -219,6 +219,12 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     }
   }
 
+  public FullTextStringIndexTuples clone() {
+    FullTextStringIndexTuples clone = (FullTextStringIndexTuples) super.clone();
+    clone.hits = hits.clone();
+    return clone;
+  }
+
   public long getColumnValue(int column) throws TuplesException {
     try {
       if (column >= 0 && column < luceneKeyList.size()) {
