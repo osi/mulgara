@@ -34,6 +34,7 @@ import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintConjunction;
 import org.mulgara.query.ConstraintOperation;
 import org.mulgara.query.QueryException;
+import org.mulgara.query.Variable;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.AbstractSymbolicTransformer;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
@@ -117,22 +118,30 @@ public class LuceneTransformer extends AbstractSymbolicTransformer {
 
       if (trans instanceof LuceneConstraint) {
         LuceneConstraint lc = (LuceneConstraint)trans;
-        List<LuceneConstraint> cumulative = luceneArgs.get(lc.getBindingVar());
+        Variable b = lc.getBindingVar();
+        if (b == null && lc.getSubject() instanceof Variable) b = (Variable)lc.getSubject();
+        if (b == null) {
+          retainedArgs.add(lc);
+          continue;
+        }
+
+        List<LuceneConstraint> cumulative = luceneArgs.get(b);
         if (cumulative == null) {
           cumulative = new ArrayList<LuceneConstraint>();
           cumulative.add(lc);
-          luceneArgs.put(lc.getBindingVar(), cumulative);
+          luceneArgs.put(b, cumulative);
         } else if (cumulative.size() > 1 ||
-                   cumulative.get(0).getSubject() == null &&
+                   cumulative.get(0).getBindingVar() == null &&
                    cumulative.get(0).getPredicate() != null &&
-                   lc.getSubject() == null && lc.getPredicate() != null) {
+                   lc.getBindingVar() == null && lc.getPredicate() != null) {
           // backwards compat hack for multiple simple queries
           cumulative.add(lc);
         } else {
           cumulative.iterator().next().conjoinWith(lc);
-          if (logger.isTraceEnabled()) logger.trace("Updated LC with: " + cumulative.iterator().next() + "; result: " + lc);
           transformed = true;
         }
+
+        if (logger.isTraceEnabled()) logger.trace("Updated LC with: " + lc + "; result: " + cumulative);
       } else {
         retainedArgs.add(trans);
       }

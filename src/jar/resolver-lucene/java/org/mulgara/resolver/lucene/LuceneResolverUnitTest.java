@@ -80,7 +80,8 @@ public class LuceneResolverUnitTest extends TestCase {
 
   public static Test suite() {
     TestSuite suite = new TestSuite();
-    suite.addTest(new LuceneResolverUnitTest("testConcurrentQuery"));
+    suite.addTest(new LuceneResolverUnitTest("testBasicQueries"));
+    suite.addTest(new LuceneResolverUnitTest("testConcurrentQueries"));
     suite.addTest(new LuceneResolverUnitTest("testConcurrentReadTransaction"));
     suite.addTest(new LuceneResolverUnitTest("testTransactionIsolation"));
     suite.addTest(new LuceneResolverUnitTest("testLuceneConstraint"));
@@ -161,10 +162,79 @@ public class LuceneResolverUnitTest extends TestCase {
   }
 
   /**
+   * Basic queries.
+   */
+  public void testBasicQueries() throws Exception {
+    logger.info("Testing basic queries");
+
+    try {
+      Session session = database.newSession();
+
+      try {
+        // Load some test data
+        URI fileURI = new File(textDirectory + File.separator + "data.n3").toURI();
+
+        if (session.modelExists(modelURI)) {
+          session.removeModel(modelURI);
+        }
+        session.createModel(modelURI, luceneModelType);
+        session.setModel(modelURI, new GraphResource(fileURI));
+
+        // Run simple query with variable subject and fixed predicate
+        String q = "select $s from <foo:bar> where $s <foo:hasText> 'American' in <" + modelURI + ">;";
+        Answer answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:node5" }, { "foo:node6" }, { "foo:node7" } }, answer);
+        answer.close();
+
+        // Run simple query with variable subject and predicate
+        q = "select $s $p from <foo:bar> where $s $p 'American' in <" + modelURI + ">;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:node5", "foo:hasText" },
+                                        { "foo:node6", "foo:hasText" },
+                                        { "foo:node7", "foo:hasText" } },
+                       answer);
+        answer.close();
+
+        // Run simple query with fixed subject and variable predicate
+        q = "select $p from <foo:bar> where <foo:node6> $p 'American' in <" + modelURI + ">;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:hasText" } }, answer);
+        answer.close();
+
+        // Run extended query with variable subject and fixed predicate
+        q = "select $s from <foo:bar> where $s <mulgara:search> $b in <" + modelURI + "> and $b <foo:hasText> 'American' in <" + modelURI + ">;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:node5" }, { "foo:node6" }, { "foo:node7" } }, answer);
+        answer.close();
+
+        // Run extended query with variable subject and predicate
+        q = "select $s $p from <foo:bar> where $s <mulgara:search> $b in <" + modelURI + "> and $b $p 'American' in <" + modelURI + ">;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:node5", "foo:hasText" },
+                                        { "foo:node6", "foo:hasText" },
+                                        { "foo:node7", "foo:hasText" } },
+                       answer);
+        answer.close();
+
+        // Run extended query with fixed subject and variable predicate
+        q = "select $p from <foo:bar> where <foo:node6> <mulgara:search> $b in <" + modelURI + "> and $b $p 'American' in <" + modelURI + ">;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:hasText" } }, answer);
+        answer.close();
+
+      } finally {
+        session.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+  /**
    * Two queries, in parallel.
    */
-  public void testConcurrentQuery() throws Exception {
-    logger.info("Testing concurrentQuery");
+  public void testConcurrentQueries() throws Exception {
+    logger.info("Testing concurrentQueries");
 
     try {
       // Load some test data
@@ -446,7 +516,7 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       ConstraintExpression ce = q.getConstraintExpression();
-      checkConstraint(ce, null, "test:title", "blah", "foo", null);
+      checkConstraint(ce, "foo", "test:title", "blah", null, null);
 
       // basic complex query
       q = new TestMutableLocalQuery(parseQuery(
@@ -504,8 +574,8 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       cc = checkConstraint(q.getConstraintExpression(), 2);
-      checkConstraint(cc.getElements().get(0), null, "test:title", "blah", "foo", null);
-      checkConstraint(cc.getElements().get(1), null, "test:author", "Smith", "foo", null);
+      checkConstraint(cc.getElements().get(0), "foo", "test:title", "blah", null, null);
+      checkConstraint(cc.getElements().get(1), "foo", "test:author", "Smith", null, null);
 
       // two simple queries, shared var and predicate
       q = new TestMutableLocalQuery(parseQuery(
@@ -516,8 +586,8 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       cc = checkConstraint(q.getConstraintExpression(), 2);
-      checkConstraint(cc.getElements().get(0), null, "test:title", "blah", "foo", null);
-      checkConstraint(cc.getElements().get(1), null, "test:title", "Smith", "foo", null);
+      checkConstraint(cc.getElements().get(0), "foo", "test:title", "blah", null, null);
+      checkConstraint(cc.getElements().get(1), "foo", "test:title", "Smith", null, null);
 
       // two simple queries, separate vars
       q = new TestMutableLocalQuery(parseQuery(
@@ -528,8 +598,8 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       cc = checkConstraint(q.getConstraintExpression(), 2);
-      checkConstraint(cc.getElements().get(0), null, "test:title", "blah", "foo", null);
-      checkConstraint(cc.getElements().get(1), null, "test:author", "Smith", "bar", null);
+      checkConstraint(cc.getElements().get(0), "foo", "test:title", "blah", null, null);
+      checkConstraint(cc.getElements().get(1), "bar", "test:author", "Smith", null, null);
 
       // two complex queries with scores but shared var
       q = new TestMutableLocalQuery(parseQuery(
@@ -574,7 +644,7 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       cc = checkConstraint(q.getConstraintExpression(), 2);
-      checkConstraint(cc.getElements().get(0), null, "test:title", "blah", "foo", null);
+      checkConstraint(cc.getElements().get(0), "foo", "test:title", "blah", null, null);
       checkConstraint(cc.getElements().get(1), "foo", "test:author", "Smith", "search2", "score2");
 
       // a simple query and a complex query, shared var, different constraint order
@@ -588,7 +658,7 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       cc = checkConstraint(q.getConstraintExpression(), 2);
-      checkConstraint(cc.getElements().get(0), null, "test:title", "blah", "foo", null);
+      checkConstraint(cc.getElements().get(0), "foo", "test:title", "blah", null, null);
       checkConstraint(cc.getElements().get(1), "foo", "test:author", "Smith", "search2", "score2");
 
       // a simple query and a complex query, separate vars
@@ -602,7 +672,7 @@ public class LuceneResolverUnitTest extends TestCase {
       transf.transform(context, q);
 
       cc = checkConstraint(q.getConstraintExpression(), 2);
-      checkConstraint(cc.getElements().get(0), null, "test:title", "blah", "foo", null);
+      checkConstraint(cc.getElements().get(0), "foo", "test:title", "blah", null, null);
       checkConstraint(cc.getElements().get(1), "bar", "test:author", "Smith", "search2", "score2");
 
       // invalid: complex query with multiple different predicates
@@ -727,12 +797,7 @@ public class LuceneResolverUnitTest extends TestCase {
     assertTrue(ce instanceof LuceneConstraint);
     LuceneConstraint lc = (LuceneConstraint)ce;
 
-    if (expSubj != null) {
-      assertTrue(lc.getSubject() instanceof Variable);
-      assertEquals(expSubj, ((Variable)lc.getSubject()).getName());
-    } else {
-      assertNull(lc.getSubject());
-    }
+    assertEquals(expSubj, ((Variable)lc.getSubject()).getName());
 
     assertTrue(lc.getPredicate() instanceof URIReference);
     assertEquals(URI.create(expPred), ((URIReference)lc.getPredicate()).getURI());
@@ -740,7 +805,11 @@ public class LuceneResolverUnitTest extends TestCase {
     assertTrue(lc.getObject() instanceof Literal);
     assertEquals(expObj, ((Literal)lc.getObject()).getLexicalForm());
 
-    assertEquals(expBind, lc.getBindingVar().getName());
+    if (expBind != null) {
+      assertEquals(expBind, lc.getBindingVar().getName());
+    } else {
+      assertNull(lc.getBindingVar());
+    }
 
     if (expScore != null) {
       assertEquals(expScore, lc.getScoreVar().getName());

@@ -96,31 +96,33 @@ public class LuceneConstraint implements Constraint {
     ConstraintElement p = constraint.getElement(1);
     ConstraintElement o = constraint.getElement(2);
 
-    // extract the binding variable
-    ConstraintElement b = p.equals(searchPred) ? o : s;
-
-    if (!(b instanceof Variable)) {
-      throw new SymbolicTransformationException("Lucene query binder must be a variable: " + b);
-    }
-
-    binder = (Variable)b;
-
     // extract predicate, object, score
     if (p.equals(searchPred)) {
-      if (s.equals(binder)) {
+      if (s.equals(o)) {
         throw new SymbolicTransformationException("subject and object of '" + searchPred +
                                                   "' may not be the same: " + s);
       }
       subject = s;
+      assignBinder(o);
     } else if (p.equals(scorePred)) {
       if (!(o instanceof Variable)) {
         throw new SymbolicTransformationException("Lucene query score must be a variable: " + o);
       }
       score = (Variable)o;
+      assignBinder(s);
     } else {
+      subject = s;
       predicate = p;
       object = o;
     }
+  }
+
+  private final void assignBinder(ConstraintElement b) throws SymbolicTransformationException {
+    if (!(b instanceof Variable)) {
+      throw new SymbolicTransformationException("Lucene query binder must be a variable: " + b);
+    }
+
+    binder = (Variable)b;
   }
 
   /**
@@ -130,11 +132,22 @@ public class LuceneConstraint implements Constraint {
    */
   void conjoinWith(LuceneConstraint constraint) throws SymbolicTransformationException {
     model = getNoDup(constraint.model, model, "Can't combine lucene constraints against different models", "model");
-    subject = getNoDup(constraint.subject, subject, "Can't combine lucene constraints with different subjects", "subj");
+
+    if (binder != null && constraint.binder != null) {
+      subject = getNoDup(constraint.subject, subject, "Can't combine lucene constraints with different subjects", "subj");
+      assignBinder(getNoDup(constraint.binder, binder, "Mismatched binder variable", "var"));
+    } else if (binder != null) {
+      assignBinder(getNoDup(constraint.subject, binder, "Mismatched binder variable", "var"));
+    } else if (constraint.binder != null) {
+      assignBinder(getNoDup(constraint.binder, subject, "Mismatched binder variable", "var"));
+      subject = constraint.subject;
+    } else {
+      subject = getNoDup(constraint.subject, subject, "Can't combine lucene constraints with different subjects", "subj");
+    }
+
     predicate = getNoDup(constraint.predicate, predicate, "Only one predicate supported per search", "pred");
     object = getNoDup(constraint.object, object, "Only one object supported per search", "obj");
 
-    binder = getNoDup(constraint.binder, binder, "Mismatched binder variable", "var");
     score = getNoDup(constraint.score, score, "Only one score supported per search", "score");
   }
 
@@ -165,7 +178,7 @@ public class LuceneConstraint implements Constraint {
     if (subject == null && score != null)
       throw new SymbolicTransformationException("Missing <mulgara:search> for lucene constraint: " +
                                                 "binder=" + binder + ", predicate=" + predicate +
-                                                "query=" + object + ", score=" + score);
+                                                ", query=" + object + ", score=" + score);
   }
 
   public ConstraintElement getModel() {

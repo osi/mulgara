@@ -140,10 +140,6 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
       // Validate and globalize subject
       String subject = null;
       ConstraintElement subjectElement = constraint.getSubject();
-      if (subjectElement == null) {
-        // backwards compat with simple constraint
-        subjectElement = constraint.getBindingVar();
-      }
 
       if (subjectElement instanceof Variable) {
         variableList.add((Variable)subjectElement);
