@@ -54,8 +54,11 @@ public final class TempDir {
 
   private static File tempDir = null;
 
+  public static File getTempDir() {
+    return getTempDir(true);
+  }
 
-  public static synchronized File getTempDir() {
+  public static synchronized File getTempDir(boolean failIfNotDir) {
     if (tempDir == null) {
       // Initialize tempDir.
       File dir = new File(systemTempDir, "mulgara_" + System.getProperty("user.name"));
@@ -68,7 +71,7 @@ public final class TempDir {
       }
     }
 
-    if (!tempDir.isDirectory()) {
+    if (!tempDir.isDirectory() && failIfNotDir) {
       // The temporary directory has gone away!  This is a fatal error because,
       // for security reasons, we don't want to just revert to using the system
       // temporary directory.

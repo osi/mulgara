@@ -800,7 +800,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
    *
    */
   private static void cleanUpTemporaryFiles() {
-    File tempDirectory = TempDir.getTempDir();
+    File tempDirectory = TempDir.getTempDir(false);
 
     // Add a filter to ensure we only delete the correct files
     File[] list = tempDirectory.listFiles(new TemporaryFileNameFilter());
