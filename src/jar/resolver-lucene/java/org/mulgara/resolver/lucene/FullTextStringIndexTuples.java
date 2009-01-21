@@ -34,6 +34,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -58,6 +59,9 @@ import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.AbstractTuples;
+import org.mulgara.store.tuples.Annotation;
+import org.mulgara.store.tuples.DefinablePrefixAnnotation;
+import org.mulgara.store.tuples.MandatoryBindingAnnotation;
 import org.mulgara.store.tuples.Tuples;
 
 /**
@@ -106,7 +110,13 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   /** The upper bound on the number of items in tuples */
   private long rowUpperBound = -1;
 
-  private final List<Variable> variableList = new ArrayList<Variable>(3);
+  /** The list of variables as found in the constraint */
+  private final List<Variable> constrVariableList = new ArrayList<Variable>(4);
+  /** The list of lucene keys corresponding to the variables found in the constraint */
+  private final List<String> constrLuceneKeyList = new ArrayList<String>(3);
+  /** The current list of variables (possibly re-ordered from definePrefix()) */
+  private final List<Variable> variableList = new ArrayList<Variable>(4);
+  /** The list of lucene keys corresponding to the (re-ordered) variable-list */
   private final List<String> luceneKeyList = new ArrayList<String>(3);
 
   private final FullTextStringIndex fullTextStringIndex;
@@ -114,7 +124,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
 
   private final ConstraintElement subjectElement;
   private final ConstraintElement predicateElement;
-  private final String            object;
+  private final ConstraintElement objectElement;
 
   //
   // Constructor
@@ -139,43 +149,40 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     this.session = session;
     this.constraint = constraint;
 
-    try {
-      // process subject
-      subjectElement = constraint.getSubject();
+    // process subject
+    subjectElement = constraint.getSubject();
 
-      if (subjectElement instanceof Variable) {
-        variableList.add((Variable)subjectElement);
-        luceneKeyList.add(FullTextStringIndex.SUBJECT_KEY);
-      }
-
-      // process predicate
-      predicateElement = constraint.getPredicate();
-
-      if (predicateElement instanceof Variable) {
-        variableList.add((Variable)predicateElement);
-        luceneKeyList.add(FullTextStringIndex.PREDICATE_KEY);
-      }
-
-      // process object
-      ConstraintElement objectElement = constraint.getObject();
-      try {
-        LiteralImpl objectLiteral = (LiteralImpl)session.globalize(((LocalNode)objectElement).getValue());
-        object = objectLiteral.getLexicalForm();
-      } catch (ClassCastException e) {
-        throw new QueryException("The object of any rdf:object statement in a mulgara:LuceneModel " +
-                                 "must be a literal.", e);
-      }
-
-      // Get the score variable
-      Variable score = constraint.getScoreVar();
-      if (score != null) {
-        variableList.add(score);
-      }
-
-      setVariables(variableList);
-    } catch (GlobalizeException e) {
-      throw new QueryException("Couldn't globalize constraint elements", e);
+    if (subjectElement instanceof Variable) {
+      constrVariableList.add((Variable)subjectElement);
+      constrLuceneKeyList.add(FullTextStringIndex.SUBJECT_KEY);
     }
+
+    // process predicate
+    predicateElement = constraint.getPredicate();
+
+    if (predicateElement instanceof Variable) {
+      constrVariableList.add((Variable)predicateElement);
+      constrLuceneKeyList.add(FullTextStringIndex.PREDICATE_KEY);
+    }
+
+    // process object
+    objectElement = constraint.getObject();
+
+    if (objectElement instanceof Variable) {
+      constrVariableList.add((Variable)objectElement);
+      constrLuceneKeyList.add(FullTextStringIndex.LITERAL_KEY);
+    }
+
+    // Get the score variable
+    Variable score = constraint.getScoreVar();
+    if (score != null) {
+      constrVariableList.add(score);
+    }
+
+    setVariables(constrVariableList);
+
+    variableList.addAll(constrVariableList);
+    luceneKeyList.addAll(constrLuceneKeyList);
   }
 
   //
@@ -183,8 +190,10 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   //
 
   public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
-    String subject = getString(subjectElement, prefix.length > 0 ? prefix[0] : 0);
-    String predicate = getString(predicateElement, prefix.length > 1 ? prefix[1] : 0);
+    String subject = getString(subjectElement, prefix);
+    String predicate = getString(predicateElement, prefix);
+    String object = getString(objectElement, prefix);
+    assert object != null : "Internal error: lucene-query string not bound";
 
     if (logger.isDebugEnabled()) {
       logger.debug("Searching for " + subject + " : " + predicate + " : " + object);
@@ -205,8 +214,14 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     rowUpperBound = -1;
   }
 
-  private String getString(ConstraintElement ce, long boundVal) throws TuplesException {
-    if (ce instanceof LocalNode) boundVal = ((LocalNode)ce).getValue();
+  private String getString(ConstraintElement ce, long[] prefix) throws TuplesException {
+    long boundVal = 0;
+    if (ce instanceof LocalNode) {
+      boundVal = ((LocalNode)ce).getValue();
+    } else if (ce instanceof Variable) {
+      int idx = variableList.indexOf(ce);
+      boundVal = (idx < prefix.length) ? prefix[idx] : 0;
+    }
 
     if (boundVal == 0) return null;
 
@@ -268,11 +283,14 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     if (rowUpperBound == -1) {
       try {
         rowUpperBound = (hits != null) ? getRowCount() :
-            fullTextStringIndex.getMaxDocs(getString(subjectElement, 0), getString(predicateElement, 0), object);
+            fullTextStringIndex.getMaxDocs(getString(subjectElement, Tuples.NO_PREFIX),
+                                           getString(predicateElement, Tuples.NO_PREFIX),
+                                           getString(objectElement, Tuples.NO_PREFIX));
       } catch (FullTextStringIndexException e) {
         throw new TuplesException("Couldn't row upper-bound from text index: subject='" +
-                                  getString(subjectElement, 0) + "', predicate='" +
-                                  getString(predicateElement, 0) + "', object='" + object + "'", e);
+                                  getString(subjectElement, Tuples.NO_PREFIX) + "', predicate='" +
+                                  getString(predicateElement, Tuples.NO_PREFIX) + "', object='" +
+                                  getString(objectElement, Tuples.NO_PREFIX) + "'", e);
       }
     }
 
@@ -338,5 +356,41 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   //!!FIXME: I have no idea if this is correct.
   public boolean isComplete() {
     return false;
+  }
+
+  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+    // the object (lucene query string) is always required
+    if (annotationClass.equals(MandatoryBindingAnnotation.class) && objectElement instanceof Variable) {
+      return new MandatoryBindingAnnotation(new Variable[] { (Variable)objectElement });
+    }
+
+    // support re-ordering the variables so any variables can be bound in the prefix
+    if (annotationClass.equals(DefinablePrefixAnnotation.class)) {
+      return new DefinablePrefixAnnotation() {
+        public void definePrefix(Set boundVars) throws TuplesException {
+          if (boundVars.contains(constraint.getScoreVar()))
+            throw new TuplesException("Score variable may not be bound");
+
+          variableList.clear();
+          luceneKeyList.clear();
+
+          for (boolean useBound : new boolean[] { true, false }) {
+            for (int idx = 0; idx < constrLuceneKeyList.size(); idx++) {
+              Variable var = constrVariableList.get(idx);
+
+              if (boundVars.contains(var) == useBound) {
+                variableList.add(var);
+                luceneKeyList.add(constrLuceneKeyList.get(idx));
+              }
+            }
+          }
+
+          if (constraint.getScoreVar() != null) variableList.add(constraint.getScoreVar());
+          setVariables(variableList);
+        }
+      };
+    }
+
+    return null;
   }
 }
