@@ -2,6 +2,18 @@
 <jxu>
   <set name="debug" value="false" />
 
+  <!-- drop all fulltext models -->
+  <set name="query"
+    value="drop &lt;@server@#model1&gt; ;
+           drop &lt;@server@#fulltext&gt; ;
+           drop &lt;@server@#fulltext2&gt; ;
+           drop &lt;@server@#normal_zh&gt; ;
+           drop &lt;@server@#fulltext_zh&gt; ;
+           drop &lt;@server@#numbers_test&gt; ;
+           drop &lt;@server@#numbers_fulltext&gt; ;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+
   <!-- Create a normal model -->
   <set name="modelName" value="@server@#model1" />
   <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/data.rdf&gt; into &lt;@server@#model1&gt; ;" />
@@ -360,6 +372,45 @@
   <ifEqual converse="true" file="queryResult19.txt" name="queryResult">
     <save name="queryResult" file="badQuery19Result.xml"/>
     <fail>Output failed.  Check badQuery19Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Query Lucene model with only a subject given -->
+  <set name="query"
+    value="select $pred $obj from &lt;@server@#model1&gt;
+           where &lt;urn:pmid:10941736&gt; $pred $obj in &lt;@server@#fulltext2&gt;
+           order by $pred $obj;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult20.txt" name="queryResult">
+    <save name="queryResult" file="badQuery20Result.xml"/>
+    <fail>Output failed.  Check badQuery20Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Query Lucene model with only a predicate given -->
+  <set name="query"
+    value="select $subj $obj from &lt;@server@#model1&gt;
+           where $subj &lt;http://mulgara.org/mulgara/Document#title&gt; $obj in &lt;@server@#fulltext2&gt;
+           order by $subj $obj;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="queryResult21.txt" name="queryResult">
+    <save name="queryResult" file="badQuery21Result.xml"/>
+    <fail>Output failed.  Check badQuery21Result.xml for output.</fail>
+  </ifEqual>
+
+  <!-- Export Lucene model -->
+  <set name="query" value="export &lt;@server@#fulltext2&gt; to &lt;@baseuri@/tmp/fulltext2.rdf&gt;;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="exportResult1.txt" name="queryResult">
+    <save name="queryResult" file="badExportResult1.xml"/>
+    <fail>Output failed.  Check badExportResult1.xml for output.</fail>
+  </ifEqual>
+
+  <set name="exportData" file="../../../tmp/fulltext2.rdf"/>
+  <ifEqual converse="true" file="exportData1.txt" name="exportData">
+    <save name="exportData" file="badExportData1.xml"/>
+    <fail>Output failed.  Check badExportData1.xml for output.</fail>
   </ifEqual>
 
   <!-- Drop the fulltext model -->

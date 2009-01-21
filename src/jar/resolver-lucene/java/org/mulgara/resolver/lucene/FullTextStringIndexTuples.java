@@ -193,7 +193,8 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     String subject = getString(subjectElement, prefix);
     String predicate = getString(predicateElement, prefix);
     String object = getString(objectElement, prefix);
-    assert object != null : "Internal error: lucene-query string not bound";
+    assert (constraint.getScoreVar() == null || object != null) :
+           "Internal error: lucene-query string not bound even though a score is requested";
 
     if (logger.isDebugEnabled()) {
       logger.debug("Searching for " + subject + " : " + predicate + " : " + object);
@@ -254,8 +255,11 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   public long getColumnValue(int column) throws TuplesException {
     try {
       if (column >= 0 && column < luceneKeyList.size()) {
-        URI uri = new URI(document.get((String) luceneKeyList.get(column)));
-        return session.localize(new URIReferenceImpl(uri));
+        String luceneKey = luceneKeyList.get(column);
+        if (luceneKey == FullTextStringIndex.LITERAL_KEY)
+          return session.localize(new LiteralImpl(document.get(luceneKey)));
+        else
+          return session.localize(new URIReferenceImpl(new URI(document.get(luceneKey))));
       } else if (column == luceneKeyList.size()) {
         // Generate the score column
         return session.localize(new LiteralImpl(hits.score(nextDocumentIndex - 1)));
@@ -359,8 +363,9 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   }
 
   public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
-    // the object (lucene query string) is always required
-    if (annotationClass.equals(MandatoryBindingAnnotation.class) && objectElement instanceof Variable) {
+    // the object (lucene query string) is required when a score is requested
+    if (annotationClass.equals(MandatoryBindingAnnotation.class) &&
+        objectElement instanceof Variable && constraint.getScoreVar() != null) {
       return new MandatoryBindingAnnotation(new Variable[] { (Variable)objectElement });
     }
 

@@ -537,25 +537,23 @@ public class FullTextStringIndex {
 
   /**
    * Find a string within the fulltext string pool. The search is based on the
-   * {@link StandardAnalyzer} used to add the string. Subject and predicate can
-   * be supplied {null}.
+   * {@link StandardAnalyzer} used to add the string.
    *
-   * @param subject subject maybe null
-   * @param predicate predicate maybe null
-   * @param literal literal to be searched via the analyzer. Must always be
-   *      supplied
+   * @param subject subject; may be null
+   * @param predicate predicate; may be null
+   * @param literal literal to be searched via the analyzer; may be null
    * @return Object containing the hits
    * @throws FullTextStringIndexException IOException occurs on reading index
    */
   public Hits find(String subject, String predicate, String literal) throws FullTextStringIndexException {
-    if ((literal == null) || (literal.length() == 0)) {
-      throw new FullTextStringIndexException("Literal has not been supplied a value");
-    }
+    Query query;
 
-    Hits hits = null;
-    BooleanQuery bQuery = new BooleanQuery();
+    if (subject == null && predicate == null && literal == null) {
+      query = new MatchAllDocsQuery();
+    } else {
+      BooleanQuery bQuery = new BooleanQuery();
+      query = bQuery;
 
-    try {
       // debug logging
       if (logger.isDebugEnabled()) {
         logger.debug("Searching the fulltext string index pool with  subject :" + subject +
@@ -564,33 +562,39 @@ public class FullTextStringIndex {
 
       if (subject != null) {
         TermQuery tSubject = new TermQuery(new Term(SUBJECT_KEY, subject));
-        tSubject.setBoost(0);
+        if (literal != null) tSubject.setBoost(0);      // if scoring, don't affect the score
         bQuery.add(tSubject, BooleanClause.Occur.MUST);
       }
 
       if (predicate != null) {
         TermQuery tPredicate = new TermQuery(new Term(PREDICATE_KEY, predicate));
-        tPredicate.setBoost(0);
+        if (literal != null) tPredicate.setBoost(0);    // if scoring, don't affect the score
         bQuery.add(tPredicate, BooleanClause.Occur.MUST);
       }
 
-      Query qliteral = null;
+      if (literal != null) {
+        Query qliteral = null;
 
-      // Are we performing a reverse string lookup?
-      if (enableReverseTextIndex && isLeadingWildcard(literal)) {
-        literal = reverseLiteralSearch(literal);
-        QueryParser parser = new QueryParser(REVERSE_LITERAL_KEY, analyzer);
-        qliteral = parser.parse(literal);
-      } else {
-        QueryParser parser = new QueryParser(LITERAL_KEY, analyzer);
-        qliteral = parser.parse(literal);
+        try {
+          // Are we performing a reverse string lookup?
+          if (enableReverseTextIndex && isLeadingWildcard(literal)) {
+            literal = reverseLiteralSearch(literal);
+            QueryParser parser = new QueryParser(REVERSE_LITERAL_KEY, analyzer);
+            qliteral = parser.parse(literal);
+          } else {
+            QueryParser parser = new QueryParser(LITERAL_KEY, analyzer);
+            qliteral = parser.parse(literal);
+          }
+        } catch (ParseException ex) {
+          logger.error("Unable to parse query '" + literal + "'", ex);
+          throw new FullTextStringIndexException("Unable to parse query '" + literal + "'", ex);
+        }
+
+        bQuery.add(qliteral, BooleanClause.Occur.MUST);
       }
 
-      // submit the literal to the boolean query
-      bQuery.add(qliteral, BooleanClause.Occur.MUST);
-
       // debug logging
-      if (logger.isDebugEnabled()) {
+      if (literal != null && logger.isDebugEnabled()) {
         if ((literal.startsWith("*") || literal.startsWith("?")) && enableReverseTextIndex) {
           logger.debug("Searching the fulltext string index pool with parsed query as " +
                        bQuery.toString(REVERSE_LITERAL_KEY));
@@ -599,23 +603,10 @@ public class FullTextStringIndex {
                        bQuery.toString(LITERAL_KEY));
         }
       }
-
-      //Perform query
-      indexSearcher.search(bQuery, hits = new Hits(indexSearcher.getIndexReader()));
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("Got hits: " + hits.length());
-      }
-    } catch (IOException ex) {
-      closeIndexers = true;
-      logger.error("Unable to read results for query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
-      throw new FullTextStringIndexException("Unable to read results for query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
-    } catch (ParseException ex) {
-      logger.error("Unable to parse query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
-      throw new FullTextStringIndexException("Unable to parse query '" + bQuery.toString(LITERAL_KEY) + "'", ex);
     }
 
-    return hits;
+    //Perform query
+    return find(query);
   }
 
   /**
@@ -645,6 +636,10 @@ public class FullTextStringIndex {
 
       //Perform query
       indexSearcher.search(query, hits = new Hits(indexSearcher.getIndexReader()));
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Got hits: " + hits.length());
+      }
     } catch (IOException ex) {
       closeIndexers = true;
       logger.error("Unable to read results for query '" + query.toString(LITERAL_KEY) + "'", ex);

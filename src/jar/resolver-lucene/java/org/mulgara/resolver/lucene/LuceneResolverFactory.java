@@ -141,10 +141,10 @@ public class LuceneResolverFactory implements ResolverFactory {
 
   /**
    * {@inheritDoc}
-   * @return <code>false</code> - this graph does not support exports.
+   * @return <code>true</code> - this graph supports exports.
    */
   public boolean supportsExport() {
-    return false;
+    return true;
   }
 
   /**

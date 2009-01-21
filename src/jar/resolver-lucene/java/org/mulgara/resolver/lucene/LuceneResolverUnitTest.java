@@ -45,6 +45,7 @@ import org.mulgara.query.Query;
 import org.mulgara.query.Variable;
 import org.mulgara.query.operation.Modification;
 import org.mulgara.query.rdf.Mulgara;
+import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.Database;
 import org.mulgara.resolver.JotmTransactionManagerFactory;
@@ -199,6 +200,36 @@ public class LuceneResolverUnitTest extends TestCase {
         q = "select $p from <foo:bar> where <foo:node6> $p 'American' in <" + modelURI + ">;";
         answer = session.query(parseQuery(q));
         compareResults(new String[][] { { "foo:hasText" } }, answer);
+        answer.close();
+
+        // Run simple query with fixed subject and variable predicate and object
+        q = "select $p $o from <foo:bar> where <foo:node9> $p $o in <" + modelURI + ">;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] { { "foo:hasText", "Antibiotic Use Working Group" } }, answer, true);
+        answer.close();
+
+        // Run simple query with fixed predicate and variable subject and object
+        q = "select $s $o from <foo:bar> where $s <foo:hasText> $o in <" + modelURI + "> order by $s limit 3;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] {
+            { "foo:node1",  "AACP Pneumothorax Consensus Group" },
+            { "foo:node10", "Atypical Squamous Cells Intraepithelial" },
+            { "foo:node11", "Lesion Triage Study (ALTS) Group" },
+          },
+          answer, true);
+
+        answer.close();
+
+        // Run simple query with variable subject, predicate, and object
+        q = "select $s $p $o from <foo:bar> where $s $p $o in <" + modelURI + "> order by $s limit 3;";
+        answer = session.query(parseQuery(q));
+        compareResults(new String[][] {
+            { "foo:node1",  "foo:hasText", "AACP Pneumothorax Consensus Group" },
+            { "foo:node10", "foo:hasText", "Atypical Squamous Cells Intraepithelial" },
+            { "foo:node11", "foo:hasText", "Lesion Triage Study (ALTS) Group" },
+          },
+          answer, true);
+
         answer.close();
 
         // Run extended query with variable subject and fixed predicate
@@ -840,14 +871,21 @@ public class LuceneResolverUnitTest extends TestCase {
   }
 
   private void compareResults(String[][] expected, Answer answer) throws Exception {
+    compareResults(expected, answer, false);
+  }
+
+  private void compareResults(String[][] expected, Answer answer, boolean lastIsLiteral)
+      throws Exception {
     try {
       answer.beforeFirst();
       for (int i = 0; i < expected.length; i++) {
         assertTrue("Answer short at row " + i, answer.next());
         assertEquals(expected[i].length, answer.getNumberOfVariables());
         for (int j = 0; j < expected[i].length; j++) {
-          URIReferenceImpl uri = new URIReferenceImpl(new URI(expected[i][j]));
-          assertEquals(uri, answer.getObject(j));
+          Object exp = (lastIsLiteral && j == expected[i].length - 1) ?
+                          new LiteralImpl(expected[i][j]) :
+                          new URIReferenceImpl(new URI(expected[i][j]));
+          assertEquals(exp, answer.getObject(j));
         }
       }
       assertFalse(answer.next());
