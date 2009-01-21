@@ -53,6 +53,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -561,13 +562,15 @@ public class FullTextStringIndex {
                      " predicate :" + predicate + " literal :" + literal);
       }
 
-      if ((subject != null) && (subject.length() > 0)) {
+      if (subject != null) {
         TermQuery tSubject = new TermQuery(new Term(SUBJECT_KEY, subject));
+        tSubject.setBoost(0);
         bQuery.add(tSubject, BooleanClause.Occur.MUST);
       }
 
-      if ((predicate != null) && (predicate.length() > 0)) {
+      if (predicate != null) {
         TermQuery tPredicate = new TermQuery(new Term(PREDICATE_KEY, predicate));
+        tPredicate.setBoost(0);
         bQuery.add(tPredicate, BooleanClause.Occur.MUST);
       }
 
@@ -649,6 +652,64 @@ public class FullTextStringIndex {
     }
 
     return hits;
+  }
+
+  /**
+   * The maximum number of documents the given query could return.
+   *
+   * @param subject   the subject; may be null
+   * @param predicate the predicate; may be null
+   * @param literal   literal to be searched via the analyzer; may be null
+   * @return the maximum number of documents
+   * @throws FullTextStringIndexException if an error occurred
+   */
+  public long getMaxDocs(String subject, String predicate, String object)
+      throws FullTextStringIndexException {
+    long total = -1;
+
+    try {
+      if (subject != null) {
+        total = indexSearcher.docFreq(new Term(SUBJECT_KEY, subject));
+        if (total == 0) return 0;
+      }
+
+      if (predicate != null) {
+        if (total > 0)
+          total = Math.min(indexSearcher.docFreq(new Term(PREDICATE_KEY, subject)), total);
+        if (total == 0) return 0;
+      }
+
+      if (object != null) {
+        QueryParser parser = new QueryParser(LITERAL_KEY, analyzer);
+        total = findMinDocCount(parser.parse(object), total);
+      }
+
+      return (total >= 0) ? total : indexSearcher.maxDoc();
+    } catch (IOException ioe) {
+      closeIndexers = true;
+      throw new FullTextStringIndexException("Unable to count results for query '" + object + "'", ioe);
+    } catch (ParseException pe) {
+      throw new FullTextStringIndexException("Unable to parse query '" + object + "'", pe);
+    }
+  }
+
+  private long findMinDocCount(Query q, long max) throws IOException {
+    long count = max;
+
+    if (q instanceof TermQuery) {
+      Term term = ((TermQuery)q).getTerm();
+      count = Math.min(indexSearcher.docFreq(term), count);
+    } else if (q instanceof BooleanQuery) {
+      for (BooleanClause clause : ((BooleanQuery)q).getClauses()) {
+        if (clause.isRequired()) count = findMinDocCount(clause.getQuery(), count);
+      }
+    } else if (q instanceof PhraseQuery) {
+      for (Term term : ((PhraseQuery)q).getTerms()) {
+        count = Math.min(indexSearcher.docFreq(term), count);
+      }
+    }
+
+    return count;
   }
 
   /**

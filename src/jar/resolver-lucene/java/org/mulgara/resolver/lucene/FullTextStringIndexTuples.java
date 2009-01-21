@@ -40,6 +40,8 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 
 // JRDf
+import org.jrdf.graph.BlankNode;
+import org.jrdf.graph.Literal;
 import org.jrdf.graph.URIReference;
 
 // local packages
@@ -82,9 +84,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   /** Logger.  */
   private final static Logger logger = Logger.getLogger(FullTextStringIndexTuples.class);
 
-  /**
-   * The native Lucene query result to represent as a {@link Tuples}.
-   */
+  /** The native Lucene query result to represent as a {@link Tuples}. */
   private FullTextStringIndex.Hits hits;
 
   /**
@@ -94,25 +94,27 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
    */
   private Document document;
 
-  /**
-   * The index of the next {@link #document} within the {@link #hits}.
-   */
+  /** The index of the next {@link #document} within the {@link #hits}. */
   private int nextDocumentIndex = 0;
 
-  /**
-   * Session used to localize Lucene text into string pool nodes.
-   */
-  private ResolverSession session;
+  /** Session used to localize Lucene text into string pool nodes. */
+  private final ResolverSession session;
 
-  /**
-   * The number of items in to tuples
-   */
+  /** The number of items in tuples */
   private long rowCount = -1;
+
+  /** The upper bound on the number of items in tuples */
+  private long rowUpperBound = -1;
 
   private final List<Variable> variableList = new ArrayList<Variable>(3);
   private final List<String> luceneKeyList = new ArrayList<String>(3);
 
-  private LuceneConstraint constraint;
+  private final FullTextStringIndex fullTextStringIndex;
+  private final LuceneConstraint constraint;
+
+  private final ConstraintElement subjectElement;
+  private final ConstraintElement predicateElement;
+  private final String            object;
 
   //
   // Constructor
@@ -133,49 +135,31 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
    */
   FullTextStringIndexTuples(FullTextStringIndex fullTextStringIndex,
       LuceneConstraint constraint, ResolverSession session) throws QueryException {
+    this.fullTextStringIndex = fullTextStringIndex;
     this.session = session;
     this.constraint = constraint;
 
     try {
-      // Validate and globalize subject
-      String subject = null;
-      ConstraintElement subjectElement = constraint.getSubject();
+      // process subject
+      subjectElement = constraint.getSubject();
 
       if (subjectElement instanceof Variable) {
         variableList.add((Variable)subjectElement);
         luceneKeyList.add(FullTextStringIndex.SUBJECT_KEY);
-      } else if (subjectElement instanceof LocalNode) {
-        try {
-          URIReference subjectURI = (URIReference) session.globalize(((
-              LocalNode) subjectElement).getValue());
-          subject = subjectURI.getURI().toString();
-        } catch (ClassCastException ec) {
-          throw new QueryException("Bad subject in Lucene constraint", ec);
-        }
       }
 
-      // Validate and globalize predicate
-      String predicate = null;
-      ConstraintElement predicateElement = constraint.getPredicate();
+      // process predicate
+      predicateElement = constraint.getPredicate();
+
       if (predicateElement instanceof Variable) {
         variableList.add((Variable)predicateElement);
         luceneKeyList.add(FullTextStringIndex.PREDICATE_KEY);
-      } else if (predicateElement instanceof LocalNode) {
-        try {
-          URIReference predicateURI = (URIReference) session.globalize(((
-              LocalNode) predicateElement).getValue());
-          predicate = predicateURI.getURI().toString();
-        } catch (ClassCastException ec) {
-          throw new QueryException("Bad predicate in Lucene constraint", ec);
-        }
       }
 
-      // Validate and globalize object
-      String object;
+      // process object
       ConstraintElement objectElement = constraint.getObject();
       try {
-        LiteralImpl objectLiteral = (LiteralImpl) session.globalize(((LocalNode)
-            objectElement).getValue());
+        LiteralImpl objectLiteral = (LiteralImpl)session.globalize(((LocalNode)objectElement).getValue());
         object = objectLiteral.getLexicalForm();
       } catch (ClassCastException e) {
         throw new QueryException("The object of any rdf:object statement in a mulgara:LuceneModel " +
@@ -188,16 +172,9 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
         variableList.add(score);
       }
 
-      if (logger.isInfoEnabled()) {
-        logger.info("Searching for " + subject + " : " + predicate + " : " + object);
-      }
-      // Initialize fields
-      hits = fullTextStringIndex.find(subject, predicate, object);
       setVariables(variableList);
     } catch (GlobalizeException e) {
       throw new QueryException("Couldn't globalize constraint elements", e);
-    } catch (FullTextStringIndexException e) {
-      throw new QueryException("Couldn't generate answer from text index", e);
     }
   }
 
@@ -205,15 +182,49 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   // Implementation of AbstractTuples methods
   //
 
-  public void beforeFirst(long[] prefix,
-      int suffixTruncation) throws TuplesException {
+  public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
+    String subject = getString(subjectElement, prefix.length > 0 ? prefix[0] : 0);
+    String predicate = getString(predicateElement, prefix.length > 1 ? prefix[1] : 0);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Searching for " + subject + " : " + predicate + " : " + object);
+    }
+
+    try {
+      hits = fullTextStringIndex.find(subject, predicate, object);
+    } catch (FullTextStringIndexException e) {
+      throw new TuplesException("Couldn't generate answer from text index: subject='" + subject +
+                                "', predicate='" + predicate + "', object='" + object + "'", e);
+    }
+
+    //Tuples tuples = TuplesOperations.sort(tmpTuples);
+
     document = null;
     nextDocumentIndex = 0;
+    rowCount = -1;
+    rowUpperBound = -1;
+  }
+
+  private String getString(ConstraintElement ce, long boundVal) throws TuplesException {
+    if (ce instanceof LocalNode) boundVal = ((LocalNode)ce).getValue();
+
+    if (boundVal == 0) return null;
+
+    try {
+      Object val =  session.globalize(boundVal);
+      if (val instanceof URIReference) return ((URIReference)val).getURI().toString();
+      if (val instanceof Literal) return ((Literal)val).getLexicalForm();
+      if (val instanceof BlankNode) return "";
+
+      throw new TuplesException("Unknown node-type for Lucene constraint '" + ce + "': local-value=" + boundVal + ", global-value=" + val + ", class=" + val.getClass());
+    } catch (GlobalizeException e) {
+      throw new TuplesException("Couldn't globalize value " + boundVal, e);
+    }
   }
 
   public void close() throws TuplesException {
     try {
-      hits.close();
+      if (hits != null) hits.close();
     } catch (IOException ioe) {
       throw new TuplesException("Error closing fulltext index hits", ioe);
     }
@@ -221,7 +232,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
 
   public FullTextStringIndexTuples clone() {
     FullTextStringIndexTuples clone = (FullTextStringIndexTuples) super.clone();
-    clone.hits = hits.clone();
+    if (hits != null) clone.hits = hits.clone();
     return clone;
   }
 
@@ -239,8 +250,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     } catch (IOException e) {
       throw new TuplesException("Couldn't get column " + column + " value", e);
     } catch (LocalizeException e) {
-      throw new TuplesException("Couldn't localize column " + column + " value",
-          e);
+      throw new TuplesException("Couldn't localize column " + column + " value", e);
     } catch (URISyntaxException e) {
       throw new TuplesException("Couldn't get column " + column + " value", e);
     }
@@ -255,7 +265,37 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   }
 
   public long getRowUpperBound() throws TuplesException {
-    return getRowCount();
+    if (rowUpperBound == -1) {
+      try {
+        rowUpperBound = (hits != null) ? getRowCount() :
+            fullTextStringIndex.getMaxDocs(getString(subjectElement, 0), getString(predicateElement, 0), object);
+      } catch (FullTextStringIndexException e) {
+        throw new TuplesException("Couldn't row upper-bound from text index: subject='" +
+                                  getString(subjectElement, 0) + "', predicate='" +
+                                  getString(predicateElement, 0) + "', object='" + object + "'", e);
+      }
+    }
+
+    return rowUpperBound;
+  }
+
+  public int getRowCardinality() throws TuplesException {
+    long bound = getRowUpperBound();
+
+    if (bound == 0) return Tuples.ZERO;
+    if (bound == 1) return Tuples.ONE;
+    return Tuples.MANY;
+
+    /* Exact, but slower
+    if (getRowUpperBound() == 0) return Tuples.ZERO;
+
+    if (hits == null) beforeFirst();
+
+    long count = getRowCount();
+    if (count == 0) return Tuples.ZERO;
+    if (count == 1) return Tuples.ONE;
+    return Tuples.MANY;
+    */
   }
 
   /**
@@ -276,6 +316,8 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   }
 
   public boolean next() throws TuplesException {
+    assert hits != null : "next() called without beforeFirst()";
+
     try {
       if (nextDocumentIndex < getRowCount()) {
         document = hits.doc(nextDocumentIndex++);

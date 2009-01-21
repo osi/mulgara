@@ -372,13 +372,7 @@ public class LuceneResolver implements Resolver {
     // generate the tuples
     try {
       FullTextStringIndex stringIndex = getFullTextStringIndex(((LocalNode)modelElement).getValue());
-      Tuples tmpTuples = new FullTextStringIndexTuples(stringIndex, (LuceneConstraint) constraint, resolverSession);
-      Tuples tuples = TuplesOperations.sort(tmpTuples);
-      tmpTuples.close();
-
-      return new TuplesWrapperResolution(tuples, constraint);
-    } catch (TuplesException te) {
-      throw new QueryException("Failed to sort tuples and close", te);
+      return new FullTextStringIndexTuples(stringIndex, (LuceneConstraint)constraint, resolverSession);
     } catch (IOException ioe) {
       throw new QueryException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {

@@ -314,8 +314,8 @@
            order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <subst name="queryResult" regexp="1\.67[0-9]*" value="1.67"/>
-  <subst name="queryResult" regexp="1\.38[0-9]*" value="1.38"/>
+  <subst name="queryResult" regexp="1\.(50|51)[0-9]*" value="1.50"/>
+  <subst name="queryResult" regexp="1\.(20|21)[0-9]*" value="1.20"/>
   <ifEqual converse="true" file="queryResult17.txt" name="queryResult">
     <save name="queryResult" file="badQuery17Result.xml"/>
     <fail>Output failed.  Check badQuery17Result.xml for output.</fail>
@@ -334,9 +334,9 @@
            order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <subst name="queryResult" regexp="1\.67[0-9]*" value="1.67"/>
-  <subst name="queryResult" regexp="1\.38[0-9]*" value="1.38"/>
-  <subst name="queryResult" regexp="2\.75[0-9]*" value="2.75"/>
+  <subst name="queryResult" regexp="1\.(50|51)[0-9]*" value="1.50"/>
+  <subst name="queryResult" regexp="1\.(20|21)[0-9]*" value="1.20"/>
+  <subst name="queryResult" regexp="2\.(61|62)[0-9]*" value="2.61"/>
   <ifEqual converse="true" file="queryResult18.txt" name="queryResult">
     <save name="queryResult" file="badQuery18Result.xml"/>
     <fail>Output failed.  Check badQuery18Result.xml for output.</fail>
@@ -355,8 +355,8 @@
            order by $pmid $title;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <subst name="queryResult" regexp="1\.38[0-9]*" value="1.38"/>
-  <subst name="queryResult" regexp="1\.04[0-9]*" value="1.04"/>
+  <subst name="queryResult" regexp="1\.(20|21)[0-9]*" value="1.20"/>
+  <subst name="queryResult" regexp="0\.(92|93)[0-9]*" value="0.92"/>
   <ifEqual converse="true" file="queryResult19.txt" name="queryResult">
     <save name="queryResult" file="badQuery19Result.xml"/>
     <fail>Output failed.  Check badQuery19Result.xml for output.</fail>
