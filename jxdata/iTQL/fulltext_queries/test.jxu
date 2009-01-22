@@ -408,10 +408,13 @@
   </ifEqual>
 
   <set name="exportData" file="../../../tmp/fulltext2.rdf"/>
+  <!-- Disabled until we come up with a good xml diff strategy, as things like
+     - the order of the attributes change between jvm's
   <ifEqual converse="true" file="exportData1.txt" name="exportData">
     <save name="exportData" file="badExportData1.xml"/>
     <fail>Output failed.  Check badExportData1.xml for output.</fail>
   </ifEqual>
+  -->
 
   <!-- Drop the fulltext model -->
   <set name="query"
