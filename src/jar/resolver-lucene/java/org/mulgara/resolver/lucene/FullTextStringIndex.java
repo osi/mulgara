@@ -41,6 +41,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -809,8 +810,8 @@ public class FullTextStringIndex {
       return hits.size();
     }
 
-    public final Document doc(int n) throws IOException {
-      return reader.document(hits.get(n).doc);
+    public final Document doc(int n, FieldSelector fs) throws IOException {
+      return reader.document(hits.get(n).doc, fs);
     }
 
     public final float score(int n) throws IOException {

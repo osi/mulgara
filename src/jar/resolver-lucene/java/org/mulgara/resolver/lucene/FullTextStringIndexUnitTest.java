@@ -496,7 +496,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
       int docsRemoved = 0;
 
       for (int docNo = 0; docNo < hits.length(); docNo++) {
-        String uri = hits.doc(docNo).getField(FullTextStringIndex.SUBJECT_KEY).stringValue();
+        String uri = hits.doc(docNo, null).getField(FullTextStringIndex.SUBJECT_KEY).stringValue();
 
         logger.debug("Found supernatural in :" + uri);
 

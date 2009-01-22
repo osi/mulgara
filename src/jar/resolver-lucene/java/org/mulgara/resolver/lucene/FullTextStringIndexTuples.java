@@ -39,6 +39,8 @@ import java.util.Set;
 // Third party packages
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.FieldSelector;
+import org.apache.lucene.document.FieldSelectorResult;
 
 // JRDf
 import org.jrdf.graph.BlankNode;
@@ -90,6 +92,9 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
 
   /** The native Lucene query result to represent as a {@link Tuples}. */
   private FullTextStringIndex.Hits hits;
+
+  /** Which fields to load from the documents. */
+  private FieldSelector fieldSelector;
 
   /**
    * The current document within the {@link #hits}.
@@ -190,9 +195,9 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
   //
 
   public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
-    String subject = getString(subjectElement, prefix);
-    String predicate = getString(predicateElement, prefix);
-    String object = getString(objectElement, prefix);
+    final String subject = getString(subjectElement, prefix);
+    final String predicate = getString(predicateElement, prefix);
+    final String object = getString(objectElement, prefix);
     assert (constraint.getScoreVar() == null || object != null) :
            "Internal error: lucene-query string not bound even though a score is requested";
 
@@ -207,7 +212,18 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
                                 "', predicate='" + predicate + "', object='" + object + "'", e);
     }
 
-    //Tuples tuples = TuplesOperations.sort(tmpTuples);
+    fieldSelector = new FieldSelector() {
+      public FieldSelectorResult accept(String fieldName) {
+        if (fieldName.equals(FullTextStringIndex.SUBJECT_KEY) && subject == null ||
+            fieldName.equals(FullTextStringIndex.PREDICATE_KEY) && predicate == null ||
+            (fieldName.equals(FullTextStringIndex.LITERAL_KEY) ||
+             fieldName.equals(FullTextStringIndex.REVERSE_LITERAL_KEY)) && object == null) {
+          return FieldSelectorResult.LOAD;
+        } else {
+          return FieldSelectorResult.NO_LOAD;
+        }
+      }
+    };
 
     document = null;
     nextDocumentIndex = 0;
@@ -342,7 +358,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
 
     try {
       if (nextDocumentIndex < getRowCount()) {
-        document = hits.doc(nextDocumentIndex++);
+        document = hits.doc(nextDocumentIndex++, fieldSelector);
         return true;
       } else {
         document = null;
