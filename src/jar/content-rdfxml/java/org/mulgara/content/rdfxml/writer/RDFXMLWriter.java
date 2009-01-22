@@ -195,7 +195,6 @@ public class RDFXMLWriter {
     // Statements may be lazily evaluated. Materializing caches them
     Tuples tuples = new StatementsWrapperTuples(statements);
     Tuples materializedTuples = TuplesOperations.materialize(tuples);
-    tuples.close();
 
     // ensure variables are in the right order
     Tuples projectedTuples = TuplesOperations.project(materializedTuples,
