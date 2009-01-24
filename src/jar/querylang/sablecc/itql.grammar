@@ -47,7 +47,6 @@ Tokens
   {def}                drop        = 'drop';
   {def}                echo        = 'echo';
   {def}                execute     = 'execute';
-  {def}                exclude     = 'exclude';
   {def}                export      = 'export';
   {def}                from        = 'from';
   {def}                help        = 'help';
@@ -253,10 +252,10 @@ Productions
     {minus} [minuend]:constraint_dterm minus [subtrahend]:constraint_factor ;
 
   constraint_factor =
-    {constraint} exclude? constraint                  |
+    {constraint} constraint                  |
     {compound} lbrace [subject]:element exists_expression in_clause? rbrace |
     {existential} lbracket exists_expression in_clause? rbracket |
-    {expression} exclude? lpar constraint_expression rpar |
+    {expression} lpar constraint_expression rpar |
     {transitive} transitive_clause |
     {walk} walk_clause ;
 

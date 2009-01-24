@@ -169,11 +169,6 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
         tmpConstraint = ConstraintFactory.newConstraint(subject, predicate, object);
       }
 
-      // handle negated constraints
-      if (((AConstraintConstraintFactor) rawConstraintFactor).getExclude() != null) {
-        tmpConstraint = new ConstraintNegation(tmpConstraint);
-      }
-
       // Set new value.
       if (logger.isDebugEnabled()) logger.debug("Setting constraint: " + tmpConstraint);
 
@@ -209,14 +204,7 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
       ConstraintExpressionBuilder builder = new ConstraintExpressionBuilder(interpreter);
       embeddedConstraintExpression.apply((Switch) builder);
 
-      tmpConstraintExpression = builder.getConstraintExpression();
-
-      // handle negated expressions
-      if (((AExpressionConstraintFactor) rawConstraintFactor).getExclude() != null) {
-        tmpConstraintExpression = new ConstraintNegation((Constraint)tmpConstraintExpression);
-      }
-
-      setConstraintExpression(tmpConstraintExpression);
+      setConstraintExpression(builder.getConstraintExpression());
     } catch (URISyntaxException use) {
       uriException = use;
     } catch (QueryException qe) {

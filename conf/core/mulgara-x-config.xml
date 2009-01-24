@@ -26,7 +26,14 @@ Mulgara Semantic Store configuration file.
           all interfaces
   -->
   <Jetty>
-    <Disabled>true</Disabled>
+    <Disabled>false</Disabled>
+    <Connector>
+      <!--<Host>localhost</Host>-->
+      <Port>8080</Port>
+      <Acceptors>5</Acceptors>
+      <MaxIdleTimeMs>60000</MaxIdleTimeMs>
+      <LowResourceMaxIdleTimeMs>5000</LowResourceMaxIdleTimeMs>
+    </Connector>
   </Jetty>
 
   <!-- The name of the server, used for RMI binding -->
@@ -81,11 +88,11 @@ Mulgara Semantic Store configuration file.
     and resolvers.  The persistent resolver is used to manipulate the system
     model.
   -->
-  <PersistentNodePoolFactory type="org.mulgara.store.nodepool.xa.XANodePoolFactory" dir="xaNodePool"/>
+  <PersistentNodePoolFactory type="org.mulgara.store.stringpool.xa11.XA11StringPoolFactory" dir="xaStringPool"/>
   <TemporaryNodePoolFactory  type="org.mulgara.store.nodepool.memory.MemoryNodePoolFactory"/>
-  <PersistentStringPoolFactory type="org.mulgara.store.stringpool.xa.XAStringPoolFactory" dir="xaStringPool"/>
+  <PersistentStringPoolFactory type="org.mulgara.store.stringpool.xa11.XA11StringPoolFactory" dir="xaStringPool"/>
   <TemporaryStringPoolFactory type="org.mulgara.store.stringpool.memory.MemoryStringPoolFactory"/>
-  <PersistentResolverFactory type="org.mulgara.resolver.store.StatementStoreResolverFactory" dir="xaStatementStore"/>
+  <PersistentResolverFactory type="org.mulgara.resolver.store.XA11StatementStoreResolverFactory" dir="xaStatementStore"/>
   <TemporaryResolverFactory type="org.mulgara.resolver.memory.MemoryResolverFactory" dir="tempStatementStore"/>
 
   <!--
@@ -98,6 +105,8 @@ Mulgara Semantic Store configuration file.
     types.
   -->
   <DefaultContentHandler type="org.mulgara.content.rdfxml.RDFXMLContentHandler"/>
+  <ContentHandler type="org.mulgara.content.mp3.MP3ContentHandler"/>
+  <ContentHandler type="org.mulgara.content.mbox.MBoxContentHandler"/>
   <ContentHandler type="org.mulgara.content.n3.N3ContentHandler"/>
 
   <!--
@@ -108,7 +117,9 @@ Mulgara Semantic Store configuration file.
   <ResolverFactory type="org.mulgara.resolver.xsd.XSDResolverFactory"/>
   <ResolverFactory type="org.mulgara.resolver.http.HttpResolverFactory"/>
   <ResolverFactory type="org.mulgara.resolver.nodetype.NodeTypeResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.jar.JarResolverFactory"/>
   <ResolverFactory type="org.mulgara.resolver.view.ViewResolverFactory"/>
+  <ResolverFactory type="org.mulgara.resolver.filesystem.FileSystemResolverFactory"/>
   <ResolverFactory type="org.mulgara.resolver.prefix.PrefixResolverFactory"/>
   <ResolverFactory type="org.mulgara.resolver.relational.RelationalResolverFactory"/>
   <ResolverFactory type="org.mulgara.resolver.distributed.DistributedResolverFactory"/>

@@ -385,4 +385,11 @@ public class MemoryResolver implements SystemResolver {
   public LongMapper getRestoreMapper() throws Exception {
     return new MemLongMapper();
   }
+
+  /**
+   * Ignored in this implementation 
+   */
+  public void initializeSystemNodes(long systemGraphNode, long rdfTypeNode, long systemGraphTypeNode) {
+    // do nothing
+  }
 }

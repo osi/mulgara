@@ -51,7 +51,6 @@ import org.mulgara.store.tuples.AbstractTuples;
  */
 public class LeftJoin extends AbstractTuples implements ContextOwner {
 
-  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(LeftJoin.class.getName());
 
   /** The set of tuples to return all row from. */
@@ -576,7 +575,7 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
     }
 
     /** @see org.mulgara.store.tuples.Tuples#getAnnotation(java.lang.Class) */
-    public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+    public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
       return wrapped.getAnnotation(annotationClass);
     }
 

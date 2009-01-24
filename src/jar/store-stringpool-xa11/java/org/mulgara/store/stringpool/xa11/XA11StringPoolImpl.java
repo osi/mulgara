@@ -2085,7 +2085,7 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
       /**
        * Copied from AbstractTuples
        */
-      public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+      public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
         return null;
       }
 

@@ -30,6 +30,7 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import gnu.trove.TIntHashSet;
 import gnu.trove.TIntIterator;
+import gnu.trove.TIntProcedure;
 
 import java.beans.Beans;
 import java.io.File;
@@ -1144,7 +1145,14 @@ public class Database implements SessionFactory
     } else {
       TIntHashSet phaseSet = intersectPhaseSets(phaseSets);
       if (phaseSet.isEmpty()) {
-        throw new SimpleXAResourceException("No matching phases between Resource Handlers.");
+        final StringBuilder s = new StringBuilder("[");
+        for (TIntHashSet p: phaseSets) {
+          s.append(" { ");
+          p.forEach(new TIntProcedure() {public boolean execute(int i) { s.append(i).append(" "); return true; }});
+          s.append("}");
+        }
+        s.append(" ]");
+        throw new SimpleXAResourceException("No matching phases between Resource Handlers. Recovery sets: " + s);
       }
 
       selectCommonPhase(highestCommonPhaseNumber(phaseSet), handlers);

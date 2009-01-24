@@ -46,33 +46,17 @@ import org.mulgara.util.StackTrace;
  * {@link Variable}s to {@link Value}s.
  *
  * @created 2003-01-30
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.12 $
- *
- * @modified $Date: 2005/05/16 11:07:10 $
- *
- * @maintenanceAuthor $Author: amuys $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2003 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
- *
+ * @copyright &copy; 2003 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public abstract class TuplesOperations {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger logger =
-      Logger.getLogger(TuplesOperations.class.getName());
+  /** Logger. This is named after the class. */
+  private final static Logger logger = Logger.getLogger(TuplesOperations.class.getName());
 
-  /**
-   * The factory used to generate new {@link Tuples} instances.
-   */
+  /** The factory used to generate new {@link Tuples} instances. */
   private static TuplesFactory tuplesFactory = TuplesFactory.newInstance();
 
   /**
@@ -82,10 +66,9 @@ public abstract class TuplesOperations {
    * value to a tuples generates an empty result.
    *
    * @return the expression which is never satisfied, no matter what value any
-   *      variable takes
+   *         variable takes
    */
   public static StoreTuples empty() {
-
     return EmptyTuples.getInstance();
   }
 
@@ -101,7 +84,6 @@ public abstract class TuplesOperations {
    * @return the expression which is always true, for any value of any variables
    */
   public static StoreTuples unconstrained() {
-
     return UnconstrainedTuples.getInstance();
   }
 
@@ -109,12 +91,11 @@ public abstract class TuplesOperations {
    * Assign a value to a variable, representing the binding as a tuples with one
    * row and one column.
    *
-   * @param variable PARAMETER TO DO
-   * @param value PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param variable The variable to bind
+   * @param value The value in local space to bind the variable to
+   * @return A Tuples with the variable bound to the given value.
    */
   public static Tuples assign(Variable variable, long value) {
-
     return (value == Tuples.UNBOUND) ? (Tuples)unconstrained()
                                      : new Assignment(variable, value);
   }
@@ -122,9 +103,9 @@ public abstract class TuplesOperations {
   /**
    * This is approximately a disjunction.
    *
-   * @param lhs PARAMETER TO DO
-   * @param rhs PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param lhs The first Tuples to be used in the result.
+   * @param rhs The second Tuples to be used in the result.
+   * @return A new Tuples containing all of the bindings from the lhs and rhs parameters.
    * @throws TuplesException if the append fails
    */
   public static Tuples append(Tuples lhs, Tuples rhs) throws TuplesException {
@@ -132,10 +113,16 @@ public abstract class TuplesOperations {
   }
 
 
+  /**
+   * Creates a new Tuples which contains all of the bindings of the Tuples in the argument list.
+   * If any tuples contains variables not found in the other Tuples, then those values will
+   * remain unbound for the bindings of those Tuples missing those variables.
+   * @param args A list of the Tuples to be used in the result.
+   * @return A Tuples containing all of the bindings from the args list.
+   * @throws TuplesException If the data could not be appended.
+   */
   public static Tuples append(List<? extends Tuples> args) throws TuplesException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Appending " + args);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Appending " + args);
 
     HashSet<Variable> variableSet = new HashSet<Variable>();
     List<Variable> variables = new ArrayList<Variable>();
@@ -147,25 +134,18 @@ public abstract class TuplesOperations {
       Tuples operand = i.next();
       if (operand.isUnconstrained()) {
         closeOperands(operands);
-        if (logger.isDebugEnabled()) {
-          logger.debug("Returning unconstrained from append.");
-        }
+        if (logger.isDebugEnabled()) logger.debug("Returning unconstrained from append.");
         return unconstrained();
       } else if (operand.getRowCardinality() == Cursor.ZERO) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Ignoring append operand " + operand + " with rowcount = " + operand.getRowCount());
-        }
+        if (logger.isDebugEnabled()) logger.debug("Ignoring append operand " + operand + " with rowcount = " + operand.getRowCount());
         continue;
       }
 
       operands.add((Tuples)operand.clone());
 
       Variable[] vars = operand.getVariables();
-      if (leftVars == null) {
-        leftVars = vars;
-      } else {
-        unionCompat = unionCompat && Arrays.equals(leftVars, vars);
-      }
+      if (leftVars == null) leftVars = vars;
+      else unionCompat = unionCompat && Arrays.equals(leftVars, vars);
       for (int j = 0; j < vars.length; j++) {
         if (!variableSet.contains(vars[j])) {
           variableSet.add(vars[j]);
@@ -174,22 +154,16 @@ public abstract class TuplesOperations {
       }
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Operands after append-unification: " + operands);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Operands after append-unification: " + operands);
 
     if (operands.isEmpty()) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Returning empty from append.");
-      }
+      if (logger.isDebugEnabled()) logger.debug("Returning empty from append.");
       return empty();
     }
 
     if (operands.size() == 1) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Returning singleton from append.");
-      }
-      return (Tuples)operands.get(0);
+      if (logger.isDebugEnabled()) logger.debug("Returning singleton from append.");
+      return operands.get(0);
     }
 
     if (unionCompat) {
@@ -202,9 +176,7 @@ public abstract class TuplesOperations {
       return result;
     } else {
       List<Tuples> projected = new ArrayList<Tuples>();
-      i = operands.iterator();
-      while (i.hasNext()) {
-        Tuples operand = i.next();
+      for (Tuples operand: operands) {
         Tuples proj = project(operand, variables);
         Tuples sorted = sort(proj);
         projected.add(sorted);
@@ -212,9 +184,7 @@ public abstract class TuplesOperations {
         operand.close();
       }
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("Returning OrderedAppend from Non-Union compatible append.");
-      }
+      if (logger.isDebugEnabled()) logger.debug("Returning OrderedAppend from Non-Union compatible append.");
       Tuples result = new OrderedAppend(projected.toArray(new Tuples[projected.size()]));
       closeOperands(projected);
       return result;
@@ -223,49 +193,97 @@ public abstract class TuplesOperations {
 
 
   /**
-   * This is approximately a conjunction.
+   * Creates a new Tuples which contains all of the bindings of the Tuples in the argument list.
+   * All tuples must have an identical pattern, and come directly from the store.
+   * @param args A list of the Tuples directly backed by the store to be used in the result.
+   * @return A StoreTuples containing all of the bindings from the args list.
+   * @throws TuplesException If the data could not be appended.
+   */
+  public static StoreTuples appendCompatible(List<StoreTuples> args) throws TuplesException {
+    if (logger.isDebugEnabled()) logger.debug("Compatible append of " + args);
+
+    Variable[] vars = null;
+    List<StoreTuples> operands = new ArrayList<StoreTuples>();
+    for (StoreTuples arg: args) {
+
+      // test for empty or unconstrained data
+      if (arg.isUnconstrained()) {
+        closeOperands(operands);
+        if (logger.isDebugEnabled()) logger.debug("Returning unconstrained from append.");
+        return unconstrained();
+      } else if (arg.getRowCardinality() == Cursor.ZERO) {
+        if (logger.isDebugEnabled()) logger.debug("Ignoring append operand " + arg + " with rowcount = " + arg.getRowCount());
+        continue;
+      }
+
+      operands.add((StoreTuples)arg.clone());
+
+      // test for tuples compatibility
+      if (vars == null) vars = arg.getVariables();
+      else if (!Arrays.equals(vars, arg.getVariables())) {
+        throw new IllegalArgumentException("Incompatible arguments to appendCompatible");
+      }
+
+    }
+
+    if (logger.isDebugEnabled()) logger.debug("Operands after compatible-append-unification: " + operands);
+
+    if (operands.isEmpty()) {
+      if (logger.isDebugEnabled()) logger.debug("Returning empty from append.");
+      return empty();
+    }
+
+    if (operands.size() == 1) {
+      if (logger.isDebugEnabled()) logger.debug("Returning singleton from append.");
+      return operands.get(0);
+    }
+
+    StoreTuples result = new OrderedStoreAppend(operands.toArray(new StoreTuples[operands.size()]));
+    closeOperands(operands);
+    return result;
+  }
+
+
+  /**
+   * Convenience method for doing a binary {@link #join(List)}.
+   * @param lhs The first argument to be joined.
+   * @param rhs The second argument to be joined.
+   * @return A Tuples containing the conjunction of lhs and rhs.
    */
   public static Tuples join(Tuples lhs, Tuples rhs) throws TuplesException {
     return join(Arrays.asList(new Tuples[] { lhs, rhs }));
   }
 
+  /**
+   * This is approximately a conjunction. Returns a set of bindings containing all the variables
+   * from both parameters. The only bindings returned are those where all the matching variables
+   * in each argument are bound to the same values.
+   * @param args The Tuples to be joined together.
+   * @return A Tuples containing the conjunction of all the arguments.
+   */
   public static Tuples join(List<? extends Tuples> args) throws TuplesException {
     try {
-      if (logger.isDebugEnabled()) {
-        logger.debug(printArgs("Flattening args:", args));
-      }
+      if (logger.isDebugEnabled()) logger.debug(printArgs("Flattening args:", args));
       List<Tuples> operands = flattenOperands(args);
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(printArgs("Unifying args: ", operands));
-      }
+      if (logger.isDebugEnabled()) logger.debug(printArgs("Unifying args: ", operands));
       List<Tuples> unified = unifyOperands(operands);
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(printArgs("Sorting args:", unified));
-      }
+      if (logger.isDebugEnabled()) logger.debug(printArgs("Sorting args:", unified));
       List<Tuples> sorted = sortOperands(unified);
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(printArgs("Preparing result: ", sorted));
-      }
+      if (logger.isDebugEnabled()) logger.debug(printArgs("Preparing result: ", sorted));
       switch (sorted.size()) {
         case 0:
-          if (logger.isDebugEnabled()) {
-            logger.debug("Short-circuit empty");
-          }
+          if (logger.isDebugEnabled()) logger.debug("Short-circuit empty");
           return empty();
 
         case 1:
-          if (logger.isDebugEnabled()) {
-            logger.debug("Short-circuit singleton");
-          }
-          return (Tuples)sorted.get(0);
+          if (logger.isDebugEnabled()) logger.debug("Short-circuit singleton");
+          return sorted.get(0);
 
         default:
-          if (logger.isDebugEnabled()) {
-            logger.debug("return UnboundJoin");
-          }
+          if (logger.isDebugEnabled()) logger.debug("return UnboundJoin");
           Tuples result = new UnboundJoin(sorted.toArray(new Tuples[sorted.size()]));
           closeOperands(sorted);
           return result;
@@ -291,10 +309,7 @@ public abstract class TuplesOperations {
    */
   public static Tuples subtract(Tuples minuend, Tuples subtrahend) throws TuplesException {
     try {
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("subtracting " + subtrahend + " from " + minuend);
-      }
+      if (logger.isDebugEnabled()) logger.debug("subtracting " + subtrahend + " from " + minuend);
       // get the matching columns
       Set<Variable> matchingVars = getMatchingVars(minuend, subtrahend);
       if (matchingVars.isEmpty()) {
@@ -327,9 +342,7 @@ public abstract class TuplesOperations {
       try {
         return new Difference(minuend, sortedSubtrahend);
       } finally {
-        if (sortedSubtrahend != subtrahend) {
-          sortedSubtrahend.close();
-        }
+        if (sortedSubtrahend != subtrahend) sortedSubtrahend.close();
       }
 
     } catch (RuntimeException re) {
@@ -355,9 +368,7 @@ public abstract class TuplesOperations {
   public static Tuples optionalJoin(Tuples standard, Tuples optional, Filter filter, QueryEvaluationContext context) throws TuplesException {
     try {
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("optional join of " + standard + " optional { " + optional + " }");
-      }
+      if (logger.isDebugEnabled()) logger.debug("optional join of " + standard + " optional { " + optional + " }");
 
       // get the matching columns
       Set<Variable> matchingVars = getMatchingVars(standard, optional);
@@ -387,9 +398,7 @@ public abstract class TuplesOperations {
       }
 
       // yes, there are extra variables
-      if (logger.isDebugEnabled()) {
-        logger.debug("sorting on the common variables: " + matchingVars);
-      }
+      if (logger.isDebugEnabled()) logger.debug("sorting on the common variables: " + matchingVars);
       // re-sort the optional according to the matching variables
       // reorder the optional as necessary
       Tuples sortedOptional = reSort(optional, new ArrayList<Variable>(matchingVars));
@@ -413,27 +422,29 @@ public abstract class TuplesOperations {
 
   /**
    * Flattens any nested joins to allow polyadic join operations.
+   * @param A list of Tuples which may in turn be nested operations.
+   * @return A flattened list of flattened Tuples. 
    */
   private static List<Tuples> flattenOperands(List<? extends Tuples> operands) throws TuplesException {
     List<Tuples> result = new ArrayList<Tuples>();
-    for (Tuples operand: operands) {
-      result.addAll(flattenOperand(operand));
-    }
-
+    for (Tuples operand: operands) result.addAll(flattenOperand(operand));
     return result;
   }
 
 
+  /**
+   * Flattens a Tuples into a list of Tuples. This means that joins will be expanded into their components.
+   * @param operand The Tuples to flatten
+   * @return A flattened list.
+   * @throws TuplesException If the Tuples could not be accessed.
+   */
   private static List<Tuples> flattenOperand(Tuples operand) throws TuplesException {
     List<Tuples> operands = new ArrayList<Tuples>();
     if (operand instanceof UnboundJoin) {
-      for (Tuples op: operand.getOperands()) {
-        operands.add((Tuples)op.clone());
-      }
+      for (Tuples op: operand.getOperands()) operands.add((Tuples)op.clone());
     } else {
       operands.add((Tuples)operand.clone());
     }
-
     return operands;
   }
 
@@ -442,7 +453,6 @@ public abstract class TuplesOperations {
    * Unifies bound variables in operands.
    * Prepends a LiteralTuples containing constrained variable bindings.
    * If any operand returns 0-rows returns EmptyTuples.
-   *
    * @param operands List of Tuples to unify.  Consumed by this function.
    * @return List of operands remaining after full unification.
    */
@@ -456,7 +466,7 @@ public abstract class TuplesOperations {
     }
 
     List<Tuples> result = extractNonReresolvableTuples(operands);
-    // operands is not effectively a List<ReresolvableResolution>
+    // operands is now effectively a List<ReresolvableResolution>
 
     List<ReresolvableResolution> reresolved;
     do {
@@ -466,6 +476,7 @@ public abstract class TuplesOperations {
         closeOperands(result);
         closeOperands(reresolved);
         logger.debug("Returning empty due to shortcircuiting progressive bindSingleRowOperands");
+        // wrap in an Array list to convert the generic type
         return new ArrayList<Tuples>(Collections.singletonList(empty()));
       }
       operands.addAll(reresolved);
@@ -481,8 +492,7 @@ public abstract class TuplesOperations {
   /**
    * Extracts all bound names from workingSet into bindings.
    */
-  private static boolean bindSingleRowOperands(Map<Variable,Long> bindings, List<? extends Tuples> workingSet)
-      throws TuplesException {
+  private static boolean bindSingleRowOperands(Map<Variable,Long> bindings, List<? extends Tuples> workingSet) throws TuplesException {
     Iterator<? extends Tuples> iter = workingSet.iterator();
     while (iter.hasNext()) {
       Tuples tuples = iter.next();
@@ -498,22 +508,15 @@ public abstract class TuplesOperations {
             for (int i = 0; i < vars.length; i++) {
               Long value = new Long(tuples.getColumnValue(tuples.getColumnIndex(vars[i])));
               Long oldValue = (Long)bindings.put(vars[i], value);
-              if (oldValue != null && !value.equals(oldValue)) {
-                return false;
-              }
+              if (oldValue != null && !value.equals(oldValue)) return false;
             }
           } else {
             // This should not happen.
             // If the call to getRowCardinality returns > 0 then beforeFirst,
             // and then next should return true too.
-            logger.error(
-                "No rows but getRowCardinality returned Cursor.ONE: (class=" +
-                tuples.getClass().getName() + ") " + tuples.toString() + "\n" +
-                new StackTrace()
-            );
-            throw new AssertionError(
-                "No rows but getRowCardinality returned Cursor.ONE"
-            );
+            logger.error("No rows but getRowCardinality returned Cursor.ONE: (class=" +
+                    tuples.getClass().getName() + ") " + tuples.toString() + "\n" + new StackTrace());
+            throw new AssertionError("No rows but getRowCardinality returned Cursor.ONE");
           }
           iter.remove();
           tuples.close();
@@ -531,8 +534,7 @@ public abstract class TuplesOperations {
   }
 
 
-  private static List<Tuples> extractNonReresolvableTuples(List<Tuples> workingSet)
-      throws TuplesException {
+  private static List<Tuples> extractNonReresolvableTuples(List<Tuples> workingSet) throws TuplesException {
     List<Tuples> nonReresolvable = new ArrayList<Tuples>(workingSet.size());
 
     Iterator<Tuples> iter = workingSet.iterator();
@@ -554,8 +556,7 @@ public abstract class TuplesOperations {
    * @param workingSet A set of ReresolvableResolution, though it will be represented as a set of Tuples
    * @return List of ConstrainedTuples resulting from any resolutions required.
    */
-  private static List<ReresolvableResolution> resolveNewlyBoundFreeNames(List<Tuples> workingSet, Map<Variable,Long> bindings)
-      throws TuplesException {
+  private static List<ReresolvableResolution> resolveNewlyBoundFreeNames(List<Tuples> workingSet, Map<Variable,Long> bindings) throws TuplesException {
     List<ReresolvableResolution> reresolved = new ArrayList<ReresolvableResolution>();
     Iterator<Tuples> iter = workingSet.iterator();
     while (iter.hasNext()) {
@@ -572,19 +573,14 @@ public abstract class TuplesOperations {
   }
 
 
-  private static Tuples createTuplesFromBindings(Map<Variable,Long> bindings)
-      throws TuplesException {
-    if (bindings.isEmpty()) {
-      return unconstrained();
-    }
+  private static Tuples createTuplesFromBindings(Map<Variable,Long> bindings) throws TuplesException {
+    if (bindings.isEmpty()) return unconstrained();
 
     Set<Variable> keys = bindings.keySet();
     Variable[] vars = keys.toArray(new Variable[keys.size()]);
 
     long[] values = new long[vars.length];
-    for (int i = 0; i < values.length; i++) {
-      values[i] = bindings.get(vars[i]);
-    }
+    for (int i = 0; i < values.length; i++) values[i] = bindings.get(vars[i]);
 
     LiteralTuples tuples = new LiteralTuples(vars);
     tuples.appendTuple(values);
@@ -615,9 +611,7 @@ public abstract class TuplesOperations {
 
       DefinablePrefixAnnotation definable =
           (DefinablePrefixAnnotation)bestTuples.getAnnotation(DefinablePrefixAnnotation.class);
-      if (definable != null) {
-        definable.definePrefix(boundVars);
-      }
+      if (definable != null) definable.definePrefix(boundVars);
 
       // Add all variables that don't contain UNBOUND to boundVars set.
       // Note: the inefficiency this introduces for distributed results
@@ -627,9 +621,7 @@ public abstract class TuplesOperations {
       // left-operand it becomes unprefixed.
       Variable[] vars = bestTuples.getVariables();
       for (int i = 0; i < vars.length; i++) {
-        if (!bestTuples.isColumnEverUnbound(i)) {
-          boundVars.add(vars[i]);
-        }
+        if (!bestTuples.isColumnEverUnbound(i)) boundVars.add(vars[i]);
       }
 
       result.add(bestTuples);
@@ -640,8 +632,7 @@ public abstract class TuplesOperations {
 
 
   // FIXME: Method too long.  Refactor.
-  private static Tuples removeBestTuples(List<Tuples> operands, Set<Variable> boundVars)
-      throws TuplesException {
+  private static Tuples removeBestTuples(List<Tuples> operands, Set<Variable> boundVars) throws TuplesException {
     ListIterator<Tuples> iter = operands.listIterator();
     Tuples minTuples = null;
     double minRowCount = Double.MAX_VALUE;
@@ -652,22 +643,17 @@ public abstract class TuplesOperations {
     logger.debug("removeBestTuples");
     while (iter.hasNext()) {
       Tuples tuples = (Tuples)iter.next();
-      if (logger.isDebugEnabled()) {
-        logger.debug("tuples: " + tuplesSummary(tuples));
-      }
+      if (logger.isDebugEnabled()) logger.debug("tuples: " + tuplesSummary(tuples));
 
       // Check tuples meets any mandatory left bindings.
       MandatoryBindingAnnotation bindingRequirements =
           (MandatoryBindingAnnotation)tuples.getAnnotation(MandatoryBindingAnnotation.class);
-      if (bindingRequirements != null && !bindingRequirements.meetsRequirement(boundVars)) {
-        continue;
-      }
+
+      if (bindingRequirements != null && !bindingRequirements.meetsRequirement(boundVars)) continue;
 
       Variable[] vars = tuples.getVariables();
       int numLeftBindings = calculateNumberOfLeftBindings(tuples, boundVars);
-      if (logger.isDebugEnabled()) {
-        logger.debug("numLeftBindings: " + numLeftBindings);
-      }
+      if (logger.isDebugEnabled()) logger.debug("numLeftBindings: " + numLeftBindings);
 
       // Basic formula assumes uniform distribution.  So number of rows is the
       // product of the length of each variable taken seperately, hence expected
@@ -703,32 +689,24 @@ public abstract class TuplesOperations {
       throw new TuplesException("Unable to meet ordering constraints");
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Selected: " + tuplesSummary(minTuples) + " with weightedRowCount: " + minRowCount);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Selected: " + tuplesSummary(minTuples) + " with weightedRowCount: " + minRowCount);
     operands.remove(minIndex);
     return minTuples;
   }
 
 
-  private static int calculateNumberOfLeftBindings(Tuples tuples,
-      Set<Variable> boundVars) throws TuplesException {
+  private static int calculateNumberOfLeftBindings(Tuples tuples, Set<Variable> boundVars) throws TuplesException {
     int numLeftBindings = 0;
     Variable[] vars = tuples.getVariables();
     // If the tuples supports defining a prefix then
     if (tuples.getAnnotation(DefinablePrefixAnnotation.class) != null) {
       for (int i = 0; i < vars.length; i++) {
-        if (boundVars.contains(vars[i])) {
-          numLeftBindings++;
-        }
+        if (boundVars.contains(vars[i])) numLeftBindings++;
       }
     } else {
       for (int i = 0; i < vars.length; i++) {
-        if (boundVars.contains(vars[i])) {
-          numLeftBindings++;
-        } else {
-          break;
-        }
+        if (boundVars.contains(vars[i])) numLeftBindings++;
+        else break;
       }
     }
 
@@ -745,18 +723,14 @@ public abstract class TuplesOperations {
    * @return RETURNED VALUE TO DO
    * @throws TuplesException if the projection operation fails
    */
-  public static Tuples project(Tuples tuples, List<Variable> variableList)
-      throws TuplesException {
+  public static Tuples project(Tuples tuples, List<Variable> variableList) throws TuplesException {
     try {
 
       boolean noVariables = (variableList == null) || (variableList.size() == 0);
 
-      if (tuples.isUnconstrained() ||
-         (noVariables && tuples.getRowCardinality() != Cursor.ZERO)) {
+      if (tuples.isUnconstrained() || (noVariables && tuples.getRowCardinality() != Cursor.ZERO)) {
 
-        if (logger.isDebugEnabled()) {
-          logger.debug("returning Unconstrained Tuples.");
-        }
+        if (logger.isDebugEnabled()) logger.debug("returning Unconstrained Tuples.");
 
         return TuplesOperations.unconstrained();
       } else if (tuples.getRowCardinality() == Cursor.ZERO) {
@@ -766,9 +740,7 @@ public abstract class TuplesOperations {
       } else if ((noVariables) && (tuples instanceof ConstrainedNegationTuples)) {
         return empty();
       } else {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Projecting to " + variableList);
-        }
+        if (logger.isDebugEnabled()) logger.debug("Projecting to " + variableList);
 
         // Perform the actual projection
         Tuples oldTuples = tuples;
@@ -785,11 +757,9 @@ public abstract class TuplesOperations {
         oldTuples = tuples;
         tuples = removeDuplicates(tuples);
         assert tuples != oldTuples;
-        if (tuples == oldTuples) {
-          logger.warn("removeDuplicates does not change the underlying tuples");
-        } else {
-          oldTuples.close();
-        }
+
+        if (tuples == oldTuples) logger.warn("removeDuplicates does not change the underlying tuples");
+        else oldTuples.close();
 
         assert tuples.hasNoDuplicates();
 
@@ -801,6 +771,13 @@ public abstract class TuplesOperations {
   }
 
 
+  /**
+   * Creates a new restriction tuples, based on a normal Tuples and a restriction predicate.
+   * @param tuples The tuples to restrict.
+   * @param pred The predicate describing the restriction.
+   * @return A new Tuples whose bindings only match the restriction.
+   * @throws TuplesException If the Tuples could not be accessed.
+   */
   public static Tuples restrict(Tuples tuples, RestrictPredicate pred) throws TuplesException {
     return new RestrictionTuples(tuples, pred);
   }
@@ -823,9 +800,8 @@ public abstract class TuplesOperations {
 
   /**
    * Sort into default order, based on the columns and local node numbers.
-   *
    * @param tuples the tuples to sort
-   * @return RETURNED VALUE TO DO
+   * @return A new Tuples with the bindings sorted.
    * @throws TuplesException if the sorting can't be accomplished
    */
   public static Tuples sort(Tuples tuples) throws TuplesException {
@@ -835,17 +811,13 @@ public abstract class TuplesOperations {
       } else if (tuples.getRowCardinality() == Cursor.ZERO) {
         tuples = empty();
       } else {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Sorting " + tuples.getRowCount() + " rows");
-        }
+        if (logger.isDebugEnabled()) logger.debug("Sorting " + tuples.getRowCount() + " rows");
 
         tuples = tuplesFactory.newTuples(tuples);
         assert tuples.getComparator() != null;
       }
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("Sorted " + tuples.getRowCount() + " rows");
-      }
+      if (logger.isDebugEnabled()) logger.debug("Sorted " + tuples.getRowCount() + " rows");
 
       return tuples;
     } else {
@@ -858,24 +830,15 @@ public abstract class TuplesOperations {
    *
    * @param tuples the tuples to sort
    * @param rowComparator the ordering
-   * @return RETURNED VALUE TO DO
+   * @return A Tuples with bindings sorted according to the rowComparator.
    * @throws TuplesException if the sorting can't be accomplished
    */
-  public static Tuples sort(Tuples tuples,
-      RowComparator rowComparator) throws TuplesException {
-
+  public static Tuples sort(Tuples tuples, RowComparator rowComparator) throws TuplesException {
     if (!rowComparator.equals(tuples.getComparator())) {
-
       tuples = tuplesFactory.newTuples(tuples, rowComparator);
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("Sorted: " + tuples + " (using supplied row comparator)");
-      }
-
+      if (logger.isDebugEnabled()) logger.debug("Sorted: " + tuples + " (using supplied row comparator)");
       return tuples;
-    }
-    else {
-
+    } else {
       return (Tuples) tuples.clone();
     }
   }
@@ -956,10 +919,9 @@ public abstract class TuplesOperations {
    * @param tuples  the instance to limit
    * @param rowCount the number of leading rows to retain
    * @return the truncated tuples
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException If there was an error accessing the Tuples.
    */
-  public static Tuples limit(Tuples tuples, long rowCount)
-    throws TuplesException {
+  public static Tuples limit(Tuples tuples, long rowCount) throws TuplesException {
     return new LimitedTuples((Tuples) tuples.clone(), rowCount);
   }
 
@@ -967,17 +929,13 @@ public abstract class TuplesOperations {
    * If a tuples is virtual, evaluate and store it.
    *
    * @param tuples the instance to materialize
-   * @return RETURNED VALUE TO DO
-   * @throws TuplesException EXCEPTION TO DO
+   * @return A set of Tuples with any virtual bindings converted into actual bindings.
+   * @throws TuplesException If there was an error evaluating the virtual bindings
    */
   public static Tuples materialize(Tuples tuples) throws TuplesException {
-
     if (tuples.isMaterialized()) {
-
-      return (Tuples) tuples.clone();
-    }
-    else {
-
+      return (Tuples)tuples.clone();
+    } else {
       return tuplesFactory.newTuples(tuples);
     }
   }
@@ -991,32 +949,27 @@ public abstract class TuplesOperations {
    * @param tuples  the instance to offset
    * @param rowCount the number of leading rows to remove
    * @return the remaining rows, if any
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException If there was an error accessing the tuples.
    */
-  public static Tuples offset(Tuples tuples, long rowCount)
-      throws TuplesException {
-    return new OffsetTuples((Tuples) tuples.clone(), rowCount);
+  public static Tuples offset(Tuples tuples, long rowCount) throws TuplesException {
+    return new OffsetTuples((Tuples)tuples.clone(), rowCount);
   }
 
   /**
    * Filter out duplicate rows.
    *
-   * @param tuples PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
-   * @throws TuplesException EXCEPTION TO DO
+   * @param tuples The tuples to filter.
+   * @return An equivalent Tuples, but with duplicate bindings removed.
+   * @throws TuplesException If there was an error accessing the tuples.
    */
   public static Tuples removeDuplicates(Tuples tuples) throws TuplesException {
 
     if (tuples.hasNoDuplicates()) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Didn't need to remove duplicates");
-      }
-      return (Tuples) tuples.clone();
+      if (logger.isDebugEnabled()) logger.debug("Didn't need to remove duplicates");
+      return (Tuples)tuples.clone();
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Removing duplicates");
-    }
+    if (logger.isDebugEnabled()) logger.debug("Removing duplicates");
 
     if (tuples.getComparator() == null) {
       Tuples oldTuples = tuples;
@@ -1032,12 +985,8 @@ public abstract class TuplesOperations {
       }
 
       return tuples;
-    }
-    else {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Already sorted: " + tuples);
-      }
-
+    } else {
+      if (logger.isDebugEnabled()) logger.debug("Already sorted: " + tuples);
       Tuples result = new DistinctTuples(tuples);
       return result;
     }
@@ -1049,18 +998,16 @@ public abstract class TuplesOperations {
   }
 
 
-  public static StringBuffer tuplesSummary(Tuples tuples) {
-    StringBuffer buff = new StringBuffer();
+  public static StringBuilder tuplesSummary(Tuples tuples) {
+    StringBuilder buff = new StringBuilder();
 
     buff.append(tuples.getClass().toString());
 
     buff.append("<" + System.identityHashCode(tuples) + ">");
     buff.append("[");
-    if (!tuples.isMaterialized()) {
-      buff.append("~");
-    } else {
-      buff.append("=");
-    }
+    if (!tuples.isMaterialized()) buff.append("~");
+    else buff.append("=");
+
     try {
       buff.append(tuples.getRowUpperBound()).append("]");
     } catch (TuplesException et) {
@@ -1071,17 +1018,13 @@ public abstract class TuplesOperations {
     Variable[] vars = tuples.getVariables();
     if (vars.length > 0) {
       buff.append(vars[0].toString());
-      for (int i = 1; i < vars.length; i++) {
-        buff.append(", " + vars[i].toString());
-      }
+      for (int i = 1; i < vars.length; i++) buff.append(", " + vars[i].toString());
     }
     buff.append("}");
 
     try {
       MandatoryBindingAnnotation mba = (MandatoryBindingAnnotation)tuples.getAnnotation(MandatoryBindingAnnotation.class);
-      if (mba != null) {
-        buff.append(" :: MBA{ " + mba.requiredVariables() + " }");
-      }
+      if (mba != null) buff.append(" :: MBA{ " + mba.requiredVariables() + " }");
     } catch (TuplesException et) {
       logger.error("Failed to obtain annotation", et);
     }
@@ -1120,15 +1063,18 @@ public abstract class TuplesOperations {
     // get the variable list
     Variable[] sv = tuples.getVariables();
     for (int i = 0; i < sv.length; i++) {
-      if (!vars.contains(sv[i])) {
-        // extra variable
-        return true;
-      }
+      if (!vars.contains(sv[i])) return true;  // extra variable
     }
     return false;
   }
 
 
+  /**
+   * Convert a list of Tuples into a string.
+   * @param header The header for the returned string.
+   * @param args The tuples to print.
+   * @return The string containing the full list of tuples.
+   */
   private static String printArgs(String header, List<? extends Tuples> args) {
     StringBuilder buff = new StringBuilder(header);
     buff.append("[");
@@ -1146,17 +1092,11 @@ public abstract class TuplesOperations {
 
 
   private static StringBuilder indentedTuplesTree(Tuples tuples, String indent) {
-
     StringBuilder buff = new StringBuilder();
-
     buff.append("\n").append(indent).append("(").append(tuplesSummary(tuples));
-
     for (Tuples t: tuples.getOperands()) buff.append(" ").append(indentedTuplesTree(t, indent + ".   "));
-
     buff.append(")");
-
     return buff;
   }
-
 
 }

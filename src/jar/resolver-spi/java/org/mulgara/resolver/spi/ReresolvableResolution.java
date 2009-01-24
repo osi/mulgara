@@ -29,6 +29,7 @@ package org.mulgara.resolver.spi;
 
 import java.util.Map;
 
+import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.TuplesException;
 
 /**
@@ -60,5 +61,5 @@ public interface ReresolvableResolution extends Resolution
    * @return null if resolution was not able to be simplified using bindings otherwise a new 
    *         ReresolvableResolution with any variables bound in the reresolution removed.
    */
-  public ReresolvableResolution reresolve(Map bindings) throws TuplesException;
+  public ReresolvableResolution reresolve(Map<? extends ConstraintElement,Long> bindings) throws TuplesException;
 }

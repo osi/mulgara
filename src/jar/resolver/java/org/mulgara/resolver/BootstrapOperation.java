@@ -38,18 +38,22 @@ class BootstrapOperation implements Operation
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
                       DatabaseMetadata       metadata) throws Exception {
+    if (logger.isDebugEnabled()) logger.debug("Creating bootstrap nodes");
     // Find the local node identifying the model
-    long model = systemResolver.localizePersistent(
+    long graph = systemResolver.localizePersistent(
         new URIReferenceImpl(databaseMetadata.getSystemModelURI()));
     long rdfType = systemResolver.localizePersistent(
         new URIReferenceImpl(databaseMetadata.getRdfTypeURI()));
-    long modelType = systemResolver.localizePersistent(
+    long graphType = systemResolver.localizePersistent(
         new URIReferenceImpl(databaseMetadata.getSystemModelTypeURI()));
 
+    // set up the system resolver to understand the system graph
+    systemResolver.initializeSystemNodes(graph, rdfType, graphType);
+
+    if (logger.isDebugEnabled()) logger.debug("Creating bootstrap statements");
     // Use the session to create the model
-    systemResolver.modifyModel(model, new SingletonStatements(model, rdfType,
-        modelType), true);
-    databaseMetadata.initializeSystemNodes(model, rdfType, modelType);
+    systemResolver.modifyModel(graph, new SingletonStatements(graph, rdfType, graphType), true);
+    databaseMetadata.initializeSystemNodes(graph, rdfType, graphType);
 
     long preSubject = systemResolver.localizePersistent(
         new URIReferenceImpl(databaseMetadata.getPreallocationSubjectURI()));
@@ -60,13 +64,13 @@ class BootstrapOperation implements Operation
 
     // Every node cached by DatabaseMetadata must be preallocated
     systemResolver.modifyModel(preModel,
-        new SingletonStatements(preSubject, prePredicate, model),
+        new SingletonStatements(preSubject, prePredicate, graph),
         true);
     systemResolver.modifyModel(preModel,
         new SingletonStatements(preSubject, prePredicate, rdfType),
         true);
     systemResolver.modifyModel(preModel,
-        new SingletonStatements(preSubject, prePredicate, modelType),
+        new SingletonStatements(preSubject, prePredicate, graphType),
         true);
     systemResolver.modifyModel(preModel,
         new SingletonStatements(preSubject, prePredicate, preSubject),
@@ -80,7 +84,7 @@ class BootstrapOperation implements Operation
 
     databaseMetadata.initializePreallocationNodes(preSubject, prePredicate, preModel);
 
-    result = model;
+    result = graph;
   }
 
   public boolean isWriteOperation()

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,16 +85,13 @@ public abstract class ProtocolServlet extends HttpServlet {
   private static final String QUERY_ARG = "query";
 
   /** The parameter identifying the output type. */
-  protected static final String OUTPUT_ARG = "out";
+  protected static final String OUTPUT_ARG = "format";
 
-  /** The output parameter value for indicating JSON output. */
-  protected static final String OUTPUT_JSON = "json";
-
-  /** The output parameter value for indicating XML output. */
-  protected static final String OUTPUT_XML = "xml";
+  /** The header name for accepted mime types. */
+  protected static final String ACCEPT_HEADER = "Accept";
 
   /** The default output type to use. */
-  protected static final String DEFAULT_OUTPUT_TYPE = OUTPUT_XML;
+  protected static final Output DEFAULT_OUTPUT_TYPE = Output.XML;
 
   /** The parameter identifying the graph. */
   protected static final String DEFAULT_GRAPH_ARG = "default-graph-uri";
@@ -138,10 +136,10 @@ public abstract class ProtocolServlet extends HttpServlet {
   private SessionFactory cachedSessionFactory;
 
   /** This object maps request types to the constructors for that output. */
-  protected final Map<String,AnswerStreamConstructor> streamBuilders = new HashMap<String,AnswerStreamConstructor>();
+  protected final Map<Output,AnswerStreamConstructor> streamBuilders = new EnumMap<Output,AnswerStreamConstructor>(Output.class);
 
   /** This object maps request types to the constructors for sending objects to that output. */
-  protected final Map<String,ObjectStreamConstructor> objectStreamBuilders = new HashMap<String,ObjectStreamConstructor>();
+  protected final Map<Output,ObjectStreamConstructor> objectStreamBuilders = new EnumMap<Output,ObjectStreamConstructor>(Output.class);
 
   /**
    * Creates the servlet for communicating with the given server.
@@ -170,7 +168,7 @@ public abstract class ProtocolServlet extends HttpServlet {
   
       Answer result = executeQuery(query, req);
 
-      String outputType = req.getParameter(OUTPUT_ARG);
+      Output outputType = getOutputType(req);
       sendAnswer(result, outputType, resp);
 
       try {
@@ -294,7 +292,7 @@ public abstract class ProtocolServlet extends HttpServlet {
    * @throws BadRequestException Due to a bad protocol type.
    * @throws InternalErrorException Due to an error accessing the answer.
    */
-  void sendAnswer(Answer answer, String outputType, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
+  void sendAnswer(Answer answer, Output outputType, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
     send(streamBuilders, answer, outputType, resp);
   }
 
@@ -309,7 +307,7 @@ public abstract class ProtocolServlet extends HttpServlet {
    * @throws BadRequestException Due to a bad protocol type.
    * @throws InternalErrorException Due to an error accessing the result.
    */
-  void sendStatus(Object result, String outputType, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
+  void sendStatus(Object result, Output outputType, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
     send(objectStreamBuilders, result, outputType, resp);
   }
 
@@ -326,13 +324,12 @@ public abstract class ProtocolServlet extends HttpServlet {
    * @throws BadRequestException Due to a bad protocol type.
    * @throws InternalErrorException Due to an error accessing the answer.
    */
-  <T> void send(Map<String,? extends StreamConstructor<T>> builders, T data, String type, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
+  <T> void send(Map<Output,? extends StreamConstructor<T>> builders, T data, Output type, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
     resp.setContentType(CONTENT_TYPE);
     resp.setHeader("pragma", "no-cache");
 
     // establish the output type
     if (type == null) type = DEFAULT_OUTPUT_TYPE;
-    else type = type.toLowerCase();
 
     // get the constructor for the stream outputter
     StreamConstructor<T> constructor = builders.get(type);
@@ -404,7 +401,7 @@ public abstract class ProtocolServlet extends HttpServlet {
 
     Object result = executeCommand(cmd, req);
 
-    String outputType = req.getParameter(OUTPUT_ARG);
+    Output outputType = getOutputType(req);
     if (result instanceof Answer) {
       sendAnswer((Answer)result, outputType, resp);
     } else {
@@ -543,5 +540,50 @@ public abstract class ProtocolServlet extends HttpServlet {
     final String[] knownParams = new String[] { DEFAULT_GRAPH_ARG, NAMED_GRAPH_ARG, GRAPH_DATA };
     for (String p: knownParams) if (p.equalsIgnoreCase(name)) return true;
     return false;
+  }
+
+
+  /**
+   * Determine the type of response we need.
+   * @param req The request object for the servlet connection.
+   * @return xml, json, rdfXml or rdfN3.
+   */
+  private Output getOutputType(HttpServletRequest req) {
+    Output type = DEFAULT_OUTPUT_TYPE;
+
+    // get the accepted types
+    String accepted = req.getHeader(ACCEPT_HEADER);
+    if (accepted != null) {
+      type = Output.forMime(accepted);
+    }
+
+    // check the URI parameters
+    String reqOutputName = req.getParameter(OUTPUT_ARG);
+    if (reqOutputName != null) {
+      Output reqOutput = Output.valueOf(reqOutputName.toUpperCase());
+      if (reqOutput != null) type = reqOutput;
+    }
+    return type;
+  }
+
+
+  /**
+   * Enumeration of the various output types, depending on mime type.
+   */
+  enum Output {
+    XML("application/sparql-results+xml"),
+    JSON("application/sparql-results+json"),
+    RDFXML("application/rdf+xml"),
+    N3("text/rdf+n3");
+
+    final String mimeText;
+    private Output(String mimeText) { this.mimeText = mimeText; }
+
+    static private Map<String,Output> outputs = new HashMap<String,Output>();
+    static {
+      for (Output o: Output.values()) outputs.put(o.mimeText, o);
+    }
+    
+    static Output forMime(String mimeText) { return outputs.get(mimeText); }
   }
 }

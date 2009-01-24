@@ -413,7 +413,7 @@ public final class TripleAVLFile {
    * Inner class to compare two triples in an int buffer, using a given ordering
    * for each of the node columns.
    */
-  private final static class TripleComparator implements Comparator {
+  private final static class TripleComparator implements Comparator<Object> {
 
     private int offset;
 
@@ -539,6 +539,7 @@ public final class TripleAVLFile {
         HEADER_SIZE + AVLFile.Phase.RECORD_SIZE +
         ManagedBlockFile.Phase.RECORD_SIZE;
 
+    @SuppressWarnings("unused")
     private final static int IDX_NR_FILE_TRIPLES = 0;
 
     private long nrFileTriples;
@@ -977,7 +978,7 @@ public final class TripleAVLFile {
                 node, node.getNextNode()
             };
           }
-          int li = avlFile.leafIndex(findResult);
+          int li = AVLFile.leafIndex(findResult);
           findResult[li].insert(newNode, 1 - li);
 
           if (index == MAX_TRIPLES || index > splitPoint) {
@@ -1189,6 +1190,39 @@ public final class TripleAVLFile {
     }
 
 
+    public StoreTuples findTuplesForMeta(long graph) throws IOException {
+      long[] startTriple = new long[SIZEOF_TRIPLE];
+      long[] endTriple = new long[SIZEOF_TRIPLE];
+      startTriple[order0] = graph;
+      endTriple[order0] = graph + 1;
+      return new MetaTuplesImpl(startTriple, endTriple, 1);
+    }
+
+
+    public StoreTuples findTuplesForMeta(long graph, long node1) throws IOException {
+      long[] startTriple = new long[SIZEOF_TRIPLE];
+      long[] endTriple = new long[SIZEOF_TRIPLE];
+      startTriple[order0] = graph;
+      startTriple[order1] = node1;
+      endTriple[order0] = graph;
+      endTriple[order1] = node1 + 1;
+      return new MetaTuplesImpl(startTriple, endTriple, 2);
+    }
+
+
+    public StoreTuples findTuplesForMeta(long graph, long node1, long node2) throws IOException {
+      long[] startTriple = new long[SIZEOF_TRIPLE];
+      long[] endTriple = new long[SIZEOF_TRIPLE];
+      startTriple[order0] = graph;
+      startTriple[order1] = node1;
+      startTriple[order2] = node2;
+      endTriple[order0] = graph;
+      endTriple[order1] = node1;
+      endTriple[order2] = node2 + 1;
+      return new MetaTuplesImpl(startTriple, endTriple, 3);
+    }
+
+
     public StoreTuples allTuples() {
       return new TuplesImpl();
     }
@@ -1386,7 +1420,7 @@ public final class TripleAVLFile {
     }
 
 
-    long checkIntegrity() {
+    public long checkIntegrity() {
       if (this == currentPhase && tripleWriteThread != null)
         tripleWriteThread.drain();
 
@@ -1661,12 +1695,11 @@ public final class TripleAVLFile {
     }
 
 
-    private final class TuplesImpl implements StoreTuples {
+    private abstract class AbstractStoreTuples implements StoreTuples {
 
       // keep a stack trace of the instantiation of this object
-      @SuppressWarnings("unused")
-      private StackTrace stack = logger.isDebugEnabled() ? new StackTrace() : null;
-      private List<Integer> objectIds = new ArrayList<Integer>();
+      protected StackTrace stack = logger.isDebugEnabled() ? new StackTrace() : null;
+      protected List<Integer> objectIds = new ArrayList<Integer>();
 
       private long[] startTriple;
 
@@ -1676,7 +1709,7 @@ public final class TripleAVLFile {
 
       private TripleLocation end;
 
-      private Token token;
+      protected Token token;
 
       private long nrTriples;
 
@@ -1685,21 +1718,21 @@ public final class TripleAVLFile {
       @SuppressWarnings("unused")
       private int prefixLength;
 
-      private int[] columnMap;
+      protected int[] columnMap;
 
-      private Variable[] variables;
+      protected Variable[] variables;
 
       private long[] tmpTriple = new long[SIZEOF_TRIPLE];
 
-      private AVLNode node;
+      protected AVLNode node;
 
-      private boolean beforeStart;
+      protected boolean beforeStart;
 
       private int nrBlockTriples = 0;
 
-      private Block tripleBlock = null;
+      protected Block tripleBlock = null;
 
-      private int offset;
+      protected int offset;
 
       private long endBlockId = Block.INVALID_BLOCK_ID;
 
@@ -1717,7 +1750,7 @@ public final class TripleAVLFile {
        * @param prefixLength PARAMETER TO DO
        * @throws IOException EXCEPTION TO DO
        */
-      TuplesImpl(
+      AbstractStoreTuples(
           long[] startTriple, long[] endTriple,
           int prefixLength
       ) throws IOException {
@@ -1728,19 +1761,6 @@ public final class TripleAVLFile {
         this.startTriple = startTriple;
         this.endTriple = endTriple;
         this.prefixLength = prefixLength;
-
-        int nrColumns = SIZEOF_TRIPLE - prefixLength;
-
-        // Set up a column order which moves the prefix columns to the end.
-        columnMap = new int[nrColumns];
-        for (int i = 0; i < nrColumns; ++i) {
-          columnMap[i] = sortOrder[(i + prefixLength) % SIZEOF_TRIPLE];
-        }
-
-        variables = new Variable[nrColumns];
-        for (int i = 0; i < nrColumns; ++i) {
-          variables[i] = StatementStore.VARIABLES[columnMap[i]];
-        }
 
         start = findTriple(startTriple);
         end = findTriple(endTriple);
@@ -1761,7 +1781,7 @@ public final class TripleAVLFile {
       /**
        * CONSTRUCTOR TuplesImpl TO DO
        */
-      TuplesImpl() {
+      AbstractStoreTuples() {
         if (Phase.this == currentPhase && tripleWriteThread != null) tripleWriteThread.drain();
 
         this.nrTriples = Phase.this.nrFileTriples;
@@ -1898,8 +1918,8 @@ public final class TripleAVLFile {
       }
 
 
-      public List getOperands() {
-        return new ArrayList(0);
+      public List<Tuples> getOperands() {
+        return Collections.emptyList();
       }
 
 
@@ -2057,7 +2077,7 @@ public final class TripleAVLFile {
 
       public Object clone() {
         try {
-          TuplesImpl copy = (TuplesImpl) super.clone();
+          AbstractStoreTuples copy = (AbstractStoreTuples) super.clone();
           tmpTriple = new long[SIZEOF_TRIPLE];
           if (start != null) {
             start.node.incRefCount();
@@ -2220,11 +2240,100 @@ public final class TripleAVLFile {
       /**
        * Copied from AbstractTuples
        */
-      public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+      public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
         return null;
       }
     }
 
+    /**
+     * The standard implementation of the StoreTuples for this phase.
+     */
+    private final class TuplesImpl extends AbstractStoreTuples {
+      TuplesImpl(long[] startTriple, long[] endTriple, int prefixLength) throws IOException {
+        super(startTriple, endTriple, prefixLength);
+        int nrColumns = SIZEOF_TRIPLE - prefixLength;
+
+        variables = new Variable[nrColumns];
+        // Set up a column order which moves the prefix columns to the end.
+        columnMap = new int[nrColumns];
+
+        for (int i = 0; i < nrColumns; ++i) {
+          columnMap[i] = sortOrder[(i + prefixLength) % SIZEOF_TRIPLE];
+          variables[i] = StatementStore.VARIABLES[columnMap[i]];
+        }
+
+      }
+
+      TuplesImpl() {
+        super();
+      }
+    }
+
+    /**
+     * A version of StoreTuples which is designed to set the Meta variable to a requested value.
+     *
+     * @created Dec 22, 2008
+     * @author Paul Gearon
+     * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
+     * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
+     */
+    private final class MetaTuplesImpl extends AbstractStoreTuples {
+
+      /** The meta node this tuples comes from. */
+      private final long metaNode;
+
+      /**
+       * Constructs the Tuples to come from the store.
+       * @param startTriple The first triple for this tuples.
+       * @param endTriple The first triple pattern that is NOT part of this tuples.
+       *                  This may not appear in the store, but if anything is <= this triple
+       *                  then it is NOT in the tuples.
+       * @param prefixLength The number of elements used to identify the requires triples.
+       * @throws IOException If there was an I/O error accessing the triples data in the store.
+       */
+      MetaTuplesImpl(long[] startTriple, long[] endTriple, int prefixLength) throws IOException {
+        super(startTriple, endTriple, prefixLength);
+        int nrColumns = SIZEOF_TRIPLE - prefixLength;
+        variables = new Variable[nrColumns + 1];
+
+        // Set up a column order which moves the prefix columns to the end.
+        columnMap = new int[nrColumns + 1];
+
+        for (int i = 0; i < nrColumns; ++i) {
+          columnMap[i] = sortOrder[(i + prefixLength) % SIZEOF_TRIPLE];
+          variables[i] = StatementStore.VARIABLES[columnMap[i]];
+        }
+        // make the last variable "Meta"
+        columnMap[nrColumns] = nrColumns;
+        variables[nrColumns] = StatementStore.VARIABLES[StatementStore.VARIABLES.length - 1];
+        metaNode = startTriple[order0];
+      }
+
+      /**
+       * Get the value from the given column on the current row.
+       * @param column The column to get the value of the binding from.
+       * @return The binding for the given column on the current row.
+       * @throws TuplesException If the current state is wrong, or if the column requested is invalid.
+       */
+      public long getColumnValue(int column) throws TuplesException {
+        if (column == variables.length - 1) return metaNode;
+        // inlining rather than calling to super
+        try {
+          return tripleBlock.getLong(offset * SIZEOF_TRIPLE + columnMap[column]);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+          if (column < 0 || column >= variables.length) {
+            throw new TuplesException("Column index out of range: " + column);
+          }
+          throw ex;
+        } catch (NullPointerException ex) {
+          if (beforeStart || node == null) {
+            throw new TuplesException("No current row.  Before start: " + beforeStart + " node: " + node);
+          }
+          throw ex;
+        }
+      }
+
+    }
   }
 
 }

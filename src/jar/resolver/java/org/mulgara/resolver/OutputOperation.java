@@ -27,7 +27,7 @@ import org.mulgara.resolver.spi.SystemResolver;
  * @copyright &copy; 2008 <a href="http://www.revelytix.com">Revelytix, Inc.</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public abstract class OutputOperation implements Operation {
+public abstract class OutputOperation extends TuplesBasedOperation implements Operation {
   
   protected final OutputStream outputStream;
   protected final URI destinationURI;

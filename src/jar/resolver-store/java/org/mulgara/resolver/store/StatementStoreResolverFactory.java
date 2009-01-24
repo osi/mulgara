@@ -71,9 +71,9 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
   private long rdfType;
 
   /** The underlying transactional graph that backs the generated resolvers.  */
-  private final XAStatementStore statementStore;
+  protected final XAStatementStore statementStore;
 
-  private XAResolverSessionFactory resolverSessionFactory;
+  protected XAResolverSessionFactory resolverSessionFactory;
 
   //
   // Constructors
@@ -86,7 +86,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
    * @throws IllegalArgumentException {@inheritDoc}
    * @throws ResolverException {@inheritDoc}
    */
-  private StatementStoreResolverFactory(FactoryInitializer initializer,
+  protected StatementStoreResolverFactory(FactoryInitializer initializer,
       XAResolverSessionFactory resolverSessionFactory) throws
       InitializerException {
     // Validate parameters
@@ -96,7 +96,7 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
 
     try {
       File filePrefix = new File(initializer.getDirectory(), "xa");
-      statementStore = new XAStatementStoreImpl(filePrefix.toString());
+      statementStore = createStore(filePrefix.toString());
       resolverSessionFactory.registerStatementStore(statementStore);
     } catch (Exception e) {
       throw new InitializerException("Couldn't initialize XA store", e);
@@ -237,5 +237,16 @@ public class StatementStoreResolverFactory implements SystemResolverFactory {
       throw new ResolverFactoryException(
           "Failed to obtain a new ResolverSession", er);
     }
+  }
+
+
+  /**
+   * Creates the required type of store
+   * @param filePrefix The base for the files being used for storage.
+   * @return a new instance of an XAStatementStore
+   * @throws IOException Error accessing the filesystem
+   */
+  protected XAStatementStore createStore(String filePrefix) throws IOException {
+    return new XAStatementStoreImpl(filePrefix.toString());
   }
 }

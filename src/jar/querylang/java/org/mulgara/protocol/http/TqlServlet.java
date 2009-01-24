@@ -62,9 +62,10 @@ public class TqlServlet extends ProtocolServlet {
     AnswerStreamConstructor xmlBuilder = new AnswerStreamConstructor() {
       public StreamedAnswer fn(Answer ans, OutputStream s) { return new StreamedTqlXMLAnswer(ans, s); }
     };
-    streamBuilders.put(OUTPUT_JSON, jsonBuilder);
-    streamBuilders.put(OUTPUT_XML, xmlBuilder);
-    streamBuilders.put(null, xmlBuilder);
+    streamBuilders.put(Output.JSON, jsonBuilder);
+    streamBuilders.put(Output.XML, xmlBuilder);
+    streamBuilders.put(Output.RDFXML, xmlBuilder);  // TODO: create an RDF/XML builder
+    streamBuilders.put(Output.N3, xmlBuilder);      // TODO: create an N3 builder
 
     ObjectStreamConstructor jsonObjBuilder = new ObjectStreamConstructor() {
       public StreamedAnswer fn(Object o, OutputStream s) { return new StreamedSparqlJSONObject(o, s); }
@@ -72,9 +73,10 @@ public class TqlServlet extends ProtocolServlet {
     ObjectStreamConstructor xmlObjBuilder = new ObjectStreamConstructor() {
       public StreamedAnswer fn(Object o, OutputStream s) { return new StreamedSparqlXMLObject(o, s); }
     };
-    objectStreamBuilders.put(OUTPUT_JSON, jsonObjBuilder);
-    objectStreamBuilders.put(OUTPUT_XML, xmlObjBuilder);
-    objectStreamBuilders.put(null, xmlObjBuilder);
+    objectStreamBuilders.put(Output.JSON, jsonObjBuilder);
+    objectStreamBuilders.put(Output.XML, xmlObjBuilder);
+    objectStreamBuilders.put(Output.RDFXML, xmlObjBuilder);  // TODO: create an RDF/XML object builder
+    objectStreamBuilders.put(Output.N3, xmlObjBuilder);      // TODO: create an N3 object builder
   }
 
 

@@ -75,7 +75,7 @@ public class NullResolution implements Resolution {
    * @see org.mulgara.store.tuples.Tuples#getAnnotation(java.lang.Class)
    * @return Always <code>null</code>.
    */
-  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
     return null;
   }
 

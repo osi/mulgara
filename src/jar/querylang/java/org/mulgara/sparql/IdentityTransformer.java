@@ -32,7 +32,6 @@ import org.mulgara.query.ConstraintHaving;
 import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.ConstraintIn;
 import org.mulgara.query.ConstraintIs;
-import org.mulgara.query.ConstraintNegation;
 import org.mulgara.query.ConstraintNotOccurs;
 import org.mulgara.query.ConstraintOccurs;
 import org.mulgara.query.ConstraintOccursLessThan;
@@ -60,7 +59,7 @@ public abstract class IdentityTransformer {
    * Builds a transformer, with identity constructors.
    */
   public IdentityTransformer() {
-    initialize(new ConsImpl(), new ConsIs(), new ConsNegation(),
+    initialize(new ConsImpl(), new ConsIs(),
          new ConsNotOccurs(), new ConsOccurs(), new ConsOccursLessThan(),
          new ConsOccursMoreThan(), new ConsSingleTransitive(),
          new ConsTransitive(), new ConsWalk());
@@ -265,11 +264,6 @@ public abstract class IdentityTransformer {
       return new ConstraintIs(c.getElement(0), c.getElement(2), c.getElement(3));
     }
     public Class<ConstraintIs> getType() { return ConstraintIs.class; }
-  }
-
-  protected class ConsNegation implements ConstraintTypeCons<ConstraintNegation> {
-    public ConstraintNegation newConstraint(Constraint c) { throw new IllegalStateException("Negations are no longer supported"); }
-    public Class<ConstraintNegation> getType() { return ConstraintNegation.class; }
   }
 
   protected class ConsSingleTransitive implements ConstraintTypeCons<SingleTransitiveConstraint> {

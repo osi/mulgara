@@ -694,7 +694,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
     /**
      * Copied from AbstractTuples
      */
-    public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+    public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
       return null;
     }
   }

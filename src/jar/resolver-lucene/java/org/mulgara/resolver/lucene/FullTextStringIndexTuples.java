@@ -378,7 +378,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     return false;
   }
 
-  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends org.mulgara.store.tuples.Annotation> annotationClass) throws TuplesException {
     // the object (lucene query string) is required when a score is requested
     if (annotationClass.equals(MandatoryBindingAnnotation.class) &&
         objectElement instanceof Variable && constraint.getScoreVar() != null) {

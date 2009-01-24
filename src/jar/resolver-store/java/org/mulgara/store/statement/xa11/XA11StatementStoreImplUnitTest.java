@@ -24,11 +24,10 @@
  * Original Code Source Code for Your Modifications.]
  *
  */
-package org.mulgara.store.statement.xa;
+package org.mulgara.store.statement.xa11;
 
 // Java 2 standard packages
 import java.io.*;
-import java.util.*;
 
 // JUnit
 import junit.framework.*;
@@ -37,40 +36,24 @@ import junit.framework.*;
 import org.apache.log4j.*;
 
 // locally written packages
-import org.mulgara.store.nodepool.*;
 import org.mulgara.store.statement.*;
 import org.mulgara.store.tuples.TestTuples;
 import org.mulgara.util.*;
 
 
 /**
- * Test case for {@link XAStatementStoreImpl}.
+ * Test case for {@link XA11StatementStoreImpl}.
  *
  * @author <a href="http://staff.pisoftware.com/david">David Makepeace</a>
  * @author <a href="http://staff.pisoftware.com/pag">Paul Gearon</a>
- *
- * @author David Makepeace
- *
- * @version $Revision: 1.2 $
- *
- * @modified $Date: 2005/02/22 08:16:34 $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy;2001-2004 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
- *
+ * @copyright &copy;2001-2004 <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class XAStatementStoreImplUnitTest
-    extends StatementStoreAbstractUnitTest {
+public class XA11StatementStoreImplUnitTest extends StatementStoreAbstractUnitTest {
 
-  /**
-   * Logger.
-   */
-  private final static Logger logger = Logger.getLogger(XAStatementStoreImplUnitTest.class);
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(XA11StatementStoreImplUnitTest.class);
 
   /**
    * start of filenames to build the graph with.
@@ -80,12 +63,7 @@ public class XAStatementStoreImplUnitTest
   /**
    * Description of the Field
    */
-  private XAStatementStoreImpl xaStore;
-
-  /**
-   * Description of the Field
-   */
-  private Set releasedNodes = new HashSet();
+  private XA11StatementStoreImpl xaStore;
 
 
   /**
@@ -93,7 +71,7 @@ public class XAStatementStoreImplUnitTest
    *
    * @param name The name of the test.
    */
-  public XAStatementStoreImplUnitTest(String name) {
+  public XA11StatementStoreImplUnitTest(String name) {
     super(name);
   }
 
@@ -104,7 +82,7 @@ public class XAStatementStoreImplUnitTest
    * @return The test suite to run.
    */
   public static Test suite() {
-    return new TestSuite(XAStatementStoreImplUnitTest.class);
+    return new TestSuite(XA11StatementStoreImplUnitTest.class);
     //TestSuite suite = new TestSuite();
     //suite.addTest(new GraphImplTest("testRemoveTriples"));
     //suite.addTest(new GraphImplTest("testFindTriplesByNode0"));
@@ -129,33 +107,6 @@ public class XAStatementStoreImplUnitTest
 
 
   /**
-   * A unit test for JUnit
-   *
-   * @throws Exception EXCEPTION TO DO
-   */
-  public void testListeners() throws Exception {
-    if (!XAStatementStoreImpl.RELEASE_NODE_LISTENERS_ENABLED) return;
-
-    xaStore.addReleaseNodeListener(
-      new ReleaseNodeListener() {
-        public void releaseNode(long node) {
-          releasedNodes.add(new Long(node));
-        }
-      });
-
-    // Hold on to node 6.
-    store.addTriple(6, 7, 8, 2);
-
-    releasedNodes.clear();
-    store.removeTriples(1, 2, 3, 1);
-    assertEquals(Collections.singleton(new Long(3)), releasedNodes);
-
-    releasedNodes.clear();
-    store.removeTriples(2, 5, 6, 2);
-    assertEquals(Collections.singleton(new Long(5)), releasedNodes);
-  }
-
-  /**
    * A method to call for each graph before running tests on it.
    *
    * @throws Exception EXCEPTION TO DO
@@ -164,10 +115,10 @@ public class XAStatementStoreImplUnitTest
     boolean exceptionOccurred = true;
     try {
       // create the graph object, using a new file
-      store = new XAStatementStoreImpl(
+      store = new XA11StatementStoreImpl(
           TempDir.getTempDir().getPath() + File.separatorChar + DBFILENAME
       );
-      xaStore = (XAStatementStoreImpl) store;
+      xaStore = (XA11StatementStoreImpl) store;
       xaStore.clear();
       super.setUp();
       exceptionOccurred = false;
@@ -197,17 +148,16 @@ public class XAStatementStoreImplUnitTest
     super.tearDown();
   }
 
-  
   /**
-   * Return a dump of all tuples, sorted by the primary index: 0123.
+   * Return a dump of all tuples, sorted by the primary index: 3012.
    * @see org.mulgara.store.statement.StatementStoreAbstractUnitTest#getDump()
    */
   protected TestTuples getDump() {
     TestTuples expected = new TestTuples();
     add(expected, StatementStore.VARIABLES, new long[] {1, 2, 3, 1});
     add(expected, StatementStore.VARIABLES, new long[] {1, 2, 4, 2});
-    add(expected, StatementStore.VARIABLES, new long[] {1, RDF_TYPE, GRAPH_TYPE, SYSTEM_GRAPH});
     add(expected, StatementStore.VARIABLES, new long[] {2, 5, 6, 2});
+    add(expected, StatementStore.VARIABLES, new long[] {1, RDF_TYPE, GRAPH_TYPE, SYSTEM_GRAPH});
     add(expected, StatementStore.VARIABLES, new long[] {2, RDF_TYPE, GRAPH_TYPE, SYSTEM_GRAPH});
     add(expected, StatementStore.VARIABLES, new long[] {SYSTEM_GRAPH, RDF_TYPE, GRAPH_TYPE, SYSTEM_GRAPH});
     return expected;

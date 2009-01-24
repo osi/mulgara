@@ -75,7 +75,7 @@ public class OrderedAppend extends AbstractTuples {
   /**
    * The propositions to conjoin.
    */
-  private final Tuples[] operands;
+  protected final Tuples[] operands;
 
   /**
    * The return value of the {@link #beforeFirst} method.
@@ -233,7 +233,7 @@ public class OrderedAppend extends AbstractTuples {
   }
 
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Arrays.asList(operands);
   }
 
@@ -351,13 +351,13 @@ public class OrderedAppend extends AbstractTuples {
   public Variable[] getVariables() {
 
     // Container for our variables
-    ArrayList variablesList = new ArrayList();
+    ArrayList<Variable> variablesList = new ArrayList<Variable>();
 
     // Iterate through the tuples objects and get the variables for each
     for (int index = 0; index < operands.length; index++) {
 
       // Get the array of variables for the current tuples object
-      Variable [] variableArray = operands[index].getVariables();
+      Variable[] variableArray = operands[index].getVariables();
 
       // We need to prevent duplicate variables so iterate through the new array
       // and remove duplicates
@@ -372,17 +372,17 @@ public class OrderedAppend extends AbstractTuples {
     }
 
     // Convert the list to an array
-    Variable [] newVariables = new Variable [variablesList.size()];
-    newVariables = (Variable []) variablesList.toArray(newVariables);
+    Variable[] newVariables = new Variable[variablesList.size()];
+    newVariables = variablesList.toArray(newVariables);
 
     return newVariables;
   }
 
 
-  public Annotation getAnnotation(Class annotation) {
+  public Annotation getAnnotation(Class<? extends Annotation> annotation) {
     if (annotation.equals(DefinablePrefixAnnotation.class) && prefixDefinable) {
       return new DefinablePrefixAnnotation() {
-        public void definePrefix(Set boundVars) throws TuplesException {
+        public void definePrefix(Set<Variable> boundVars) throws TuplesException {
           for (int i = 0; i < operands.length; i++) {
             DefinablePrefixAnnotation annotation = 
                 (DefinablePrefixAnnotation)operands[i].getAnnotation(DefinablePrefixAnnotation.class);

@@ -111,8 +111,8 @@ public class JRDFGraphUnitTest extends AbstractGraphTest {
     }
 
     //reset model
-    this.dropModel(this.modelURI);
-    this.createModel(this.modelURI);
+    this.dropModel(modelURI);
+    this.createModel(modelURI);
 
     //create and return graph
     graph = new JRDFGraph(session, modelURI);
@@ -246,19 +246,18 @@ public class JRDFGraphUnitTest extends AbstractGraphTest {
     try {
 
       String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-      this.serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
-      this.modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
+      serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
+      modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
 
       SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, false);
       this.session = (LocalJRDFSession) sessionFactory.newJRDFSession();
 
       //initialize model
-      this.createModel(this.modelURI);
+      this.createModel(modelURI);
 
       //let superclass set up too
       super.setUp();
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
 
       exception.printStackTrace();
 
@@ -266,11 +265,11 @@ public class JRDFGraphUnitTest extends AbstractGraphTest {
       try {
 
         tearDown();
+      } catch (Throwable t) {
+        logger.error("Encountered exception in exception handler. Ignoring.", t);
       }
-      finally {
 
-        throw exception;
-      }
+      throw exception;
     }
   }
 
@@ -281,7 +280,7 @@ public class JRDFGraphUnitTest extends AbstractGraphTest {
    */
   public void tearDown() throws Exception {
 
-    this.dropModel(this.modelURI);
+    this.dropModel(modelURI);
 
     //close the graph
     if (graph != null) {

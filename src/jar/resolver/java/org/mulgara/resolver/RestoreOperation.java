@@ -80,8 +80,7 @@ import org.mulgara.util.TempDir;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class RestoreOperation implements BackupConstants, Operation
-{
+class RestoreOperation extends TuplesBasedOperation implements BackupConstants, Operation {
 
   /** Logger.  */
   private static final Logger logger =
@@ -221,23 +220,20 @@ class RestoreOperation implements BackupConstants, Operation
                                      StatementStore.VARIABLES[1],
                                      StatementStore.VARIABLES[2],
                                      StatementStore.VARIABLES[3]));
-    assert tuples.getVariables()[0] == StatementStore.VARIABLES[0];
-    assert tuples.getVariables()[1] == StatementStore.VARIABLES[1];
-    assert tuples.getVariables()[2] == StatementStore.VARIABLES[2];
-    assert tuples.getVariables()[3] == StatementStore.VARIABLES[3];
+    int[] colMap = mapColumnsToStd(tuples.getVariables());
 
     try {
       tuples.beforeFirst();
 
       long preallocationModelNode = metadata.getPreallocationModelNode();
       while (tuples.next()) {
-        long modelNode = tuples.getColumnValue(3);
+        long modelNode = tuples.getColumnValue(colMap[3]);
         if (modelNode != preallocationModelNode) {
           resolver.modifyModel(
               modelNode,
-              new SingletonStatements(tuples.getColumnValue(0),
-                                      tuples.getColumnValue(1),
-                                      tuples.getColumnValue(2)),
+              new SingletonStatements(tuples.getColumnValue(colMap[0]),
+                                      tuples.getColumnValue(colMap[1]),
+                                      tuples.getColumnValue(colMap[2])),
               DatabaseSession.DENY_STATEMENTS
           );
         }
@@ -541,23 +537,20 @@ class RestoreOperation implements BackupConstants, Operation
                                      StatementStore.VARIABLES[1],
                                      StatementStore.VARIABLES[2],
                                      StatementStore.VARIABLES[3]));
-    assert tuples.getVariables()[0] == StatementStore.VARIABLES[0];
-    assert tuples.getVariables()[1] == StatementStore.VARIABLES[1];
-    assert tuples.getVariables()[2] == StatementStore.VARIABLES[2];
-    assert tuples.getVariables()[3] == StatementStore.VARIABLES[3];
+    int[] colMap = mapColumnsToStd(tuples.getVariables());
 
     try {
       tuples.beforeFirst();
 
       long preallocationModelNode = metadata.getPreallocationModelNode();
       while (tuples.next()) {
-        long modelNode = tuples.getColumnValue(3);
+        long modelNode = tuples.getColumnValue(colMap[3]);
         if (modelNode != preallocationModelNode) {
           resolver.modifyModel(
               modelNode,
-              new SingletonStatements(tuples.getColumnValue(0),
-                                      tuples.getColumnValue(1),
-                                      tuples.getColumnValue(2)),
+              new SingletonStatements(tuples.getColumnValue(colMap[0]),
+                                      tuples.getColumnValue(colMap[1]),
+                                      tuples.getColumnValue(colMap[2])),
               DatabaseSession.DENY_STATEMENTS
           );
         }

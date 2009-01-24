@@ -1285,6 +1285,7 @@ public final class AVLNode {
    */
   private int rotateL() throws IOException {
     AVLNode nodeL = getLeftChildNode();
+    if (nodeL == null) throw new IllegalStateException("Invalid tree structure on disk");
     int deltaHeight = (nodeL.block.getByte(IDX_BALANCE_B) >= 0) ?
         rotateLL(nodeL) : rotateLR(nodeL);
     nodeL.release();
@@ -1301,6 +1302,7 @@ public final class AVLNode {
    */
   private int rotateR() throws IOException {
     AVLNode nodeR = getRightChildNode();
+    if (nodeR == null) throw new IllegalStateException("Invalid tree structure on disk");
     int deltaHeight = (nodeR.block.getByte(IDX_BALANCE_B) <= 0) ?
         rotateRR(nodeR) : rotateRL(nodeR);
     nodeR.release();
@@ -1443,6 +1445,7 @@ public final class AVLNode {
   private int rotateLR(AVLNode nodeL) throws IOException {
     // First perform rotateRR on nodeL.
     AVLNode nodeLR = nodeL.getRightChildNode();
+    if (nodeLR == null) throw new IllegalStateException("Invalid tree structure on disk");
     int deltaHeightL = nodeL.rotateRR(nodeLR);
 
     // Adjust the balance of this node.

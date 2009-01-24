@@ -163,22 +163,19 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
         StatementStore.VARIABLES[3]));
     assert tuples != null;
     try {
-      assert tuples.getVariables()[0] == StatementStore.VARIABLES[0];
-      assert tuples.getVariables()[1] == StatementStore.VARIABLES[1];
-      assert tuples.getVariables()[2] == StatementStore.VARIABLES[2];
-      assert tuples.getVariables()[3] == StatementStore.VARIABLES[3];
+      int[] colMap = mapColumnsToStd(tuples.getVariables());
       writer.write("TRIPLES\n");
 
       long preallocationModelNode = metadata.getPreallocationModelNode();
       for (tuples.beforeFirst(); tuples.next(); ) {
         // Suppress output of the preallocation model.
-        long modelNode = tuples.getColumnValue(3);
+        long modelNode = tuples.getColumnValue(colMap[3]);
         if (modelNode != preallocationModelNode) {
-          writer.write(Long.toString(tuples.getColumnValue(0)));
+          writer.write(Long.toString(tuples.getColumnValue(colMap[0])));
           writer.write(' ');
-          writer.write(Long.toString(tuples.getColumnValue(1)));
+          writer.write(Long.toString(tuples.getColumnValue(colMap[1])));
           writer.write(' ');
-          writer.write(Long.toString(tuples.getColumnValue(2)));
+          writer.write(Long.toString(tuples.getColumnValue(colMap[2])));
           writer.write(' ');
           writer.write(Long.toString(modelNode));
           writer.write('\n');

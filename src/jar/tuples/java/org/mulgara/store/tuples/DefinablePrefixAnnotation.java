@@ -42,10 +42,6 @@
 package org.mulgara.store.tuples;
 
 // JDK packages
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 // Third party packages
@@ -73,5 +69,5 @@ public interface DefinablePrefixAnnotation extends Annotation {
    * 
    * @param boundVars  variables available to be bound in beforeFirst.
    */
-  public void definePrefix(Set boundVars) throws TuplesException;
+  public void definePrefix(Set<Variable> boundVars) throws TuplesException;
 }

@@ -355,7 +355,7 @@ public class StatementStoreResolver implements SystemResolver {
         
         if (occurs) {
           // statement is asserted to be true
-          logger.debug("Inserting statement: [" + subject + " "
+          if (logger.isDebugEnabled()) logger.debug("Inserting statement: [" + subject + " "
                                                 + predicate + " "
                                                 + object + "] in " + model);
 
@@ -391,8 +391,6 @@ public class StatementStoreResolver implements SystemResolver {
         if (!constraint.isRepeating()) {
           if (constraint instanceof ConstraintImpl) {
             return new StatementStoreResolution(constraint, statementStore);
-          } else if (constraint instanceof ConstraintNegation) {
-            return new StatementStoreInverseResolution(constraint, statementStore);
           } else {
             throw new QueryException("Unable to resolve constraint " + constraint + " unknown type");
           }
@@ -524,6 +522,13 @@ public class StatementStoreResolver implements SystemResolver {
     } catch (SimpleXAResourceException es) {
       throw new IllegalStateException("Failed to Abort store", es);
     }
+  }
+
+  /**
+   * @see org.mulgara.resolver.spi.SystemResolver#initializeSystemNodes(long, long, long)
+   */
+  public void initializeSystemNodes(long systemGraphNode, long rdfTypeNode, long systemGraphTypeNode) {
+    statementStore.initializeSystemNodes(systemGraphNode, rdfTypeNode, systemGraphTypeNode);
   }
 
 }

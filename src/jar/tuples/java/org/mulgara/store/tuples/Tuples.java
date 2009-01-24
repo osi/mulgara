@@ -274,5 +274,5 @@ public interface Tuples extends Cursor, Cloneable {
    *
    * @return An annotation of the class requested, or null if none exists.
    */
-  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException;
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException;
 }

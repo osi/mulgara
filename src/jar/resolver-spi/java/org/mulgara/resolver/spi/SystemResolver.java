@@ -27,7 +27,6 @@
 
 package org.mulgara.resolver.spi;
 
-import java.net.URI;
 
 /**
  * A {@link Resolver} that is currently hosting the System Graph.
@@ -50,4 +49,12 @@ public interface SystemResolver extends Resolver, ResolverSession
   public void createSystemModel(long model, long modelTypeURI) throws ResolverException, LocalizeException;
 
   public boolean modelExists(long model) throws ResolverException, LocalizeException;
+
+  /**
+   * Informs the system resolver of the metadata it uses for managing data.
+   * @param systemGraphNode The node for the system graph.
+   * @param rdfTypeNode The node representing <rdf:type>.
+   * @param systemGraphTypeNode The node used for the SystemResolver graph type.
+   */
+  public void initializeSystemNodes(long systemGraphNode, long rdfTypeNode, long systemGraphTypeNode);
 }

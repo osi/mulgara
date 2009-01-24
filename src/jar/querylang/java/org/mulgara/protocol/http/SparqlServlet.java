@@ -60,9 +60,10 @@ public class SparqlServlet extends ProtocolServlet {
     AnswerStreamConstructor xmlBuilder = new AnswerStreamConstructor() {
       public StreamedAnswer fn(Answer ans, OutputStream s) { return new StreamedSparqlXMLAnswer(ans, s); }
     };
-    streamBuilders.put(OUTPUT_JSON, jsonBuilder);
-    streamBuilders.put(OUTPUT_XML, xmlBuilder);
-    streamBuilders.put(null, xmlBuilder);
+    streamBuilders.put(Output.JSON, jsonBuilder);
+    streamBuilders.put(Output.XML, xmlBuilder);
+    streamBuilders.put(Output.RDFXML, xmlBuilder);  // TODO: create an RDF/XML Builder
+    streamBuilders.put(Output.N3, xmlBuilder);      // TODO: create an N3 Builder
 
     ObjectStreamConstructor jsonObjBuilder = new ObjectStreamConstructor() {
       public StreamedAnswer fn(Object o, OutputStream s) { return new StreamedSparqlJSONObject(o, s); }
@@ -70,9 +71,10 @@ public class SparqlServlet extends ProtocolServlet {
     ObjectStreamConstructor xmlObjBuilder = new ObjectStreamConstructor() {
       public StreamedAnswer fn(Object o, OutputStream s) { return new StreamedSparqlXMLObject(o, s); }
     };
-    objectStreamBuilders.put(OUTPUT_JSON, jsonObjBuilder);
-    objectStreamBuilders.put(OUTPUT_XML, xmlObjBuilder);
-    objectStreamBuilders.put(null, xmlObjBuilder);
+    objectStreamBuilders.put(Output.JSON, jsonObjBuilder);
+    objectStreamBuilders.put(Output.XML, xmlObjBuilder);
+    objectStreamBuilders.put(Output.RDFXML, xmlObjBuilder);  // TODO: create an RDF/XML Object Builder
+    objectStreamBuilders.put(Output.N3, xmlObjBuilder);      // TODO: create an N3 Builder
   }
 
 

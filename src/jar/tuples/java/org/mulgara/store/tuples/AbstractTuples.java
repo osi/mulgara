@@ -69,6 +69,7 @@ public abstract class AbstractTuples implements Tuples {
   private final static Variable[] emptyVariables = new Variable[] {};
 
   /** Description of the Field */
+  @SuppressWarnings("unused")
   private final static long[] NO_PREFIX = new long[] {};
 
   /** Description of the Field */
@@ -577,7 +578,7 @@ public abstract class AbstractTuples implements Tuples {
     variables = variableArray;
   }
 
-  public Annotation getAnnotation(Class<?> annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
     return null;
   }
 }

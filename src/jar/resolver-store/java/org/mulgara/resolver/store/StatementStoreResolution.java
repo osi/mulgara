@@ -40,8 +40,6 @@ import java.util.*;
 // Locally written packages
 import org.mulgara.query.*;
 import org.mulgara.resolver.spi.ReresolvableResolution;
-import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.store.statement.StatementStore;
 import org.mulgara.store.statement.StatementStoreException;
@@ -241,6 +239,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
   /**
    * @param bound constraints to be bound post-beforeFirst.  In constraint-order.
    */
+  @SuppressWarnings("unchecked")
   protected void defineIndex(boolean[] bound) throws TuplesException {
     assert bound.length == 4;
 
@@ -254,8 +253,7 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
 
     if (indexedTuples != null) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Orig indexedTuples.variables = " +
-                    toString(indexedTuples.getVariables()));
+        logger.debug("Orig indexedTuples.variables = " + toString(indexedTuples.getVariables()));
       }
       indexedTuples.close();
     }
@@ -352,14 +350,14 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
   }
 
 
-  public ReresolvableResolution reresolve(final Map bindings) throws TuplesException {
+  public ReresolvableResolution reresolve(final Map<? extends ConstraintElement, Long> bindings) throws TuplesException {
     boolean reconstrain = false;
     ConstraintElement[] e = new ConstraintElement[4];
     for (int i = 0; i < 4; i++) {
       e[i] = constraint.getElement(i);
 
       if (e[i] instanceof Variable) {
-        Long value = (Long)bindings.get(e[i]);
+        Long value = bindings.get(e[i]);
         if (value != null) {
           e[i] = new LocalNode(value.longValue());
           reconstrain = true;
@@ -445,8 +443,8 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
   }
 
 
-  public List getOperands() {
-    return Collections.EMPTY_LIST;
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
 
@@ -557,17 +555,17 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
     return this;
   }
 
-  public Annotation getAnnotation(Class annotation) {
+  public Annotation getAnnotation(Class<? extends Annotation> annotation) {
     if (annotation.equals(DefinablePrefixAnnotation.class)) {
       return new DefinablePrefixAnnotation() {
-        public void definePrefix(Set boundVars) throws TuplesException {
+        public void definePrefix(Set<Variable> boundVars) throws TuplesException {
           boolean[] bound = new boolean[4];
           Constraint constraint = getConstraint();
           for (int i = 0; i < 4; i++) {
             ConstraintElement elem = constraint.getElement(i);
             if (elem instanceof LocalNode) {
               bound[i] = true;
-            } else if (boundVars.contains((Variable)elem)) {
+            } else if (boundVars.contains(elem)) {
               bound[i] = true;
             } else {
               bound[i] = false;

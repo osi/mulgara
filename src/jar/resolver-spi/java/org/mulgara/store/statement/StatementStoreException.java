@@ -43,6 +43,9 @@ import org.mulgara.store.StoreException;
  */
 public class StatementStoreException extends StoreException {
 
+  /** Version ID for serialization. */
+  private static final long serialVersionUID = -2415826145039347120L;
+
   /**
    * Get line separator.
    */

@@ -32,6 +32,7 @@ import org.mulgara.query.QueryException;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.driver.SessionFactoryFinder;
 import org.mulgara.util.Rmi;
+import org.mulgara.util.StackTrace;
 import org.mulgara.util.TempDir;
 
 // third party packages
@@ -91,7 +92,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   private ItqlInterpreterBean bean = null;
 
   /** host name of server */
-  private static String hostName = System.getProperty("host.name");
+  private static String hostName = System.getProperty("host.name", "localhost");
 
   /** an example model */
   private static String testModel = "rmi://" + hostName + "/server1#itqlmodel";
@@ -617,14 +618,24 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // log that we're executing the test
     log.debug("Starting backup API test 2");
 
-    File file = new File(tmpDirectory, "server.gz");
-    file.delete();
-
-    URI serverURI = new URI("rmi://localhost/server1");
-
-    bean.backup(serverURI, file);
-
-    assertTrue("Excepting a backup file", file.exists());
+    try {
+      File file = new File(tmpDirectory, "server.gz");
+      file.delete();
+  
+      URI serverURI = new URI("rmi://localhost/server1");
+  
+      bean.backup(serverURI, file);
+  
+      assertTrue("Excepting a backup file", file.exists());
+    } catch (QueryException e) {
+      System.err.println("Error processing query" + e);
+      Throwable t = e.getCause();
+      while (t != null) {
+        System.err.println("Caused by: " + t + StackTrace.throwableToString(t));
+        t = t.getCause();
+      }
+      throw e;
+    }
 
   }
 
@@ -639,15 +650,25 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // log that we're executing the test
     log.debug("Starting backup API test 4");
 
-    File file = new File(tmpDirectory, "server2.gz");
-    file.delete();
-
-    URI serverURI = new URI("rmi://localhost/server1");
-
-    bean.backup(serverURI, new FileOutputStream(file));
-
-    assertTrue("Excepting a backup file", file.exists());
-
+    try {
+      File file = new File(tmpDirectory, "server2.gz");
+      file.delete();
+  
+      URI serverURI = new URI("rmi://localhost/server1");
+  
+      bean.backup(serverURI, new FileOutputStream(file));
+  
+      assertTrue("Excepting a backup file", file.exists());
+    } catch (QueryException e) {
+      System.err.println("Error processing query" + e);
+      Throwable t = e.getCause();
+      while (t != null) {
+        System.err.println("Caused by: " + t + StackTrace.throwableToString(t));
+        t = t.getCause();
+      }
+      throw e;
+    }
+  
   }
 
   /**
@@ -700,17 +721,26 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
-  @SuppressWarnings("deprecation")
   public void testRestoreApi1() throws Exception {
 
     // log that we're executing the test
     log.debug("Starting restore API test 1");
 
-    File file = new File(tmpDirectory, "server2.gz");
-
-    URI serverURI = new URI("rmi://localhost/server1");
-
-    bean.restore(file.toURL().openStream(), serverURI);
+    try {
+      File file = new File(tmpDirectory, "server2.gz");
+  
+      URI serverURI = new URI("rmi://localhost/server1");
+  
+      bean.restore(file.toURL().openStream(), serverURI);
+    } catch (QueryException e) {
+      System.err.println("Error processing query" + e);
+      Throwable t = e.getCause();
+      while (t != null) {
+        System.err.println("Caused by: " + t + StackTrace.throwableToString(t));
+        t = t.getCause();
+      }
+      throw e;
+    }
 
   }
 
@@ -721,57 +751,66 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
-  @SuppressWarnings("deprecation")
   public void testRoundTrip1() throws Exception {
 
-    // log that we're executing the test
-    log.debug("Starting round trip test 1");
-
-    URI serverURI = new URI("rmi://" + hostName + "/server1");
-
-    // test the output
-    String select = "select $o from <" + testModel + "> " +
-        "where <rmi://" + hostName +
-        "/server1> <http://purl.org/dc/elements/1.1/creator> $o or " +
-        " <rmi://" + hostName +
-        "/foobar> <http://purl.org/dc/elements/1.1/creator> $o or " +
-        " <rmi://" + hostName +
-        "/server1/foobar> <http://purl.org/dc/elements/1.1/creator> $o ;";
-
-    // insert statements with a subject the same as the
-    // server name
-    String insert = "insert " +
-        "<rmi://" + hostName +
-        "/server1> <http://purl.org/dc/elements/1.1/creator> 'foo' " +
-        "<rmi://" + hostName +
-        "/foobar> <http://purl.org/dc/elements/1.1/creator> 'foobar' " +
-        "<rmi://" + hostName +
-        "/server1/foobar> <http://purl.org/dc/elements/1.1/creator> 'server1/foobar' " +
-        " into <" + testModel + ">;";
-
-    // insert the statement
-    bean.executeQuery(insert);
-
-    // select the statement
-    Answer answer = bean.executeQuery(select);
-    assertTrue("Excepting a answer before restore", answer != null);
-    assertTrue("Excepting a single result and found :" +
-        answer.getRowCount(), (answer.getRowCount() == 3));
-
-    //backup the server
-    File file = new File(tmpDirectory, "roundtrip.gz");
-    file.delete();
-    bean.backup(serverURI, new FileOutputStream(file));
-    assertTrue("Excepting a backup file", file.exists());
-
-    // restore the server
-    bean.restore(file.toURL().openStream(), serverURI);
-
-    // select the statement
-    answer = bean.executeQuery(select);
-    assertTrue("Excepting a answer after restore", answer != null);
-    assertTrue("Excepting a single result and found :" +
-        answer.getRowCount(), (answer.getRowCount() == 3));
+    try {
+      // log that we're executing the test
+      log.debug("Starting round trip test 1");
+  
+      URI serverURI = new URI("rmi://" + hostName + "/server1");
+  
+      // test the output
+      String select = "select $o from <" + testModel + "> " +
+          "where <rmi://" + hostName +
+          "/server1> <http://purl.org/dc/elements/1.1/creator> $o or " +
+          " <rmi://" + hostName +
+          "/foobar> <http://purl.org/dc/elements/1.1/creator> $o or " +
+          " <rmi://" + hostName +
+          "/server1/foobar> <http://purl.org/dc/elements/1.1/creator> $o ;";
+  
+      // insert statements with a subject the same as the
+      // server name
+      String insert = "insert " +
+          "<rmi://" + hostName +
+          "/server1> <http://purl.org/dc/elements/1.1/creator> 'foo' " +
+          "<rmi://" + hostName +
+          "/foobar> <http://purl.org/dc/elements/1.1/creator> 'foobar' " +
+          "<rmi://" + hostName +
+          "/server1/foobar> <http://purl.org/dc/elements/1.1/creator> 'server1/foobar' " +
+          " into <" + testModel + ">;";
+  
+      // insert the statement
+      bean.executeQuery(insert);
+  
+      // select the statement
+      Answer answer = bean.executeQuery(select);
+      assertTrue("Excepting a answer before restore", answer != null);
+      assertTrue("Excepting a single result and found :" +
+          answer.getRowCount(), (answer.getRowCount() == 3));
+  
+      //backup the server
+      File file = new File(tmpDirectory, "roundtrip.gz");
+      file.delete();
+      bean.backup(serverURI, new FileOutputStream(file));
+      assertTrue("Excepting a backup file", file.exists());
+  
+      // restore the server
+      bean.restore(file.toURL().openStream(), serverURI);
+  
+      // select the statement
+      answer = bean.executeQuery(select);
+      assertTrue("Excepting a answer after restore", answer != null);
+      assertTrue("Excepting a single result and found :" +
+          answer.getRowCount(), (answer.getRowCount() == 3));
+    } catch (QueryException e) {
+      System.err.println("Error processing query" + e);
+      Throwable t = e.getCause();
+      while (t != null) {
+        System.err.println("Caused by: " + t + StackTrace.throwableToString(t));
+        t = t.getCause();
+      }
+      throw e;
+    }
 
   }
 

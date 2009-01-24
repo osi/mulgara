@@ -138,6 +138,7 @@ public class LuceneTransformer extends AbstractSymbolicTransformer {
           cumulative.add(lc);
         } else {
           cumulative.iterator().next().conjoinWith(lc);
+          if (logger.isTraceEnabled()) logger.trace("Updated LC with: " + cumulative.iterator().next() + "; result: " + lc);
           transformed = true;
         }
 

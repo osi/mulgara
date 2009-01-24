@@ -27,9 +27,6 @@
 
 package org.mulgara.store.statement;
 
-// Java 2 standard packages
-import java.util.*;
-
 // Locally written packages
 import org.mulgara.query.Variable;
 import org.mulgara.store.tuples.StoreTuples;
