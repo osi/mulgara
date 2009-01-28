@@ -57,7 +57,8 @@ public class URIUtil {
         // Attempt qname-to-URI substitution for aliased namespace prefixes
         URI mapping = aliasMap.get(uri.getScheme());
         if (mapping != null) {
-          uri = new URI(mapping + uri.getSchemeSpecificPart());
+          uri = new URI(mapping.toString() + uri.getSchemeSpecificPart() +
+                        (uri.getFragment() != null ? "#" + uri.getFragment() : ""));
         }
       }
       return uri;
@@ -65,5 +66,4 @@ public class URIUtil {
       throw new RuntimeException("Bad URI syntax in resource", e);
     }
   }
-  
 }
