@@ -49,11 +49,13 @@ import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
+import org.jrdf.vocabulary.OWL;
 import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
+import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
@@ -291,9 +293,17 @@ class Parser extends Thread implements N3ParserEventHandler {
     }
 
     // convert the triple components to JRDF Nodes
-    SubjectNode   subjectNode   = (SubjectNode)   toNode(subj);
-    PredicateNode predicateNode = (PredicateNode) toNode(pred);
-    ObjectNode    objectNode    = (ObjectNode)    toNode(obj);
+    SubjectNode   subjectNode   = null;
+    PredicateNode predicateNode = null;
+    ObjectNode    objectNode    = null;
+    try {
+      subjectNode   = (SubjectNode)   toNode(subj);
+      predicateNode = (PredicateNode) toNode(pred);
+      objectNode    = (ObjectNode)    toNode(obj);
+    } catch (MulgaraParserException e) {
+      logger.error("Unable to parse. " + e.getMessage());
+      return;
+    }
 
     if (logger.isDebugEnabled()) {
       logger.debug("Parsed " + subjectNode + " " + predicateNode + " " + objectNode + " from " + baseURI);
@@ -344,8 +354,9 @@ class Parser extends Thread implements N3ParserEventHandler {
    *
    * @param ast  The AST object to convert.
    * @return a {@link Node} matching the AST object.
+   * @throws MulgaraParserException An unhandled element was encountered.
    */
-  private Node toNode(AST ast) {
+  private Node toNode(AST ast) throws MulgaraParserException {
     if (ast == null) throw new IllegalArgumentException("Unable to load NULL nodes");
 
     switch (ast.getType()) {
@@ -396,6 +407,18 @@ class Parser extends Thread implements N3ParserEventHandler {
         return toURIReference(ast.toString());
       case N3Parser.KW_A:
         return toURIReference(RDF.TYPE);
+      case N3Parser.TK_LIST_FIRST:
+        return toURIReference(RDF.FIRST);
+      case N3Parser.TK_LIST_REST:
+        return toURIReference(RDF.REST);
+      case N3Parser.TK_LIST_NIL:
+        return toURIReference(RDF.NIL);
+      case N3Parser.TK_LIST:
+        return toURIReference(RDF.LIST);
+      case N3Parser.EQUAL:
+        return toURIReference(OWL.SAME_AS);
+      case N3Parser.FORMULA:
+        throw new MulgaraParserException("Formulas are not supported");
       default:
         throw new Error("Unsupported N3 parser token type: " + ast.getType());
     }
@@ -487,6 +510,8 @@ class Parser extends Thread implements N3ParserEventHandler {
    * @return The number part of the node.
    */
   private long parseAnonId(AST node) {
+    String str = node.toString();
+    if (!str.startsWith(ANON_TAG)) return -1;
     try {
       int startPoint = node.toString().startsWith(LOCAL_ANON_TAG) ? LOCAL_ANON_TAG.length() : ANON_TAG.length();
       return Long.parseLong(node.toString().substring(startPoint));
