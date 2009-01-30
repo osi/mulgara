@@ -225,7 +225,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
           // Ensure that the host name can be extracted - in case there's an
           // opaque hostname.
           if (tmpGraphName.isOpaque()) {
-            throw new QueryException("Unknown graph, and no hostname: " + tmpGraphName);
+            throw new QueryException("Graph not in local storage, and not able to be found with the \"" + graphURI.getScheme() + "\" scheme: <" + tmpGraphName + ">");
           }
 
           // Do not test for locality if jar or file protocol
@@ -236,7 +236,8 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
             if ((metadata.getHostnameAliases().contains(host)) &&
                 (metadata.getServerName().equals(metadata.getServerName(graphURI)))) {
               // should be on the current server, but was not found here
-              throw new QueryException(graphNode.toString() + " is not a Graph");
+              throw new QueryException(graphNode.toString() +
+                  " has a URI indicating the local server, but was not found");
             }
           }
         } catch (URISyntaxException use) {
@@ -253,8 +254,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         ResolverFactory resolverFactory = externalResolverFactoryMap.get(graphProtocol);
         if (resolverFactory == null) {
           throw new QueryException(
-              "Unsupported protocol for destination graph (" +
-              graphProtocol + ", " + graph + " : '" + graphProtocol + "')");
+              "Graph <" + graph + "> was not found locally, and the \"" + graphProtocol + "\" protocol is unsupported");
         }
 
         // For the moment, not applying caching to any external graphs

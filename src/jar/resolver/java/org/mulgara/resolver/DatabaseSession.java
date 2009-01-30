@@ -50,6 +50,7 @@ import org.mulgara.resolver.spi.*;
 import org.mulgara.rules.*;
 import org.mulgara.server.Session;
 import org.mulgara.transaction.TransactionManagerFactory;
+import org.mulgara.util.StackTrace;
 
 /**
  * A database session.
@@ -751,7 +752,7 @@ class DatabaseSession implements Session {
       transaction.execute(operation, metadata);
     } catch (MulgaraTransactionException em) {
       logger.debug("Error executing operation: " + errorString, em);
-      throw new QueryException(errorString, em);
+      throw new QueryException(errorString + ": " + StackTrace.getReasonMessage(em), em);
     }
   }
 
