@@ -30,7 +30,6 @@ package org.mulgara.query;
 // Java 2 standard packages
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 // Third party packages
@@ -193,7 +192,7 @@ public class ArrayAnswer implements Answer, Cloneable, Serializable {
     assert variables != null:"variables array is null";
 
     // Copy the values
-    List valueList = new ArrayList();
+    List<Object> valueList = new ArrayList<Object>();
     rowCount = 0;
 
     answer.beforeFirst();

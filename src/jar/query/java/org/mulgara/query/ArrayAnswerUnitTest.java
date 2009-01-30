@@ -27,9 +27,6 @@
 
 package org.mulgara.query;
 
-// Java 2 standard packages
-import java.util.*;
-
 // Third party packages
 import junit.framework.*;        // JUnit
 import org.apache.log4j.Logger;  // Log4J
@@ -57,9 +54,8 @@ import org.mulgara.query.rdf.LiteralImpl;
  */
 public class ArrayAnswerUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private Logger logger = Logger.getLogger(ArrayAnswerUnitTest.class.getName());
 
   /**

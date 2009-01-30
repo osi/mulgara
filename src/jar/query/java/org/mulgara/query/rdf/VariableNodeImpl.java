@@ -34,8 +34,7 @@ import java.io.Serializable;
 // JRDF
 import org.jrdf.graph.*;
 
-//Local packages
-import org.mulgara.query.ConstraintElement;
+// Local packages
 import org.mulgara.query.Value;
 
 /**

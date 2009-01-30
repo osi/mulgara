@@ -26,6 +26,9 @@ import org.mulgara.query.filter.value.ComparableExpression;
  */
 public abstract class BinaryComparisonFilter extends AbstractFilterValue implements Filter {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -5041035997419603862L;
+
   /** The first operand */
   protected ComparableExpression lhs;
 

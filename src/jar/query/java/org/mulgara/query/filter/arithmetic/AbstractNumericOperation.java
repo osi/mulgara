@@ -23,6 +23,9 @@ import org.mulgara.query.filter.value.SimpleLiteral;
  */
 public abstract class AbstractNumericOperation extends AbstractComparable implements NumericExpression {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -6795347129998821301L;
+
   /** The owner of the context for resolving here */
   private ContextOwner owner = null;
 

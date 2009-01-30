@@ -32,13 +32,11 @@ import junit.framework.*;
 
 // Java 2 standard packages
 import java.sql.*;
-import java.util.*;
 
 // Log4J
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.util.MulgaraResultSet;
 import org.mulgara.util.ResultSetRow;
 import org.mulgara.util.TestResultSet;
 
@@ -62,9 +60,8 @@ import org.mulgara.util.TestResultSet;
  */
 public class AnswerOperationsUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(AnswerOperationsUnitTest.class);
 
   /**

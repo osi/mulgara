@@ -29,6 +29,9 @@ import org.mulgara.query.filter.RDFTerm;
  */
 public abstract class AbstractComparableLiteral extends AbstractComparable implements ValueLiteral {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = 8196102019234790023L;
+
   /** The wrapped value */
   Object value;
 

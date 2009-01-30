@@ -27,8 +27,6 @@
 
 package org.mulgara.query;
 
-import java.util.Set;
-
 /**
  * An abstract class to be used by implementations of GIVEN clauses.
  *

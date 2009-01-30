@@ -35,8 +35,11 @@ package org.mulgara.query;
  *
  * @licence Open Software License v3.0</a>
  */
-public class MulgaraTransactionException extends Exception
-{
+public class MulgaraTransactionException extends Exception {
+
+  /** Serialization ID */
+  private static final long serialVersionUID = 3841097225175843231L;
+
   public MulgaraTransactionException(String message) {
     super(message);
   }

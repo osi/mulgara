@@ -56,9 +56,8 @@ import org.apache.log4j.Logger;
  */
 public class GraphResourceUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(GraphResourceUnitTest.class);
 
   /**
@@ -117,8 +116,7 @@ public class GraphResourceUnitTest extends TestCase {
 
       assertNotSame("Resources should be different instances", res2, res3);
       assertTrue("Resource should be equal", res2.equals(res3));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
 
       e.printStackTrace();
     }

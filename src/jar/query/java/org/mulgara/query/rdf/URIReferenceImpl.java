@@ -36,7 +36,6 @@ import java.net.URI;
 import org.jrdf.graph.*;
 
 // Local packages
-import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.Value;
 
 /**
@@ -58,7 +57,7 @@ import org.mulgara.query.Value;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class URIReferenceImpl extends AbstractURIReference
-    implements Comparable, Serializable, Value {
+    implements Comparable<Node>, Serializable, Value {
 
   /**
    * Allow newer compiled version of the stub to operate when changes
@@ -98,7 +97,7 @@ public class URIReferenceImpl extends AbstractURIReference
    * @param object PARAMETER TO DO
    * @return RETURNED VALUE TO DO
    */
-  public int compareTo(java.lang.Object object) {
+  public int compareTo(Node object) {
 
     if (object instanceof BlankNode) {
       return 1;

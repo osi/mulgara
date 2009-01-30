@@ -25,6 +25,9 @@ import org.mulgara.query.filter.value.Bool;
  */
 public abstract class AbstractBooleanFn extends AbstractFilterValue implements Filter {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -5045050008524194860L;
+
   /** The variable to test */
   RDFTerm operand;
 

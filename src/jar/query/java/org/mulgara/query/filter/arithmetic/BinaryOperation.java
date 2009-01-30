@@ -28,6 +28,9 @@ import org.mulgara.query.filter.value.NumericExpression;
  */
 public abstract class BinaryOperation extends AbstractNumericOperation implements NumericExpression {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -8435619400443937913L;
+
   /** The first operand */
   protected NumericExpression lhs;
 

@@ -29,6 +29,9 @@ import org.mulgara.query.filter.value.ValueLiteral;
  */
 public abstract class AbstractFilterValue extends AbstractContextOwner implements Filter, ValueLiteral {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = 7034034367736302522L;
+
   /** The operands for the operation */
   protected RDFTerm[] operands;
 

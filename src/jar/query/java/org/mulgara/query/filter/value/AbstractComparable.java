@@ -27,6 +27,9 @@ import org.mulgara.query.filter.AbstractContextOwner;
  */
 public abstract class AbstractComparable extends AbstractContextOwner implements ComparableExpression {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -8790392353983171058L;
+
   /** {@inheritDoc} */
   public boolean lessThan(ComparableExpression v) throws QueryException {
     compatibilityTest(v);

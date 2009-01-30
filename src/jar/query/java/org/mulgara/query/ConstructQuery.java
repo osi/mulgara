@@ -33,7 +33,6 @@ public class ConstructQuery extends Query {
   /** Required serialization ID */
   private static final long serialVersionUID = -6024259961466362580L;
 
-  @SuppressWarnings("unchecked")
   public ConstructQuery(List<? extends SelectElement> variableList, GraphExpression graphExpression,
         ConstraintExpression constraintExpression,
         List<Order> orderList, Integer limit, int offset) {

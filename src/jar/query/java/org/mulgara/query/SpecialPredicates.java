@@ -56,7 +56,7 @@ import static org.mulgara.query.rdf.Mulgara.NAMESPACE;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings({ "serial" })
 public class SpecialPredicates extends Vocabulary {
 
   /** The string for the equality predicate */

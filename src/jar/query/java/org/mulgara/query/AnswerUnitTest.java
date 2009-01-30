@@ -39,7 +39,6 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.util.MulgaraResultSet;
 import org.mulgara.util.ResultSetRow;
 import org.mulgara.util.TestResultSet;
 
@@ -63,9 +62,8 @@ import org.mulgara.util.TestResultSet;
  */
 public class AnswerUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(AnswerUnitTest.class);
 
   /**
@@ -142,7 +140,7 @@ public class AnswerUnitTest extends TestCase {
    */
   public void testEmptyConstructor() throws Exception {
 
-    List variables = Arrays.asList(new Variable[] { new Variable("x") });
+    List<Variable> variables = Arrays.asList(new Variable[] { new Variable("x") });
     AnswerImpl empty = new AnswerImpl(variables);
     assertTrue(!empty.next());
     empty.close();

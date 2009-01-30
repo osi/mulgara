@@ -30,6 +30,9 @@ import org.mulgara.query.filter.RDFTerm;
  */
 public abstract class AbstractAccessorFn extends AbstractFilterValue implements ValueLiteral {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = 291544759144763946L;
+
   /** The operand for the function */
   RDFTerm operand;
 

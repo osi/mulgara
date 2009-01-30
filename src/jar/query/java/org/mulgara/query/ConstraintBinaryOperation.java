@@ -15,6 +15,9 @@ import java.util.List;
  */
 public abstract class ConstraintBinaryOperation extends ConstraintOperation {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -267804943672931500L;
+
   /**
    * A binary-only constructor.
    * @param lhs The LHS for the operation.

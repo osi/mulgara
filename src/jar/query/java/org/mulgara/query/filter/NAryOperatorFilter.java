@@ -29,6 +29,9 @@ import org.mulgara.query.filter.value.ValueLiteral;
  */
 public abstract class NAryOperatorFilter extends AbstractFilterValue implements ValueLiteral {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = -558162654076780285L;
+
   /**
    * Creates a multiple operand operation
    * @param operands The operands for this filter operation.

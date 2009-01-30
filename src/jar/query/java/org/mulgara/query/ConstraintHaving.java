@@ -63,9 +63,10 @@ public abstract class ConstraintHaving extends AbstractConstraintExpression impl
   // /** Logger. */
   // private final static Logger logger = Logger.getLogger(ConstraintHaving.class);
 
-  /**
-    * The 4-tuple of elements (either nodes or variables)
-   */
+  /** Serialization ID */
+  private static final long serialVersionUID = -802805844572698506L;
+
+  /** The 4-tuple of elements (either nodes or variables) */
   protected final ConstraintElement[] element;
 
 

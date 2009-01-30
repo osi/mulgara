@@ -57,11 +57,8 @@ import org.apache.log4j.Logger;    // Log4J
  */
 public class LiteralImplUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(LiteralImplUnitTest.class);
 
   /**
