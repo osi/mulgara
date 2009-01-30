@@ -132,24 +132,26 @@ public abstract class RDF extends Vocabulary {
 
   static {
     // Add Classes
-    resources.add(SEQ);
-    resources.add(BAG);
-    resources.add(ALT);
-    resources.add(STATEMENT);
-    resources.add(PROPERTY);
-    resources.add(XML_LITERAL);
-    resources.add(LIST);
-    resources.add(NIL);
-
-    resources.add(LI);
+    classes.add(SEQ);
+    classes.add(BAG);
+    classes.add(ALT);
+    classes.add(STATEMENT);
+    classes.add(PROPERTY);
+    classes.add(XML_LITERAL);
+    classes.add(LIST);
+    classes.add(NIL);
+    classes.add(LI);
 
     // Add Properties
-    resources.add(SUBJECT);
-    resources.add(PREDICATE);
-    resources.add(OBJECT);
-    resources.add(TYPE);
-    resources.add(VALUE);
-    resources.add(FIRST);
-    resources.add(REST);
+    properties.add(SUBJECT);
+    properties.add(PREDICATE);
+    properties.add(OBJECT);
+    properties.add(TYPE);
+    properties.add(VALUE);
+    properties.add(FIRST);
+    properties.add(REST);
+
+    resources.addAll(classes);
+    resources.addAll(properties);
   }
 }

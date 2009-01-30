@@ -125,22 +125,25 @@ public abstract class RDFS extends Vocabulary {
 
   static {
     // Add Classes
-    resources.add(RESOURCE);
-    resources.add(CLASS);
-    resources.add(LITERAL);
-    resources.add(DATATYPE);
-    resources.add(CONTAINER);
-    resources.add(CONTAINER_MEMBERSHIP_PROPERTY);
+    classes.add(RESOURCE);
+    classes.add(CLASS);
+    classes.add(LITERAL);
+    classes.add(DATATYPE);
+    classes.add(CONTAINER);
+    classes.add(CONTAINER_MEMBERSHIP_PROPERTY);
 
     // Add Properties
-    resources.add(RANGE);
-    resources.add(DOMAIN);
-    resources.add(SUB_CLASS_OF);
-    resources.add(SUB_PROPERTY_OF);
-    resources.add(LABEL);
-    resources.add(COMMENT);
-    resources.add(MEMBER);
-    resources.add(SEE_ALSO);
-    resources.add(IS_DEFINED_BY);
+    properties.add(RANGE);
+    properties.add(DOMAIN);
+    properties.add(SUB_CLASS_OF);
+    properties.add(SUB_PROPERTY_OF);
+    properties.add(LABEL);
+    properties.add(COMMENT);
+    properties.add(MEMBER);
+    properties.add(SEE_ALSO);
+    properties.add(IS_DEFINED_BY);
+
+    resources.addAll(classes);
+    resources.addAll(properties);
   }
 }

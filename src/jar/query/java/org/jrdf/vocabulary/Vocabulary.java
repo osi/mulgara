@@ -57,6 +57,7 @@ package org.jrdf.vocabulary;
 // Java 2 standard
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,20 +74,54 @@ public abstract class Vocabulary implements Serializable {
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  private static final long serialVersionUID = -3602059929452647818L;
+  private static final long serialVersionUID = 1299792941457444378L;
 
   /** The set of URI references. */
   protected static Set<URI> resources = new HashSet<URI>();
+
+  /** The set of properties in this vocabulary. */
+  protected static Set<URI> properties = new HashSet<URI>();
+
+  /** The set of classes in this vocabulary. */
+  protected static Set<URI> classes = new HashSet<URI>();
 
   protected Vocabulary() {
   }
 
   /**
    * Returns the resources in this vocabulary.
-   *
    * @return the resource in this vocabulary.
    */
   public static Set<URI> getResources() {
-    return resources;
+    return Collections.unmodifiableSet(resources);
+  }
+
+  /**
+   * Returns the property resources in this vocabulary.
+   * @return the property resources in this vocabulary.
+   */
+  public static Set<URI> getProperties() {
+    return Collections.unmodifiableSet(properties);
+  }
+
+  /**
+   * Returns the class resources in this vocabulary.
+   * @return the class resources in this vocabulary.
+   */
+  public static Set<URI> getClasses() {
+    return Collections.unmodifiableSet(classes);
+  }
+
+  /**
+   * Calculate the intersection of 2 sets.
+   * @param <T> The objects contained in the sets.
+   * @param first The first set.
+   * @param second The second set.
+   * @return A new set containing those elements that appear in both first and second.
+   */
+  protected static <T> Set<T> intersectionOf(Set<T> first, Set<T> second) {
+    Set <T> copyFirst = new HashSet<T>(first);
+    copyFirst.retainAll(second);
+    return copyFirst;
   }
 }
