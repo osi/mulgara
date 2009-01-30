@@ -39,6 +39,7 @@ import org.mulgara.connection.SessionConnection;
 import org.mulgara.parser.Interpreter;
 import org.mulgara.protocol.StreamedAnswer;
 import org.mulgara.query.Answer;
+import org.mulgara.query.ConstructQuery;
 import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -168,7 +169,7 @@ public abstract class ProtocolServlet extends HttpServlet {
   
       Answer result = executeQuery(query, req);
 
-      Output outputType = getOutputType(req);
+      Output outputType = getOutputType(req, query);
       sendAnswer(result, outputType, resp);
 
       try {
@@ -401,7 +402,7 @@ public abstract class ProtocolServlet extends HttpServlet {
 
     Object result = executeCommand(cmd, req);
 
-    Output outputType = getOutputType(req);
+    Output outputType = getOutputType(req, cmd);
     if (result instanceof Answer) {
       sendAnswer((Answer)result, outputType, resp);
     } else {
@@ -548,13 +549,15 @@ public abstract class ProtocolServlet extends HttpServlet {
    * @param req The request object for the servlet connection.
    * @return xml, json, rdfXml or rdfN3.
    */
-  private Output getOutputType(HttpServletRequest req) {
+  private Output getOutputType(HttpServletRequest req, Command cmd) {
     Output type = DEFAULT_OUTPUT_TYPE;
 
     // get the accepted types
     String accepted = req.getHeader(ACCEPT_HEADER);
     if (accepted != null) {
-      type = Output.forMime(accepted);
+      // if this is a known type, then return it
+      Output t = Output.forMime(accepted);
+      if (t != null) type = t;
     }
 
     // check the URI parameters
@@ -563,6 +566,14 @@ public abstract class ProtocolServlet extends HttpServlet {
       Output reqOutput = Output.valueOf(reqOutputName.toUpperCase());
       if (reqOutput != null) type = reqOutput;
     }
+
+    // need graph types if constructing a graph
+    if (cmd instanceof ConstructQuery) {
+      if (type == Output.XML) type = Output.RDFXML;
+    } else {
+      if (type == Output.RDFXML || type == Output.N3) type = Output.XML;
+    }
+
     return type;
   }
 

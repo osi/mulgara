@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.mulgara.protocol.StreamedAnswer;
+import org.mulgara.protocol.StreamedN3Answer;
+import org.mulgara.protocol.StreamedRdfXmlAnswer;
 import org.mulgara.protocol.StreamedSparqlJSONAnswer;
 import org.mulgara.protocol.StreamedSparqlJSONObject;
 import org.mulgara.protocol.StreamedSparqlXMLAnswer;
@@ -60,10 +62,17 @@ public class SparqlServlet extends ProtocolServlet {
     AnswerStreamConstructor xmlBuilder = new AnswerStreamConstructor() {
       public StreamedAnswer fn(Answer ans, OutputStream s) { return new StreamedSparqlXMLAnswer(ans, s); }
     };
+    AnswerStreamConstructor rdfXmlBuilder = new AnswerStreamConstructor() {
+      public StreamedAnswer fn(Answer ans, OutputStream s) { return new StreamedRdfXmlAnswer(ans, s); }
+    };
+    AnswerStreamConstructor n3Builder = new AnswerStreamConstructor() {
+      public StreamedAnswer fn(Answer ans, OutputStream s) { return new StreamedN3Answer(ans, s); }
+    };
+    
     streamBuilders.put(Output.JSON, jsonBuilder);
     streamBuilders.put(Output.XML, xmlBuilder);
-    streamBuilders.put(Output.RDFXML, xmlBuilder);  // TODO: create an RDF/XML Builder
-    streamBuilders.put(Output.N3, xmlBuilder);      // TODO: create an N3 Builder
+    streamBuilders.put(Output.RDFXML, rdfXmlBuilder);
+    streamBuilders.put(Output.N3, n3Builder);
 
     ObjectStreamConstructor jsonObjBuilder = new ObjectStreamConstructor() {
       public StreamedAnswer fn(Object o, OutputStream s) { return new StreamedSparqlJSONObject(o, s); }
