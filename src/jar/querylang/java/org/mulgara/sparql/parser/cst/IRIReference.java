@@ -70,7 +70,9 @@ public class IRIReference implements Node, PrimaryExpression {
     try {
       this.uri = new URI(uri);
     } catch (URISyntaxException e) {
-      throw new ParseException("Unable to create a URI from: " + uri);
+      // Mulgara hack for handling the system graph
+      if (!uri.endsWith("##")) throw new ParseException("Unable to create a URI from: " + uri);
+      this.uri = URI.create("#");
     }
     text = "<" + uri + ">";
   }
