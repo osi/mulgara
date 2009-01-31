@@ -1,4 +1,17 @@
 ------------------------------------------------------------------------
+r1468 | ronald | 2009-01-30 23:55:58 -0600 (Fri, 30 Jan 2009) | 2 lines
+Changed paths:
+   M /trunk/jxdata/iTQL/standard_queries/queryResult3.txt
+
+Replaced hardcoded local ip-address introduced in r1465 with macro.
+This fixes the build.
+------------------------------------------------------------------------
+r1466 | pag | 2009-01-30 16:01:08 -0600 (Fri, 30 Jan 2009) | 1 line
+Changed paths:
+   A /trunk/KOWARI-MODIFICATIONS/mods-mulgara-2.0.8.txt
+
+Changelog for 2.0.8
+------------------------------------------------------------------------
 r1465 | pag | 2009-01-30 15:28:52 -0600 (Fri, 30 Jan 2009) | 1 line
 Changed paths:
    M /trunk/jxdata/iTQL/having_queries/queryResult10.txt
