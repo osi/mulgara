@@ -54,14 +54,20 @@ public class GraphAnswer implements Answer, Serializable {
   /** The raw answer to wrap. */
   private Answer rawAnswer;
 
+  /** The column counter for emulating rows. */
+  private int colOffset = 0;
+
+  /** The number of rows per column. */
+  private final int rowsPerCol;
+
   /**
    * Constructs a new BooleanAnswer.
    * @param result The result this answer represents.
    */
   public GraphAnswer(Answer rawAnswer) {
-    if (rawAnswer.getNumberOfVariables() != 3) {
-      throw new IllegalArgumentException("Cannot construct a graph with " + rawAnswer.getNumberOfVariables() + " columns.");
-    }
+    int cols = rawAnswer.getNumberOfVariables();
+    if (cols % 3 != 0) throw new IllegalArgumentException("Cannot construct a graph with " + cols + " columns.");
+    rowsPerCol = cols / 3;
     this.rawAnswer = rawAnswer;
   }
 
@@ -69,7 +75,7 @@ public class GraphAnswer implements Answer, Serializable {
    * @see org.mulgara.query.Answer#getObject(int)
    */
   public Object getObject(int column) throws TuplesException {
-    return rawAnswer.getObject(column);
+    return rawAnswer.getObject(column + colOffset);
   }
 
   /**
@@ -77,15 +83,16 @@ public class GraphAnswer implements Answer, Serializable {
    */
   public Object getObject(String columnName) throws TuplesException {
     // use an unrolled loop
-    if (CONSTANT_VAR_SUBJECT.equals(columnName)) return rawAnswer.getObject(0);
-    if (CONSTANT_VAR_PREDICATE.equals(columnName)) return rawAnswer.getObject(1);
-    if (CONSTANT_VAR_OBJECT.equals(columnName)) return rawAnswer.getObject(2);
+    if (CONSTANT_VAR_SUBJECT.equals(columnName)) return rawAnswer.getObject(colOffset);
+    if (CONSTANT_VAR_PREDICATE.equals(columnName)) return rawAnswer.getObject(1 + colOffset);
+    if (CONSTANT_VAR_OBJECT.equals(columnName)) return rawAnswer.getObject(2 + colOffset);
     throw new TuplesException("Unknown variable: " + columnName);
   }
 
   /** @see org.mulgara.query.Cursor#beforeFirst() */
   public void beforeFirst() throws TuplesException {
     rawAnswer.beforeFirst();
+    colOffset = (rowsPerCol - 1) * 3;
   }
 
   /** @see org.mulgara.query.Cursor#close() */
@@ -115,7 +122,7 @@ public class GraphAnswer implements Answer, Serializable {
    * @see org.mulgara.query.Cursor#getRowCardinality()
    */
   public int getRowCardinality() throws TuplesException {
-    int rawCardinality = rawAnswer.getRowCardinality();
+    int rawCardinality = rawAnswer.getRowCardinality() * rowsPerCol;
     if (rawCardinality == 0) return 0;
     // get a copy to work with
     GraphAnswer answerCopy = (GraphAnswer)clone();
@@ -124,7 +131,8 @@ public class GraphAnswer implements Answer, Serializable {
       // test if one row
       if (!answerCopy.next()) return 0;
       // test if we know it can't be more than 1, or if there is no second row
-      if (rawCardinality == 1 || !answerCopy.next()) return 1;
+      if (rawCardinality == 1) return 1;
+      if (!answerCopy.next()) return rowsPerCol;
       // Return the raw cardinality
       return rawCardinality;
     } finally {
@@ -143,7 +151,7 @@ public class GraphAnswer implements Answer, Serializable {
       answerCopy.beforeFirst();
       long result = 0;
       while (answerCopy.next()) result++;
-      return result;
+      return result * rowsPerCol;
     } finally {
       answerCopy.close();
     }
@@ -153,7 +161,7 @@ public class GraphAnswer implements Answer, Serializable {
    * @see org.mulgara.query.Cursor#getRowUpperBound()
    */
   public long getRowUpperBound() throws TuplesException {
-    return rawAnswer.getRowUpperBound();
+    return rawAnswer.getRowUpperBound() * rowsPerCol;
   }
 
   /**
@@ -177,21 +185,36 @@ public class GraphAnswer implements Answer, Serializable {
     return false;
   }
 
+
   /**
    * @see org.mulgara.query.Cursor#next()
    */
   public boolean next() throws TuplesException {
     boolean nextAvailable;
     do {
-      nextAvailable = rawAnswer.next();
+      nextAvailable = internalNext();
     } while (nextAvailable && !graphable());
     return nextAvailable;
   }
+
 
   /** @see java.lang.Object#clone() */
   public Object clone() {
     return new GraphAnswer((Answer)rawAnswer.clone());
   }
+
+
+  /**
+   * An internal method for moving on to the next row, without testing validity.
+   * @return <code>true</code> if this call has not exhausted the rows.
+   * @throws TuplesException Due to an error in the underlying rawAnswer.
+   */
+  private boolean internalNext() throws TuplesException {
+    if ((colOffset += 3) < (rowsPerCol * 3)) return true;
+    colOffset = 0;
+    return rawAnswer.next();
+  }
+
 
   /**
    * Test if the current row is expressible as a graph row.
@@ -199,8 +222,8 @@ public class GraphAnswer implements Answer, Serializable {
    * @throws TuplesException The row could not be accessed.
    */
   private boolean graphable() throws TuplesException {
-    if (rawAnswer.getObject(0) instanceof Literal) return false;
-    Object predicate = rawAnswer.getObject(1);
+    if (rawAnswer.getObject(colOffset) instanceof Literal) return false;
+    Object predicate = rawAnswer.getObject(1 + colOffset);
     return !(predicate instanceof Literal || predicate instanceof BlankNode);
   }
 }
