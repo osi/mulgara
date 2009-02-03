@@ -75,8 +75,9 @@ public class BicRegEx implements BuiltInCall, LogicExpression {
   public String getImage() {
     StringBuffer result = new StringBuffer("REGEX(");
     result.append(expr.getImage()).append(COMMA);
-    result.append(pattern.getImage()).append(COMMA);
-    result.append(flags.getImage()).append(")");
+    result.append(pattern.getImage());
+    if (flags != null) result.append(COMMA).append(flags.getImage());
+    result.append(")");
     return result.toString();
   }
 

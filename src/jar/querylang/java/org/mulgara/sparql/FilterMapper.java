@@ -186,6 +186,7 @@ public class FilterMapper {
    * @throws MulgaraParserException If the value was not mapped to an AST ValueLiteral.
    */
   static private ValueLiteral mapValue(Expression operand) throws MulgaraParserException {
+    if (operand == null) return null;
     RDFTerm op = mapExpression(operand);
     try {
       if (!op.isLiteral()) throw new MulgaraParserException("Non-literal resolution when a value is required from: " + op.getClass().getSimpleName());

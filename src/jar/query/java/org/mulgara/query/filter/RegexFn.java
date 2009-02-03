@@ -62,7 +62,7 @@ public class RegexFn extends BinaryTestFilter {
   public RegexFn(ValueLiteral str, ValueLiteral patternStr, ValueLiteral flagExpression) {
     super(str, patternStr);
     this.flagExpression = flagExpression;
-    flagExpression.setContextOwner(this);
+    if (flagExpression != null) flagExpression.setContextOwner(this);
   }
 
   /** @see org.mulgara.query.filter.BinaryTestFilter#testCmp() */
