@@ -125,7 +125,8 @@ public class StackTrace {
    * @return The message from the base case.
    */
   public static String getReasonMessage(Throwable t) {
-    return getReason(t).getMessage();
+    String msg = getReason(t).getMessage();
+    return msg != null ? msg : t.getClass().getName();
   }
 
 }
