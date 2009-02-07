@@ -28,12 +28,10 @@
 package org.mulgara.content.n3;
 
 // Java 2 standard packages
-import java.beans.Beans;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.HashMap;
 
 // Third party packages
 import junit.framework.*;        // JUnit unit testing framework
@@ -42,7 +40,6 @@ import org.jrdf.vocabulary.RDF;  // Java RDF API
 
 // Locally written packages
 import org.mulgara.content.Content;
-import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.ResolverSession;

@@ -27,11 +27,6 @@
 
 package org.mulgara.content.n3;
 
-// Java 2 standard packages
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-
 // Java 2 enterprise packages
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -59,13 +54,10 @@ import org.mulgara.resolver.spi.Statements;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class N3ContentHandler implements ContentHandler
-{
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-    Logger.getLogger(N3ContentHandler.class.getName());
+public class N3ContentHandler implements ContentHandler {
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(N3ContentHandler.class.getName());
 
   /**
    * The MIME type of RDF/XML.

@@ -28,14 +28,11 @@
 package org.mulgara.content.n3;
 
 // Java 2 standard packages
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
-import org.xml.sax.*;
 
 // Third party packages
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.log4j.Logger;      // Apache Log4J
 import org.jrdf.graph.*;             // JRDF
 
@@ -43,17 +40,13 @@ import org.jrdf.graph.*;             // JRDF
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.content.NotModifiedTuplesException;
-import org.mulgara.query.Constraint;
 import org.mulgara.query.Cursor;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.StatementsWrapperResolution;
-import org.mulgara.store.StoreException;
 import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 
@@ -72,29 +65,17 @@ import org.mulgara.store.tuples.Tuples;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class N3Statements extends AbstractTuples implements Statements
-{
-  /**
-   * Logger.
-   */
-  private static final Logger logger =
-    Logger.getLogger(N3Statements.class.getName());
+public class N3Statements extends AbstractTuples implements Statements {
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(N3Statements.class.getName());
 
-  /**
-   * The RDF/XML formatted document.
-   */
+  /** The RDF/XML formatted document. */
   private Content content;
 
-  /**
-   * The session used to globalize the RDF nodes from the stream.
-   */
+  /** The session used to globalize the RDF nodes from the stream. */
   private ResolverSession resolverSession;
 
-  /**
-   * The current row.
-   *
-   * if the cursor is not on a row, this will be <code>null</code>
-   */
+  /** The current row. if the cursor is not on a row, this will be <code>null</code> */
   private Triple triple;
 
   private Parser parser = null;
@@ -115,8 +96,7 @@ public class N3Statements extends AbstractTuples implements Statements
    * @throws IllegalArgumentException if <var>inputStream</var> or
    *   <var>resolverSession</var> are <code>null</code>
    */
-  N3Statements(Content content, ResolverSession resolverSession)
-  {
+  N3Statements(Content content, ResolverSession resolverSession) {
     // Validate "content" parameter
     if (content == null) {
       throw new IllegalArgumentException( "Null \"content\" parameter");
@@ -141,18 +121,15 @@ public class N3Statements extends AbstractTuples implements Statements
   // Methods implementing Statements
   //
 
-  public long getSubject() throws TuplesException
-  {
+  public long getSubject() throws TuplesException {
     return getColumnValue(0);
   }
 
-  public long getPredicate() throws TuplesException
-  {
+  public long getPredicate() throws TuplesException {
     return getColumnValue(1);
   }
 
-  public long getObject() throws TuplesException
-  {
+  public long getObject() throws TuplesException {
     return getColumnValue(2);
   }
 
@@ -173,9 +150,7 @@ public class N3Statements extends AbstractTuples implements Statements
    * @throws NotModifiedTuplesException if the underlying tuples are cached
    * @throws TuplesException {@inheritDoc}; also if <var>prefix</var> is non-zero length
    */
-  public void beforeFirst(long[] prefix, int suffixTruncation)
-    throws TuplesException
-  {
+  public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
     if (logger.isDebugEnabled()) {
       logger.debug("Before first");
     }
@@ -214,8 +189,7 @@ public class N3Statements extends AbstractTuples implements Statements
   /**
    * The cursor position isn't cloned by this method.
    */
-  public Object clone()
-  {
+  public Object clone() {
     N3Statements cloned = (N3Statements) super.clone();
 
     // Copy immutable fields by reference
@@ -232,16 +206,14 @@ public class N3Statements extends AbstractTuples implements Statements
   /**
    * Close the RDF/XML formatted input stream.
    */
-  public void close() throws TuplesException
-  {
+  public void close() throws TuplesException {
     stopThread();
   }
 
   /**
    * @param column  0 for the subject, 1 for the predicate, 2 for the object
    */
-  public long getColumnValue(int column) throws TuplesException
-  {
+  public long getColumnValue(int column) throws TuplesException {
     if (triple == null) {
       throw new TuplesException("There is no current row");
     }
@@ -265,13 +237,11 @@ public class N3Statements extends AbstractTuples implements Statements
     }
   }
 
-  public List getOperands()
-  {
-    return Collections.EMPTY_LIST;
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
-  public int getRowCardinality() throws TuplesException
-  {
+  public int getRowCardinality() throws TuplesException {
     long statementCount;
 
     if (rowCountIsValid) {
@@ -328,8 +298,7 @@ public class N3Statements extends AbstractTuples implements Statements
                                  Cursor.MANY;
   }
 
-  public long getRowCount() throws TuplesException
-  {
+  public long getRowCount() throws TuplesException {
     if (!rowCountIsValid) {
       if (parser != null && parser.isStatementCountTotal()) {
         // Get the statement count from the parser.
@@ -356,20 +325,17 @@ public class N3Statements extends AbstractTuples implements Statements
     return rowCount;
   }
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     // If the row count isn't yet available, return an absurdly huge value
     return parser != null && parser.isStatementCountTotal() ?
            parser.getStatementCount() : Long.MAX_VALUE;
   }
 
-  public boolean hasNoDuplicates() throws TuplesException
-  {
+  public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }
 
-  public boolean isColumnEverUnbound(int column) throws TuplesException
-  {
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
     switch (column) {
     case 0: case 1: case 2:
       return false;
@@ -378,8 +344,7 @@ public class N3Statements extends AbstractTuples implements Statements
     }
   }
 
-  public boolean next() throws TuplesException
-  {
+  public boolean next() throws TuplesException {
     if (parser == null) {
       // no current row
       return false;
@@ -405,8 +370,7 @@ public class N3Statements extends AbstractTuples implements Statements
   /**
    * Stops the thread if it is running, and clears the current row.
    */
-  private void stopThread()
-  {
+  private void stopThread() {
     if (parser != null) {
       parser.abort();
       parser = null;
