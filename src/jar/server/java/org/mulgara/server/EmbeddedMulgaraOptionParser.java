@@ -75,8 +75,11 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   /** option to change to the peer client port for RMI */
   public final static Option RMI_OBJECT_PORT = new IntegerOption('t', "rmiobjectport");
 
-  /** option to change the port the server is bound to */
+  /** option to change the port the http server is bound to */
   public final static Option PORT = new StringOption('p', "port");
+
+  /** option to change the public port the http server is bound to */
+  public final static Option PUBLIC_PORT = new StringOption('u', "publicport");
 
   /** option to change the name of the server */
   public final static Option SERVER_NAME = new StringOption('s', "servername");
@@ -118,6 +121,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
     addOption(NO_HTTP);
     addOption(SERVER_HOST);
     addOption(PORT);
+    addOption(PUBLIC_PORT);
     addOption(NO_RMI);
     addOption(RMI_PORT);
     addOption(RMI_OBJECT_PORT);

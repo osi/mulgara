@@ -14,12 +14,26 @@
       <xs:sequence>
         <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
         <xs:element ref="Connector" minOccurs="0"/>
+        <xs:element ref="PublicConnector" minOccurs="0"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="Connector">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
+        <xs:element ref="Host" minOccurs="0"/>
+        <xs:element ref="Port"/>
+        <xs:element ref="Acceptors" minOccurs="0"/>
+        <xs:element ref="MaxIdleTimeMs" minOccurs="0"/>
+        <xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PublicConnector">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
         <xs:element ref="Host" minOccurs="0"/>
         <xs:element ref="Port"/>
         <xs:element ref="Acceptors" minOccurs="0"/>

@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.util.MultiException;
 import org.mulgara.config.Connector;
 import org.mulgara.config.MulgaraConfig;
+import org.mulgara.config.PublicConnector;
 import org.mulgara.util.MortbayLogger;
 import org.mulgara.util.Reflect;
 import org.mulgara.util.TempDir;
@@ -103,6 +105,9 @@ public class HttpServices {
   /** The HTTP server instance. */
   private final Server httpServer;
 
+  /** The Public HTTP server instance. */
+  private final Server httpPublicServer;
+
   /** The configuration for the server. */
   private final MulgaraConfig config;
 
@@ -129,7 +134,11 @@ public class HttpServices {
     this.hostServer = hostServer;
     this.config = config;
     this.hostName = hostName;
-    httpServer = createHttpServer();
+    assert !config.getJetty().isDisabled();
+    // get servers as a pair so we can set them here. Needed because they are final.
+    Pair<Server,Server> servers = createHttpServers();
+    httpServer = servers.first();
+    httpPublicServer = servers.second();
   }
 
 
@@ -141,7 +150,8 @@ public class HttpServices {
   @SuppressWarnings("unchecked")
   public void start() throws ExceptionList, Exception {
     try {
-      httpServer.start();
+      if (httpServer != null) httpServer.start();
+      if (httpPublicServer != null) httpPublicServer.start();
     } catch (MultiException e) {
       throw new ExceptionList(e.getThrowables());
     }
@@ -153,13 +163,17 @@ public class HttpServices {
    * @throws Exception Both the server and the services are able to throw exceptions.
    */
   public void stop() throws Exception {
-    httpServer.stop();
+    try {
+      if (httpServer != null) httpServer.stop();
+    } finally {
+      if (httpPublicServer != null) httpPublicServer.stop();
+    }
   }
 
 
   /**
    * Creates an HTTP server.
-   * @return an HTTP server
+   * @return a pair of private/public servers.
    * @throws IOException if the server configuration cannot be found
    * @throws SAXException if the HTTP server configuration file is invalid
    * @throws ClassNotFoundException if the HTTP server configuration file contains a reference to an unkown class
@@ -167,30 +181,24 @@ public class HttpServices {
    * @throws InvocationTargetException if an error ocurrs while trying to configure the HTTP server
    * @throws IllegalAccessException If a class loaded by the server is accessed in an unexpected way.
    */
-  public Server createHttpServer() throws IOException, SAXException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+  public Pair<Server,Server> createHttpServers() throws IOException, SAXException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     if (logger.isDebugEnabled()) logger.debug("Creating HTTP server instance");
 
     // Set the magic logging property for Jetty to use Log4j
     System.setProperty(MortbayLogger.LOGGING_CLASS_PROPERTY, MortbayLogger.class.getCanonicalName());
 
     // create and register a new HTTP server
-    Server server;
-    if (config.getJetty().getConnector() == null) {
-      // create a default server
-      server = new Server(ServerInfo.getHttpPort());
-    } else {
-      // create a server with a configured connector
-      server = new Server();
-      addConnector(server);
-    }
+    Server privateServer = buildAndConfigure(new JettyConnector(config.getJetty().getConnector()), ServerInfo.getHttpPort());
+    Server publicServer = buildAndConfigure(new JettyConnector(config.getJetty().getPublicConnector()), ServerInfo.getPublicHttpPort());
+
 
     // Accumulator for all the services
-    Map<String,String> services = new HashMap<String,String>();
+    Map<String,String> privateServices = new HashMap<String,String>();
 
-    // start all the configured services.
+    // start all the private configured services.
     for (ContextStarter starter: getContextStarters()) {
       try {
-        starter.fn(server).add(services);
+        starter.fn(privateServer).addTo(privateServices);
       } catch (IllegalStateException e) {
         // not fatal, so just log the problem and go on
         logger.warn("Unable to start web service", e.getCause());
@@ -198,17 +206,48 @@ public class HttpServices {
     }
 
     // we have all the services, so now instantiate the service listing service
-    addWebServiceListingContext(server, services);
+    addWebServiceListingContext(privateServer, privateServices);
+
+    // start the public contexts
+    for (ContextStarter starter: getPublicContextStarters()) {
+      try {
+        starter.fn(publicServer);
+      } catch (IllegalStateException e) {
+        logger.warn("Unable to start public web service", e.getCause());
+      }
+    }
+
+    // get all the handlers in use by both servers
+    List<Handler> handlers = new ArrayList<Handler>(Arrays.asList(privateServer.getChildHandlers()));
+    handlers.addAll(Arrays.asList(publicServer.getChildHandlers()));
 
     // add our class loader as the classloader of all contexts, unless this is a webapp in which case we wrap it
     ClassLoader classLoader = this.getClass().getClassLoader();
-    for (Handler handler: server.getChildHandlers()) {
+    for (Handler handler: handlers) {
       if (handler instanceof WebAppContext) ((WebAppContext)handler).setClassLoader(new WebAppClassLoader(classLoader, (WebAppContext)handler));
       else if (handler instanceof ContextHandler) ((ContextHandler)handler).setClassLoader(classLoader);
     }
 
-    // return the server
-    return server;
+    // return the servers
+    return new Pair<Server,Server>(privateServer, publicServer);
+  }
+
+
+  /**
+   * Create a server object, and configure it.
+   * @param cfg The Jetty configuration for the server.
+   * @return The created server.
+   * @throws UnknownHostException The configured host name is invalid.
+   */
+  Server buildAndConfigure(JettyConnector cfg, int port) throws UnknownHostException {
+    Server s;
+    if (cfg.isProvided()) {
+      s = new Server(port);
+    } else {
+      s = new Server();
+      addConnector(s, cfg);
+    }
+    return s;
   }
 
 
@@ -241,12 +280,26 @@ public class HttpServices {
 
 
   /**
+   * Creates a list of functions for starting public contexts.
+   * <strong>This defines the list of services to be run.</strong>
+   * @return A list that can start all the configured contexts.
+   */
+  private List<ContextStarter> getPublicContextStarters() {
+    List<ContextStarter> starters = new ArrayList<ContextStarter>();
+    starters.add(new ContextStarter() { public Service fn(Server s) throws IOException {
+      return addServletContext(s, "org.mulgara.protocol.http.PublicSparqlServlet", SPARQL_PATH, "SPARQL HTTP Service");
+    } });
+    return starters;
+  }
+
+
+  /**
    * Adds a listener to the <code>httpServer</code>. The listener is created and configured
    * according to the Jetty configuration.
    * @param httpServer the server to add the listener to
    * @throws UnknownHostException if an invalid hostname was specified in the Mulgara server configuration
    */
-  private void addConnector(Server httpServer) throws UnknownHostException {
+  private void addConnector(Server httpServer, JettyConnector jettyConfig) throws UnknownHostException {
     if (httpServer == null) throw new IllegalArgumentException("Null \"httpServer\" parameter");
 
     if (logger.isDebugEnabled()) logger.debug("Adding socket listener");
@@ -261,10 +314,8 @@ public class HttpServices {
       if (logger.isDebugEnabled()) logger.debug("Servlet container listening on all host interfaces");
     }
 
-    // set the listener to the jetty configuration
-    Connector jettyConfig = (Connector)config.getJetty().getConnector();
-    connector.setPort(ServerInfo.getHttpPort());
 
+    if (jettyConfig.hasPort()) connector.setPort(jettyConfig.getPort());
     if (jettyConfig.hasMaxIdleTimeMs()) connector.setMaxIdleTime(jettyConfig.getMaxIdleTimeMs());
     if (jettyConfig.hasLowResourceMaxIdleTimeMs()) connector.setLowResourceMaxIdleTime(jettyConfig.getLowResourceMaxIdleTimeMs());
     if (jettyConfig.hasAcceptors()) {
@@ -398,4 +449,108 @@ public class HttpServices {
     return outFile.getAbsolutePath();
   }
 
+
+  /**
+   * A common class for representing the identical configuration found in the
+   * separate Connector and PublicConnector classes.
+   */
+  private class JettyConnector {
+    boolean provided = false;
+    Boolean disabled = null;
+    String host = null;
+    Integer port = null;
+    Integer acceptors = null;
+    Integer maxIdleTimeMs = null;
+    Integer lowResourceMaxIdleTimeMs = null;
+
+    /**
+     * Creates a config from a Connector object.
+     * @param c The Connector to build the config from.
+     */
+    public JettyConnector(Connector c) {
+      if (c == null) return;
+      provided = true;
+      if (c.hasDisabled()) disabled = c.isDisabled();
+      host = c.getHost();
+      if (c.hasPort()) port = c.getPort();
+      if (c.hasAcceptors()) acceptors = c.getAcceptors();
+      if (c.hasMaxIdleTimeMs()) maxIdleTimeMs = c.getMaxIdleTimeMs();
+      if (c.hasLowResourceMaxIdleTimeMs()) lowResourceMaxIdleTimeMs = c.getLowResourceMaxIdleTimeMs();
+    }
+
+    /**
+     * Creates a config from a PublicConnector object.
+     * @param c The PublicConnector to build the config from.
+     */
+    public JettyConnector(PublicConnector c) {
+      if (c == null) return;
+      provided = true;
+      if (c.hasDisabled()) disabled = c.isDisabled();
+      host = c.getHost();
+      if (c.hasPort()) port = c.getPort();
+      if (c.hasAcceptors()) acceptors = c.getAcceptors();
+      if (c.hasMaxIdleTimeMs()) maxIdleTimeMs = c.getMaxIdleTimeMs();
+      if (c.hasLowResourceMaxIdleTimeMs()) lowResourceMaxIdleTimeMs = c.getLowResourceMaxIdleTimeMs();
+    }
+
+    /** @return if this config was provided. */
+    public boolean isProvided() {
+      return provided;
+    }
+
+    /** @return if this config is disabled or not. */
+    public boolean isDisabled() {
+      return disabled;
+    }
+
+    /** @return the host name */
+    public String getHost() {
+      return host;
+    }
+
+    /** @return the port to use */
+    public int getPort() {
+      return port;
+    }
+
+    /** @return the number of acceptors to use */
+    public int getAcceptors() {
+      return acceptors;
+    }
+
+    /** @return the maxIdleTimeMs */
+    public int getMaxIdleTimeMs() {
+      return maxIdleTimeMs;
+    }
+
+    /** @return the lowResourceMaxIdleTimeMs */
+    public int getLowResourceMaxIdleTimeMs() {
+      return lowResourceMaxIdleTimeMs;
+    }
+
+    /** @return <code>true</code> if the Disabled value was provided. */
+    public boolean hasDisabled() {
+      return disabled != null;
+    }
+
+    /** @return <code>true</code> if the Port value was provided. */
+    public boolean hasPort() {
+      return port != null;
+    }
+
+    /** @return <code>true</code> if the Accepted value was provided. */
+    public boolean hasAcceptors() {
+      return acceptors != null;
+    }
+
+    /** @return <code>true</code> if the MaxIdelTimeMs value was provided. */
+    public boolean hasMaxIdleTimeMs() {
+      return maxIdleTimeMs != null;
+    }
+
+    /** @return <code>true</code> if the LogResourceMaxIdeTimeMs value was provided. */
+    public boolean hasLowResourceMaxIdleTimeMs() {
+      return lowResourceMaxIdleTimeMs != null;
+    }
+  }
 }

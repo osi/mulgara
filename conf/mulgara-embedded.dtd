@@ -7,9 +7,10 @@
 
   <!ELEMENT MulgaraHost (#PCDATA)>
 
-  <!ELEMENT Jetty (Connector)>
+  <!ELEMENT Jetty (Connector, PublicConnector)>
 
-    <!ELEMENT Connector (Host?, Port, Acceptors?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
+    <!ELEMENT Connector (Disabled?, Host?, Port, Acceptors?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
+    <!ELEMENT PublicConnector (Disabled?, Host?, Port, Acceptors?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
 
       <!ELEMENT Host (#PCDATA)>
       <!ELEMENT Port (#PCDATA)>

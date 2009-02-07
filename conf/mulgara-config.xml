@@ -28,12 +28,21 @@ Mulgara Semantic Store configuration file.
   <Jetty>
     <Disabled>false</Disabled>
     <Connector>
+      <Disabled>false</Disabled>
       <!--<Host>localhost</Host>-->
       <Port>8080</Port>
       <Acceptors>5</Acceptors>
       <MaxIdleTimeMs>60000</MaxIdleTimeMs>
       <LowResourceMaxIdleTimeMs>5000</LowResourceMaxIdleTimeMs>
     </Connector>
+    <PublicConnector>
+      <Disabled>false</Disabled>
+      <!--<Host>localhost</Host>-->
+      <Port>8081</Port>
+      <Acceptors>5</Acceptors>
+      <MaxIdleTimeMs>60000</MaxIdleTimeMs>
+      <LowResourceMaxIdleTimeMs>5000</LowResourceMaxIdleTimeMs>
+    </PublicConnector>
   </Jetty>
 
   <!-- The name of the server, used for RMI binding -->

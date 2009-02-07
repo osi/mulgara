@@ -75,6 +75,9 @@ public class ServerInfo {
   /** The port used for HTTP. */
   private static int httpPort = 8080;
 
+  /** The port used for public HTTP. */
+  private static int publicHttpPort = 8081;
+
   /** The set of hostname aliases. */
   private static Set<String> hostnames = new HashSet<String>();
 
@@ -145,6 +148,16 @@ public class ServerInfo {
    */
   public static int getHttpPort() {
     return httpPort;
+  }
+
+
+  /**
+   * Returns the port the public HTTP server is bound to.
+   *
+   * @return the port the public HTTP server is bound to
+   */
+  public static int getPublicHttpPort() {
+    return publicHttpPort;
   }
 
 
@@ -222,7 +235,18 @@ public class ServerInfo {
    * @param httpPort the port the HTTP server is bound to
    */
   static void setHttpPort(int httpPort) {
+    if (httpPort == ServerInfo.publicHttpPort) throw new IllegalArgumentException("Public and private HTTP ports cannot be the same");
     ServerInfo.httpPort = httpPort;
+  }
+
+  /**
+   * Sets the port the public HTTP server is bound to.
+   *
+   * @param publicHttpPort the port the public HTTP server is bound to
+   */
+  static void setPublicHttpPort(int publicHttpPort) {
+    if (publicHttpPort == ServerInfo.httpPort) throw new IllegalArgumentException("Public and private HTTP ports cannot be the same");
+    ServerInfo.publicHttpPort = publicHttpPort;
   }
 
   public static String toStaticString() {
@@ -234,6 +258,7 @@ public class ServerInfo {
     s.append("Bound host name = ").append(boundHostname).append("\n");
     s.append("RMI Port = ").append(rmiPort).append("\n");
     s.append("HTTP Port = ").append(httpPort).append("\n");
+    s.append("Public HTTP Port = ").append(publicHttpPort).append("\n");
     s.append("Host names = ").append(hostnames).append("\n");
     return s.toString();
   }

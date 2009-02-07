@@ -47,6 +47,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 // locally written packages
 import org.mulgara.config.MulgaraConfig;
 import org.mulgara.config.Connector;
+import org.mulgara.config.PublicConnector;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.StoreException;
 import org.mulgara.store.xa.SimpleXAResourceException;
@@ -563,6 +564,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         if (System.getProperty(DISABLE_HTTP) == null && !mulgaraConfig.getJetty().getDisabled()) {
           httpEnabled = true;
           Connector httpConnector = mulgaraConfig.getJetty().getConnector();
+          PublicConnector httpPublicConnector = mulgaraConfig.getJetty().getPublicConnector();
     
           String httpHost = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
           httpHostName = (httpHost != null || httpConnector == null) ? httpHost : httpConnector.getHost();
@@ -573,6 +575,14 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
             ServerInfo.setHttpPort(Integer.parseInt(httpPort));
           } else {
             if (httpConnector != null) ServerInfo.setHttpPort(httpConnector.getPort());
+          }
+
+          // set the port on which to accept public HTTP requests
+          httpPort = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.PUBLIC_PORT);
+          if (httpPort != null) {
+            ServerInfo.setPublicHttpPort(Integer.parseInt(httpPort));
+          } else {
+            if (httpPublicConnector != null) ServerInfo.setPublicHttpPort(httpPublicConnector.getPort());
           }
         } else {
           httpEnabled = false;
