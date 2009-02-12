@@ -93,31 +93,28 @@ final class TripleWriteThread extends Thread {
       synchronized (this) {
         checkForException();
 
-        if (queue.isEmpty()) {
-          // Transition from empty to not empty.
-          notifyAll();
-        } else {
-          // Make sure the Queue doesn't exceed its maximum size.
-          if (queue.size() == QUEUE_MAX_BUFFERS) {
-            // Queue is full.  Log a message.
-            if (logger.isInfoEnabled()) {
-              logger.info(
-                  "Triple write queue full for file: " + file + "  Waiting."
-              );
-            }
-
-            // Wait for the Queue to be less than full.
-            do {
-              try {
-                wait();
-              } catch (InterruptedException ie) {
-                throw new RuntimeException("Exception in " + getName(), ie);
-              }
-            } while (queue.size() == QUEUE_MAX_BUFFERS);
+        // Make sure the Queue doesn't exceed its maximum size.
+        if (queue.size() == QUEUE_MAX_BUFFERS) {
+          if (logger.isInfoEnabled()) {
+            logger.info("Triple write queue full for file: " + file + "  Waiting.");
           }
+
+          // Wait for the Queue to be less than full.
+          do {
+            try {
+              wait();
+            } catch (InterruptedException ie) {
+              throw new RuntimeException("Exception in " + getName(), ie);
+            }
+          } while (queue.size() == QUEUE_MAX_BUFFERS);
         }
 
         // Put the buffer in the queue.
+        if (queue.isEmpty()) {
+          // Transition from empty to not empty.
+          notifyAll();
+        }
+
         queue.addLast(buffer);
       }
       buffer = null;
