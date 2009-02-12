@@ -147,7 +147,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
         return new MulgaraTransactionException(errorMessage, cause);
       } finally {
         completed = true;
-        factory.transactionComplete(this);
+        factory.transactionComplete(this, rollbackCause);
       }
     } finally {
       releaseMutex();
@@ -469,6 +469,10 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
     return heurCode;
   }
 
+  String getRollbackCause() {
+    return rollbackCause;
+  }
+
   boolean isRollbacked() {
     return rollback;
   }
@@ -604,7 +608,7 @@ public class MulgaraExternalTransaction implements MulgaraTransaction {
   private void cleanupTransaction() throws XAException {
     report("cleanupTransaction");
     try {
-      factory.transactionComplete(this);
+      factory.transactionComplete(this, rollbackCause);
     } catch (MulgaraTransactionException em) {
       try {
         logger.error("Failed to cleanup transaction", em);

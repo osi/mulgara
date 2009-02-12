@@ -512,7 +512,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
             context.clear();
             enlisted.clear();
             state = State.FAILED;
-            factory.transactionAborted(this);
+            factory.transactionAborted(this, rollbackCause);
             return new MulgaraTransactionException("Transaction rollback triggered", cause);
         case DEACTREF:
           throw new IllegalStateException("Attempt to rollback deactivated transaction");
@@ -567,6 +567,8 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
       // need to rollback this transaction, but if we have reached here
       // we have failed to obtain a valid transaction to rollback!
       try {
+        if (rollbackCause == null) rollbackCause = cause;
+
         try {
           errorReport(errorMessage + " - Aborting", cause);
         } finally { try {
@@ -574,7 +576,7 @@ public class MulgaraInternalTransaction implements MulgaraTransaction {
             transaction.rollback();
           }
         } finally { try {
-          factory.transactionAborted(this);
+          factory.transactionAborted(this, cause);
         } finally { try {
           abortEnlistedResources();
         } finally { try {

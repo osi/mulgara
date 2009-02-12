@@ -48,11 +48,13 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
   private final MulgaraXAResourceContext xaResource;
 
   private MulgaraExternalTransaction associatedTransaction;
+  private String                     lastRollbackCause;
 
   public MulgaraExternalTransactionFactory(DatabaseSession session, MulgaraTransactionManager manager) {
     super(session, manager);
 
     this.associatedTransaction = null;
+    this.lastRollbackCause = null;
     this.transactions = new HashSet<MulgaraExternalTransaction>();
     this.xaResource = new MulgaraXAResourceContext(this, session);
   }
@@ -61,7 +63,10 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
     acquireMutex(0, MulgaraTransactionException.class);
     try {
       if (associatedTransaction == null) {
-        throw new MulgaraTransactionException("No externally mediated transaction associated with session");
+        throw new MulgaraTransactionException(
+            "No externally mediated transaction associated with session" +
+            (lastRollbackCause != null ? " - last transaction was rolled back with error: " +
+                                         lastRollbackCause : ""));
       } else if (write && associatedTransaction != writeTransaction) {
         throw new MulgaraTransactionException("RO-transaction associated with session when requesting write operation");
       }
@@ -91,6 +96,7 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
           xa = new MulgaraExternalTransaction(this, xid, session.newOperationContext(true));
           writeTransaction = xa;
           associatedTransaction = xa;
+          lastRollbackCause = null;
           transactions.add(xa);
           transactionCreated(xa);
 
@@ -98,13 +104,14 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
         } catch (Throwable th) {
           manager.releaseWriteLock(session);
           if (xa != null)
-            transactionComplete(xa);
+            transactionComplete(xa, th.toString());
           throw new MulgaraTransactionException("Error initiating write transaction", th);
         }
       } else {
         try {
           MulgaraExternalTransaction xa = new MulgaraExternalTransaction(this, xid, session.newOperationContext(false));
           associatedTransaction = xa;
+          lastRollbackCause = null;
           transactions.add(xa);
           transactionCreated(xa);
 
@@ -131,7 +138,7 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
     }
   }
 
-  public void transactionComplete(MulgaraExternalTransaction xa)
+  public void transactionComplete(MulgaraExternalTransaction xa, String rollbackCause)
       throws MulgaraTransactionException {
     acquireMutex(0, MulgaraTransactionException.class);
     try {
@@ -147,6 +154,7 @@ public class MulgaraExternalTransactionFactory extends MulgaraTransactionFactory
       transactions.remove(xa);
       if (associatedTransaction == xa) {
         associatedTransaction = null;
+        lastRollbackCause = rollbackCause;
       }
     } finally {
       releaseMutex();

@@ -56,8 +56,11 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
   private static final Logger logger =
     Logger.getLogger(MulgaraInternalTransactionFactory.class.getName());
 
-  /** Set of sessions whose transactions have been rolledback.*/
+  /** Flag indicating current explicit-transaction has been rolledback. */
   private boolean isFailed;
+
+  /** The reason for the failure if {@link #isFailed} is true. */
+  private Throwable failureCause;
 
   /** Map of threads to active transactions. */
   private final Map<Thread, MulgaraTransaction> activeTransactions;
@@ -78,6 +81,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     super(session, manager);
 
     this.isFailed = false;
+    this.failureCause = null;
     this.activeTransactions = new HashMap<Thread, MulgaraTransaction>();
     this.autoCommit = true;
     this.transactions = new HashSet<MulgaraTransaction>();
@@ -141,7 +145,8 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     acquireMutex(0, MulgaraTransactionException.class);
     try {
       if (isFailed) {
-        throw new MulgaraTransactionException("Attempting to commit failed session");
+        if (failureCause != null) throw new MulgaraTransactionException("Attempting to commit failed session", failureCause);
+        else throw new MulgaraTransactionException("Attempting to commit failed session");
       } else if (!manager.isHoldingWriteLock(session)) {
         throw new MulgaraTransactionException(
             "Attempting to commit while not the current writing transaction");
@@ -194,6 +199,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
       } else if (isFailed) {
         explicitXA = null;
         isFailed = false;
+        failureCause = null;
         setAutoCommit(false);
       } else {
         throw new MulgaraTransactionException(
@@ -238,6 +244,7 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
           } else if (isFailed) {
             // Within failed transaction - cleanup.
             isFailed = false;
+            failureCause = null;
           }
         } else {
           if (!manager.isHoldingWriteLock(session)) {
@@ -387,13 +394,14 @@ public class MulgaraInternalTransactionFactory extends MulgaraTransactionFactory
     }
   }
 
-  public void transactionAborted(MulgaraTransaction transaction) {
+  public void transactionAborted(MulgaraTransaction transaction, Throwable cause) {
     acquireMutex(0, RuntimeException.class);
     try {
       try {
         // Make sure this cleans up the transaction metadata - this transaction is DEAD!
         if (!autoCommit && transaction == writeTransaction) {
           isFailed = true;
+          failureCause = cause;
         }
         transactionComplete(transaction);
       } catch (Throwable th) {

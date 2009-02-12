@@ -124,8 +124,8 @@ public class MulgaraXAResourceContext {
           // 7.6.2.2 requires an XA_RB* exception in the case of 1PC and 7.6.2.5
           // implies that HEURRB is not permitted during 2PC - this seems broken
           // to me, but that's the spec.
-//          throw new XAException(XAException.XA_HEURRB);
-          throw new XAException(XAException.XA_RBROLLBACK);
+//          throw newXAException(XAException.XA_HEURRB, xa.getRollbackCause());
+          throw newXAException(XAException.XA_RBROLLBACK, xa.getRollbackCause());
         } else if (xa.isHeuristicallyCommitted()) {
           throw new XAException(XAException.XA_HEURCOM);
         }
@@ -191,7 +191,7 @@ public class MulgaraXAResourceContext {
             break;
           case TMSUCCESS:
             if (xa.isHeuristicallyRollbacked()) {
-              throw new XAException(XAException.XA_RBPROTO);
+              throw newXAException(XAException.XA_RBPROTO, xa.getRollbackCause());
             }
             break;
           case TMSUSPEND: // Should I be tracking the xid's state to ensure
@@ -330,8 +330,9 @@ public class MulgaraXAResourceContext {
      */
     private void doRollback(MulgaraExternalTransaction xa, Xid xid) throws XAException {
       if (xa.isHeuristicallyRollbacked()) {
-        logger.warn("Attempted to rollback heuristically rollbacked transaction: " + xa.getHeuristicCode());
-        throw new XAException(xa.getHeuristicCode());
+        logger.warn("Attempted to rollback heuristically rollbacked transaction: xa-code=" +
+                    xa.getHeuristicCode() + ", reason-string='" + xa.getRollbackCause() + "'");
+        throw newXAException(xa.getHeuristicCode(), xa.getRollbackCause());
       } else if (!xa.isRollbacked()) {
         xa.rollback(xid);
       }
@@ -411,6 +412,12 @@ public class MulgaraXAResourceContext {
      * inner-classes.
      */
     private DatabaseSession getSession() { return session; }
+  }
+
+  private static XAException newXAException(int errorCode, String reason) {
+    XAException xae = new XAException(reason);
+    xae.errorCode = errorCode;
+    return xae;
   }
 
   public static String parseXid(Xid xid) {
