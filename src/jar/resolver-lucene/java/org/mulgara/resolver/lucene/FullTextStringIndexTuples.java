@@ -378,15 +378,15 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     return false;
   }
 
-  public Annotation getAnnotation(Class<? extends org.mulgara.store.tuples.Annotation> annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
     // the object (lucene query string) is required when a score is requested
-    if (annotationClass.equals(MandatoryBindingAnnotation.class) &&
+    if (annotationClass == MandatoryBindingAnnotation.class &&
         objectElement instanceof Variable && constraint.getScoreVar() != null) {
       return new MandatoryBindingAnnotation(new Variable[] { (Variable)objectElement });
     }
 
     // support re-ordering the variables so any variables can be bound in the prefix
-    if (annotationClass.equals(DefinablePrefixAnnotation.class)) {
+    if (annotationClass == DefinablePrefixAnnotation.class) {
       return new DefinablePrefixAnnotation() {
         public void definePrefix(Set boundVars) throws TuplesException {
           if (boundVars.contains(constraint.getScoreVar()))
