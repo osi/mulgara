@@ -727,44 +727,39 @@ public abstract class TuplesOperations {
     try {
 
       boolean noVariables = (variableList == null) || (variableList.size() == 0);
-
       if (tuples.isUnconstrained() || (noVariables && tuples.getRowCardinality() != Cursor.ZERO)) {
-
-        if (logger.isDebugEnabled()) logger.debug("returning Unconstrained Tuples.");
-
-        return TuplesOperations.unconstrained();
+        return unconstrained();
       } else if (tuples.getRowCardinality() == Cursor.ZERO) {
         return empty();
-      // If the tuples is not unconstrained, and there's no variables in the SELECT
-      // and the tuples is a ConstrainedNegationTuples return empty/false.
-      } else if ((noVariables) && (tuples instanceof ConstrainedNegationTuples)) {
-        return empty();
-      } else {
-        if (logger.isDebugEnabled()) logger.debug("Projecting to " + variableList);
-
-        // Perform the actual projection
-        Tuples oldTuples = tuples;
-        tuples = new UnorderedProjection(tuples, variableList);
-        assert tuples != oldTuples;
-
-        // Test whether creating an unordered projects has removed variables.
-        if (tuples.isUnconstrained()) {
-          tuples.close();
-          return TuplesOperations.unconstrained();
-        }
-
-        // Eliminate any duplicates
-        oldTuples = tuples;
-        tuples = removeDuplicates(tuples);
-        assert tuples != oldTuples;
-
-        if (tuples == oldTuples) logger.warn("removeDuplicates does not change the underlying tuples");
-        else oldTuples.close();
-
-        assert tuples.hasNoDuplicates();
-
-        return tuples;
       }
+
+      if (logger.isDebugEnabled()) logger.debug("Projecting to " + variableList);
+
+      // Perform the actual projection
+      Tuples oldTuples = tuples;
+      tuples = new UnorderedProjection(tuples, variableList);
+      assert tuples != oldTuples;
+
+      // Test whether creating an unordered projects has removed variables.
+      if (tuples.isUnconstrained()) {
+        tuples.close();
+        return TuplesOperations.unconstrained();
+      }
+
+      // Eliminate any duplicates
+      oldTuples = tuples;
+      tuples = removeDuplicates(tuples);
+      assert tuples != oldTuples;
+
+      if (tuples == oldTuples) {
+        logger.warn("removeDuplicates does not change the underlying tuples");
+      } else {
+        oldTuples.close();
+      }
+
+      assert tuples.hasNoDuplicates();
+
+      return tuples;
     } catch (TuplesException e) {
       throw new TuplesException("Couldn't perform projection", e);
     }
