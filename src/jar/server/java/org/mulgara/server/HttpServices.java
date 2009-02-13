@@ -186,6 +186,7 @@ public class HttpServices {
 
     // Set the magic logging property for Jetty to use Log4j
     System.setProperty(MortbayLogger.LOGGING_CLASS_PROPERTY, MortbayLogger.class.getCanonicalName());
+    MortbayLogger.setEnabled(true);
 
     // create and register a new HTTP server
     Server privateServer = buildAndConfigure(new JettyConnector(config.getJetty().getConnector()), ServerInfo.getHttpPort());
