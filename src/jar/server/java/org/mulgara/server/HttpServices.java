@@ -243,10 +243,10 @@ public class HttpServices {
   Server buildAndConfigure(JettyConnector cfg, int port) throws UnknownHostException {
     Server s;
     if (cfg.isProvided()) {
-      s = new Server(port);
-    } else {
       s = new Server();
       addConnector(s, cfg);
+    } else {
+      s = new Server(port);
     }
     return s;
   }
