@@ -75,6 +75,9 @@ public class HttpContent implements Content {
   /** The URI version of the URL */
   private URI httpUri;
 
+  /** The MIME type of this data */
+  private MimeType contentType = null;
+
   /**
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
@@ -330,35 +333,21 @@ public class HttpContent implements Content {
    * from the HTTP <code>Content-Type</code> header.
    */
   public MimeType getContentType() throws NotModifiedException {
-
-    MimeType mimeType = null;
-    HeadMethod method = null;
-    String contentType = null;
-
-    try {
-
-      // obtain connection and retrieve the headers
-      method = (HeadMethod) establishConnection(HEAD);
-      Header header = method.getResponseHeader("Content-Type");
-      if (header != null) {
-        contentType = header.getValue();
-        mimeType = new MimeType(contentType);
-        if (logger.isInfoEnabled()) {
-          logger.info("Obtain content type " + mimeType + "  from " + httpUri);
-        }
+    // if we don't have the type from the connection already, then establish one
+    if (contentType == null) {
+      HttpMethod method = null;
+      try {
+        method = establishConnection(HEAD);
+        contentType = readMimeType(method);
+      } catch (IOException e) {
+        logger.info("Unable to obtain content type for " + httpUri);
+      } finally {
+        // we're the only one to have needed this connection, so drop it
+        if (method != null) method.releaseConnection();
+        if (connection != null) connection.close();
       }
-    } catch (MimeTypeParseException e) {
-      logger.warn("Unable to parse " + contentType + " as a content type for "
-          + httpUri);
-    } catch (IOException e) {
-      logger.info("Unable to obtain content type for " + httpUri);
-    } catch (java.lang.IllegalStateException e) {
-      logger.info("Unable to obtain content type for " + httpUri);
-    } finally {
-      if (method != null) method.releaseConnection();
-      if (connection != null) connection.close();
     }
-    return mimeType;
+    return contentType;
   }
 
   /**
@@ -367,7 +356,6 @@ public class HttpContent implements Content {
    * @return The URI for the actual content
    */
   public URI getURI() {
-
     return httpUri;
   }
 
@@ -387,6 +375,7 @@ public class HttpContent implements Content {
 
     // obtain connection and retrieve the headers
     method = (GetMethod) establishConnection(GET);
+    contentType = readMimeType(method);
     inputStream = method.getResponseBodyAsStream();
     if (inputStream == null) throw new IOException("Unable to obtain inputstream from " + httpUri);
     if (logger.isDebugEnabled()) logger.debug("Got new input stream for " + httpUri);
@@ -414,5 +403,34 @@ public class HttpContent implements Content {
   /** @see org.mulgara.content.Content#getURIString() */
   public String getURIString() {
     return httpUri.toString();
+  }
+
+
+  /**
+   * Read the mime type. Should only be done if the Mime type is not already available
+   * as this will close the connection.
+   * @return The MimeType for the URL.
+   * @throws NotModifiedException if the content validates against the cache
+   */
+  private MimeType readMimeType(HttpMethod method) throws NotModifiedException {
+    MimeType result = null;
+    String contentType = null;
+
+    try {
+      // obtain connection and retrieve the headers
+      Header header = method.getResponseHeader("Content-Type");
+      if (header != null) {
+        contentType = header.getValue();
+        result = new MimeType(contentType);
+        if (logger.isInfoEnabled()) {
+          logger.info("Obtain content type " + result + "  from " + httpUri);
+        }
+      }
+    } catch (MimeTypeParseException e) {
+      logger.warn("Unable to parse " + contentType + " as a content type for " + httpUri);
+    } catch (java.lang.IllegalStateException e) {
+      logger.info("Unable to obtain content type for " + httpUri);
+    }
+    return result;
   }
 }
