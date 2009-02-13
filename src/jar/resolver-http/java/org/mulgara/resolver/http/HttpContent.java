@@ -81,47 +81,31 @@ public class HttpContent implements Content {
    */
   private Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
-  /**
-   * Connection host <code>host</code>
-   */
+  /** Connection host <code>host</code> */
   private String host;
 
-  /**
-   * <code>port</code> to make connection to
-   */
+  /** <code>port</code> to make connection to */
   private int port;
 
-  /**
-   * Schema for connection <code>schema</code>
-   */
+  /** Schema for connection <code>schema</code> */
   private String schema;
 
-  /**
-   * A container for HTTP attributes that may persist from request to request
-   */
+  /** A container for HTTP attributes that may persist from request to request */
   private HttpState state = new HttpState();
 
-  /**
-   * Http connection
-   */
+  /** Http connection */
   private HttpConnection connection = null;
 
   /** Http connection manager. For setting up and cleaning after connections. */
   HttpConnectionManager connectionManager = new SimpleHttpConnectionManager();
 
-  /**
-   * To obtain the http headers only
-   */
+  /** To obtain the http headers only */
   private static final int HEAD = 1;
 
-  /**
-   * To obtain the response body
-   */
+  /** To obtain the response body */
   private static final int GET = 2;
 
-  /**
-   * Max. number of redirects
-   */
+  /** Max. number of redirects */
   private static final int MAX_NO_REDIRECTS = 10;
 
   public HttpContent(URI uri) throws URISyntaxException, MalformedURLException {
@@ -136,25 +120,18 @@ public class HttpContent implements Content {
    * the content of
    */
   public HttpContent(URL url) throws URISyntaxException {
-
     // Validate "url" parameter
-    if (url == null) {
-      throw new IllegalArgumentException("Null \"url\" parameter");
-    }
-
+    if (url == null)  throw new IllegalArgumentException("Null \"url\" parameter");
     initialiseSettings(url);
   }
 
   /**
    * Initialise the basic settings for a connection
    * 
-   * @param url
-   *          location of source
-   * @throws URISyntaxException
-   *           invalid URI
+   * @param url location of source
+   * @throws URISyntaxException invalid URI
    */
   private void initialiseSettings(URL url) throws URISyntaxException {
-
     // Convert the URL to a Uri
     httpUri = new URI(url.toExternalForm());
 
@@ -162,7 +139,6 @@ public class HttpContent implements Content {
     host = httpUri.getHost();
     port = httpUri.getPort();
     schema = httpUri.getScheme();
-
   }
 
   /**
@@ -171,19 +147,16 @@ public class HttpContent implements Content {
    * @return The node map used to ensure that blank nodes are consistent
    */
   public Map<Object,BlankNode> getBlankNodeMap() {
-
     return blankNodeMap;
   }
 
   /**
    * Obtain the approrpriate connection method
    * 
-   * @param methodType
-   *          can be HEAD or GET
+   * @param methodType can be HEAD or GET
    * @return HttpMethodBase method
    */
   private HttpMethod getConnectionMethod(int methodType) {
-
     if (methodType != GET && methodType != HEAD) {
       throw new IllegalArgumentException("Invalid method base supplied for connection");
     }
@@ -229,11 +202,6 @@ public class HttpContent implements Content {
       method = new GetMethod(httpUri.toString());
     }
 
-    // No longer a useful operation
-//    if (connection.isProxied() && connection.isSecure()) {
-//      method = new ConnectMethod(method);
-//    }
-
     // manually follow redirects due to the
     // strictness of http client implementation
 
@@ -246,18 +214,13 @@ public class HttpContent implements Content {
   /**
    * Obtain a valid connection and follow redirects if necessary.
    * 
-   * @param methodType
-   *          request the headders (HEAD) or body (GET)
+   * @param methodType request the headders (HEAD) or body (GET)
    * @return valid connection method. Can be null.
    * @throws NotModifiedException  if the content validates against the cache
    * @throws IOException  if there's difficulty communicating with the web site
    */
-  private HttpMethod establishConnection(int methodType)
-    throws IOException, NotModifiedException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Establishing connection");
-    }
+  private HttpMethod establishConnection(int methodType) throws IOException, NotModifiedException {
+    if (logger.isDebugEnabled()) logger.debug("Establishing connection");
 
     HttpMethod method = this.getConnectionMethod(methodType);
     Header header = null;
@@ -279,9 +242,7 @@ public class HttpContent implements Content {
       */
      
       // Make the request
-      if (logger.isDebugEnabled()) {
-        logger.debug("Executing HTTP request");
-      }
+      if (logger.isDebugEnabled()) logger.debug("Executing HTTP request");
       connection.open();
       method.execute(state, connection);
       if (logger.isDebugEnabled()) {
@@ -418,9 +379,7 @@ public class HttpContent implements Content {
    */
   public InputStream newInputStream() throws IOException, NotModifiedException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Getting new input stream for " + httpUri);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Getting new input stream for " + httpUri);
 
     // Create an input stream by opening the URL's input stream
     GetMethod method = null;
@@ -429,12 +388,8 @@ public class HttpContent implements Content {
     // obtain connection and retrieve the headers
     method = (GetMethod) establishConnection(GET);
     inputStream = method.getResponseBodyAsStream();
-    if (inputStream == null) {
-      throw new IOException("Unable to obtain inputstream from " + httpUri);
-    }
-    if (logger.isDebugEnabled()) {
-      logger.debug("Got new input stream for " + httpUri);
-    }
+    if (inputStream == null) throw new IOException("Unable to obtain inputstream from " + httpUri);
+    if (logger.isDebugEnabled()) logger.debug("Got new input stream for " + httpUri);
     return inputStream;
   }
 
@@ -456,4 +411,8 @@ public class HttpContent implements Content {
         || status == HttpStatus.SC_SEE_OTHER);
   }
 
+  /** @see org.mulgara.content.Content#getURIString() */
+  public String getURIString() {
+    return httpUri.toString();
+  }
 }

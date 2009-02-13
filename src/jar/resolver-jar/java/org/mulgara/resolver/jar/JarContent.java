@@ -66,9 +66,7 @@ public class JarContent implements Content {
    */
   private Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
-  /**
-   * The wrapped URL.
-   */
+  /** The wrapped URL. */
   private URL url;
 
   /** The URI version of the URL */
@@ -88,10 +86,7 @@ public class JarContent implements Content {
   public JarContent(URL url) throws URISyntaxException {
 
     // Validate "url" parameter
-    if (url == null) {
-
-      throw new IllegalArgumentException("Null \"url\" parameter");
-    }
+    if (url == null) throw new IllegalArgumentException("Null \"url\" parameter");
 
     // Store the URL this class represents
     this.url = url;
@@ -106,19 +101,15 @@ public class JarContent implements Content {
    * @return The node map used to ensure that blank nodes are consistent
    */
   public Map<Object,BlankNode> getBlankNodeMap() {
-
     return blankNodeMap;
   }
 
   public MimeType getContentType() {
-
     try {
       return new MimeType(url.openConnection().getContentType());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       return null;
-    }
-    catch (MimeTypeParseException e) {
+    } catch (MimeTypeParseException e) {
       return null;
     }
   }
@@ -129,7 +120,6 @@ public class JarContent implements Content {
    * @return The URI for the actual content
    */
   public URI getURI() {
-
     return urlUri;
   }
 
@@ -141,20 +131,21 @@ public class JarContent implements Content {
    * @throws IOException
    */
   public InputStream newInputStream() throws IOException {
-
     // Create an input stream by opening the URL's input stream
     InputStream inputStream = url.openStream();
-
     assert inputStream != null;
-
     return inputStream;
   }
 
   /**
    * @throws IOException always (not implemented)
    */
-  public OutputStream newOutputStream() throws IOException
-  {
+  public OutputStream newOutputStream() throws IOException {
     throw new IOException("Output of JAR content not implemented");
+  }
+
+  /** @see org.mulgara.content.Content#getURIString() */
+  public String getURIString() {
+    return urlUri.toString();
   }
 }

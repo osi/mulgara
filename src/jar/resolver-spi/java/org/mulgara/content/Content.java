@@ -50,12 +50,10 @@ import org.jrdf.graph.BlankNode;
  * @version $Revision: 1.8 $
  * @modified $Date: 2005/01/05 04:58:50 $ @maintenanceAuthor $Author: newmana $
  * @company <a href="mailto:info@tucanatech.com">Tucana Technology</a>
- * @copyright &copy; 2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology Inc</a>
+ * @copyright &copy; 2004 <a href="http://www.tucanatech.com/">Tucana Technology Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface Content
-{
+public interface Content {
   /**
    * A map attached to the 'scope' of the content object containing a
    * mapping from ContentHandler specific identifiers to blank nodes from
@@ -100,4 +98,10 @@ public interface Content
    * @throws IOException if the stream can't be obtained
    */
   public OutputStream newOutputStream() throws IOException, ModifiedException;
+
+  /**
+   * Gets a string representation of the URI, or something suitable if no URI is available.
+   * @return A string containing a URI or a description of an alternative.
+   */
+  public String getURIString();
 }

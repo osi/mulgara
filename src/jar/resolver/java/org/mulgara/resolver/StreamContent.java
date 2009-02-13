@@ -53,24 +53,23 @@ import org.mulgara.content.Content;
  *   Technology Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class StreamContent implements Content
-{
+class StreamContent implements Content {
+
   /**
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
    */
   private final Map<Object,BlankNode> blankNodeMap = new HashMap<Object,BlankNode>();
 
-  /**
-   * The wrapped uri to assist with InputStream content detection.
-   */
+  /** The wrapped uri to assist with InputStream content detection. */
   private URI uri;
 
-  /**
-   * The wrapped inputStream containing the source content
-   */
+  /** The wrapped inputStream containing the source content. */
   private InputStream inputStream;
-  
+
+  /** The content type of the stream, if provided. */
+  private MimeType contentType;
+
   //
   // Constructor
   //
@@ -80,8 +79,7 @@ class StreamContent implements Content
    * A URI must be supplied to help determine the content
    * of the inputstream.  
    */
-  StreamContent(InputStream inputStream, URI uri)
-  {
+  StreamContent(InputStream inputStream, URI uri) {
     // Validate "file" parameter
     if (uri == null) {
       throw new IllegalArgumentException("Null \"uri\" parameter");
@@ -91,6 +89,25 @@ class StreamContent implements Content
     }
     // Initialize fields
     this.uri = uri;
+    this.contentType = null;
+    this.inputStream = inputStream;
+  }
+
+  /**
+   * Wrap a {@link InputStream} as {@link Content}.
+   * The content type must be provided.  
+   */
+  StreamContent(InputStream inputStream, MimeType contentType) {
+    // Validate "file" parameter
+    if (contentType == null) {
+      throw new IllegalArgumentException("Null \"contentType\" parameter");
+    }
+    if (inputStream == null) {
+      throw new IllegalArgumentException("Null \"inputStream\" parameter");
+    }
+    // Initialize fields
+    this.uri = null;
+    this.contentType = contentType;
     this.inputStream = inputStream;
   }
 
@@ -98,8 +115,7 @@ class StreamContent implements Content
   // Methods implementing Content
   //
 
-  public Map<Object,BlankNode> getBlankNodeMap()
-  {
+  public Map<Object,BlankNode> getBlankNodeMap() {
     return blankNodeMap;
   }
 
@@ -107,18 +123,15 @@ class StreamContent implements Content
    * @return {@inheritDoc}; always returns <code>null</code> because Java
    *   {@link File}s don't have any inherent MIME type
    */
-  public MimeType getContentType()
-  {
-    return null;
+  public MimeType getContentType() {
+    return contentType;
   }
 
   /**
    * This URI will help determine the contents of the inputStream.
-   * 
    * @see org.mulgara.content.Content#getURI()
    */
-  public URI getURI()
-  {
+  public URI getURI() {
     return uri;
   }
 
@@ -127,8 +140,7 @@ class StreamContent implements Content
    * 
    * @see org.mulgara.content.Content#newInputStream()
    */
-  public InputStream newInputStream() throws IOException
-  {
+  public InputStream newInputStream() throws IOException {
     return inputStream;
   }
 
@@ -140,8 +152,12 @@ class StreamContent implements Content
    *
    * @throws IOException always
    */
-  public OutputStream newOutputStream() throws IOException
-  {
+  public OutputStream newOutputStream() throws IOException {
     throw new IOException("Stream resolver can't perform output");
+  }
+
+  /** @see org.mulgara.content.Content#getURIString() */
+  public String getURIString() {
+    return uri == null ? "<<stream>>" : uri.toString();
   }
 }

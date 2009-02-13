@@ -30,7 +30,6 @@ package org.mulgara.resolver.file;
 // Java 2 standard packages
 import java.io.*;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.zip.*;
 
@@ -54,8 +53,8 @@ import org.mulgara.content.Content;
  *   Technology Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class FileContent implements Content
-{
+public class FileContent implements Content {
+
   /**
    * A map containing any format-specific blank node mappings from previous
    * parses of this file.
@@ -79,12 +78,9 @@ public class FileContent implements Content
   /**
    * Wrap a {@link File} as {@link Content}.
    */
-  public FileContent(File file)
-  {
+  public FileContent(File file) {
     // Validate "file" parameter
-    if (file == null) {
-      throw new IllegalArgumentException("Null \"file\" parameter");
-    }
+    if (file == null) throw new IllegalArgumentException("Null \"file\" parameter");
 
     // Initialize fields
     this.file = file;
@@ -94,8 +90,7 @@ public class FileContent implements Content
   // Methods implementing Content
   //
 
-  public Map<Object,BlankNode> getBlankNodeMap()
-  {
+  public Map<Object,BlankNode> getBlankNodeMap() {
     return blankNodeMap;
   }
 
@@ -103,26 +98,22 @@ public class FileContent implements Content
    * @return {@inheritDoc}; always returns <code>null</code> because Java
    *   {@link File}s don't have any inherent MIME type
    */
-  public MimeType getContentType()
-  {
+  public MimeType getContentType() {
     return null;
   }
 
-  public URI getURI()
-  {
+  public URI getURI() {
     return file.toURI();
   }
 
-  public InputStream newInputStream() throws IOException
-  {
+  public InputStream newInputStream() throws IOException {
     InputStream inputStream = new FileInputStream(file);
 
     // Guess at transfer encoding (compression scheme) based on file extension
     if (file.getName().toLowerCase().endsWith(".gz")) {
       // The file name ends with ".gz", so assume it's a gzip'ed file
       inputStream = new GZIPInputStream(inputStream);
-    }
-    else if (file.getName().toLowerCase().endsWith(".zip")) {
+    } else if (file.getName().toLowerCase().endsWith(".zip")) {
       // The file name ends with ".zip", so assume it's a zip'ed file
       inputStream = new ZipInputStream(inputStream);
 
@@ -135,16 +126,14 @@ public class FileContent implements Content
     return inputStream;
   }
 
-  public OutputStream newOutputStream() throws IOException
-  {
+  public OutputStream newOutputStream() throws IOException {
     OutputStream outputStream = new FileOutputStream(file);
 
     // Guess at transfer encoding (compression scheme) based on file extension
     if (file.getName().toLowerCase().endsWith(".gz")) {
       // The file name ends with ".gz", so assume it's a gzip'ed file
       outputStream = new GZIPOutputStream(outputStream);
-    }
-    else if (file.getName().toLowerCase().endsWith(".zip")) {
+    } else if (file.getName().toLowerCase().endsWith(".zip")) {
       // The file name ends with ".zip", so assume it's a zip'ed file
       outputStream = new ZipOutputStream(outputStream);
 
@@ -152,10 +141,15 @@ public class FileContent implements Content
       ((ZipOutputStream) outputStream).putNextEntry(new ZipEntry(
         "dummy-specified-by-" + getClass()
       ));
-      
     }
     assert outputStream != null;
 
     return outputStream;
   }
+
+  /** @see org.mulgara.content.Content#getURIString() */
+  public String getURIString() {
+    return file.toURI().toString();
+  }
+
 }
