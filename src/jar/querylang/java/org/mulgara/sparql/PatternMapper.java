@@ -143,7 +143,7 @@ public class PatternMapper {
       // store this reference as a value that should be in the FROM NAMED list
       URI ref = ((IRIReference)graph).getUri();
       graphUris.add(ref);
-      constraint = new ConstraintIn(constraint, new URIReferenceImpl(ref));
+      constraint = new ConstraintIn(constraint, new URIReferenceImpl(ref, false));
     } else {
       throw new IllegalArgumentException("Illegal argument in a GRAPH expression: " + graph.getClass().getSimpleName());
     }
@@ -159,7 +159,7 @@ public class PatternMapper {
     if (n instanceof org.mulgara.sparql.parser.cst.Variable) {
       return new Variable(((org.mulgara.sparql.parser.cst.Variable)n).getName());
     }
-    if (n instanceof IRIReference) return new URIReferenceImpl(((IRIReference)n).getUri());
+    if (n instanceof IRIReference) return new URIReferenceImpl(((IRIReference)n).getUri(), false);
     if (n instanceof BlankNode) return new Variable(((BlankNode)n).getLabel());
     if (n instanceof RDFLiteral) {
       RDFLiteral lit = (RDFLiteral)n;
