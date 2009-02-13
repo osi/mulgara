@@ -30,11 +30,6 @@ package org.mulgara.content.mbox;
 // Java 2 standard packages
 import java.io.*;
 import java.net.URI;
-import java.util.Map;
-
-// Java 2 enterprise packages
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 
 // Third party packages
 import org.apache.log4j.Logger; // Apache Log4J
@@ -72,22 +67,6 @@ public class MBoxContentHandler implements ContentHandler {
   /** Logger. */
   private static Logger log = Logger.getLogger(MBoxContentHandler.class);
 
-  /**
-   * The MIME type of MBoxes.
-   */
-  private static final MimeType TEXT_MAILBOX;
-
-  static {
-
-    try {
-
-      // Create the mime type to represent mailboxes
-      TEXT_MAILBOX = new MimeType("text", "mailbox");
-    } catch (MimeTypeParseException e) {
-
-      throw new ExceptionInInitializerError(e);
-    }
-  }
 
   /**
    * Parses the messages of an mbox file pointed to by the content object which
@@ -113,7 +92,7 @@ public class MBoxContentHandler implements ContentHandler {
     } catch (TuplesException tuplesException) {
 
       throw new ContentHandlerException("Unable to create statements object from " +
-                                        "content object: " + content.getURI().toString(),
+                                        "content object: " + content.getURIString(),
                                         tuplesException);
     }
 
@@ -127,52 +106,43 @@ public class MBoxContentHandler implements ContentHandler {
   public boolean canParse(Content content) throws NotModifiedException {
 
     if (content.getClass().getName().equals("org.mulgara.resolver.StreamContent")) {
-
       log.info("Unable to parse streaming content in mbox content handler.");
-
       return false;
     }
 
 
-    // Get the mime type of the content object
-    MimeType contentType = content.getContentType();
+    // Ignoring the MIME type
 
-    //if (contentType != null && TEXT_MAILBOX.match(contentType)) {
+    // Container for our input stream from the mbox file
+    InputStream inputStream = null;
 
-      // If the mime type matches an mbox then check the first line to see if it
-      // is a valid format
+    try {
 
-      // Container for our input stream from the mbox file
-      InputStream inputStream = null;
-
-      try {
-
-        // Obtain the input stream to our file
-        inputStream = content.newInputStream();
-      } catch (NotModifiedException e) {
-        // Not only CAN we parse this, we already have
-        return true;
-      } catch (IOException ioException) {
-
-        // If we can't obtain an input stream, chances are our mbox file has
-        // problems and is most likely invalid and non-parsable
-        return false;
-      }
-
-      try {
-
-        // Attempt to validate the inputStream to the file in order to validate
-        // that we are working with an MBox
-        validate(inputStream, content.getURI());
-      } catch (InvalidMBoxException invalidMBoxException) {
-
-        // If the mbox is in an invalid format then we can't use it so state
-        // that we can't parse it
-        return false;
-      }
-
+      // Obtain the input stream to our file
+      inputStream = content.newInputStream();
+    } catch (NotModifiedException e) {
+      // Not only CAN we parse this, we already have
       return true;
-    //}
+    } catch (IOException ioException) {
+
+      // If we can't obtain an input stream, chances are our mbox file has
+      // problems and is most likely invalid and non-parsable
+      return false;
+    }
+
+    try {
+
+      // Attempt to validate the inputStream to the file in order to validate
+      // that we are working with an MBox
+      validate(inputStream, content.getURI());
+    } catch (InvalidMBoxException invalidMBoxException) {
+
+      // If the mbox is in an invalid format then we can't use it so state
+      // that we can't parse it
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -202,10 +172,11 @@ public class MBoxContentHandler implements ContentHandler {
   private void validate(InputStream stream, URI uri) throws InvalidMBoxException {
 
     if (stream == null) {
-
       // The mbox file cannot be null
       throw new InvalidMBoxException("Cannot parse null mbox objects.");
     }
+
+    String file = (uri == null) ? "<<stream>>" : uri.toString();
 
     // Create an input stream reader
     InputStreamReader inputReader = new InputStreamReader(stream);
@@ -226,7 +197,7 @@ public class MBoxContentHandler implements ContentHandler {
     } catch (IOException ioException) {
 
       // We could not read the mbox file
-      throw new InvalidMBoxException("MBox file [" + uri.toString() +
+      throw new InvalidMBoxException("MBox file [" + file +
                                      "] was not able to be read from.",
                                      ioException);
     }
@@ -234,7 +205,7 @@ public class MBoxContentHandler implements ContentHandler {
     if (!line.toLowerCase().startsWith("from ")) {
 
       // The mbox is not RFC822 compliant
-      throw new InvalidMBoxException("MBox file [" + uri.toString() +
+      throw new InvalidMBoxException("MBox file [" + file +
                                      "] was not a valid RFC822 mbox.");
     } else {
 
@@ -245,7 +216,7 @@ public class MBoxContentHandler implements ContentHandler {
       } catch (IOException ioException) {
 
         // We could not read the mbox file
-        throw new InvalidMBoxException("MBox file [" + uri.toString() +
+        throw new InvalidMBoxException("MBox file [" + file +
                                        "] was not able to be read from.",
                                        ioException);
       }
@@ -253,7 +224,7 @@ public class MBoxContentHandler implements ContentHandler {
           !line.split(" ")[0].endsWith(":")) {
 
         // The mbox is not RFC822 compliant if the next line is not a header
-      throw new InvalidMBoxException("MBox file [" + uri.toString() +
+      throw new InvalidMBoxException("MBox file [" + file +
                                      "] was not a valid RFC822 mbox.");
       }
     }

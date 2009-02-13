@@ -28,11 +28,9 @@
 package org.mulgara.content.mp3;
 
 // Java 2 standard packages
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-
 // Java 2 enterprise packages
+import java.net.URI;
+
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
@@ -69,8 +67,8 @@ import org.mulgara.resolver.spi.Statements;
 public class MP3ContentHandler implements ContentHandler {
 
   /** Logger. */
-  private static Logger logger =
-      Logger.getLogger(MP3ContentHandler.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(MP3ContentHandler.class.getName());
 
   /**
    * The MIME type of RDF/XML.
@@ -80,8 +78,7 @@ public class MP3ContentHandler implements ContentHandler {
   static {
     try {
       AUDIO_MPEG = new MimeType("audio", "mpeg");
-    }
-    catch (MimeTypeParseException e) {
+    } catch (MimeTypeParseException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
@@ -108,10 +105,13 @@ public class MP3ContentHandler implements ContentHandler {
       // Attempt to create the MP3 statements
       statements = new MP3Statements(content, resolverSession);
     } catch (TuplesException tuplesException) {
-
-      throw new ContentHandlerException("Unable to create statements object from " +
-                                        "content object: " + content.getURI().toString(),
-                                        tuplesException);
+      URI u = content.getURI();
+      if (u == null) {
+        throw new ContentHandlerException("Unable to create statements object from stream with type" +
+                                          content.getContentType(), tuplesException);
+      }
+      throw new ContentHandlerException("Unable to create statements object from content object: " +
+                                        content.getURI().toString(), tuplesException);
     }
 
     return statements;
@@ -128,8 +128,7 @@ public class MP3ContentHandler implements ContentHandler {
       return true;
     }
 
-    if (content.getURI() == null)
-    {
+    if (content.getURI() == null) {
       return false;
     }
                                                                                 

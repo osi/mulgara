@@ -28,10 +28,7 @@
 package org.mulgara.content.mbox.parser.model.impl;
 
 import java.io.*;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.List;
 import java.util.Date;
@@ -53,7 +50,6 @@ import org.mulgara.content.mbox.parser.model.MBox;
 import org.mulgara.content.mbox.parser.model.exception.InvalidMBoxException;
 import org.mulgara.content.mbox.parser.model.exception.ModelException;
 import org.mulgara.content.mbox.parser.model.exception.VocabularyException;
-import org.mulgara.util.TempDir;
 
 /**
  * implementation of the MBox object interface which representes an MBox along
@@ -84,16 +80,10 @@ public class MBoxImpl implements MBox {
   private Graph graph;
 
   /** The iterator to use for iterating the graph */
-  private ClosableIterator iterator;
-
-  /** Indicator as to whether we are parsing one file or a directory */
-  private boolean singleFile;
+  private ClosableIterator<Triple> iterator;
 
   /** The tool to perform the actual parsing of an mbox into message beans */
   private MimeMessageToPart mimeMessageToPart;
-
-  /** The name of the cached file */
-  private String cachedFileName;
 
   /** The content object this object represents */
   private Content mBoxContent;
@@ -103,9 +93,6 @@ public class MBoxImpl implements MBox {
    * required to set the graph and file to use.
    */
   public MBoxImpl(Content content) {
-
-    // Always assume a single file
-    singleFile = true;
 
     // Instantiate our parsing tool
     mimeMessageToPart = new MimeMessageToPart();
@@ -120,7 +107,6 @@ public class MBoxImpl implements MBox {
    * @return The location of the mbox as an URI
    */
   public URI getURI() {
-
     return mBoxContent.getURI();
   }
 
@@ -146,7 +132,6 @@ public class MBoxImpl implements MBox {
    * @return The graph object that the mbox is using to store its content
    */
   public Graph getGraph() {
-
     return graph;
   }
 
@@ -156,7 +141,6 @@ public class MBoxImpl implements MBox {
    * @param graph The graph object the mbox should use to store its content
    */
   public void setGraph(Graph graph) {
-
     // Store the new graph
     this.graph = graph;
   }
@@ -177,7 +161,7 @@ public class MBoxImpl implements MBox {
     if (iterator.hasNext()) {
 
       // Get the next triple in the iterator
-      nextTriple = (Triple) iterator.next();
+      nextTriple = iterator.next();
     } else {
 
       try {
@@ -205,7 +189,7 @@ public class MBoxImpl implements MBox {
 
         // Get the next triple in the iterator if we have any, as the message
         // we just finished with may have been the last
-        nextTriple = (Triple) iterator.next();
+        nextTriple = iterator.next();
       } else {
 
         // If we could not find any more messages then end the triple search
@@ -287,7 +271,7 @@ public class MBoxImpl implements MBox {
     } catch (IOException ioException) {
 
       throw new ModelException("Failed to open stream to original resource: " +
-                               getURI().toString(), ioException);
+                               getUriString(), ioException);
     }
 
     // Validate the file
@@ -311,7 +295,7 @@ public class MBoxImpl implements MBox {
     } catch (IOException ioException) {
 
       throw new ModelException("Failed to reopen stream to original resource: " +
-                               getURI().toString(), ioException);
+                               getUriString(), ioException);
     }
 
     try {
@@ -356,7 +340,7 @@ public class MBoxImpl implements MBox {
       // exceptions, otherwise we just ignore the mbox because we don't
       // want to interrupt processing
       throw new ModelException(
-          "Unable to process mbox '" + getURI().toString() +
+          "Unable to process mbox '" + getUriString() +
           "' into parts due to I/O failure.", ioProcessingException);
     } catch (UnsupportedEncodingProcessingException
              unsupportedEncodingProcessingException) {
@@ -431,7 +415,7 @@ public class MBoxImpl implements MBox {
     } catch (IOException ioException) {
 
       // We could not read the mbox file
-      throw new InvalidMBoxException("MBox file [" + getURI().toString() +
+      throw new InvalidMBoxException("MBox file [" + getUriString() +
                                      "] was not able to be read from.",
                                      ioException);
     }
@@ -439,7 +423,7 @@ public class MBoxImpl implements MBox {
     if (line == null || !line.toLowerCase().startsWith("from ")) {
 
       // The mbox is not RFC822 compliant
-      throw new InvalidMBoxException("MBox file [" + getURI().toString() +
+      throw new InvalidMBoxException("MBox file [" + getUriString() +
                                      "] was not a valid RFC822 mbox.");
     } else {
 
@@ -450,7 +434,7 @@ public class MBoxImpl implements MBox {
       } catch (IOException ioException) {
 
         // We could not read the mbox file
-        throw new InvalidMBoxException("MBox file [" + getURI().toString() +
+        throw new InvalidMBoxException("MBox file [" + getUriString() +
                                        "] was not able to be read from.",
                                        ioException);
       }
@@ -463,7 +447,7 @@ public class MBoxImpl implements MBox {
           // We require a check for either a blank line or an invalid header
 
           // The mbox is not RFC822 compliant if the next line is not a header
-          throw new InvalidMBoxException("MBox file [" + getURI().toString() +
+          throw new InvalidMBoxException("MBox file [" + getUriString() +
                                          "] was not a valid RFC822 mbox.");
         }
       }
@@ -478,8 +462,7 @@ public class MBoxImpl implements MBox {
    * @throws ModelException
    * @throws VocabularyException
    */
-  private void storeBeansRDF(MimeMessageToPartBean bean) throws
-      ModelException, VocabularyException {
+  private void storeBeansRDF(MimeMessageToPartBean bean) throws ModelException, VocabularyException {
 
     // Create the vocabulary for the graph
     Properties vocab = EmailVocab.createVocabulary(graph);
@@ -490,23 +473,18 @@ public class MBoxImpl implements MBox {
     // Container for our subject node
     SubjectNode subject = null;
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("Creating graph nodes for bean: " + bean);
-    }
+    if (log.isDebugEnabled()) log.debug("Creating graph nodes for bean: " + bean);
 
     try {
-
       // Create a subject blank node
       subject = factory.createResource();
     } catch (GraphElementFactoryException graphElementFactoryException) {
-
       throw new ModelException("Unable to create resource node for subject.",
                                graphElementFactoryException);
     }
 
     // Get the list of bccs
-    List bccList = bean.getBCCAddresses();
+    List<QuollEmailAddress> bccList = bean.getBCCAddresses();
 
     for (int j = 0; j < bccList.size(); j++) {
 
@@ -523,7 +501,7 @@ public class MBoxImpl implements MBox {
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
@@ -536,7 +514,7 @@ public class MBoxImpl implements MBox {
 
         throw new ModelException("Failed to add BCC address '" +
                                  address.getAddress() + "' to mbox: " +
-                                 getURI().toString(), graphException);
+                                 getUriString(), graphException);
       }
 
       if (log.isDebugEnabled()) {
@@ -548,12 +526,7 @@ public class MBoxImpl implements MBox {
     }
 
     // Get the list of ccs
-    List ccList = bean.getCCAddresses();
-
-    for (int j = 0; j < ccList.size(); j++) {
-
-      // Retrieve the next address
-      QuollEmailAddress address = (QuollEmailAddress) ccList.get(j);
+    for (QuollEmailAddress address: bean.getCCAddresses()) {
 
       // Container for our object node
       ObjectNode objectNode = null;
@@ -565,7 +538,7 @@ public class MBoxImpl implements MBox {
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
@@ -578,7 +551,7 @@ public class MBoxImpl implements MBox {
 
         throw new ModelException("Failed to add CC address '" +
                                  address.getAddress() + "' to mbox: " +
-                                 getURI().toString(), graphException);
+                                 getUriString(), graphException);
       }
 
       if (log.isDebugEnabled()) {
@@ -589,13 +562,7 @@ public class MBoxImpl implements MBox {
       }
     }
 
-    // Get the list of tos
-    List toList = bean.getToAddresses();
-
-    for (int j = 0; j < toList.size(); j++) {
-
-      // Retrieve the next address
-      QuollEmailAddress address = (QuollEmailAddress) toList.get(j);
+    for (QuollEmailAddress address: bean.getToAddresses()) {
 
       // Container for our object node
       ObjectNode objectNode = null;
@@ -607,7 +574,7 @@ public class MBoxImpl implements MBox {
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
@@ -620,7 +587,7 @@ public class MBoxImpl implements MBox {
 
         throw new ModelException("Failed to add TO address '" +
                                  address.getAddress() + "' to mbox: " +
-                                 getURI().toString(), graphException);
+                                 getUriString(), graphException);
       }
 
       if (log.isDebugEnabled()) {
@@ -642,26 +609,18 @@ public class MBoxImpl implements MBox {
     if (from != null) {
 
       try {
-
         // Create a literal out of the address
         objectNode = factory.createLiteral(from.getAddress());
       } catch (GraphElementFactoryException graphElementFactoryException) {
-
-        throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
-                                 graphElementFactoryException);
+        throw new ModelException("Failed to create literal for mbox: " + getUriString(), graphElementFactoryException);
       }
 
       try {
-
         // Add the triple to the graph
-        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.FROM),
-                  objectNode);
+        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.FROM), objectNode);
       } catch (GraphException graphException) {
-
-        throw new ModelException("Failed to add from address '" +
-                                 from.getAddress() + "' to mbox: " +
-                                 getURI().toString(), graphException);
+        throw new ModelException("Failed to add from address '" + from.getAddress() + "' to mbox: " +
+                                 getUriString(), graphException);
       }
     }
 
@@ -671,25 +630,21 @@ public class MBoxImpl implements MBox {
     if (date != null) {
 
       try {
-
         // Create a literal out of the date
         objectNode = factory.createLiteral(formatDateTime(date));
       } catch (GraphElementFactoryException graphElementFactoryException) {
-
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
       try {
 
         // Add the triple to the graph
-        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.DATE),
-                  objectNode);
+        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.DATE), objectNode);
       } catch (GraphException graphException) {
-
         throw new ModelException("Failed to add date '" + formatDateTime(date) +
-                                 "' to mbox: " + getURI().toString(),
+                                 "' to mbox: " + getUriString(),
                                  graphException);
       }
     }
@@ -706,7 +661,7 @@ public class MBoxImpl implements MBox {
       } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
@@ -718,7 +673,7 @@ public class MBoxImpl implements MBox {
       } catch (GraphException graphException) {
 
         throw new ModelException("Failed to add ID '" + id + "' to mbox: " +
-                                 getURI().toString(), graphException);
+                                 getUriString(), graphException);
       }
 
       if (log.isDebugEnabled()) {
@@ -731,34 +686,22 @@ public class MBoxImpl implements MBox {
     }
 
     // Retrieve the references of the message
-    List references = bean.getReferences();
-
-    for (int j = 0; j < references.size(); j++) {
-
-      // Retrieve the next reference
-      String reference = (String) references.get(j);
-
+    for (String reference: bean.getReferences()) {
       try {
-
         // Create a literal out of the reference
         objectNode = factory.createLiteral(reference);
       } catch (GraphElementFactoryException graphElementFactoryException) {
-
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
       try {
-
         // Add the triple to the graph
-        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.REFERENCES),
-                  objectNode);
+        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.REFERENCES), objectNode);
       } catch (GraphException graphException) {
-
         throw new ModelException("Failed to add reference '" + reference +
-                                 "' to mbox: " + getURI().toString(),
-                                 graphException);
+                                 "' to mbox: " + getUriString(), graphException);
       }
     }
 
@@ -766,28 +709,21 @@ public class MBoxImpl implements MBox {
     String subjectString = bean.getSubject();
 
     if (subjectString != null) {
-
       try {
-
         // Create a literal out of the subject
         objectNode = factory.createLiteral(subjectString);
       } catch (GraphElementFactoryException graphElementFactoryException) {
-
         throw new ModelException("Failed to create literal for mbox: " +
-                                 getURI().toString(),
+                                 getUriString(),
                                  graphElementFactoryException);
       }
 
       try {
-
         // Add the triple to the graph
-        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.SUBJECT),
-                  objectNode);
+        graph.add(subject, (PredicateNode) vocab.get(EmailVocab.SUBJECT), objectNode);
       } catch (GraphException graphException) {
-
         throw new ModelException("Failed to add subject '" + subjectString +
-                                 "' to mbox: " +
-                                 getURI().toString(), graphException);
+                                 "' to mbox: " + getUriString(), graphException);
       }
     }
 
@@ -795,35 +731,23 @@ public class MBoxImpl implements MBox {
     PredicateNode typePredicate = null;
 
     try {
-
       // Create a predicate for type
       typePredicate = factory.createResource(RDF.TYPE);
     } catch (GraphElementFactoryException graphElementFactoryException) {
-
-      throw new ModelException("Failed to create type predicate: " + RDF.TYPE,
-                               graphElementFactoryException);
+      throw new ModelException("Failed to create type predicate: " + RDF.TYPE, graphElementFactoryException);
     }
 
     try {
-
       // Add the type triple to the graph
-      graph.add(subject, typePredicate,
-                (ObjectNode) vocab.get(EmailVocab.MESSAGE));
+      graph.add(subject, typePredicate, (ObjectNode) vocab.get(EmailVocab.MESSAGE));
     } catch (GraphException graphException) {
-
       throw new ModelException("Failed to add type '" + RDF.TYPE +
-                               "' to mbox: " +
-                               getURI().toString(), graphException);
+                               "' to mbox: " + getUriString(), graphException);
     }
 
-    // Retrieve the attachments of the message
-    Attachment[] attachments = bean.getParts();
-
-    for (int j = 0; j < attachments.length; j++) {
-
+    for (Attachment attachment: bean.getParts()) {
       // Add the next attachment to the resource
-      addAttachment(subject, attachments[j], vocab);
-
+      addAttachment(subject, attachment, vocab);
     }
 
   }
@@ -997,6 +921,14 @@ public class MBoxImpl implements MBox {
   }
 
   /**
+   * Gets a string representation of the URI.
+   * @return A String for the URI of the content.
+   */
+  private String getUriString() {
+    return mBoxContent.getURIString();
+  }
+
+  /**
    * Calculates whether the given object is equal to the current mbox.  Only the
    * file is required to be the same as the class is the encapsulation of a file
    * handle and will always have the same content for a particular handle.
@@ -1022,13 +954,15 @@ public class MBoxImpl implements MBox {
     MBox mbox = null;
 
     try {
-
       // Cast the object to an MBox
       mbox = (MBox) object;
     } catch (ClassCastException classCastException) {
-
       // If the object is not of the right cast then it is not equal
       return false;
+    }
+
+    if (mbox.getURI() == null) {
+      return getURI() == null;
     }
 
     if (mbox.getURI().compareTo(getURI()) == 0) {

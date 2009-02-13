@@ -174,8 +174,8 @@ public class MBoxStatementsUnitTest extends TestCase {
                                   "data" + File.separator + "mbox"), "Trash");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -255,19 +255,19 @@ public class MBoxStatementsUnitTest extends TestCase {
     } catch (NotModifiedException notModifiedException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", notModifiedException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     } catch (TuplesException tuplesException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", tuplesException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     }
 
     // Check the statements objects was really created
@@ -286,8 +286,8 @@ public class MBoxStatementsUnitTest extends TestCase {
                                   "data" + File.separator + "mbox"), "Trash");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -367,19 +367,19 @@ public class MBoxStatementsUnitTest extends TestCase {
     } catch (NotModifiedException notModifiedException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", notModifiedException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     } catch (TuplesException tuplesException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", tuplesException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     }
 
     // Check the statements objects was really created
@@ -400,7 +400,7 @@ public class MBoxStatementsUnitTest extends TestCase {
                 content.getURI() + "].", tuplesException);
 
       // Fail the test
-      fail("Unable to retrieve number of statements for [" + content.getURI() +
+      fail("Unable to retrieve number of statements for [" + content.getURIString() +
            "].");
 
     }
@@ -425,8 +425,8 @@ public class MBoxStatementsUnitTest extends TestCase {
                                   "data" + File.separator + "mbox"), "Trash");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -506,19 +506,19 @@ public class MBoxStatementsUnitTest extends TestCase {
     } catch (NotModifiedException notModifiedException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", notModifiedException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     } catch (TuplesException tuplesException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", tuplesException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     }
 
     // Check the statements objects was really created
@@ -550,8 +550,8 @@ public class MBoxStatementsUnitTest extends TestCase {
                                   "data" + File.separator + "mbox"), "Trash");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -631,19 +631,19 @@ public class MBoxStatementsUnitTest extends TestCase {
     } catch (NotModifiedException notModifiedException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", notModifiedException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     } catch (TuplesException tuplesException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", tuplesException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     }
 
     // Check the statements objects was really created
@@ -690,11 +690,11 @@ public class MBoxStatementsUnitTest extends TestCase {
 
         log.debug("Globalized values of first entry: [" +
                   resolverSession.globalize(statements.getColumnValue(
-            statements.SUBJECT)) + ", " +
+            MBoxStatements.SUBJECT)) + ", " +
                   resolverSession.globalize(statements.getColumnValue(
-            statements.PREDICATE)) + ", " +
+            MBoxStatements.PREDICATE)) + ", " +
                   resolverSession.globalize(statements.getColumnValue(
-            statements.OBJECT)) + "]");
+            MBoxStatements.OBJECT)) + "]");
       } catch (TuplesException tuplesException) {
 
         // Ignore the exception as we are debugging
@@ -712,7 +712,7 @@ public class MBoxStatementsUnitTest extends TestCase {
     try {
 
       // Get the subject node id
-      subject = statements.getColumnValue(statements.SUBJECT);
+      subject = statements.getColumnValue(MBoxStatements.SUBJECT);
     } catch (TuplesException tuplesException) {
 
       // Log the exception
@@ -728,7 +728,7 @@ public class MBoxStatementsUnitTest extends TestCase {
     try {
 
       // Get the predicate node id
-      predicate = statements.getColumnValue(statements.PREDICATE);
+      predicate = statements.getColumnValue(MBoxStatements.PREDICATE);
     } catch (TuplesException tuplesException) {
 
       // Log the exception
@@ -744,7 +744,7 @@ public class MBoxStatementsUnitTest extends TestCase {
     try {
 
       // Get the object node id
-      object = statements.getColumnValue(statements.OBJECT);
+      object = statements.getColumnValue(MBoxStatements.OBJECT);
     } catch (TuplesException tuplesException) {
 
       // Log the exception
@@ -842,8 +842,8 @@ public class MBoxStatementsUnitTest extends TestCase {
                                   "data"), "camera.owl");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -913,6 +913,7 @@ public class MBoxStatementsUnitTest extends TestCase {
     ResolverSession resolverSession = new TestResolverSession();
 
     // Container for our statements object
+    @SuppressWarnings("unused")
     MBoxStatements statements = null;
 
     // Boolean to show we failed to initialise (assumed false)
@@ -1063,19 +1064,19 @@ public class MBoxStatementsUnitTest extends TestCase {
     } catch (NotModifiedException notModifiedException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", notModifiedException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     } catch (TuplesException tuplesException) {
 
       // Log the exception
-      log.error("Failed to parse out [" + content.getURI() + "] into " +
+      log.error("Failed to parse out [" + content.getURIString() + "] into " +
                 "statements.", tuplesException);
 
       // Fail the test
-      fail("Failed to parse out [" + content.getURI() + "] into statements.");
+      fail("Failed to parse out [" + content.getURIString() + "] into statements.");
     }
 
     // Check the statements objects was really created

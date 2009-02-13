@@ -112,9 +112,13 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
     }
 
     if (defaultHandler == null) {
-      throw new ContentHandlerException(
-        "Unable to determine content type for " + content.getURI()
-      );
+      if (content.getURI() != null) {
+        throw new ContentHandlerException("Unable to determine content type for " + content.getURI());
+      }
+      if (content.getContentType() != null) {
+        throw new ContentHandlerException("Unknown content type: " + content.getContentType());
+      }
+      throw new ContentHandlerException("Attempting to parse invalid content.");
     }
     assert defaultHandler != null;
 
@@ -133,9 +137,13 @@ public class ContentHandlerManagerImpl implements ContentHandlerManager
     }
 
     if (defaultHandler == null) {
-      throw new ContentHandlerException(
-        "Unable to determine type of " + content.getURI()
-      );
+      if (content.getContentType() != null) {
+        throw new ContentHandlerException("Unrecognized content type: " + content.getContentType());
+      }
+      if (content.getURI() != null) {
+        throw new ContentHandlerException("Unable to determine type of " + content.getURI());
+      }
+      throw new ContentHandlerException("Attempted to parse invalid content");
     }
     assert defaultHandler != null;
 

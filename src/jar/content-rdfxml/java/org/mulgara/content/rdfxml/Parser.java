@@ -34,6 +34,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
 
+import javax.activation.MimeType;
+
 // logging
 import org.apache.log4j.Logger;
 
@@ -48,6 +50,7 @@ import org.mulgara.content.NotModifiedException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.ResolverSession;
@@ -169,6 +172,9 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
    */
   private URI baseURI;
 
+  /** The data type on the stream provided. If provided then this should be application/rdf+xml. */
+  private MimeType contentType;
+
   /**
    * The context in which to localize incoming RDF nodes.
    */
@@ -208,7 +214,7 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
     }
 
     // Initialize fields
-    this.baseURI      = content.getURI();
+    this.baseURI      = content.getURI() != null ? content.getURI() : URI.create(Mulgara.NAMESPACE);
     try {
       this.blankNodeNameMap = new StringToLongMap();
       this.blankNodeIdMap = IntFile.open(
@@ -222,9 +228,9 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
     try {
       this.inputStream  = content.newInputStream();
     } catch (IOException e) {
-      throw new TuplesException("Unable to obtain input stream from " + baseURI,
-                                e);
+      throw new TuplesException("Unable to obtain input stream from " + baseURI, e);
     }
+    this.contentType = content.getContentType();
     this.resolverSession = resolverSession;
 
     // Configure the RDF/XML parser
@@ -288,7 +294,7 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
     Throwable t = null;
 
     try {
-      arp.load(inputStream, baseURI.toString());
+      arp.load(inputStream, baseURI == null ? "" : baseURI.toString());
       if (logger.isDebugEnabled()) {
         logger.debug("Parsed RDF/XML");
       }
@@ -486,6 +492,7 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
       queue.clear();
       headIndex = 0;
       headBuffer = null;
+      if (baseURI == null) throw new TuplesException("Exception while reading stream of type: " + contentType, exception);
       throw new TuplesException("Exception while reading " + baseURI, exception);
     }
   }

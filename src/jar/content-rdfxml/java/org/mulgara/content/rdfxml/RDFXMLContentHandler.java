@@ -106,8 +106,7 @@ public class RDFXMLContentHandler implements ContentHandler
     // We're breaking the WWW architectural principle of URI Opacity by doing
     // so (see http://www.w3.org/TR/webarch/#uri-opacity).
 
-    if (content.getURI() == null)
-    {
+    if (content.getURI() == null) {
       return false;
     }
 
@@ -132,8 +131,8 @@ public class RDFXMLContentHandler implements ContentHandler
   public void serialize(Statements      statements,
                         Content         content,
                         ResolverSession resolverSession)
-    throws ContentHandlerException, ModifiedException
-  {
+      throws ContentHandlerException, ModifiedException {
+
     RDFXMLWriter rdfXmlWriter = new RDFXMLWriter();
     try {
       rdfXmlWriter.write(
@@ -141,16 +140,10 @@ public class RDFXMLContentHandler implements ContentHandler
         resolverSession,
         new OutputStreamWriter(content.newOutputStream(), "utf-8")
       );
-    }
-    catch (QueryException e) {
-      throw new ContentHandlerException(
-        "Failed to serialize RDF/XML to " + content.getURI(), e
-      );
-    }
-    catch (IOException e) {
-      throw new ContentHandlerException(
-        "Failed to serialize RDF/XML to " + content.getURI(), e
-      );
+    } catch (QueryException e) {
+      throw new ContentHandlerException("Failed to serialize RDF/XML to " + content.getURIString(), e);
+    } catch (IOException e) {
+      throw new ContentHandlerException("Failed to serialize RDF/XML to " + content.getURIString(), e);
     }
   }
 }
