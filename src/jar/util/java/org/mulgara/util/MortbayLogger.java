@@ -178,12 +178,15 @@ public class MortbayLogger implements Logger {
    * @return The new string with the objects inserted.
    */
   private String format(String msg, Object arg0, Object arg1) {
-    // simple test to avoid the unlikely event of a buffer overrun
-    if (msg.contains("%s")) return msg + ": " + arg0 + " - " + arg1;
-    // only replace the first 2 instances - leave the rest alone
-    msg = msg.replaceFirst("\\{\\}", "%s").replaceFirst("\\{\\}", "%s");
-    String a0 = (arg0 == null) ? "-" : arg0.toString();
-    String a1 = (arg1 == null) ? "-" : arg1.toString();
-    return String.format(msg, a0, a1);
+    int i0 = msg.indexOf("{}");
+    int i1 = i0 < 0 ? -1 : msg.indexOf("{}", i0 + 2);
+    
+    if (arg1 != null && i1 >= 0) {
+        msg=msg.substring(0, i1) + arg1 + msg.substring(i1 + 2);
+    }
+    if (arg0 != null && i0 >= 0) {
+        msg = msg.substring(0, i0) + arg0 + msg.substring(i0 + 2);
+    }
+    return msg;
   }
 }
