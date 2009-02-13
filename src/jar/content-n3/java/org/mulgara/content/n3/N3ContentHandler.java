@@ -89,13 +89,10 @@ public class N3ContentHandler implements ContentHandler {
    * @return <code>true</code> if the file part of the URI has an
    *   <code>.n3</code>, <code>.nt</code> or <code>.rdf</code> extension
    */
-  public boolean canParse(Content content) throws NotModifiedException
-  {
+  public boolean canParse(Content content) throws NotModifiedException {
     // We definitely can parse anything of MIME type application/rdf+xml
     MimeType contentType = content.getContentType();
-    if (contentType != null &&
-        (APPLICATION_N3.match(contentType) || TEXT_RDF_N3.match(contentType)))
-    {
+    if (contentType != null && (APPLICATION_N3.match(contentType) || TEXT_RDF_N3.match(contentType))) {
       return true;
     }
 
@@ -103,8 +100,7 @@ public class N3ContentHandler implements ContentHandler {
     // We're breaking the WWW architectural principle of URI Opacity by doing
     // so (see http://www.w3.org/TR/webarch/#uri-opacity).
 
-    if (content.getURI() == null)
-    {
+    if (content.getURI() == null) {
       return false;
     }
 
