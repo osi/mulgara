@@ -190,8 +190,6 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
   public void caseAExpressionConstraintFactor(AExpressionConstraintFactor rawConstraintFactor) {
 
     try {
-      ConstraintExpression tmpConstraintExpression;
-
       if (logger.isDebugEnabled()) logger.debug("Found factor expression constraint factor " + rawConstraintFactor);
 
       // get the constraint expression
@@ -674,7 +672,7 @@ public class ConstraintExpressionBuilder extends AnalysisAdapter {
 
       // create a new resource
       constraintElement = new URIReferenceImpl(interpreter.toURI(
-          ((AResourceElement) element).getResource()));
+          ((AResourceElement) element).getResource()), false);
 
     } else if (element instanceof ALiteralElement) {
 
