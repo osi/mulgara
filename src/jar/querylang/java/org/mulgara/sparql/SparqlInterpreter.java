@@ -313,7 +313,7 @@ public class SparqlInterpreter implements Interpreter {
         } else if (n instanceof IRIReference) {
           // SPARQL SELECT only permits variables; DESCRIBE permits IRI's
           if (queryStruct.getType() == QueryType.select) throw new MulgaraParserException("Unexpected non-variable in the SELECT clause");
-          result.add(new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)n).getUri())));
+          result.add(new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)n).getUri(), false)));
         } else {
           throw new MulgaraParserException("Unexpected select expression");
         }
@@ -369,7 +369,7 @@ public class SparqlInterpreter implements Interpreter {
     }
     // IRIReferences are converted to a URI and wrapped in a ConstantValue
     if (node instanceof IRIReference) {
-      return new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)node).getUri()));
+      return new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)node).getUri(), false));
     }
     // nothing else is valid. We probably have a compound expression.
     throw new MulgaraParserException("Unexpected element in CONSTRUCT template: " + node); 
@@ -481,7 +481,7 @@ public class SparqlInterpreter implements Interpreter {
     List<ConstraintExpression> isConstraints = new ArrayList<ConstraintExpression>(bindingList.size());
     for (IRIReference iri: bindingList) {
       // does this need a graph node that isn't variable?
-      isConstraints.add(new ConstraintIs(var, new URIReferenceImpl(iri.getUri())));
+      isConstraints.add(new ConstraintIs(var, new URIReferenceImpl(iri.getUri(), false)));
     }
     return new ConstraintDisjunction(isConstraints);
   }

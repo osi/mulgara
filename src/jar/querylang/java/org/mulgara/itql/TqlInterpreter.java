@@ -1341,7 +1341,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       
     } else if (element instanceof AResourceTripleElement) {
       // create a new resource
-      node = new URIReferenceImpl(toURI(((AResourceTripleElement)element).getResource()));
+      node = new URIReferenceImpl(toURI(((AResourceTripleElement)element).getResource()), false);
       
     } else if (element instanceof AVariableTripleElement) {
 
