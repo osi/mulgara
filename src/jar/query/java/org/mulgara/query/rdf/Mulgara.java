@@ -43,6 +43,9 @@ public class Mulgara {
   /** Mulgara RDF namespace. */
   public final static String NAMESPACE = "http://mulgara.org/mulgara#";
   
+  /** Mulgara RDF namespace. */
+  public final static String VIRTUAL_NS = "http://mulgara.org/virtual/";
+
   /** A general identifier for an empty graph */
   public final static String NULL_GRAPH = "sys:null";
 
