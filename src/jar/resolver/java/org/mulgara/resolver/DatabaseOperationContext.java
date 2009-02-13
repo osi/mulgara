@@ -412,7 +412,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
   public URI mapToModelTypeURI(URI graphURI) throws QueryException {
     try {
       if (logger.isDebugEnabled()) logger.debug("Finding graphTypeURI for " + graphURI);
-      long rawGraph = systemResolver.localize(new URIReferenceImpl(graphURI));
+      long rawGraph = systemResolver.localize(new URIReferenceImpl(graphURI, false));
       long canGraph = getCanonicalModel(rawGraph);
 
       URI graphTypeURI = findGraphTypeURI(canGraph);

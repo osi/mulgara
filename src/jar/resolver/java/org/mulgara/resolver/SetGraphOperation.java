@@ -31,6 +31,8 @@ package org.mulgara.resolver;
 import java.io.*;
 import java.net.URI;
 
+import javax.activation.MimeType;
+
 // Third party packages
 import org.apache.log4j.Logger;
 
@@ -76,6 +78,7 @@ class SetGraphOperation implements Operation
   private final URI         srcModelURI;
   private final URI         destModelURI;
   private final InputStream inputStream;
+  private final MimeType    contentType;
 
   private Content               content;
   private final ContentHandlerManager contentHandlers;
@@ -102,14 +105,16 @@ class SetGraphOperation implements Operation
   SetGraphOperation(URI         srcModelURI,
                     URI         destModelURI,
                     InputStream inputStream,
+                    MimeType    contentType,
                     ContentHandlerManager contentHandlers,
                     DatabaseSession databaseSession)
   {
     this.srcModelURI      = srcModelURI;
-    this.destModelURI = destModelURI;
-    this.inputStream         = inputStream;
-    this.contentHandlers = contentHandlers;
-    this.databaseSession    = databaseSession;
+    this.destModelURI     = destModelURI;
+    this.inputStream      = inputStream;
+    this.contentType      = contentType;
+    this.contentHandlers  = contentHandlers;
+    this.databaseSession  = databaseSession;
   }
 
   //
@@ -198,7 +203,11 @@ class SetGraphOperation implements Operation
       if (logger.isDebugEnabled()) {
         logger.debug("Detected inputstream associated with " + srcModelURI );
       }
-      content = new StreamContent(inputStream, srcModelURI);
+      if (srcModelURI == null) {
+        content = new StreamContent(inputStream, contentType);
+      } else {
+        content = new StreamContent(inputStream, srcModelURI);
+      }
     } else {
       try {
         content = ContentFactory.getContent(srcModelURI);

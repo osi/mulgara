@@ -34,6 +34,8 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
+import javax.activation.MimeType;
+
 // Locally written packages
 import org.jrdf.graph.Triple;
 import org.mulgara.query.AskQuery;
@@ -253,8 +255,8 @@ interface RemoteSession extends Remote {
    * @throws QueryException if the model can't be modified
    */
   public long setModel(InputStream inputStream, URI uri,
-                      GraphExpression graphExpression) throws QueryException,
-      RemoteException;
+                       GraphExpression graphExpression, MimeType contentType)
+      throws QueryException, RemoteException;
 
   /**
    * Sets the AutoCommit attribute of the RemoteSession object

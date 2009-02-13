@@ -27,14 +27,7 @@
 
 package org.mulgara.content.mbox.parser.model.impl;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-
 import org.apache.log4j.*;
-import org.jrdf.graph.Graph;
-import org.jrdf.graph.mem.GraphImpl;
-import org.jrdf.graph.GraphException;
 
 import org.mulgara.content.Content;
 import org.mulgara.content.mbox.parser.model.*;
@@ -64,25 +57,16 @@ public class MBoxManagerImpl implements MBoxManager {
   /** Logger */
   private static Logger logger = Logger.getLogger(MBoxManagerImpl.class);
 
-  /** The arraylist to use as the cache */
-  private ArrayList cache;
-
   /** The current mbox we are dealing with */
   private MBox currentMBox;
 
   public MBoxManagerImpl() {
-
-    // Initialise the cache
-    cache = new ArrayList();
   }
 
   /**
    * Clears the cache of all stored mboxes.
    */
   public void clear() {
-
-    // Clear the array list
-    cache.clear();
   }
 
   /**
@@ -91,9 +75,6 @@ public class MBoxManagerImpl implements MBoxManager {
    * @param mbox The mbox to remove
    */
   public void delete(MBox mbox) throws ModelException {
-
-    // Remove the mbox
-    cache.remove(mbox.getURI().toString());
   }
 
   /**
@@ -109,9 +90,6 @@ public class MBoxManagerImpl implements MBoxManager {
    * @throws ModelException
    */
   public MBox getMBox(Content content) throws ModelException {
-
-    // Container for the mbox we are creating
-    MBox mbox = null;
 
     if (currentMBox != null) {
 
@@ -146,7 +124,7 @@ public class MBoxManagerImpl implements MBoxManager {
     }
 
     // Create an array of the types for the mbox constructor
-    Class [] parameterTypes = new Class [] {Content.class};
+    Class<?> [] parameterTypes = new Class [] {Content.class};
 
     // Create an array of parameters for the mbox constructor
     Object [] parameters = new Object [] {content};

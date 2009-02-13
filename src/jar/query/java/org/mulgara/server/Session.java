@@ -33,6 +33,8 @@ package org.mulgara.server;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+
+import javax.activation.MimeType;
 import javax.transaction.xa.XAResource;
 
 // Locally written packages
@@ -298,7 +300,7 @@ public interface Session {
    * @throws QueryException if the model can't be modified
    */
   public long setModel(InputStream inputStream, URI uri,
-      GraphExpression graphExpression) throws QueryException;
+      GraphExpression graphExpression, MimeType contentType) throws QueryException;
 
   /**
    * Extract {@link Rules} from the data found in a model.

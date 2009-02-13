@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.MimeType;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.utils.DOM2Writer;
@@ -104,7 +105,10 @@ public class ItqlInterpreterBean {
    * TODO: Bring this into line with the Mulgara.NAMESPACE, which may break existing client.
    */
   private final static String TQL_NS = "http://mulgara.org/tql#";
-  
+
+  /** A dummy URI to be used when none is provided on a data source. */
+  private final static URI DUMMY_RDF_URI = URI.create("http://dummy/data.rdf");
+
   /** The ITQL interpreter Bean. */
   private final TqlAutoInterpreter interpreter = new TqlAutoInterpreter();
   
@@ -301,7 +305,6 @@ public class ItqlInterpreterBean {
    * @param name the name of the transaction ( debug purposes only ) *
    * @throws QueryException Unable to commit one of the connections.
    */
-  @SuppressWarnings("deprecation")
   public void commit(String name) throws QueryException {
 
     if (log.isDebugEnabled()) log.debug("Commit transaction for :" + name);
@@ -316,7 +319,6 @@ public class ItqlInterpreterBean {
    * @param name the name of the transaction ( debug purposes only ) *
    * @throws QueryException Unable to rollback one of the connections
    */
-  @SuppressWarnings("deprecation")
   public void rollback(String name) throws QueryException {
 
     log.warn("Rollback transaction for :" + name);
@@ -809,6 +811,30 @@ public class ItqlInterpreterBean {
 
 
   /**
+   * Load the contents of an InputStream into a database/model.
+   * <p>Note. <var>destinationURI</var> must be a valid URI, and does not include
+   * the angle brackets (&lt; and &gt;) used to delimit URLs in iTQL.</p>
+   *
+   * @param inputStream a locally supplied inputstream.
+   * @param destinationURI destination model for the source data.
+   * @param contentType The string representation of the content type of the data in the stream.
+   * @return number of rows inserted into the destination model
+   */
+  public long load(InputStream inputStream, URI destinationURI, String contentType) throws QueryException {
+    long numberOfStatements = 0;
+    try {
+      Load loadCmd = new Load(destinationURI, inputStream, new MimeType(contentType));
+      numberOfStatements = (Long)loadCmd.execute(interpreter.establishConnection(loadCmd.getServerURI()));
+    } catch (QueryException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new QueryException("Unable to load data: " + ex.getMessage(), ex);
+    }
+    return numberOfStatements;
+  }
+
+
+  /**
    * Load the contents of an InputStream or a URI into a database/model.
    * <p>
    *   Note. <var>destinationURI</var> must be a valid URI, and does not include
@@ -827,6 +853,7 @@ public class ItqlInterpreterBean {
   public long load(InputStream inputStream, URI sourceURI, URI destinationURI) throws QueryException {
     long numberOfStatements = 0;
     try {
+      if (sourceURI == null) sourceURI = DUMMY_RDF_URI;
       Load loadCmd = new Load(sourceURI, destinationURI, true);
       loadCmd.setOverrideInputStream(inputStream);
       numberOfStatements = (Long)loadCmd.execute(interpreter.establishConnection(loadCmd.getServerURI()));

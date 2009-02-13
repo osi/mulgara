@@ -150,6 +150,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi2"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi3"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi4"));
+    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi4_1"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi5"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi6"));
     suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi7"));
@@ -490,6 +491,26 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     // execute the load locally
     long statements = bean.load(sourceURI.toURL().openStream(),
         modelURI);
+
+    assertEquals("Incorrect number of statements inserted", 154, statements);
+
+  }
+
+  /**
+   * Test the interpreter using a load API locally
+   *
+   * @throws Exception if the test fails
+   */
+  public void testLoadApi4_1() throws Exception {
+
+    // log that we're executing the test
+    log.debug("Starting load API test 4_1");
+
+    URI sourceURI = new URI("http://purl.org/dc/elements/1.1");
+    URI modelURI = new URI(testModel);
+
+    // execute the load locally
+    long statements = bean.load(sourceURI.toURL().openStream(), modelURI, "application/rdf+xml");
 
     assertEquals("Incorrect number of statements inserted", 154, statements);
 

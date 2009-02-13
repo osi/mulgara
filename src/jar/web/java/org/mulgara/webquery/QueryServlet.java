@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServlet;
@@ -415,16 +417,16 @@ public class QueryServlet extends HttpServlet {
    * @throws QueryException A query exception occurred during the load operation.
    */
   protected Load loadData(URI graph, BodyPart data, Connection cxt) throws RequestException, IOException, QueryException {
+    String contentType = "";
     try {
-      URI absoluteUri = new URI(HTTP_PUT_NS + data.getFileName());
-      Load loadCmd = new Load(absoluteUri, graph, true);
-      loadCmd.setOverrideInputStream(data.getInputStream());
+      contentType = data.getContentType();
+      Load loadCmd = new Load(graph, data.getInputStream(), new MimeType(contentType));
       loadCmd.execute(cxt);
       return loadCmd;
     } catch (MessagingException e) {
       throw new RequestException("Unable to process data for loading: " + e.getMessage());
-    } catch (URISyntaxException e) {
-      throw new RequestException("Illegal filename: " + e.getInput());
+    } catch (MimeTypeParseException e) {
+      throw new RequestException("Bad Content Type in request: " + contentType + " (" + e.getMessage() + ")");
     }
   }
 

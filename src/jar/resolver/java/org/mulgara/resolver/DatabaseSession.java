@@ -37,6 +37,7 @@ import java.net.URI;
 import java.util.*;
 
 // Java 2 enterprise packages
+import javax.activation.MimeType;
 import javax.transaction.xa.XAResource;
 
 // Third party packages
@@ -77,7 +78,6 @@ class DatabaseSession implements Session {
    * The list of all registered {@link ResolverFactory} instances.
    * Not used in this implementation.
    */
-  @SuppressWarnings("unused")
   private final List<ResolverFactory> resolverFactoryList;
 
   /**
@@ -547,20 +547,20 @@ class DatabaseSession implements Session {
    * @throws QueryException if the model can't be modified
    */
   public synchronized long setModel(URI uri, GraphExpression graphExpression) throws QueryException {
-    return this.setModel(null, uri, graphExpression);
+    return this.setModel(null, uri, graphExpression, null);
   }
 
 
   /**
    * Define the contents of a model via an inputstream
    * @param inputStream a remote inputstream
-   * @param destinationModelURI the {@link URI} of the model to be redefined
-   * @param graphExpression the new content for the model
-   * @return RETURNED VALUE TO DO
+   * @param destinationModelURI the {@link URI} of the graph to be redefined
+   * @param graphExpression the new content for the graph
+   * @return The number of statements loaded into the graph
    * @throws QueryException if the model can't be modified
    */
   public synchronized long setModel(InputStream inputStream,
-      URI destinationModelURI, GraphExpression graphExpression) throws QueryException {
+      URI destinationModelURI, GraphExpression graphExpression, MimeType contentType) throws QueryException {
     if (logger.isDebugEnabled()) {
       logger.debug("SET-MODEL " + destinationModelURI + " to " + graphExpression + " from " + inputStream);
     }
@@ -568,22 +568,22 @@ class DatabaseSession implements Session {
     // Validate parameters
     if (destinationModelURI == null) {
       throw new IllegalArgumentException("Null 'destinationModelURI' parameter");
-    } else if (graphExpression == null) {
-      throw new IllegalArgumentException("Null 'modelExpression' parameter");
+    }
+    if (graphExpression == null && contentType == null) {
+      throw new IllegalArgumentException("Null 'modelExpression' and 'contentType' parameters");
     }
 
     // Convert the model expression into the source model URI
-    if (!(graphExpression instanceof GraphResource)) {
+    if (graphExpression != null && !(graphExpression instanceof GraphResource)) {
       throw new QueryException("Unsupported model expression " + graphExpression + " (" + graphExpression.getClass() + ")");
     }
-    assert graphExpression instanceof GraphResource;
 
-    URI sourceModelURI = ((GraphResource)graphExpression).getURI();
-    assert sourceModelURI != null;
+    URI sourceModelURI = graphExpression == null ? null : ((GraphResource)graphExpression).getURI();
+    assert sourceModelURI != null || contentType != null;
 
     // Perform the operation
     SetGraphOperation op = new SetGraphOperation(sourceModelURI, destinationModelURI,
-                                  inputStream, contentHandlers, this);
+                                  inputStream, contentType, contentHandlers, this);
     // preExcecute is a rather ugly hack, get rid of it once we support re-entrant transactions.
     if (op.preExecute()) {
       execute(op, "Unable to load " + sourceModelURI + " into " + destinationModelURI);

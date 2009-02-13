@@ -53,6 +53,7 @@ import org.mulgara.rules.RulesRef;
 import org.mulgara.server.NonRemoteSessionException;
 import org.mulgara.server.Session;
 
+import javax.activation.MimeType;
 import javax.naming.*;
 
 /**
@@ -159,16 +160,16 @@ class RemoteSessionWrapperSession implements Serializable, Session {
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
-  public long setModel(InputStream inputStream, URI uri, GraphExpression graphExpression) throws QueryException {
+  public long setModel(InputStream inputStream, URI uri, GraphExpression graphExpression, MimeType contentType) throws QueryException {
 
     try {
 
-      long r = remoteSession.setModel(inputStream, uri, graphExpression);
+      long r = remoteSession.setModel(inputStream, uri, graphExpression, contentType);
       resetRetries();
       return r;
     } catch (RemoteException e) {
       testRetry(e);
-      return setModel(inputStream, uri, graphExpression);
+      return setModel(inputStream, uri, graphExpression, contentType);
     }
   }
 

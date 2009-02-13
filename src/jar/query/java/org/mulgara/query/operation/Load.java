@@ -14,6 +14,9 @@ package org.mulgara.query.operation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.activation.MimeType;
 
 import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
@@ -33,13 +36,13 @@ public class Load extends DataInputTx {
 
   /** The logger */
   static final Logger logger = Logger.getLogger(Load.class.getName());
-  
-  /** Dummy source model URI to pass to the server when overriding with local stream. */
-  protected static final URI DUMMY_RDF_SOURCE = URI.create(Mulgara.NAMESPACE+"locally-sourced-inputStream.rdf");
-  
+
   /** Graph resource form of the source URI */
   private final GraphResource srcRsc;
-  
+
+  /** The type of data that may be in a stream. */
+  private MimeType contentType;
+
   /**
    * Build a load operation, loading data from one URI into a graph specified by another URI.
    * @param source The URI of the source of the RDF data.
@@ -52,7 +55,8 @@ public class Load extends DataInputTx {
     // Validate arguments.
     if (graphURI == null) throw new IllegalArgumentException("Need a valid destination graph URI");
     
-    srcRsc = new GraphResource(source == null ? DUMMY_RDF_SOURCE : source);
+    srcRsc = source == null ? null : new GraphResource(source);
+    contentType = null;
   }
 
 
@@ -60,12 +64,27 @@ public class Load extends DataInputTx {
    * Alternate constructor for creating a load operation whose source will be a local input stream.
    * @param graphURI The URI of the graph to receive the data.
    * @param stream The local input stream that is the source of data to load.
+   * @param contentType the content type for the stream.
    */
-  public Load(URI graphURI, InputStream stream) {
+  public Load(URI graphURI, InputStream stream, MimeType contentType) {
     this(null, graphURI, true);
     setOverrideInputStream(stream);
+    this.contentType = contentType;
   }
 
+  /**
+   * Alternate constructor for creating a load operation whose source will be a local input stream,
+   * and a filename has been provided. The filename is for informative purposes only.
+   * @param graphURI The URI of the graph to receive the data.
+   * @param stream The local input stream that is the source of data to load.
+   * @param contentType the content type for the stream.
+   * @param fileUri
+   */
+  public Load(URI graphURI, InputStream stream, MimeType contentType, String file) {
+    this(toUri(file), graphURI, true);
+    setOverrideInputStream(stream);
+    this.contentType = contentType;
+  }
 
   /**
    * Load the data into the destination graph through the given connection.
@@ -104,7 +123,7 @@ public class Load extends DataInputTx {
    */
   @Override
   protected Long doTx(Connection conn, InputStream inputStream) throws QueryException {
-    return conn.getSession().setModel(inputStream, getDestination(), srcRsc);
+    return conn.getSession().setModel(inputStream, getDestination(), srcRsc, contentType);
   }
 
 
@@ -118,4 +137,18 @@ public class Load extends DataInputTx {
     return text;
   }
 
+
+  /**
+   * Attempt to turn a filename into a URI. If unsuccessful return null.
+   * @param filename
+   * @return
+   */
+  private static URI toUri(String filename) {
+    if (filename == null) return null;
+    try {
+      return new URI(Mulgara.VIRTUAL_NS + filename);
+    } catch (URISyntaxException e) {
+      return null;
+    }
+  }
 }

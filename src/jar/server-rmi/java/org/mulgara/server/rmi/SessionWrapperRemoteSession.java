@@ -35,6 +35,8 @@ import java.rmi.*;
 import java.rmi.server.Unreferenced;
 import java.util.*;
 
+import javax.activation.MimeType;
+
 // Third party packages
 import org.apache.log4j.Logger;
 
@@ -68,7 +70,6 @@ import org.mulgara.server.Session;
  */
 class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
 
-  @SuppressWarnings("unused")
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(SessionWrapperRemoteSession.class.getName());
 
@@ -118,9 +119,9 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    * @return The number of statements inserted into the model
    * @throws QueryException if the model can't be modified
    */
-  public long setModel(InputStream inputStream, URI uri, GraphExpression graphExpression) throws QueryException {
+  public long setModel(InputStream inputStream, URI uri, GraphExpression graphExpression, MimeType contentType) throws QueryException {
     try {
-      return session.setModel(inputStream, uri, graphExpression);
+      return session.setModel(inputStream, uri, graphExpression, contentType);
     } catch (Throwable t) {
       throw convertToQueryException(t);
     }
