@@ -31,19 +31,6 @@ package org.mulgara.content.mbox.parser;
 import java.io.*;
 import java.util.*;
 
-// Java enterprise packages
-import javax.activation.*;
-import javax.mail.*;
-import javax.mail.internet.*;
-
-// Third party packages
-import org.apache.log4j.*;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
-
-// Other quoll tool packages
-import org.mulgara.content.mbox.parser.config.*;
-import org.mulgara.content.mbox.parser.exception.*;
 
 /**
  * The class of values returned from {@link MimeMessageToPart#process}.
@@ -70,20 +57,20 @@ import org.mulgara.content.mbox.parser.exception.*;
 public class MimeMessageToPartBean {
 
   // Message header fields
-  private final List bccAddressList = new ArrayList();
-  private final List ccAddressList = new ArrayList();
+  private final List<QuollEmailAddress> bccAddressList = new ArrayList<QuollEmailAddress>();
+  private final List<QuollEmailAddress> ccAddressList = new ArrayList<QuollEmailAddress>();
   private Date date = null;
   private QuollEmailAddress fromAddress = null;
   private String messageID = null;
   private String subject = null;
-  private final List toAddressList = new ArrayList();
-  private final List referenceList = new ArrayList();
+  private final List<QuollEmailAddress> toAddressList = new ArrayList<QuollEmailAddress>();
+  private final List<String> referenceList = new ArrayList<String>();
 
   /**
    * List of {@link File}s for each body or attachment part extracted from the
    * message.
    */
-  private final List partList = new ArrayList();
+  private final List<Attachment> partList = new ArrayList<Attachment>();
 
   //
   // Methods
@@ -91,43 +78,33 @@ public class MimeMessageToPartBean {
 
   /**
    * @param address  a blind carbon copy address
-   * @throws IllegalArgumentException  if <var>address</var> is
-   *   <code>null</code>
+   * @throws IllegalArgumentException  if <var>address</var> is <code>null</code>
    */
   public void addBCCAddress(QuollEmailAddress address) {
-    if (address == null) {
-      throw new IllegalArgumentException("Null \"address\" parameter");
-    }
-
+    if (address == null) throw new IllegalArgumentException("Null \"address\" parameter");
     bccAddressList.add(address);
   }
 
   /**
-   * @return a non-<code>null</code> list of {@link String}-valued blind carbon
-   *   copy addresses
+   * @return a non-<code>null</code> list of {@link String}-valued blind carbon copy addresses
    */
-  public List getBCCAddresses() {
+  public List<QuollEmailAddress> getBCCAddresses() {
     return bccAddressList;
   }
 
   /**
    * @param address  a carbon copy address
-   * @throws IllegalArgumentException  if <var>address</var> is
-   *   <code>null</code>
+   * @throws IllegalArgumentException  if <var>address</var> is <code>null</code>
    */
   public void addCCAddress(QuollEmailAddress address) {
-    if (address == null) {
-      throw new IllegalArgumentException("Null \"address\" parameter");
-    }
-
+    if (address == null) throw new IllegalArgumentException("Null \"address\" parameter");
     ccAddressList.add(address);
   }
 
   /**
-   * @return a non-<code>null</code> list of {@link String}-valued carbon
-   *   copy addresses
+   * @return a non-<code>null</code> list of {@link String}-valued carbon copy addresses
    */
-  public List getCCAddresses() {
+  public List<QuollEmailAddress> getCCAddresses() {
     return ccAddressList;
   }
 
@@ -177,10 +154,7 @@ public class MimeMessageToPartBean {
    * @param partFile  the file containing the text of a body or attachment
    */
   public void addPart(Attachment partFile) {
-
-    if (partFile == null) {
-      throw new IllegalArgumentException("Null filename for message page");
-    }
+    if (partFile == null) throw new IllegalArgumentException("Null filename for message page");
     partList.add(partFile);
   }
 
@@ -188,7 +162,6 @@ public class MimeMessageToPartBean {
    * @return the number of body/attachment parts
    */
   public int getPartCount() {
-
     return partList.size();
   }
 
@@ -196,8 +169,7 @@ public class MimeMessageToPartBean {
    * @return all the body/attachment parts
    */
   public Attachment[] getParts() {
-
-    return (Attachment[]) partList.toArray(new Attachment[partList.size()]);
+    return partList.toArray(new Attachment[partList.size()]);
   }
 
   /**
@@ -217,21 +189,17 @@ public class MimeMessageToPartBean {
 
   /**
    * @param address  a non-<code>null</code> recipient address
-   * @throws IllegalArgumentException if a <code>null</code> <var>address</var>
-   *   is passed
+   * @throws IllegalArgumentException if a <code>null</code> <var>address</var> is passed
    */
   public void addToAddress(QuollEmailAddress address) {
-    if (address == null) {
-      throw new IllegalArgumentException("Null \"address\" parameter");
-    }
-
+    if (address == null) throw new IllegalArgumentException("Null \"address\" parameter");
     toAddressList.add(address);
   }
 
   /**
    * @return a non-<code>null</code> list of recipient addresses
    */
-  public List getToAddresses() {
+  public List<QuollEmailAddress> getToAddresses() {
     return toAddressList;
   }
 
@@ -241,23 +209,19 @@ public class MimeMessageToPartBean {
    *   <code>null</code>
    */
   public void addReference(String reference) {
-    if (reference == null) {
-      throw new IllegalArgumentException("Null \"reference\" parameter");
-    }
-
+    if (reference == null) throw new IllegalArgumentException("Null \"reference\" parameter");
     referenceList.add(reference);
   }
 
   /**
    * @return a non-<code>null</code> list of mimeMessage references
    */
-  public List getReferences() {
+  public List<String> getReferences() {
     return referenceList;
   }
 
   /**
    * Converts the object into a string representation.
-   *
    * @return The string representation of the object
    */
   public String toString() {
@@ -267,7 +231,6 @@ public class MimeMessageToPartBean {
 
     // Retrieve the bcc addresses
     for (int i = 0; i < bccAddressList.size(); i++) {
-
       // Add the next bcc address
       content += bccAddressList.get(i) + ", ";
     }
@@ -276,7 +239,6 @@ public class MimeMessageToPartBean {
 
     // Retrieve the cc addresses
     for (int i = 0; i < ccAddressList.size(); i++) {
-
       // Retrieve the next cc address
       content += ccAddressList.get(i) + ", ";
     }
@@ -285,7 +247,6 @@ public class MimeMessageToPartBean {
 
     // Retrieve the to addresses
     for (int i = 0; i < toAddressList.size(); i++) {
-
       // Retrieve the next to address
       content += toAddressList.get(i) + ", ";
     }
@@ -294,7 +255,6 @@ public class MimeMessageToPartBean {
 
     // Retrieve the reference address list
     for (int i = 0; i < referenceList.size(); i++) {
-
       // Retrieve the next reference address
       content += referenceList.get(i) + ", ";
     }
