@@ -59,6 +59,7 @@ import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.LocalizeException;
@@ -177,7 +178,7 @@ class Parser extends Thread implements N3ParserEventHandler {
 
     // Initialize fields
     this.resolverSession = resolverSession;
-    this.baseURI = content.getURI();
+    this.baseURI = content.getURI() != null ? content.getURI() : URI.create(Mulgara.NAMESPACE);
     try {
       this.blankNodeIdMap = IntFile.open(TempDir.createTempFile("n3idmap", null), true);
       this.blankNodeNameMap = new StringToLongMap();
