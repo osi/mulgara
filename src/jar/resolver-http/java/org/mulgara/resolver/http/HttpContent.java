@@ -166,6 +166,11 @@ public class HttpContent implements Content {
 
     HostConfiguration config = new HostConfiguration();
     config.setHost(host, port, Protocol.getProtocol(schema));
+    if (connection != null) {
+      connection.releaseConnection();
+      connection.close();
+      connection = null;
+    }
     try {
       connection = connectionManager.getConnectionWithTimeout(config, 0L);
     } catch (ConnectionPoolTimeoutException te) {
@@ -225,7 +230,7 @@ public class HttpContent implements Content {
   private HttpMethod establishConnection(int methodType) throws IOException, NotModifiedException {
     if (logger.isDebugEnabled()) logger.debug("Establishing connection");
 
-    HttpMethod method = this.getConnectionMethod(methodType);
+    HttpMethod method = getConnectionMethod(methodType);
     Header header = null;
 
     if (method != null) {
@@ -280,7 +285,7 @@ public class HttpContent implements Content {
               }
 
               // attempt a new connection to this location
-              method = this.getConnectionMethod(methodType);
+              method = getConnectionMethod(methodType);
               connection.open();
               method.execute(state, connection);
               if (!isValidStatusCode(method.getStatusCode())) {
