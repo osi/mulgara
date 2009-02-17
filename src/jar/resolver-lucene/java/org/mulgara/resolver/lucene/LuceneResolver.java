@@ -71,9 +71,6 @@ import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
-import org.mulgara.resolver.spi.TuplesWrapperResolution;
-import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.tuples.TuplesOperations;
 import org.mulgara.util.conversion.html.HtmlToTextConverter;
 
 /**
@@ -372,23 +369,13 @@ public class LuceneResolver implements Resolver {
     // generate the tuples
     try {
       FullTextStringIndex stringIndex = getFullTextStringIndex(((LocalNode)modelElement).getValue());
-
-      /* run the query now and materialize the result; it is often much faster to run a large query
-       * and grab all resulting lucene documents than it is to run many smaller queries. Ideally we
-       * would try and figure out which approach is better on a query-by-query basis.
-       */
-      Tuples tmpTuples = new FullTextStringIndexTuples(stringIndex, (LuceneConstraint)constraint, resolverSession);
-      Tuples tuples = TuplesOperations.sort(tmpTuples);
-      tmpTuples.close();
-
-      return new TuplesWrapperResolution(tuples, constraint);
-    } catch (TuplesException te) {
-      throw new QueryException("Failed to sort tuples and close", te);
-
+      return new FullTextStringIndexTuples(stringIndex, (LuceneConstraint)constraint, resolverSession);
     } catch (IOException ioe) {
       throw new QueryException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
       throw new QueryException("Query failed against string index", ef);
+    } catch (TuplesException te) {
+      throw new QueryException("Failed to query string index", te);
     }
   }
 

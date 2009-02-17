@@ -31,6 +31,8 @@ package org.mulgara.resolver.lucene;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 // Log4J
@@ -816,6 +818,14 @@ public class FullTextStringIndex {
 
     public final float score(int n) throws IOException {
       return hits.get(n).score;
+    }
+
+    public void sort() {
+      Collections.sort(hits, new Comparator<ScoreDoc>() {
+        public int compare(ScoreDoc sd1, ScoreDoc sd2) {
+          return (sd1.doc < sd2.doc) ? -1 : (sd1.doc == sd2.doc) ? 0 : +1;
+        }
+      });
     }
 
     public void close() throws IOException {
