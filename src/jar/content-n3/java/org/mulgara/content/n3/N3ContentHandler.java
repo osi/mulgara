@@ -27,6 +27,12 @@
 
 package org.mulgara.content.n3;
 
+// Java packages
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 // Java 2 enterprise packages
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -38,6 +44,7 @@ import org.apache.log4j.Logger;  // Apache Log4J
 import org.mulgara.content.Content;
 import org.mulgara.content.ContentHandler;
 import org.mulgara.content.ContentHandlerException;
+import org.mulgara.content.ModifiedException;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
@@ -115,13 +122,18 @@ public class N3ContentHandler implements ContentHandler {
   }
 
   /**
-   * @throws ContentHandlerException  {@inheritDoc}; this particular
-   *   implementation doesn't implement this method and will always throw the
-   *   exception
+   * Writes out the statements in basic NTriples format.
    */
   public void serialize(Statements      statements,
                         Content         content,
-                        ResolverSession resolverSession) throws ContentHandlerException {
-    throw new ContentHandlerException("N3 output not implemented");
+                        ResolverSession resolverSession)
+      throws ContentHandlerException, ModifiedException {
+    try {
+      Writer out = new BufferedWriter(new OutputStreamWriter(content.newOutputStream(), "utf-8"));
+      new N3Writer().write(statements, resolverSession, out);
+      out.close();
+    } catch (IOException e) {
+      throw new ContentHandlerException("Failed to serialize N3 to " + content.getURIString(), e);
+    }
   }
 }
