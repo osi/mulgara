@@ -176,7 +176,7 @@ public abstract class SessionFactoryFinder {
       // check if the exception thrown indicates we should retry
       Throwable e = originalEx.getCause();
       if (!(e instanceof NonRemoteSessionException)) {
-        throw new SessionFactoryFinderException("Couldn't create session factory for " + serverURI, e);
+        throw new SessionFactoryFinderException("Couldn't create session factory for " + serverURI + " (" + e.getMessage() + ")", e);
       }
       // tell the calling code
       throw (NonRemoteSessionException)originalEx;
