@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.mulgara.content.rdfxml.writer.RDFXMLWriter;
+import org.mulgara.content.n3.N3Writer;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.LocalNode;
@@ -103,9 +104,14 @@ class ExportOperation extends OutputOperation {
 
         // Do the writing.
         try {
-          // TODO: Use the destination URI file suffix to determine the appropriate writer.
-          RDFXMLWriter rdfWriter = new RDFXMLWriter();
-          rdfWriter.write(graphStatements, systemResolver, writer, prefixes);
+          String path = destinationURI.getPath();
+          if (path.endsWith(".n3") || path.endsWith(".nt") || path.endsWith(".ttl")) {
+            N3Writer n3Writer = new N3Writer();
+            n3Writer.write(graphStatements, systemResolver, writer);
+          } else {
+            RDFXMLWriter rdfWriter = new RDFXMLWriter();
+            rdfWriter.write(graphStatements, systemResolver, writer, prefixes);
+          }
         } finally {
           // This will close the wrapped resolution as well.
           graphStatements.close();
