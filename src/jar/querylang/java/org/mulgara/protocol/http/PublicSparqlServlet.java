@@ -64,6 +64,12 @@ public class PublicSparqlServlet extends SparqlServlet {
     resp.sendError(SC_METHOD_NOT_ALLOWED, "This is a Read Only service.");
   }
 
-
+  /**
+   * Respond to a request for the servlet. This may handle update queries.
+   * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+   */
+  protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    resp.sendError(SC_METHOD_NOT_ALLOWED, "This is a Read Only service.");
+  }
 
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -30,14 +31,12 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 
+import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
-import org.mulgara.connection.SessionConnection;
 import org.mulgara.parser.Interpreter;
 import org.mulgara.protocol.StreamedAnswer;
 import org.mulgara.query.Answer;
@@ -47,12 +46,15 @@ import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
 import org.mulgara.query.operation.CreateGraph;
+import org.mulgara.query.operation.Deletion;
+import org.mulgara.query.operation.DropGraph;
+import org.mulgara.query.operation.Insertion;
 import org.mulgara.query.operation.Load;
-import org.mulgara.server.SessionFactory;
 import org.mulgara.server.SessionFactoryProvider;
 import org.mulgara.util.functional.C;
 import org.mulgara.util.functional.Fn1E;
 import org.mulgara.util.functional.Fn2;
+import org.mulgara.util.functional.Pair;
 
 /**
  * A query gateway for query languages.
@@ -61,10 +63,13 @@ import org.mulgara.util.functional.Fn2;
  * @author Paul Gearon
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
-public abstract class ProtocolServlet extends HttpServlet {
+public abstract class ProtocolServlet extends MulgaraServlet {
 
   /** Generated serialization ID. */
   private static final long serialVersionUID = -6510062000251611536L;
+
+  /** The logger. */
+  final static Logger logger = Logger.getLogger(ProtocolServlet.class.getName());
 
   /**
    * Internal type definition of a function that takes "something" and an output stream,
@@ -111,9 +116,6 @@ public abstract class ProtocolServlet extends HttpServlet {
   /** The content type of the results. */
   protected static final String CONTENT_TYPE = "application/sparql-results+xml";
 
-  /** Session value for database connection. */
-  private static final String CONNECTION = "session.connection";
-
   /** Session value for interpreter. */
   protected static final String INTERPRETER = "session.interpreter";
 
@@ -132,11 +134,17 @@ public abstract class ProtocolServlet extends HttpServlet {
   /** A made-up scheme for data uploaded through http-put, since http means "downloaded". */
   protected static final String HTTP_PUT_NS = "http-put://upload/";
 
-  /** The server for finding a session factory. */
-  private SessionFactoryProvider server;
+  /** The various parameter names used to identify a graph in a request */
+  private static final String[] GRAPH_PARAM_NAMES = { DEFAULT_GRAPH_ARG, GRAPH_DATA };
 
-  /** Session factory for accessing the database. */
-  private SessionFactory cachedSessionFactory;
+  /** The various parameter names used to identify a subject in a request */
+  private static final String[] SUBJECT_PARAM_NAMES = { "subject", "subj", "s" };
+
+  /** The various parameter names used to identify a predicate in a request */
+  private static final String[] PREDICATE_PARAM_NAMES = { "predicate", "pred", "p" };
+
+  /** The various parameter names used to identify an object in a request */
+  private static final String[] OBJECT_PARAM_NAMES = { "object", "obj", "o" };
 
   /** This object maps request types to the constructors for that output. */
   protected final Map<Output,AnswerStreamConstructor> streamBuilders = new EnumMap<Output,AnswerStreamConstructor>(Output.class);
@@ -149,8 +157,16 @@ public abstract class ProtocolServlet extends HttpServlet {
    * @param server The server that provides access to the database.
    */
   public ProtocolServlet(SessionFactoryProvider server) throws IOException {
-    this.cachedSessionFactory = null;
-    this.server = server;
+    super(server);
+    initializeBuilders();
+  }
+
+
+  /**
+   * Creates the servlet for communicating with the given server. Default construction,
+   * meaning that the connectionFactory will be used for establishing a connection.
+   */
+  public ProtocolServlet() throws IOException {
     initializeBuilders();
   }
 
@@ -195,6 +211,40 @@ public abstract class ProtocolServlet extends HttpServlet {
     try {
       if (type != null && type.startsWith(POSTED_DATA_TYPE)) handleDataUpload(req, resp);
       else handleUpdateQuery(req, resp);
+    } catch (ServletException e) {
+      e.sendResponseTo(resp);
+    }
+  }
+
+
+  /**
+   * Responds to requests to create graphs or triples.
+   */
+  protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    try {
+      Pair<URI,LocalTriple> params = getModifyParams(req);
+      URI graph = params.first();
+      LocalTriple triple = params.second();
+      Connection conn = getConnection(req);
+      if (triple == null) createGraph(conn, graph);
+      else createTriple(conn, graph, triple);
+    } catch (ServletException e) {
+      e.sendResponseTo(resp);
+    }
+  }
+
+
+  /**
+   * Responds to requests to create graphs or triples.
+   */
+  protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    try {
+      Pair<URI,LocalTriple> params = getModifyParams(req);
+      URI graph = params.first();
+      LocalTriple triple = params.second();
+      Connection conn = getConnection(req);
+      if (triple == null) deleteGraph(conn, graph);
+      else deleteTriple(conn, graph, triple);
     } catch (ServletException e) {
       e.sendResponseTo(resp);
     }
@@ -500,37 +550,64 @@ public abstract class ProtocolServlet extends HttpServlet {
 
 
   /**
-   * Gets the connection for the current session, creating it if it doesn't exist yet.
-   * @param req The current request environment.
-   * @return A connection that is tied to this HTTP session.
-   * @throws IOException When an error occurs creating a new session.
+   * Creates a new graph.
+   * @param conn A connection to the database.
+   * @param graph The graph to create.
+   * @throws ServletException If there was an error creating the graph.
    */
-  private Connection getConnection(HttpServletRequest req) throws IOException, IllegalStateException {
-    HttpSession httpSession = req.getSession();
-    Connection connection = (Connection)httpSession.getAttribute(CONNECTION);
-    if (connection == null) {
-      try {
-        connection = new SessionConnection(getSessionFactory().newSession(), null, null);
-      } catch (QueryException qe) {
-        throw new IOException("Unable to create a connection to the database. " + qe.getMessage());
-      }
-      httpSession.setAttribute(CONNECTION, connection);
+  protected void createGraph(Connection conn, URI graph) throws ServletException {
+    try {
+      new CreateGraph(graph).execute(conn);
+    } catch (QueryException e) {
+      throw new InternalErrorException("Unable to create graph: " + e.getMessage());
     }
-    return connection;
   }
 
 
   /**
-   * This method allows us to put off getting a session factory until the server is
-   * ready to provide one.
-   * @return A new session factory.
+   * Creates a triple in a graph.
+   * @param conn A connection to the database.
+   * @param graph The graph to create the triple in.
+   * @param triple The triple to create.
+   * @throws ServletException If there was an error creating the triple, or the graph does not exist.
    */
-  private SessionFactory getSessionFactory() throws IllegalStateException {
-    if (cachedSessionFactory == null) {
-      cachedSessionFactory = server.getSessionFactory();
-      if (cachedSessionFactory == null) throw new IllegalStateException("Server not yet ready. Try again soon.");
+  protected void createTriple(Connection conn, URI graph, LocalTriple triple) throws ServletException {
+    try {
+      new Insertion(graph, triple.toSet()).execute(conn);
+    } catch (QueryException e) {
+      throw new InternalErrorException("Unable to create triple: " + e.getMessage());
     }
-    return cachedSessionFactory;
+  }
+
+
+  /**
+   * Deletes a graph.
+   * @param conn A connection to the database.
+   * @param graph The graph to delete.
+   * @throws ServletException If there was an error removing the graph.
+   */
+  protected void deleteGraph(Connection conn, URI graph) throws ServletException {
+    try {
+      new DropGraph(graph).execute(conn);
+    } catch (QueryException e) {
+      throw new InternalErrorException("Unable to drop graph: " + e.getMessage());
+    }
+  }
+
+
+  /**
+   * Deletes a triple in a graph.
+   * @param conn A connection to the database.
+   * @param graph The graph to delete the triple from.
+   * @param triple The triple to delete.
+   * @throws ServletException If there was an error deleting the triple.
+   */
+  protected void deleteTriple(Connection conn, URI graph, LocalTriple triple) throws ServletException {
+    try {
+      new Deletion(graph, triple.toSet()).execute(conn);
+    } catch (QueryException e) {
+      throw new InternalErrorException("Unable to delete triple: " + e.getMessage());
+    }
   }
 
 
@@ -543,6 +620,57 @@ public abstract class ProtocolServlet extends HttpServlet {
     final String[] knownParams = new String[] { DEFAULT_GRAPH_ARG, NAMED_GRAPH_ARG, GRAPH_DATA };
     for (String p: knownParams) if (p.equalsIgnoreCase(name)) return true;
     return false;
+  }
+
+
+  /**
+   * Get the parameters of a request to modify the store.
+   * @param req The HTTP request.
+   * @return A Pair containing the graph for the modification, and an optional triple to be
+   *         modified in the graph.
+   * @throws ServletException If the request was improperly formed.
+   */
+  @SuppressWarnings("unchecked")
+  private Pair<URI,LocalTriple> getModifyParams(HttpServletRequest req) throws ServletException {
+    Map<String,String[]> params = req.getParameterMap();
+    String graphParam = getParam(GRAPH_PARAM_NAMES, params);
+    if (graphParam == null) throw new BadRequestException("No graph parameter defined.");
+    URI g;
+    try {
+      g = new URI(graphParam);
+    } catch (URISyntaxException e) {
+      throw new BadRequestException("Invalid graph name: " + graphParam);
+    }
+    String s = getParam(SUBJECT_PARAM_NAMES, params);
+    String p = getParam(PREDICATE_PARAM_NAMES, params);
+    String o = getParam(OBJECT_PARAM_NAMES, params);
+    if (s == null && p == null && o == null) return new Pair<URI,LocalTriple>(g, null);
+    return new Pair<URI,LocalTriple>(g, new LocalTriple(s, p, o, true));
+  }
+
+
+  /**
+   * Get the value of a parameter from a map. The parameter is identified by one of the elements
+   * found in the <var>keyNames</var> parameter.
+   * @param keyNames An array of alternative names for the one parameter.
+   * @param params A map of parameter names to values.
+   * @return The value for the parameter, or <code>null</code> if not found.
+   * @throws ServletException If the parameter appear more than once.
+   */
+  private String getParam(String[] keyNames, Map<String,String[]> params) throws ServletException {
+    boolean found = false;
+    String result = null;
+    for (String k: keyNames) {
+      if (params.containsKey(k)) {
+        if (found) throw new BadRequestException("Duplicate parameter: " + k);
+        String[] values = params.get(k);
+        if (values.length == 0) throw new BadRequestException("Unsupplied parameter: " + k);
+        if (values.length > 1) throw new BadRequestException("Duplicate values for " + k + ": " + Arrays.asList(values));
+        result = values[0];
+        found = true;
+      }
+    }
+    return result;
   }
 
 
@@ -599,4 +727,5 @@ public abstract class ProtocolServlet extends HttpServlet {
     
     static Output forMime(String mimeText) { return outputs.get(mimeText); }
   }
+
 }
