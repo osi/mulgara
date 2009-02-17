@@ -282,7 +282,7 @@ class UnorderedProjection extends AbstractTuples {
    */
   public boolean hasNoDuplicates() throws TuplesException {
 
-    return (operand.getVariables().length == getNumberOfVariables())
+    return (operand.getVariables().length <= getNumberOfVariables())
         ? operand.hasNoDuplicates() : false;
   }
 
