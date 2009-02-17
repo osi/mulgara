@@ -104,8 +104,8 @@ class ExportOperation extends OutputOperation {
 
         // Do the writing.
         try {
-          String path = destinationURI.getPath();
-          if (path.endsWith(".n3") || path.endsWith(".nt") || path.endsWith(".ttl")) {
+          String path = (destinationURI != null) ? destinationURI.getPath() : null;
+          if (path != null && (path.endsWith(".n3") || path.endsWith(".nt") || path.endsWith(".ttl"))) {
             N3Writer n3Writer = new N3Writer();
             n3Writer.write(graphStatements, systemResolver, writer);
           } else {
