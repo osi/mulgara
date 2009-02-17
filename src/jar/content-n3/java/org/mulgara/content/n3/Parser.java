@@ -476,7 +476,7 @@ class Parser extends Thread implements N3ParserEventHandler {
         BlankNodeImpl blankNode;
         if (resourceNodeId == 0) {
           if (anonId >= 0) {
-            blankNode = unallocBlankNodeIdMap.get(resourceNodeId);
+            blankNode = unallocBlankNodeIdMap.get(anonId);
           } else {
             blankNode = unallocBlankNodeNameMap.get(n.toString());
           }
