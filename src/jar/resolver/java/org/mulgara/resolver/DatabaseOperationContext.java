@@ -553,7 +553,11 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         metadata.getHostnameAliases().contains(addr.getCanonicalHostName()) ||
         metadata.getHostnameAliases().contains(addr.getHostAddress())) {
       // change the host name to one that is recognised
-      return getLocalURI(graphURI);
+      // Make sure that it doesn't canonicalize to the original URI; this could cause an infinite loop.
+      URI newGraphURI = getLocalURI(graphURI);
+      if (!graphURI.equals(newGraphURI)) {
+        return new URIReferenceImpl(graphURI);
+      }
     }
 
     // not found, so return nothing
@@ -568,7 +572,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    * @return The URIReference representing the same URI as the parameter, with the host name updated.
    * @throws QueryException When the uri cannot be manipulated.
    */
-  private Node getLocalURI(URI uri) throws QueryException {
+  private URI getLocalURI(URI uri) throws QueryException {
     // use the system graph to find the local host name
     String newHost = metadata.getSystemModelURI().getHost();
     // update the URI
@@ -577,7 +581,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
                                 uri.getPath(), uri.getQuery(), uri.getFragment());
       logger.debug("Changing graph URI from " + uri + " to " + newGraphURI);
 
-      return new URIReferenceImpl(newGraphURI);
+      return newGraphURI;
     } catch (URISyntaxException e) {
       throw new QueryException("Internal error.  Graph URI cannot be manipulated.");
     }
