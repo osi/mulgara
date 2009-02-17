@@ -371,9 +371,8 @@ public class HttpServices {
 
     // create the web context
     try {
-      AbstractServer serverMBean = (AbstractServer)hostServer.getServerMBean();
       String rmiName = hostServer.getServerName();
-      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName(servletClass), hostName, rmiName, serverMBean);
+      Servlet servlet = (Servlet)Reflect.newInstance(Class.forName(servletClass), hostName, rmiName, hostServer);
       String webPath = "/" + servletPath;
       new org.mortbay.jetty.servlet.Context(server, webPath, SESSIONS).addServlet(new ServletHolder(servlet), "/*");
       return new Service(name, webPath);

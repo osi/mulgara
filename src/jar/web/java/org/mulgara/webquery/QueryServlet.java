@@ -27,24 +27,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Set;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.mulgara.connection.Connection;
-import org.mulgara.connection.SessionConnection;
 import org.mulgara.itql.TqlInterpreter;
 import org.mulgara.parser.Interpreter;
 import org.mulgara.parser.MulgaraLexerException;
 import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.protocol.http.MimeMultiNamedPart;
+import org.mulgara.protocol.http.MulgaraServlet;
 import org.mulgara.protocol.http.ServletDataSource;
 import org.mulgara.query.Answer;
 import org.mulgara.query.Query;
@@ -53,8 +55,7 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.operation.Command;
 import org.mulgara.query.operation.CreateGraph;
 import org.mulgara.query.operation.Load;
-import org.mulgara.server.AbstractServer;
-import org.mulgara.server.SessionFactory;
+import org.mulgara.server.SessionFactoryProvider;
 import org.mulgara.sparql.SparqlInterpreter;
 import org.mulgara.util.SparqlUtil;
 import org.mulgara.util.StackTrace;
@@ -75,16 +76,10 @@ import static javax.servlet.http.HttpServletResponse.SC_SERVICE_UNAVAILABLE;
  * @author Paul Gearon
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
-public class QueryServlet extends HttpServlet {
+public class QueryServlet extends MulgaraServlet {
 
   /** Serialization by default */
   private static final long serialVersionUID = -8407263937557243990L;
-
-  /** The default name to use for the host. */
-  private static final String DEFAULT_HOSTNAME = "localhost";
-
-  /** Session value for database connection. */
-  private static final String CONNECTION = "session.connection";
 
   /** Session value for the TQL interpreter. */
   private static final String TQL_INTERPRETER = "session.tql.interpreter";
@@ -99,19 +94,13 @@ public class QueryServlet extends HttpServlet {
   protected static final String HTTP_PUT_NS = "http-put://upload/";
 
   /** The name of the host for the application. */
-  private final String hostname;
+  private String hostname;
 
   /** The name of the server for the application. */
-  private final String servername;
-
-  /** The server for finding a session factory. */
-  private final AbstractServer server;
+  private String servername;
 
   /** The default graph URI to use. */
   private String defaultGraphUri;
-
-  /** Session factory for accessing the database. */
-  private SessionFactory cachedSessionFactory;
 
   /** The path down to the template resource. */
   private String templatePath;
@@ -122,21 +111,59 @@ public class QueryServlet extends HttpServlet {
   /** Debugging text. */
   private String debugText = "";
 
+  /** Indicates if this servlet has been initialized. */
+  private boolean initialized = false;
+
+
   /**
    * Creates the servlet for the named host.
    * @param hostname The host name to use, or <code>null</code> if this is not known.
    * @param servername The name of the current server.
    */
-  public QueryServlet(String hostname, String servername, AbstractServer server) throws IOException {
-    this.hostname = (hostname != null) ? hostname : DEFAULT_HOSTNAME;
-    this.servername = servername;
-    this.cachedSessionFactory = null;
-    this.server = server;
-    URL path = getClass().getClassLoader().getResource(ResourceFile.RESOURCES + getTemplateFile());
-    if (path == null) throw new IOException("Resource not found: " + ResourceFile.RESOURCES + getTemplateFile());
-    templatePath = path.toString();
-    resourcePath = templatePath.split("!")[0];
-    defaultGraphUri = "rmi://" + hostname + "/" + servername + "#sampledata";
+  public QueryServlet(String hostname, String servername, SessionFactoryProvider server) {
+    super(server);
+    init(hostname, servername);
+  }
+
+
+  /**
+   * Creates the servlet for the named host.
+   * @param hostname The host name to use, or <code>null</code> if this is not known.
+   * @param servername The name of the current server.
+   */
+  public QueryServlet() {
+    initialized = false;
+  }
+
+
+  /**
+   * Called by a servlet environment, particularly when this is in a Web ARchive (WAR) file.
+   * @see org.mulgara.protocol.http.MulgaraServlet#init(javax.servlet.ServletConfig)
+   */
+  public void init(ServletConfig config) {
+    super.init(config);
+    ServletContext context = config.getServletContext();
+    init(context.getInitParameter(HOST_NAME_PARAM), context.getInitParameter(SERVER_NAME_PARAM));
+  }
+
+
+  /**
+   * Initialize this class with parameters passed from either a Servlet environment,
+   * or a constructing class.
+   * @param hostname The name of this host. If null then the localhost is presumed.
+   * @param servername The name of this service. If null then the default of server1 is used.
+   */
+  private void init(String hostname, String servername) {
+    if (!initialized) {
+      URL path = getClass().getClassLoader().getResource(ResourceFile.RESOURCES + getTemplateFile());
+      if (path == null) throw new MissingResourceException("Missing template file", getClass().getName(), ResourceFile.RESOURCES + getTemplateFile());
+      templatePath = path.toString();
+      resourcePath = templatePath.split("!")[0];
+      this.hostname = (hostname != null) ? hostname : DEFAULT_HOSTNAME;
+      this.servername = (servername != null) ? servername : DEFAULT_SERVERNAME;
+      defaultGraphUri = "rmi://" + hostname + "/" + servername + "#sampledata";
+      initialized = true;
+    }
   }
 
 
@@ -644,41 +671,6 @@ public class QueryServlet extends HttpServlet {
       attr = TQL_INTERPRETER;
     }
     return new RegInterpreter(factory, attr);
-  }
-
-
-  /**
-   * Gets the connection for the current session, creating it if it doesn't exist yet.
-   * @param req The current request environment.
-   * @return A connection that is tied to this HTTP session.
-   * @throws IOException When an error occurs creating a new session.
-   */
-  private Connection getConnection(HttpServletRequest req) throws IOException, IllegalStateException {
-    HttpSession httpSession = req.getSession();
-    Connection connection = (Connection)httpSession.getAttribute(CONNECTION);
-    if (connection == null) {
-      try {
-        connection = new SessionConnection(getSessionFactory().newSession(), null, null);
-      } catch (QueryException qe) {
-        throw new IOException("Unable to create a connection to the database. " + qe.getMessage());
-      }
-      httpSession.setAttribute(CONNECTION, connection);
-    }
-    return connection;
-  }
-
-
-  /**
-   * This method allows us to put off getting a session factory until the server is
-   * ready to provide one.
-   * @return A new session factory.
-   */
-  private SessionFactory getSessionFactory() throws IllegalStateException {
-    if (cachedSessionFactory == null) {
-      cachedSessionFactory = server.getSessionFactory();
-      if (cachedSessionFactory == null) throw new IllegalStateException("Server not yet ready. Try again soon.");
-    }
-    return cachedSessionFactory;
   }
 
 

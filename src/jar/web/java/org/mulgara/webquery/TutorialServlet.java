@@ -19,6 +19,7 @@ package org.mulgara.webquery;
 import java.io.IOException;
 
 import org.mulgara.server.AbstractServer;
+import org.mulgara.server.SessionFactoryProvider;
 
 /**
  * A tutorial Web UI for the server. This is almost the same as the standard
@@ -48,8 +49,15 @@ public class TutorialServlet extends QueryServlet {
    * @param server
    * @throws IOException
    */
-  public TutorialServlet(String hostname, String servername, AbstractServer server) throws IOException {
+  public TutorialServlet(String hostname, String servername, SessionFactoryProvider server) {
     super(hostname, servername, server);
+  }
+
+
+  /**
+   * Creates the tutorial servlet in a managed environment.
+   */
+  public TutorialServlet() {
   }
 
 
