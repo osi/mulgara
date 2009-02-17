@@ -34,21 +34,21 @@ import org.mulgara.store.tuples.Tuples;
 /**
  * An {@link Operation} that serializes the contents of an RDF graph to either
  * an output stream or a destination file.
- * 
+ *
  * @created Jun 25, 2008
  * @author Alex Hall
  * @copyright &copy; 2008 <a href="http://www.revelytix.com">Revelytix, Inc.</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
 class ExportOperation extends OutputOperation {
-  
+
   private final URI graphURI;
   private final Map<String,URI> prefixes;
-  
+
   /**
    * Create an {@link Operation} which exports the contents of the specified RDF graph
    * to a URI or to an output stream.
-   *  
+   *
    * The database is not changed by this method.
    * If an {@link OutputStream} is supplied then the destinationURI is ignored.
    *
@@ -63,7 +63,7 @@ class ExportOperation extends OutputOperation {
   public ExportOperation(OutputStream outputStream, URI graphURI, URI destinationURI,
       Map<String,URI> initialPrefixes) {
     super(outputStream, destinationURI);
-    
+
     if (graphURI == null) {
       throw new IllegalArgumentException("Graph URI may not be null.");
     }
@@ -75,20 +75,20 @@ class ExportOperation extends OutputOperation {
    * @see org.mulgara.resolver.OutputOperation#execute(org.mulgara.resolver.OperationContext, org.mulgara.resolver.spi.SystemResolver, org.mulgara.resolver.spi.DatabaseMetadata)
    */
   @Override
-  public void execute(OperationContext operationContext, SystemResolver systemResolver, 
+  public void execute(OperationContext operationContext, SystemResolver systemResolver,
                       DatabaseMetadata metadata) throws Exception {
     // Verify that the graph is of a type that supports exports.
     long graph = systemResolver.localize(new URIReferenceImpl(graphURI));
     ResolverFactory resolverFactory = operationContext.findModelResolverFactory(graph);
-    
-    if (resolverFactory.supportsExport()) {    
+
+    if (resolverFactory.supportsExport()) {
       OutputStream os = getOutputStream();
       assert os != null;
       OutputStreamWriter writer = null;
-      
+
       try {
         writer = new OutputStreamWriter(os, "UTF-8");
-        
+
         // create a constraint to get all statements
         Variable[] vars = new Variable[] {
             StatementStore.VARIABLES[0],
@@ -96,11 +96,11 @@ class ExportOperation extends OutputOperation {
             StatementStore.VARIABLES[2]
         };
         Constraint constraint = new ConstraintImpl(vars[0], vars[1], vars[2], new LocalNode(graph));
-        
+
         // Get all statements from the graph.  Delegate to the operation context to do the security check.
         Tuples resolution = operationContext.resolve(constraint);
         Statements graphStatements = new TuplesWrapperStatements(resolution, vars[0], vars[1], vars[2]);
-        
+
         // Do the writing.
         try {
           // TODO: Use the destination URI file suffix to determine the appropriate writer.
@@ -125,5 +125,4 @@ class ExportOperation extends OutputOperation {
       throw new QueryException("Graph " + graphURI + " does not support export.");
     }
   }
-
 }

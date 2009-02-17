@@ -28,7 +28,7 @@ import org.mulgara.resolver.spi.SystemResolver;
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
 public abstract class OutputOperation extends TuplesBasedOperation implements Operation {
-  
+
   protected final OutputStream outputStream;
   protected final URI destinationURI;
 
@@ -39,7 +39,7 @@ public abstract class OutputOperation extends TuplesBasedOperation implements Op
     this.outputStream = outputStream;
     this.destinationURI = destinationURI;
   }
-  
+
   /**
    * Gets an output stream for this operation, opening one from the destination
    * URI if necessary.
@@ -48,7 +48,7 @@ public abstract class OutputOperation extends TuplesBasedOperation implements Op
    */
   protected OutputStream getOutputStream() throws FileNotFoundException {
     OutputStream os = outputStream;
-    
+
     // Check if an output stream was supplied and open the local file if it
     // hasn't.
     if (os == null) {
@@ -69,10 +69,10 @@ public abstract class OutputOperation extends TuplesBasedOperation implements Op
 
     // Ensure the output is buffered for efficiency.
     os = new BufferedOutputStream(os);
-    
+
     return os;
   }
-  
+
   /* (non-Javadoc)
    * @see org.mulgara.resolver.Operation#execute(org.mulgara.resolver.OperationContext, org.mulgara.resolver.spi.SystemResolver, org.mulgara.resolver.spi.DatabaseMetadata)
    */
@@ -86,5 +86,4 @@ public abstract class OutputOperation extends TuplesBasedOperation implements Op
   public boolean isWriteOperation() {
     return false;
   }
-
 }
