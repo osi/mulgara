@@ -671,7 +671,7 @@ public class FullTextStringIndex {
 
       if (predicate != null) {
         if (total > 0)
-          total = Math.min(indexSearcher.docFreq(new Term(PREDICATE_KEY, subject)), total);
+          total = Math.min(indexSearcher.docFreq(new Term(PREDICATE_KEY, predicate)), total);
         if (total == 0) return 0;
       }
 
