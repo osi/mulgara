@@ -57,7 +57,7 @@ import org.mulgara.resolver.spi.Statements;
 public class N3ContentHandler implements ContentHandler {
   /** Logger. */
   @SuppressWarnings("unused")
-  private static Logger logger = Logger.getLogger(N3ContentHandler.class.getName());
+  private static Logger logger = Logger.getLogger(N3ContentHandler.class);
 
   /**
    * The MIME type of RDF/XML.
@@ -69,8 +69,7 @@ public class N3ContentHandler implements ContentHandler {
     try {
       APPLICATION_N3 = new MimeType("application", "n3");
       TEXT_RDF_N3    = new MimeType("text", "rdf+n3");
-    }
-    catch (MimeTypeParseException e) {
+    } catch (MimeTypeParseException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
@@ -79,9 +78,7 @@ public class N3ContentHandler implements ContentHandler {
   // Methods implementing ContentHandler
   //
 
-  public Statements parse(Content content, ResolverSession resolverSession)
-                          throws ContentHandlerException
-  {
+  public Statements parse(Content content, ResolverSession resolverSession) throws ContentHandlerException {
     return new N3Statements(content, resolverSession);
   }
 
@@ -110,23 +107,21 @@ public class N3ContentHandler implements ContentHandler {
       return false;
     }
     assert path != null;
-    
+
     // We recognize a fixed set of extensions
     return path.endsWith(".n3") ||
            path.endsWith(".nt") ||
            path.endsWith(".ttl");
   }
 
-    /**
+  /**
    * @throws ContentHandlerException  {@inheritDoc}; this particular
    *   implementation doesn't implement this method and will always throw the
    *   exception
    */
   public void serialize(Statements      statements,
                         Content         content,
-                        ResolverSession resolverSession)
-    throws ContentHandlerException
-  {
+                        ResolverSession resolverSession) throws ContentHandlerException {
     throw new ContentHandlerException("N3 output not implemented");
   }
 }
