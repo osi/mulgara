@@ -9,12 +9,13 @@
 
   <!ELEMENT Jetty (Connector, PublicConnector)>
 
-    <!ELEMENT Connector (Disabled?, Host?, Port, Acceptors?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
-    <!ELEMENT PublicConnector (Disabled?, Host?, Port, Acceptors?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
+    <!ELEMENT Connector (Disabled?, Host?, Port, Acceptors?, MaxThreads?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
+    <!ELEMENT PublicConnector (Disabled?, Host?, Port, Acceptors?, MaxThreads?, MaxIdleTimeMs?, LowResourceMaxIdleTimeMs?)>
 
       <!ELEMENT Host (#PCDATA)>
       <!ELEMENT Port (#PCDATA)>
       <!ELEMENT Acceptors (#PCDATA)>
+      <!ELEMENT MaxThreads (#PCDATA)>
       <!ELEMENT MaxIdleTimeMs (#PCDATA)>
       <!ELEMENT LowResourceMaxIdleTimeMs (#PCDATA)>
 

@@ -39,6 +39,7 @@ import org.mortbay.jetty.nio.BlockingChannelConnector;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppClassLoader;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.mortbay.thread.QueuedThreadPool;
 import org.mortbay.util.MultiException;
 import org.mulgara.config.Connector;
 import org.mulgara.config.MulgaraConfig;
@@ -98,9 +99,6 @@ public class HttpServices {
 
   /** Key to the bound server model uri in the attribute map of the servlet context. */
   public final static String SERVER_MODEL_URI_KEY = "serverModelURI";
-
-  /** The maximum number of acceptors that Jetty can handle. It locks above this number. */
-  private static final int WEIRD_JETTY_THREAD_LIMIT = 24;
 
   /** The HTTP server instance. */
   private final Server httpServer;
@@ -315,15 +313,27 @@ public class HttpServices {
       if (logger.isDebugEnabled()) logger.debug("Servlet container listening on all host interfaces");
     }
 
+    // Each connector will get its own thread pool, so that they may be configured separately.
+    // If a connector does not have its own thread pool, it inherits one from the server that it might
+    // share with other connectors.
+    QueuedThreadPool threadPool = new QueuedThreadPool();
+    if (jettyConfig.hasMaxThreads()) {
+      threadPool.setMaxThreads(jettyConfig.getMaxThreads());
+    }
+    connector.setThreadPool(threadPool);
 
     if (jettyConfig.hasPort()) connector.setPort(jettyConfig.getPort());
     if (jettyConfig.hasMaxIdleTimeMs()) connector.setMaxIdleTime(jettyConfig.getMaxIdleTimeMs());
     if (jettyConfig.hasLowResourceMaxIdleTimeMs()) connector.setLowResourceMaxIdleTime(jettyConfig.getLowResourceMaxIdleTimeMs());
     if (jettyConfig.hasAcceptors()) {
       int acceptors = jettyConfig.getAcceptors();
-      if (acceptors > WEIRD_JETTY_THREAD_LIMIT) {
-        logger.warn("Acceptor threads set beyond HTTP Server limits. Reducing from" + acceptors + " to " + WEIRD_JETTY_THREAD_LIMIT);
-        acceptors = WEIRD_JETTY_THREAD_LIMIT;
+      // Acceptors are part of the thread pool, but they delegate handling of servlet
+      // requests to another thread in the pool.  Therefore, the number of acceptors
+      // must be strictly less than the maximum number of threads in the pool.
+      int acceptorLimit = threadPool.getMaxThreads() - 1;
+      if (acceptors > acceptorLimit) {
+        logger.warn("Acceptor threads set beyond HTTP Server limits. Reducing from" + acceptors + " to " + acceptorLimit);
+        acceptors = acceptorLimit;
       }
       connector.setAcceptors(acceptors);
     }
@@ -460,6 +470,7 @@ public class HttpServices {
     String host = null;
     Integer port = null;
     Integer acceptors = null;
+    Integer maxThreads = null;
     Integer maxIdleTimeMs = null;
     Integer lowResourceMaxIdleTimeMs = null;
 
@@ -474,6 +485,7 @@ public class HttpServices {
       host = c.getHost();
       if (c.hasPort()) port = c.getPort();
       if (c.hasAcceptors()) acceptors = c.getAcceptors();
+      if (c.hasMaxThreads()) maxThreads = c.getMaxThreads();
       if (c.hasMaxIdleTimeMs()) maxIdleTimeMs = c.getMaxIdleTimeMs();
       if (c.hasLowResourceMaxIdleTimeMs()) lowResourceMaxIdleTimeMs = c.getLowResourceMaxIdleTimeMs();
     }
@@ -489,6 +501,7 @@ public class HttpServices {
       host = c.getHost();
       if (c.hasPort()) port = c.getPort();
       if (c.hasAcceptors()) acceptors = c.getAcceptors();
+      if (c.hasMaxThreads()) maxThreads = c.getMaxThreads();
       if (c.hasMaxIdleTimeMs()) maxIdleTimeMs = c.getMaxIdleTimeMs();
       if (c.hasLowResourceMaxIdleTimeMs()) lowResourceMaxIdleTimeMs = c.getLowResourceMaxIdleTimeMs();
     }
@@ -517,6 +530,11 @@ public class HttpServices {
     public int getAcceptors() {
       return acceptors;
     }
+    
+    /** @return the maximum number of threads for the thread pool. */
+    public int getMaxThreads() {
+      return maxThreads;
+    }
 
     /** @return the maxIdleTimeMs */
     public int getMaxIdleTimeMs() {
@@ -541,6 +559,11 @@ public class HttpServices {
     /** @return <code>true</code> if the Accepted value was provided. */
     public boolean hasAcceptors() {
       return acceptors != null;
+    }
+
+    /** @return <code>true</code> if the MaxThreads value was provided. */
+    public boolean hasMaxThreads() {
+      return maxThreads != null;
     }
 
     /** @return <code>true</code> if the MaxIdelTimeMs value was provided. */

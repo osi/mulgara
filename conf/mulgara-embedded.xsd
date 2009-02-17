@@ -25,6 +25,7 @@
         <xs:element ref="Host" minOccurs="0"/>
         <xs:element ref="Port"/>
         <xs:element ref="Acceptors" minOccurs="0"/>
+        <xs:element ref="MaxThreads" minOccurs="0"/>
         <xs:element ref="MaxIdleTimeMs" minOccurs="0"/>
         <xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0"/>
       </xs:sequence>
@@ -37,6 +38,7 @@
         <xs:element ref="Host" minOccurs="0"/>
         <xs:element ref="Port"/>
         <xs:element ref="Acceptors" minOccurs="0"/>
+        <xs:element ref="MaxThreads" minOccurs="0"/>
         <xs:element ref="MaxIdleTimeMs" minOccurs="0"/>
         <xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0"/>
       </xs:sequence>
@@ -45,6 +47,7 @@
   <xs:element name="LowResourceMaxIdleTimeMs" type="xs:int"/>
   <xs:element name="MaxIdleTimeMs" type="xs:int"/>
   <xs:element name="Acceptors" type="xs:int"/>
+  <xs:element name="MaxThreads" type="xs:int"/>
   <xs:element name="DefaultGraph" type="xs:string"/>
   <xs:element name="PersistencePath" type="xs:string"/>
   <xs:element name="Port" type="xs:int"/>
