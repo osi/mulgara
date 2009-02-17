@@ -531,7 +531,7 @@ class Parser extends Thread implements N3ParserEventHandler {
   private String getLang(AST a) {
     // empty nodes have no info
     if (a == null) return null;
-    return a.getType() == N3Parser.AT_LANG ? a.getText() : null;
+    return a.getType() == N3Parser.AT_LANG ? a.getText().substring(1) : null;
   }
 
   /**
