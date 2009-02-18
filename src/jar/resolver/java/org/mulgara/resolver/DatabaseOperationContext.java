@@ -206,7 +206,10 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         Node aliasedNode = getCanonicalAlias(graphURI);
         if (aliasedNode != null) {
           long aliasedGraph = systemResolver.localize(aliasedNode);
-          return findModelResolverFactory(aliasedGraph);
+          // In some situations, a canonical alias can localize back to the original graph node.
+          if (aliasedGraph != graph) {
+            return findModelResolverFactory(aliasedGraph);
+          }
         }
 
         // test the graph URI against the current server
