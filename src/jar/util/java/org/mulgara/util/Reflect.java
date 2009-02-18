@@ -95,6 +95,11 @@ public class Reflect {
     for (Constructor<T> con: (Constructor<T>[])clazz.getConstructors()) {
       boolean match = true;
       Class<?>[] paramTypes = con.getParameterTypes();
+      
+      // Make sure the candidate constructor has the appropriate number of arguments.
+      if (paramTypes.length != argTypes.length) continue;
+      
+      // If the argument count matches, test the argument classes one-by-one.
       for (int p = 0; p < paramTypes.length; p++) {
         if (match && !assignFrom.test(paramTypes[p], argTypes[p])) {
           match = false;
