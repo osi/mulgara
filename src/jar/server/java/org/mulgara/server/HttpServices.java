@@ -190,34 +190,43 @@ public class HttpServices {
     Server publicServer = buildAndConfigure(config.getJetty().getPublicConnector(), ServerInfo.getPublicHttpPort());
 
 
-    // Accumulator for all the services
-    Map<String,String> privateServices = new HashMap<String,String>();
+    if (privateServer != null) {
+      // Accumulator for all the services
+      Map<String,String> privateServices = new HashMap<String,String>();
 
-    // start all the private configured services.
-    for (ContextStarter starter: getContextStarters()) {
-      try {
-        starter.fn(privateServer).addTo(privateServices);
-      } catch (IllegalStateException e) {
-        // not fatal, so just log the problem and go on
-        logger.warn("Unable to start web service", e.getCause());
+      // start all the private configured services.
+      for (ContextStarter starter: getContextStarters()) {
+        try {
+          starter.fn(privateServer).addTo(privateServices);
+        } catch (IllegalStateException e) {
+          // not fatal, so just log the problem and go on
+          logger.warn("Unable to start web service", e.getCause());
+        }
       }
+
+      // we have all the services, so now instantiate the service listing service
+      addWebServiceListingContext(privateServer, privateServices);
     }
-
-    // we have all the services, so now instantiate the service listing service
-    addWebServiceListingContext(privateServer, privateServices);
-
-    // start the public contexts
-    for (ContextStarter starter: getPublicContextStarters()) {
-      try {
-        starter.fn(publicServer);
-      } catch (IllegalStateException e) {
-        logger.warn("Unable to start public web service", e.getCause());
+    
+    if (publicServer != null) {
+      // start the public contexts
+      for (ContextStarter starter: getPublicContextStarters()) {
+        try {
+          starter.fn(publicServer);
+        } catch (IllegalStateException e) {
+          logger.warn("Unable to start public web service", e.getCause());
+        }
       }
     }
 
     // get all the handlers in use by both servers
-    List<Handler> handlers = new ArrayList<Handler>(Arrays.asList(privateServer.getChildHandlers()));
-    handlers.addAll(Arrays.asList(publicServer.getChildHandlers()));
+    List<Handler> handlers = new ArrayList<Handler>();
+    if (privateServer != null) {
+      handlers.addAll(Arrays.asList(privateServer.getChildHandlers()));
+    }
+    if (publicServer != null) {
+      handlers.addAll(Arrays.asList(publicServer.getChildHandlers()));
+    }
 
     // add our class loader as the classloader of all contexts, unless this is a webapp in which case we wrap it
     ClassLoader classLoader = this.getClass().getClassLoader();
@@ -239,11 +248,14 @@ public class HttpServices {
    */
   Server buildAndConfigure(JettyConnector cfg, int port) throws UnknownHostException {
     Server s = null;
-    if (cfg != null) {
-      s = new Server();
-      addConnector(s, cfg);
-    } else {
-      s = new Server(port);
+    boolean disabled = (cfg != null && cfg.hasDisabled() && cfg.isDisabled());
+    if (!disabled) {
+      if (cfg != null) {
+        s = new Server();
+        addConnector(s, cfg);
+      } else {
+        s = new Server(port);
+      }
     }
     return s;
   }
