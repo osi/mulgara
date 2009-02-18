@@ -18,32 +18,19 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Connector">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
-        <xs:element ref="Host" minOccurs="0"/>
-        <xs:element ref="Port"/>
-        <xs:element ref="Acceptors" minOccurs="0"/>
-        <xs:element ref="MaxThreads" minOccurs="0"/>
-        <xs:element ref="MaxIdleTimeMs" minOccurs="0"/>
-        <xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="PublicConnector">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="Disabled" type="xs:boolean" minOccurs="0"/>
-        <xs:element ref="Host" minOccurs="0"/>
-        <xs:element ref="Port"/>
-        <xs:element ref="Acceptors" minOccurs="0"/>
-        <xs:element ref="MaxThreads" minOccurs="0"/>
-        <xs:element ref="MaxIdleTimeMs" minOccurs="0"/>
-        <xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+  <xs:element name="Connector" type="JettyConnector"/>
+  <xs:element name="PublicConnector" type="JettyConnector"/>
+  <xs:complexType name="JettyConnector">
+  	<xs:sequence>
+  		<xs:element name="Disabled" type="xs:boolean" minOccurs="0" />
+  		<xs:element ref="Host" minOccurs="0" />
+  		<xs:element ref="Port" />
+  		<xs:element ref="Acceptors" minOccurs="0" />
+  		<xs:element ref="MaxThreads" minOccurs="0" />
+  		<xs:element ref="MaxIdleTimeMs" minOccurs="0" />
+  		<xs:element ref="LowResourceMaxIdleTimeMs" minOccurs="0" />
+  	</xs:sequence>
+  </xs:complexType>
   <xs:element name="LowResourceMaxIdleTimeMs" type="xs:int"/>
   <xs:element name="MaxIdleTimeMs" type="xs:int"/>
   <xs:element name="Acceptors" type="xs:int"/>

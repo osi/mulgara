@@ -41,9 +41,8 @@ import org.mortbay.jetty.webapp.WebAppClassLoader;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.thread.QueuedThreadPool;
 import org.mortbay.util.MultiException;
-import org.mulgara.config.Connector;
+import org.mulgara.config.JettyConnector;
 import org.mulgara.config.MulgaraConfig;
-import org.mulgara.config.PublicConnector;
 import org.mulgara.util.MortbayLogger;
 import org.mulgara.util.Reflect;
 import org.mulgara.util.TempDir;
@@ -187,8 +186,8 @@ public class HttpServices {
     MortbayLogger.setEnabled(true);
 
     // create and register a new HTTP server
-    Server privateServer = buildAndConfigure(new JettyConnector(config.getJetty().getConnector()), ServerInfo.getHttpPort());
-    Server publicServer = buildAndConfigure(new JettyConnector(config.getJetty().getPublicConnector()), ServerInfo.getPublicHttpPort());
+    Server privateServer = buildAndConfigure(config.getJetty().getConnector(), ServerInfo.getHttpPort());
+    Server publicServer = buildAndConfigure(config.getJetty().getPublicConnector(), ServerInfo.getPublicHttpPort());
 
 
     // Accumulator for all the services
@@ -239,8 +238,8 @@ public class HttpServices {
    * @throws UnknownHostException The configured host name is invalid.
    */
   Server buildAndConfigure(JettyConnector cfg, int port) throws UnknownHostException {
-    Server s;
-    if (cfg.isProvided()) {
+    Server s = null;
+    if (cfg != null) {
       s = new Server();
       addConnector(s, cfg);
     } else {
@@ -460,120 +459,4 @@ public class HttpServices {
   }
 
 
-  /**
-   * A common class for representing the identical configuration found in the
-   * separate Connector and PublicConnector classes.
-   */
-  private class JettyConnector {
-    boolean provided = false;
-    Boolean disabled = null;
-    String host = null;
-    Integer port = null;
-    Integer acceptors = null;
-    Integer maxThreads = null;
-    Integer maxIdleTimeMs = null;
-    Integer lowResourceMaxIdleTimeMs = null;
-
-    /**
-     * Creates a config from a Connector object.
-     * @param c The Connector to build the config from.
-     */
-    public JettyConnector(Connector c) {
-      if (c == null) return;
-      provided = true;
-      if (c.hasDisabled()) disabled = c.isDisabled();
-      host = c.getHost();
-      if (c.hasPort()) port = c.getPort();
-      if (c.hasAcceptors()) acceptors = c.getAcceptors();
-      if (c.hasMaxThreads()) maxThreads = c.getMaxThreads();
-      if (c.hasMaxIdleTimeMs()) maxIdleTimeMs = c.getMaxIdleTimeMs();
-      if (c.hasLowResourceMaxIdleTimeMs()) lowResourceMaxIdleTimeMs = c.getLowResourceMaxIdleTimeMs();
-    }
-
-    /**
-     * Creates a config from a PublicConnector object.
-     * @param c The PublicConnector to build the config from.
-     */
-    public JettyConnector(PublicConnector c) {
-      if (c == null) return;
-      provided = true;
-      if (c.hasDisabled()) disabled = c.isDisabled();
-      host = c.getHost();
-      if (c.hasPort()) port = c.getPort();
-      if (c.hasAcceptors()) acceptors = c.getAcceptors();
-      if (c.hasMaxThreads()) maxThreads = c.getMaxThreads();
-      if (c.hasMaxIdleTimeMs()) maxIdleTimeMs = c.getMaxIdleTimeMs();
-      if (c.hasLowResourceMaxIdleTimeMs()) lowResourceMaxIdleTimeMs = c.getLowResourceMaxIdleTimeMs();
-    }
-
-    /** @return if this config was provided. */
-    public boolean isProvided() {
-      return provided;
-    }
-
-    /** @return if this config is disabled or not. */
-    public boolean isDisabled() {
-      return disabled;
-    }
-
-    /** @return the host name */
-    public String getHost() {
-      return host;
-    }
-
-    /** @return the port to use */
-    public int getPort() {
-      return port;
-    }
-
-    /** @return the number of acceptors to use */
-    public int getAcceptors() {
-      return acceptors;
-    }
-    
-    /** @return the maximum number of threads for the thread pool. */
-    public int getMaxThreads() {
-      return maxThreads;
-    }
-
-    /** @return the maxIdleTimeMs */
-    public int getMaxIdleTimeMs() {
-      return maxIdleTimeMs;
-    }
-
-    /** @return the lowResourceMaxIdleTimeMs */
-    public int getLowResourceMaxIdleTimeMs() {
-      return lowResourceMaxIdleTimeMs;
-    }
-
-    /** @return <code>true</code> if the Disabled value was provided. */
-    public boolean hasDisabled() {
-      return disabled != null;
-    }
-
-    /** @return <code>true</code> if the Port value was provided. */
-    public boolean hasPort() {
-      return port != null;
-    }
-
-    /** @return <code>true</code> if the Accepted value was provided. */
-    public boolean hasAcceptors() {
-      return acceptors != null;
-    }
-
-    /** @return <code>true</code> if the MaxThreads value was provided. */
-    public boolean hasMaxThreads() {
-      return maxThreads != null;
-    }
-
-    /** @return <code>true</code> if the MaxIdelTimeMs value was provided. */
-    public boolean hasMaxIdleTimeMs() {
-      return maxIdleTimeMs != null;
-    }
-
-    /** @return <code>true</code> if the LogResourceMaxIdeTimeMs value was provided. */
-    public boolean hasLowResourceMaxIdleTimeMs() {
-      return lowResourceMaxIdleTimeMs != null;
-    }
-  }
 }
