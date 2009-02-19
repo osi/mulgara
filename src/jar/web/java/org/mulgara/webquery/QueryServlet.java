@@ -216,7 +216,7 @@ public class QueryServlet extends MulgaraServlet {
 
     String type = req.getContentType();
     if (type != null && type.startsWith(POSTED_DATA_TYPE)) handleDataUpload(req, resp);
-    doQuery(req, resp, req.getParameter(GRAPH_ARG));
+    else doQuery(req, resp, req.getParameter(GRAPH_ARG));
   }
 
 
@@ -361,7 +361,7 @@ public class QueryServlet extends MulgaraServlet {
       try {
         new CreateGraph(destGraph).execute(conn);
       } catch (QueryException e) {
-        throw new RequestException("Unable to create graph: " + e.getMessage());
+        throw new RequestException("Unable to create graph <" + destGraph + ">: " + e.getMessage());
       }
 
       // upload the data
@@ -375,7 +375,10 @@ public class QueryServlet extends MulgaraServlet {
             break;
           }
         } catch (QueryException e) {
-          throw new RequestException("Unable to load data: " + partName);
+          String filename = part.getFileName();
+          String message = "Unable to load data: " + (filename == null ? partName : filename);
+          message += ".  " + StackTrace.getReasonMessage(e);
+          throw new RequestException(message);
         }
       }
 
@@ -414,6 +417,7 @@ public class QueryServlet extends MulgaraServlet {
         throw new RequestException("Invalid URI for upload graph. " + e.getInput());
       }
     }
+    System.err.println("No graphs in the parameter values");
     // look in the mime data
     if (mime != null) {
       try {
@@ -447,7 +451,7 @@ public class QueryServlet extends MulgaraServlet {
     String contentType = "";
     try {
       contentType = data.getContentType();
-      Load loadCmd = new Load(graph, data.getInputStream(), new MimeType(contentType));
+      Load loadCmd = new Load(graph, data.getInputStream(), new MimeType(contentType), data.getFileName());
       loadCmd.execute(cxt);
       return loadCmd;
     } catch (MessagingException e) {
