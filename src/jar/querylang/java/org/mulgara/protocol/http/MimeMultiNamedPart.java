@@ -17,6 +17,9 @@
 package org.mulgara.protocol.http;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.CharBuffer;
 
 import javax.activation.DataSource;
 import javax.mail.BodyPart;
@@ -31,6 +34,9 @@ import javax.mail.internet.MimeMultipart;
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
 public class MimeMultiNamedPart extends MimeMultipart {
+
+  /** The number of elements in internal data buffers. */
+  private static final int BUFFER_SIZE = 1024;
 
   /**
    * @param src The data source to retrieve the MIME data from
@@ -61,7 +67,8 @@ public class MimeMultiNamedPart extends MimeMultipart {
    */
   public String getParameterString(String param) throws MessagingException, IOException {
     Object obj = getParameter(param);
-    return obj == null ? null : obj.toString();
+    if (obj == null) return null;
+    return toString(obj);
   }
 
 
@@ -129,4 +136,33 @@ public class MimeMultiNamedPart extends MimeMultipart {
     return str;
   }
 
+
+  /**
+   * Gets a string from an object. If the object is a stream, then it reads the stream
+   * otherwise it gets the string form of the object.
+   * @param o The object to convert to a string.
+   * @return The string form of the object, or <code>null</code> if the object could not be read.
+   */
+  private static String toString(Object o) {
+    if (o instanceof InputStream) {
+      CharBuffer buffer = CharBuffer.allocate(BUFFER_SIZE);
+      StringBuilder sb = new StringBuilder();
+      InputStreamReader in = new InputStreamReader((InputStream)o);
+      try {
+        while (in.read(buffer) >= 0) {
+          buffer.flip();
+          sb.append(buffer);
+        }
+        o = sb;
+      } catch (IOException e) {
+        o = null;
+      }
+      try {
+        in.close();
+      } catch (IOException e) {
+        // got our data at this point, so ignore
+      }
+    }
+    return o.toString();
+  }
 }
