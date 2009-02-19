@@ -18,7 +18,6 @@ package org.mulgara.webquery;
 
 import java.io.IOException;
 
-import org.mulgara.server.AbstractServer;
 import org.mulgara.server.SessionFactoryProvider;
 
 /**
