@@ -66,13 +66,13 @@ public class RegexFnUnitTest extends TestCase {
   public void testLiteral() throws Exception {
     SimpleLiteral str = new SimpleLiteral("a foolish test");
     SimpleLiteral diffStr = new SimpleLiteral("another test");
-    SimpleLiteral pattern = new SimpleLiteral(".*foo.*");
-    SimpleLiteral patternCaps = new SimpleLiteral(".*FOO.*");
-    SimpleLiteral pattern2 = new SimpleLiteral(".*foo.*test.*");
+    SimpleLiteral pattern = new SimpleLiteral("foo");
+    SimpleLiteral patternCaps = new SimpleLiteral("FOO");
+    SimpleLiteral pattern2 = new SimpleLiteral("foo.*test");
     SimpleLiteral noTest = new SimpleLiteral("fred");
     SimpleLiteral caseFlag = new SimpleLiteral("i");
     ValueLiteral typed = TypedLiteral.newLiteral("a foolish test");
-    ValueLiteral typedPattern = TypedLiteral.newLiteral(".*foo.*");
+    ValueLiteral typedPattern = TypedLiteral.newLiteral("foo");
 
     RegexFn fn = new RegexFn(str, pattern);
     assertTrue(t.equals(fn));
@@ -121,12 +121,12 @@ public class RegexFnUnitTest extends TestCase {
 
     Literal str = new LiteralImpl("a foolish test");
     Literal diffStr = new LiteralImpl("another test");
-    Literal pattern = new LiteralImpl(".*foo.*");
-    Literal patternCaps = new LiteralImpl(".*FOO.*");
-    Literal pattern2 = new LiteralImpl(".*foo.*test.*");
+    Literal pattern = new LiteralImpl("foo");
+    Literal patternCaps = new LiteralImpl("FOO");
+    Literal pattern2 = new LiteralImpl("foo.*test");
     Literal noTest = new LiteralImpl("fred");
     Literal typed = new LiteralImpl("a foolish test", SimpleLiteral.STRING_TYPE.getValue());
-    Literal typedPattern = new LiteralImpl(".*foo.*", SimpleLiteral.STRING_TYPE.getValue());
+    Literal typedPattern = new LiteralImpl("foo", SimpleLiteral.STRING_TYPE.getValue());
     URIReferenceImpl xsdString = new URIReferenceImpl(SimpleLiteral.STRING_TYPE.getValue());
     BlankNodeImpl bn = new BlankNodeImpl(101);
     Node[][] rows = {
