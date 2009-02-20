@@ -693,8 +693,11 @@ public abstract class ProtocolServlet extends MulgaraServlet {
     // check the URI parameters
     String reqOutputName = req.getParameter(OUTPUT_ARG);
     if (reqOutputName != null) {
-      Output reqOutput = Output.valueOf(reqOutputName.toUpperCase());
-      if (reqOutput != null) type = reqOutput;
+      try {
+        type = Output.valueOf(reqOutputName.toUpperCase());
+      } catch (IllegalArgumentException e) {
+        // no-op: ignore unknown enumeration values.
+      }
     }
 
     // need graph types if constructing a graph
