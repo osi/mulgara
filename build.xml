@@ -480,7 +480,7 @@
     <!-- This will get the ARP parser working -->
     <mkdir dir="${obj.dir}/xerces"/>
 
-    <unjar src="${lib.dir}/xercesImpl.jar" dest="${obj.dir}/xerces"/>
+    <unjar src="${lib.dir}/${xerces.jar}" dest="${obj.dir}/xerces"/>
     <unjar src="${lib.dir}/xmlParserAPIs.jar" dest="${obj.dir}/xerces"/>
     <!-- HACK!!!!! -->
 
@@ -1016,7 +1016,7 @@
                  includes="activation*.jar, jargs-*.jar,
                            icu4j.jar, jena*.jar, antlr*.jar,
                            ${commons-logging.jar}, log4j*.jar, lucene*.jar,
-                           xerces*.jar, xmlParserAPIs.jar,
+                           ${xerces.jar}, xmlParserAPIs.jar,
                            ${saaj.jar}, ${sesame-model.jar}"/>
       </classpath>
     </java>
@@ -1331,7 +1331,7 @@
 
         <fileset dir="${bin.dir}" includes="${dtd.jar}, ${querylang.jar}, ${rules.jar}, ${query.jar},
                  ${driver.jar}, ${rmi.jar}, ${server-rmi.jar}"/>
-        <fileset dir="${lib.dir}" includes="xerces*.jar, xmlParserAPIs.jar, jxunit*.jar, junit.jar, junitpp.jar"/>
+        <fileset dir="${lib.dir}" includes="${xerces.jar}, xmlParserAPIs.jar, jxunit*.jar, junit.jar, junitpp.jar"/>
       </classpath>
 
     </java>
@@ -1617,7 +1617,7 @@
     <!-- My theory about why this is necessary is that the Bootloader class
          messes up the JAR plugin framework that both JAXP and StAX use -->
     <mkdir dir="${obj.dir}/xerces"/>
-    <unjar src="${lib.dir}/xercesImpl.jar" dest="${obj.dir}/xerces"/>
+    <unjar src="${lib.dir}/${xerces.jar}" dest="${obj.dir}/xerces"/>
     <unjar src="${lib.dir}/xmlParserAPIs.jar" dest="${obj.dir}/xerces"/>
     <!-- HACK!!!!! -->
 

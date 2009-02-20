@@ -155,7 +155,7 @@
       <arg value="${demo-mp3.obj.src.dir}/java"/>
       <classpath>
         <fileset dir="${lib.dir}"
-          includes="xerces*.jar, xmlParserAPIs.jar, castor*.jar, commons-logging*.jar, velocity*.jar"/>
+          includes="${xerces.jar}, xmlParserAPIs.jar, castor*.jar, commons-logging*.jar, velocity*.jar"/>
       </classpath>
     </java>
   </target>
