@@ -378,11 +378,11 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    * @throws InternalErrorException Due to an error accessing the answer.
    */
   <T> void send(Map<Output,? extends StreamConstructor<T>> builders, T data, Output type, HttpServletResponse resp) throws IOException, BadRequestException, InternalErrorException {
-    resp.setContentType(CONTENT_TYPE);
-    resp.setHeader("pragma", "no-cache");
-
     // establish the output type
     if (type == null) type = DEFAULT_OUTPUT_TYPE;
+
+    resp.setContentType(type.mimeText);
+    resp.setHeader("pragma", "no-cache");
 
     // get the constructor for the stream outputter
     StreamConstructor<T> constructor = builders.get(type);
