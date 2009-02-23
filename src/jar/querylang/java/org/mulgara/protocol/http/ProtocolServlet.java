@@ -100,6 +100,9 @@ public abstract class ProtocolServlet extends MulgaraServlet {
 
   /** The default output type to use. */
   protected static final Output DEFAULT_OUTPUT_TYPE = Output.XML;
+  
+  /** The default output type to use for queries that return graph results. */
+  protected static final Output DEFAULT_GRAPH_OUTPUT_TYPE = Output.RDFXML;
 
   /** The parameter identifying the graph. */
   protected static final String DEFAULT_GRAPH_ARG = "default-graph-uri";
@@ -702,9 +705,9 @@ public abstract class ProtocolServlet extends MulgaraServlet {
 
     // need graph types if constructing a graph
     if (cmd instanceof ConstructQuery) {
-      if (type == Output.XML) type = Output.RDFXML;
+      if (!type.isGraphType) type = DEFAULT_GRAPH_OUTPUT_TYPE;
     } else {
-      if (type == Output.RDFXML || type == Output.N3) type = Output.XML;
+      if (type.isGraphType) type = DEFAULT_OUTPUT_TYPE;
     }
 
     return type;
@@ -715,13 +718,17 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    * Enumeration of the various output types, depending on mime type.
    */
   enum Output {
-    XML("application/sparql-results+xml"),
-    JSON("application/sparql-results+json"),
-    RDFXML("application/rdf+xml"),
-    N3("text/rdf+n3");
+    XML("application/sparql-results+xml", false),
+    JSON("application/sparql-results+json", false),
+    RDFXML("application/rdf+xml", true),
+    N3("text/rdf+n3", true);
 
     final String mimeText;
-    private Output(String mimeText) { this.mimeText = mimeText; }
+    final boolean isGraphType;
+    private Output(String mimeText, boolean isGraphType) { 
+      this.mimeText = mimeText;
+      this.isGraphType = isGraphType;
+    }
 
     static private Map<String,Output> outputs = new HashMap<String,Output>();
     static {
