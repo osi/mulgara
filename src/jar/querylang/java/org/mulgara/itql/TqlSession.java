@@ -397,7 +397,7 @@ public class TqlSession {
 
           if (answers.isEmpty()) {
             for (String message: messages) out.println(message);
-          } else {
+           } else {
             int answerIndex = 0;
 
             while (answerIndex < answers.size()) {
@@ -447,7 +447,6 @@ public class TqlSession {
                   if (hasAnswers) out.println(rowCount + " rows returned.");
                   answerIndex++;
                   answer.close();
-                  out.flush();
 
                   if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
                     break;
@@ -458,6 +457,7 @@ public class TqlSession {
               }
             }
           }
+          out.flush();
         }
       } catch (IOException e) {
         e.printStackTrace();
