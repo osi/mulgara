@@ -292,8 +292,8 @@ I.  Open Source Components
               http://oss.software.ibm.com/developerworks/opensource/CPLv1.0.htm
     
     Xerces
-    JARs:     xercesImpl.jar
-              xmlParserAPIs.jar
+    JARs:     xercesImpl-2.9.1.jar
+              xml-apis-2.9.1.jar
     URL:      http://xml.apache.org/xerces-j/index.html
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0

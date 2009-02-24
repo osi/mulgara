@@ -42,7 +42,7 @@
       <arg value="${obj.dir}/jar/config/java"/>
 
       <classpath>
-        <fileset dir="${lib.dir}" includes="${xerces.jar}, xmlParserAPIs.jar, castor*.jar, commons-logging*.jar, velocity*.jar"/>
+        <fileset dir="${lib.dir}" includes="${xerces.jar}, ${xmlParserAPIs.jar}, castor*.jar, commons-logging*.jar, velocity*.jar"/>
       </classpath>
     </java>
   </target>

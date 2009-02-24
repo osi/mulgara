@@ -139,7 +139,7 @@
     <pathelement path="${java.class.path}"/>
 
     <fileset dir="${lib.dir}"
-             includes="log4j-*.jar, xmlParserAPIs.jar, ${xerces.jar},
+             includes="log4j-*.jar, ${xmlParserAPIs.jar}, ${xerces.jar},
                        ${jena.jar}, ${iri.jar}, ${icu4j.jar}, jxunit*.jar, castor*.jar,
                        mail-*.jar, activation-*.jar, apache-soap-*.jar, jline*.jar,
                        axis-*.jar, saaj-*.jar, emory-*.jar, trove-*.jar,
@@ -268,7 +268,7 @@
       <classpath>
         <path refid="${classpath.id}"/>
         <fileset dir="${bin.dir}" includes="${jar}, ${dtd.jar}"/>
-        <fileset dir="${lib.dir}" includes="${xerces.jar}, xmlParserAPIs.jar"/>
+        <fileset dir="${lib.dir}" includes="${xerces.jar}, ${xmlParserAPIs.jar}"/>
       </classpath>
 
       <formatter type="xml"/>
@@ -414,7 +414,7 @@
 
         <fileset dir="${bin.dir}" includes="${dtd.jar}, ${querylang.jar}, ${query.jar},
                  ${driver.jar}, ${rmi.jar}, ${server-rmi.jar}"/>
-        <fileset dir="${lib.dir}" includes="${xerces.jar}, xmlParserAPIs.jar, jxunit*.jar, junit.jar, junitpp.jar"/>
+        <fileset dir="${lib.dir}" includes="${xerces.jar}, ${xmlParserAPIs.jar}, jxunit*.jar, junit.jar, junitpp.jar"/>
       </classpath>
 
     </java>
@@ -475,7 +475,7 @@
                                             ${query.jar},
                                             ${driver.jar}, ${rmi.base.jar},
                                             ${server-rmi.jar}"/>
-        <fileset dir="${lib.dir}" includes="${xerces.jar}, xmlParserAPIs.jar,
+        <fileset dir="${lib.dir}" includes="${xerces.jar}, ${xmlParserAPIs.jar},
                                             xmlc-xerces.jar, jxunit*.jar,
                                             jakarta-regexp*.jar, junit.jar"/>
       </classpath>
