@@ -49,20 +49,23 @@ package org.mulgara.descriptor;
  */
 public class DescriptorException extends Exception {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = 8152923213619787421L;
+
   /**
-   * CONSTRUCTOR DescriptorException TO DO
+   * Creates an exception condition for managing descriptors
    *
-   * @param message PARAMETER TO DO
+   * @param message The message to report the problem
    */
   public DescriptorException(String message) {
     super(message);
   }
 
   /**
-   * CONSTRUCTOR DescriptorException TO DO
+   * Creates a chained exception condition for managing descriptors
    *
-   * @param message PARAMETER TO DO
-   * @param e PARAMETER TO DO
+   * @param message The message to report the problem
+   * @param e The causing exception to chain onto
    */
   public DescriptorException(String message, Exception e) {
     super(message, e);

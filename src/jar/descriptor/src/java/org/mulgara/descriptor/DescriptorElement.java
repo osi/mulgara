@@ -35,7 +35,6 @@ import java.util.*;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
 
 // Log4j
 import org.apache.log4j.*;
@@ -152,8 +151,7 @@ public class DescriptorElement {
 
         // create the descriptor URL
         descURL = new URL(descURLString);
-      }
-      catch (MalformedURLException use) {
+      } catch (MalformedURLException use) {
 
         log.debug("Unable to use URL from '" + descURLString + 
             "' as full URL attempting to make full URL");
@@ -211,8 +209,7 @@ public class DescriptorElement {
         }
 
         bean = new ItqlInterpreterBean();
-      }
-      else {
+      } else {
 
         if (log.isDebugEnabled()) {
 
@@ -226,7 +223,7 @@ public class DescriptorElement {
       des.setInterpreterBean(bean);
 
       // get descriptor list of parameters to search for
-      List paramsList = des.getParams(descURL);
+      List<Param> paramsList = des.getParams(descURL);
 
       // get original params for this
       // List origParams = des.getParams(descURL);
@@ -249,13 +246,11 @@ public class DescriptorElement {
       // populate params
       String paramName = null;
       Object paramValue = null;
-      Param param = null;
-      Vector paramVec = new Vector();
+      Vector<Param> paramVec = new Vector<Param>();
 
       // iterate thru the parameters this desciptor has
-      for (Iterator pi = paramsList.iterator(); pi.hasNext(); ) {
+      for (Param param: paramsList) {
 
-        param = (Param) pi.next();
         paramName = param.getName();
 
         // we have to map some internal names to their proper values
@@ -266,8 +261,7 @@ public class DescriptorElement {
 
           log.debug("adding special param " + paramValue + " as " +
                     Descriptor.DESCRIPTOR_TARGET);
-        }
-        else {
+        } else {
 
           paramValue =
               extElem.getAttribute(paramName, context.getContextNode(),
@@ -301,14 +295,12 @@ public class DescriptorElement {
       factory.releaseDescriptor(des);
 
       return doc;
-    }
-    catch (TransformerException te) {
+    } catch (TransformerException te) {
 
       String errorString="Transformer problems (" + descURLString + ")";
       log.error(errorString + " cause: " + te.getCause() );
       throw new DescriptorException(errorString, te);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
 
       String errorString="General Exception (" + descURLString + ")";
       log.error(errorString + " cause: " + e.getCause());
@@ -353,8 +345,7 @@ public class DescriptorElement {
       }
 
       bean = new ItqlInterpreterBean();
-    }
-    else {
+    } else {
 
       if (log.isDebugEnabled()) {
 
@@ -373,7 +364,7 @@ public class DescriptorElement {
       // populate params
       String paramName = null;
       Object paramValue = null;
-      Vector paramVec = new Vector();
+      Vector<Param> paramVec = new Vector<Param>();
 
       // replace @@XXX@@
       int start;
@@ -424,11 +415,9 @@ public class DescriptorElement {
             queryString =
                 StringUtil.replaceStringWithString(queryString,
                 DELIM + paramName + DELIM, paramValue.toString());
-          }
-          else {
+          } else {
 
-            throw new DescriptorException("Could not find closing " + DELIM +
-                                          " good bye");
+            throw new DescriptorException("Could not find closing " + DELIM + " good bye");
           }
         }
 
@@ -448,13 +437,11 @@ public class DescriptorElement {
       Element result = bean.execute(queryString);
 
       return result;
-    }
-    catch (TransformerException te) {
+    } catch (TransformerException te) {
 
       throw new DescriptorException("Transformer probs - query string: " +
                                     queryString, te);
-    }
-    catch (java.lang.Exception e) {
+    } catch (java.lang.Exception e) {
 
       throw new DescriptorException("Mulgara probs - query String:" +
                                     queryString, e);
@@ -493,16 +480,13 @@ public class DescriptorElement {
       File destFile = new File(dest);
 
       copy(srcFile, destFile);
-    }
-    catch (javax.xml.transform.TransformerException te) {
+    } catch (javax.xml.transform.TransformerException te) {
 
       throw new DescriptorException("Unable to find attributes !", te);
-    }
-    catch (MalformedURLException mue) {
+    } catch (MalformedURLException mue) {
 
       throw new DescriptorException("Bad File URL for source", mue);
-    }
-    catch (IOException ie) {
+    } catch (IOException ie) {
 
       throw new DescriptorException("Unable to copy file:" + src + "  to  " +
                                     dest, ie);
@@ -517,39 +501,22 @@ public class DescriptorElement {
    * @throws IOException EXCEPTION TO DO
    */
   public static void copy(File src, File dst) throws IOException {
-
     File parentDir = dst.getParentFile();
-
-    if (parentDir != null) {
-
-      parentDir.mkdirs();
-    }
+    if (parentDir != null) parentDir.mkdirs();
 
     InputStream is = new FileInputStream(src);
     OutputStream os = null;
 
     try {
-
       os = new FileOutputStream(dst);
-
       int n;
-
       try {
-
         byte[] buf = new byte[4096];
-
-        while ( (n = is.read(buf)) != -1) {
-
-          os.write(buf, 0, n);
-        }
-      }
-      finally {
-
+        while ( (n = is.read(buf)) != -1) os.write(buf, 0, n);
+      } finally {
         os.close();
       }
-    }
-    finally {
-
+    } finally {
       is.close();
     }
   }
@@ -570,9 +537,6 @@ public class DescriptorElement {
     String queryString = extElem.getFirstChild().getNodeValue();
     queryString += extElem.getAttribute("msg");
 
-    if (log.isDebugEnabled()) {
-
-      log.debug("DEBUG:" + queryString);
-    }
+    if (log.isDebugEnabled()) log.debug("DEBUG:" + queryString);
   }
 }

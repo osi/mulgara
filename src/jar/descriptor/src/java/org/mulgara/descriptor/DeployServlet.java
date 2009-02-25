@@ -36,22 +36,13 @@ import java.util.*;
 // Servlet packages
 import javax.servlet.*;
 import javax.servlet.http.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 
 // Third party packages
 import org.apache.log4j.*;
 
 // Debugging writer
-import org.apache.soap.util.xml.DOM2Writer;
 import org.mulgara.itql.ItqlInterpreterBean;
 import org.mulgara.query.QueryException;
-import org.mulgara.server.ServerInfo;
-
-// DOM
-import org.w3c.dom.*;
 
 /**
  * Deploys descriptors.
@@ -75,11 +66,13 @@ import org.w3c.dom.*;
  */
 public class DeployServlet extends HttpServlet {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = 8322549888804327301L;
+
   /**
    * the logging category to log to
    */
-  private final static Logger log =
-      Logger.getLogger(DeployServlet.class.getName());
+  private final static Logger log = Logger.getLogger(DeployServlet.class.getName());
 
   /**
    * Get line separator.
@@ -92,7 +85,7 @@ public class DeployServlet extends HttpServlet {
   private static String hostname = null;
 
   /**
-   * Description of the Field
+   * Array of deployed descriptors
    */
   private static URL[] descriptorsArray = {};
 
@@ -105,20 +98,18 @@ public class DeployServlet extends HttpServlet {
   /**
    * Deploys descriptors
    *
-   * @param req PARAMETER TO DO
-   * @param res PARAMETER TO DO
-   * @throws ServletException EXCEPTION TO DO
-   * @throws IOException EXCEPTION TO DO
+   * @param req The HTTP request
+   * @param res The HTTP response
+   * @throws ServletException An error in running the servlet
+   * @throws IOException An error reading from the request, or writing a response
    */
-  public void doGet(HttpServletRequest req,
-      HttpServletResponse res) throws ServletException, IOException {
+  @SuppressWarnings("unchecked")
+  public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
     res.setContentType("text/plain");
 
-    PrintWriter out = res.getWriter();
-
     // Extract the parameters
-    Enumeration enumeration = req.getParameterNames();
+    Enumeration<String> enumeration = (Enumeration<String>)req.getParameterNames();
 
     // commands
     boolean deployLocalDescriptors = false;
@@ -136,34 +127,21 @@ public class DeployServlet extends HttpServlet {
           String[] values = req.getParameterValues(name);
 
           if (values != null) {
-
             for (int i = 0; i < values.length; i++) {
-
               if (log.isDebugEnabled()) {
-
                 log.debug("name :" + name + " (" + i + ") : " + values[i]);
               }
-
-              // if
             }
-
-            // for
           }
 
-          // if
-          if (name.equals("deployLocalDescriptors") &&
-              values[0].equals("true")) {
-
+          if (name.equals("deployLocalDescriptors") && values[0].equals("true")) {
             deployLocalDescriptors = true;
-          }
-          else if (name.equals("clearLocalDescriptors") &&
-              values[0].equals("true")) {
-
+          } else if (name.equals("clearLocalDescriptors") &&
+            values[0].equals("true")) {
             clearLocalDescriptors = true;
           }
         }
 
-        // while
         // for our HTML result
         StringBuffer result = new StringBuffer();
 
@@ -179,11 +157,7 @@ public class DeployServlet extends HttpServlet {
           res.getWriter().println(result);
 
           try {
-
-            if (log.isDebugEnabled()) {
-
-              log.debug("about to execute query: " + query.toString());
-            }
+            if (log.isDebugEnabled()) log.debug("about to execute query: " + query.toString());
 
 
             // send statements to the database
@@ -208,45 +182,30 @@ public class DeployServlet extends HttpServlet {
             String beanResponse = beanResponseBuffer.toString();
 
             // Create Descriptor Factory
-            if (factory == null) {
-              factory = DescriptorFactory.getInstance();
-            }
+            if (factory == null) factory = DescriptorFactory.getInstance();
 
             // clear the cache
             factory.clearDescriptorCache();
 
             // write result to response
-            res.getWriter().println("Response from server: " +
-                beanResponse);
-          }
-          catch (QueryException qe) {
-
+            res.getWriter().println("Response from server: " + beanResponse);
+          } catch (QueryException qe) {
             throw new ServletException("Query error", qe);
-          }
-          catch (SQLException se) {
-
+          } catch (SQLException se) {
             throw new ServletException("SQL error", se);
-          }
-          catch (Exception ge) {
-
+          } catch (Exception ge) {
             throw new ServletException("General Exception", ge);
           }
-        }
-        else {
-
+        } else {
           // redirect to the error.jsp page with some needed params
           res.sendRedirect("error.jsp&message=NO_VALID_PARAMS");
         }
-      }
-      else {
-
+      } else {
         // No parameters
         // redirect to the error.jsp page with some needed params
         res.sendRedirect("error.jsp&message=NO_PARAMS");
       }
-    }
-    catch (DescriptorException de) {
-
+    } catch (DescriptorException de) {
      throw new ServletException("Descriptor Problem", de);
     }
   }
@@ -266,11 +225,7 @@ public class DeployServlet extends HttpServlet {
     // get the hostname from the descriptor Servlet
     if (hostname == null) {
       hostname = org.mulgara.server.ServerInfo.getBoundHostname();
-
-      if (log.isDebugEnabled()) {
-        log.debug("Hostname is set from ServerInfo to " + hostname);
-      }
-
+      if (log.isDebugEnabled()) log.debug("Hostname is set from ServerInfo to " + hostname);
     }
 
     // Auto deploy the descriptors
@@ -281,19 +236,13 @@ public class DeployServlet extends HttpServlet {
       // build the deploy query;
       StringBuffer query = buildDeployQuery(true);
 
-      if (log.isDebugEnabled()) {
-
-        log.debug("about to execute query: " + query.toString());
-      }
+      if (log.isDebugEnabled()) log.debug("about to execute query: " + query.toString());
 
       // send statements to the database
       String beanResponse = bean.executeQueryToString(query.toString());
 
       // Create Descriptor Factory
-      if (factory == null) {
-
-        factory = DescriptorFactory.getInstance();
-      }
+      if (factory == null) factory = DescriptorFactory.getInstance();
 
       // clear the cache
       factory.clearDescriptorCache();
@@ -312,64 +261,50 @@ public class DeployServlet extends HttpServlet {
   /**
    * Returns an array of Local Descriptor URLs
    *
-   * @param request PARAMETER TO DO
    * @param resources PARAMETER TO DO
    * @return The LocalDescriptorURLs value
    * @throws DescriptorException EXCEPTION TO DO
    */
-  private URL[] getLocalDescriptorURLs(List resources) throws DescriptorException {
+  private URL[] getLocalDescriptorURLs(List<String> resources) throws DescriptorException {
 
-    Vector descriptors = new Vector();
+    Vector<URL> descriptors = new Vector<URL>();
 
     // Figure out our URL
     String URL2Here = Descriptor.DEFAULT_DESCRIPTOR_PROTOCOL +
         org.mulgara.server.ServerInfo.getBoundHostname() + 
         ":" + org.mulgara.server.ServerInfo.getHttpPort() + "/webservices/";
 
-    for (Iterator it = resources.iterator(); it.hasNext(); ) {
-
-      String currResource = (String) it.next();
+    for (String currResource: resources) {
 
       // get the descriptor resource from this context
       try {
-
         URL defaultDir = getServletContext().getResource(currResource);
-
         log.info("default dir is " + defaultDir);
 
         //if (defaultDir != null) {
 
           File dfile = null;
-
           try {
-
             // Now make a file out of it..
             // Use the URI constructor to assist with Windows 2000/NT
             // issues.
             dfile = new File(new URI(defaultDir.toString()));
-
           } catch (java.net.URISyntaxException use) {
-
             throw new DescriptorException("Unable to construct URI to default" +
                  " Descriptors at directory location "+ defaultDir );
           }
 
           // check if its a directory
           if (dfile.isDirectory()) {
-
             log.debug("Entering " + defaultDir);
-
 
             // go thru all files in dir, TODO descend into dirs if necessary
             File[] dfiles = dfile.listFiles();
 
             for (int i = 0; i < dfiles.length; i++) {
-
               log.debug("Testing " + dfiles[i].getName());
-
               // test if this file is a file
               if (dfiles[i].isFile()) {
-
                 //String urlString = URL2Here + "descriptors/default/" + dfiles[i].getName();
                 String urlString =
                     URL2Here + currResource.substring(1, currResource.length()) +
@@ -385,23 +320,17 @@ public class DeployServlet extends HttpServlet {
                 descriptors.add(url);
               }
             }
-          } 
-          else {
-
-            throw new DescriptorException("Path to default descriptors (" +
-                defaultDir + ") is NOT a directory!");
+          } else {
+            throw new DescriptorException("Path to default descriptors (" + defaultDir + ") is NOT a directory!");
           }
         //} // if defaultDir 
-      }
-      catch (java.net.MalformedURLException mue) {
-
-        throw new DescriptorException("Unable to construct URL to default" +
-            " Descriptors!");
+      } catch (java.net.MalformedURLException mue) {
+        throw new DescriptorException("Unable to construct URL to default Descriptors!");
       }
     }
 
     // return as an array
-    return (URL[]) descriptors.toArray(descriptorsArray);
+    return descriptors.toArray(descriptorsArray);
   }
 
 
@@ -426,14 +355,10 @@ public class DeployServlet extends HttpServlet {
 
     // end if
     // get server name
-    String serverURIString =
-        modelURIString.substring(0, modelURIString.indexOf('#'));
+    String serverURIString = modelURIString.substring(0, modelURIString.indexOf('#'));
 
     // log it
-    if (log.isDebugEnabled()) {
-
-      log.debug("Server URI is " + serverURIString);
-    }
+    if (log.isDebugEnabled()) log.debug("Server URI is " + serverURIString);
 
     // end if
 
@@ -448,15 +373,14 @@ public class DeployServlet extends HttpServlet {
     // when clearing, create,drop,create to avoid exceptions
     if (clearLocalDescriptors) {
 
-      query.append(
-          "# create,drop,create avoids Graph not found exceptions" + eol);
+      query.append("# create,drop,create avoids Graph not found exceptions" + eol);
       query.append("create <" + modelURIString + ">;" + eol);
       query.append("drop <" + modelURIString + ">;" + eol);
       query.append("create <" + modelURIString + ">;" + eol);
     }
 
     // create load statements
-    List resources = new Vector();
+    List<String> resources = new Vector<String>();
     resources.add("/descriptor/descriptors/default/");
     resources.add("/descriptor/descriptors/vcard/");
     resources.add("/descriptor/descriptors/test/");
@@ -465,9 +389,7 @@ public class DeployServlet extends HttpServlet {
     query.append("# Deploy Internal Descriptors " + eol);
 
     for (int i = 0; i < descriptors.length; i++) {
-
       log.debug("Descriptor URL: " + descriptors[i].toString());
-
       query.append("load <");
       query.append(descriptors[i].toString());
       query.append("> into <");
@@ -477,10 +399,9 @@ public class DeployServlet extends HttpServlet {
 
     // end transaction
     query.append("set autocommit on;" + eol);
-/*
+    /*
     // send to response
     result.append(eol + query + eol);
-
     result.append("\n Sending Statements to Mulgara Database..." + eol);
     */
 

@@ -69,12 +69,12 @@ public class DescriptorFactory {
   /**
    * Description of the Field
    */
-  private static Map busyPool = new HashMap();
+  private static Map<URL,Set<Descriptor>> busyPool = new HashMap<URL,Set<Descriptor>>();
 
   /**
-   * Description of the Field
+   * Map of URLs to descriptors
    */
-  private static Map freePool = new HashMap();
+  private static Map<URL,Set<SoftReference<Descriptor>>> freePool = new HashMap<URL,Set<SoftReference<Descriptor>>>();
 
   /**
    * Description of the Field
@@ -82,19 +82,18 @@ public class DescriptorFactory {
   private ItqlInterpreterBean bean = null;
 
   /**
-   * CONSTRUCTOR DescriptorFactory TO DO
+   * Creates a descriptor factory
    */
   public DescriptorFactory() {
     this(null);
   }
 
   /**
-   * CONSTRUCTOR DescriptorFactory TO DO
+   * Creates a descriptor factory
    *
-   * @param bean PARAMETER TO DO
+   * @param bean Access to the database
    */
   public DescriptorFactory(ItqlInterpreterBean bean) {
-
     this.bean = bean;
   }
 
@@ -106,9 +105,7 @@ public class DescriptorFactory {
   public static DescriptorFactory getInstance() {
 
     if (descriptorFactory == null) {
-
       synchronized (DescriptorFactory.class) {
-
         descriptorFactory = new DescriptorFactory();
       }
     }
@@ -120,15 +117,13 @@ public class DescriptorFactory {
    * Call with this getInstance first to set the bean to use when creating
    * descriptors TODO very ugly must fix
    *
-   * @param bean PARAMETER TO DO
+   * @param bean Access to the database
    * @return The Instance value
    */
   public static DescriptorFactory getInstance(ItqlInterpreterBean bean) {
 
     if (descriptorFactory == null) {
-
       synchronized (DescriptorFactory.class) {
-
         descriptorFactory = new DescriptorFactory(bean);
       }
     }
@@ -137,22 +132,21 @@ public class DescriptorFactory {
   }
 
   /**
-       * Return the InterpreterBean used by the factory to pass to descriptors. bean
+   * Return the InterpreterBean used by the factory to pass to descriptors. bean
    * will be null if factory was constructed without one.
    *
-   * @return bean see comment
+   * @return The access to the Mulgara database
    */
   public ItqlInterpreterBean getItqlInterpreterBean() {
-
     return bean;
   }
 
   /**
    * Gets the Descriptor attribute of the DescriptorFactory object
    *
-   * @param url PARAMETER TO DO
+   * @param url The key to find the descriptor by
    * @return The Descriptor value
-   * @throws DescriptorException EXCEPTION TO DO
+   * @throws DescriptorException The descriptor could not be marked as available
    */
   public Descriptor getDescriptor(URL url) throws DescriptorException {
 
@@ -162,12 +156,9 @@ public class DescriptorFactory {
     descriptor = getFromFreePool(url);
 
     if (descriptor == null) {
-
       log.info("creating descriptor! " + url);
       descriptor = new Descriptor(url, bean);
-    }
-    else if (log.isDebugEnabled()) {
-
+    } else if (log.isDebugEnabled()) {
       log.debug("reusing descriptor! " + url);
     }
 
@@ -180,12 +171,10 @@ public class DescriptorFactory {
   /**
    * Releases a descriptor
    *
-   * @param descriptor PARAMETER TO DO
-   * @throws DescriptorException EXCEPTION TO DO
+   * @param descriptor Descriptor to be released
+   * @throws DescriptorException If the descriptor was not allocated
    */
-  public void releaseDescriptor(Descriptor descriptor) throws
-      DescriptorException {
-
+  public void releaseDescriptor(Descriptor descriptor) throws DescriptorException {
     putInFreePool(getFromBusyPool(descriptor));
   }
 
@@ -193,7 +182,7 @@ public class DescriptorFactory {
    * Clears the cache of descriptors. this is normally done if a descriptor has
    * been changed externally and the cached versions are now invalid
    *
-   * @throws DescriptorException EXCEPTION TO DO
+   * @throws DescriptorException Unable to manage the descriptor
    */
   public void clearDescriptorCache() throws DescriptorException {
 
@@ -203,20 +192,15 @@ public class DescriptorFactory {
 
       //resetDescriptorSet(busyPool.keySet(), busyPool);
       //busyPool.clear();
-      Set urls = busyPool.keySet();
-      Set set = null;
-      URL url = null;
+      Set<URL> urls = busyPool.keySet();
+      Set<Descriptor> set = null;
 
-      for (Iterator i = urls.iterator(); i.hasNext(); ) {
-
-        // get next URL
-        url = (URL) i.next();
+      for (URL url: urls) {
 
         // get the set of these descriptors
-        set = (Set) busyPool.get(url);
+        set = busyPool.get(url);
 
         if (set.size() != 0) {
-
           log.warn("Clearing descriptor Cache but there are still " +
               " active descriptors in busy pool for " + url + " these " +
               " have been ignored");
@@ -225,38 +209,34 @@ public class DescriptorFactory {
     }
 
     synchronized (freePool) {
-
       resetDescriptorSet(freePool.keySet(), freePool);
       freePool.clear();
     }
   }
 
   /**
-       * Gets a descriptor from the busy pool, the same descriptor is returned - its
+   * Gets a descriptor from the busy pool, the same descriptor is returned - its
    * not in ANY pool when returned
    *
-   * @param descriptor PARAMETER TO DO
+   * @param descriptor Descriptor to get from the busy pool
    * @return The FromBusyPool value
-   * @throws DescriptorException EXCEPTION TO DO
+   * @throws DescriptorException if the descriptor was not available
    */
-  private Descriptor getFromBusyPool(Descriptor descriptor) throws
-      DescriptorException {
+  private Descriptor getFromBusyPool(Descriptor descriptor) throws DescriptorException {
 
     URL url = descriptor.getURL();
 
     synchronized (busyPool) {
 
-      Set busyDes = (Set) busyPool.get(url);
+      Set<Descriptor> busyDes = busyPool.get(url);
 
-      if ( (busyDes == null) || (busyDes.size() == 0)) {
-
+      if ((busyDes == null) || (busyDes.size() == 0)) {
         throw new DescriptorException(
             "tried to remove descriptor from empty busy pool " +
             " and its not there! URL: " + url + " Pool Set: " + busyDes);
       }
 
       if (!busyDes.remove(descriptor)) {
-
         throw new DescriptorException(
             "tried to remove descriptor from busy pool " +
             " and its not there! URL: " + url);
@@ -269,85 +249,59 @@ public class DescriptorFactory {
   /**
    * gets a descriptor from the free pool or null if there isn't one
    *
-   * @param url PARAMETER TO DO
+   * @param url The key to find the descriptor with
    * @return The FromFreePool value
    */
   private Descriptor getFromFreePool(URL url) {
 
     Descriptor descriptor = null;
-    SoftReference ref = null;
 
     synchronized (freePool) {
 
-      Set freeDes = (Set) freePool.get(url);
+      Set<SoftReference<Descriptor>> freeDes = freePool.get(url);
 
-      if ( (freeDes != null) && (freeDes.size() > 0)) {
+      if ((freeDes != null) && (freeDes.size() > 0)) {
 
         // get first available non null descriptor
         // debug
         if (log.isDebugEnabled()) {
-
           log.debug("Looking in free pool for : " + url);
         }
 
         // iterate thru set of soft ref'ed descriptors..
-        for (Iterator i = freeDes.iterator(); i.hasNext(); ) {
+        for (SoftReference<Descriptor> ref: freeDes) {
 
-          //descriptor = (Descriptor)(((SoftReference)i.next()).get());
-          ref = (SoftReference) i.next();
-          descriptor = (Descriptor) ref.get();
+          descriptor = ref.get();
 
           // got a non garbage collected descriptor
           if (descriptor != null) {
+            if (log.isDebugEnabled()) log.debug("Got Free descriptor : " + url);
 
-            // debug
-            if (log.isDebugEnabled()) {
-
-              log.debug("Got Free descriptor : " + url);
-            }
-
-            // debug
-            if (log.isDebugEnabled()) {
-
-              log.debug("free pool size b4 removal : " + freeDes.size());
-            }
+            if (log.isDebugEnabled()) log.debug("free pool size b4 removal : " + freeDes.size());
 
             // remove it from the free list
             freeDes.remove(ref);
 
-            // debug
-            if (log.isDebugEnabled()) {
-
-              log.debug("free pool size after removal : " + freeDes.size());
-            }
+            if (log.isDebugEnabled()) log.debug("free pool size after removal : " + freeDes.size());
 
             // return it
             return descriptor;
-          }
-          else if (log.isDebugEnabled()) {
-
+          } else if (log.isDebugEnabled()) {
             log.debug("free pool descriptor gc'ed: " + url);
           }
         }
 
         // debug
         if (log.isDebugEnabled()) {
-
-          log.debug("Free pool soft referenced descriptors gc'ed for  : " +
-              url);
+          log.debug("Free pool soft referenced descriptors gc'ed for  : " + url);
         }
 
-        // if we got here then all soft referenced descriptors have been garbage
-        // collected
+        // if we got here then all soft referenced descriptors have been garbage collected
         return null;
-      }
-      else {
+      } else {
 
         // debug
-        if (log.isDebugEnabled()) {
-
-          log.debug("Nothing in free pool for : " + url);
-        }
+        if (log.isDebugEnabled()) log.debug("Nothing in free pool for : " + url);
 
         // nothing in pool
         return null;
@@ -358,7 +312,7 @@ public class DescriptorFactory {
   /**
    * puts a descriptor in a pool
    *
-   * @param descriptor PARAMETER TO DO
+   * @param descriptor The descriptor to mark as free
    */
   private void putInFreePool(Descriptor descriptor) {
 
@@ -368,21 +322,19 @@ public class DescriptorFactory {
     synchronized (freePool) {
 
       // get the set for this URL
-      Set set = (Set) freePool.get(url);
+      Set<SoftReference<Descriptor>> set = freePool.get(url);
 
       // create set if needed
       if (set == null) {
-
-        set = new HashSet();
+        set = new HashSet<SoftReference<Descriptor>>();
         freePool.put(url, set);
       }
 
       // add this descriptor to the set
-      set.add(new SoftReference(descriptor));
+      set.add(new SoftReference<Descriptor>(descriptor));
 
       // debug
       if (log.isDebugEnabled()) {
-
         log.debug("Free Pool size: " + set.size() + " for url: " + url);
       }
     }
@@ -391,7 +343,7 @@ public class DescriptorFactory {
   /**
    * puts a descriptor in a persistent pool
    *
-   * @param descriptor PARAMETER TO DO
+   * @param descriptor The descriptor to mark as busy
    */
   private void putInBusyPool(Descriptor descriptor) {
 
@@ -401,20 +353,16 @@ public class DescriptorFactory {
     synchronized (busyPool) {
 
       // get the set for this URL
-      Set set = (Set) busyPool.get(url);
+      Set<Descriptor> set = busyPool.get(url);
 
       // create set if needed
       if (set == null) {
-
-        set = new HashSet();
+        set = new HashSet<Descriptor>();
         busyPool.put(url, set);
       }
 
       // debug
-      if (log.isDebugEnabled()) {
-
-        log.debug("Busy Pool size: " + set.size());
-      }
+      if (log.isDebugEnabled()) log.debug("Busy Pool size: " + set.size());
 
       // add this descriptor to the set
       set.add(descriptor);
@@ -424,54 +372,23 @@ public class DescriptorFactory {
   /**
    * resets descriptors in a set
    *
-   * @param descriptors PARAMETER TO DO
-   * @param pool PARAMETER TO DO
-   * @throws DescriptorException EXCEPTION TO DO
+   * @param descriptors The set of keys for descriptors to reset
+   * @param pool The pool that references to descriptors can be found in
+   * @throws DescriptorException Unable to manage the descriptor
    */
-  private void resetDescriptorSet(Set descriptors, Map pool) throws
-      DescriptorException {
-
-    // reset every descriptor
-    URL url = null;
-    Descriptor des = null;
-    Set set = null;
-
+  private void resetDescriptorSet(Set<URL> descriptors, Map<URL,Set<SoftReference<Descriptor>>> pool) throws DescriptorException {
     synchronized (pool) {
-
-      for (Iterator i = descriptors.iterator(); i.hasNext(); ) {
-
-        url = (URL) i.next();
-
+      for (URL url: descriptors) {
         // get the set of these descriptors
-        set = (Set) pool.get(url);
-
+        Set<SoftReference<Descriptor>> set = pool.get(url);
         // go thru each and reset
-        for (Iterator pi = set.iterator(); pi.hasNext(); ) {
-
-          Object obj = pi.next();
-
-          if (obj instanceof SoftReference) {
-
-            des = (Descriptor) ( (SoftReference) obj).get();
-          }
-          else if (obj instanceof Descriptor) {
-
-            des = (Descriptor) obj;
-          }
-          else {
-
-            throw new DescriptorException("Found wacky object " + obj +
-                " in Set, should be SoftReference or Descriptor");
-          }
-
+        for (Iterator<SoftReference<Descriptor>> pi = set.iterator(); pi.hasNext(); ) {
+          Descriptor des = pi.next().get();
           if (des != null) {
-
             des.resetSettings();
-          }
-          else {
-
+          } else {
             // remove this from the set, its not used any more
-            set.remove(obj);
+            pi.remove();
           }
         }
       }

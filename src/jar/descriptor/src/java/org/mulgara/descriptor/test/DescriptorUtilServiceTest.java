@@ -65,8 +65,8 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
     */
 
     public void test1DescriptorServiceInvokeToString() throws Exception {
-        org.mulgara.descriptor.DescriptorServiceSoapBindingStub binding = null;
         /*
+        org.mulgara.descriptor.DescriptorServiceSoapBindingStub binding = null;
         try {
             binding = (org.mulgara.descriptor.DescriptorServiceSoapBindingStub)
                           new org.mulgara.descriptor.DescriptorUtilServiceLocator().getDescriptorService();
@@ -76,7 +76,6 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
                 jre.getLinkedCause().printStackTrace();
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
-        */
         assertNotNull("binding is null", binding);
 
         // Time out after a minute
@@ -93,12 +92,14 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
 
         // finally, test for helloworld
         assertEquals(testValue, value);
+        */
     }
 
 
-    private HashMap createHashMap() throws Exception {
+    @SuppressWarnings("unused")
+    private HashMap<String,String> createHashMap() throws Exception {
 
-      HashMap descriptorHash = new HashMap();
+      HashMap<String,String> descriptorHash = new HashMap<String,String>();
       descriptorHash.put(Descriptor.DESCRIPTOR_SELF,
           "http://" + hostName +
           ":8080/webservices/descriptor/descriptors/test/hello.xsl");
@@ -109,13 +110,11 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
       return descriptorHash;
     }
 
+    @SuppressWarnings("unused")
     private Element createElement() throws Exception {
 
-      // Set up parameters
-      Vector params = new Vector();
-
       // assemble descriptor parameters into hashtable
-      HashMap descriptorHash = new HashMap();
+      HashMap<String,String> descriptorHash = new HashMap<String,String>();
       descriptorHash.put(Descriptor.DESCRIPTOR_SELF,
           "http://" + hostName +
           ":8080/webservices/descriptor/descriptors/test/hello.xsl");
@@ -136,10 +135,9 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
       // <name> is the real name of the parameter
       Element element = doc.createElement("descriptor-params");
 
-      for (Iterator e = descriptorHash.keySet().iterator(); e.hasNext(); ) {
+      for (String key: descriptorHash.keySet()) {
 
-        String key = (String) e.next();
-        String value = (String) descriptorHash.get(key);
+        String value = descriptorHash.get(key);
 
         Element dParam = doc.createElement(key);
         dParam.appendChild(doc.createTextNode(value));
@@ -147,8 +145,7 @@ public class DescriptorUtilServiceTest extends junit.framework.TestCase {
         element.appendChild(dParam);
       }
 
-      System.out.println("SOAP CLIENT PARAMS:" +
-                         DOM2Writer.nodeToString((Node)element, true));
+      System.out.println("SOAP CLIENT PARAMS:" + DOM2Writer.nodeToString((Node)element, true));
 
       return element;
     }

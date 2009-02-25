@@ -29,7 +29,6 @@ package org.mulgara.descriptor;
 
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -38,8 +37,6 @@ import org.apache.log4j.*;
 
 // Debugging writer
 import org.apache.axis.utils.DOM2Writer;
-
-import org.mulgara.server.EmbeddedMulgaraServer;
 
 // DOM
 import org.w3c.dom.*;
@@ -109,7 +106,7 @@ public class DescriptorUtil {
    * @return see description.
    * @throws Exception thrown when the descriptor has an internal exception.
    */
-  public String invokeToString(HashMap params) throws Exception {
+  public String invokeToString(HashMap<String,String> params) throws Exception {
 
     // if this gets set to thru reset the factory descriptors
     boolean clearDescriptorCache = false;
@@ -126,57 +123,39 @@ public class DescriptorUtil {
     String url = null;
     int i = 0;
 
-    for (Iterator pi = params.keySet().iterator(); pi.hasNext(); ) {
+    for (String key: params.keySet()) {
 
-      String key = (String) pi.next();
       String value = (String) params.get(key);
 
       parameters[i++] = new Param(key, value);
 
       //Check for the descriptor url
       if (key.equalsIgnoreCase(Descriptor.CLEAR_DESCRIPTOR_CACHE)) {
-
         clearDescriptorCache = true;
-      }
-      else if (key.equalsIgnoreCase(Descriptor.DESCRIPTOR_SELF)) {
-
+      } else if (key.equalsIgnoreCase(Descriptor.DESCRIPTOR_SELF)) {
         url = value;
-      }
-      else if (key.equalsIgnoreCase(Descriptor.DESCRIPTOR_SOURCE)) {
-
+      } else if (key.equalsIgnoreCase(Descriptor.DESCRIPTOR_SOURCE)) {
         // we've got a _source param - above url must be relative
         sourceURLString = value;
       }
     }
 
     if (url == null) {
-
-      throw new Exception(Descriptor.DESCRIPTOR_SELF +
-                          " not set as a name value pair");
+      throw new Exception(Descriptor.DESCRIPTOR_SELF + " not set as a name value pair");
     }
 
     // Create Descriptor Factory
-    if (factory == null) {
-
-      factory = DescriptorFactory.getInstance();
-    }
+    if (factory == null) factory = DescriptorFactory.getInstance();
 
     try {
 
       // received a clear descriptor cache command
-      if (clearDescriptorCache) {
-
-        factory.clearDescriptorCache();
-      }
+      if (clearDescriptorCache) factory.clearDescriptorCache();
 
       try {
-
         descURL = new URL(url);
-
         // we have a source attribute
-      }
-      catch (MalformedURLException mue) {
-
+      } catch (MalformedURLException mue) {
         descURL = Descriptor.resolveRelativeURL(url, sourceURLString);
       }
 
@@ -188,9 +167,7 @@ public class DescriptorUtil {
 
       // return the descriptor
       factory.releaseDescriptor(des);
-    }
-    catch (DescriptorException de) {
-
+    } catch (DescriptorException de) {
       throw new Exception("Descriptor Problem", de);
     }
 
@@ -212,7 +189,6 @@ public class DescriptorUtil {
   public Element invokeDescriptor(Element eparams) throws Exception {
 
     if (log.isDebugEnabled()) {
-
       log.debug("SOAP SUBMITTED PARAMS:" + DOM2Writer.nodeToString((Node)eparams, true));
     }
 
@@ -247,7 +223,6 @@ public class DescriptorUtil {
       String value = (String) param.getFirstChild().getNodeValue();
 
       if (log.isDebugEnabled()) {
-
         log.debug("Descriptor PARAM: name " + name + " value " + value);
       }
 
@@ -255,48 +230,32 @@ public class DescriptorUtil {
 
       //Check for the descriptor url
       if (name.equalsIgnoreCase(Descriptor.CLEAR_DESCRIPTOR_CACHE)) {
-
         clearDescriptorCache = true;
-      }
-      else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SELF)) {
-
+      } else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SELF)) {
         url = value;
-      }
-      else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SOURCE)) {
-
+      } else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SOURCE)) {
         // we've got a _source param - above url must be relative
         sourceURLString = value;
       }
     }
 
     if (url == null) {
-
-      throw new Exception(Descriptor.DESCRIPTOR_SELF +
-                          " not set as a name value pair");
+      throw new Exception(Descriptor.DESCRIPTOR_SELF + " not set as a name value pair");
     }
 
     // Create Descriptor Factory
-    if (factory == null) {
-
-      factory = DescriptorFactory.getInstance();
-    }
+    if (factory == null) factory = DescriptorFactory.getInstance();
 
     try {
-
       // received a clear descriptor cache command
       if (clearDescriptorCache) {
-
         factory.clearDescriptorCache();
       }
 
       try {
-
         descURL = new URL(url);
-
         // we have a source attribute
-      }
-      catch (MalformedURLException mue) {
-
+      } catch (MalformedURLException mue) {
         descURL = Descriptor.resolveRelativeURL(url, sourceURLString);
       }
 
@@ -308,11 +267,8 @@ public class DescriptorUtil {
 
       // return the descriptor
       factory.releaseDescriptor(des);
-    }
-    catch (DescriptorException de) {
-
+    } catch (DescriptorException de) {
       de.printStackTrace();
-
       throw new Exception("Descriptor Problem: " + de.getCause(), de);
     }
 

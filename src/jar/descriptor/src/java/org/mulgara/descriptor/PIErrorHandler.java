@@ -68,6 +68,7 @@ public class PIErrorHandler implements ErrorHandler, ErrorListener {
   /**
    * Description of the Field
    */
+  @SuppressWarnings("unused")
   private static final Logger log = Logger.getLogger("XALAN");
 
   /**
@@ -420,7 +421,7 @@ public class PIErrorHandler implements ErrorHandler, ErrorListener {
    * @return The wrapped exception, or <code>null</code> if there is no getException method on e.
    */
   private static Exception getWrappedException(Object e) {
-    Class c = e.getClass();
+    Class<?> c = e.getClass();
     try {
       Method m = c.getMethod("getException");
       return (Exception)m.invoke(e);

@@ -40,13 +40,6 @@ import javax.servlet.http.*;
 // Third party packages
 import org.apache.log4j.*;
 
-// Debugging writer
-import org.apache.soap.util.xml.DOM2Writer;
-import org.mulgara.server.EmbeddedMulgaraServer;
-
-// DOM
-import org.w3c.dom.*;
-
 /**
  *
  * @axis.service name="DescriptorService"
@@ -69,6 +62,9 @@ import org.w3c.dom.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class DescriptorServlet extends HttpServlet {
+
+  /** Serialization ID */
+  private static final long serialVersionUID = -8766212391201433314L;
 
   /**
    * descriptor username for Mulgara access
@@ -95,11 +91,6 @@ public class DescriptorServlet extends HttpServlet {
    * magic name/value to override Mime type
    */
   private final static String MIME_TYPE = "_mimeType";
-
-  /**
-   * hostname of this machine
-   */
-  private static String hostname = null;
 
   /**
    * unknown mimeType
@@ -330,6 +321,7 @@ public class DescriptorServlet extends HttpServlet {
    * @throws ServletException EXCEPTION TO DO
    * @throws IOException EXCEPTION TO DO
    */
+  @SuppressWarnings("unchecked")
   public void doGet(HttpServletRequest req, HttpServletResponse res) throws
       ServletException, IOException {
 
@@ -343,9 +335,8 @@ public class DescriptorServlet extends HttpServlet {
     URL descURL = null;
     String mimeType = null;
 
-    PrintWriter out = res.getWriter();
-
     // if this gets set to thru reset the factory descriptors
+    @SuppressWarnings("unused")
     boolean clearDescriptorCache = false;
 
     // get descriptor URL first.
@@ -353,42 +344,30 @@ public class DescriptorServlet extends HttpServlet {
 
     // sanity check url
     if (url == null) {
-
       throw new ServletException("Insifficient parameters supplied - no URL " +
                                  Descriptor.DESCRIPTOR_SELF + " parameter");
     }
 
     try {
-
       // see if we have a source URL string
       sourceURLString = req.getParameter(Descriptor.DESCRIPTOR_SOURCE);
 
       // try and make a URL first
       try {
-
         if (log.isDebugEnabled()) {
-
           log.debug("Attempting to construct descriptor URL from " + url);
         }
-
         descURL = new URL(url);
-      }
-      catch (MalformedURLException mue) {
-
+      } catch (MalformedURLException mue) {
         // if we have a source attribute attempt to make a full URL
         if (sourceURLString != null) {
-
           if (log.isDebugEnabled()) {
-
             log.debug(
                 "Attempting to absolute construct descriptor URL from relative URL '" +
                 url + "' and source URL '" + sourceURLString + "'");
           }
-
           descURL = Descriptor.resolveRelativeURL(url, sourceURLString);
-        }
-        else {
-
+        } else {
           throw new DescriptorException("Partial URL: '" + url +
                                         "' can not be used to find " +
               " descriptor, use full URL or supply full URL of descriptor located relative " +
@@ -399,13 +378,11 @@ public class DescriptorServlet extends HttpServlet {
 
       // Get a Descriptor Factory instance
       if (factory == null) {
-
         factory = DescriptorFactory.getInstance();
       }
 
       // check if we need to clear the cache
       if (req.getParameter(Descriptor.CLEAR_DESCRIPTOR_CACHE) != null) {
-
         factory.clearDescriptorCache();
       }
 
@@ -413,12 +390,12 @@ public class DescriptorServlet extends HttpServlet {
       Descriptor des = factory.getDescriptor(descURL);
 
       // get the params for the descriptor,
-      List params = new Vector();
+      List<Param> params = new Vector<Param>();
 
       // fill paramsList with modifiable copy of descriptor list
       // Collections.copy(paramsList, des.getParams(descURL));
       // Extract the remaining parameters
-      Enumeration enumeration = req.getParameterNames();
+      Enumeration<String> enumeration = (Enumeration<String>)req.getParameterNames();
 
       // check if we have any params, if not show usage screen
       if (enumeration.hasMoreElements()) {
@@ -426,47 +403,36 @@ public class DescriptorServlet extends HttpServlet {
         //Output the parameters to the debug logger
         while (enumeration.hasMoreElements()) {
 
-          String name = (String) enumeration.nextElement();
+          String name = enumeration.nextElement();
           String[] values = req.getParameterValues(name);
 
           // if param is required then value can NOT be null or empty string
           // otherwise remove name value pair
           if (values != null) {
 
-            for (int i = 0; i < values.length; i++) {
+            int i = 0;
+            for (String value: values) {
 
               if (log.isDebugEnabled()) {
-
-                log.debug("HTTP param name :" + name + " (" + i + ") : '" +
-                          values[i] + "'");
+                log.debug("HTTP param name :" + name + " (" + i++ + ") : '" + value + "'");
               }
 
               //Check for the descriptor url
               if (name.equalsIgnoreCase(Descriptor.CLEAR_DESCRIPTOR_CACHE)) {
-
                 clearDescriptorCache = true;
-              }
-              else if (name.equalsIgnoreCase(MIME_TYPE)) {
-
-                mimeType = values[i];
-              }
-              else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SELF)) {
-
+              } else if (name.equalsIgnoreCase(MIME_TYPE)) {
+                mimeType = value;
+              } else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SELF)) {
                 // IGNORE we have it already.
-              }
-              else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SOURCE)) {
-
+              } else if (name.equalsIgnoreCase(Descriptor.DESCRIPTOR_SOURCE)) {
                 // IGNORE we already have it.
-              }
-              else if ( (values[i] != null) && (values[i].length() > 0)) {
-
-                params.add(new Param(name, values[i]));
-              }
-              else if (log.isDebugEnabled()) {
+              } else if ( (value != null) && (value.length() > 0)) {
+                params.add(new Param(name, value));
+              } else if (log.isDebugEnabled()) {
 
                 // ignoring empty value
                 log.debug("ignoring parameter " + name + " value is " +
-                          ( (values[i] == null) ? "null" : "zero length"));
+                          ( (value == null) ? "null" : "zero length"));
               }
             }
           }
@@ -480,14 +446,12 @@ public class DescriptorServlet extends HttpServlet {
 
         // set mime type if known and not over ridden
         if (mimeType == null) {
-
           // not set as HTTP param - use configured mimetype
           mimeType = des.getMimeType().toString();
         }
 
         // set it unless unknown type
         if (!mimeType.equals(UNKNOWN_MIME_TYPE)) {
-
           res.setContentType(mimeType);
         }
 
@@ -499,8 +463,7 @@ public class DescriptorServlet extends HttpServlet {
 
         // return the descriptor
         factory.releaseDescriptor(des);
-      }
-      else {
+      } else {
 
         // No parameters
         log.debug("NO parameters");
@@ -508,13 +471,9 @@ public class DescriptorServlet extends HttpServlet {
         // redirect to the index.jsp page with some needed params
         res.sendRedirect("index.jsp");
       }
-    }
-    catch (MalformedURLException mue) {
-
+    } catch (MalformedURLException mue) {
       throw new ServletException("Bad URL for Descriptor", mue);
-    }
-    catch (DescriptorException de) {
-
+    } catch (DescriptorException de) {
       throw new ServletException("Descriptor Problem", de);
     }
   }
@@ -523,7 +482,7 @@ public class DescriptorServlet extends HttpServlet {
    * Initatiates the servlet
    *
    * @param config Servlet Config
-   * @throws ServletException EXCEPTION TO DO
+   * @throws ServletException Error initializing the servlet framework
    */
   public void init(ServletConfig config) throws ServletException {
 

@@ -222,7 +222,7 @@
     <mkdir dir="${client.obj.dir}/classes"/>
 
     <!-- compile wsdl client -->
-    <javac destdir="${client.obj.dir}/classes" debug="on" source="1.4">
+    <javac destdir="${client.obj.dir}/classes" debug="on" source="1.5">
 
       <classpath refid="descriptor-classpath"/>
 

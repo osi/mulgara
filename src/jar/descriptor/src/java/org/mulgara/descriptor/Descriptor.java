@@ -30,7 +30,6 @@ package org.mulgara.descriptor;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.regex.*;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -144,11 +143,6 @@ public class Descriptor {
   private static Document stubDoc = null;
 
   /**
-   * used in Vector.toArray(p)
-   */
-  private static Param[] p = new Param[] {};
-
-  /**
    * Description of the Field
    */
   private static URI descriptorModelURI = null;
@@ -156,12 +150,12 @@ public class Descriptor {
   /**
    * Description of the Field
    */
-  private static Map paramMap = null;
+  private static Map<URL,List<Param>> paramMap = null;
 
   /**
    * map if our mime types
    */
-  private static Map mimeMap = null;
+  private static Map<URL,MimeType> mimeMap = null;
 
   /**
    * Description of the Field
@@ -255,7 +249,7 @@ public class Descriptor {
 
       if (documentBuilderFactory == null) {
 
-        documentBuilderFactory = documentBuilderFactory.newInstance();
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();
       }
 
       if (documentBuilder == null) {
@@ -486,7 +480,7 @@ public class Descriptor {
   public MimeType getMimeType() throws DescriptorException {
 
     // we will be in here, or exception would have been thrown earlier
-    return (MimeType) mimeMap.get(url);
+    return mimeMap.get(url);
   }
 
   /**
@@ -494,8 +488,7 @@ public class Descriptor {
    *
    * @return The Params value
    */
-  public List getParams() {
-
+  public List<Param> getParams() {
     return getParams(this.url);
   }
 
@@ -505,17 +498,15 @@ public class Descriptor {
    * @param url PARAMETER TO DO
    * @return The Params value
    */
-  public List getParams(URL url) {
+  public List<Param> getParams(URL url) {
 
     if (paramMap == null) {
-
       synchronized (Descriptor.class) {
-
-        paramMap = new HashMap();
+        paramMap = new HashMap<URL,List<Param>>();
       }
     }
 
-    return Collections.unmodifiableList( (List) paramMap.get(url));
+    return Collections.unmodifiableList(paramMap.get(url));
   }
 
   /**
@@ -727,7 +718,7 @@ public class Descriptor {
 
       synchronized (Descriptor.class) {
 
-        paramMap = new HashMap();
+        paramMap = new HashMap<URL,List<Param>>();
       }
     }
 
@@ -736,7 +727,7 @@ public class Descriptor {
 
       synchronized (Descriptor.class) {
 
-        mimeMap = new HashMap();
+        mimeMap = new HashMap<URL,MimeType>();
       }
     }
 
@@ -754,7 +745,7 @@ public class Descriptor {
       }
 
       // var to be put in maps
-      List params = new ArrayList();
+      List<Param> params = new ArrayList<Param>();
       String mimeMajor = null;
       String mimeMinor = null;
 
@@ -809,16 +800,16 @@ public class Descriptor {
 
       String query = b.toString();
 
-      List answers = context.getInterpreterBean().executeQueryToList(query);
+      List<Object> answers = context.getInterpreterBean().executeQueryToList(query);
       Object obj = null;
 
       try {
 
-        for (Iterator ai = answers.iterator(); ai.hasNext(); ) {
+        for (Iterator<Object> ai = answers.iterator(); ai.hasNext(); ) {
 
           obj = ai.next();
 
-          Answer answer = ( (Answer) obj);
+          Answer answer = (Answer)obj;
 
           // get our result
           if (!answer.isUnconstrained()) {
