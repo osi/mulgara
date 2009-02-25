@@ -77,15 +77,15 @@ public class ObjectListBuilder extends AnalysisAdapter {
 
   private final static Logger logger = Logger.getLogger(ObjectListBuilder.class.getName());
 
-  private List objList;
+  private List<PElement> objList;
   /**
    * Constructor.
    */
   public ObjectListBuilder() {
-    objList = new ArrayList();
+    objList = new ArrayList<PElement>();
   }
 
-  public List getObjectList() {
+  public List<PElement> getObjectList() {
     return objList;
   }
 
