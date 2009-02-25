@@ -62,6 +62,7 @@ public class ItqlInterpreterStressTest {
   /**
    * Description of the Field
    */
+  @SuppressWarnings("unused")
   private boolean verbose = false;
 
   /**
@@ -117,6 +118,7 @@ public class ItqlInterpreterStressTest {
   /**
    * Start time of the stress test
    */
+  @SuppressWarnings("unused")
   private long startTime = 0;
 
   /**
@@ -127,7 +129,7 @@ public class ItqlInterpreterStressTest {
   /**
    * Contains the list of queries to be executed
    */
-  private Vector queries = new Vector();
+  private Vector<String> queries = new Vector<String>();
 
   /**
    * Stream to read tql commands
@@ -149,9 +151,7 @@ public class ItqlInterpreterStressTest {
    */
   public static void main(String[] args) {
 
-    if ( args.length > 0 &&
-        (args[0].equals("-?") ||
-         args[0].equalsIgnoreCase("-h"))) {
+    if ( args.length > 0 && (args[0].equals("-?") || args[0].equalsIgnoreCase("-h"))) {
 
       String lineSeparator = System.getProperty("line.separator");
       String usuage = "Stress test " + lineSeparator + "Usage: "+ lineSeparator +
@@ -167,16 +167,11 @@ public class ItqlInterpreterStressTest {
           " -i the input file containing the itql commands (default itqlcmd.log)"+lineSeparator+
           " -o output file containing the query performance results (default query.csv)"+lineSeparator;
       System.out.println( usuage );
-    }
-    else {
-
+    } else {
       try {
-
         new ItqlInterpreterStressTest().start(args);
         System.exit(0);
-      }
-      catch (Exception e) {
-
+      } catch (Exception e) {
         System.out.println(e.getMessage());
         System.exit(1);
       }
@@ -194,49 +189,32 @@ public class ItqlInterpreterStressTest {
     for (int i = 0; i < args.length; i++) {
 
       if (args[i].equals("-v")) {
-
         verbose = true;
-      }
-      else if (args[i].equals("-r")) {
-
+      } else if (args[i].equals("-r")) {
         repetitions = Integer.parseInt(args[i + 1]);
-      }
-      else if (args[i].equals("-s")) {
-
+      } else if (args[i].equals("-s")) {
         stress = Integer.parseInt(args[i + 1]);
-      }
-      else if (args[i].equals("-w")) {
-
+      } else if (args[i].equals("-w")) {
         delay = Integer.parseInt(args[i + 1]);
-      }
-      else if (args[i].equals("-wm")) {
-
+      } else if (args[i].equals("-wm")) {
         minDelay = Integer.parseInt(args[i + 1]);
-      }
-      else if (args[i].equals("-i")) {
-
+      } else if (args[i].equals("-i")) {
         itqlLog = args[i + 1];
-      }
-      else if (args[i].equals("-ra")) {
-
+      } else if (args[i].equals("-ra")) {
         rampTime = Integer.parseInt(args[i + 1]);
-      }
-      else if (args[i].equals("-o")) {
-
+      } else if (args[i].equals("-o")) {
         queryOutputFile = args[i + 1];
       }
 
     }
 
     // open the itql command log
-    LineNumberReader itqlCommands =
-        new LineNumberReader(new FileReader(itqlLog));
+    LineNumberReader itqlCommands = new LineNumberReader(new FileReader(itqlLog));
 
     // read the contents
     String query = itqlCommands.readLine();
 
     while (query != null) {
-
       queries.add(query);
       query = itqlCommands.readLine();
     }
@@ -251,12 +229,10 @@ public class ItqlInterpreterStressTest {
     System.out.println("\tQuery OutputFile :" + queryOutputFile);
 
     if (queries.size() == 0) {
-
       System.out.println("No queries to be tested - exiting");
     }
 
     if (queryOutputFile == null) {
-
       System.out.println("The output file has been supplied.  Use -o");
     }
 
@@ -266,7 +242,6 @@ public class ItqlInterpreterStressTest {
     ItqlRobot[] threads = new ItqlRobot[stress];
 
     for (int i = 0; i < stress; i++) {
-
       String name = "Robot" + String.valueOf(i);
       threads[i] = new ItqlRobot(name, queries, repetitions, delay, minDelay);
     }
@@ -284,11 +259,8 @@ public class ItqlInterpreterStressTest {
 
       // wait a period time before adding a new robot
       try {
-
         Thread.sleep(rampTime);
-      }
-      catch (InterruptedException e) {
-
+      } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
@@ -296,7 +268,6 @@ public class ItqlInterpreterStressTest {
     System.out.println("All robots have started....");
 
     for (int i = 0; i < stress; i++) {
-
       threads[i].join();
     }
 
@@ -307,12 +278,11 @@ public class ItqlInterpreterStressTest {
 
     private ItqlInterpreterBean itql = null;
     private String name = null;
-    private Vector queries = null;
+    private Vector<String> queries = null;
     private int repetitions = 0;
     private int delay = 0;
     private int minDelay = 0;
     private int noOfQueries = 0;
-    private boolean verbose = false;
 
     /**
      * TQL bean robot that will execute a collection of TQL queries
@@ -323,7 +293,7 @@ public class ItqlInterpreterStressTest {
      * @param delay the maximum delay between executes
      * @param minDelay the minimum delay between executes
      */
-    public ItqlRobot(String name, Vector queries, int repetitions, int delay,
+    public ItqlRobot(String name, Vector<String> queries, int repetitions, int delay,
         int minDelay) {
 
       this.itql = new ItqlInterpreterBean();
@@ -354,7 +324,7 @@ public class ItqlInterpreterStressTest {
 
         long start = System.currentTimeMillis();
         int queryNumber = rand.nextInt(noOfQueries);
-        String query = (String) queries.elementAt(queryNumber);
+        String query = queries.elementAt(queryNumber);
         answer = itql.executeQuery(query);
         if ( answer != null ) {
           System.out.print(".");
@@ -374,12 +344,10 @@ public class ItqlInterpreterStressTest {
                            queryNumber + "\t" + queryTime + "\t"+
                            (totalTime / executions) );
         }
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
 
         ex.printStackTrace();
-      }
-      finally {
+      } finally {
         try {
           answer.close();
         } catch (Exception ex) {
@@ -395,9 +363,8 @@ public class ItqlInterpreterStressTest {
 
           try {
 
-            this.sleep(rand.nextInt(delay - minDelay) + minDelay);
-          }
-          catch (InterruptedException e) {
+            sleep(rand.nextInt(delay - minDelay) + minDelay);
+          } catch (InterruptedException e) {
 
             e.printStackTrace();
           }
@@ -405,8 +372,7 @@ public class ItqlInterpreterStressTest {
           try {
 
             this.executeQuery();
-          }
-          catch (Exception ex) {
+          } catch (Exception ex) {
 
             ex.printStackTrace();
           }
