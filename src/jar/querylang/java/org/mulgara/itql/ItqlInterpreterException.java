@@ -51,6 +51,9 @@ package org.mulgara.itql;
  */
 public class ItqlInterpreterException extends Exception {
 
+  /** Serialization ID */
+  private static final long serialVersionUID = 2343059534661825090L;
+
   /**
    * Constructor for the ItqlInterpreterException object
    *
