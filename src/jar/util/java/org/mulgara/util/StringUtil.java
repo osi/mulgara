@@ -687,6 +687,44 @@ public class StringUtil {
   }
 
 
+  /** Map of escape characters to their character codes */
+  private static Map<Character,String> map = new HashMap<Character,String>();
+  static {
+    map.put('t', "\t");
+    map.put('t', "\t");
+    map.put('b', "\b");
+    map.put('n', "\n");
+    map.put('r', "\r");
+    map.put('f', "\f");
+    map.put('\\', "\\");
+    map.put('"', "\"");
+    map.put('\'', "'");
+  }
+
+
+  /**
+   * Search for escape characters in a string, and replace them with the request values.
+   * @param s The string to search.
+   * @return A new string with all escape characters replaced with the originals.
+   */
+  static final public String unescapeJavaString(String s) {
+    StringBuilder sb = new StringBuilder();
+    int last = 0;
+    int pos = 0;
+    while ((pos = s.indexOf('\\', pos)) >= 0) {
+      sb.append(s.substring(last, pos));
+      if (++pos == s.length()) break;
+      char c = s.charAt(pos);
+      String m = map.get(c);
+      if (m != null) sb.append(m);
+      else sb.append(c);
+      last = ++pos;
+    }
+    sb.append(s.substring(last));
+    return sb.toString();
+  }
+
+
   /**
    * Returns a stack trace of a Throwable as a string, rather than the
    * default behaviour of sending it to stderr.
