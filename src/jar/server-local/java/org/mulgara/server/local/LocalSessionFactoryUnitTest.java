@@ -68,8 +68,8 @@ public class LocalSessionFactoryUnitTest extends TestCase {
   /**
    * init the logging class
    */
-  private static Logger logger =
-      Logger.getLogger(LocalSessionFactoryUnitTest.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(LocalSessionFactoryUnitTest.class.getName());
 
   /**
    * Calls the super classes constructor.
@@ -96,6 +96,7 @@ public class LocalSessionFactoryUnitTest extends TestCase {
    * Test creating a local session, adding it to the Jena implementation and
    * querying it using the ItqlInterpreterBean.
    */
+  @SuppressWarnings("deprecation")
   public void testCreateLocalAndQuery() {
 
     LocalSessionFactory factory = null;
@@ -126,8 +127,7 @@ public class LocalSessionFactoryUnitTest extends TestCase {
       String query = "select $s $p $o from <" + modelURI + "> where $s $p $o;";
 
       // this bit, for instance, will not work.
-      ItqlInterpreterBean interpreter = new ItqlInterpreterBean(session,
-          null);
+      ItqlInterpreterBean interpreter = new ItqlInterpreterBean(session, null);
 
       //create the model and insert data
       interpreter.executeQueryToString("create <" + modelURI + "> ;");
