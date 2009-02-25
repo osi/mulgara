@@ -45,13 +45,12 @@ import org.mulgara.resolver.spi.*;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class URLResolverFactory implements ResolverFactory
-{
+public class URLResolverFactory implements ResolverFactory {
   /**
    * Logger.
    */
-  private static Logger logger =
-    Logger.getLogger(URLResolverFactory.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(URLResolverFactory.class.getName());
 
   //
   // Constructors

@@ -79,14 +79,12 @@ public class URLResolver implements Resolver {
    */
   private final ResolverSession resolverSession;
 
-  private final Resolver systemResolver;
-
   /**
    * Map from the {@link URIReference} of each document ever parsed by this
    * resolver to a {@link Map} from {@link ARP}'s {@link String}-valued blank
    * node IDs to {@link BlankNode} instances.
    */
-  private final Map documentMap = new HashMap();
+  private final Map<URIReference,Map<String,BlankNode>> documentMap = new HashMap<URIReference,Map<String,BlankNode>>();
 
   //
   // Constructors
@@ -110,7 +108,6 @@ public class URLResolver implements Resolver {
 
     // Initialize fields
     this.resolverSession = resolverSession;
-    this.systemResolver = systemResolver;
   }
 
   //
@@ -126,11 +123,8 @@ public class URLResolver implements Resolver {
    * @param modelTypeURI  {@inheritDoc}.  This field is ignored, because URL models
    *   are external.
    */
-  public void createModel(long model,
-      URI modelTypeURI) throws ResolverException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Create URL model " + model);
-    }
+  public void createModel(long model, URI modelTypeURI) throws ResolverException {
+    if (logger.isDebugEnabled()) logger.debug("Create URL model " + model);
 
     // Globalize the model
     URIReference modelURIReference;
@@ -141,8 +135,7 @@ public class URLResolver implements Resolver {
             "Graph parameter " + globalModel + " isn't a URI reference");
       }
       modelURIReference = (URIReference) globalModel;
-    }
-    catch (GlobalizeException e) {
+    } catch (GlobalizeException e) {
       throw new ResolverException("Couldn't globalize model", e);
     }
     assert modelURIReference != null;
@@ -165,8 +158,7 @@ public class URLResolver implements Resolver {
 
         // Open a stream out to the file
         outputStream = new FileOutputStream(new File(url.getPath()));
-      }
-      else {
+      } else {
         // Otherwise, we trust that the Java environment has an appropriate URL
         // protocol handler, and hope furthermore that it supports output
         outputStream = url.openConnection().getOutputStream();
@@ -179,12 +171,10 @@ public class URLResolver implements Resolver {
             new PrintWriter(new OutputStreamWriter(outputStream));
         writer.println("This should be the content of " + modelURIReference);
         writer.flush();
-      }
-      finally {
+      } finally {
         outputStream.close();
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new ResolverException("Can't create RDF document from " + model, e);
     }
   }
@@ -193,19 +183,14 @@ public class URLResolver implements Resolver {
    * @return a {@link DummyXAResource} with a 10 second transaction timeout
    */
   public XAResource getXAResource() {
-    return new DummyXAResource(
-        10 // seconds before transaction timeout
-        );
+    return new DummyXAResource(10); // seconds before transaction timeout
   }
 
   /**
    * Insert or delete RDF statements in a model at a URL.
    */
-  public void modifyModel(long model, Statements statements,
-      boolean occurs) throws ResolverException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Modify URL model " + model);
-    }
+  public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {
+    if (logger.isDebugEnabled()) logger.debug("Modify URL model " + model);
     throw new ResolverException("Modification of URLs not implemented");
     /*
          logger.error("Choosing an arbitrary scratch model node");
@@ -231,9 +216,7 @@ public class URLResolver implements Resolver {
    * Remove the cached model containing the contents of a URL.
    */
   public void removeModel(long model) throws ResolverException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Remove URL model " + model);
-    }
+    if (logger.isDebugEnabled())  logger.debug("Remove URL model " + model);
 
     // Globalize the model
     URIReference modelURIReference;
@@ -244,8 +227,7 @@ public class URLResolver implements Resolver {
             "Graph parameter " + globalModel + " isn't a URI reference");
       }
       modelURIReference = (URIReference) globalModel;
-    }
-    catch (GlobalizeException e) {
+    } catch (GlobalizeException e) {
       throw new ResolverException("Couldn't globalize model", e);
     }
     assert modelURIReference != null;
@@ -267,17 +249,14 @@ public class URLResolver implements Resolver {
         if (!(new File(url.getPath()).delete())) {
           logger.warn("Tried to delete nonexistent " + url + " -- ignoring");
         }
-      }
-      else {
+      } else {
         // This is a URL protocol for which we have no specific code
         throw new ResolverException(
             "Can't remove " + url + ": " + url.getProtocol() +
             " protocol not supported");
       }
-    }
-    catch (IOException e) {
-      throw new ResolverException(
-          "Can't remove RDF document from " + modelURIReference, e);
+    } catch (IOException e) {
+      throw new ResolverException("Can't remove RDF document from " + modelURIReference, e);
     }
   }
 
@@ -287,32 +266,26 @@ public class URLResolver implements Resolver {
    * Resolution is by filtration of a URL stream, and thus very slow.
    */
   public Resolution resolve(Constraint constraint) throws QueryException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Resolve " + constraint);
-    }
+    if (logger.isDebugEnabled()) logger.debug("Resolve " + constraint);
 
     // Validate parameters
     if (constraint == null) {
       throw new IllegalArgumentException("constraint null");
-    }
-    else if (!(constraint.getModel() instanceof LocalNode)) {
+    } else if (!(constraint.getModel() instanceof LocalNode)) {
       throw new QueryException("Constraint model can't be variable");
     }
 
     // Convert the constraint's model to a URI reference
     URIReference modelURIReference;
     try {
-      Node node = resolverSession.globalize(((LocalNode) constraint.getElement(
-          3)).getValue());
+      Node node = resolverSession.globalize(((LocalNode) constraint.getElement(3)).getValue());
 
       if (!(node instanceof URIReference)) {
-        throw new QueryException("Constraint model " + node +
-            " isn't a URI reference");
+        throw new QueryException("Constraint model " + node + " isn't a URI reference");
       }
 
       modelURIReference = (URIReference) node;
-    }
-    catch (GlobalizeException e) {
+    } catch (GlobalizeException e) {
       throw new QueryException("Couldn't globalize model for " + constraint, e);
     }
     assert modelURIReference != null;
@@ -320,9 +293,9 @@ public class URLResolver implements Resolver {
     // Return the statements in the document at the model URL
     try {
       // Find or create the blank node map for this document
-      Map blankNodeMap = (Map) documentMap.get(modelURIReference);
+      Map<String,BlankNode> blankNodeMap = documentMap.get(modelURIReference);
       if (blankNodeMap == null) {
-        blankNodeMap = new HashMap();
+        blankNodeMap = new HashMap<String,BlankNode>();
         documentMap.put(modelURIReference, blankNodeMap);
       }
       assert blankNodeMap != null;
@@ -331,13 +304,10 @@ public class URLResolver implements Resolver {
       // Generate the resolution
       return new StatementsWrapperResolution(
           constraint,
-          new URLStatements(modelURIReference.getURI().toURL(),
-          resolverSession,
-          blankNodeMap),
+          new URLStatements(modelURIReference.getURI().toURL(), resolverSession, blankNodeMap),
           true // a definitive and complete resolution
           );
-    }
-    catch (MalformedURLException e) {
+    } catch (MalformedURLException e) {
       // This isn't really a document, so return no statements
       Variable[] variables = new Variable[] {new Variable("subject"),
           new Variable("predicate"),
@@ -355,11 +325,7 @@ public class URLResolver implements Resolver {
       catch (TuplesException e2) {
         throw new QueryException("Couldn't generate empty resolution", e2);
       }
-    }
-    catch (IOException e) {
-      throw new QueryException("Couldn't read URL " + modelURIReference, e);
-    }
-    catch (TuplesException e) {
+    } catch (TuplesException e) {
       throw new QueryException("Couldn't read URL " + modelURIReference, e);
     }
   }
