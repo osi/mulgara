@@ -44,7 +44,6 @@ package org.mulgara.itql;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-import java.beans.*;
 import java.io.*;
 import java.util.*;
 
@@ -52,31 +51,22 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.text.*;
-import javax.swing.event.*;
 
 import org.apache.log4j.*;
 import org.jrdf.graph.Node;
 
 import org.mulgara.query.Answer;
-import org.mulgara.query.TuplesException;
 
 public class ItqlSessionUI extends JScrollPane implements Runnable,
     KeyListener, java.awt.event.MouseListener, ActionListener {
+
+  /** Serialization ID */
+  private static final long serialVersionUID = 6713691768040570333L;
 
   /**
    * The logging category to log to
    */
   private final static Logger log = Logger.getLogger(ItqlSessionUI.class);
-
-  /**
-   * Inputstream to take user input.
-   */
-  private InputStream in;
-
-  /**
-   * Outputstream to display user output.
-   */
-   private PrintStream out;
 
   /**
    * Used to pipe input.
@@ -96,7 +86,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
   /**
    * The list of history items.
    */
-  private ArrayList history = new ArrayList();
+  private ArrayList<String> history = new ArrayList<String>();
 
   /**
    * Current index into the history.
@@ -162,14 +152,14 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
     outPipe = new PipedOutputStream();
     try {
 
-      in = new PipedInputStream((PipedOutputStream) outPipe);
+      new PipedInputStream((PipedOutputStream) outPipe);
     } catch (IOException e) {
 
       log.error("Error creating input stream", e);
     }
 
     PipedOutputStream pout = new PipedOutputStream();
-    out = new PrintStream(pout);
+    new PrintStream(pout);
     try {
 
       inPipe = new PipedInputStream(pout);
@@ -722,6 +712,7 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
   /**
    * Extension to JTextPane to put all pastes at the end of the command line.
    */
+  @SuppressWarnings("serial")
   class PasteablePane extends JTextPane {
 
     public PasteablePane(StyledDocument doc) {
@@ -775,20 +766,20 @@ public class ItqlSessionUI extends JScrollPane implements Runnable,
       itqlSession.executeCommand(command);
       println();
 
-      java.util.List answers = itqlSession.getLastAnswers();
-      java.util.List messages = itqlSession.getLastMessages();
+      java.util.List<Answer> answers = itqlSession.getLastAnswers();
+      java.util.List<String> messages = itqlSession.getLastMessages();
 
       int answerIndex = 0;
       String lastMessage;
 
       while (answerIndex < answers.size()) {
 
-        lastMessage = (String) messages.get(answerIndex);
+        lastMessage = messages.get(answerIndex);
 
         try {
 
           // Assume the same number of answers and messages
-          Answer answer = (Answer) answers.get(answerIndex);
+          Answer answer = answers.get(answerIndex);
 
           // If there's more than one answer print a heading.
           if (answers.size() > 1) {
