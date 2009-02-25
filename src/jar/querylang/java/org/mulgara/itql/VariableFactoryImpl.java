@@ -27,28 +27,13 @@
 
 package org.mulgara.itql;
 
-// Java 2 standard packages
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
 // Third party packages
 import org.apache.log4j.Logger;  // Apache Log4J
-import org.jrdf.graph.*;         // JRDF
 
 // Locally written packages
 
 // Automatically generated packages (SableCC)
-import org.mulgara.itql.analysis.*;
-import org.mulgara.itql.lexer.*;
-import org.mulgara.itql.node.*;
-import org.mulgara.itql.parser.*;
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.*;
-import org.mulgara.server.Session;
-import org.mulgara.server.SessionFactory;
-import org.mulgara.server.driver.SessionFactoryFinder;
-import org.mulgara.server.driver.SessionFactoryFinderException;
 
 
 /**
@@ -72,11 +57,8 @@ import org.mulgara.server.driver.SessionFactoryFinderException;
  */
 public class VariableFactoryImpl implements VariableFactory {
 
-  /**
-   * The logger
-   */
-  private final static Logger logger =
-      Logger.getLogger(VariableFactory.class.getName());
+  /** The logger */
+  private final static Logger logger = Logger.getLogger(VariableFactory.class.getName());
 
   /**
    * Index to keep track.
@@ -89,6 +71,7 @@ public class VariableFactoryImpl implements VariableFactory {
    * @return Variable a new variable.
    */
   public Variable newVariable() {
+    if (logger.isDebugEnabled()) logger.debug("Allocating variable k" + index);
     return new Variable("k" + Integer.toString(index++));
   }
 
@@ -96,6 +79,7 @@ public class VariableFactoryImpl implements VariableFactory {
    * Reset the index to 0.
    */
   public void reset() {
+    if (logger.isDebugEnabled()) logger.debug("Resetting");
     index = 0;
   }
 }
