@@ -60,16 +60,8 @@ public class N3WriterUnitTest extends TestCase {
     // basic statement with blank-node and datatyped literal
     runTest("_:node1000001 <foo:baz> \"42\"^^<xsd:int> .\n", null);
     // literal and uri with non-ascii characters
-/*
-TODO: Fix this non-ascii stuff.
-Error message:
-<...C3%B8%C3%A9> <foo:baz> "Some text with \" in it, and \u65E5\u672C...
- but was:
-<...E2%88%9A%E2%88%8F%E2%88%9A%C2%A9> <foo:baz> "Some text with \" in it, and \u00CA\u00F3\u2022\u00CA\u00FA\u00A8...>
-
     runTest("<foo:i18n:øé> <foo:baz> \"Some text with \\\" in it, and 日本 chars, and \\u00E0 \" .",
             "<foo:i18n:%C3%B8%C3%A9> <foo:baz> \"Some text with \\\" in it, and \\u65E5\\u672C chars, and \\u00E0 \" .\n");
-*/
     // literal with newlines, ff, etc
     runTest("<foo:bar> <foo:baz> \"Some text with \n, \r, \f, \u0000 in it\" .",
             "<foo:bar> <foo:baz> \"Some text with \\n, \\r, \\u000C, \\u0000 in it\" .\n");

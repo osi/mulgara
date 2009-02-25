@@ -70,7 +70,7 @@
                        source code">
 
     <javac destdir="${content-n3.obj.dir}/classes" debug="on"
-           deprecation="on" source="1.5">
+           deprecation="on" source="1.5" encoding="UTF-8">
 
       <classpath refid="content-n3-classpath"/>
 
