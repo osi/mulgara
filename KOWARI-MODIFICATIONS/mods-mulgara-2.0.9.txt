@@ -1,4 +1,17 @@
 ------------------------------------------------------------------------
+r1543 | pag | 2009-02-24 22:32:10 -0600 (Tue, 24 Feb 2009) | 1 line
+Changed paths:
+   M /trunk/src/jar/content-n3/build.xml
+   M /trunk/src/jar/content-n3/java/org/mulgara/content/n3/N3WriterUnitTest.java
+
+Using UTF-8 when decoding international character sets in tests
+------------------------------------------------------------------------
+r1541 | pag | 2009-02-24 16:37:52 -0600 (Tue, 24 Feb 2009) | 1 line
+Changed paths:
+   A /trunk/KOWARI-MODIFICATIONS/mods-mulgara-2.0.9.txt
+
+Added update log for 2.0.9
+------------------------------------------------------------------------
 r1540 | pag | 2009-02-24 16:27:35 -0600 (Tue, 24 Feb 2009) | 1 line
 Changed paths:
    M /trunk/common.properties
