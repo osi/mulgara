@@ -40,12 +40,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 // Automatically generated packages (SableCC)
-import org.mulgara.itql.analysis.DepthFirstAdapter;
-import org.mulgara.itql.lexer.Lexer;
-import org.mulgara.itql.lexer.LexerException;
-import org.mulgara.itql.node.*;
-import org.mulgara.itql.parser.Parser;
-import org.mulgara.itql.parser.ParserException;
 import org.mulgara.query.Answer;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -127,12 +121,12 @@ public class ItqlSession {
   /**
    * The messages from the previous queries.
    */
-  private List messages = new ArrayList();
+  private List<String> messages = new ArrayList<String>();
 
   /**
    * The answers from the previous queries.
    */
-  private List answers = new ArrayList();
+  private List<Answer> answers = new ArrayList<Answer>();
 
   /**
    * The file name (URL) of the script to execute if -s is given.
@@ -327,8 +321,7 @@ public class ItqlSession {
    *
    * @return the message from the execution of the last command.
    */
-  public List getLastMessages() {
-
+  public List<String> getLastMessages() {
     return messages;
   }
 
@@ -336,8 +329,7 @@ public class ItqlSession {
    * Returns a list of Answers from the execution of the last command or series
    * of commands.  Failures will have null answers in place.
    */
-  public List getLastAnswers() {
-
+  public List<Answer> getLastAnswers() {
     return answers;
   }
 
@@ -347,7 +339,6 @@ public class ItqlSession {
    * @return the script to run.
    */
   public String getScript() {
-
     return script;
   }
 
@@ -473,6 +464,7 @@ public class ItqlSession {
    * Closes the session associated with this interpreter. Subclasses that
    * override this method <strong>must</strong> call <code>super.close()</code>.
    */
+  @SuppressWarnings("deprecation")
   private void close() {
 
     // Close the session, if any
