@@ -85,7 +85,7 @@ public class KruleLoader implements RuleLoader {
   private Map<Node,ConstraintExpression> constraintMap;
 
   /** URI for the Krule namespace. */
-  private static final String KRULE = "http://mulgara.org/owl/krule/#";
+  public static final String KRULE = "http://mulgara.org/owl/krule/#";
 
   /** URI for a constraint subject. */
   private static final String HAS_SUBJECT_STR = KRULE + "hasSubject";
@@ -97,7 +97,40 @@ public class KruleLoader implements RuleLoader {
   private static final String HAS_OBJECT_STR = KRULE + "hasObject";
 
   /** URI for a constraint model. */
-  private static final String HAS_MODEL_STR = KRULE + "hasModel";
+  private static final String HAS_GRAPH_STR = KRULE + "hasModel";
+
+  /** URI for a query property on rules. */
+  private static final String HAS_QUERY_STR = KRULE + "hasQuery";
+
+  /** URI for an axiom subject. */
+  private static final String AXIOM_SUBJECT_STR = KRULE + "subject";
+
+  /** URI for an axiom predicate. */
+  private static final String AXIOM_PREDICATE_STR = KRULE + "predicate";
+
+  /** URI for an axiom object. */
+  private static final String AXIOM_OBJECT_STR = KRULE + "object";
+
+  /** URI for rule triggering predicate. */
+  private static final String TRIGGERS_STR = KRULE + "triggers";
+
+  /** URI for selection variables in a query. */
+  private static final String SELECTION_VARS_STR = KRULE + "selectionVariables";
+
+  /** URI for constraints predicate in a query. */
+  private static final String HAS_WHERE_CLAUSE_STR = KRULE + "hasWhereClause";
+
+  /** URI for the argument property. */
+  private static final String ARGUMENT_STR = KRULE + "argument";
+
+  /** URI for the transitive constraint argument. */
+  private static final String TRANSITIVE_ARGUMENT_STR = KRULE + "transitiveArgument";
+
+  /** URI for the transitive constraint anchor argument. */
+  private static final String ANCHOR_ARGUMENT_STR = KRULE + "anchorArgument";
+
+  /** URI for the name argument. */
+  private static final String NAME_STR = KRULE + "name";
 
   /** URI for the constraint conjunction type. */
   private static final String CONSTRAINT_CONJUNCTION_STR = KRULE + "ConstraintConjunction";
@@ -105,11 +138,11 @@ public class KruleLoader implements RuleLoader {
   /** URI for the constraint disjunction type. */
   private static final String CONSTRAINT_DISJUNCTION_STR = KRULE + "ConstraintDisjunction";
 
-  /** URI for the transitive constraint argument. */
-  private static final String TRANSITIVE_ARGUMENT_STR = KRULE + "transitiveArgument";
+  /** URI for the simple constraint type. */
+  private static final String SIMPLE_CONSTRAINT_STR = KRULE + "SimpleConstraint";
 
-  /** URI for the transitive constraint anchor argument. */
-  private static final String ANCHOR_ARGUMENT_STR = KRULE + "anchorArgument";
+  /** URI for difference type. */
+  private static final String DIFFERENCE_STR = KRULE + "Difference";
 
   /** URI for the Value type. */
   private static final String URI_REF_STR = KRULE + "URIReference";
@@ -120,58 +153,89 @@ public class KruleLoader implements RuleLoader {
   /** URI for the Variable type. */
   private static final String LITERAL_STR = KRULE + "Literal";
 
+  /** URI for axiom type. */
+  private static final String AXIOM_STR = KRULE + "Axiom";
+
+  /** URI for rule type. */
+  private static final String RULE_STR = KRULE + "Rule";
+
+  /** URI for query type. */
+  private static final String QUERY_STR = KRULE + "Query";
+
   /** RDF reference for constraint subject. */
-  private static URIReference HAS_SUBJECT;
+  public static final URIReference HAS_SUBJECT = new URIReferenceImpl(URI.create(HAS_SUBJECT_STR));
 
   /** RDF reference for constraint predicate. */
-  private static URIReference HAS_PREDICATE;
+  public static final URIReference HAS_PREDICATE = new URIReferenceImpl(URI.create(HAS_PREDICATE_STR));
 
   /** RDF reference for constraint object. */
-  private static URIReference HAS_OBJECT;
+  public static final URIReference HAS_OBJECT = new URIReferenceImpl(URI.create(HAS_OBJECT_STR));
 
   /** RDF reference for constraint model. */
-  private static URIReference HAS_MODEL;
+  public static final URIReference HAS_GRAPH = new URIReferenceImpl(URI.create(HAS_GRAPH_STR));
 
-  /** RDF reference for constraint conjunction class. */
-  private static URIReference CONSTRAINT_CONJUNCTION;
+  /** RDF reference for query property on rules. */
+  public static final URIReference HAS_QUERY = new URIReferenceImpl(URI.create(HAS_QUERY_STR));
 
-  /** RDF reference for constraint disjunction class. */
-  private static URIReference CONSTRAINT_DISJUNCTION;
+  /** RDF reference for axiom subject. */
+  public static final URIReference AXIOM_SUBJECT = new URIReferenceImpl(URI.create(AXIOM_SUBJECT_STR));
+
+  /** RDF reference for axiom predicate. */
+  public static final URIReference AXIOM_PREDICATE = new URIReferenceImpl(URI.create(AXIOM_PREDICATE_STR));
+
+  /** RDF reference for axiom object. */
+  public static final URIReference AXIOM_OBJECT = new URIReferenceImpl(URI.create(AXIOM_OBJECT_STR));
+
+  /** RDF reference for rule triggering predicate. */
+  public static final URIReference TRIGGERS = new URIReferenceImpl(URI.create(TRIGGERS_STR));
+
+  /** RDF reference for selection variables predicate. */
+  public static final URIReference SELECTION_VARS = new URIReferenceImpl(URI.create(SELECTION_VARS_STR));
+
+  /** RDF reference for hasWhereClause predicate. */
+  public static final URIReference HAS_WHERE_CLAUSE = new URIReferenceImpl(URI.create(HAS_WHERE_CLAUSE_STR));
+
+  /** RDF reference for the argument property. */
+  public static final URIReference ARGUMENT = new URIReferenceImpl(URI.create(ARGUMENT_STR));
 
   /** RDF reference for the transitive constraint argument. */
-  private static URIReference TRANSITIVE_ARGUMENT;
+  public static final URIReference TRANSITIVE_ARGUMENT = new URIReferenceImpl(URI.create(TRANSITIVE_ARGUMENT_STR));
 
   /** RDF reference for the transitive constraint anchor argument. */
-  private static URIReference ANCHOR_ARGUMENT;
+  public static final URIReference ANCHOR_ARGUMENT = new URIReferenceImpl(URI.create(ANCHOR_ARGUMENT_STR));
+
+  /** RDF reference for the name argument. */
+  public static final URIReference NAME = new URIReferenceImpl(URI.create(NAME_STR));
+
+  /** RDF reference for constraint conjunction class. */
+  public static final URIReference CONSTRAINT_CONJUNCTION = new URIReferenceImpl(URI.create(CONSTRAINT_CONJUNCTION_STR));
+
+  /** RDF reference for constraint disjunction class. */
+  public static final URIReference CONSTRAINT_DISJUNCTION = new URIReferenceImpl(URI.create(CONSTRAINT_DISJUNCTION_STR));
+
+  /** RDF reference for the simple constraint type. */
+  public static final URIReference SIMPLE_CONSTRAINT = new URIReferenceImpl(URI.create(SIMPLE_CONSTRAINT_STR));
+
+  /** RDF reference for the Difference type. */
+  public static final URIReference DIFFERENCE = new URIReferenceImpl(URI.create(DIFFERENCE_STR));
 
   /** RDF reference for the Value type. */
-  static URIReference URI_REF;
+  public static final URIReference URI_REF = new URIReferenceImpl(URI.create(URI_REF_STR));
 
   /** RDF reference for the Variable type. */
-  static URIReference VARIABLE;
+  public static final URIReference VARIABLE = new URIReferenceImpl(URI.create(VARIABLE_STR));
 
   /** RDF reference for the Literal type. */
-  static URIReference LITERAL;
+  public static final URIReference LITERAL = new URIReferenceImpl(URI.create(LITERAL_STR));
 
+  /** RDF reference for the Axiom type. */
+  public static final URIReference AXIOM = new URIReferenceImpl(URI.create(AXIOM_STR));
 
-  // initialise the URIs
-  static {
-    try {
-      HAS_SUBJECT = new URIReferenceImpl(new URI(HAS_SUBJECT_STR));
-      HAS_PREDICATE = new URIReferenceImpl(new URI(HAS_PREDICATE_STR));
-      HAS_OBJECT = new URIReferenceImpl(new URI(HAS_OBJECT_STR));
-      HAS_MODEL = new URIReferenceImpl(new URI(HAS_MODEL_STR));
-      CONSTRAINT_CONJUNCTION = new URIReferenceImpl(new URI(CONSTRAINT_CONJUNCTION_STR));
-      CONSTRAINT_DISJUNCTION = new URIReferenceImpl(new URI(CONSTRAINT_DISJUNCTION_STR));
-      TRANSITIVE_ARGUMENT = new URIReferenceImpl(new URI(TRANSITIVE_ARGUMENT_STR));
-      ANCHOR_ARGUMENT = new URIReferenceImpl(new URI(ANCHOR_ARGUMENT_STR));
-      URI_REF = new URIReferenceImpl(new URI(URI_REF_STR));
-      VARIABLE = new URIReferenceImpl(new URI(VARIABLE_STR));
-      LITERAL = new URIReferenceImpl(new URI(LITERAL_STR));
-    } catch (URISyntaxException u) {
-      logger.error("Unable to build URI: " + u);
-    }
-  }
+  /** RDF reference for the Rule type. */
+  public static final URIReference RULE = new URIReferenceImpl(URI.create(RULE_STR));
+
+  /** RDF reference for the Query type. */
+  public static final URIReference QUERY = new URIReferenceImpl(URI.create(QUERY_STR));
 
 
   /**
@@ -713,7 +777,7 @@ public class KruleLoader implements RuleLoader {
       ConstraintElement p = convertToElement(pv.get(HAS_PREDICATE));
       ConstraintElement o = convertToElement(pv.get(HAS_OBJECT));
       // check if there is a "from" property
-      Node from = pv.get(HAS_MODEL);
+      Node from = pv.get(HAS_GRAPH);
       // build the appropriate constraint
       // add it to the map
       if (from == null) {
