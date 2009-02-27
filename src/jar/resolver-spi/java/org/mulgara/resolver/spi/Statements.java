@@ -30,6 +30,7 @@ package org.mulgara.resolver.spi;
 // Local packages
 import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
+import org.mulgara.query.Variable;
 import org.mulgara.store.nodepool.NodePool;
 
 /**
@@ -46,26 +47,28 @@ import org.mulgara.store.nodepool.NodePool;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface Statements extends Cursor
-{
-  /**
-   * Stopgap measure until the stringpool gets a <q>no match</q> value.
-   */
+public interface Statements extends Cursor {
+
+  /** A variable for the subject position in a triple */
+  static final Variable SUBJECT = new Variable("subject");
+
+  /** A variable for the predicate position in a triple */
+  static final Variable PREDICATE = new Variable("predicate");
+
+  /** A variable for the object position in a triple */
+  static final Variable OBJECT = new Variable("object");
+
+
+  /** Stopgap measure until the stringpool gets a <q>no match</q> value. */
   static final long NONE = NodePool.NONE;
 
-  /**
-   * Return the subject node of the current triple.
-   */
+  /** Return the subject node of the current triple. */
   public long getSubject() throws TuplesException;
 
-  /**
-   * Return the predicate node of the current triple.
-   */
+  /** Return the predicate node of the current triple. */
   public long getPredicate() throws TuplesException;
 
-  /**
-   * Return the object node of the current triple.
-   */
+  /** Return the object node of the current triple. */
   public long getObject() throws TuplesException;
 
   public Object clone();
