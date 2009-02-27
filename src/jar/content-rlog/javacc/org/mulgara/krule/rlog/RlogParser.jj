@@ -1,0 +1,217 @@
+options
+{
+  STATIC=false;
+  UNICODE_INPUT=true;
+  IGNORE_CASE=false;
+  JAVA_UNICODE_ESCAPE=false;
+  DEBUG_PARSER=false;
+  JDK_VERSION="1.5";
+}
+
+PARSER_BEGIN(RlogParser)
+package org.mulgara.krule.rlog;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.mulgara.krule.rlog.ast.Axiom;
+import org.mulgara.krule.rlog.ast.BPredicate;
+import org.mulgara.krule.rlog.ast.BPredicateLiteral;
+import org.mulgara.krule.rlog.ast.IntegerLiteral;
+import org.mulgara.krule.rlog.ast.InvertedPredicate;
+import org.mulgara.krule.rlog.ast.Predicate;
+import org.mulgara.krule.rlog.ast.PredicateParam;
+import org.mulgara.krule.rlog.ast.Rule;
+import org.mulgara.krule.rlog.ast.Statement;
+import org.mulgara.krule.rlog.ast.StringLiteral;
+import org.mulgara.krule.rlog.ast.TypeLiteral;
+import org.mulgara.krule.rlog.ast.TypeStatement;
+import org.mulgara.krule.rlog.ast.Variable;
+import org.mulgara.util.StringUtil;
+
+public class RlogParser {
+
+  public static List<Statement> parse(String query) throws ParseException {
+    RlogParser parser = new RlogParser(new StringReader(query));
+    return parser.statements();
+  }
+
+  private static final String unq(String str) {
+    return str.substring(1, str.length() - 1);
+  }
+}
+
+PARSER_END(RlogParser)
+
+SKIP : { "\t" | "\n" | "\r" | "\f" | " " }
+
+MORE : { "--" : IN_COMMENT }
+
+<IN_COMMENT>
+SPECIAL_TOKEN : { < COMMENT: (~["\r","\n"])* > : DEFAULT }
+
+TOKEN :
+{
+    < #LOWER_CASE_LETTER: ["a"-"z"] >
+  | < #UPPER_CASE_LETTER: ["A"-"Z"] >
+  | < #DIGIT: ["0"-"9"] >
+  | < #J_LETTER_DIGIT: ["0"-"9", "a"-"z", "A"-"Z", "_"] >
+}
+
+TOKEN :
+{
+    < IMPLIED_BY: ":-" >
+  | < INVERT: "~" >
+  | < NEGATE: "-" >
+  | < DOT: "." >
+  | < COMMA: "," >
+  | < LPAR: "(" >
+  | < RPAR: ")" >
+}
+
+TOKEN :
+{
+  < STRING_LITERAL: "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+TOKEN :
+{
+    < IDENTIFIER : <LOWER_CASE_LETTER> (<J_LETTER_DIGIT>)* >
+  | < VARIABLE : <UPPER_CASE_LETTER> >
+  | < TYPE : <UPPER_CASE_LETTER> (<J_LETTER_DIGIT>)+ >
+  | < INTEGER_LITERAL : ("0" | ["1"-"9"] (<DIGIT>)*) >
+  | < DOMAIN : (<LOWER_CASE_LETTER>)+ ":" >
+}
+
+
+/* statements  ::= (statement)+ */
+List<Statement> statements() : {
+  List<Statement> sList = new ArrayList<Statement>();
+  Statement s;
+} {
+  (s=statement() { sList.add(s); } )+ { return sList; }
+}
+
+
+/* statement   ::= axiom | rule */
+Statement statement() : {
+  Statement s;
+} {
+  ( LOOKAHEAD(10) s=axiom() | s=rule() ) { return s; }
+}
+
+
+/* axiom       ::= predicate DOT */
+Axiom axiom() : {
+  Predicate p;
+} {
+  p=predicate() <DOT> { return new Axiom(p); }
+}
+
+/* rule        ::= IMPLIED_BY predicate_list DOT | predicate IMPLIED_BY predicate_list DOT */
+Rule rule() : {
+  List<Predicate> body;
+  Predicate head;
+} {
+  <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(body); }
+| head=predicate() <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(head, body); }
+}
+
+/* predicate   ::= type_decl | binary_predicate | INVERT predicate */
+Predicate predicate() : {
+  Predicate p;
+} {
+  LOOKAHEAD(5)
+  p=typeDecl() { return p; }
+| p=binaryPredicate() { return p; }
+| <INVERT> p=predicate() { return new InvertedPredicate(p); }
+}
+
+/* type_decl   ::= dom? TYPE LPAR parameter_elt RPAR | VARIABLE LPAREN parameter_elt RPAREN */
+TypeStatement typeDecl() : {
+  Token t;
+  PredicateParam p;
+  String d = null;
+} {
+  (d=dom())? t=<TYPE> <LPAR> p=parameterElt() <RPAR> {
+    return new TypeStatement(new TypeLiteral(d, t.image), p);
+  }
+| t=<VARIABLE> <LPAR> p=parameterElt() <RPAR> { return new TypeStatement(new Variable(t.image), p); }
+}
+
+/* binary_predicate ::= dom? IDENTIFIER LPAR parameter_elt COMMA parameter RPAR
+                      | VARIABLE LPAR parameter_elt COMMA parameter RPAR */
+BPredicate binaryPredicate() : {
+  String d = null;
+  Token pred;
+  PredicateParam left, right;
+} {
+  (d=dom())? pred=<IDENTIFIER> <LPAR> left=parameterElt() <COMMA> right=parameter() <RPAR> {
+    return new BPredicate(new BPredicateLiteral(d, pred.image), left, right);
+  }
+| pred=<VARIABLE> <LPAR> left=parameterElt() <COMMA> right=parameter() <RPAR> {
+    return new BPredicate(new Variable(pred.image), left, right);
+  }
+}
+
+
+/* parameter_elt    ::= dom? IDENTIFIER | dom? TYPE | VARIABLE */
+PredicateParam parameterElt() : {
+  String d = null;
+  Token t;
+  PredicateParam p;
+} {
+  LOOKAHEAD(2)
+  (d=dom())? t=<IDENTIFIER> { return new BPredicateLiteral(d, t.image); }
+| (d=dom())? t=<TYPE> { return new TypeLiteral(d, t.image); }
+| t=<VARIABLE> { return new Variable(t.image); }
+}
+
+
+/* parameter        ::= VARIABLE | dom? IDENTIFIER | dom? TYPE | literal */
+PredicateParam parameter() : {
+  PredicateParam p;
+} {
+  p=parameterElt() { return p; }
+| p=literal() { return p; }
+}
+
+
+/* literal          ::= STRING_LITERAL | INTEGER_LITERAL */
+PredicateParam literal() : {
+  Token t;
+} {
+  t=<INTEGER_LITERAL> { return new IntegerLiteral(t.image); }
+| t=<STRING_LITERAL> { return new StringLiteral(StringUtil.unescapeJavaString(unq(t.image))); }
+}
+
+
+/* predicate_list   ::= predicate (COMMA predicate)* */
+List<Predicate> predicateList() : {
+  List<Predicate> predicates = new ArrayList<Predicate>();
+  Predicate p;
+} {
+  p=predicate() { predicates.add(p); }
+  (<COMMA> p=predicate() { predicates.add(p); })*
+  { return predicates; }
+}
+
+/* dom              ::= DOMAIN */
+String dom() : {
+  Token d;
+} {
+  d=<DOMAIN> { return d.image.substring(0, d.image.length() - 1); }
+}

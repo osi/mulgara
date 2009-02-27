@@ -117,6 +117,7 @@ Mulgara Semantic Store configuration file.
   <ContentHandler type="org.mulgara.content.mp3.MP3ContentHandler"/>
   <ContentHandler type="org.mulgara.content.mbox.MBoxContentHandler"/>
   <ContentHandler type="org.mulgara.content.n3.N3ContentHandler"/>
+  <ContentHandler type="org.mulgara.content.rlog.RlogContentHandler"/>
 
   <!--
     Additional resolvers

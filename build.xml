@@ -21,6 +21,7 @@
   <property file="${jar.src.dir}/content-mp3/content-mp3-build.properties"/>
   <property file="${jar.src.dir}/content-n3/content-n3-build.properties"/>
   <property file="${jar.src.dir}/content-rdfxml/content-rdfxml-build.properties"/>
+  <property file="${jar.src.dir}/content-rlog/content-rlog-build.properties"/>
   <property file="${jar.src.dir}/descriptor/descriptor-build.properties"/>
   <property file="${jar.src.dir}/driver/driver-build.properties"/>
   <property file="${jar.src.dir}/dtd/dtd-build.properties"/>
@@ -84,6 +85,7 @@
   <import file="${jar.src.dir}/content-mp3/build.xml"/>
   <import file="${jar.src.dir}/content-n3/build.xml"/>
   <import file="${jar.src.dir}/content-rdfxml/build.xml"/>
+  <import file="${jar.src.dir}/content-rlog/build.xml"/>
   <import file="${jar.src.dir}/descriptor/build.xml"/>
   <import file="${jar.src.dir}/driver/build.xml"/>
   <import file="${jar.src.dir}/dtd/build.xml"/>
@@ -470,7 +472,7 @@
                    resolver-store-dist, resolver-url-dist, resolver-jar-dist,
                    resolver-view-dist, resolver-xsd-dist,
                    content-mbox-dist, content-mp3-dist, content-n3-dist,
-                   content-rdfxml-dist,
+                   content-rdfxml-dist, content-rlog-dist,
                    lite-create-manifest, javadoc-dist,
                    lite-dist-uptodate"
           unless="dist.lite.uptodate"
@@ -536,6 +538,7 @@
       <zipfileset src="${bin.dir}/${content-mp3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${descriptor.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
@@ -732,7 +735,7 @@
              ant-task-jar, client-jrdf-jar, config-jar,
              content-mbox-jar, content-mp3-jar,
              content-n3-jar, content-rdfxml-jar,
-             querylang-jar,
+             content-rlog-jar, querylang-jar,
              doclet.jar, jrdf-jar, store-jar,
              store-xa-jar,
              store-nodepool-jar, store-nodepool-memory-jar,
@@ -820,6 +823,7 @@
       <sourcepath path="${content-mp3.src.dir}/java"/>
       <sourcepath path="${content-n3.src.dir}/java"/>
       <sourcepath path="${content-rdfxml.src.dir}/java"/>
+      <sourcepath path="${content-rlog.src.dir}/java"/>
       <sourcepath path="${driver.src.dir}/java"/>
       <sourcepath path="${dtd.src.dir}/java"/>
       <sourcepath path="${querylang.src.dir}/java"/>
@@ -883,7 +887,7 @@
                    client-jrdf-javadoc,
                    content-mbox-javadoc,
                    content-mp3-javadoc, content-n3-javadoc,
-                   content-rdfxml-javadoc,
+                   content-rdfxml-javadoc, content-rlog-javadoc,
                    descriptor-javadoc, driver-javadoc, dtd-javadoc,
                    querylang-javadoc,
                    store-javadoc, store-xa-javadoc,
@@ -1561,6 +1565,7 @@
              content-mp3-jar,
              content-n3-jar,
              content-rdfxml-jar,
+             content-rlog-jar,
              create-manifest,
              demo-jar,
              dtd-jar,
@@ -1709,6 +1714,7 @@
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
@@ -1754,6 +1760,7 @@
              content-mp3-jar,
              content-n3-jar,
              content-rdfxml-jar,
+             content-rlog-jar,
              create-manifest,
              demo-jar,
              dtd-jar,
@@ -1847,6 +1854,7 @@
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
@@ -1880,6 +1888,7 @@
              config-jar,
              content-n3-jar,
              content-rdfxml-jar,
+             content-rlog-jar,
              create-manifest,
              demo-jar,
              dtd-jar,
@@ -1964,6 +1973,7 @@
       <zipfileset src="${bin.dir}/${tuples-hybrid.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="**/*.xml, META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="**/*.xml, META-INF/**"/>
@@ -2046,7 +2056,7 @@
 
   <target name="resolver-api-test"
     depends="content-mbox-test, content-mp3-test, content-n3-test,
-             content-rdfxml-test,
+             content-rdfxml-test, content-rlog-test,
              resolver-test, resolver-null-test, resolver-file-test,
              resolver-filesystem-test, resolver-jar-test, resolver-gis-test,
              resolver-http-test, resolver-lucene-test,

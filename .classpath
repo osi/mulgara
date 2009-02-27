@@ -6,6 +6,8 @@
 	<classpathentry kind="src" path="src/jar/content-mp3/java"/>
 	<classpathentry kind="src" path="src/jar/content-n3/java"/>
 	<classpathentry kind="src" path="src/jar/content-rdfxml/java"/>
+	<classpathentry kind="src" path="src/jar/content-rlog/java"/>
+	<classpathentry kind="src" path="src/jar/content-rlog/javacc"/>
 	<classpathentry kind="src" path="src/jar/demo-mp3/java"/>
 	<classpathentry kind="src" path="src/jar/descriptor/src/java"/>
 	<classpathentry kind="src" path="src/jar/driver/java"/>
