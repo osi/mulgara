@@ -24,11 +24,25 @@ import org.mulgara.util.StringUtil;
 
 public class RlogParser implements RlogParserConstants {
 
+  /** This context holds parse-specific domain mappings. */
+  private ParseContext context = new ParseContext();
+
+  /**
+   * Parse an entire document into statements.
+   * @param query The document as a string.
+   * @return A list of Statements parsed from the document.
+   * @throws ParseException Due to a syntactical or grammatical error in the query document.
+   */
   public static List<Statement> parse(String query) throws ParseException {
     RlogParser parser = new RlogParser(new StringReader(query));
     return parser.statements();
   }
 
+  /**
+   * Remove quotation marks from the front and back of a string.
+   * @param str The string to unquote.
+   * @return A string containing everything from <var>str</var> between the outermost quotes.
+   */
   private static final String unq(String str) {
     return str.substring(1, str.length() - 1);
   }
@@ -40,8 +54,10 @@ public class RlogParser implements RlogParserConstants {
     label_1:
     while (true) {
       s = statement();
-                   sList.add(s);
+                   if (s != null) sList.add(s);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case PREFIX:
+      case BASE:
       case IMPLIED_BY:
       case INVERT:
       case IDENTIFIER:
@@ -55,32 +71,54 @@ public class RlogParser implements RlogParserConstants {
         break label_1;
       }
     }
-                                        {if (true) return sList;}
+                                                       {if (true) return sList;}
     throw new Error("Missing return statement in function");
   }
 
 /* statement   ::= axiom | rule */
   final public Statement statement() throws ParseException {
+  String d, ns;
   Statement s;
-    if (jj_2_1(10)) {
-      s = axiom();
-    } else {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case IMPLIED_BY:
-      case INVERT:
-      case IDENTIFIER:
-      case VARIABLE:
-      case TYPE:
-      case DOMAIN:
-        s = rule();
-        break;
-      default:
-        jj_la1[1] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PREFIX:
+      prefix();
+             {if (true) return null;}
+      break;
+    case BASE:
+      base();
+           {if (true) return null;}
+      break;
+    case IMPLIED_BY:
+    case INVERT:
+    case IDENTIFIER:
+    case VARIABLE:
+    case TYPE:
+    case DOMAIN:
+      if (jj_2_1(10)) {
+        s = axiom();
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case IMPLIED_BY:
+        case INVERT:
+        case IDENTIFIER:
+        case VARIABLE:
+        case TYPE:
+        case DOMAIN:
+          s = rule();
+          break;
+        default:
+          jj_la1[1] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
       }
-    }
                                            {if (true) return s;}
+      break;
+    default:
+      jj_la1[2] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
     throw new Error("Missing return statement in function");
   }
 
@@ -89,7 +127,7 @@ public class RlogParser implements RlogParserConstants {
   Predicate p;
     p = predicate();
     jj_consume_token(DOT);
-                        {if (true) return new Axiom(p);}
+                        {if (true) return new Axiom(p, context);}
     throw new Error("Missing return statement in function");
   }
 
@@ -102,7 +140,7 @@ public class RlogParser implements RlogParserConstants {
       jj_consume_token(IMPLIED_BY);
       body = predicateList();
       jj_consume_token(DOT);
-                                            {if (true) return new Rule(body);}
+                                            {if (true) return new Rule(body, context);}
       break;
     case INVERT:
     case IDENTIFIER:
@@ -113,10 +151,10 @@ public class RlogParser implements RlogParserConstants {
       jj_consume_token(IMPLIED_BY);
       body = predicateList();
       jj_consume_token(DOT);
-                                                             {if (true) return new Rule(head, body);}
+                                                             {if (true) return new Rule(head, body, context);}
       break;
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[3] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -140,10 +178,10 @@ public class RlogParser implements RlogParserConstants {
       case INVERT:
         jj_consume_token(INVERT);
         p = predicate();
-                           {if (true) return new InvertedPredicate(p);}
+                           {if (true) return new InvertedPredicate(p, context);}
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[4] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -164,24 +202,24 @@ public class RlogParser implements RlogParserConstants {
         d = dom();
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         ;
       }
       t = jj_consume_token(TYPE);
       jj_consume_token(LPAR);
       p = parameterElt();
       jj_consume_token(RPAR);
-    {if (true) return new TypeStatement(new TypeLiteral(d, t.image), p);}
+    {if (true) return new TypeStatement(new TypeLiteral(d, t.image, context), p, context);}
       break;
     case VARIABLE:
       t = jj_consume_token(VARIABLE);
       jj_consume_token(LPAR);
       p = parameterElt();
       jj_consume_token(RPAR);
-                                                {if (true) return new TypeStatement(new Variable(t.image), p);}
+                                                {if (true) return new TypeStatement(new Variable(t.image), p, context);}
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -202,7 +240,7 @@ public class RlogParser implements RlogParserConstants {
         d = dom();
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[7] = jj_gen;
         ;
       }
       pred = jj_consume_token(IDENTIFIER);
@@ -211,7 +249,7 @@ public class RlogParser implements RlogParserConstants {
       jj_consume_token(COMMA);
       right = parameter();
       jj_consume_token(RPAR);
-    {if (true) return new BPredicate(new BPredicateLiteral(d, pred.image), left, right);}
+    {if (true) return new BPredicate(new BPredicateLiteral(d, pred.image, context), left, right, context);}
       break;
     case VARIABLE:
       pred = jj_consume_token(VARIABLE);
@@ -220,10 +258,10 @@ public class RlogParser implements RlogParserConstants {
       jj_consume_token(COMMA);
       right = parameter();
       jj_consume_token(RPAR);
-    {if (true) return new BPredicate(new Variable(pred.image), left, right);}
+    {if (true) return new BPredicate(new Variable(pred.image), left, right, context);}
       break;
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -241,11 +279,11 @@ public class RlogParser implements RlogParserConstants {
         d = dom();
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[9] = jj_gen;
         ;
       }
       t = jj_consume_token(IDENTIFIER);
-                              {if (true) return new BPredicateLiteral(d, t.image);}
+                              {if (true) return new BPredicateLiteral(d, t.image, context);}
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TYPE:
@@ -255,18 +293,18 @@ public class RlogParser implements RlogParserConstants {
           d = dom();
           break;
         default:
-          jj_la1[9] = jj_gen;
+          jj_la1[10] = jj_gen;
           ;
         }
         t = jj_consume_token(TYPE);
-                        {if (true) return new TypeLiteral(d, t.image);}
+                        {if (true) return new TypeLiteral(d, t.image, context);}
         break;
       case VARIABLE:
         t = jj_consume_token(VARIABLE);
                  {if (true) return new Variable(t.image);}
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -291,7 +329,7 @@ public class RlogParser implements RlogParserConstants {
                 {if (true) return p;}
       break;
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[12] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -308,10 +346,10 @@ public class RlogParser implements RlogParserConstants {
       break;
     case STRING_LITERAL:
       t = jj_consume_token(STRING_LITERAL);
-                       {if (true) return new StringLiteral(StringUtil.unescapeJavaString(unq(t.image)));}
+                       {if (true) return new StringLiteral(StringUtil.unescapeJavaString(unq(t.image)), context);}
       break;
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -331,7 +369,7 @@ public class RlogParser implements RlogParserConstants {
         ;
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[14] = jj_gen;
         break label_2;
       }
       jj_consume_token(COMMA);
@@ -342,11 +380,38 @@ public class RlogParser implements RlogParserConstants {
     throw new Error("Missing return statement in function");
   }
 
+/* prefix  := PREFIX dom uri DOT */
+  final public void prefix() throws ParseException {
+  String d, ns;
+    jj_consume_token(PREFIX);
+    d = dom();
+    ns = uri();
+    jj_consume_token(DOT);
+                                    context.registerDomain(d, ns);
+  }
+
+/* base  := BASE uri DOT */
+  final public void base() throws ParseException {
+  String ns;
+    jj_consume_token(BASE);
+    ns = uri();
+    jj_consume_token(DOT);
+                          context.setBase(ns);
+  }
+
 /* dom              ::= DOMAIN */
   final public String dom() throws ParseException {
   Token d;
     d = jj_consume_token(DOMAIN);
                {if (true) return d.image.substring(0, d.image.length() - 1);}
+    throw new Error("Missing return statement in function");
+  }
+
+/* uri              ::= URI */
+  final public String uri() throws ParseException {
+  Token u;
+    u = jj_consume_token(URI);
+            {if (true) return unq(u.image);}
     throw new Error("Missing return statement in function");
   }
 
@@ -369,122 +434,6 @@ public class RlogParser implements RlogParserConstants {
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
-  }
-
-  final private boolean jj_3R_6() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) {
-    jj_scanpos = xsp;
-    if (jj_3R_10()) {
-    jj_scanpos = xsp;
-    if (jj_3R_11()) return true;
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_19() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_16() {
-    if (jj_scan_token(VARIABLE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_5() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_15() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_19()) jj_scanpos = xsp;
-    if (jj_scan_token(TYPE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_5()) jj_scanpos = xsp;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_13() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_15()) {
-    jj_scanpos = xsp;
-    if (jj_3R_16()) return true;
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3R_9() {
-    if (jj_scan_token(DOMAIN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(DOT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_18() {
-    if (jj_scan_token(VARIABLE)) return true;
-    if (jj_scan_token(LPAR)) return true;
-    if (jj_3R_13()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_21()) return true;
-    if (jj_scan_token(RPAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_20() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_17() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_20()) jj_scanpos = xsp;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(LPAR)) return true;
-    if (jj_3R_13()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_21()) return true;
-    if (jj_scan_token(RPAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_14() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) {
-    jj_scanpos = xsp;
-    if (jj_3R_18()) return true;
-    }
-    return false;
   }
 
   final private boolean jj_3R_8() {
@@ -572,6 +521,122 @@ public class RlogParser implements RlogParserConstants {
     return false;
   }
 
+  final private boolean jj_3R_9() {
+    if (jj_scan_token(DOMAIN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_6() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3R_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_11()) return true;
+    }
+    }
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_19() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_16() {
+    if (jj_scan_token(VARIABLE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_5() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_15() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_19()) jj_scanpos = xsp;
+    if (jj_scan_token(TYPE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_5()) jj_scanpos = xsp;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_13() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) {
+    jj_scanpos = xsp;
+    if (jj_3R_16()) return true;
+    }
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(DOT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_18() {
+    if (jj_scan_token(VARIABLE)) return true;
+    if (jj_scan_token(LPAR)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_21()) return true;
+    if (jj_scan_token(RPAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_20() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_17() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_20()) jj_scanpos = xsp;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(LPAR)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_21()) return true;
+    if (jj_scan_token(RPAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_14() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) {
+    jj_scanpos = xsp;
+    if (jj_3R_18()) return true;
+    }
+    return false;
+  }
+
   public RlogParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -581,13 +646,13 @@ public class RlogParser implements RlogParserConstants {
   public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[14];
+  final private int[] jj_la1 = new int[15];
   static private int[] jj_la1_0;
   static {
       jj_la1_0();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x1703000,0x1703000,0x1703000,0x1302000,0x1000000,0x1600000,0x1000000,0x1300000,0x1000000,0x1000000,0x1600000,0x1f80000,0x880000,0x10000,};
+      jj_la1_0 = new int[] {0xb80c300,0xb80c000,0xb80c300,0xb80c000,0x9808000,0x8000000,0xb000000,0x8000000,0x9800000,0x8000000,0x8000000,0xb000000,0xfa00000,0x4200000,0x40000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[3];
   private boolean jj_rescan = false;
@@ -602,7 +667,7 @@ public class RlogParser implements RlogParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -615,7 +680,7 @@ public class RlogParser implements RlogParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -625,7 +690,7 @@ public class RlogParser implements RlogParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -635,7 +700,7 @@ public class RlogParser implements RlogParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -644,7 +709,7 @@ public class RlogParser implements RlogParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -653,7 +718,7 @@ public class RlogParser implements RlogParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -764,15 +829,15 @@ public class RlogParser implements RlogParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[25];
-    for (int i = 0; i < 25; i++) {
+    boolean[] la1tokens = new boolean[28];
+    for (int i = 0; i < 28; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 15; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -781,7 +846,7 @@ public class RlogParser implements RlogParserConstants {
         }
       }
     }
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 28; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

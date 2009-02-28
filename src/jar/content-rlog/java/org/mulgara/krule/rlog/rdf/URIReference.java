@@ -19,6 +19,7 @@ package org.mulgara.krule.rlog.rdf;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.NSUtils;
 
 /**
@@ -37,16 +38,28 @@ public class URIReference implements RDFNode {
 
   private final String value;
 
-  public URIReference(String prefix, String value) throws URISyntaxException {
+  /**
+   * This constructor is for context free use only, such as static initialization.
+   * @param prefix The prefix of the URI.
+   * @param value The value inside the namespace for the domain.
+   * @throws URISyntaxException If the URI is syntactically incorrect. Should not happen.
+   */
+  private URIReference(String prefix, String value) throws URISyntaxException {
     this.prefix = prefix;
     this.value = value;
     this.uri = NSUtils.newURI(prefix, value);
   }
 
-  public URIReference(String value) throws URISyntaxException {
+  public URIReference(String prefix, String value, ParseContext context) throws URISyntaxException {
+    this.prefix = prefix;
+    this.value = value;
+    this.uri = context.newURI(prefix, value);
+  }
+
+  public URIReference(String value, ParseContext context) throws URISyntaxException {
     this.prefix = NSUtils.getDefaultPrefix();
     this.value = value;
-    this.uri = NSUtils.newURI(prefix, value);
+    this.uri = context.newURI(prefix, value);
   }
 
   /** Internal mechanism for setting each element manually from a factory. */
@@ -61,11 +74,12 @@ public class URIReference implements RDFNode {
    * can fail then use the constructor instead.
    * @param prefix A namespace prefix.
    * @param value The value within the namespace.
+   * @param context The current context of the parser.
    * @return A new URIReference.
    */
-  public static URIReference create(String prefix, String value) {
+  public static URIReference create(String prefix, String value, ParseContext context) {
     try {
-      return new URIReference(prefix, value);
+      return new URIReference(prefix, value, context);
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException("Unable to create a URI for: " + prefix + ":" + value);
     }
@@ -75,13 +89,14 @@ public class URIReference implements RDFNode {
    * Creates a URIReference. This requires the URI to be clean. If it is possible that this
    * can fail then use the constructor instead.
    * @param value The value within the namespace.
+   * @param context The current context of the parser.
    * @return A new URIReference.
    */
-  public static URIReference create(String value) {
+  public static URIReference create(String value, ParseContext context) {
     try {
-      return new URIReference(value);
+      return new URIReference(value, context);
     } catch (URISyntaxException e) {
-      throw new IllegalArgumentException("Unable to create a URI for: " + NSUtils.getDefaultDomain() + ":" + value);
+      throw new IllegalArgumentException("Unable to create a URI for: " + context.getBase() + ":" + value);
     }
   }
 
@@ -94,6 +109,20 @@ public class URIReference implements RDFNode {
    */
   public static URIReference create(String prefix, String value, String uriStr) {
     return new URIReference(prefix, value, URI.create(uriStr));
+  }
+
+  /**
+   * Creates a context free URIReference. This requires the URI to be clean.
+   * @param prefix A namespace prefix.
+   * @param value The value within the namespace.
+   * @return A new URIReference.
+   */
+  public static URIReference contextFreeCreate(String prefix, String value) {
+    try {
+      return new URIReference(prefix, value);
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Unable to create a URI for: " + prefix + ":" + value);
+    }
   }
 
   /** @see org.mulgara.krule.rlog.rdf.RDFNode#isVariable() */

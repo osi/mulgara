@@ -31,7 +31,7 @@ public class RDF {
 
   public static final String PREFIX = "rdf";
 
-  public static final URIReference TYPE = URIReference.create(PREFIX, "type");
+  public static final URIReference TYPE = URIReference.contextFreeCreate(PREFIX, "type");
 
   public static final String XSD_NS = "http://www.w3.org/2001/XMLSchema#";
 
@@ -67,6 +67,6 @@ public class RDF {
 
   // Specific URIs used by the standard parser
 
-  public static final URIReference XSD_LONG = URIReference.create(XSD_PREFIX, "long");
+  public static final URIReference XSD_LONG = URIReference.contextFreeCreate(XSD_PREFIX, "long");
 
 }

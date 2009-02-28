@@ -16,6 +16,8 @@
 
 package org.mulgara.krule.rlog.ast;
 
+import org.mulgara.krule.rlog.ParseContext;
+
 /**
  * Marker class to represent top level nodes in the AST.
  * 
@@ -24,5 +26,14 @@ package org.mulgara.krule.rlog.ast;
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
 public abstract class Statement extends Node {
+
+  /**
+   * Create this statement, with the context it requires.
+   * @param context The context passed in from the parser.
+   */
+  protected Statement(ParseContext context) {
+    super(context);
+  }
+
 }
 

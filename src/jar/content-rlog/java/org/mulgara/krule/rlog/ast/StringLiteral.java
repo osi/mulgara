@@ -16,6 +16,7 @@
 
 package org.mulgara.krule.rlog.ast;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.rdf.Literal;
 import org.mulgara.krule.rlog.rdf.RDFNode;
 
@@ -34,8 +35,11 @@ public class StringLiteral extends Node implements PredicateParam {
   /**
    * A new string literal.
    * @param value The contents of the quoted string.
+   * @param context The context passed in from the parser. Keeping this in case we need it
+   *        in future for datatyped literals.
    */
-  public StringLiteral(String value) {
+  public StringLiteral(String value, ParseContext context) {
+    super(context);
     this.value = value;
   }
 

@@ -36,11 +36,11 @@ import static org.mulgara.krule.rlog.rdf.RDF.RDFS_PREFIX;
  */
 public class MulgaraGraphs {
 
-  public static final URIReference MULGARA_PRE = URIReference.create(MULGARA_PREFIX, "prefix");
+  public static final URIReference MULGARA_PRE = URIReference.contextFreeCreate(MULGARA_PREFIX, "prefix");
 
-  public static final URIReference MULGARA_URI_REF = URIReference.create(MULGARA_PREFIX, "UriReference");
+  public static final URIReference MULGARA_URI_REF = URIReference.contextFreeCreate(MULGARA_PREFIX, "UriReference");
 
-  public static final URIReference MULGARA_LITERAL = URIReference.create(RDFS_PREFIX, "Literal");
+  public static final URIReference MULGARA_LITERAL = URIReference.contextFreeCreate(RDFS_PREFIX, "Literal");
 
   public static final URIReference MULGARA_PRE_GRAPH = URIReference.create(MULGARA_PREFIX, "prefixGraph", "sys:prefix");
 

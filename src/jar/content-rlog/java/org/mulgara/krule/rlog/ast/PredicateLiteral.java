@@ -18,6 +18,7 @@ package org.mulgara.krule.rlog.ast;
 
 import java.net.URISyntaxException;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.NSUtils;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.RDFNode;
@@ -43,8 +44,10 @@ public abstract class PredicateLiteral extends Node implements BPredicateLabel, 
    * Creates a new literal, including a domain, for use in a binary predicate.
    * @param domain The domain for the name (eg. rdfs or owl).
    * @param name The name of the literal.
+   * @param context The context passed in from the parser.
    */
-  public PredicateLiteral(String domain, String name) {
+  public PredicateLiteral(String domain, String name, ParseContext context) {
+    super(context);
     // use some indirect references to let the compiler know we are really setting the final values
     // storing null in ref means that the URI syntax is invalid
     URIReference r = null;
@@ -52,10 +55,10 @@ public abstract class PredicateLiteral extends Node implements BPredicateLabel, 
     try {
       if (domain == null) {
         n = NSUtils.newName(name);
-        r = new URIReference(name);
+        r = new URIReference(name, context);
       } else {
         n = NSUtils.newName(domain, name);
-        r = new URIReference(domain, name);
+        r = new URIReference(domain, name, context);
       }
     } catch (URISyntaxException e) { /* r == null */ }
     this.name = n;

@@ -39,7 +39,7 @@ public class NullPredicate extends Predicate {
    * Creates a null predicate.
    */
   private NullPredicate() {
-    super();
+    super(null);
   }
 
   /** {@inheritDoc} */

@@ -34,11 +34,25 @@ import org.mulgara.util.StringUtil;
 
 public class RlogParser {
 
+  /** This context holds parse-specific domain mappings. */
+  private ParseContext context = new ParseContext();
+
+  /**
+   * Parse an entire document into statements.
+   * @param query The document as a string.
+   * @return A list of Statements parsed from the document.
+   * @throws ParseException Due to a syntactical or grammatical error in the query document.
+   */
   public static List<Statement> parse(String query) throws ParseException {
     RlogParser parser = new RlogParser(new StringReader(query));
     return parser.statements();
   }
 
+  /**
+   * Remove quotation marks from the front and back of a string.
+   * @param str The string to unquote.
+   * @return A string containing everything from <var>str</var> between the outermost quotes.
+   */
   private static final String unq(String str) {
     return str.substring(1, str.length() - 1);
   }
@@ -52,6 +66,12 @@ MORE : { "--" : IN_COMMENT }
 
 <IN_COMMENT>
 SPECIAL_TOKEN : { < COMMENT: (~["\r","\n"])* > : DEFAULT }
+
+TOKEN [IGNORE_CASE] :
+{
+    < PREFIX : "@prefix" >
+  | < BASE : "@base" >
+}
 
 TOKEN :
 {
@@ -85,6 +105,7 @@ TOKEN :
       )*
       "\""
   >
+  | < URI : "<" ( ~[" ", ">", "\n", "\r"] )* ">" >
 }
 
 TOKEN :
@@ -93,7 +114,7 @@ TOKEN :
   | < VARIABLE : <UPPER_CASE_LETTER> >
   | < TYPE : <UPPER_CASE_LETTER> (<J_LETTER_DIGIT>)+ >
   | < INTEGER_LITERAL : ("0" | ["1"-"9"] (<DIGIT>)*) >
-  | < DOMAIN : (<LOWER_CASE_LETTER>)+ ":" >
+  | < DOMAIN : (<LOWER_CASE_LETTER>)* ":" >
 }
 
 
@@ -102,15 +123,18 @@ List<Statement> statements() : {
   List<Statement> sList = new ArrayList<Statement>();
   Statement s;
 } {
-  (s=statement() { sList.add(s); } )+ { return sList; }
+  (s=statement() { if (s != null) sList.add(s); } )+ { return sList; }
 }
 
 
 /* statement   ::= axiom | rule */
 Statement statement() : {
+  String d, ns;
   Statement s;
 } {
-  ( LOOKAHEAD(10) s=axiom() | s=rule() ) { return s; }
+  prefix() { return null; }
+| base() { return null; }
+| ( LOOKAHEAD(10) s=axiom() | s=rule() ) { return s; }
 }
 
 
@@ -118,7 +142,7 @@ Statement statement() : {
 Axiom axiom() : {
   Predicate p;
 } {
-  p=predicate() <DOT> { return new Axiom(p); }
+  p=predicate() <DOT> { return new Axiom(p, context); }
 }
 
 /* rule        ::= IMPLIED_BY predicate_list DOT | predicate IMPLIED_BY predicate_list DOT */
@@ -126,8 +150,8 @@ Rule rule() : {
   List<Predicate> body;
   Predicate head;
 } {
-  <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(body); }
-| head=predicate() <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(head, body); }
+  <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(body, context); }
+| head=predicate() <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(head, body, context); }
 }
 
 /* predicate   ::= type_decl | binary_predicate | INVERT predicate */
@@ -137,7 +161,7 @@ Predicate predicate() : {
   LOOKAHEAD(5)
   p=typeDecl() { return p; }
 | p=binaryPredicate() { return p; }
-| <INVERT> p=predicate() { return new InvertedPredicate(p); }
+| <INVERT> p=predicate() { return new InvertedPredicate(p, context); }
 }
 
 /* type_decl   ::= dom? TYPE LPAR parameter_elt RPAR | VARIABLE LPAREN parameter_elt RPAREN */
@@ -147,9 +171,9 @@ TypeStatement typeDecl() : {
   String d = null;
 } {
   (d=dom())? t=<TYPE> <LPAR> p=parameterElt() <RPAR> {
-    return new TypeStatement(new TypeLiteral(d, t.image), p);
+    return new TypeStatement(new TypeLiteral(d, t.image, context), p, context);
   }
-| t=<VARIABLE> <LPAR> p=parameterElt() <RPAR> { return new TypeStatement(new Variable(t.image), p); }
+| t=<VARIABLE> <LPAR> p=parameterElt() <RPAR> { return new TypeStatement(new Variable(t.image), p, context); }
 }
 
 /* binary_predicate ::= dom? IDENTIFIER LPAR parameter_elt COMMA parameter RPAR
@@ -160,10 +184,10 @@ BPredicate binaryPredicate() : {
   PredicateParam left, right;
 } {
   (d=dom())? pred=<IDENTIFIER> <LPAR> left=parameterElt() <COMMA> right=parameter() <RPAR> {
-    return new BPredicate(new BPredicateLiteral(d, pred.image), left, right);
+    return new BPredicate(new BPredicateLiteral(d, pred.image, context), left, right, context);
   }
 | pred=<VARIABLE> <LPAR> left=parameterElt() <COMMA> right=parameter() <RPAR> {
-    return new BPredicate(new Variable(pred.image), left, right);
+    return new BPredicate(new Variable(pred.image), left, right, context);
   }
 }
 
@@ -175,8 +199,8 @@ PredicateParam parameterElt() : {
   PredicateParam p;
 } {
   LOOKAHEAD(2)
-  (d=dom())? t=<IDENTIFIER> { return new BPredicateLiteral(d, t.image); }
-| (d=dom())? t=<TYPE> { return new TypeLiteral(d, t.image); }
+  (d=dom())? t=<IDENTIFIER> { return new BPredicateLiteral(d, t.image, context); }
+| (d=dom())? t=<TYPE> { return new TypeLiteral(d, t.image, context); }
 | t=<VARIABLE> { return new Variable(t.image); }
 }
 
@@ -195,7 +219,7 @@ PredicateParam literal() : {
   Token t;
 } {
   t=<INTEGER_LITERAL> { return new IntegerLiteral(t.image); }
-| t=<STRING_LITERAL> { return new StringLiteral(StringUtil.unescapeJavaString(unq(t.image))); }
+| t=<STRING_LITERAL> { return new StringLiteral(StringUtil.unescapeJavaString(unq(t.image)), context); }
 }
 
 
@@ -209,9 +233,34 @@ List<Predicate> predicateList() : {
   { return predicates; }
 }
 
+
+/* prefix  := PREFIX dom uri DOT */
+void prefix() : {
+  String d, ns;
+} {
+  <PREFIX> d=dom() ns=uri() <DOT> { context.registerDomain(d, ns); }
+}
+
+
+/* base  := BASE uri DOT */
+void base() : {
+  String ns;
+} {
+  <BASE> ns=uri() <DOT> { context.setBase(ns); }
+}
+
+
 /* dom              ::= DOMAIN */
 String dom() : {
   Token d;
 } {
   d=<DOMAIN> { return d.image.substring(0, d.image.length() - 1); }
+}
+
+
+/* uri              ::= URI */
+String uri() : {
+  Token u;
+} {
+  u=<URI> { return unq(u.image); }
 }

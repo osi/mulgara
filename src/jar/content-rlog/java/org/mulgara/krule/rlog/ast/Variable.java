@@ -30,7 +30,11 @@ public class Variable extends Node implements TypeLabel, BPredicateLabel, Predic
 
   public final String name;
 
+  /**
+   * Create this variable, with the context it requires.
+   */
   public Variable(String name) {
+    super(null);
     this.name = name;
   }
 

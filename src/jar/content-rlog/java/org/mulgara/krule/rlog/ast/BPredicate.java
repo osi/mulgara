@@ -19,6 +19,7 @@ package org.mulgara.krule.rlog.ast;
 import java.util.HashSet;
 import java.util.Collection;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.MulgaraGraphs;
 import org.mulgara.krule.rlog.rdf.URIReference;
@@ -47,8 +48,10 @@ public class BPredicate extends Predicate {
    * @param label The predicate name.
    * @param left The first parameter of the predicate.
    * @param right The second parameter of the predicate.
+   * @param context The context passed in from the parser.
    */
-  public BPredicate(BPredicateLabel label, PredicateParam left, PredicateParam right) {
+  public BPredicate(BPredicateLabel label, PredicateParam left, PredicateParam right, ParseContext context) {
+    super(context);
     this.label = label;
     this.left = left;
     this.right = right;

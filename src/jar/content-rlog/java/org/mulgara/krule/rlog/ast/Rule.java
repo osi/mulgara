@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.TypeException;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.RDFNode;
@@ -32,7 +33,7 @@ import org.mulgara.krule.rlog.rdf.URIReference;
 import org.mulgara.krule.rlog.rdf.Var;
 
 /**
- *  Represents a rule statement.
+ * Represents a rule statement.
  * 
  * @created May 16, 2008
  * @author Paul Gearon
@@ -55,8 +56,8 @@ public class Rule extends Statement {
   /** The name of this rule. Used in RDF. */
   private String name;
 
-  public Rule(List<Predicate> body) {
-    this(NullPredicate.NULL, body);
+  public Rule(List<Predicate> body,  ParseContext context) {
+    this(NullPredicate.NULL, body, context);
   }
 
   /**
@@ -64,8 +65,10 @@ public class Rule extends Statement {
    * and checks for soundness.
    * @param head A Predicate containing a subset of variables from the body.
    * @param body A set of Predicates for the body.
+   * @param context The context passed in from the parser.
    */
-  public Rule(Predicate head, List<Predicate> body) {
+  public Rule(Predicate head, List<Predicate> body, ParseContext context) {
+    super(context);
     this.head = head;
     this.body = body;
     this.bodySubtractions = new LinkedList<Predicate>();

@@ -34,10 +34,10 @@ public class IntegerLiteral extends Node implements PredicateParam {
 
   /**
    * A new numeric literal.
-   * @param value The value of the number.
+   * @param s The string representation of the number.
    */
   public IntegerLiteral(String s) {
-    this.value = Long.valueOf(s);
+    this(Long.valueOf(s));
   }
 
   /**
@@ -45,6 +45,7 @@ public class IntegerLiteral extends Node implements PredicateParam {
    * @param value The value of the number.
    */
   public IntegerLiteral(Long value) {
+    super(null);
     this.value = value;
   }
 

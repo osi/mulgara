@@ -19,6 +19,7 @@ package org.mulgara.krule.rlog.ast;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.MulgaraGraphs;
 import org.mulgara.krule.rlog.rdf.RDF;
@@ -45,9 +46,10 @@ public class TypeStatement extends Predicate {
    * Creates a unary predicate indicating a type statement.
    * @param typeLabel The declared type.
    * @param param The object declared to be of the specified type.
+   * @param context The context passed in from the parser.
    */
-  public TypeStatement(TypeLabel typeLabel, PredicateParam param) {
-    super();
+  public TypeStatement(TypeLabel typeLabel, PredicateParam param, ParseContext context) {
+    super(context);
     this.typeLabel = typeLabel;
     this.param = param;
     // get the referenced nodes, delaying any exceptions until later.

@@ -18,6 +18,7 @@ package org.mulgara.krule.rlog.ast;
 
 import java.util.Collection;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.RDFNode;
 import org.mulgara.krule.rlog.rdf.Var;
@@ -33,8 +34,12 @@ public class InvertedPredicate extends Predicate {
 
   public final Predicate invertPredicate;
 
-  public InvertedPredicate(Predicate typeStatement) {
-    super();
+  /**
+   * Create this inverted predicate instance, with the context it requires.
+   * @param context The context passed in from the parser.
+   */
+  public InvertedPredicate(Predicate typeStatement, ParseContext context) {
+    super(context);
     this.invertPredicate = typeStatement;
   }
 

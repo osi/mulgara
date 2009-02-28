@@ -16,6 +16,8 @@
 
 package org.mulgara.krule.rlog.ast;
 
+import org.mulgara.krule.rlog.ParseContext;
+
 /**
  * Base class for all nodes in the AST.
  * 
@@ -24,6 +26,18 @@ package org.mulgara.krule.rlog.ast;
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
 public abstract class Node {
+
+  /** This contains domain data relevant to the parsing context. */
+  protected ParseContext parseContext;
+
+  /**
+   * Create this node, with the context it requires.
+   * @param context The context passed in from the parser.
+   */
+  protected Node(ParseContext context) {
+    parseContext = context;
+  }
+
   /**
    * Double binding return point for use with the visitor pattern.
    * @param walker The Visitor object.

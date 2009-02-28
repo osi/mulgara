@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.RDFNode;
 import org.mulgara.krule.rlog.rdf.URIReference;
@@ -57,6 +58,14 @@ public abstract class Predicate extends Node {
 
   /** The exception generated when trying to parse the predicate. Hopwefully null. */
   protected URIParseException delayedObjectException = null;
+
+  /**
+   * Create this predicate instance, with the context it requires.
+   * @param context The context passed in from the parser.
+   */
+  public Predicate(ParseContext context) {
+    super(context);
+  }
 
   /**
    * Sets the parent AST node.

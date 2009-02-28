@@ -18,6 +18,7 @@ package org.mulgara.krule.rlog.ast;
 
 import java.util.Set;
 
+import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.RDFNode;
 import org.mulgara.krule.rlog.rdf.URIReference;
@@ -37,8 +38,10 @@ public class Axiom extends Statement {
   /**
    * Takes a predicate for a statement and checks that there are not variables in it.
    * @param p A Predicate containing no variables.
+   * @param context The context passed in from the parser.
    */
-  public Axiom(Predicate p) {
+  public Axiom(Predicate p, ParseContext context) {
+    super(context);
     predicate = p;
     if (predicate.containsVariables()) throw new IllegalArgumentException("Axioms may not contain variables.");
     predicate.setParent(this);

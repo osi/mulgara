@@ -16,6 +16,8 @@
 
 package org.mulgara.krule.rlog.ast;
 
+import org.mulgara.krule.rlog.ParseContext;
+
 /**
  * Represents a value (not a variable) at any place in a predicate.
  * Basic String and integer literals have a separate type.
@@ -30,9 +32,10 @@ public class BPredicateLiteral extends PredicateLiteral implements BPredicateLab
    * Creates a new literal, including a domain, for use in a binary predicate.
    * @param domain The domain for the name (eg. rdfs or owl).
    * @param name The name of the literal.
+   * @param context The context passed in from the parser.
    */
-  public BPredicateLiteral(String domain, String name) {
-    super(domain, name);
+  public BPredicateLiteral(String domain, String name, ParseContext context) {
+    super(domain, name, context);
   }
 
   /** {@inheritDoc} */

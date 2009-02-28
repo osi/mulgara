@@ -120,4 +120,14 @@ public class NSUtils {
     String namespace = registeredDomains.get(domain);
     return (namespace == null ? domain + ":" : namespace) + uriStr;
   }
+
+  /**
+   * Retrieves the namespace registered for a domain.
+   * @param domain The registered domain.
+   * @return The namespace associated with the domain, or <code>null</code> if the domain
+   *         was not registered.
+   */
+  public static String getRegisteredNamespace(String domain) {
+    return registeredDomains.get(domain);
+  }
 }

@@ -16,6 +16,8 @@
 
 package org.mulgara.krule.rlog.ast;
 
+import org.mulgara.krule.rlog.ParseContext;
+
 /**
  * A literal for use in unary type predicates.
  * 
@@ -29,9 +31,10 @@ public class TypeLiteral extends PredicateLiteral implements TypeLabel, Predicat
    * Creates a new literal with a domain for a type predicate.
    * @param domain The domain for the literal.
    * @param name The text of the literal.
+   * @param context The context passed in from the parser.
    */
-  public TypeLiteral(String domain, String name) {
-    super(domain, name);
+  public TypeLiteral(String domain, String name, ParseContext context) {
+    super(domain, name, context);
   }
 
   //inheritdoc
