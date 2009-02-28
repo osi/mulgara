@@ -252,7 +252,7 @@ public class HttpServices {
     if (!disabled) {
       if (cfg != null) {
         s = new Server();
-        addConnector(s, cfg);
+        addConnector(s, cfg, port);
       } else {
         s = new Server(port);
       }
@@ -307,9 +307,11 @@ public class HttpServices {
    * Adds a listener to the <code>httpServer</code>. The listener is created and configured
    * according to the Jetty configuration.
    * @param httpServer the server to add the listener to
+   * @param jettyConfig The configuraton for the server. Do not read the port at this point.
+   * @param port The port to listen on. The configuration may have been overriden by this value.
    * @throws UnknownHostException if an invalid hostname was specified in the Mulgara server configuration
    */
-  private void addConnector(Server httpServer, JettyConnector jettyConfig) throws UnknownHostException {
+  private void addConnector(Server httpServer, JettyConnector jettyConfig, int port) throws UnknownHostException {
     if (httpServer == null) throw new IllegalArgumentException("Null \"httpServer\" parameter");
 
     if (logger.isDebugEnabled()) logger.debug("Adding socket listener");
@@ -333,7 +335,7 @@ public class HttpServices {
     }
     connector.setThreadPool(threadPool);
 
-    if (jettyConfig.hasPort()) connector.setPort(jettyConfig.getPort());
+    connector.setPort(port);
     if (jettyConfig.hasMaxIdleTimeMs()) connector.setMaxIdleTime(jettyConfig.getMaxIdleTimeMs());
     if (jettyConfig.hasLowResourceMaxIdleTimeMs()) connector.setLowResourceMaxIdleTime(jettyConfig.getLowResourceMaxIdleTimeMs());
     if (jettyConfig.hasAcceptors()) {
