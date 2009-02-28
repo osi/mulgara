@@ -206,7 +206,9 @@ public class Query implements Cloneable, Serializable, Command {
     this.orderList = query.orderList;
     this.limit = query.limit;
     this.offset = query.offset;
-    this.answer = (Answer)query.answer.clone();
+    if (query.answer != null) {
+      this.answer = (Answer)query.answer.clone();
+    }
     /*
       this(query.getVariableList(),
           query.getModelExpression(),
