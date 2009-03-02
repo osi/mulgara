@@ -174,7 +174,7 @@
         includes="log4j*.jar, icu4j.jar, ${jena.jar}, ${iri.jar}, antlr*.jar, ${commons-logging.jar},
           activation*.jar, jargs*.jar,
           ${jetty.jar}, ${jetty.plus.jar}, ${servlet.jar}, ${jasper.runtime.jar},
-          ${xerces.jar}, mail-*.jar, castor*.jar, trove-*.jar, ${jrdf.jar}, ${emory-util.jar}, ${sesame-model.jar}"/>
+          ${xerces.jar}, mail-*.jar, castor*.jar, ${trove.jar}, ${jrdf.jar}, ${emory-util.jar}, ${sesame-model.jar}"/>
       <zipfileset dir="${bin.dir}" prefix="lib" includes="${query.jar},
           ${driver.jar}, ${querylang.jar}, ${server.jar},
           ${util.jar}, ${config.jar}"/>
