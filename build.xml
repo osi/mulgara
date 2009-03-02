@@ -755,6 +755,7 @@
     <delete dir="${javadoc.dir}"/>
     <mkdir dir="${javadoc.dir}"/>
     <javadoc destdir="${javadoc.dir}"
+        maxmemory="256m"
         packagenames="org.mulgara.ant.*,
                       org.mulgara.barracuda.*,
                       org.mulgara.client.*,
