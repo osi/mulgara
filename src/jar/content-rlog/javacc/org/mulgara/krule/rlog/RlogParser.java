@@ -57,7 +57,6 @@ public class RlogParser implements RlogParserConstants {
                    if (s != null) sList.add(s);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PREFIX:
-      case BASE:
       case IMPLIED_BY:
       case INVERT:
       case IDENTIFIER:
@@ -83,10 +82,6 @@ public class RlogParser implements RlogParserConstants {
     case PREFIX:
       prefix();
              {if (true) return null;}
-      break;
-    case BASE:
-      base();
-           {if (true) return null;}
       break;
     case IMPLIED_BY:
     case INVERT:
@@ -390,15 +385,6 @@ public class RlogParser implements RlogParserConstants {
                                     context.registerDomain(d, ns);
   }
 
-/* base  := BASE uri DOT */
-  final public void base() throws ParseException {
-  String ns;
-    jj_consume_token(BASE);
-    ns = uri();
-    jj_consume_token(DOT);
-                          context.setBase(ns);
-  }
-
 /* dom              ::= DOMAIN */
   final public String dom() throws ParseException {
   Token d;
@@ -434,6 +420,34 @@ public class RlogParser implements RlogParserConstants {
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
+  }
+
+  final private boolean jj_3R_17() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_20()) jj_scanpos = xsp;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(LPAR)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_21()) return true;
+    if (jj_scan_token(RPAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_14() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) {
+    jj_scanpos = xsp;
+    if (jj_3R_18()) return true;
+    }
+    return false;
   }
 
   final private boolean jj_3R_8() {
@@ -521,11 +535,6 @@ public class RlogParser implements RlogParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_9() {
-    if (jj_scan_token(DOMAIN)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_6() {
     Token xsp;
     xsp = jj_scanpos;
@@ -564,6 +573,11 @@ public class RlogParser implements RlogParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_19()) jj_scanpos = xsp;
     if (jj_scan_token(TYPE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_9() {
+    if (jj_scan_token(DOMAIN)) return true;
     return false;
   }
 
@@ -609,34 +623,6 @@ public class RlogParser implements RlogParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_17() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_20()) jj_scanpos = xsp;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(LPAR)) return true;
-    if (jj_3R_13()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_21()) return true;
-    if (jj_scan_token(RPAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_14() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) {
-    jj_scanpos = xsp;
-    if (jj_3R_18()) return true;
-    }
-    return false;
-  }
-
   public RlogParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -652,7 +638,7 @@ public class RlogParser implements RlogParserConstants {
       jj_la1_0();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0xb80c300,0xb80c000,0xb80c300,0xb80c000,0x9808000,0x8000000,0xb000000,0x8000000,0x9800000,0x8000000,0x8000000,0xb000000,0xfa00000,0x4200000,0x40000,};
+      jj_la1_0 = new int[] {0x5c06100,0x5c06000,0x5c06100,0x5c06000,0x4c04000,0x4000000,0x5800000,0x4000000,0x4c00000,0x4000000,0x4000000,0x5800000,0x7d00000,0x2100000,0x20000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[3];
   private boolean jj_rescan = false;
@@ -829,8 +815,8 @@ public class RlogParser implements RlogParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[28];
-    for (int i = 0; i < 28; i++) {
+    boolean[] la1tokens = new boolean[27];
+    for (int i = 0; i < 27; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -846,7 +832,7 @@ public class RlogParser implements RlogParserConstants {
         }
       }
     }
-    for (int i = 0; i < 28; i++) {
+    for (int i = 0; i < 27; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
