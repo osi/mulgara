@@ -28,7 +28,6 @@
 package org.mulgara.store.tuples;
 
 // Java 2 standard packages
-import java.util.*;
 
 // Third party packages
 import org.jrdf.graph.Node;
@@ -36,10 +35,6 @@ import org.jrdf.graph.Node;
 // Local packages
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.ConstraintHaving;
-import org.mulgara.query.ConstraintNotOccurs;
-import org.mulgara.query.ConstraintOccurs;
-import org.mulgara.query.ConstraintOccursLessThan;
-import org.mulgara.query.ConstraintOccursMoreThan;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 import org.mulgara.resolver.spi.LocalizeException;
@@ -143,7 +138,7 @@ public class HavingPredicates {
   public static class PredicateOccursMoreThan extends AbstractHavingPredicate {
     public boolean pass(Tuples tuples) throws TuplesException {
       try {
-        return session.findStringPoolObject(getLhsValue(tuples)).compareTo(
+        return session.findStringPoolObject(getLhsValue(tuples)).numericalCompare(
                   session.findStringPoolObject(getRhsValue(tuples))) > 0;
       } catch (StringPoolException es) {
         throw new TuplesException("Failure to extract SPObject from stringpool", es);
@@ -155,7 +150,7 @@ public class HavingPredicates {
   public static class PredicateOccursLessThan extends AbstractHavingPredicate {
     public boolean pass(Tuples tuples) throws TuplesException {
       try {
-        return session.findStringPoolObject(getLhsValue(tuples)).compareTo(
+        return session.findStringPoolObject(getLhsValue(tuples)).numericalCompare(
                   session.findStringPoolObject(getRhsValue(tuples))) < 0;
       } catch (StringPoolException es) {
         throw new TuplesException("Failure to extract SPObject from stringpool", es);

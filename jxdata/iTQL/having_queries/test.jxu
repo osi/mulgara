@@ -26,7 +26,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -42,7 +42,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; '2.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; '2'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -58,7 +58,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; '3.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; '3'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -74,7 +74,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '0'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -90,7 +90,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -106,7 +106,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '3.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occursMoreThan&gt; '3'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -122,7 +122,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#occursLessThan&gt; '3.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#occursLessThan&gt; '3'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -138,7 +138,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#notOccurs&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#notOccurs&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -154,7 +154,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt; 
          where $s $p $o
-         having $k0 &lt;http://mulgara.org/mulgara#notOccurs&gt; '0.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         having $k0 &lt;http://mulgara.org/mulgara#notOccurs&gt; '0'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          order by $s;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -170,7 +170,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt;
          where $s $p $o
-         and $v &lt;http://mulgara.org/mulgara#is&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         and $v &lt;http://mulgara.org/mulgara#is&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; $v
          order by $s ;"/>
 
@@ -187,7 +187,7 @@
            where $s &lt;urn:test:property&gt; $o )
          from &lt;@server@#foo&gt;
          where $s $p $o
-         and $v &lt;http://mulgara.org/mulgara#is&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+         and $v &lt;http://mulgara.org/mulgara#is&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
          having $k0 &lt;http://mulgara.org/mulgara#occurs&gt; $v
          order by $s;"/>
 
@@ -252,7 +252,7 @@
     and $r &lt;http://www.w3.org/2002/07/owl#someValuesFrom&gt; $v 
     and $r &lt;http://www.w3.org/2002/07/owl#onProperty&gt; $p
     and $s $p $o2
-    having $k0 &lt;http://mulgara.org/mulgara#occursLessThan&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+    having $k0 &lt;http://mulgara.org/mulgara#occursLessThan&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
     order by $s ;  
   "/>
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
@@ -269,7 +269,7 @@
     and $r &lt;http://www.w3.org/2002/07/owl#someValuesFrom&gt; $v 
     and $r &lt;http://www.w3.org/2002/07/owl#onProperty&gt; $p
     and $s $p $o2
-    having $k0 &lt;http://mulgara.org/mulgara#occursLessThan&gt; '1.0'^^&lt;http://www.w3.org/2001/XMLSchema#double&gt;
+    having $k0 &lt;http://mulgara.org/mulgara#occursLessThan&gt; '1'^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt;
     order by $s ;  
   "/>
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
