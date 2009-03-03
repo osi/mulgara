@@ -160,4 +160,18 @@ public class SPLimit implements SPObject {
 
   }
 
+  /** 
+   * @see org.mulgara.store.stringpool.SPObject#isNumber()
+   */
+  public boolean isNumber() {
+    return false;
+  }
+
+  /**
+   * @see org.mulgara.store.stringpool.SPObject#numericalCompare(org.mulgara.store.stringpool.SPObject)
+   */
+  public int numericalCompare(SPObject o) {
+    return compareTo(o);
+  }
+
 }

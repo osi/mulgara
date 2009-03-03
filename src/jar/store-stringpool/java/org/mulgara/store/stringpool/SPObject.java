@@ -62,6 +62,21 @@ public interface SPObject extends Comparable<SPObject> {
   public boolean isSmallest();
 
 
+  /**
+   * Tests if this object represents a number.
+   * @return <code>true</code> if this object is a number.
+   */
+  public boolean isNumber();
+
+
+  /**
+   * Compare objects numerically. If one object is not a number, then use the standard comparison.
+   * @param o The object to compare to.
+   * @return -1 if this object is smaller, +1 if larger, 0 if equal.
+   */
+  public int numericalCompare(SPObject o);
+
+
   public static class TypeCategory {
 
     // Indicates an unused G2N record.

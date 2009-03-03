@@ -27,6 +27,7 @@
 package org.mulgara.store.stringpool.xa;
 
 // Java 2 standard packages
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.ByteBuffer;
 
@@ -59,7 +60,7 @@ import org.mulgara.util.Constants;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public final class SPFloatImpl extends AbstractSPTypedLiteral {
+public final class SPFloatImpl extends AbstractSPTypedLiteral implements SPNumber {
 
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPFloatImpl.class);
@@ -156,6 +157,52 @@ public final class SPFloatImpl extends AbstractSPTypedLiteral {
       return Float.compare(f1.getFloat(), f2.getFloat());
     }
 
+  }
+
+
+  /**
+   * Comparison used for inequalities the value.
+   * If o is not a number, then use the standard comparison.
+   * @return -1 if this is smaller than o, +1 if larger, 0 if equal, or the result of compareTo
+   *         if not a number.
+   */
+  public int numericalCompare(SPObject o) {
+    return o.isNumber() ? -((SPNumber)o).numericalCompareTo(f) : compareTo(o);
+  }
+
+
+  /**
+   * Indicates if this object is a number. Not usually, so returns <code>false</code> in this
+   * abstract class. XSD extensions the represent numerical values should return true.
+   * @return <code>true</code> if this object is a number. False otherwise.
+   */
+  public boolean isNumber() {
+    return true;
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(java.math.BigDecimal)
+   */
+  public int numericalCompareTo(BigDecimal n) {
+    double dn = n.doubleValue();
+    return (double)f < dn ? -1 : (f > dn ? 1 : 0);
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(double)
+   */
+  public int numericalCompareTo(double d) {
+    return Double.compare(f, d);
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(long)
+   */
+  public int numericalCompareTo(long l) {
+    return Double.compare(f, (double)l);
   }
 
 }

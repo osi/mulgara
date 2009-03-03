@@ -51,7 +51,7 @@ import org.mulgara.util.Constants;
  * @copyright &copy; 2004 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public abstract class SPDecimalImpl extends AbstractSPTypedLiteral {
+public abstract class SPDecimalImpl extends AbstractSPTypedLiteral implements SPNumber {
 
   @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(SPDecimalImpl.class);
@@ -218,6 +218,48 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
   }
 
 
+  /**
+   * Indicates if this object is a number.
+   * @return <code>true</code> since this object is a number.
+   */
+  public boolean isNumber() {
+    return true;
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.AbstractSPObject#numericalCompare(org.mulgara.store.stringpool.SPObject)
+   */
+  public int numericalCompare(SPObject o) {
+    if (!o.isNumber()) return compareTo(o);
+    return -((SPNumber)o).numericalCompareTo(val);
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(java.math.BigDecimal)
+   */
+  public int numericalCompareTo(BigDecimal n) {
+    return val.compareTo(n);
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(double)
+   */
+  public int numericalCompareTo(double d) {
+    return val.compareTo(new BigDecimal(d));
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(long)
+   */
+  public int numericalCompareTo(long l) {
+    return val.compareTo(new BigDecimal(l));
+  }
+
+
   /** @see java.lang.Object#hashCode() */
   public int hashCode() {
     return lexical.hashCode();
@@ -282,7 +324,7 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
 class SPDecimalExtImpl extends SPDecimalImpl {
 
   /** The long value containing the number. */
-  final Long l;
+  final long l;
 
   /**
    * Creates an xsd:decimal extension out of a long.
@@ -424,6 +466,39 @@ class SPDecimalExtImpl extends SPDecimalImpl {
       return c;
     }
 
+  }
+
+
+  /**
+   * Indicates if this object is a number.
+   * @return <code>true</code> since this object is a number.
+   */
+  public boolean isNumber() {
+    return true;
+  }
+
+
+  /**
+   * @see org.mulgara.store.stringpool.AbstractSPObject#numericalCompare(org.mulgara.store.stringpool.SPObject)
+   */
+  public int numericalCompare(SPObject o) {
+    if (!o.isNumber()) return compareTo(o);
+    return -((SPNumber)o).numericalCompareTo(l);
+  }
+
+
+  public int numericalCompareTo(BigDecimal n) {
+    return new BigDecimal(l).compareTo(n);
+  }
+
+
+  public int numericalCompareTo(double d) {
+    return Double.compare((double)l, d);
+  }
+
+
+  public int numericalCompareTo(long l) {
+    return this.l < l ? -1 : (this.l > l ? 1 : 0);
   }
 
 }

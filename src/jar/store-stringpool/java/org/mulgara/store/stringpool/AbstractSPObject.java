@@ -184,6 +184,28 @@ public abstract class AbstractSPObject implements SPObject {
 
 
   /**
+   * Comparison used for inequalities on numerical values for an object.
+   * If one of these objects is not a number, then use the standard comparison.
+   * @return -1 if this is smaller than o, +1 if larger, 0 if equal, or the result of compareTo
+   *         if not a number.
+   */
+  public int numericalCompare(SPObject o) {
+    assert !isNumber();
+    return compareTo(o);
+  }
+
+
+  /**
+   * Indicates if this object is a number. Not usually, so returns <code>false</code> in this
+   * abstract class. XSD extensions the represent numerical values should return true.
+   * @return <code>true</code> if this object is a number. False otherwise.
+   */
+  public boolean isNumber() {
+    return false;
+  }
+
+
+  /**
    * Utility for long comparisons
    * @param a The first long value
    * @param b The second long value
