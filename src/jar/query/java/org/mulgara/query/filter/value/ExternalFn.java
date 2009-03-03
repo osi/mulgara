@@ -30,7 +30,7 @@ import org.mulgara.query.rdf.XSD;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public class ExternalFn extends AbstractAccessorFn {
+public class ExternalFn extends AbstractAccessorFn implements NumericExpression {
 
   /** Generated Serialization ID for RMI */
   private static final long serialVersionUID = 5748124115023875223L;
@@ -77,7 +77,8 @@ public class ExternalFn extends AbstractAccessorFn {
    */
   private boolean isCast(URI u) {
     if (XSD_SCHEME.equals(fnUri.getScheme()) && XSD_PART.equals(fnUri.getSchemeSpecificPart())) return true;
-    if (RDF.XML_LITERAL.equals(u)) return true;
+    if (XSD.DOM.equals(fnUri.getScheme())) return true;
+    if (RDF.XML_LITERAL.equals(u) || RDF.XML_LITERAL_ABBR.equals(u)) return true;
     return false;
   }
 
@@ -172,5 +173,17 @@ public class ExternalFn extends AbstractAccessorFn {
       result.add(op.getValue());
     }
     return result;
+  }
+
+  /**
+   * Extract a numeric value from this expression, if legal. This may result in a type exception.
+   * @see org.mulgara.query.filter.value.NumericExpression#getNumber()
+   * @return A numeric value for the resolved expression.
+   * @throws QueryException If the resolved expression is not a numeric type.
+   */
+  public Number getNumber() throws QueryException {
+    RDFTerm result = resolve();
+    if (!result.isLiteral() && !(result instanceof NumericExpression)) throw new QueryException("Type Error: Not valid to ask the numeric form of a: " + result.getClass().getSimpleName());
+    return ((NumericExpression)result).getNumber();
   }
 }
