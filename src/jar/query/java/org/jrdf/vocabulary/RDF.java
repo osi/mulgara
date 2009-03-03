@@ -73,7 +73,10 @@ public abstract class RDF extends Vocabulary {
   private static final long serialVersionUID = 5974585938932893808L;
 
   /** The URI of the RDF name space. */
-  public static final URI BASE_URI = URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#");;
+  public static final String DOM = "rdf";
+
+  /** The URI of the RDF name space. */
+  public static final URI BASE_URI = URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 
   /** The class of unordered containers. */
   public static final URI BAG = URI.create(BASE_URI + "Bag");
@@ -129,6 +132,9 @@ public abstract class RDF extends Vocabulary {
 
   /** The rest of the subject RDF list after the first item. */
   public static final URI REST = URI.create(BASE_URI + "rest");
+
+  /** The abbreviation for the class of XML literal values. */
+  public static final URI XML_LITERAL_ABBR = URI.create(DOM + ":XMLLiteral");
 
   static {
     // Add Classes

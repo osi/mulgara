@@ -72,6 +72,9 @@ public abstract class XSD {
    */
   public final static String NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
+  /** The common domain abbreviation for the namespace. */
+  public final static String DOM = "xsd";
+
   /** URI for the XML Schema <code>xsd:string</code> datatype. */
   public final static URI STRING_URI = URI.create(NAMESPACE + "string");
 
