@@ -60,13 +60,9 @@ import org.mulgara.query.rdf.XSD;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class NTriplesUnitTest extends TestCase {
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static Logger logger =
-    Logger.getLogger(NTriplesUnitTest.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(NTriplesUnitTest.class.getName());
 
   /**
    * Constructs a new test with the given name.
@@ -185,7 +181,7 @@ public class NTriplesUnitTest extends TestCase {
 
       // Datatyped literals
       convert(seven,
-              "\"7.0\"^^<" + XSD.DOUBLE_URI + ">",
+              "\"7\"^^<" + XSD.INTEGER_URI + ">",
               baseURI);
 
       convert(pi,
