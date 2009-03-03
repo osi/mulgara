@@ -58,25 +58,19 @@ import org.mulgara.store.stringpool.StringPoolFactory;
  */
 public class MemoryStringPoolFactory implements StringPoolFactory
 {
-  /**
-   * Logger.
-   */
-  private static final Logger logger =
-    Logger.getLogger(MemoryStringPoolFactory.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(MemoryStringPoolFactory.class.getName());
 
-  /**
-   * The singleton instance of this class.
-   */
-  private static final StringPoolFactory stringPoolFactory =
-    new MemoryStringPoolFactory();
+  /** The singleton instance of this class. */
+  private static final StringPoolFactory stringPoolFactory = new MemoryStringPoolFactory();
 
   /**
    * This constructor is only for internal use.
    *
    * Use the {@link #newInstance} method to obtain instances.
    */
-  private MemoryStringPoolFactory()
-  {
+  private MemoryStringPoolFactory() {
     // null implementation
   }
 
@@ -85,8 +79,7 @@ public class MemoryStringPoolFactory implements StringPoolFactory
    *
    * @param factoryInitializer  not used
    */
-  static public StringPoolFactory newInstance(FactoryInitializer factoryInitializer)
-  {
+  static public StringPoolFactory newInstance(FactoryInitializer factoryInitializer) {
     return stringPoolFactory;
   }
 
@@ -97,8 +90,7 @@ public class MemoryStringPoolFactory implements StringPoolFactory
   /**
    * {@inheritDoc StringPoolFactory}
    */
-  public StringPool newStringPool()
-  {
+  public StringPool newStringPool() {
     return new MemoryStringPoolImpl();
   }
 }
