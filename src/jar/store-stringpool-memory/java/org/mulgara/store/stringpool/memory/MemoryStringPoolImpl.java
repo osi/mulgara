@@ -91,12 +91,12 @@ public final class MemoryStringPoolImpl implements XAStringPool {
   /**
    * The hash map containing a long to an object.
    */
-  private TLongObjectHashMap nodeToStringPool;
+  private TLongObjectHashMap<SPObject> nodeToStringPool;
 
   /**
    * The hash map containing an object to a long.
    */
-  private TObjectLongHashMap stringToNodePool;
+  private TObjectLongHashMap<SPObject> stringToNodePool;
 
   /**
    * An index for sorting the SPObjects.
@@ -130,8 +130,8 @@ public final class MemoryStringPoolImpl implements XAStringPool {
    */
   public MemoryStringPoolImpl() {
 
-    nodeToStringPool = new TLongObjectHashMap(10);
-    stringToNodePool = new TObjectLongHashMap(10);
+    nodeToStringPool = new TLongObjectHashMap<SPObject>(10);
+    stringToNodePool = new TObjectLongHashMap<SPObject>(10);
     stringIndex = new TreeSet<SPObject>();
 
     // intialise the SPObject arrays
@@ -226,7 +226,7 @@ public final class MemoryStringPoolImpl implements XAStringPool {
 
     if (nodeToStringPool.contains(gNode)) {
 
-      SPObject obj = (SPObject)nodeToStringPool.remove(gNode);
+      SPObject obj = nodeToStringPool.remove(gNode);
       long node = stringToNodePool.remove(obj);
       stringIndex.remove(obj);
 
