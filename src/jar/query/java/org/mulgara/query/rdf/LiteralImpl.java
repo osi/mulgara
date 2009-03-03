@@ -133,6 +133,15 @@ public class LiteralImpl extends AbstractLiteral implements Comparable<Node>,
     this(Double.toString(value), XSD.DOUBLE_URI);
   }
 
+  /**
+   * Construct an <code>xsd:integer</code> literal.
+   * Choosing this over the more specific XSD.LONG
+   * @param value  the numerical value of the literal
+   */
+  public LiteralImpl(long value) {
+    this(Long.toString(value), XSD.INTEGER_URI);
+  }
+
   //
   // Methods implementing the Comparable interface
   //
