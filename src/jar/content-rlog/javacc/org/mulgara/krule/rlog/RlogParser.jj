@@ -70,7 +70,6 @@ SPECIAL_TOKEN : { < COMMENT: (~["\r","\n"])* > : DEFAULT }
 TOKEN [IGNORE_CASE] :
 {
     < PREFIX : "@prefix" >
-  | < BASE : "@base" >
 }
 
 TOKEN :
@@ -133,7 +132,6 @@ Statement statement() : {
   Statement s;
 } {
   prefix() { return null; }
-| base() { return null; }
 | ( LOOKAHEAD(10) s=axiom() | s=rule() ) { return s; }
 }
 
@@ -239,14 +237,6 @@ void prefix() : {
   String d, ns;
 } {
   <PREFIX> d=dom() ns=uri() <DOT> { context.registerDomain(d, ns); }
-}
-
-
-/* base  := BASE uri DOT */
-void base() : {
-  String ns;
-} {
-  <BASE> ns=uri() <DOT> { context.setBase(ns); }
 }
 
 
