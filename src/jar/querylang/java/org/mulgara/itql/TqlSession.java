@@ -81,7 +81,7 @@ public class TqlSession {
 
   /** The default path to the post-loading script */
   private final static String POST_LOADING_SCRIPT_PATH = "default-post.tql";
-  
+
   /** The command prompt */
   final static String PROMPT = "TQL> ";
 
@@ -113,13 +113,13 @@ public class TqlSession {
 
   /** A functor for splitting commands apart. */
   private CommandSplitter commandSplitter = null;
-  
+
   /** A flag to indicate that an executed command was complete */
   private boolean incomplete = false;
-  
+
   /** A flag to indicate whether to use the Swing shell or not */
   private boolean useSwing = false;
-  
+
   /** What machine should we query for models */
   private String host = "localhost";
 
@@ -172,7 +172,7 @@ public class TqlSession {
     }
   }
 
-  
+
   /**
    * Convenience method to log errors and terminate the program.
    * @param session The current session to close.
@@ -225,7 +225,7 @@ public class TqlSession {
   boolean isCommandIncomplete() {
     return incomplete;
   }
-  
+
   /**
    * Indicates if we should use the Swing shell or not
    */
@@ -239,7 +239,7 @@ public class TqlSession {
   String getModelHost() {
     return host;
   }
-  
+
   /**
    * Executes a series of commands the given command.  Accumulates all the
    * results of these commands into the answers and messages lists.
@@ -272,7 +272,7 @@ public class TqlSession {
         close();
         return;
       }
-      
+
       String msg = autoTql.getLastMessage();
       if (msg == null) {
         if (log.isDebugEnabled()) log.debug("Need to follow on for an incomplete command.");
@@ -342,7 +342,7 @@ public class TqlSession {
 
           String lastMessage = autoTql.getLastMessage();
           if ((lastMessage != null) && (lastMessage != "") && (gui != null)) System.out.println(lastMessage);
-          
+
           Exception e = autoTql.getLastException();
           if (e != null) log.warn("Couldn't execute command", e);
         }
@@ -359,7 +359,7 @@ public class TqlSession {
 
 
   private void runInterface(boolean useSwing) {
-    
+
     if(useSwing) {
       // Create the UI.
       JFrame mainWindow = new JFrame(SHELL_NAME);
@@ -377,7 +377,7 @@ public class TqlSession {
       mainWindow.setVisible(true);
     } else {
       try {
-        ConsoleReader reader = new ConsoleReader();    
+        ConsoleReader reader = new ConsoleReader();
         File historyFile = getHistoryFile();
         History history = reader.getHistory();
         history.setHistoryFile(historyFile);
@@ -397,13 +397,13 @@ public class TqlSession {
 
           if (answers.isEmpty()) {
             for (String message: messages) out.println(message);
-           } else {
+          } else {
             int answerIndex = 0;
 
             while (answerIndex < answers.size()) {
               @SuppressWarnings("unused")
               String lastMessage = (String)messages.get(answerIndex);
-              
+
               try {
                 // Assume the same number of answers and messages
                 Answer answer = answers.get(answerIndex);
@@ -414,7 +414,7 @@ public class TqlSession {
                   // If there's more than one answer add an extra line before the heading.
                   out.println("Executing Query " + (answerIndex+1));
                 }
-                
+
                 // print the results
                 if (answer != null) {
                   boolean hasAnswers = true;
@@ -451,7 +451,7 @@ public class TqlSession {
                   if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
                     break;
                   }
-                }              
+                }
               } catch(TuplesException te ) {
                 te.printStackTrace();
               }
@@ -463,16 +463,16 @@ public class TqlSession {
         e.printStackTrace();
       }
 
-      
+
     }
 
     if (log.isInfoEnabled()) log.info("Stopping TQL interpreter");
     if (log.isDebugEnabled()) log.debug("Executed post-loading script");
   }
-  
+
   /*
-   * Get the history file if it exists. 
-   * 
+   * Get the history file if it exists.
+   *
    */
   private File getHistoryFile() {
     // TODO: Generalize this process
@@ -516,18 +516,18 @@ public class TqlSession {
   private URL getPostLoadingScriptURL() {
     return postLoadingScriptUrl;
   }
-  
+
   /**
    * @return the list of existing model names for tab completion purposes
    */
-  
+
   private List<String> prefetchModels(String hostname) {
     List<String> retValue = new ArrayList<String>();
     StringBuffer sb = new StringBuffer();
     sb.append("select $model from <rmi://");
     sb.append(hostname);
     sb.append("/server1#> where $model $p $o;");
-    
+
     try {
       executeCommand(sb.toString());
       List<Answer> models = getLastAnswers();
@@ -540,7 +540,7 @@ public class TqlSession {
     } catch(Throwable t) {
       t.printStackTrace();
     }
-    
+
     return retValue;
   }
 
@@ -649,7 +649,7 @@ public class TqlSession {
 
         // dump the interpreter configuration
         if (null != parser.getOptionValue(ItqlOptionParser.DUMP_CONFIG)) dumpConfig();
-        
+
         String modelHost = (String) parser.getOptionValue(ItqlOptionParser.REMOTE);
         if(modelHost != null) {
           host = modelHost;
@@ -673,7 +673,7 @@ public class TqlSession {
           // override the default post-loading script
           String postScript = (String)parser.getOptionValue(ItqlOptionParser.POST_SCRIPT);
           if (postScript != null) postLoadingScriptUrl = new URL(preScript);
-          
+
           // override the default UI environment script
           useSwing = parser.getOptionValue(ItqlOptionParser.GUI) != null;
 
@@ -724,7 +724,7 @@ public class TqlSession {
     usage.append("scripts (useful with -s)").append(EOL);
 
     usage.append("-l, --logconfig     use an external logging configuration file").append(EOL);
-    
+
     usage.append("-o, --postload      execute an TQL script after interpreter stops,").append(EOL);
     usage.append("                    overriding default post-loading script").append(EOL);
     usage.append("-p, --preload       execute an TQL script before interpreter starts,").append(EOL);
