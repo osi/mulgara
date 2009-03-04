@@ -182,7 +182,11 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     String object = getString(objectElement);
 
     results = new SearchHitsTuples(subject, predicate, object);
-    if (subject != null || predicate != null || object != null) {
+    if (subject != null && predicate != null && object != null) {
+      Tuples old = results;
+      results = old.next() ? TuplesOperations.unconstrained() : TuplesOperations.empty();
+      old.close();
+    } else if (subject != null || predicate != null || object != null) {
       Tuples old = results;
       long t0 = System.currentTimeMillis();
       results = TuplesOperations.materialize(results);
