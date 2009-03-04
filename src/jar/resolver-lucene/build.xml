@@ -44,6 +44,7 @@
     <fileset file="${tuples-hybrid.dist.dir}/${tuples-hybrid.jar}"/>
     <fileset file="${resolver-memory.dist.dir}/${resolver-memory.jar}"/>
     <fileset file="${content-n3.dist.dir}/${content-n3.jar}"/>
+    <fileset file="${content-rdfxml.dist.dir}/${content-rdfxml.jar}"/>
     <fileset file="${resolver-file.dist.dir}/${resolver-file.jar}"/>
     <fileset file="${lib.dir}/${antlr.jar}"/>
   </path>

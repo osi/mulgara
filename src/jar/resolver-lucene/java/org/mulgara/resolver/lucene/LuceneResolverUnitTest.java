@@ -82,6 +82,8 @@ public class LuceneResolverUnitTest extends TestCase {
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new LuceneResolverUnitTest("testBasicQueries"));
+    suite.addTest(new LuceneResolverUnitTest("testSubqueries"));
+    suite.addTest(new LuceneResolverUnitTest("testSubqueries2"));
     suite.addTest(new LuceneResolverUnitTest("testConcurrentQueries"));
     suite.addTest(new LuceneResolverUnitTest("testConcurrentReadTransaction"));
     suite.addTest(new LuceneResolverUnitTest("testTransactionIsolation"));
@@ -144,11 +146,26 @@ public class LuceneResolverUnitTest extends TestCase {
                    tempResolverFactoryClassName,    // temporary models
                    null,                            // no dir for temp models
                    "",                              // no rule loader
-                   "org.mulgara.content.n3.N3ContentHandler");
+                   "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
+      database.addContentHandler("org.mulgara.content.n3.N3ContentHandler");
       database.addResolverFactory("org.mulgara.resolver.lucene.LuceneResolverFactory", persistenceDirectory);
 
       ti = new TqlInterpreter();
+
+      // Load some test data
+      Session session = database.newSession();
+      try {
+        URI fileURI = new File(textDirectory + File.separator + "data.n3").toURI();
+
+        if (session.modelExists(modelURI)) {
+          session.removeModel(modelURI);
+        }
+        session.createModel(modelURI, luceneModelType);
+        session.setModel(modelURI, new GraphResource(fileURI));
+      } finally {
+        session.close();
+      }
     }
   }
 
@@ -172,15 +189,6 @@ public class LuceneResolverUnitTest extends TestCase {
       Session session = database.newSession();
 
       try {
-        // Load some test data
-        URI fileURI = new File(textDirectory + File.separator + "data.n3").toURI();
-
-        if (session.modelExists(modelURI)) {
-          session.removeModel(modelURI);
-        }
-        session.createModel(modelURI, luceneModelType);
-        session.setModel(modelURI, new GraphResource(fileURI));
-
         // Run simple query with variable subject and fixed predicate
         String q = "select $s from <foo:bar> where $s <foo:hasText> 'American' in <" + modelURI + ">;";
         Answer answer = session.query(parseQuery(q));
@@ -262,21 +270,127 @@ public class LuceneResolverUnitTest extends TestCase {
   }
 
   /**
+   * Subqueries.
+   */
+  public void testSubqueries() throws Exception {
+    logger.info("Testing subqueries");
+
+    try {
+      Session session = database.newSession();
+
+      try {
+        // Lucene query in outer query
+        String q = "select $s subquery(select $y $z from <" + modelURI + "> where $s $y $z)" +
+                   " from <foo:bar> where $s $p 'b*' in <" + modelURI + "> order by $s;";
+
+        Answer answer = session.query(parseQuery(q));
+        compareResults(new Object[][] {
+          { "foo:node13",  new Object[][] { { "foo:hasText", "Benefit Evaluation of Direct Coronary Stenting Study Group" } } },
+          { "foo:node14",  new Object[][] { { "foo:hasText", "Biomarkers Definitions Working Group." } } },
+        }, answer, true);
+        answer.close();
+
+        // Lucene query in both
+        q = "select $x subquery(select $y from <foo:bar> where $x $y 'a*' in <" + modelURI + ">) " +
+            "  from <foo:bar> where $x <foo:hasText> 'Group' in <" + modelURI + "> order by $x;";
+
+        answer = session.query(parseQuery(q));
+        compareResults(new Object[][] {
+          { "foo:node1",  new Object[][] { { "foo:hasText" } } },
+          { "foo:node11", new Object[][] { { "foo:hasText" } } },
+          { "foo:node12", new Object[][] { { "foo:hasText" } } },
+          { "foo:node13", new Object[][] { } },
+          { "foo:node14", new Object[][] { } },
+          { "foo:node18", new Object[][] { } },
+          { "foo:node2",  new Object[][] { { "foo:hasText" } } },
+          { "foo:node4",  new Object[][] { { "foo:hasText" } } },
+          { "foo:node9",  new Object[][] { { "foo:hasText" } } },
+        }, answer);
+        answer.close();
+
+      } finally {
+        session.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+  /**
+   * Subqueries.
+   */
+  public void testSubqueries2() throws Exception {
+    logger.info("Testing subqueries2");
+
+    try {
+      Session session = database.newSession();
+
+      try {
+        // create models
+        URI dataModel = new URI("local:sampledata");
+        URI textModel = new URI("local:sampletext");
+
+        if (session.modelExists(dataModel)) session.removeModel(dataModel);
+        if (session.modelExists(textModel)) session.removeModel(textModel);
+        session.createModel(dataModel, null);
+        session.createModel(textModel, luceneModelType);
+
+        // load models
+        URI fileURI = new File(new File(System.getProperty("cvs.root"), "data"), "w3c-news.rss").toURI();
+        session.setModel(dataModel, new GraphResource(fileURI));
+
+        String q = "select $s $p $o from <local:sampledata> where $s $p $o and (" +
+                     "  $p <mulgara:is> <http://purl.org/rss/1.0/description> or " +
+                     "  $p <mulgara:is> <http://purl.org/rss/1.0/title>);";
+        session.insert(textModel, parseQuery(q));
+
+        // run queries
+        q = "select $s subquery(select $z from <local:sampledata> where $s <http://purl.org/rss/1.0/title> $z) " +
+            "  from <local:sampledata> where $s $p $o and $s $p 'W*' in <local:sampletext> order by $s;";
+        Answer answer = session.query(parseQuery(q));
+        compareResults(new Object[][] {
+          { "http://www.w3.org/2000/08/w3c-synd/home.rss", new Object[][] { { "The World Wide Web Consortium" } } },
+          { "http://www.w3.org/News/2002#item12", new Object[][] { { "W3C Launches Web Services Activity" } } },
+          { "http://www.w3.org/News/2002#item13", new Object[][] { { "Platform for Privacy Preferences (P3P) Becomes a W3C Proposed Recommendation" } } },
+          { "http://www.w3.org/News/2002#item14", new Object[][] { { "XHTML+SMIL Profile Published" } } },
+          { "http://www.w3.org/News/2002#item15", new Object[][] { { "W3C Team Presentations in February" } } },
+          { "http://www.w3.org/News/2002#item16", new Object[][] { { "QA Framework First Public Working Drafts Published" } } },
+          { "http://www.w3.org/News/2002#item17", new Object[][] { { "DOM Level 3 Working Drafts Published" } } },
+          { "http://www.w3.org/News/2002#item18", new Object[][] { { "P3P Deployment Guide Updated" } } },
+        }, answer, true);
+        answer.close();
+
+        q = "select $s subquery(select $z from <local:sampledata> where $s <http://purl.org/rss/1.0/title> $z and $s <http://purl.org/rss/1.0/title> 'W*' in <local:sampletext>) " +
+            "  from <local:sampledata> where $s <http://purl.org/rss/1.0/title> $o order by $s;";
+        answer = session.query(parseQuery(q));
+        compareResults(new Object[][] {
+          { "http://www.w3.org/2000/08/w3c-synd/home.rss", new Object[][] { { "The World Wide Web Consortium" } } },
+          { "http://www.w3.org/News/2002#item12", new Object[][] { { "W3C Launches Web Services Activity" } } },
+          { "http://www.w3.org/News/2002#item13", new Object[][] { { "Platform for Privacy Preferences (P3P) Becomes a W3C Proposed Recommendation" } } },
+          { "http://www.w3.org/News/2002#item14", new Object[][] { } },
+          { "http://www.w3.org/News/2002#item15", new Object[][] { { "W3C Team Presentations in February" } } },
+          { "http://www.w3.org/News/2002#item16", new Object[][] { { "QA Framework First Public Working Drafts Published" } } },
+          { "http://www.w3.org/News/2002#item17", new Object[][] { { "DOM Level 3 Working Drafts Published" } } },
+          { "http://www.w3.org/News/2002#item18", new Object[][] { } },
+        }, answer, true);
+        answer.close();
+
+      } finally {
+        session.close();
+      }
+    } catch (Exception e) {
+      fail(e);
+    }
+  }
+
+  /**
    * Two queries, in parallel.
    */
   public void testConcurrentQueries() throws Exception {
     logger.info("Testing concurrentQueries");
 
     try {
-      // Load some test data
       Session session = database.newSession();
-
-      URI fileURI = new File(textDirectory + File.separator + "data.n3").toURI();
-      if (session.modelExists(modelURI)) {
-        session.removeModel(modelURI);
-      }
-      session.createModel(modelURI, luceneModelType);
-      session.setModel(modelURI, new GraphResource(fileURI));
 
       // Run the queries
       try {
@@ -870,27 +984,43 @@ public class LuceneResolverUnitTest extends TestCase {
     return res;
   }
 
-  private void compareResults(String[][] expected, Answer answer) throws Exception {
+  private void compareResults(Object[][] expected, Answer answer) throws Exception {
     compareResults(expected, answer, false);
   }
 
-  private void compareResults(String[][] expected, Answer answer, boolean lastIsLiteral)
+  private void compareResults(Object[][] expected, Answer answer, boolean lastIsLiteral)
       throws Exception {
     try {
       answer.beforeFirst();
+
       for (int i = 0; i < expected.length; i++) {
         assertTrue("Answer short at row " + i, answer.next());
         assertEquals(expected[i].length, answer.getNumberOfVariables());
         for (int j = 0; j < expected[i].length; j++) {
-          Object exp = (lastIsLiteral && j == expected[i].length - 1) ?
-                          new LiteralImpl(expected[i][j]) :
-                          new URIReferenceImpl(new URI(expected[i][j]));
-          assertEquals(exp, answer.getObject(j));
+          if (expected[i][j] == null) {
+            assertNull(answer.getObject(j));
+          } else if (expected[i][j] instanceof String) {
+            Object exp = (lastIsLiteral && j == expected[i].length - 1) ?
+                            new LiteralImpl((String) expected[i][j]) :
+                            new URIReferenceImpl(new URI((String) expected[i][j]));
+            assertEquals(exp, answer.getObject(j));
+          } else if (expected[i][j] instanceof Object[][]) {
+            compareResults((Object[][]) expected[i][j], (Answer) answer.getObject(j), lastIsLiteral);
+          } else {
+            throw new IllegalArgumentException("Don't know how to handle expected value '" +
+                                               expected[i][j] + "' of type " +
+                                               expected[i][j].getClass() + "' at index " + i +
+                                               "," + j);
+          }
         }
       }
-      assertFalse(answer.next());
+
+      assertFalse("Answer too long", answer.next());
     } catch (Exception e) {
-      logger.error("Failed test - " + answer);
+      logger.error("Failed test - \n" + answer);
+      throw e;
+    } catch (Error e) {
+      logger.error("Failed test - \n" + dumpAnswer(answer, "  "));
       answer.close();
       throw e;
     }
@@ -908,6 +1038,25 @@ public class LuceneResolverUnitTest extends TestCase {
     }
     assertFalse(answer2.next());
   }
+
+  private static String dumpAnswer(Answer answer, String indent) throws Exception {
+    StringBuilder sb = new StringBuilder(500);
+
+    answer.beforeFirst();
+    while (answer.next()) {
+      sb.append(indent).append("next-row\n");
+      for (int j = 0; j < answer.getNumberOfVariables(); j++) {
+        sb.append(indent).append("  column: " + answer.getObject(j) + "\n");
+        if (answer.getObject(j) instanceof Answer) {
+          sb.append(dumpAnswer((Answer) answer.getObject(j), indent + "    "));
+        }
+      }
+    }
+
+    sb.append(indent).append("end\n");
+    return sb.toString();
+  }
+
 
   private void fail(Throwable throwable) {
     StringWriter stringWriter = new StringWriter();
