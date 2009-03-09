@@ -78,6 +78,7 @@ import org.mulgara.query.filter.arithmetic.DivideOperation;
 import org.mulgara.query.filter.arithmetic.MinusOperation;
 import org.mulgara.query.filter.arithmetic.MultiplyOperation;
 import org.mulgara.query.filter.value.Bool;
+import org.mulgara.query.filter.value.ComparableExpression;
 import org.mulgara.query.filter.value.DataTypeFn;
 import org.mulgara.query.filter.value.ExternalFn;
 import org.mulgara.query.filter.value.IRI;
@@ -177,6 +178,18 @@ public class FilterMapper {
     List<Filter> logicOps = new ArrayList<Filter>(operands.size());
     for (LogicExpression e: operands) logicOps.add(mapLogic(e));
     return logicOps.toArray(new Filter[logicOps.size()]);
+  }
+
+  /**
+   * Converts a CST ComparableExpression into an AST ComparableExpression.
+   * @param operand The CST comparable expression.
+   * @return An AST comparable expression.
+   * @throws MulgaraParserException If the value was not mapped to an AST numeric expression.
+   */
+  static private ComparableExpression mapComparable(Expression operand) throws MulgaraParserException {
+    RDFTerm op = mapExpression(operand);
+    if (!(op instanceof ComparableExpression)) throw new MulgaraParserException("Non-comparable value in comparison operation: " + op.getClass().getSimpleName());
+    return (ComparableExpression)op;
   }
 
   /**
@@ -404,28 +417,28 @@ public class FilterMapper {
   private static class GreaterThanMap extends AbstractExprToFilter<GreaterThan> {
     public Class<GreaterThan> getMapType() { return GreaterThan.class; }
     public RDFTerm typedMap(GreaterThan expr) throws MulgaraParserException {
-      return new org.mulgara.query.filter.GreaterThan(mapNumber(expr.getLhs()), mapNumber(expr.getRhs()));
+      return new org.mulgara.query.filter.GreaterThan(mapComparable(expr.getLhs()), mapComparable(expr.getRhs()));
     }
   }
 
   private static class GreaterThanEqualMap extends AbstractExprToFilter<GreaterThanEqual> {
     public Class<GreaterThanEqual> getMapType() { return GreaterThanEqual.class; }
     public RDFTerm typedMap(GreaterThanEqual expr) throws MulgaraParserException {
-      return new GreaterThanEqualTo(mapNumber(expr.getLhs()), mapNumber(expr.getRhs()));
+      return new GreaterThanEqualTo(mapComparable(expr.getLhs()), mapComparable(expr.getRhs()));
     }
   }
 
   private static class LessThanMap extends AbstractExprToFilter<LessThan> {
     public Class<LessThan> getMapType() { return LessThan.class; }
     public RDFTerm typedMap(LessThan expr) throws MulgaraParserException {
-      return new org.mulgara.query.filter.LessThan(mapNumber(expr.getLhs()), mapNumber(expr.getRhs()));
+      return new org.mulgara.query.filter.LessThan(mapComparable(expr.getLhs()), mapComparable(expr.getRhs()));
     }
   }
 
   private static class LessThanEqualMap extends AbstractExprToFilter<LessThanEqual> {
     public Class<LessThanEqual> getMapType() { return LessThanEqual.class; }
     public RDFTerm typedMap(LessThanEqual expr) throws MulgaraParserException {
-      return new LessThanEqualTo(mapNumber(expr.getLhs()), mapNumber(expr.getRhs()));
+      return new LessThanEqualTo(mapComparable(expr.getLhs()), mapComparable(expr.getRhs()));
     }
   }
 
