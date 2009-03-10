@@ -420,7 +420,7 @@ public class RuleGenerator extends TripleGenerator {
     String seqBase = RDF.BASE_URI.toString() + "_";
     for (int i = cachedSeq.size() + 1; i <= largest; i++) {
       URI s = URI.create(seqBase + i);
-      cachedSeq.add(resolverSession.lookup(new URIReferenceImpl(s)));
+      cachedSeq.add(resolverSession.localize(new URIReferenceImpl(s)));
     }
   }
 
