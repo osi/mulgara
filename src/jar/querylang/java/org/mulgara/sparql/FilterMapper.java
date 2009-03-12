@@ -308,7 +308,7 @@ public class FilterMapper {
   private static class DecimalMap extends AbstractExprToFilter<DecimalLiteral> {
     public Class<DecimalLiteral> getMapType() { return DecimalLiteral.class; }
     public RDFTerm typedMap(DecimalLiteral expr) {
-      return new NumericLiteral(expr.getFloat());
+      return new NumericLiteral(expr.getValue());
     }
   }
 
