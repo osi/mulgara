@@ -95,9 +95,6 @@ public abstract class AbstractFilterValue extends AbstractContextOwner implement
   /** @see org.mulgara.query.filter.RDFTerm#isURI() */
   public boolean isURI() throws QueryException { return isIRI(); }
 
-  /** @see org.mulgara.query.filter.RDFTerm#notEquals(org.mulgara.query.filter.RDFTerm) */
-  public boolean notEquals(RDFTerm v) throws QueryException { return !resolve().equals(v); }
-
   /** @see org.mulgara.query.filter.RDFTerm#sameTerm(org.mulgara.query.filter.RDFTerm) */
   public boolean sameTerm(RDFTerm v) throws QueryException { return resolve().sameTerm(v); }
 

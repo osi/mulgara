@@ -11,6 +11,7 @@
  */
 package org.mulgara.query.filter.value;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
    * @param n The number to wrap
    */
   public NumericLiteral(Number n) {
-    super(n, typeMap.get(n.getClass()));
+    super(n, numericTypeMap.get(n.getClass()));
   }
 
   /**
@@ -59,7 +60,7 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
    * @return An IRI containing the XSD datatype of n.
    */
   public static IRI getTypeFor(Number n) {
-    return new IRI(typeMap.get(n.getClass()));
+    return new IRI(numericTypeMap.get(n.getClass()));
   }
 
   /**
@@ -82,15 +83,16 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
   }
 
   /** A mapping of numeric types to their URIs */
-  private static final Map<Class<? extends Number>,URI> typeMap = new HashMap<Class<? extends Number>,URI>();
+  private static final Map<Class<? extends Number>,URI> numericTypeMap = new HashMap<Class<? extends Number>,URI>();
   
   static {
-    typeMap.put(Float.class, XSD.FLOAT_URI);
-    typeMap.put(Double.class, XSD.DOUBLE_URI);
-    typeMap.put(Long.class, XSD.LONG_URI);
-    typeMap.put(Integer.class, XSD.INT_URI);
-    typeMap.put(Short.class, XSD.SHORT_URI);
-    typeMap.put(Byte.class, XSD.BYTE_URI);
+    numericTypeMap.put(Float.class, XSD.FLOAT_URI);
+    numericTypeMap.put(Double.class, XSD.DOUBLE_URI);
+    numericTypeMap.put(Long.class, XSD.LONG_URI);
+    numericTypeMap.put(Integer.class, XSD.INT_URI);
+    numericTypeMap.put(Short.class, XSD.SHORT_URI);
+    numericTypeMap.put(Byte.class, XSD.BYTE_URI);
+    numericTypeMap.put(BigDecimal.class, XSD.DECIMAL_URI);
   }
 
 }

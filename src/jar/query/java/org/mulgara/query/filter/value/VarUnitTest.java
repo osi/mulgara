@@ -100,7 +100,6 @@ public class VarUnitTest extends TestCase implements ContextOwner {
     assertEquals(foo.getLexicalForm(), v.getLexical());
     assertEquals(SimpleLiteral.STRING_TYPE, v.getType());
     assertTrue(v.equals(new SimpleLiteral("foo")));
-    assertFalse(v.notEquals(new SimpleLiteral("foo")));
     assertTrue(v.greaterThan(new SimpleLiteral("eoo")));
     assertTrue(v.greaterThanEqualTo(new SimpleLiteral("eoo")));
     assertTrue(v.lessThan(new SimpleLiteral("goo")));
@@ -137,7 +136,6 @@ public class VarUnitTest extends TestCase implements ContextOwner {
     } catch (QueryException e) { }
     IRI i = new IRI(foobar.getURI());
     assertTrue(v.equals(i));
-    assertFalse(v.notEquals(i));
 
     SimpleLiteral s = new SimpleLiteral("foobar");
     try {
@@ -196,7 +194,6 @@ public class VarUnitTest extends TestCase implements ContextOwner {
     } catch (QueryException e) { }
     BlankNodeValue b = new BlankNodeValue(bn);
     assertTrue(v.equals(b));
-    assertFalse(v.notEquals(b));
 
     SimpleLiteral s = new SimpleLiteral("foobar");
     try {
@@ -260,10 +257,6 @@ public class VarUnitTest extends TestCase implements ContextOwner {
     BlankNodeValue b = new BlankNodeValue(bn);
     try {
       v.equals(b);
-      assertTrue(false);
-    } catch (QueryException e) { }
-    try {
-      v.notEquals(b);
       assertTrue(false);
     } catch (QueryException e) { }
 

@@ -63,11 +63,6 @@ public class IRI implements RDFTerm {
   }
 
   /** {@inheritDoc} */
-  public boolean notEquals(RDFTerm v) throws QueryException {
-    return !equals(v);
-  }
-
-  /** {@inheritDoc} */
   public boolean isBlank() { return false; }
 
   /** {@inheritDoc} */

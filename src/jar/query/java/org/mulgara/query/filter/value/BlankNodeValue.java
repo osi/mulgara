@@ -52,11 +52,6 @@ public class BlankNodeValue implements RDFTerm {
   }
 
   /** {@inheritDoc} */
-  public boolean notEquals(RDFTerm v) throws QueryException {
-    return !equals(v);
-  }
-
-  /** {@inheritDoc} */
   public boolean sameTerm(RDFTerm v) throws QueryException {
     return equals(v);
   }

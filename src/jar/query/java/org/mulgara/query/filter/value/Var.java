@@ -114,11 +114,6 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
   }
 
   /** {@inheritDoc} */
-  public boolean notEquals(RDFTerm v) throws QueryException {
-    return resolve().notEquals(v);
-  }
-
-  /** {@inheritDoc} */
   public boolean greaterThan(ComparableExpression v) throws QueryException {
     return resolveComparable().greaterThan(v);
   }

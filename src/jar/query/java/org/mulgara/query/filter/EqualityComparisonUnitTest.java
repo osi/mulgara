@@ -88,36 +88,30 @@ public class EqualityComparisonUnitTest extends TestCase {
     // compare unequal literals
     RDFTerm lhs = t;
     RDFTerm rhs = f;
+    assertTrue(f.equals(new Equals(lhs, rhs)));
+    assertTrue(f.equals(new SameTerm(lhs, rhs)));
+    assertTrue(t.equals(new NotEquals(lhs, rhs)));
+
+    // compare incomparable literals
+    lhs = TypedLiteral.newLiteral(7);
     try {
       assertTrue(f.equals(new Equals(lhs, rhs)));
-      fail("Unequal literals should throw an exception when compared for equality");
+      fail("Incomparable literals should throw an exception when compared for equality");
     } catch (QueryException qe) {
       assertTrue(qe.getMessage().startsWith("Type Error"));
     }
-    assertTrue(f.equals(new SameTerm(lhs, rhs)));
-    assertTrue(t.equals(new NotEquals(lhs, rhs)));
 
     // compare equivalent but different literals
     lhs = TypedLiteral.newLiteral(7);
     rhs = TypedLiteral.newLiteral(7.0);
-    try {
-      assertTrue(f.equals(new Equals(lhs, rhs)));
-      fail("Unequal literals should throw an exception when compared for equality");
-    } catch (QueryException qe) {
-      assertTrue(qe.getMessage().startsWith("Type Error"));
-    }
+    assertTrue(t.equals(new Equals(lhs, rhs)));
     assertTrue(f.equals(new SameTerm(lhs, rhs)));
-    assertTrue(t.equals(new NotEquals(lhs, rhs)));
+    assertTrue(f.equals(new NotEquals(lhs, rhs)));
 
     // compare unequal literal strings
     lhs = TypedLiteral.newLiteral("foo", null, null);
     rhs = TypedLiteral.newLiteral("fool", null, null);
-    try {
-      assertTrue(f.equals(new Equals(lhs, rhs)));
-      fail("Unequal literals should throw an exception when compared for equality");
-    } catch (QueryException qe) {
-      assertTrue(qe.getMessage().startsWith("Type Error"));
-    }
+    assertTrue(f.equals(new Equals(lhs, rhs)));
     assertTrue(f.equals(new SameTerm(lhs, rhs)));
     assertTrue(t.equals(new NotEquals(lhs, rhs)));
 
@@ -131,17 +125,17 @@ public class EqualityComparisonUnitTest extends TestCase {
       assertTrue(qe.getMessage().startsWith("Type Error"));
     }
     assertTrue(f.equals(new SameTerm(lhs, rhs)));
-    assertTrue(t.equals(new NotEquals(lhs, rhs)));
-
-    // compare unequal languages
-    lhs = TypedLiteral.newLiteral("foo", null, "en");
-    rhs = TypedLiteral.newLiteral("foo", null, "fr");
     try {
-      assertTrue(f.equals(new Equals(lhs, rhs)));
+      assertTrue(t.equals(new NotEquals(lhs, rhs)));
       fail("Unequal literals should throw an exception when compared for equality");
     } catch (QueryException qe) {
       assertTrue(qe.getMessage().startsWith("Type Error"));
     }
+
+    // compare unequal languages
+    lhs = TypedLiteral.newLiteral("foo", null, "en");
+    rhs = TypedLiteral.newLiteral("foo", null, "fr");
+    assertTrue(f.equals(new Equals(lhs, rhs)));
     assertTrue(f.equals(new SameTerm(lhs, rhs)));
     assertTrue(t.equals(new NotEquals(lhs, rhs)));
 
@@ -203,6 +197,11 @@ public class EqualityComparisonUnitTest extends TestCase {
       new Node[] {simple, strEn},
       new Node[] {simple, strFr},
 
+      new Node[] {seven, str},
+      new Node[] {sevenF, str},
+      new Node[] {str, seven},
+      new Node[] {str, sevenF},
+
       new Node[] {str, str},
       new Node[] {str, strEn},
       new Node[] {strEn, strEn},
@@ -229,68 +228,70 @@ public class EqualityComparisonUnitTest extends TestCase {
     eq.setCurrentContext(c);
     same.setCurrentContext(c);
     ne.setCurrentContext(c);
-
-    String results = "tl tlll tltl ff tff x tf";
+                   // 01 2345 6789 0123 45 678 9 01
+    String results = "te tlff llll tltf ff tff x tf";
     runTests(c, eq, same, ne, results);
 
   }
   
   private void runTests(TestContext c, AbstractFilterValue eq, AbstractFilterValue same, AbstractFilterValue ne, String results) throws Exception {
     c.beforeFirst();
+    int i = 0;
     for (char result: results.toCharArray()) {
       if (result == ' ') continue;
+      String it = "iteration: " + i++;
       assertTrue(c.next());
       switch (result) {
       case 't':  // equal
-        assertTrue(t.equals(eq));
-        assertTrue(t.equals(same));
-        assertTrue(f.equals(ne));
+        assertTrue(it, t.equals(eq));
+        assertTrue(it, t.equals(same));
+        assertTrue(it, f.equals(ne));
         break;
 
       case 'f':  // unequal
-        assertTrue(f.equals(eq));
-        assertTrue(f.equals(same));
-        assertTrue(t.equals(ne));
+        assertTrue(it, f.equals(eq));
+        assertTrue(it, f.equals(same));
+        assertTrue(it, t.equals(ne));
         break;
 
       case 'l':  // unequal literals
-        assertTrue(f.equals(same));
-        assertTrue(t.equals(ne));
+        assertTrue(it, f.equals(same));
         try {
-          assertTrue(f.equals(eq));
-          fail("Unequal literals should throw an exception when compared for equality");
+          assertTrue(it, t.equals(ne));
+          fail("Unequal literals should throw an exception when compared for equality: " + i);
+        } catch (QueryException qe) {
+          assertTrue(qe.getMessage().startsWith("Type Error"));
+        }
+        try {
+          assertTrue(it, f.equals(eq));
+          fail("Unequal literals should throw an exception when compared for equality: " + i);
         } catch (QueryException qe) {
           assertTrue(qe.getMessage().startsWith("Type Error"));
         }
         break;
 
       case 'e':  // equivalent but unequal
-        assertTrue(t.equals(same));
-        assertTrue(t.equals(ne));
-        try {
-          assertTrue(f.equals(eq));
-          fail("Unequal literals should throw an exception when compared for equality");
-        } catch (QueryException qe) {
-          assertTrue(qe.getMessage().startsWith("Type Error"));
-        }
+        assertTrue(it, f.equals(same));
+        assertTrue(it, f.equals(ne));
+        assertTrue(it, t.equals(eq));
         break;
 
       case 'x':  // exception due to unbound
         try {
-          assertTrue(f.equals(eq));
-          fail("No exception when testing an unbound value for equality");
+          assertTrue(it, f.equals(eq));
+          fail("No exception when testing an unbound value for equality: " + i);
         } catch (QueryException qe) {
           assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }
         try {
-          assertTrue(f.equals(same));
-          fail("No exception when testing an unbound value for equivalency");
+          assertTrue(it, f.equals(same));
+          fail("No exception when testing an unbound value for equivalency: " + i);
         } catch (QueryException qe) {
           assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }
         try {
-          assertTrue(f.equals(ne));
-          fail("No exception when testing an unbound value for inequality");
+          assertTrue(it, f.equals(ne));
+          fail("No exception when testing an unbound value for inequality: " + i);
         } catch (QueryException qe) {
           assertTrue(qe.getMessage().startsWith("Resolving unbound variable"));
         }

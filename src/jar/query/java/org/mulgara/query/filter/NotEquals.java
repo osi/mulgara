@@ -33,7 +33,7 @@ public class NotEquals extends BinaryTestFilter {
 
   /** @see org.mulgara.query.filter.BinaryTestFilter#testCmp() */
   boolean testCmp() throws QueryException {
-    return lhs.notEquals(rhs);
+    return !lhs.equals(rhs);
   }
 
 }

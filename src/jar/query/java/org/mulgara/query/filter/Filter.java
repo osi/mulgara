@@ -46,7 +46,6 @@ public interface Filter extends ContextOwner, RDFTerm {
     public boolean isIRI() throws QueryException { return false; }
     public boolean isLiteral() throws QueryException { return true; }
     public boolean isURI() throws QueryException { return false; }
-    public boolean notEquals(RDFTerm v) throws QueryException { return !equals(v); }
     public boolean sameTerm(RDFTerm v) throws QueryException { return equals(v); }
     public void setContextOwner(ContextOwner owner) { }
   };

@@ -43,15 +43,6 @@ public interface RDFTerm extends Serializable {
   public boolean equals(RDFTerm v) throws QueryException;
 
   /**
-   * A value based inequality test.
-   * @param v The object to compare to
-   * @return <code>false</code> iff v has the same value as the current object.
-   * @throws QueryException Resolving the data for this value leads to an error,
-   *                        or the types are incompatible.
-   */
-  public boolean notEquals(RDFTerm v) throws QueryException;
-
-  /**
    * Tests if this object is a URI or IRI.
    * @return <code>true</code> if this object is an IRI.
    */

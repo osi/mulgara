@@ -59,8 +59,6 @@ public class BlankNodeValueUnitTest extends TestCase {
     assertFalse(b2.equals(bv.getValue()));
     BlankNodeValue bv2 = new BlankNodeValue(b2);
     assertTrue(bv.equals(bv));
-    assertTrue(bv.notEquals(bv2));
-    assertFalse(bv.notEquals(bv));
     assertFalse(bv.equals(bv2));
   }
 

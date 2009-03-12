@@ -57,11 +57,6 @@ public abstract class AbstractComparable extends AbstractContextOwner implements
     return compare(getValue(), v.getValue()) == 0;
   }
 
-  /** {@inheritDoc} */
-  public boolean notEquals(ComparableExpression v) throws QueryException {
-    return !equals(v);
-  }
-
   /**
    * Tests a value to see if it is a simple literal, and throws an exception if it is.
    * Simple literals do a similar test when compared with a ComparableExpression.

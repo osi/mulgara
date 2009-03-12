@@ -105,8 +105,9 @@ public class SimpleLiteral extends AbstractComparableLiteral {
 
   /**
    * {@inheritDoc}
-   * This method will only return <code>true</code> when the elements are identical.
-   * Since this object is a literal, then an incorrect comparison will throw an exception.
+   * This method will only return <code>true</code> when the elements are identical, and
+   * <code>false</code> when they are the same type, but different values.
+   * Since this object is a literal, then a comparison with another type will throw an exception.
    * {@link http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal}
    * <em>produces a type error if the arguments are both literal but are not the same RDF term</em>
    */
@@ -114,7 +115,7 @@ public class SimpleLiteral extends AbstractComparableLiteral {
     if (!v.isLiteral()) return false;
     if (((ValueLiteral)v).isSimple()) {
       // check values and language codes
-      if (getValue().equals(v.getValue()) && compareLangEquals((ValueLiteral)v)) return true;
+      return getValue().equals(v.getValue()) && compareLangEquals((ValueLiteral)v);
     }
     throw new QueryException("Type Error: Terms are not equal");
   }

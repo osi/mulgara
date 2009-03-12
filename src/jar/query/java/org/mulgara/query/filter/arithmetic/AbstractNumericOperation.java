@@ -51,9 +51,6 @@ public abstract class AbstractNumericOperation extends AbstractComparable implem
   /** @see org.mulgara.query.filter.RDFTerm#isURI() */
   public boolean isURI() throws QueryException { return false; }
 
-  /** @see org.mulgara.query.filter.RDFTerm#notEquals() */
-  public boolean notEquals(RDFTerm v) throws QueryException { return compare(getNumber(), v.getValue()) != 0; }
-
   /** @see org.mulgara.query.filter.RDFTerm#sameTerm() */
   public boolean sameTerm(RDFTerm v) throws QueryException { return getNumber().equals(v.getValue()); }
 

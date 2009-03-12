@@ -11,6 +11,8 @@
  */
 package org.mulgara.query.filter.value;
 
+import java.math.BigDecimal;
+
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.TestContext;
 import static org.mulgara.query.rdf.XSD.*;
@@ -62,6 +64,11 @@ public class NumericLiteralUnitTest extends TestCase {
     n = new NumericLiteral(six);
     assertEquals(n.getValue(), six);
     assertFalse(Double.valueOf(4).equals(n.getValue()));
+
+    BigDecimal large = new BigDecimal("12345678901234567890");
+    n = new NumericLiteral(large);
+    assertEquals(n.getValue(), large);
+    assertFalse(BigDecimal.valueOf(1234567890123456789L).equals(n.getValue()));
   }
 
   public void testFilter() throws Exception {
@@ -74,6 +81,11 @@ public class NumericLiteralUnitTest extends TestCase {
     n = new NumericLiteral(Double.valueOf(5.0));
     assertTrue(n.test(c));
     n = new NumericLiteral(Double.valueOf(0));
+    assertFalse(n.test(c));
+
+    n = new NumericLiteral(BigDecimal.valueOf(5.0));
+    assertTrue(n.test(c));
+    n = new NumericLiteral(BigDecimal.ZERO);
     assertFalse(n.test(c));
   }
 
@@ -93,6 +105,10 @@ public class NumericLiteralUnitTest extends TestCase {
     n = new NumericLiteral(Float.valueOf(5));
     assertTrue(n.getType().isIRI());
     assertEquals(n.getType().getValue(), FLOAT_URI);
+
+    n = new NumericLiteral(new BigDecimal("12345678901234567890"));
+    assertTrue(n.getType().isIRI());
+    assertEquals(n.getType().getValue(), DECIMAL_URI);
   }
 
 
@@ -114,6 +130,12 @@ public class NumericLiteralUnitTest extends TestCase {
     Double six = Double.valueOf(6.0);
     n = new NumericLiteral(six);
     n2 = TypedLiteral.newLiteral(six);
+    assertTrue(n.equals(n2));
+    assertTrue(n.getType().equals(n2.getType()));
+
+    BigDecimal large = new BigDecimal("12345678901234567890");
+    n = new NumericLiteral(large);
+    n2 = TypedLiteral.newLiteral(large);
     assertTrue(n.equals(n2));
     assertTrue(n.getType().equals(n2.getType()));
   }

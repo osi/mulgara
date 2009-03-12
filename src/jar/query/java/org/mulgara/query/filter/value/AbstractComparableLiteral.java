@@ -11,12 +11,15 @@
  */
 package org.mulgara.query.filter.value;
 
+import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.RDFTerm;
+import org.mulgara.query.rdf.XSD;
 
 
 /**
@@ -74,7 +77,7 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
   /** {@inheritDoc} */
   public boolean sameTerm(RDFTerm v) throws QueryException {
     if (!v.isLiteral()) return false;
-    return equalLiteralTypes((ValueLiteral)v) && getValue().equals(v.getValue());
+    return comparableLiteralTypes((ValueLiteral)v) && getValue().equals(v.getValue());
   }
 
   /**
@@ -86,23 +89,47 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
    */
   public boolean equals(RDFTerm v) throws QueryException {
     if (!v.isLiteral()) return false;
-    // compare types, and then check values
-    if (equalLiteralTypes((ValueLiteral)v) && getValue().equals(v.getValue())) return true;
+    // numbers are compared differently
+    if (isNumber(v) && isNumber(this)) return numericEquals(v);
+
+    // simple strings can do the comparison for us. This object cannot be simple,
+    // otherwise this method would not have been called.
+    if (((ValueLiteral)v).isSimple()) return v.equals(this);
+
+    // if the types allow for direct comparisons, then do so
+    if (directlyComparableTypes(v)) return getValue().equals(v.getValue());
+
+    // This is now RDFterm-equal, return true or an error
+    // compare for type equality, then value equality
+    if (comparableLiteralTypes(v) && getValue().equals(v.getValue())) return true;
     throw new QueryException("Type Error: Terms are not equal");
   }
-  
+
+
   /**
-   * {@inheritDoc}
-   * Not the inverse of #equals().  This method returns true when the elements connot be determined
-   * to be equal.
+   * Indicates that an direct compare operation is valid on these types. This is defined
+   * to be valid for:
+   * <ul>
+   *   <li>booleans</li>
+   *   <li>dateTimes</li>
+   *   <li>XSD strings</li>
+   * </ul>
+   * Simple strings and numbers are handled elsewhere.
+   * @param vl The other value literal to be compared against.
+   * @return <code>true</code> if direct comparison is allowed between these types.
+   * @throws QueryException If there is a data error accessing the types.
    */
-  public boolean notEquals(RDFTerm v) throws QueryException {
-    try {
-      return !equals(v);
-    } catch (QueryException qe) {
-      return true;
-    }
+  private boolean directlyComparableTypes(RDFTerm term) throws QueryException {
+    ValueLiteral vl = (ValueLiteral)term;
+    IRI otherType = vl.getType();
+    IRI thisType = getType();
+    assert otherType != null && thisType != null;
+    // if differing types, then can't be compared
+    if (!thisType.equals(otherType)) return false;
+    URI tt = thisType.getValue();
+    return tt.equals(XSD.BOOLEAN_URI) || tt.equals(XSD.DATE_TIME_URI) || thisType.equals(SimpleLiteral.STRING_TYPE);
   }
+
 
   /**
    * Compares the type of this object to the type of another object. This takes into account
@@ -112,17 +139,15 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
    *   then both objects have to be typed literals, or untyped literals.
    * @throws QueryException If there is an error accessing the type data.
    */
-  private boolean equalLiteralTypes(ValueLiteral vl) throws QueryException {
+  private boolean comparableLiteralTypes(RDFTerm term) throws QueryException {
+    ValueLiteral vl = (ValueLiteral)term;
     IRI opType = vl.getType();
     IRI thisType = getType();
     assert opType != null && thisType != null;
-    // if the types differ, then not equal
-    if (!opType.equals(thisType)) return false;
-    // types are the same. If they are not strings, then definitely equal
-    if (!opType.equals(SimpleLiteral.STRING_TYPE)) return true;
-    // both types are strings. Only true if the other object is not a simple literal
-    return !vl.isSimple();
+    // if the types differ, then the literals are definitely not equal
+    return opType.equals(thisType);
   }
+
 
   /**
    * Extended numerical comparison function. Currently unused.
@@ -130,10 +155,10 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
    * @return <code>true</code> if this compares against v with semantic equivalence, regardless of lexical equivalence
    * @throws QueryException Thrown when a value cannot be resolved, or if the types are no numbers.
    */
-  @SuppressWarnings("unused")
-  private boolean numberCompare(RDFTerm v) throws QueryException {
-    if (!(value instanceof Number) || !(v.getValue() instanceof Number)) throw new QueryException("Terms are not equal");
-    return compare(value, v) == 0;
+  private boolean numericEquals(RDFTerm v) throws QueryException {
+    Object ov = v.getValue();
+    if (!(value instanceof Number) || !(ov instanceof Number)) throw new QueryException("Terms are not equal");
+    return compare(value, ov) == 0;
   }
 
   /**
@@ -149,6 +174,18 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
     return cmpFn.compare(left, right);
   }
 
+
+  /**
+   * Utility to test a literal to see if it is a numeric type. Accepts an RDFTerm for convenience.
+   * @param t A ValueLiteral to test to see if it is a number.
+   * @return <code>true</code> if the term is a number.
+   * @throws QueryException If there was an error accessing the value of the term.
+   */
+  private static final boolean isNumber(RDFTerm t) throws QueryException {
+    return NumericLiteral.isNumeric(((ValueLiteral)t).getType().getValue());
+  }
+
+
   /** Map of class types to the functions used to compare those types */
   protected static Map<Class<? extends Comparable<?>>,DataCompare> typeMap = new HashMap<Class<? extends Comparable<?>>,DataCompare>();
 
@@ -158,10 +195,11 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
     typeMap.put(Boolean.class, new BooleanCompare());
     typeMap.put(Float.class, new FloatCompare());
     typeMap.put(Double.class, new DoubleCompare());
-    typeMap.put(Long.class, new DecimalCompare());
-    typeMap.put(Integer.class, new DecimalCompare());
-    typeMap.put(Short.class, new DecimalCompare());
-    typeMap.put(Byte.class, new DecimalCompare());
+    typeMap.put(Long.class, new IntegralCompare());
+    typeMap.put(Integer.class, new IntegralCompare());
+    typeMap.put(Short.class, new IntegralCompare());
+    typeMap.put(Byte.class, new IntegralCompare());
+    typeMap.put(BigDecimal.class, new BigDecimalCompare());
   }
 
   /** Defines a function for comparing objects of arbitrary type */
@@ -231,11 +269,25 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
   }
 
   /** Implements integer comparisons */
-  private static class DecimalCompare implements DataCompare {
+  private static class IntegralCompare implements DataCompare {
     public int compare(Object left, Object right) throws QueryException {
       if (!(right instanceof Number)) throw new QueryException("Type Error: Cannot compare a decimal number to a: " + right.getClass());
       Long lleft = ((Number)left).longValue();
       return lleft.compareTo(((Number)right).longValue());
+    }
+    public ValueLiteral newLiteral(Object data) { return new NumericLiteral((Number)data); }
+  }
+
+  /** Implements big-decimal comparisons */
+  private static class BigDecimalCompare implements DataCompare {
+    public int compare(Object left, Object right) throws QueryException {
+      if (!(right instanceof Number)) throw new QueryException("Type Error: Cannot compare a decimal number to a: " + right.getClass());
+      BigDecimal bleft = (BigDecimal)left;
+      if (right instanceof BigDecimal) return bleft.compareTo((BigDecimal)right);
+      if (right instanceof Double || right instanceof Float) {
+        return bleft.compareTo(BigDecimal.valueOf(((Number)right).doubleValue()));
+      }
+      return bleft.compareTo(BigDecimal.valueOf(((Number)right).longValue()));
     }
     public ValueLiteral newLiteral(Object data) { return new NumericLiteral((Number)data); }
   }
