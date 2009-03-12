@@ -14,6 +14,8 @@
  */
 package org.mulgara.sparql.parser.cst;
 
+import java.math.BigDecimal;
+
 
 /**
  * Represents a Decimal literal number.
@@ -26,45 +28,56 @@ package org.mulgara.sparql.parser.cst;
 public class DecimalLiteral implements NumericLiteral {
 
   /** The value of this literal. */
-  private float value;
+  private BigDecimal value;
 
   /**
    * Constructs the literal from a string image.
    * @param value The string image of the value for this literal
    */
   public DecimalLiteral(String s) {
-    this.value = Float.parseFloat(s);
+    this.value = new BigDecimal(s);
   }
 
   /**
    * Constructs the literal.
-   * @param value The floating point value for this literal
+   * @param value The double precision floating point value for this literal
    */
-  public DecimalLiteral(float value) {
-    this.value = value;
+  public DecimalLiteral(double value) {
+    this.value = BigDecimal.valueOf(value);
+  }
+  
+  /**
+   * Constructs the literal.
+   * @param value The long integral value for this literal
+   */
+  public DecimalLiteral(long value) {
+    this.value = BigDecimal.valueOf(value);
   }
   
   /**
    * Retrieve the value as a generic Number.
+   * We deem the loss of precision to double to be acceptable
    * @return A Number object containing the value.
    */
   public Number getValue() {
-    return new Float(value);
+    Number result = value.doubleValue();
+    if (result.equals(Double.NEGATIVE_INFINITY) || result.equals(Double.POSITIVE_INFINITY)) result = value;
+    return result;
   }
 
   /**
    * Retrieve the value as a raw type.
    * @return The internal value.
    */
-  public float getFloat() {
-    return value;
+  public double getDouble() {
+    return value.doubleValue();
   }
 
   /**
    * @see org.mulgara.sparql.parser.cst.Node#getImage()
    */
   public String getImage() {
-    return Float.toString(value);
+    return value.toPlainString();
   }
 
 }
