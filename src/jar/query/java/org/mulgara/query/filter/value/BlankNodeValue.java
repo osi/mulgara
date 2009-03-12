@@ -13,6 +13,7 @@ package org.mulgara.query.filter.value;
 
 import org.jrdf.graph.BlankNode;
 import org.mulgara.query.QueryException;
+import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
 import org.mulgara.query.filter.RDFTerm;
 
@@ -73,4 +74,14 @@ public class BlankNodeValue implements RDFTerm {
 
   /** This value does not need a context */
   public void setContextOwner(ContextOwner owner) { }
+
+  /** This value does not need a context */
+  public Context getCurrentContext() { return null; }
+
+  /** This value does not need a context */
+  public void setCurrentContext(Context context) { }
+
+  /** This value does not need a context */
+  public void addContextListener(ContextOwner l) { }
+
 }

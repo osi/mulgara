@@ -63,6 +63,7 @@ public abstract class AbstractNumericOperation extends AbstractComparable implem
   /** @see org.mulgara.query.filter.RDFTerm#setContextOwner(org.mulgara.query.filter.ContextOwner) */
   public void setContextOwner(ContextOwner owner) {
     this.owner = owner;
+    owner.addContextListener(this);
   }
 
   /** @see org.mulgara.query.filter.RDFTerm#getContextOwner() */

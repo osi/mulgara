@@ -202,6 +202,7 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
   /** @see org.mulgara.query.filter.RDFTerm#setContextOwner(org.mulgara.query.filter.ContextOwner) */
   public void setContextOwner(ContextOwner owner) {
     this.contextOwner = owner;
+    owner.addContextListener(this);
   }
 
   /**

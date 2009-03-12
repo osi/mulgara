@@ -11,6 +11,9 @@
  */
 package org.mulgara.query.filter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A test class for emulating a context ownership.
@@ -24,6 +27,9 @@ public class TestContextOwner implements ContextOwner {
   /** The owned context */
   private Context ctx;
   
+  /** A list of context owners that this owner provides the context for. */
+  private List<ContextOwner> contextListeners = new ArrayList<ContextOwner>();
+
   /**
    * Create the test ownership.
    * @param ctx The context to own.
@@ -34,9 +40,37 @@ public class TestContextOwner implements ContextOwner {
    * Updates the owned context.
    * @param ctx The context to update to.
    */
-  public void setCurrentContext(Context ctx) { this.ctx = ctx; }
+  public void setCurrentContext(Context ctx) {
+    this.ctx = ctx;
+    for (ContextOwner l: contextListeners) l.setCurrentContext(ctx);
+  }
 
   /** @return the current context. */
   public Context getCurrentContext() { return ctx; }
+
+  /**
+   * Adds a context owner as a listener so that it will be updated with its context
+   * when this owner gets updated.
+   * @param l The context owner to register.
+   */
+  public void addContextListener(ContextOwner l) {
+    contextListeners.add(l);
+  }
+
+  /**
+   * This provides a context, and does not need to refer to a parent.
+   * @see org.mulgara.query.filter.ContextOwner#getContextOwner()
+   */
+  public ContextOwner getContextOwner() {
+    throw new IllegalStateException("Should never be asking for the context owner of a Tuples");
+  }
+
+  /**
+   * The owner of the context for a Tuples is never needed, since it is always provided by the Tuples.
+   * @see org.mulgara.query.filter.ContextOwner#setContextOwner(org.mulgara.query.filter.ContextOwner)
+   */
+  public void setContextOwner(ContextOwner owner) {
+    throw new IllegalStateException("Should never be setting the context owner of a Tuples");
+  }
 
 }

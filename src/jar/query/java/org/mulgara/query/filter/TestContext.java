@@ -108,6 +108,8 @@ public class TestContext implements Context {
   /** @see org.mulgara.query.filter.Context#isBound(int) */
   public boolean isBound(int columnNumber) throws QueryException {
     if (columnNumber >= columnNames.size()) throw new QueryException("Unexpected column: " + columnNumber);
+    if (rowNumber < 0) throw new QueryException("beforeFirst() called on Context without next()");
+    if (rowNumber >= rows.length) throw new QueryException("called next() on Context too often");
     return rows[rowNumber][columnNumber] != null;
   }
 

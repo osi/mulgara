@@ -134,7 +134,10 @@ public abstract class AbstractFilterValue extends AbstractContextOwner implement
   public ContextOwner getContextOwner() { return contextOwner; }
 
   /** @see org.mulgara.query.filter.RDFTerm#setContextOwner(org.mulgara.query.filter.ContextOwner) */
-  public void setContextOwner(ContextOwner owner) { contextOwner = owner; }
+  public void setContextOwner(ContextOwner owner) {
+    contextOwner = owner;
+    owner.addContextListener(this);
+  }
 
   /** @see org.mulgara.query.filter.ContextOwner#getCurrentContext() */
   public Context getCurrentContext() { return contextOwner.getCurrentContext(); }
@@ -142,6 +145,7 @@ public abstract class AbstractFilterValue extends AbstractContextOwner implement
   /** @see org.mulgara.query.filter.ContextOwner#setCurrentContext(org.mulgara.query.filter.Context) */
   public void setCurrentContext(Context context) {
     if (!(context.equals(contextOwner.getCurrentContext()))) throw new AssertionError("Filter context being set differently to initial calling context.");
+    super.setCurrentContext(context);
   }
 
   /**

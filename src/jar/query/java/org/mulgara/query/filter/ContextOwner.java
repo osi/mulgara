@@ -34,4 +34,24 @@ public interface ContextOwner {
    * @return The context of the currently running test, or the most recent context if not in a test.
    */
   public Context getCurrentContext();
+
+  /**
+   * Sets the object that contains the current context to work in.
+   * @param owner The object that owns this context.
+   */
+  public void setContextOwner(ContextOwner owner);
+
+  /**
+   * Gets the object that contains the current context to work in.
+   * @return The object that owns this context.
+   */
+  public ContextOwner getContextOwner();
+
+  /**
+   * Adds a context owner as a listener so that it will be updated with its context
+   * when this owner gets updated.
+   * @param l The context owner to register.
+   */
+  public void addContextListener(ContextOwner l);
+
 }

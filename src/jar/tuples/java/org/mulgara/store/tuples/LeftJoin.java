@@ -65,6 +65,9 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
   /** The tuples context */
   protected TuplesContext context = null;
 
+  /** A list of context owners that this owner provides the context for. */
+  private List<ContextOwner> contextListeners = new ArrayList<ContextOwner>();
+
   /** The set of variables common to both the lhs and the rhs. */
   protected Set<Variable> commonVars;
 
@@ -399,8 +402,34 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
   public void setCurrentContext(Context context) {
     if (!(context instanceof TuplesContext)) throw new IllegalArgumentException("LeftJoin can only accept a TuplesContext.");
     this.context = (TuplesContext)context;
+    for (ContextOwner l: contextListeners) l.setCurrentContext(context);
   }
 
+
+  /**
+   * This provides a context, and does not need to refer to a parent.
+   * @see org.mulgara.query.filter.ContextOwner#getContextOwner()
+   */
+  public ContextOwner getContextOwner() {
+    throw new IllegalStateException("Should never be asking for the context owner of a Tuples");
+  }
+
+
+  /**
+   * The owner of the context for a Tuples is never needed, since it is always provided by the Tuples.
+   * @see org.mulgara.query.filter.ContextOwner#setContextOwner(org.mulgara.query.filter.ContextOwner)
+   */
+  public void setContextOwner(ContextOwner owner) {
+  }
+
+  /**
+   * Adds a context owner as a listener so that it will be updated with its context
+   * when this owner gets updated.
+   * @param l The context owner to register.
+   */
+  public void addContextListener(ContextOwner l) {
+    contextListeners.add(l);
+  }
 
   //
   // Internal methods and classes

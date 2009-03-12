@@ -11,6 +11,9 @@
  */
 package org.mulgara.query.filter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Defines how to set and retrieve context
@@ -25,16 +28,36 @@ public abstract class AbstractContextOwner implements ContextOwner {
   /** The more recent context */
   private Context context = null;
 
+  /** A list of context owners that this owner provides the context for. */
+  private List<ContextOwner> contextListeners = new ArrayList<ContextOwner>();
+
+  /**
+   * Adds a context owner as a listener so that it will be updated with its context
+   * when this owner gets updated.
+   * @param l The context owner to register.
+   */
+  public void addContextListener(ContextOwner l) {
+    contextListeners.add(l);
+  }
+
   /**
    * Set the current context. This *must* be run at the start of every test else the underlying
    * values will not resolve correctly.
    * @param context The context for this test.
    */
-  public void setCurrentContext(Context context) { this.context = context; }
+  public void setCurrentContext(Context context) {
+    this.context = context;
+    // update anyone who asked to be updated
+    for (ContextOwner l: contextListeners) l.setCurrentContext(context);
+  }
   
   /**
    * Get the current context. This is a callback that is used during a test.
    * @return The context of the currently running test, or the most recent context if not in a test.
    */
-  public Context getCurrentContext() { return context; }
+  public Context getCurrentContext() {
+    if (context != null) return context;
+    ContextOwner parent = getContextOwner();
+    return parent == null ? null : parent.getCurrentContext();
+  }
 }

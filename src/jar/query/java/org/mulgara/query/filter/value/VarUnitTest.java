@@ -12,6 +12,8 @@
 package org.mulgara.query.filter.value;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Literal;
@@ -51,6 +53,9 @@ public class VarUnitTest extends TestCase implements ContextOwner {
 
   /** A blank node used in the context */
   BlankNode bn = new BlankNodeImpl();
+
+  /** A list of context owners that we may want to update if the context changes */
+  List<ContextOwner> contextListeners = new ArrayList<ContextOwner>();
 
   /**
    * Build the unit test.
@@ -311,6 +316,29 @@ public class VarUnitTest extends TestCase implements ContextOwner {
     return context;
   }
 
-  public void setCurrentContext(Context context) { /* no op */ }
-  
+  public void setCurrentContext(Context context) {
+    for (ContextOwner l: contextListeners) l.setCurrentContext(context);
+  }
+
+  /**
+   * This provides a context, and does not need to refer to a parent.
+   * @see org.mulgara.query.filter.ContextOwner#getContextOwner()
+   */
+  public ContextOwner getContextOwner() {
+    throw new IllegalStateException("Should never be asking for the context owner of a Tuples");
+  }
+
+  /**
+   * The owner of the context for a Tuples is never needed, since it is always provided by the Tuples.
+   * @see org.mulgara.query.filter.ContextOwner#setContextOwner(org.mulgara.query.filter.ContextOwner)
+   */
+  public void setContextOwner(ContextOwner owner) { }
+
+  /**
+   * This provides a context and cannot be a parent
+   * @see org.mulgara.query.filter.ContextOwner#addContextListener(org.mulgara.query.filter.ContextOwner)
+   */
+  public void addContextListener(ContextOwner l) {
+    contextListeners.add(l);
+  }
 }

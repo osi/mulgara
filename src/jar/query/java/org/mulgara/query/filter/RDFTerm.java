@@ -24,7 +24,7 @@ import org.mulgara.query.QueryException;
  * @copyright &copy; 2008 <a href="http://www.topazproject.org/">The Topaz Project</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public interface RDFTerm extends Serializable {
+public interface RDFTerm extends Serializable, ContextOwner {
 
   /**
    * Returns the data represented by this expression.
@@ -70,15 +70,4 @@ public interface RDFTerm extends Serializable {
    */
   public boolean sameTerm(RDFTerm v) throws QueryException;
   
-  /**
-   * Sets the object that contains the current context to work in.
-   * @param owner The object that owns this context.
-   */
-  public void setContextOwner(ContextOwner owner);
-  
-  /**
-   * Gets the object that contains the current context to work in.
-   * @return The object that owns this context.
-   */
-  public ContextOwner getContextOwner();
 }
