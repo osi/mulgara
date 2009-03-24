@@ -47,20 +47,15 @@ public abstract class RuleLoaderFactory {
    * @param target  the destination for rule consequences.
    * @return the constructed {@link RuleLoader}
    */
-  public static RuleLoader newRuleLoader(String className, URI source, URI base, URI target)
-    throws InitializerException
-  {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Creating rule loader " + className);
-    }
+  public static RuleLoader newRuleLoader(String className, URI source, URI base, URI target) throws InitializerException {
+
+    if (logger.isDebugEnabled()) logger.debug("Creating rule loader " + className);
 
     // Validate parameters
-    if (className == null) {
-      throw new IllegalArgumentException("Null 'className' parameter");
-    }
+    if (className == null) throw new IllegalArgumentException("Null 'className' parameter");
 
     try {
-      Class ruleLoaderClass = Class.forName(className);
+      Class<?> ruleLoaderClass = Class.forName(className);
 
       // Validate that the candidate supports the RuleLoader interface
       if (!RuleLoader.class.isAssignableFrom(ruleLoaderClass)) {
@@ -80,8 +75,8 @@ public abstract class RuleLoaderFactory {
         newInstanceMethod.invoke(null, new Object[] { source, base, target });
 
       return ruleLoader;
-    }
-    catch (Exception e) {
+
+    } catch (Exception e) {
       logger.warn("Error generating rule loader factory", e);
       throw new InitializerException("Unable to add rule loader factory", e);
     }

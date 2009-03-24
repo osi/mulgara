@@ -172,6 +172,12 @@ public abstract class Predicate extends Node {
   }
 
   /**
+   * Returns a canonical version of this predicate.
+   * @return A new canonical predicate, with canonicalized elements.
+   */
+  abstract CanonicalPredicate getCanonical();
+
+  /**
    * Converts a Variable to a Var. Accepts multiple types.
    * @param v The Variable to convert. This must be a Variable.
    * @return a new Var that is equivalent to the v.

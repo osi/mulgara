@@ -107,7 +107,7 @@ public class BPredicate extends Predicate {
 
   //inheritdoc
   public String toString() {
-    return "BPredicate: " + label + "(" + left + "," + right + ")";
+    return label.toString() + "(" + left + "," + right + ")";
   }
 
   //inheritdoc
@@ -131,6 +131,15 @@ public class BPredicate extends Predicate {
     if (predicate != null && predicate.isReference()) {
       graphAnnotation = MulgaraGraphs.getPredicateGraph(((URIReference)predicate).getURI());
     }
+  }
+
+  /**
+   * Creates a canonical form for this predicate.
+   * @see org.mulgara.krule.rlog.ast.Predicate#getCanonical()
+   */
+  @Override
+  CanonicalPredicate getCanonical() {
+    return new CanonicalPredicate(left, (PredicateParam)label, right);
   }
 }
 

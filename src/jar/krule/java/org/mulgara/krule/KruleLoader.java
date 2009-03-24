@@ -24,16 +24,20 @@ import java.rmi.RemoteException;
 // Third party packages
 import org.apache.log4j.Logger;
 import org.jrdf.graph.*;
+import org.jrdf.vocabulary.RDF;
 
 // Locally written packages
-import org.mulgara.itql.*;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.LiteralImpl;
+import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.TripleImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.OperationContext;
 import org.mulgara.rules.*;
+import org.mulgara.util.functional.Pair;
+
 import static org.mulgara.query.rdf.Mulgara.PREFIX_GRAPH;
+import static org.mulgara.query.rdf.Krule.*;
 
 /**
  * This object is used for parsing an RDF graph and building a rules structure
@@ -54,20 +58,17 @@ public class KruleLoader implements RuleLoader {
   /** The database session for querying. */
   private OperationContext operationContext;
 
-  /** The interpreter for parsing queries. */
-  private TqlInterpreter interpreter;
-
   /** The rules. */
   private RuleStructure rules;
 
-  /** The URI of the model containing the rule data. */
-  private URI ruleModel;
+  /** The Graph resource represented by ruleGraphUri. */
+  private final GraphResource ruleGraph;
 
-  /** The URI of the model containing the base data. */
-  private URI baseModel;
+  /** The URI of the graph containing the base data. */
+  private URI baseGraphUri;
 
-  /** The URI of the model to receive the entailed data. */
-  private URI destModel;
+  /** The URI of the graph to receive the entailed data. */
+  private URI destGraphUri;
 
   /** A map of namespace names to the URIs. */
   private Map<String,URI> aliases;
@@ -84,175 +85,30 @@ public class KruleLoader implements RuleLoader {
   /** Map of Constraint nodes to the associated constraint object. */
   private Map<Node,ConstraintExpression> constraintMap;
 
-  /** URI for the Krule namespace. */
-  public static final String KRULE = "http://mulgara.org/owl/krule/#";
+  /** RDF reference for rdf:type. */
+  public static final URIReferenceImpl RDF_TYPE = new URIReferenceImpl(RDF.TYPE);
 
-  /** URI for a constraint subject. */
-  private static final String HAS_SUBJECT_STR = KRULE + "hasSubject";
+  /** RDF reference for rdf:value. */
+  public static final URIReferenceImpl RDF_VALUE = new URIReferenceImpl(RDF.VALUE);
 
-  /** URI for a constraint predicate. */
-  private static final String HAS_PREDICATE_STR = KRULE + "hasPredicate";
-
-  /** URI for a constraint object. */
-  private static final String HAS_OBJECT_STR = KRULE + "hasObject";
-
-  /** URI for a constraint model. */
-  private static final String HAS_GRAPH_STR = KRULE + "hasModel";
-
-  /** URI for a query property on rules. */
-  private static final String HAS_QUERY_STR = KRULE + "hasQuery";
-
-  /** URI for an axiom subject. */
-  private static final String AXIOM_SUBJECT_STR = KRULE + "subject";
-
-  /** URI for an axiom predicate. */
-  private static final String AXIOM_PREDICATE_STR = KRULE + "predicate";
-
-  /** URI for an axiom object. */
-  private static final String AXIOM_OBJECT_STR = KRULE + "object";
-
-  /** URI for rule triggering predicate. */
-  private static final String TRIGGERS_STR = KRULE + "triggers";
-
-  /** URI for selection variables in a query. */
-  private static final String SELECTION_VARS_STR = KRULE + "selectionVariables";
-
-  /** URI for constraints predicate in a query. */
-  private static final String HAS_WHERE_CLAUSE_STR = KRULE + "hasWhereClause";
-
-  /** URI for the argument property. */
-  private static final String ARGUMENT_STR = KRULE + "argument";
-
-  /** URI for the transitive constraint argument. */
-  private static final String TRANSITIVE_ARGUMENT_STR = KRULE + "transitiveArgument";
-
-  /** URI for the transitive constraint anchor argument. */
-  private static final String ANCHOR_ARGUMENT_STR = KRULE + "anchorArgument";
-
-  /** URI for the name argument. */
-  private static final String NAME_STR = KRULE + "name";
-
-  /** URI for the constraint conjunction type. */
-  private static final String CONSTRAINT_CONJUNCTION_STR = KRULE + "ConstraintConjunction";
-
-  /** URI for the constraint disjunction type. */
-  private static final String CONSTRAINT_DISJUNCTION_STR = KRULE + "ConstraintDisjunction";
-
-  /** URI for the simple constraint type. */
-  private static final String SIMPLE_CONSTRAINT_STR = KRULE + "SimpleConstraint";
-
-  /** URI for difference type. */
-  private static final String DIFFERENCE_STR = KRULE + "Difference";
-
-  /** URI for the Value type. */
-  private static final String URI_REF_STR = KRULE + "URIReference";
-
-  /** URI for the Variable type. */
-  private static final String VARIABLE_STR = KRULE + "Variable";
-
-  /** URI for the Variable type. */
-  private static final String LITERAL_STR = KRULE + "Literal";
-
-  /** URI for axiom type. */
-  private static final String AXIOM_STR = KRULE + "Axiom";
-
-  /** URI for rule type. */
-  private static final String RULE_STR = KRULE + "Rule";
-
-  /** URI for query type. */
-  private static final String QUERY_STR = KRULE + "Query";
-
-  /** RDF reference for constraint subject. */
-  public static final URIReference HAS_SUBJECT = new URIReferenceImpl(URI.create(HAS_SUBJECT_STR));
-
-  /** RDF reference for constraint predicate. */
-  public static final URIReference HAS_PREDICATE = new URIReferenceImpl(URI.create(HAS_PREDICATE_STR));
-
-  /** RDF reference for constraint object. */
-  public static final URIReference HAS_OBJECT = new URIReferenceImpl(URI.create(HAS_OBJECT_STR));
-
-  /** RDF reference for constraint model. */
-  public static final URIReference HAS_GRAPH = new URIReferenceImpl(URI.create(HAS_GRAPH_STR));
-
-  /** RDF reference for query property on rules. */
-  public static final URIReference HAS_QUERY = new URIReferenceImpl(URI.create(HAS_QUERY_STR));
-
-  /** RDF reference for axiom subject. */
-  public static final URIReference AXIOM_SUBJECT = new URIReferenceImpl(URI.create(AXIOM_SUBJECT_STR));
-
-  /** RDF reference for axiom predicate. */
-  public static final URIReference AXIOM_PREDICATE = new URIReferenceImpl(URI.create(AXIOM_PREDICATE_STR));
-
-  /** RDF reference for axiom object. */
-  public static final URIReference AXIOM_OBJECT = new URIReferenceImpl(URI.create(AXIOM_OBJECT_STR));
-
-  /** RDF reference for rule triggering predicate. */
-  public static final URIReference TRIGGERS = new URIReferenceImpl(URI.create(TRIGGERS_STR));
-
-  /** RDF reference for selection variables predicate. */
-  public static final URIReference SELECTION_VARS = new URIReferenceImpl(URI.create(SELECTION_VARS_STR));
-
-  /** RDF reference for hasWhereClause predicate. */
-  public static final URIReference HAS_WHERE_CLAUSE = new URIReferenceImpl(URI.create(HAS_WHERE_CLAUSE_STR));
-
-  /** RDF reference for the argument property. */
-  public static final URIReference ARGUMENT = new URIReferenceImpl(URI.create(ARGUMENT_STR));
-
-  /** RDF reference for the transitive constraint argument. */
-  public static final URIReference TRANSITIVE_ARGUMENT = new URIReferenceImpl(URI.create(TRANSITIVE_ARGUMENT_STR));
-
-  /** RDF reference for the transitive constraint anchor argument. */
-  public static final URIReference ANCHOR_ARGUMENT = new URIReferenceImpl(URI.create(ANCHOR_ARGUMENT_STR));
-
-  /** RDF reference for the name argument. */
-  public static final URIReference NAME = new URIReferenceImpl(URI.create(NAME_STR));
-
-  /** RDF reference for constraint conjunction class. */
-  public static final URIReference CONSTRAINT_CONJUNCTION = new URIReferenceImpl(URI.create(CONSTRAINT_CONJUNCTION_STR));
-
-  /** RDF reference for constraint disjunction class. */
-  public static final URIReference CONSTRAINT_DISJUNCTION = new URIReferenceImpl(URI.create(CONSTRAINT_DISJUNCTION_STR));
-
-  /** RDF reference for the simple constraint type. */
-  public static final URIReference SIMPLE_CONSTRAINT = new URIReferenceImpl(URI.create(SIMPLE_CONSTRAINT_STR));
-
-  /** RDF reference for the Difference type. */
-  public static final URIReference DIFFERENCE = new URIReferenceImpl(URI.create(DIFFERENCE_STR));
-
-  /** RDF reference for the Value type. */
-  public static final URIReference URI_REF = new URIReferenceImpl(URI.create(URI_REF_STR));
-
-  /** RDF reference for the Variable type. */
-  public static final URIReference VARIABLE = new URIReferenceImpl(URI.create(VARIABLE_STR));
-
-  /** RDF reference for the Literal type. */
-  public static final URIReference LITERAL = new URIReferenceImpl(URI.create(LITERAL_STR));
-
-  /** RDF reference for the Axiom type. */
-  public static final URIReference AXIOM = new URIReferenceImpl(URI.create(AXIOM_STR));
-
-  /** RDF reference for the Rule type. */
-  public static final URIReference RULE = new URIReferenceImpl(URI.create(RULE_STR));
-
-  /** RDF reference for the Query type. */
-  public static final URIReference QUERY = new URIReferenceImpl(URI.create(QUERY_STR));
-
+  /** A field used in queries to indicate no prior constraints on the answer. */
+  private static final UnconstrainedAnswer UNCONSTRAINED = new UnconstrainedAnswer();
 
   /**
    * Principle constructor.
    *
-   * @param ruleModel The name of the model with the rules to run.
-   * @param baseModel The name of the model with the base data.
-   * @param destModel The name of the model which will receive the entailed data.
+   * @param ruleGraphUri The name of the graph with the rules to run.
+   * @param baseGraphUri The name of the graph with the base data.
+   * @param destGraphUri The name of the graph which will receive the entailed data.
    */
-  KruleLoader(URI ruleModel, URI baseModel, URI destModel) {
-    this.ruleModel = ruleModel;
-    this.baseModel = baseModel;
-    this.destModel = destModel;
+  KruleLoader(URI ruleGraphUri, URI baseGraphUri, URI destGraphUri) {
+    this.baseGraphUri = baseGraphUri;
+    this.destGraphUri = destGraphUri;
+
+    ruleGraph = new GraphResource(ruleGraphUri);
 
     // set the query objects to null
     operationContext = null;
-    interpreter = null;
 
     // initialize the aliases
     newAliases();
@@ -279,15 +135,11 @@ public class KruleLoader implements RuleLoader {
    * Reads the ruleModel in the database and constructs the rules from it.
    *
    * @param opContextParam The operationContext for querying on.
-   * @param systemModel The system model.
    * @return A new rule structure.
    * @throws InitializerException There was a problem reading and creating the rules.
    */
-  public Rules readRules(Object opContextParam, URI systemModel) throws InitializerException, RemoteException {
+  public Rules readRules(Object opContextParam) throws InitializerException, RemoteException {
     this.operationContext = (OperationContext)opContextParam;
-
-    // get a new interpreter
-    interpreter = new TqlInterpreter(aliases);
 
     rules = null;
     try {
@@ -298,7 +150,7 @@ public class KruleLoader implements RuleLoader {
       if (logger.isDebugEnabled()) logger.debug("Querying for rules");
       rules = findRules();
       // set the target model
-      rules.setTargetModel(destModel);
+      rules.setTargetModel(destGraphUri);
 
       // find the triggers
       loadTriggers();
@@ -363,14 +215,18 @@ public class KruleLoader implements RuleLoader {
    * @throws QueryException When there is an exception finding the rules.
    */
   private RuleStructure findRules() throws QueryException, TuplesException {
-  	Query query;
-    try {
-      // find all of the rules
-      query = interpreter.parseQuery("select $rule from <" + ruleModel + "> where $rule <rdf:type> <krule:Rule> ;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query attempted while finding rules.", e);
-    }
-    
+    // select $rule from <ruleGraph> where $rule <rdf:type> <krule:Rule>
+    Variable ruleV = new Variable("rule");
+    Variable ruletypeV = new Variable("ruletype");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(ruleV, RDF_TYPE, ruletypeV),
+        new ConstraintDisjunction(
+            new ConstraintIs(ruletypeV, RULE),
+            new ConstraintIs(ruletypeV, CHECK)
+        )
+    );
+    Query query = createQuery(where, ruleV, ruletypeV);
+
     Answer ruleAnswer = query(query);
     if (logger.isDebugEnabled()) logger.debug("Got response for rule query");
 
@@ -381,7 +237,11 @@ public class KruleLoader implements RuleLoader {
       // create all the rules
       while (ruleAnswer.next()) {
         // create the rule and add it to the set
-        rules.add(new Rule(ruleAnswer.getObject(0).toString()));
+        URIReference type = (URIReference)ruleAnswer.getObject(1);
+        String name = ruleAnswer.getObject(0).toString();
+        if (type.equals(RULE)) rules.add(new Rule(name));
+        else if (type.equals(CHECK)) rules.add(new ConsistencyCheck(name));
+        else throw new QueryException("Unexpected type for rule: " + name + "(" + type + ")");
       }
     } finally {
       ruleAnswer.close();
@@ -399,12 +259,10 @@ public class KruleLoader implements RuleLoader {
    * @throws InitializerException Data structures did not meet preconditions.
    */
   private void loadTriggers() throws QueryException, TuplesException, InitializerException {
-    Query query;
-    try {
-      query = interpreter.parseQuery("select $src $dest from <" + ruleModel + "> where $src <krule:triggers> $dest ;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while finding triggers.", e);
-    }
+    // select $src $dest from <ruleGraph> where $src <krule:triggers> $dest
+    Variable srcV = new Variable("src");
+    Variable destV = new Variable("dest");
+    Query query = createQuery(new ConstraintImpl(srcV, TRIGGERS, destV), srcV, destV);
 
     Answer answer = query(query);
 
@@ -433,55 +291,66 @@ public class KruleLoader implements RuleLoader {
    */
   private void loadQueries() throws TuplesException, QueryException, KruleStructureException, InitializerException {
     if (logger.isDebugEnabled()) logger.debug("Loading Queries");
+
+    // create some of the loop-invariant resources
+    final URIReferenceImpl sysPrefix = new URIReferenceImpl(URI.create(PREFIX_GRAPH));
+    final URIReferenceImpl mulgaraPrefix = new URIReferenceImpl(Mulgara.PREFIX_URI);
+    final URIReferenceImpl seqPrefix = new URIReferenceImpl(URI.create(RDF.BASE_URI + "_"));
+
     // go through the rules to set their queries
     Iterator<Rule> ri = rules.getRuleIterator();
     while (ri.hasNext()) {
       Rule rule = ri.next();
 
+      // create a resource for this rule
+      URIReferenceImpl ruleRef = new URIReferenceImpl(URI.create(rule.getName()));
       if (logger.isDebugEnabled()) logger.debug("Reading query for rule: " + rule.getName());
-      Query query;
-      try {
-        // get the query data for this rule
-        query = interpreter.parseQuery("select $pre $v $t from <" + ruleModel +
-            "> where <" + rule.getName() + "> <krule:hasQuery> $q and $q <krule:selectionVariables> $vs and" +
-            " $vs $pre $v and $pre <mulgara:prefix> <rdf:_> in <"+ PREFIX_GRAPH +
-            "> and $v <rdf:type> $t ;");
-      } catch (Exception e) {
-        throw new QueryException("Invalid query while getting rule queries.", e);
-      }
+      // select $pre $v $t from <ruleGraph>
+      // where <#ruleRef> <krule:hasQuery> $q and $q <krule:selectionVariables> $vs
+      // and $vs $pre $v and $pre <mulgara:prefix> <rdf:_> in <sys:prefix> and $v <rdf:type> $t
+      Variable qV = new Variable("q");
+      Variable vsV = new Variable("vs");
+      Variable preV = new Variable("pre");
+      Variable vV = new Variable("v");
+      Variable tV = new Variable("t");
+      ConstraintExpression where = new ConstraintConjunction(
+          new ConstraintImpl(ruleRef, HAS_QUERY, qV),
+          new ConstraintImpl(qV, SELECTION_VARS, vsV),
+          new ConstraintImpl(vsV, preV, vV),
+          new ConstraintImpl(preV, mulgaraPrefix, seqPrefix, sysPrefix),
+          new ConstraintImpl(vV, RDF_TYPE, tV)
+      );
+      Query query = createQuery(where, preV, vV, tV);
       Answer answer = query(query);
 
       // get the length of the sequence prefix
       int prefixLength = ((URI)aliases.get("rdf")).toString().length() + 1;
       // get the variables and values as elements with the appropriate type
-      URIReference[] elements = new URIReference[3];
-      URIReference[] types = new URIReference[3];
+      List<URIReference> elements = new ArrayList<URIReference>();
+      List<URIReference> types = new ArrayList<URIReference>();
       try {
         while (answer.next()) {
           if (logger.isDebugEnabled()) logger.debug("Getting element from " + answer.getObject(0));
           // work out the position of the element.  Subject=0 Predicate=1 Object=2
           int seqNr = Integer.parseInt(answer.getObject(0).toString().substring(prefixLength)) - 1;
           if (logger.isDebugEnabled()) logger.debug("parsed: " + seqNr);
-          if (seqNr > elements.length) {
-            throw new KruleStructureException("Rule " + rule.getName() + " has too many insertion elements. Found sequence number: " + seqNr);
-          }
           // get the selection element and its type
-          elements[seqNr] = (URIReference)answer.getObject(1);
-          types[seqNr] = (URIReference)answer.getObject(2);
-          if (logger.isDebugEnabled()) logger.debug("Nr: " + seqNr + ", v: " + elements[seqNr] + ", type: " + types[seqNr]);
+          setList(elements, seqNr, (URIReference)answer.getObject(1));
+          setList(types, seqNr, (URIReference)answer.getObject(2));
+          if (logger.isDebugEnabled()) logger.debug("Nr: " + seqNr + ", v: " + elements.get(seqNr) + ", type: " + types.get(seqNr));
         }
       } finally {
         answer.close();
       }
-      for (int select = 0; select < elements.length; select++) {
-        if (elements[select] == null || types[select] == null) {
+      for (int select = 0; select < elements.size(); select++) {
+        if (elements.get(select) == null || types.get(select) == null) {
           // one element was set. Get a descriptive error message
           StringBuffer errorMsg = new StringBuffer();
-          for (int s = 0; s < elements.length; s++) {
-            if (elements[s] == null) errorMsg.append(" <null>");
-            else errorMsg.append(" ").append(elements[s]);
-            if (types[s] == null) errorMsg.append("^^<null>");
-            else errorMsg.append("^^<").append(types[s]).append(">");
+          for (int s = 0; s < elements.size(); s++) {
+            if (elements.get(s) == null) errorMsg.append(" <null>");
+            else errorMsg.append(" ").append(elements.get(s));
+            if (types.get(s) == null) errorMsg.append("^^<null>");
+            else errorMsg.append("^^<").append(types.get(s)).append(">");
           }
           throw new KruleStructureException("Rule " + rule.getName() + " does not have enough insertion elements. Got: " + errorMsg);
         }
@@ -490,13 +359,15 @@ public class KruleLoader implements RuleLoader {
       QueryStruct queryStruct = new QueryStruct(elements, types, aliases, uriReferences, varReferences, literalReferences);
 
       // read in the WHERE reference
-      try {
-        // get the WHERE clause for this rule
-        query = interpreter.parseQuery("select $w from <" + ruleModel +
-            "> where <" + rule.getName() + "> <krule:hasQuery> $q and $q <krule:hasWhereClause> $w;");
-      } catch (Exception e) {
-        throw new QueryException("Invalid query reading WHERE clause for rule: " + rule.getName(), e);
-      }
+
+      // select $w from <ruleGraph>
+      // where <#rule.getName()> <krule:hasQuery> $q and $q <krule:hasWhereClause> $w
+      Variable wV = new Variable("w");
+      where = new ConstraintConjunction(
+          new ConstraintImpl(ruleRef, HAS_QUERY, qV),
+          new ConstraintImpl(qV, HAS_WHERE_CLAUSE, wV)
+      );
+      query = createQuery(where, wV);
       answer = query(query);
 
       try {
@@ -518,7 +389,7 @@ public class KruleLoader implements RuleLoader {
 
       if (logger.isDebugEnabled()) logger.debug("Setting models for the query");
       // set the models
-      queryStruct.setModelExpression(baseModel, destModel);
+      queryStruct.setModelExpression(baseGraphUri, destGraphUri);
 
       if (logger.isDebugEnabled()) logger.debug("Setting query structure for the rule");
       // create a new query and set it for the rule
@@ -539,15 +410,20 @@ public class KruleLoader implements RuleLoader {
   private Set<org.jrdf.graph.Triple> findAxioms() throws TuplesException, QueryException, KruleStructureException, InitializerException {
     if (logger.isDebugEnabled()) logger.debug("Loading Axioms");
 
-    Query query;
-    try {
-      // get the query data for this rule
-      query = interpreter.parseQuery("select $s $p $o from <" + ruleModel +
-          "> where $axiom <rdf:type> <krule:Axiom> and $axiom <krule:subject> $s" +
-          " and $axiom <krule:predicate> $p and $axiom <krule:object> $o;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while finding axioms.", e);
-    }
+    // select $s $p $o from <ruleGraph>
+    // where $axiom <rdf:type> <krule:Axiom> and $axiom <krule:subject> $s
+    // and $axiom <krule:predicate> $p and $axiom <krule:object> $o
+    Variable sV = new Variable("s");
+    Variable pV = new Variable("p");
+    Variable oV = new Variable("o");
+    Variable axiomV = new Variable("axiom");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(axiomV, RDF_TYPE, AXIOM),
+        new ConstraintImpl(axiomV, AXIOM_SUBJECT, sV),
+        new ConstraintImpl(axiomV, AXIOM_PREDICATE, pV),
+        new ConstraintImpl(axiomV, AXIOM_OBJECT, oV)
+    );
+    Query query = createQuery(where, sV, pV, oV);
     Answer answer = query(query);
 
     // prepare the set of axioms
@@ -618,15 +494,15 @@ public class KruleLoader implements RuleLoader {
   private void findUriReferences() throws TuplesException, QueryException, InitializerException {
     if (logger.isDebugEnabled()) logger.debug("Querying for URI reference objects.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $ref $uri from <" +
-          ruleModel + "> where $ref <rdf:type> <krule:URIReference> and $ref <rdf:value> $uri ;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while looking for URI references.", e);
-    }
-    
+    // select $ref $uri from <ruleGraph>
+    // where $ref <rdf:type> <krule:URIReference> and $ref <rdf:value> $uri
+    Variable refV = new Variable("ref");
+    Variable uriV = new Variable("uri");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(refV, RDF_TYPE, URI_REF),
+        new ConstraintImpl(refV, RDF_VALUE, uriV)
+    );
+    Query query = createQuery(where, refV, uriV);
     Answer answer = query(query);
     if (logger.isDebugEnabled()) logger.debug("Found all URI references.");
 
@@ -657,15 +533,17 @@ public class KruleLoader implements RuleLoader {
   private void findVarReferences() throws TuplesException, QueryException, InitializerException {
     if (logger.isDebugEnabled()) logger.debug("Querying for variable reference objects.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $ref $name from <" +
-          ruleModel + "> where $ref <rdf:type> <krule:Variable> and $ref <krule:name> $name ;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while finding variable references.", e);
-    }
-    
+    // find the URI references and the referred URIs.
+
+    // select $ref $name from <ruleGraph>
+    // where $ref <rdf:type> <krule:Variable> and $ref <krule:name> $name
+    Variable refV = new Variable("ref");
+    Variable nameV = new Variable("name");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(refV, RDF_TYPE, VARIABLE),
+        new ConstraintImpl(refV, NAME, nameV)
+    );
+    Query query = createQuery(where, refV, nameV);
     Answer answer = query(query);
     if (logger.isDebugEnabled()) logger.debug("Found all variable references.");
 
@@ -677,7 +555,7 @@ public class KruleLoader implements RuleLoader {
         URIReference ref = (URIReference)answer.getObject(0);
         Literal name = (Literal)answer.getObject(1);
         if (logger.isDebugEnabled()) logger.debug("Mapping <" + ref + "> to <" + name + ">");
-        varReferences.put(ref, new Variable(name.toString()));
+        varReferences.put(ref, new Variable(name.getLexicalForm()));
       }
     } finally {
       answer.close();
@@ -696,15 +574,15 @@ public class KruleLoader implements RuleLoader {
   private void findLiteralReferences() throws TuplesException, QueryException, InitializerException {
     if (logger.isDebugEnabled()) logger.debug("Querying for Literal objects.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $lit $str from <" +
-          ruleModel + "> where $lit <rdf:type> <krule:Literal> and $lit <rdf:value> $str ;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while looking for literal references.", e);
-    }
-    
+    // select $lit $str from <ruleGraph>
+    // where $lit <rdf:type> <krule:Literal> and $lit <rdf:value> $str
+    Variable litV = new Variable("lit");
+    Variable strV = new Variable("str");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(litV, RDF_TYPE, LITERAL),
+        new ConstraintImpl(litV, RDF_VALUE, strV)
+    );
+    Query query = createQuery(where, litV, strV);
     Answer answer = query(query);
     if (logger.isDebugEnabled()) logger.debug("Found all Literals.");
 
@@ -735,16 +613,26 @@ public class KruleLoader implements RuleLoader {
   private void loadSimpleConstraints() throws KruleStructureException, TuplesException, QueryException {
     if (logger.isDebugEnabled()) logger.debug("Querying for Simple constraints.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $c $p $o from <" + ruleModel +
-          "> where $c <rdf:type> <krule:SimpleConstraint> and $c $p $o and " +
-          "($p <mulgara:is> <krule:hasSubject> or $p <mulgara:is> <krule:hasPredicate> or " +
-          "$p <mulgara:is> <krule:hasObject> or $p <mulgara:is> <krule:hasModel>);");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while looking for simple constraints.", e);
-    }
+    // select $c $p $o from <ruleGraph>
+    // where $c <rdf:type> <krule:SimpleConstraint> and $c $p $o
+    // and ($p <mulgara:is> <krule:hasSubject>
+    //   or $p <mulgara:is> <krule:hasPredicate>
+    //   or $p <mulgara:is> <krule:hasObject>
+    //   or $p <mulgara:is> <krule:hasModel>)
+    Variable cV = new Variable("c");
+    Variable pV = new Variable("p");
+    Variable oV = new Variable("o");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(cV, RDF_TYPE, SIMPLE_CONSTRAINT),
+        new ConstraintImpl(cV, pV, oV),
+        new ConstraintDisjunction(
+            new ConstraintIs(pV, HAS_SUBJECT),
+            new ConstraintIs(pV, HAS_PREDICATE),
+            new ConstraintIs(pV, HAS_OBJECT),
+            new ConstraintIs(pV, HAS_GRAPH)
+        )
+    );
+    Query query = createQuery(where, cV, pV, oV);
 
     Answer answer = query(query);
     if (logger.isDebugEnabled()) logger.debug("Found all simple constraints.");
@@ -802,23 +690,42 @@ public class KruleLoader implements RuleLoader {
     // build constraints in place, recursively constructing child constraints until all are found
     if (logger.isDebugEnabled()) logger.debug("Querying for Join constraints.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $constraint $constraint2 $type from <" + ruleModel +
-          "> where $constraint <krule:argument> $constraint2 and $constraint <rdf:type> $type and " +
-          "($type <mulgara:is> <krule:ConstraintConjunction> or $type <mulgara:is> <krule:ConstraintDisjunction>);");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while looking for join constraints.", e);
-    }
+    // don't look for the type of the child constraints. krule:argument has range of Constraint.
 
+    // select $constraint $arg $constraint2 $type from <ruleGraph>
+    // where $constraint $arg $constraint2
+    //   and $constraint <rdf:type> $type
+    //   and ($type <mulgara:is> <krule:ConstraintConjunction>
+    //     or $type <mulgara:is> <krule:ConstraintDisjunction>)
+    //   and ($arg <mulgara:is> <krule:argument>
+    //     or $arg <mulgara:is> <krule:minuend>
+    //     or $arg <mulgara:is> <krule:subtrahend>)
+    Variable constraintV = new Variable("constraint");
+    Variable argV = new Variable("arg");
+    Variable constraint2V = new Variable("constraint2");
+    Variable typeV = new Variable("type");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(constraintV, argV, constraint2V),
+        new ConstraintImpl(constraintV, RDF_TYPE, typeV),
+        new ConstraintDisjunction(
+            new ConstraintIs(typeV, CONSTRAINT_CONJUNCTION),
+            new ConstraintIs(typeV, CONSTRAINT_DISJUNCTION),
+            new ConstraintIs(typeV, DIFFERENCE)
+        ),
+        new ConstraintDisjunction(
+            new ConstraintIs(argV, ARGUMENT),
+            new ConstraintIs(argV, MINUEND),
+            new ConstraintIs(argV, SUBTRAHEND)
+        )
+    );
+    Query query = createQuery(where, constraintV, argV, constraint2V, typeV);
     Answer answer = query(query);
     if (logger.isDebugEnabled()) logger.debug("Found all join constraints.");
 
     // accumulate all the constraint links and types
 
     // create a map of join constraints to the constraints that they join
-    Map<Node,Set<Node>> constraintLinks = new HashMap<Node,Set<Node>>();
+    Map<Node,Set<Pair<Node,Node>>> constraintLinks = new HashMap<Node,Set<Pair<Node,Node>>>();
 
     // map the join constraints to the type of join
     Map<Node,URIReference> joinTypes = new HashMap<Node,URIReference>();
@@ -827,13 +734,16 @@ public class KruleLoader implements RuleLoader {
       // map each reference to the associated argument and type
       while (answer.next()) {
         Node constraintNode = (Node)answer.getObject(0);
-        Node constraintNode2 = (Node)answer.getObject(1);
-        URIReference type = (URIReference)answer.getObject(2);
-        if (logger.isDebugEnabled()) logger.debug("constraint (" + type + ")<" + constraintNode + "> -> <" + constraintNode2 + ">");
-        // map the constraint to its argument
-        addLink(constraintLinks, constraintNode, constraintNode2);
+        URIReference arg = (URIReference)answer.getObject(1);
+        Node constraintNode2 = (Node)answer.getObject(2);
+        URIReference type = (URIReference)answer.getObject(3);
+        if (logger.isDebugEnabled()) logger.debug("constraint (" + type + ")<" + constraintNode + ">  <" + arg + "><" + constraintNode2 + ">");
+        // map the constraint to its operand: constraintNode2
+        addLink(constraintLinks, constraintNode, new Pair<Node,Node>(arg, constraintNode2));
         // map the type
-        joinTypes.put(constraintNode, type);
+        URIReference storedType = joinTypes.get(constraintNode);
+        if (storedType == null) joinTypes.put(constraintNode, type);
+        else if (!storedType.equals(type)) throw new KruleStructureException("Varying types in constraint operations in the rule structure");
       }
     } finally {
       answer.close();
@@ -841,19 +751,19 @@ public class KruleLoader implements RuleLoader {
 
     if (logger.isDebugEnabled()) logger.debug("mapping join constraint RDF nodes to join constraint objects");
     // collect all arguments together into constraints and map the node to the constraint
-    for (Map.Entry<Node,Set<Node>> entry: constraintLinks.entrySet()) {
+    for (Map.Entry<Node,Set<Pair<Node,Node>>> entry: constraintLinks.entrySet()) {
       // get the constraint node in question
       Node constraintNode = entry.getKey();
       // see if it maps to a constraint
       if (constraintMap.get(constraintNode) == null) {
         // the constraint does not exist
         // get the argument nodes
-        Set<Node> args = entry.getValue();
+        Set<Pair<Node,Node>> operands = entry.getValue();
         // get the constraint's type
         Node type = joinTypes.get(constraintNode);
-        if (type == null) throw new KruleStructureException("No type (AND/OR) available on join constraint: " + constraintNode);
+        if (type == null) throw new KruleStructureException("No type (AND/OR/Minus) available on join constraint: " + constraintNode);
         // convert the RDF nodes to constraints
-        List<ConstraintExpression> constraintArgs = getConstraints(args, constraintLinks, joinTypes);
+        List<ConstraintExpression> constraintArgs = getConstraints(operands, constraintLinks, joinTypes);
         ConstraintExpression joinConstraint = newJoinConstraint(type, constraintArgs);
         if (logger.isDebugEnabled()) logger.debug("mapped " + constraintNode + " -> " + joinConstraint);
         // build the join constraint, and map the node to it
@@ -877,16 +787,12 @@ public class KruleLoader implements RuleLoader {
   private void loadHavingConstraints() throws KruleStructureException, TuplesException, QueryException {
     if (logger.isDebugEnabled()) logger.debug("Querying for Having constraints.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $constraint from <" + ruleModel +
-          "> where $rule <krule:hasHavingClause> $constraint;");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while searching on having clauses.", e);
-    }
-
+    // select $constraint from <ruleGraph> where $rule <krule:hasHavingClause> $constraint
+    Variable ruleV = new Variable("rule");
+    Variable constraintV = new Variable("constraint");
+    Query query = createQuery(new ConstraintImpl(ruleV, HAS_HAVING_CLAUSE, constraintV), constraintV);
     Answer answer = query(query);
+
     if (logger.isDebugEnabled()) logger.debug("Found all having constraints.");
 
     try {
@@ -907,15 +813,22 @@ public class KruleLoader implements RuleLoader {
   private void loadTransitiveConstraints() throws KruleStructureException, TuplesException, QueryException {
     if (logger.isDebugEnabled()) logger.debug("Querying for Transitive constraints.");
 
-    Query query;
-    try {
-      // find the URI references and the referred URIs.
-      query = interpreter.parseQuery("select $c $p $arg from <" + ruleModel +
-          "> where $c <rdf:type> <krule:TransitiveConstraint> and $c $p $arg and " +
-          "($p <mulgara:is> <krule:transitiveArgument> or $p <mulgara:is> <krule:anchorArgument>);");
-    } catch (Exception e) {
-      throw new QueryException("Invalid query while querying for transitive constraints.", e);
-    }
+    // select $c $p $arg from <ruleGraph>
+    // where $c <rdf:type> <krule:TransitiveConstraint> and $c $p $arg
+    // and ($p <mulgara:is> <krule:transitiveArgument>
+    //   or $p <mulgara:is> <krule:anchorArgument>)
+    Variable cV = new Variable("c");
+    Variable pV = new Variable("p");
+    Variable argV = new Variable("arg");
+    ConstraintExpression where = new ConstraintConjunction(
+        new ConstraintImpl(cV, RDF_TYPE, TRANSITIVE_CONSTRAINT),
+        new ConstraintImpl(cV, pV, argV),
+        new ConstraintDisjunction(
+            new ConstraintIs(pV, TRANSITIVE_ARGUMENT),
+            new ConstraintIs(pV, ANCHOR_ARGUMENT)
+        )
+    );
+    Query query = createQuery(where, cV, pV, argV);
     Answer answer = query(query);
 
     if (logger.isDebugEnabled()) logger.debug("Retrieved all transitive constraints.");
@@ -975,13 +888,13 @@ public class KruleLoader implements RuleLoader {
    * to be created.  The constraintLinks and typeMap arguments are for constructing new
    * constraint objects.
    *
-   * @param constraints The set of constraint nodes to get the constraints for.  Whenever possible,
-   *             the constraints come from constraintMap.
-   * @param constraintLinks Linkage of join constraints to their arguments.  Used to create a new constraint.
+   * @param constraints The set of constraint nodes and their usage to get the constraints for.
+   *             Whenever possible, the constraints come from constraintMap.
+   * @param constraintLinks Linkage of join constraints to their arguments (and argument usage).  Used to create a new constraint.
    * @param typeMap Maps constraint nodes to their type.  Used to create a new constraint.
    * @throws KruleStructureException There was an error in the RDF data structure.
    */
-  private List<ConstraintExpression> getConstraints(Set<Node> constraints, Map<Node,Set<Node>> constraintLinks, Map<Node,URIReference> typeMap) throws KruleStructureException {
+  private List<ConstraintExpression> getConstraints(Set<Pair<Node,Node>> constraints, Map<Node,Set<Pair<Node,Node>>> constraintLinks, Map<Node,URIReference> typeMap) throws KruleStructureException {
     if (logger.isDebugEnabled()) logger.debug("converting nodes to constraint list: " + constraints);
 
     // build the return list
@@ -992,21 +905,27 @@ public class KruleLoader implements RuleLoader {
       return cList;
     }
     // go through the arguments
-    for (Node cNode: constraints) {
+    for (Pair<Node,Node> constraintUsage: constraints) {
+      Node usage = constraintUsage.first();  // one of: argument/minuend/subtrahend
+      Node cNode = constraintUsage.second();
       if (logger.isDebugEnabled()) logger.debug("converting: " + cNode);
       // get the constraint expression object
       ConstraintExpression constraintExpr = (ConstraintExpression)constraintMap.get(cNode);
       if (constraintExpr == null) {
         if (logger.isDebugEnabled()) logger.debug(cNode.toString() + " not yet mapped to constraint");
         // constraint expression object does not yet exist, get its arguments
-        Set<Node> constraintArgNodes = constraintLinks.get(cNode);
+        Set<Pair<Node,Node>> constraintArgNodes = constraintLinks.get(cNode);
         // build the constraint expression - get the arguments as a list of constraints
         List<ConstraintExpression> constraintArgs = getConstraints(constraintArgNodes, constraintLinks, typeMap);
         constraintExpr = newJoinConstraint((Node)typeMap.get(cNode), constraintArgs);
       }
       // add the constraint argument to the list
-      if (constraintExpr != null) cList.add(constraintExpr);
-      else logger.warn("Missing constraint expression. Ignoring.");
+      if (constraintExpr != null) {
+        if (usage.equals(MINUEND)) setList(cList, 0, constraintExpr);
+        else if (usage.equals(SUBTRAHEND)) setList(cList, 1, constraintExpr);
+        else if (usage.equals(ARGUMENT)) cList.add(constraintExpr);
+        else throw new KruleStructureException("Unknown argument type for " + cNode + ": " + usage);
+      } else logger.warn("Missing constraint expression. Ignoring.");
     }
     return cList;
   }
@@ -1028,8 +947,11 @@ public class KruleLoader implements RuleLoader {
       return new ConstraintConjunction(args);
     } else if (type.equals(CONSTRAINT_DISJUNCTION)) {
       return new ConstraintDisjunction(args);
+    } else if (type.equals(DIFFERENCE)) {
+      if (args.size() != 2) throw new KruleStructureException("Difference constraints require 2 arguments: args=" + args);
+      return new ConstraintDifference(args.get(0), args.get(1));
     }
-    throw new KruleStructureException("Unknown join constraint type (not AND/OR): " + type);
+    throw new KruleStructureException("Unknown join constraint type (not AND/OR/Minus): " + type);
   }
 
 
@@ -1085,27 +1007,62 @@ public class KruleLoader implements RuleLoader {
 
 
   /**
-   * Maps a node to another node, creating the entry if it does not exist yet.
+   * Maps a node to data about a nodee, creating the entry if it does not exist yet.
    *
    * @param map The mapping of nodes to tuples.
    * @param node1 The node to map.
-   * @param node2 The node to map it to.
+   * @param nodeData The node data to map it to.
    */
-  private static void addLink(Map<Node,Set<Node>> map, Node node1, Node node2) {
+  private static void addLink(Map<Node,Set<Pair<Node,Node>>> map, Node node1, Pair<Node,Node> nodeData) {
     // get the current set of properties
-    Set<Node> links = map.get(node1);
+    Set<Pair<Node,Node>> links = map.get(node1);
     // check that the set exists
     if (links == null) {
       // no, so create
-      links = new HashSet<Node>();
-      links.add(node2);
+      links = new HashSet<Pair<Node,Node>>();
+      links.add(nodeData);
       // add to the map
       map.put(node1, links);
     } else {
       // update the map to hold the new value
-      links.add(node2);
+      links.add(nodeData);
     }
   }
+
+
+  /**
+   * Sets an element in a list, expanding the list if necessary.
+   * @param list The list to update.
+   * @param offset The offset to write to in the list.
+   * @param value The value to write to the list.
+   */
+  private static <T> void setList(List<T> list, int offset, T value) {
+    while (offset >= list.size()) list.add(null);
+    list.set(offset, value);
+  }
+
+
+  /**
+   * Utility method to create a query.
+   * @param constraintExpression The constraint expression making up the WHERE clause of the query.
+   * @param selection The variables to select in the query.
+   * @return The new query.
+   */
+  @SuppressWarnings("unchecked")
+  private Query createQuery(ConstraintExpression constraintExpression, Variable... selection) {
+    List<Variable> selectList = Arrays.asList(selection);
+    return new Query(
+        selectList,                                 // SELECT
+        ruleGraph,                                  // FROM
+        constraintExpression,                                      // WHERE
+        null,                                       // HAVING
+        (List<Order>)Collections.EMPTY_LIST,        // ORDER BY
+        null,                                       // LIMIT
+        0,                                          // OFFSET
+        UNCONSTRAINED                               // GIVEN
+    );
+  }
+
 
   /**
    * Local wrapper for querying on an OperationContext. Since {@link OperationContext#doQuery(Query)}
@@ -1116,7 +1073,8 @@ public class KruleLoader implements RuleLoader {
    */
   private Answer query(Query q) throws QueryException {
     try {
-      return operationContext.doQuery(q);
+      if (operationContext != null) return operationContext.doQuery(q);
+      throw new IllegalStateException("No environment to query the database in");
     } catch (Exception e) {
       if (e instanceof QueryException) throw (QueryException)e;
       throw new QueryException("Unable to execute query", e);

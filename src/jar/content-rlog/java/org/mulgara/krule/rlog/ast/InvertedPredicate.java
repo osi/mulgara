@@ -91,5 +91,10 @@ public class InvertedPredicate extends Predicate {
     return invertPredicate.getObject();
   }
 
+  @Override
+  CanonicalPredicate getCanonical() {
+    return invertPredicate.getCanonical().invert();
+  }
+
 }
 

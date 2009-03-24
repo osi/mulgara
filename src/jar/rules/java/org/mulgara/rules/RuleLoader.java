@@ -16,7 +16,6 @@
 
 package org.mulgara.rules;
 
-import java.net.URI;
 import java.rmi.RemoteException;
 
 /**
@@ -36,6 +35,6 @@ public interface RuleLoader {
    *
    * @return A {@link org.mulgara.krule.RuleStructure} containing all the loaded rules.
    */
-  public Rules readRules(Object session, URI systemModel) throws InitializerException, RemoteException;
+  public Rules readRules(Object session) throws InitializerException, RemoteException;
 
 }

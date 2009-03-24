@@ -27,6 +27,8 @@
 
 package org.mulgara.query.rdf;
 
+import java.net.URI;
+
 /**
  * General constants.
  *
@@ -57,4 +59,14 @@ public class Mulgara {
 
   /** An identifier for a XSD resolver graph */
   public final static String XSD_GRAPH = "sys:xsd";
+
+  /** The URI for prefix graph types. */
+  public final static URI PREFIX_GRAPH_TYPE_URI = URI.create(NAMESPACE + "PrefixGraph");
+
+  /** The URI for prefixes. */
+  public final static URI PREFIX_URI = URI.create(NAMESPACE + "prefix");
+
+  /** The URI for prefixes. */
+  public final static URI IS_URI = URI.create(NAMESPACE + "is");
+
 }

@@ -38,14 +38,8 @@ public class PrefixResolverFactory implements ResolverFactory {
   /** Logger. */
   private static Logger logger = Logger.getLogger(PrefixResolverFactory.class.getName());
 
-  /** The URI for the graphType.  */
-  private static final URI graphTypeURI = URI.create(Mulgara.NAMESPACE + "PrefixGraph");
-
   /** The URI for the default graph. */
   private static final URI DEFAULT_GRAPH = URI.create(Mulgara.PREFIX_GRAPH);
-
-  /** The URI for prefixes. */
-  private static final URI mulgaraPrefixURI = URI.create(Mulgara.NAMESPACE + "prefix");
 
   /** The preallocated local node representing the prefix predicate. */
   private long mulgaraPrefix;
@@ -66,7 +60,7 @@ public class PrefixResolverFactory implements ResolverFactory {
     }
 
     // intialize the fields
-    mulgaraPrefix = initializer.preallocate(new URIReferenceImpl(mulgaraPrefixURI));
+    mulgaraPrefix = initializer.preallocate(new URIReferenceImpl(Mulgara.PREFIX_URI));
 
     // no need to claim the types supported by this resolver, as this is detected in the default graphs
   }
@@ -116,14 +110,14 @@ public class PrefixResolverFactory implements ResolverFactory {
       boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
   ) throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating new Prefix resolver");
-    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, graphTypeURI);
+    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, Mulgara.PREFIX_GRAPH_TYPE_URI);
   }
 
   /**
    * @return The default graph for this resolver.
    */
   public Graph[] getDefaultGraphs() {
-    return new Graph[] { new Graph(DEFAULT_GRAPH, graphTypeURI) };
+    return new Graph[] { new Graph(DEFAULT_GRAPH, Mulgara.PREFIX_GRAPH_TYPE_URI) };
   }
   
   /**

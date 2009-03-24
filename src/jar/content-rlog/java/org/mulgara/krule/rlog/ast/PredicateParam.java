@@ -26,9 +26,17 @@ import org.mulgara.krule.rlog.rdf.RDFNode;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Topaz Project</a>
  * @licence <a href="http://www.opensource.org/licenses/apache2.0.php">Apache License, Version 2.0</a>
  */
-public interface PredicateParam {
+public interface PredicateParam extends Comparable<PredicateParam> {
   public void accept(TreeWalker walker);
   public void print(int indent);
   public RDFNode getRDFNode() throws URIParseException;
+  public int orderId();
+
+  // Identifiers for ordering subtypes
+  static final int PREDICATE_LITERAL_ID = 1;
+  static final int STRING_LITERAL_ID = 2;
+  static final int INTEGER_LITERAL_ID = 3;
+  static final int VARIABLE_ID = 4;
+
 }
 

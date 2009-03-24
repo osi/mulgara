@@ -97,7 +97,7 @@ public class TypeStatement extends Predicate {
 
   // inheritdoc
   public String toString() {
-    return "TypeStatement: type(" + typeLabel + ") param(" + param + ")";
+    return typeLabel.toString() + "(" + param + ")";
   }
 
   //inheritdoc
@@ -112,6 +112,17 @@ public class TypeStatement extends Predicate {
   public int hashCode() {
     return typeLabel.hashCode() * 37 + param.hashCode();
   }
+
+
+  /**
+   * Creates a canonical form for this predicate.
+   * @see org.mulgara.krule.rlog.ast.Predicate#getCanonical()
+   */
+  @Override
+  CanonicalPredicate getCanonical() {
+    return new CanonicalPredicate((PredicateParam)typeLabel, param);
+  }
+
 
   /**
    * Search for the type in the special graphs, and annotate this predicate

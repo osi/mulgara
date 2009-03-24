@@ -73,5 +73,26 @@ public class IntegerLiteral extends Node implements PredicateParam {
   public RDFNode getRDFNode() {
     return new Literal(value.toString(), RDF.XSD_LONG);
   }
+
+
+  /**
+   * Order by PredicateLiteral, StringLiteral, IntegerLiteral, Var.
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  public int compareTo(PredicateParam o) {
+    if (o instanceof IntegerLiteral) return value.compareTo(((IntegerLiteral)o).value);
+    // Smaller than Variable, larger than everything else
+    return (o instanceof Variable) ? -1 : 1;
+  }
+
+
+  /**
+   * Defines the ordering that this class occurs in, compared to other PredicateParams
+   * @see org.mulgara.krule.rlog.ast.PredicateParam#orderId()
+   */
+  public int orderId() {
+    return INTEGER_LITERAL_ID;
+  }
+
 }
 

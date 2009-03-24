@@ -82,6 +82,15 @@ public class ConstraintDisjunction  extends ConstraintOperation {
   }
 
   /**
+   * Create a Disjunction (OR expression) between several constraint expressions.
+   *
+   * @param elements The expressions to perform a disjunction on.
+   */
+  public ConstraintDisjunction(ConstraintExpression... elements) {
+    super(Arrays.asList(elements));
+  }
+
+  /**
    * Gets the Name attribute of the ConstraintDisjunction object
    *
    * @return The Name value

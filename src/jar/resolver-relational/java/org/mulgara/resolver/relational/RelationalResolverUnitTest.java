@@ -43,11 +43,8 @@ package org.mulgara.resolver.relational;
 
 // Java 2 standard packages
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.InetAddress;
 import java.util.*;
 import java.sql.*;
 
@@ -58,14 +55,9 @@ import org.jrdf.vocabulary.RDF;  // JRDF
 
 // Locally written packages
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.server.Session;
-import org.mulgara.store.StoreException;
-import org.mulgara.store.nodepool.NodePool;
-import org.mulgara.store.stringpool.StringPool;
-import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.util.FileUtil;
 import org.mulgara.util.TempDir;
 
@@ -109,9 +101,12 @@ public class RelationalResolverUnitTest extends TestCase {
     }
   }
 
+  /** create the temporary directory */
+  @SuppressWarnings("unused")
   private static final File tmpDir = TempDir.getTempDir();
 
   /** Logger.  */
+  @SuppressWarnings("unused")
   private static Logger logger =
     Logger.getLogger(RelationalResolverUnitTest.class.getName());
 
@@ -224,9 +219,6 @@ public class RelationalResolverUnitTest extends TestCase {
       // Define the resolver factory used to manage system models
       String tempResolverFactoryClassName =
         "org.mulgara.resolver.memory.MemoryResolverFactory";
-
-      String ruleLoaderFactoryClassName =
-        "org.mulgara.rules.RuleLoaderFactory";
 
       // Create a database which keeps its system models on the Java heap
       database = new Database(
@@ -380,7 +372,7 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicClassQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Collections.singletonList(new Variable("s"));
+      List<Variable> selectList = Collections.singletonList(new Variable("s"));
 
 
       Answer answer = session.query(new Query(
@@ -414,8 +406,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicPropertyQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("fn") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("fn") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("fn"), true)
         });
@@ -458,8 +450,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBoundPropertyQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
         });
 
@@ -499,8 +491,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBoundSubjectQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("o") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("o") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("o"), true), 
         });
 
@@ -540,8 +532,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testConjPropertyQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("fn") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("fn") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("fn"), true)
         });
@@ -590,7 +582,7 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testURIPatternQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Collections.singletonList(new Variable("s"));
+      List<Variable> selectList = Collections.singletonList(new Variable("s"));
 
 
       Answer answer = session.query(new Query(
@@ -624,8 +616,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testURIPatternPropertyQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("loc") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("loc") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("loc"), true)
         });
@@ -668,8 +660,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicPredicateQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("p"), true)
         });
@@ -709,8 +701,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicPredicateObjectQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("o") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("o") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("p"), true),
           new Order(new Variable("o"), true)
@@ -788,8 +780,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testCompoundPredicateVoidQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("q") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("q") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("p"), true),
           new Order(new Variable("q"), true)
@@ -833,8 +825,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testCompoundPredicateQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("q") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("q") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("p"), true),
           new Order(new Variable("q"), true)
@@ -882,8 +874,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testCompoundPredicateObjectQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("o") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("o") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("p"), true),
           new Order(new Variable("o"), true)
@@ -947,8 +939,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicPatternPropertyQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("title") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("title") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("title"), true)
         });
@@ -994,8 +986,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBoundPatternPropertyQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
         });
 
@@ -1035,8 +1027,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBoundPatternSubjectQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("o") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("o") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("o"), true), 
         });
 
@@ -1077,8 +1069,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicReferWithJoinQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("name"), new Variable("abstract") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("name"), new Variable("abstract") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("name"), true), 
           new Order(new Variable("abstract"), true), 
         });
@@ -1137,12 +1129,12 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicReferWithJoinQueryAndPropPattern() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] {
           new Variable("name"),
           new Variable("abstract"),
           new Variable("title"),
         });
-      List orderList = Arrays.asList(new Order[] {
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("name"), true), 
           new Order(new Variable("abstract"), true), 
           new Order(new Variable("title"), true),
@@ -1209,11 +1201,11 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicReferWithPropPattern() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] {
           new Variable("abstract"),
           new Variable("title"),
         });
-      List orderList = Arrays.asList(new Order[] {
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("abstract"), true), 
           new Order(new Variable("title"), true),
         });
@@ -1264,8 +1256,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testObjectReferWithMNJoin() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("title"), new Variable("author") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("title"), new Variable("author") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("title"), true), 
           new Order(new Variable("author"), true), 
         });
@@ -1327,8 +1319,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testObjectReferWithPK() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("author"), new Variable("paper") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("author"), new Variable("paper") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("author"), true), 
           new Order(new Variable("paper"), true), 
         });
@@ -1382,8 +1374,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testBasicQueryWithAdditionalProperty() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("title"), new Variable("seeAlso") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("title"), new Variable("seeAlso") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("title"), true), 
           new Order(new Variable("seeAlso"), true), 
         });
@@ -1451,8 +1443,8 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testDualDatabaseQuery() throws Exception {
     Session session = database.newSession();
     try {
-      List selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("loc") });
-      List orderList = Arrays.asList(new Order[] {
+      List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("loc") });
+      List<Order> orderList = Arrays.asList(new Order[] {
           new Order(new Variable("s"), true), 
           new Order(new Variable("loc"), true)
         });

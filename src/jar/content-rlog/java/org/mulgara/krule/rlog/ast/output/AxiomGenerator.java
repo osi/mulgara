@@ -31,7 +31,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mulgara.krule.KruleLoader.*;
+import static org.mulgara.query.rdf.Krule.*;
 
 /**
  * Writes variables to a list of triples.

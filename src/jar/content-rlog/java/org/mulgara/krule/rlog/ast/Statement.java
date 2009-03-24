@@ -35,5 +35,11 @@ public abstract class Statement extends Node {
     super(context);
   }
 
+  /**
+   * Get a list of canonicalized predicates to represent the statement. The body of the
+   * statement must be sorted, but if a head exists then it must be at the end.
+   * @return A list containing the statement in canonical form.
+   */
+  public abstract CanonicalStatement getCanonical();
 }
 

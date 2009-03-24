@@ -93,6 +93,15 @@ public class ConstraintConjunction extends ConstraintOperation {
 
 
   /**
+   * Build a conjunction with a {@link Collection} of several children constraint expressions
+   * @param elements a {@link Collection} of {@link ConstraintExpression}s.
+   */
+  public ConstraintConjunction(ConstraintExpression... elements) {
+    super(Arrays.asList(elements));
+  }
+
+
+  /**
    * Gets the Filtered attribute of the ConstraintConjunction object
    *
    * @return The Filtered value

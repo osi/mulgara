@@ -18,6 +18,10 @@
 package org.mulgara.content.rlog;
 
 // Java 2 enterprise packages
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
@@ -94,6 +98,14 @@ public class RlogContentHandler implements ContentHandler {
    */
   public void serialize(Statements statements, Content content, ResolverSession resolverSession)
           throws ContentHandlerException, ModifiedException {
-    throw new UnsupportedOperationException();
+    try {
+      Writer out = new BufferedWriter(new OutputStreamWriter(content.newOutputStream(), "utf-8"));
+      RlogStructure struct = new RlogStructure(resolverSession);
+      struct.load(statements);
+      struct.write(out);
+      out.close();
+    } catch (Exception e) {
+      throw new ContentHandlerException("Failed to serialize RLog to " + content.getURIString(), e);
+    }
   }
 }

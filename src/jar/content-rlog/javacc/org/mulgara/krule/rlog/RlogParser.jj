@@ -13,13 +13,12 @@ package org.mulgara.krule.rlog;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.mulgara.krule.rlog.ast.Axiom;
 import org.mulgara.krule.rlog.ast.BPredicate;
 import org.mulgara.krule.rlog.ast.BPredicateLiteral;
+import org.mulgara.krule.rlog.ast.CheckRule;
 import org.mulgara.krule.rlog.ast.IntegerLiteral;
 import org.mulgara.krule.rlog.ast.InvertedPredicate;
 import org.mulgara.krule.rlog.ast.Predicate;
@@ -37,15 +36,27 @@ public class RlogParser {
   /** This context holds parse-specific domain mappings. */
   private ParseContext context = new ParseContext();
 
+  /** The program being built by the parser. */
+  private Program program = null;
+
   /**
    * Parse an entire document into statements.
-   * @param query The document as a string.
+   * @param doc The document as a string.
    * @return A list of Statements parsed from the document.
    * @throws ParseException Due to a syntactical or grammatical error in the query document.
    */
-  public static List<Statement> parse(String query) throws ParseException {
-    RlogParser parser = new RlogParser(new StringReader(query));
-    return parser.statements();
+  public static Program parse(String doc) throws ParseException {
+    RlogParser parser = new RlogParser(new StringReader(doc));
+    return parser.program();
+  }
+
+  /**
+   * Retrieves the program that has been built up by this parser.
+   * @return The program built by this parser.
+   */
+  public Program getProgram() throws ParseException {
+    if (program == null) program = program();
+    return program;
   }
 
   /**
@@ -67,9 +78,10 @@ MORE : { "--" : IN_COMMENT }
 <IN_COMMENT>
 SPECIAL_TOKEN : { < COMMENT: (~["\r","\n"])* > : DEFAULT }
 
-TOKEN [IGNORE_CASE] :
+TOKEN :
 {
     < PREFIX : "@prefix" >
+  | < IMPORT : "@import" >
 }
 
 TOKEN :
@@ -118,11 +130,11 @@ TOKEN :
 
 
 /* statements  ::= (statement)+ */
-List<Statement> statements() : {
-  List<Statement> sList = new ArrayList<Statement>();
+Program program() : {
   Statement s;
+  if (program == null) program = new Program();
 } {
-  (s=statement() { if (s != null) sList.add(s); } )+ { return sList; }
+  (s=statement() { if (s != null) program.add(s); } )+ { return program; }
 }
 
 
@@ -131,7 +143,8 @@ Statement statement() : {
   String d, ns;
   Statement s;
 } {
-  prefix() { return null; }
+  importDecl() { return null; }
+| prefix() { return null; }
 | ( LOOKAHEAD(10) s=axiom() | s=rule() ) { return s; }
 }
 
@@ -148,7 +161,7 @@ Rule rule() : {
   List<Predicate> body;
   Predicate head;
 } {
-  <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(body, context); }
+  <IMPLIED_BY> body=predicateList() <DOT> { return new CheckRule(body, context); }
 | head=predicate() <IMPLIED_BY> body=predicateList() <DOT> { return new Rule(head, body, context); }
 }
 
@@ -237,6 +250,14 @@ void prefix() : {
   String d, ns;
 } {
   <PREFIX> d=dom() ns=uri() <DOT> { context.registerDomain(d, ns); }
+}
+
+
+/* importDecl  := IMPORT uri DOT */
+void importDecl() : {
+  String u;
+} {
+  <IMPORT> u=uri() <DOT> { program.addImport(u); }
 }
 
 

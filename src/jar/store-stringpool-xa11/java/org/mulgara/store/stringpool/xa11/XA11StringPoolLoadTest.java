@@ -29,7 +29,7 @@ import org.mulgara.store.stringpool.xa.SPObjectFactoryImpl;
 import org.mulgara.util.TempDir;
 
 /**
- * Test case for {@link XAStringPoolImpl}.
+ * Test case for {@link XA11StringPoolImpl}.
  *
  * @created 2008-08-20
  *

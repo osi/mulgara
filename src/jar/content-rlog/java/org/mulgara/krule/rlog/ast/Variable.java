@@ -47,7 +47,7 @@ public class Variable extends Node implements TypeLabel, BPredicateLabel, Predic
   }
 
   public String toString() {
-    return "var(" + name + ")";
+    return "?" + name;
   }
 
   /** {@inheritDoc} */
@@ -64,6 +64,25 @@ public class Variable extends Node implements TypeLabel, BPredicateLabel, Predic
   /** {@inheritDoc} */
   public int hashCode() {
     return name.hashCode();
+  }
+
+
+  /**
+   * Order by PredicateLiteral, StringLiteral, IntegerLiteral, Var.
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  public int compareTo(PredicateParam o) {
+    // larger than everything except other variables
+    return (o instanceof Variable) ? name.compareTo(((Variable)o).name) : 1;
+  }
+
+
+  /**
+   * Defines the ordering that this class occurs in, compared to other PredicateParams
+   * @see org.mulgara.krule.rlog.ast.PredicateParam#orderId()
+   */
+  public int orderId() {
+    return VARIABLE_ID;
   }
 
 }

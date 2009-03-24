@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -48,7 +49,7 @@ public class C {
    * @return A list whose elements are the result of applying op to each element of args.
    * @throws E An exception that may be thrown from the {@link Fn1E#fn(Object)} method.
    */
-  public static <T1,T2,E extends Exception> List<T2> map(Collection<T1> args, Fn1E<T1,T2,E> op) throws E {
+  public static final <T1,T2,E extends Exception> List<T2> map(Collection<T1> args, Fn1E<T1,T2,E> op) throws E {
     List<T2> result = new LinkedList<T2>();
     for (T1 a: args) result.add(op.fn(a));
     return result;
@@ -57,7 +58,7 @@ public class C {
   /**
    * The same method as {@link #map(Collection, Fn1E)} for arrays.
    */
-  public static <T1,T2,E extends Exception> List<T2> map(T1[] args, Fn1E<T1,T2,E> op) throws E {
+  public static final <T1,T2,E extends Exception> List<T2> map(T1[] args, Fn1E<T1,T2,E> op) throws E {
     List<T2> result = new ArrayList<T2>(args.length);
     for (T1 a: args) result.add(op.fn(a));
     return result;
@@ -76,14 +77,14 @@ public class C {
    * @param op The operation to apply to the elements of the input list.
    * @return A list whose elements are the result of applying op to each element of args.
    */
-  public static <T1,T2> List<T2> map(Collection<T1> args, Fn1<T1,T2> op) {
+  public static final <T1,T2> List<T2> map(Collection<T1> args, Fn1<T1,T2> op) {
     return map(args, (Fn1E<T1,T2,RuntimeException>)op);
   }
 
   /**
    * The same method as {@link #map(Collection, Fn1)} for arrays.
    */
-  public static <T1,T2> List<T2> map(T1[] args, Fn1<T1,T2> op) {
+  public static final <T1,T2> List<T2> map(T1[] args, Fn1<T1,T2> op) {
     List<T2> result = new ArrayList<T2>(args.length);
     for (T1 a: args) result.add(op.fn(a));
     return result;
@@ -100,7 +101,7 @@ public class C {
    * @return The first element in the list.
    * @throws NoSuchElementException If the list is empty.
    */
-  public static <T1> T1 head(LinkedList<T1> arg) throws NoSuchElementException {
+  public static final <T1> T1 head(LinkedList<T1> arg) throws NoSuchElementException {
     return arg.getFirst();
   }
 
@@ -111,7 +112,7 @@ public class C {
    * @return The first element in the list.
    * @throws NoSuchElementException If the list is empty.
    */
-  public static <T1> T1 head(List<T1> arg) throws NoSuchElementException {
+  public static final <T1> T1 head(List<T1> arg) throws NoSuchElementException {
     if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getFirst();
     if (arg.size() == 0) throw new NoSuchElementException("Empty list");
     return arg.get(0);
@@ -123,7 +124,7 @@ public class C {
    * @param arg The list.
    * @return The first element in the list, or <code>null</code> if the list is empty.
    */
-  public static <T1> T1 headN(LinkedList<T1> arg) {
+  public static final <T1> T1 headN(LinkedList<T1> arg) {
     return arg.isEmpty() ? null : arg.getFirst();
   }
 
@@ -133,7 +134,7 @@ public class C {
    * @param arg The list.
    * @return The first element in the list, or <code>null</code> if the list is empty.
    */
-  public static <T1> T1 headN(List<T1> arg) {
+  public static final <T1> T1 headN(List<T1> arg) {
     return arg.isEmpty() ? null : (arg instanceof LinkedList) ? ((LinkedList<T1>)arg).getFirst() : arg.get(0);
   }
 
@@ -144,7 +145,7 @@ public class C {
    * @return The last element in the list.
    * @throws NoSuchElementException If the list is empty.
    */
-  public static <T1> T1 tail(LinkedList<T1> arg) throws NoSuchElementException {
+  public static final <T1> T1 tail(LinkedList<T1> arg) throws NoSuchElementException {
     return arg.getLast();
   }
 
@@ -155,7 +156,7 @@ public class C {
    * @return The last element in the list.
    * @throws IndexOutOfBoundsException If the list is empty.
    */
-  public static <T1> T1 tail(List<T1> arg) throws NoSuchElementException {
+  public static final <T1> T1 tail(List<T1> arg) throws NoSuchElementException {
     if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getLast();
     if (arg.size() == 0) throw new NoSuchElementException("Empty list");
     return arg.get(arg.size() - 1);
@@ -167,7 +168,7 @@ public class C {
    * @param arg The list.
    * @return The last element in the list, or <code>null</code> if the list is empty.
    */
-  public static <T1> T1 tailN(LinkedList<T1> arg) {
+  public static final <T1> T1 tailN(LinkedList<T1> arg) {
     return arg.isEmpty() ? null : arg.getLast();
   }
 
@@ -177,7 +178,7 @@ public class C {
    * @param arg The list.
    * @return The last element in the list, or <code>null</code> if the list is empty.
    */
-  public static <T1> T1 tailN(List<T1> arg) {
+  public static final <T1> T1 tailN(List<T1> arg) {
     return arg.isEmpty() ? null : arg.get(arg.size() - 1);
   }
 
@@ -188,7 +189,7 @@ public class C {
    * @return The first element in the list.
    * @throws NoSuchElementException If the list is empty.
    */
-  public static <T1> T1 first(LinkedList<T1> arg) throws NoSuchElementException {
+  public static final <T1> T1 first(LinkedList<T1> arg) throws NoSuchElementException {
     return arg.getFirst();
   }
 
@@ -199,10 +200,63 @@ public class C {
    * @return The first element in the collection.
    * @throws NoSuchElementException If the collection is empty.
    */
-  public static <T1> T1 first(Collection<T1> arg) throws NoSuchElementException {
+  public static final <T1> T1 first(Collection<T1> arg) throws NoSuchElementException {
     if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getFirst();
     if (arg.isEmpty()) throw new NoSuchElementException("Empty Collection");
     return arg.iterator().next();
+  }
+
+  /**
+   * Inserts an element into a list in ascending order.
+   * @param <T> The type of the element to be inserted. Must be comparable on itself.
+   * @param list The list to insert into. This must already be ordered.
+   * @param c The element to insert.
+   * @return The newly modified list with all elements in ascending.
+   */
+  public static final <T extends Comparable<T>> List<T> ascendingInsert(List<T> list, T c) {
+    return orderedInsert(list, c, true);
+  }
+
+  /**
+   * Inserts an element into an ordered list in descending order.
+   * @param <T> The type of the element to be inserted. Must be comparable on itself.
+   * @param list The list to insert into. This must already be ordered.
+   * @param c The element to insert.
+   * @return The newly modified list, with all elements in descending order.
+   */
+  public static final <T extends Comparable<T>> List<T> descendingInsert(List<T> list, T c) {
+    return orderedInsert(list, c, false);
+  }
+
+  /**
+   * Inserts an element into an ordered list in a given order.
+   * @param <T> The type of the element to be inserted. Must be comparable on itself.
+   * @param list The list to insert into. This must already be ordered in the same order as this insert.
+   * @param c The element to insert.
+   * @return The newly modified list, with all elements in order.
+   */
+  private static final <T extends Comparable<T>> List<T> orderedInsert(List<T> list, T c, boolean smaller) {
+    ListIterator<T> i = list.listIterator();
+    while (i.hasNext()) {
+      if (orderTest(c.compareTo(i.next()), smaller)) {
+        i.previous();
+        break;
+      }
+    }
+    i.add(c);
+    return list;
+  }
+
+  /**
+   * Tests if a comparison value indicates that smaller or larger values.
+   * @param value The value returned from a comparison.
+   * @param smaller When <code>true</code> this returns true for a comparison indicating a
+   *                smaller value was first, otherwise it tests if the comparison indicates
+   *                a larger value first.
+   * @return <code>true</code> when the value is in the same direction as the smaller flag indicates.
+   */
+  private static final boolean orderTest(int value, boolean smaller) {
+    return smaller ? value < 0 : value > 0;
   }
 
 }

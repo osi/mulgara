@@ -51,13 +51,13 @@ public class Rule implements Serializable {
   private static Logger logger = Logger.getLogger(Rule.class.getName());
 
   /** The name of this rule. */
-  private String name;
+  protected String name;
 
   /** The rules to be triggered when this rule generates statements.*/
   private Set<Rule> triggerSet;
 
   /** The query for this rule. This contains the information for the base model. */
-  private Query query;
+  protected Query query;
 
   /** The graph receiving the inferred data. */
   private long targetGraph = UNINITIALIZED;
@@ -66,7 +66,7 @@ public class Rule implements Serializable {
   private long lastCount;
 
   /** The structure containing this rule */
-  private RuleStructure ruleStruct;
+  protected RuleStructure ruleStruct;
 
   // TODO: Change this to a map of constraints to longs
 
@@ -112,11 +112,15 @@ public class Rule implements Serializable {
 
 
   /**
-   * Sets the query for this rule.
+   * Sets the query for this rule. Must be a valid query for inserting data, meaning that it
+   * returns a multiple of 3 elements.
    *
    * @param queryStruct The query which retrieves data for this rule.
+   * @throws KruleStructureException If the query does not return a multiple of 3 elements.
    */
-  public void setQueryStruct(QueryStruct queryStruct) {
+  public void setQueryStruct(QueryStruct queryStruct) throws KruleStructureException {
+    int e = queryStruct.elementCount();
+    if (e == 0 || e % 3 != 0) throw new KruleStructureException("Rule \"" + name + "\" attempting to generate the wrong number of elements (must be a multiple of 3): " + e);
     this.query = queryStruct.extractQuery();
   }
 

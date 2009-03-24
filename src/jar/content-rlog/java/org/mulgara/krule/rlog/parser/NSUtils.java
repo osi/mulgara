@@ -18,8 +18,10 @@ package org.mulgara.krule.rlog.parser;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.mulgara.krule.rlog.rdf.RDF;
 
@@ -129,5 +131,14 @@ public class NSUtils {
    */
   public static String getRegisteredNamespace(String domain) {
     return registeredDomains.get(domain);
+  }
+
+
+  /**
+   * Returns a list of entries in the registered domains.
+   * @return A Set of Map.Entries which map domain abbreviations to full namespaces.
+   */
+  public static Set<Map.Entry<String,String>> getRegisteredDomains() {
+    return Collections.unmodifiableSet(registeredDomains.entrySet());
   }
 }

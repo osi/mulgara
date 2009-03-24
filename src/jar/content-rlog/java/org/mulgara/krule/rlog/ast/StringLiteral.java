@@ -67,5 +67,24 @@ public class StringLiteral extends Node implements PredicateParam {
   public RDFNode getRDFNode() {
     return new Literal(value.toString());
   }
+
+  /**
+   * Order by PredicateLiteral, StringLiteral, IntegerLiteral, Var.
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  public int compareTo(PredicateParam o) {
+    if (o instanceof StringLiteral) return value.compareTo(((StringLiteral)o).value);
+    // larger than PredicateLiteral, smaller than everything else
+    return (o instanceof PredicateLiteral) ? 1 : -1;
+  }
+
+  /**
+   * Defines the ordering that this class occurs in, compared to other PredicateParams
+   * @see org.mulgara.krule.rlog.ast.PredicateParam#orderId()
+   */
+  public int orderId() {
+    return STRING_LITERAL_ID;
+  }
+
 }
 

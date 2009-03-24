@@ -41,6 +41,7 @@ import org.mulgara.query.SelectElement;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
 import org.mulgara.query.VariableFactory;
+import org.mulgara.query.rdf.Krule;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.URIReferenceImpl;
 
@@ -62,7 +63,7 @@ public class QueryStruct implements Serializable {
   private static Logger logger = Logger.getLogger(QueryStruct.class.getName());
 
   /** The selection list. */
-  private ConstraintElement[] select = new ConstraintElement[3];
+  private ConstraintElement[] select;
 
   /** List of elements which are variables, or ConstantValues. */
   private List<SelectElement> variables;
@@ -80,8 +81,8 @@ public class QueryStruct implements Serializable {
   /**
    * Constructor.  Converts string descriptions of the values and variables into the constraint elements.
    *
-   * @param vs The element nodes.
-   * @param types The types of the elements, defined in the krule namespace.
+   * @param valueSelection The element nodes.
+   * @param selTypes The types of the elements, defined in the krule namespace.
    * @param alias The aliases used in the query process.
    * @param uriReferences A map of all krule:ref_* objects to the appropriate {@link org.jrdf.graph.URIReference}s. 
    * @param varReferences A map of all krule:var_* objects to the appropriate name.
@@ -89,42 +90,57 @@ public class QueryStruct implements Serializable {
    *         or the references are not found in the references map.
    */
   public QueryStruct(
-      URIReference[] vs, URIReference[] types, Map<String,URI> alias,
+      List<URIReference> valueSelection, List<URIReference> selTypes, Map<String,URI> alias,
       Map<URIReference,URIReference> uriReferences, Map<URIReference,Variable> varReferences,
       Map<Node,Literal> litReferences
   ) {
 
-    if (vs.length != 3 && types.length != 3) {
+    if (valueSelection.size() <= 0 || selTypes.size() <= 0 || valueSelection.size() != selTypes.size()) {
       throw new IllegalArgumentException("Wrong number of elements for a rule query");
     }
+
+    URIReference[] vs = valueSelection.toArray(new URIReference[valueSelection.size()]);
+    URIReference[] types = selTypes.toArray(new URIReference[selTypes.size()]);
+
+    // If there is a non-multiple of 3 in the selection variables, then this is a check rule
+    // and we can only select variables in check rules
+    boolean varsOnly = vs.length % 3 != 0;
 
     VariableFactory variableFactory = new VariableFactoryImpl();
 
     // set up a list of variables
     variables = new ArrayList<SelectElement>();
+    select = new ConstraintElement[vs.length];
 
     // convert the parameters to usable objects
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < vs.length; i++) {
       URIReference element = vs[i];
       // check the type
-      if (types[i].equals(KruleLoader.URI_REF)) {
+      if (types[i].equals(Krule.URI_REF)) {
+
+        // check that this didn't have a non-multiple of 3 in the selection values
+        if (varsOnly) throw new IllegalArgumentException("Wrong number of elements for a rule query: " + vs.length);
 
         // get the referred value from the map
         select[i] = (URIReferenceImpl)uriReferences.get(element);
         // assume that literals do not have the "Value" type inferred
         variables.add(new ConstantValue(variableFactory.newVariable(), (URIReferenceImpl)select[i]));
 
-      } else if (types[i].equals(KruleLoader.VARIABLE)) {
+      } else if (types[i].equals(Krule.VARIABLE)) {
 
         // get the variable
         select[i] = (Variable)varReferences.get(element);
         variables.add((Variable)select[i]);
 
-      } else if (types[i].equals(KruleLoader.LITERAL)) {
+      } else if (types[i].equals(Krule.LITERAL)) {
         
-        if (i != 2) {
+        if (i % 3 != 2) {
           throw new IllegalArgumentException("Selection literal in illegal position in query");
         }
+
+        // check that this didn't have a non-multiple of 3 in the selection values
+        if (varsOnly) throw new IllegalArgumentException("Wrong number of elements for a rule query: " + vs.length);
+
         // get the literal
         select[i] = (LiteralImpl)litReferences.get(element);
         variables.add(new ConstantValue(variableFactory.newVariable(), (LiteralImpl)select[i]));
@@ -143,6 +159,15 @@ public class QueryStruct implements Serializable {
 
 
   /**
+   * Returns the number of elements to be returned from this query.
+   * @return The number of selection elements from the query.
+   */
+  public int elementCount() {
+    return select.length;
+  }
+
+
+  /**
    * Retrieve the element <em>n</em>.
    *
    * @param n The element number to retrieve.
@@ -150,7 +175,7 @@ public class QueryStruct implements Serializable {
    * @throws IndexOutOfBoundsException If n is larger than 3.
    */
   public ConstraintElement getElement(int n) {
-    assert n < 3;
+    assert n < select.length;
     return select[n];
   }
 

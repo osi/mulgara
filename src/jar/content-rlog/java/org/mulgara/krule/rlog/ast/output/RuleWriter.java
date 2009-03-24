@@ -16,12 +16,16 @@
 
 package org.mulgara.krule.rlog.ast.output;
 
+import org.mulgara.krule.rlog.ast.CheckRule;
 import org.mulgara.krule.rlog.ast.Predicate;
 import org.mulgara.krule.rlog.ast.Rule;
 import org.mulgara.krule.rlog.parser.URIParseException;
+import org.mulgara.krule.rlog.rdf.RDFNode;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,11 +62,18 @@ public class RuleWriter extends XMLFragmentWriter {
    * @param r The rule to print.
    */
   private void emitRule(PrintStream out, Rule r) throws URIParseException {
-    out.println("  <krule:Rule rdf:about=\"#" + r.getName() + "\">");
-    emitTriggers(out, r.getTriggers());
+    if (r instanceof CheckRule) {
+      out.println("  <krule:ConsistencyCheck rdf:about=\"#" + r.getName() + "\">");
+    } else {
+      out.println("  <krule:Rule rdf:about=\"#" + r.getName() + "\">");
+      emitTriggers(out, r.getTriggers());
+    }
     out.println("    <hasQuery>\n" +
                 "      <Query>");
-    emitSelection(out, r.getHead());
+
+    if (r instanceof CheckRule) emitSelection(out, r.getVariables()); 
+    else emitSelection(out, r.getHead());
+
     emitWhereClause(out, r.getBody(), r.getBodySubtractions());
     out.println("      </Query>\n" +
                 "    </hasQuery>\n" +
@@ -86,14 +97,41 @@ public class RuleWriter extends XMLFragmentWriter {
    * @param selection The selection that makes up the head of a rule.
    */
   private void emitSelection(PrintStream out, Predicate selection) throws URIParseException {
+    emitSelection(out, Collections.singletonList(selection));
+  }
+
+
+  /**
+   * Prints the head for a rule to a PrintStream.
+   * @param out The PrintStream to send the selection to.
+   * @param selection The list of predicates that makes up the head of a rule.
+   */
+  private void emitSelection(PrintStream out, List<Predicate> selection) throws URIParseException {
+    List<RDFNode> sel = new ArrayList<RDFNode>();
+    for (Predicate p: selection) {
+      sel.add(p.getSubject());
+      sel.add(p.getPredicate());
+      sel.add(p.getObject());
+    }
+    emitSelection(out, sel);
+  }
+
+
+  /**
+   * Prints the selection values to a PrintStream.
+   * @param out The PrintStream to send the selection to.
+   * @param sel The elements to be selected.
+   */
+  private void emitSelection(PrintStream out, Collection<? extends RDFNode> sel) throws URIParseException {
     out.println("        <selectionVariables>\n" +
-                "          <rdf:Seq>\n" +
-                "            <rdf:li rdf:resource=\"" + selection.getSubject().getRdfLabel() + "\"/>\n" +
-                "            <rdf:li rdf:resource=\"" + selection.getPredicate().getRdfLabel() + "\"/>\n" +
-                "            <rdf:li rdf:resource=\"" + selection.getObject().getRdfLabel() + "\"/>\n" +
-                "          </rdf:Seq>\n" +
+                "          <rdf:Seq>");
+    for (RDFNode s: sel) {
+      out.println("            <rdf:li rdf:resource=\"" + s.getRdfLabel() + "\"/>");
+    }
+    out.println("          </rdf:Seq>\n" +
                 "        </selectionVariables>");
   }
+
 
   /**
    * Prints the body for a rule to a PrintStream.
@@ -112,13 +150,13 @@ public class RuleWriter extends XMLFragmentWriter {
   private void emitSubtractions(PrintStream out, List<Predicate> body, List<Predicate> subs, int indent) throws URIParseException {
     int lastElt = subs.size() - 1;
     out.println(sp(indent) + "<Difference>\n" +
-                sp(indent + 1) + "<argument>");
+                sp(indent + 1) + "<minuend>");
     if (lastElt == 0) emitConjunction(out, body, indent + 2);
     else emitSubtractions(out, body, subs.subList(0, lastElt), indent + 2);
-    out.println(sp(indent + 1) + "</argument>\n" +
-                sp(indent + 1) + "<argument>");
+    out.println(sp(indent + 1) + "</minuend>\n" +
+                sp(indent + 1) + "<subtrahend>");
     emitSimpleConstraint(out, subs.get(lastElt), indent + 2);
-    out.println(sp(indent + 1) + "</argument>\n" +
+    out.println(sp(indent + 1) + "</subtrahend>\n" +
                 sp(indent) + "</Difference>");
   }
 

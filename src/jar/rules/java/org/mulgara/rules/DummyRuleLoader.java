@@ -17,7 +17,6 @@
 package org.mulgara.rules;
 
 import java.net.URI;
-import java.rmi.RemoteException;
 
 /**
  * A dummy implementation of the rule loader.
@@ -36,7 +35,7 @@ public class DummyRuleLoader implements RuleLoader {
    *
    * @return Nothing.
    */
-  public Rules readRules(Object session, URI systemModel) throws InitializerException {
+  public Rules readRules(Object session) throws InitializerException {
     throw new InitializerException("No rule loader available.");
   }
 

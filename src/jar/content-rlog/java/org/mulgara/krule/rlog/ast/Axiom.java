@@ -104,5 +104,15 @@ public class Axiom extends Statement {
   public RDFNode getObject() throws URIParseException {
     return predicate.getObject();
   }
+
+  @Override
+  public CanonicalStatement getCanonical() {
+    return new CanonicalStatement(predicate.getCanonical());
+  }
+
+  /** @see java.lang.Object#toString() */
+  public String toString() {
+    return predicate.toString() + ".";
+  }
 }
 

@@ -16,9 +16,9 @@
 
 package org.mulgara.krule.rlog.ast.output;
 
-import static org.mulgara.krule.KruleLoader.KRULE;
-import static org.mulgara.krule.KruleLoader.LITERAL;
-import static org.mulgara.krule.KruleLoader.URI_REF;
+import static org.mulgara.query.rdf.Krule.KRULE;
+import static org.mulgara.query.rdf.Krule.LITERAL;
+import static org.mulgara.query.rdf.Krule.URI_REF;
 
 import java.net.URI;
 import java.net.URISyntaxException;

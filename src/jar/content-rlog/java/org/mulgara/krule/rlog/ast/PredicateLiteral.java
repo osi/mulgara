@@ -79,5 +79,28 @@ public abstract class PredicateLiteral extends Node implements BPredicateLabel, 
     if (ref == null) throw new URIParseException(name);
     return ref;
   }
+
+  /**
+   * Order by PredicateLiteral, StringLiteral, IntegerLiteral, Var.
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  public int compareTo(PredicateParam o) {
+    // smaller than everything except other PredicateLiterals
+    return (o instanceof PredicateLiteral) ? name.compareTo(((PredicateLiteral)o).name) : -1;
+  }
+
+  /**
+   * Defines the ordering that this class occurs in, compared to other PredicateParams
+   * @see org.mulgara.krule.rlog.ast.PredicateParam#orderId()
+   */
+  public int orderId() {
+    return PREDICATE_LITERAL_ID;
+  }
+
+  /** @see java.lang.Object#toString() */
+  public String toString() {
+    return name;
+  }
+
 }
 

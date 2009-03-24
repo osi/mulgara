@@ -417,7 +417,6 @@ public class QueryServlet extends MulgaraServlet {
         throw new RequestException("Invalid URI for upload graph. " + e.getInput());
       }
     }
-    System.err.println("No graphs in the parameter values");
     // look in the mime data
     if (mime != null) {
       try {

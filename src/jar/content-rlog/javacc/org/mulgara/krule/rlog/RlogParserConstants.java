@@ -6,24 +6,25 @@ public interface RlogParserConstants {
   int EOF = 0;
   int COMMENT = 7;
   int PREFIX = 8;
-  int LOWER_CASE_LETTER = 9;
-  int UPPER_CASE_LETTER = 10;
-  int DIGIT = 11;
-  int J_LETTER_DIGIT = 12;
-  int IMPLIED_BY = 13;
-  int INVERT = 14;
-  int NEGATE = 15;
-  int DOT = 16;
-  int COMMA = 17;
-  int LPAR = 18;
-  int RPAR = 19;
-  int STRING_LITERAL = 20;
-  int URI = 21;
-  int IDENTIFIER = 22;
-  int VARIABLE = 23;
-  int TYPE = 24;
-  int INTEGER_LITERAL = 25;
-  int DOMAIN = 26;
+  int IMPORT = 9;
+  int LOWER_CASE_LETTER = 10;
+  int UPPER_CASE_LETTER = 11;
+  int DIGIT = 12;
+  int J_LETTER_DIGIT = 13;
+  int IMPLIED_BY = 14;
+  int INVERT = 15;
+  int NEGATE = 16;
+  int DOT = 17;
+  int COMMA = 18;
+  int LPAR = 19;
+  int RPAR = 20;
+  int STRING_LITERAL = 21;
+  int URI = 22;
+  int IDENTIFIER = 23;
+  int VARIABLE = 24;
+  int TYPE = 25;
+  int INTEGER_LITERAL = 26;
+  int DOMAIN = 27;
 
   int DEFAULT = 0;
   int IN_COMMENT = 1;
@@ -38,6 +39,7 @@ public interface RlogParserConstants {
     "\"--\"",
     "<COMMENT>",
     "\"@prefix\"",
+    "\"@import\"",
     "<LOWER_CASE_LETTER>",
     "<UPPER_CASE_LETTER>",
     "<DIGIT>",

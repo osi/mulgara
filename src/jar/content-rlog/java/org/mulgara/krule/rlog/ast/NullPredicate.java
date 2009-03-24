@@ -90,5 +90,15 @@ public class NullPredicate extends Predicate {
     throw new UnsupportedOperationException();
   }
 
+  /** @see java.lang.Object#toString() */
+  public String toString() {
+    return "";
+  }
+
+  @Override
+  CanonicalPredicate getCanonical() {
+    return new CanonicalPredicate();
+  }
+
 }
 

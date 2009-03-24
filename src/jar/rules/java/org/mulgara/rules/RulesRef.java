@@ -16,8 +16,6 @@
 
 package org.mulgara.rules;
 
-import java.net.URI;
-import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

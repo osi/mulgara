@@ -60,7 +60,7 @@
   </target>
 
   <target name="content-rlog-compile"
-          depends="-content-rlog-prepare, gen-rlog-parser, resolver-spi-jar, resolver-file-jar, krule-jar"
+          depends="-content-rlog-prepare, gen-rlog-parser, resolver-spi-jar, resolver-file-jar"
           description="Compiles all content-rlog related files included generated source code">
     <javac destdir="${content-rlog.obj.dir}/classes" debug="on" deprecation="on" source="1.5" encoding="UTF-8">
       <classpath refid="content-rlog-classpath"/>

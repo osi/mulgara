@@ -16,6 +16,7 @@
 
 package org.mulgara.krule.rlog.ast;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.RDFNode;
 import org.mulgara.krule.rlog.rdf.URIReference;
 import org.mulgara.krule.rlog.rdf.Var;
+import org.mulgara.util.functional.C;
 
 /**
  * Represents a rule statement.
@@ -56,7 +58,7 @@ public class Rule extends Statement {
   /** The name of this rule. Used in RDF. */
   private String name;
 
-  public Rule(List<Predicate> body,  ParseContext context) {
+  protected Rule(List<Predicate> body,  ParseContext context) {
     this(NullPredicate.NULL, body, context);
   }
 
@@ -208,6 +210,28 @@ public class Rule extends Statement {
   public Collection<Rule> getTriggers() {
     return triggers;
   }
+
+  @Override
+  public CanonicalStatement getCanonical() {
+    List<CanonicalPredicate> list = new ArrayList<CanonicalPredicate>(body.size() + 1);
+    // reorder the predicates
+    for (Predicate p: body) C.ascendingInsert(list, p.getCanonical());
+    return new CanonicalStatement(head.getCanonical(), list);
+  }
+
+
+  /** @see java.lang.Object#toString() */
+  public String toString() {
+    StringBuilder sb = new StringBuilder(head.toString());
+    sb.append(" :- ");
+    for (int b = 0; b < body.size(); b++) {
+      if (b != 0) sb.append(", ");
+      sb.append(body.get(b));
+    }
+    sb.append(".");
+    return sb.toString();
+  }
+
 
   /**
    * Checks that all variables in the head are found in the body, and that every subtracted predicate

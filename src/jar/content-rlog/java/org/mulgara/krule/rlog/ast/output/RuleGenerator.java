@@ -18,6 +18,7 @@ package org.mulgara.krule.rlog.ast.output;
 
 import org.jrdf.vocabulary.RDF;
 import org.mulgara.krule.rlog.ParseException;
+import org.mulgara.krule.rlog.ast.CheckRule;
 import org.mulgara.krule.rlog.ast.Predicate;
 import org.mulgara.krule.rlog.ast.Rule;
 import org.mulgara.krule.rlog.parser.URIParseException;
@@ -34,24 +35,28 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import static org.mulgara.krule.KruleLoader.ARGUMENT;
-import static org.mulgara.krule.KruleLoader.CONSTRAINT_CONJUNCTION;
-import static org.mulgara.krule.KruleLoader.DIFFERENCE;
-import static org.mulgara.krule.KruleLoader.HAS_QUERY;
-import static org.mulgara.krule.KruleLoader.HAS_WHERE_CLAUSE;
-import static org.mulgara.krule.KruleLoader.HAS_SUBJECT;
-import static org.mulgara.krule.KruleLoader.HAS_PREDICATE;
-import static org.mulgara.krule.KruleLoader.HAS_OBJECT;
-import static org.mulgara.krule.KruleLoader.HAS_GRAPH;
-import static org.mulgara.krule.KruleLoader.NAME;
-import static org.mulgara.krule.KruleLoader.QUERY;
-import static org.mulgara.krule.KruleLoader.RULE;
-import static org.mulgara.krule.KruleLoader.SELECTION_VARS;
-import static org.mulgara.krule.KruleLoader.SIMPLE_CONSTRAINT;
-import static org.mulgara.krule.KruleLoader.TRIGGERS;
-import static org.mulgara.krule.KruleLoader.VARIABLE;
+import static org.mulgara.query.rdf.Krule.ARGUMENT;
+import static org.mulgara.query.rdf.Krule.CHECK;
+import static org.mulgara.query.rdf.Krule.CONSTRAINT_CONJUNCTION;
+import static org.mulgara.query.rdf.Krule.DIFFERENCE;
+import static org.mulgara.query.rdf.Krule.HAS_QUERY;
+import static org.mulgara.query.rdf.Krule.HAS_WHERE_CLAUSE;
+import static org.mulgara.query.rdf.Krule.HAS_SUBJECT;
+import static org.mulgara.query.rdf.Krule.HAS_PREDICATE;
+import static org.mulgara.query.rdf.Krule.HAS_OBJECT;
+import static org.mulgara.query.rdf.Krule.HAS_GRAPH;
+import static org.mulgara.query.rdf.Krule.MINUEND;
+import static org.mulgara.query.rdf.Krule.NAME;
+import static org.mulgara.query.rdf.Krule.QUERY;
+import static org.mulgara.query.rdf.Krule.RULE;
+import static org.mulgara.query.rdf.Krule.SELECTION_VARS;
+import static org.mulgara.query.rdf.Krule.SIMPLE_CONSTRAINT;
+import static org.mulgara.query.rdf.Krule.SUBTRAHEND;
+import static org.mulgara.query.rdf.Krule.TRIGGERS;
+import static org.mulgara.query.rdf.Krule.VARIABLE;
 
 /**
  * Writes rules to a list of triples.
@@ -70,6 +75,9 @@ public class RuleGenerator extends TripleGenerator {
 
   /** The node for the krule:Rule type */
   private final long kruleRule;
+
+  /** The node for the krule:Check type */
+  private final long kruleCheck;
 
   /** The node for the krule:Query type */
   private final long kruleQuery;
@@ -113,6 +121,12 @@ public class RuleGenerator extends TripleGenerator {
   /** The node for the krule:argument predicate */
   private final long kruleArgument;
 
+  /** The node for the krule:minuend predicate */
+  private final long kruleMinuend;
+
+  /** The node for the krule:subtrahend predicate */
+  private final long kruleSubtrahend;
+
   /** The node for the krule:name predicate */
   private final long kruleName;
 
@@ -129,6 +143,7 @@ public class RuleGenerator extends TripleGenerator {
     this.rules = rules;
     rdfSeq = resolverSession.localize(new URIReferenceImpl(RDF.SEQ));
     kruleRule = resolverSession.localize(RULE);
+    kruleCheck = resolverSession.localize(CHECK);
     kruleQuery = resolverSession.localize(QUERY);
     kruleDifference = resolverSession.localize(DIFFERENCE);
     kruleConjunction = resolverSession.localize(CONSTRAINT_CONJUNCTION);
@@ -143,6 +158,8 @@ public class RuleGenerator extends TripleGenerator {
     kruleSelVars = resolverSession.localize(SELECTION_VARS);
     kruleHasWhereClause = resolverSession.localize(HAS_WHERE_CLAUSE);
     kruleArgument = resolverSession.localize(ARGUMENT);
+    kruleMinuend = resolverSession.localize(MINUEND);
+    kruleSubtrahend = resolverSession.localize(SUBTRAHEND);
     kruleName = resolverSession.localize(NAME);
     initSeqTo(3);
   }
@@ -180,10 +197,14 @@ public class RuleGenerator extends TripleGenerator {
   private List<long[]> emitRule(List<long[]> triples, Rule rule) throws NodePoolException, ParseException, LocalizeException, URISyntaxException, URIParseException {
     long ruleNode = toKruleNode(rule.getName());
 
-    // rule rdf:type kruleRule
-    add(triples, ruleNode, rdfType, kruleRule);
-
-    emitTriggers(triples, ruleNode, rule.getTriggers());
+    if (rule instanceof CheckRule) {
+      // rule rdf:type kruleCheck
+      add(triples, ruleNode, rdfType, (rule instanceof CheckRule) ? kruleCheck : kruleRule);
+    } else {
+      // rule rdf:type kruleRule
+      add(triples, ruleNode, rdfType, kruleRule);
+      emitTriggers(triples, ruleNode, rule.getTriggers());
+    }
 
     // query rdf:type krule:Query
     // rule krule:hasQuery query
@@ -191,7 +212,9 @@ public class RuleGenerator extends TripleGenerator {
     add(triples, query, rdfType, kruleQuery);
     add(triples, ruleNode, kruleHasQuery, query);
 
-    emitSelection(triples, query, rule.getHead());
+    if (rule instanceof CheckRule) emitSelection(triples, query, rule.getVariables()); 
+    else emitSelection(triples, query, rule.getHead());
+
     emitWhereClause(triples, query, rule.getBody(), rule.getBodySubtractions());
 
     return triples;
@@ -218,18 +241,47 @@ public class RuleGenerator extends TripleGenerator {
    * @throws URISyntaxException If a selected URI is incorrectly formed.
    */
   private void emitSelection(List<long[]> triples, long query, Predicate selection) throws URIParseException, LocalizeException, URISyntaxException {
+    emitSelection(triples, query, Collections.singletonList(selection));
+  }
+
+
+  /**
+   * Adds the head of a rule to the triples.
+   * @param triples The list of triples to append to.
+   * @param selection The list of predicates that makes up the head of a rule.
+   * @throws LocalizeException Unable to create a new blank node.
+   * @throws URISyntaxException If a selected URI is incorrectly formed.
+   */
+  private void emitSelection(List<long[]> triples, long query, List<Predicate> selection) throws URIParseException, LocalizeException, URISyntaxException {
+    List<RDFNode> sel = new ArrayList<RDFNode>();
+    for (Predicate p: selection) {
+      sel.add(p.getSubject());
+      sel.add(p.getPredicate());
+      sel.add(p.getObject());
+    }
+    emitSelection(triples, query, sel);
+  }
+
+
+  /**
+   * Adds the selection elements of a rule to the triples.
+   * @param triples The list of triples to append to.
+   * @param selection The selection that makes up the variables or the head of a rule.
+   * @throws LocalizeException Unable to create a new blank node.
+   * @throws URISyntaxException If a selected URI is incorrectly formed.
+   */
+  private void emitSelection(List<long[]> triples, long query, Collection<? extends RDFNode> selection) throws URIParseException, LocalizeException, URISyntaxException {
     // seq rdf:type rdf:Seq
     // query krule:selectionVariables seq
     long seq = newBlankNode();
     add(triples, seq, rdfType, rdfSeq);
     add(triples, query, kruleSelVars, seq);
 
-    // seq rdf:_1 getSubject()
-    // seq rdf:_2 getPredicate()
-    // seq rdf:_3 getObject()
-    add(triples, seq, getSeq(1), toKruleNode(selection.getSubject().getRdfLabel()));
-    add(triples, seq, getSeq(2), toKruleNode(selection.getPredicate().getRdfLabel()));
-    add(triples, seq, getSeq(3), toKruleNode(selection.getObject().getRdfLabel()));
+    // seq rdf:_n selection(n) ...
+    int n = 1;
+    for (RDFNode s: selection) {
+      add(triples, seq, getSeq(n++), toKruleNode(s.getRdfLabel()));
+    }
   }
 
 
@@ -262,21 +314,21 @@ public class RuleGenerator extends TripleGenerator {
    * @throws URISyntaxException If one of the URIs in the constraint has an invalid syntax.
    */
   private void emitSubtractions(List<long[]> triples, long diff, List<Predicate> body, List<Predicate> subs) throws URIParseException, LocalizeException, URISyntaxException {
-    // constraintExpr rdf:type krule:Difference
+    // diff rdf:type krule:Difference
     add(triples, diff, rdfType, kruleDifference);
 
     long argument = newBlankNode();
-    // diff krule:argument argument
-    add(triples, diff, kruleArgument, argument);
+    // diff krule:minuend argument
+    add(triples, diff, kruleMinuend, argument);
 
     int lastElt = subs.size() - 1;
     if (lastElt == 0) emitConjunction(triples, argument, body);
     else emitSubtractions(triples, argument, body, subs.subList(0, lastElt));
 
     // last argument in subtraction
-    // diff krule:argument argument
+    // diff krule:subtrahend argument
     argument = newBlankNode();
-    add(triples, diff, kruleArgument, argument);
+    add(triples, diff, kruleSubtrahend, argument);
 
     emitSimpleConstraint(triples, argument, subs.get(lastElt));
   }

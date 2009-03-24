@@ -3,13 +3,12 @@ package org.mulgara.krule.rlog;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.mulgara.krule.rlog.ast.Axiom;
 import org.mulgara.krule.rlog.ast.BPredicate;
 import org.mulgara.krule.rlog.ast.BPredicateLiteral;
+import org.mulgara.krule.rlog.ast.CheckRule;
 import org.mulgara.krule.rlog.ast.IntegerLiteral;
 import org.mulgara.krule.rlog.ast.InvertedPredicate;
 import org.mulgara.krule.rlog.ast.Predicate;
@@ -27,15 +26,27 @@ public class RlogParser implements RlogParserConstants {
   /** This context holds parse-specific domain mappings. */
   private ParseContext context = new ParseContext();
 
+  /** The program being built by the parser. */
+  private Program program = null;
+
   /**
    * Parse an entire document into statements.
-   * @param query The document as a string.
+   * @param doc The document as a string.
    * @return A list of Statements parsed from the document.
    * @throws ParseException Due to a syntactical or grammatical error in the query document.
    */
-  public static List<Statement> parse(String query) throws ParseException {
-    RlogParser parser = new RlogParser(new StringReader(query));
-    return parser.statements();
+  public static Program parse(String doc) throws ParseException {
+    RlogParser parser = new RlogParser(new StringReader(doc));
+    return parser.program();
+  }
+
+  /**
+   * Retrieves the program that has been built up by this parser.
+   * @return The program built by this parser.
+   */
+  public Program getProgram() throws ParseException {
+    if (program == null) program = program();
+    return program;
   }
 
   /**
@@ -48,15 +59,16 @@ public class RlogParser implements RlogParserConstants {
   }
 
 /* statements  ::= (statement)+ */
-  final public List<Statement> statements() throws ParseException {
-  List<Statement> sList = new ArrayList<Statement>();
+  final public Program program() throws ParseException {
   Statement s;
+  if (program == null) program = new Program();
     label_1:
     while (true) {
       s = statement();
-                   if (s != null) sList.add(s);
+                   if (s != null) program.add(s);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PREFIX:
+      case IMPORT:
       case IMPLIED_BY:
       case INVERT:
       case IDENTIFIER:
@@ -70,7 +82,7 @@ public class RlogParser implements RlogParserConstants {
         break label_1;
       }
     }
-                                                       {if (true) return sList;}
+                                                         {if (true) return program;}
     throw new Error("Missing return statement in function");
   }
 
@@ -79,6 +91,10 @@ public class RlogParser implements RlogParserConstants {
   String d, ns;
   Statement s;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case IMPORT:
+      importDecl();
+                 {if (true) return null;}
+      break;
     case PREFIX:
       prefix();
              {if (true) return null;}
@@ -135,7 +151,7 @@ public class RlogParser implements RlogParserConstants {
       jj_consume_token(IMPLIED_BY);
       body = predicateList();
       jj_consume_token(DOT);
-                                            {if (true) return new Rule(body, context);}
+                                            {if (true) return new CheckRule(body, context);}
       break;
     case INVERT:
     case IDENTIFIER:
@@ -385,6 +401,15 @@ public class RlogParser implements RlogParserConstants {
                                     context.registerDomain(d, ns);
   }
 
+/* importDecl  := IMPORT uri DOT */
+  final public void importDecl() throws ParseException {
+  String u;
+    jj_consume_token(IMPORT);
+    u = uri();
+    jj_consume_token(DOT);
+                           program.addImport(u);
+  }
+
 /* dom              ::= DOMAIN */
   final public String dom() throws ParseException {
   Token d;
@@ -420,6 +445,146 @@ public class RlogParser implements RlogParserConstants {
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
+  }
+
+  final private boolean jj_3R_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_12()) jj_scanpos = xsp;
+    if (jj_scan_token(TYPE)) return true;
+    if (jj_scan_token(LPAR)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(RPAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) {
+    jj_scanpos = xsp;
+    if (jj_3R_8()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_23() {
+    if (jj_3R_24()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_22() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_21() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_11() {
+    if (jj_scan_token(INVERT)) return true;
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_10() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_9() {
+    if (jj_scan_token(DOMAIN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_6() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3R_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_11()) return true;
+    }
+    }
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_19() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_16() {
+    if (jj_scan_token(VARIABLE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_5() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_15() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_19()) jj_scanpos = xsp;
+    if (jj_scan_token(TYPE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_5()) jj_scanpos = xsp;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_13() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) {
+    jj_scanpos = xsp;
+    if (jj_3R_16()) return true;
+    }
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(DOT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_18() {
+    if (jj_scan_token(VARIABLE)) return true;
+    if (jj_scan_token(LPAR)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_21()) return true;
+    if (jj_scan_token(RPAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_20() {
+    if (jj_3R_9()) return true;
+    return false;
   }
 
   final private boolean jj_3R_17() {
@@ -483,146 +648,6 @@ public class RlogParser implements RlogParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_7() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_12()) jj_scanpos = xsp;
-    if (jj_scan_token(TYPE)) return true;
-    if (jj_scan_token(LPAR)) return true;
-    if (jj_3R_13()) return true;
-    if (jj_scan_token(RPAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_4() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) {
-    jj_scanpos = xsp;
-    if (jj_3R_8()) return true;
-    }
-    return false;
-  }
-
-  final private boolean jj_3R_23() {
-    if (jj_3R_24()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_22() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_21() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_22()) {
-    jj_scanpos = xsp;
-    if (jj_3R_23()) return true;
-    }
-    return false;
-  }
-
-  final private boolean jj_3R_11() {
-    if (jj_scan_token(INVERT)) return true;
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_10() {
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_6() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) {
-    jj_scanpos = xsp;
-    if (jj_3R_10()) {
-    jj_scanpos = xsp;
-    if (jj_3R_11()) return true;
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_19() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_16() {
-    if (jj_scan_token(VARIABLE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_5() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_15() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_19()) jj_scanpos = xsp;
-    if (jj_scan_token(TYPE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_9() {
-    if (jj_scan_token(DOMAIN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_5()) jj_scanpos = xsp;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_13() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_15()) {
-    jj_scanpos = xsp;
-    if (jj_3R_16()) return true;
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3R_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(DOT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_18() {
-    if (jj_scan_token(VARIABLE)) return true;
-    if (jj_scan_token(LPAR)) return true;
-    if (jj_3R_13()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_21()) return true;
-    if (jj_scan_token(RPAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_20() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
   public RlogParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -638,7 +663,7 @@ public class RlogParser implements RlogParserConstants {
       jj_la1_0();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x5c06100,0x5c06000,0x5c06100,0x5c06000,0x4c04000,0x4000000,0x5800000,0x4000000,0x4c00000,0x4000000,0x4000000,0x5800000,0x7d00000,0x2100000,0x20000,};
+      jj_la1_0 = new int[] {0xb80c300,0xb80c000,0xb80c300,0xb80c000,0x9808000,0x8000000,0xb000000,0x8000000,0x9800000,0x8000000,0x8000000,0xb000000,0xfa00000,0x4200000,0x40000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[3];
   private boolean jj_rescan = false;
@@ -815,8 +840,8 @@ public class RlogParser implements RlogParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[27];
-    for (int i = 0; i < 27; i++) {
+    boolean[] la1tokens = new boolean[28];
+    for (int i = 0; i < 28; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -832,7 +857,7 @@ public class RlogParser implements RlogParserConstants {
         }
       }
     }
-    for (int i = 0; i < 27; i++) {
+    for (int i = 0; i < 28; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

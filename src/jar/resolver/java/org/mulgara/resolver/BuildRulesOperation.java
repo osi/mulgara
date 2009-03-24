@@ -81,7 +81,7 @@ class BuildRulesOperation implements Operation {
     if (ruleLoader == null) throw new org.mulgara.rules.InitializerException("No rule loader available");
   
     // read in the rules
-    Rules rules =  ruleLoader.readRules(operationContext, metadata.getSystemModelURI());
+    Rules rules =  ruleLoader.readRules(operationContext);
     result = new RulesRefImpl(rules);
   }
 

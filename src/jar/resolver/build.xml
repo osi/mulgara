@@ -33,6 +33,7 @@
     <fileset file="${resolver-url.dist.dir}/${resolver-url.jar}"/>
     <fileset file="${content-rdfxml.dist.dir}/${content-rdfxml.jar}"/>
     <fileset file="${content-n3.dist.dir}/${content-n3.jar}"/>
+    <fileset file="${content-rlog.dist.dir}/${content-rlog.jar}"/>
     <fileset file="${driver.dist.dir}/${driver.jar}"/>
   </path>
 
@@ -82,7 +83,7 @@
   <target name="resolver-compile"
           depends="-resolver-prepare, resolver-spi-jar, rules-jar,
                    resolver-http-jar, resolver-file-jar, resolver-url-jar,
-                   resolver-jar-jar, content-rdfxml-jar, content-n3-jar,
+                   resolver-jar-jar, content-rdfxml-jar, content-n3-jar, content-rlog-jar,
                    client-jrdf-jar, jrdf-jar, resolver-xsd-jar, driver-jar"
           description="Compiles all resolver related files included generated
                        source code">

@@ -54,7 +54,7 @@ import org.mulgara.krule.rlog.parser.URIParseException;
 /**
  * Parses an {@link InputStream} into {@link Statements}.
  * This parser uses memory and does not stream.
- * 
+ *
  * @created Feb 24, 2009
  * @author Paul Gearon
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
@@ -98,7 +98,7 @@ public class RlogStatements extends AbstractTuples implements Statements {
     try {
       InputStreamReader input = new InputStreamReader(content.newInputStream());
       try {
-        rlogParser = new Rlog(input);
+        rlogParser = new Rlog(input, content.getURI());
       } finally {
         input.close();
       }
