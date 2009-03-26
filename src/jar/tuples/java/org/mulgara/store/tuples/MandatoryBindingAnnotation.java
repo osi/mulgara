@@ -60,22 +60,22 @@ import org.mulgara.query.Variable;
  */
 
 public class MandatoryBindingAnnotation implements Annotation {
-  private Set variables;
+  private Set<Variable> variables;
 
-  public MandatoryBindingAnnotation(Collection variables) {
-    this.variables = new HashSet(variables);
+  public MandatoryBindingAnnotation(Collection<Variable> variables) {
+    this.variables = new HashSet<Variable>(variables);
   }
 
   public MandatoryBindingAnnotation(Variable[] varArray) {
     this(Arrays.asList(varArray));
   }
 
-  public Set requiredVariables() {
+  public Set<Variable> requiredVariables() {
     return variables;
   }
 
-  public boolean meetsRequirement(Set boundVars) {
-    Iterator i = variables.iterator();
+  public boolean meetsRequirement(Set<Variable> boundVars) {
+    Iterator<Variable> i = variables.iterator();
     while (i.hasNext()) {
       if (!boundVars.contains(i.next())) {
         return false;
