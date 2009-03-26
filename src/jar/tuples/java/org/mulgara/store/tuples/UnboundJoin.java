@@ -17,8 +17,8 @@
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
  * Contributor(s):
- *  Various bug fixes copyright Netymon Pty Ltd <info@netymon.com> under
- *  contract to The Topaz Foundation <info@topazproject.org>
+ *  Various bug fixes copyright Netymon Pty Ltd (info@netymon.com) under
+ *  contract to The Topaz Foundation (info@topazproject.org)
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -200,11 +200,11 @@ public class UnboundJoin extends AbstractTuples {
 
     // Calculate the variables present and their mappings from operand
     // columns to result columns
-    List variableList = new ArrayList();
-    List mapOperandList = new ArrayList();
-    List mapColumnList = new ArrayList();
-    List fooOperandList = new ArrayList();
-    List fooColumnList = new ArrayList();
+    List<Variable> variableList = new ArrayList<Variable>();
+    List<Integer> mapOperandList = new ArrayList<Integer>();
+    List<Integer> mapColumnList = new ArrayList<Integer>();
+    List<Integer> fooOperandList = new ArrayList<Integer>();
+    List<Integer> fooColumnList = new ArrayList<Integer>();
 
     for (int i = 0; i < operands.length; i++) {
       fooOperandList.clear();
@@ -286,7 +286,7 @@ public class UnboundJoin extends AbstractTuples {
     return true;
   }
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Arrays.asList(operands);
   }
 
