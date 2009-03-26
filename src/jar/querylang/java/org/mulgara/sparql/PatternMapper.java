@@ -56,7 +56,7 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.XSD;
 
 /**
- * This object maps a {@link GroupGraphPattern} into a {@link ConstraintExpresion}.
+ * This object maps a {@link GroupGraphPattern} into a {@link ConstraintExpression}.
  *
  * @created Apr 21, 2008
  * @author Paul Gearon

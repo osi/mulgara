@@ -78,7 +78,7 @@ import org.w3c.dom.Element;
  * This class provides a simple interface for the execution of iTQL queries.
  * </p>
  * <p>
- * Note. This class will be deprecated and is going away in favour of {@link org.mulgara.connection.MulgaraConnection}
+ * Note. This class will be deprecated and is going away in favour of {@link org.mulgara.connection.Connection}
  * based interfaces.
  * </p>
  *
@@ -86,8 +86,6 @@ import org.w3c.dom.Element;
  * @author Tate Jones
  * @author Ben Warren
  * @author Tom Adams
- * @version $Revision: 1.11 $
- * @modified $Date: 2005/04/04 11:30:11 $ by $Author: tomadams $
  * @copyright &copy;2001-2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @copyright &copy;2005 <a href="mailto:tomjadams@gmail.com">Tom Adams</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>

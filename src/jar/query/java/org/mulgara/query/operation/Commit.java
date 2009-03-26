@@ -24,7 +24,7 @@ import org.mulgara.server.Session;
  * commits through a different method to the standard call path, while the normal
  * call will pass in a {@link org.mulgara.connection.DummyConnection}.
  *
- * After performing a commit, all connections are left in place {@link #cleanup(Iterator)} and
+ * After performing a commit, all connections are left in place and
  * the transaction is kept open {@link #stayInTx()}.
  * 
  * @created 2007-08-09

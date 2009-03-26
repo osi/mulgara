@@ -58,7 +58,7 @@ public class DivideOperation extends BinaryOperation {
   /**
    * A recursive method to build a NumericExpression that represents the division of all values in the list.
    * This constructs a linked list of divisions.
-   * @param operands The list of values to divide.
+   * @param ops The list of values to divide.
    * @return A NumericExpression which represents the ordered division of everything in the ops list.
    */
   private static NumericExpression createNestedDivision(List<NumericExpression> ops) {

@@ -102,8 +102,10 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
   
   /**
    * Create a new UI representation.
-   * @param newItqlSession the itql session to call when we receive commands and
+   * @param newTqlSession the itql session to call when we receive commands and
    *        when we want to display them.
+   * @param inStream The console input for this session.
+   * @param outStream The console output for this session.
    */
   public TqlSessionUI(TqlSession newTqlSession, InputStream inStream, OutputStream outStream) {
     super();
@@ -517,7 +519,7 @@ public class TqlSessionUI extends JScrollPane implements Runnable,
 
   /**
    * Adds a text to the UI. Sends a little "closure" to the UI thread.
-   * @param message the message to display.
+   * @param cmd the command to send.
    */
   public void injectCommand(final String cmd) {
     invokeAndWait(new Runnable() {

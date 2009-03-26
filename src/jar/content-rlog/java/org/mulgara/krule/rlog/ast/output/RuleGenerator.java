@@ -287,8 +287,9 @@ public class RuleGenerator extends TripleGenerator {
 
   /**
    * Prints the body for a rule to a PrintStream.
-   * @param out The PrintStream to send the where clause to.
-   * @param body The where clause that makes up the body of the rule.
+   * @param triples The list of triples to append to.
+   * @param query The node that represents the query that makes up the body.
+   * @param body The list of predicates that makes up the body.
    * @param subs The part of a where clause to be removed from the body.
    * @throws URIParseException If one of the URIs in the constraint expression has an invalid syntax.
    * @throws LocalizeException Unable to localize some of the URIs in the constraints.
@@ -306,7 +307,7 @@ public class RuleGenerator extends TripleGenerator {
 
   /**
    * Emit the operation for the difference between the body and the subtractions as a set of triples.
-   * @param triples The 
+   * @param triples The list of triples to append to.
    * @param body The main body to be selected (the minuend).
    * @param subs The constraints to be subtracted from the body (the subtrahends).
    * @throws URIParseException The constraints contain URIs that are invalid.
@@ -337,7 +338,7 @@ public class RuleGenerator extends TripleGenerator {
   /**
    * Adds a list of constraints as the arguments to a single ConstraintConjunction.
    * @param triples The list of triples to add the statements to.
-   * @param conj The node representing the conjunction being emitted.
+   * @param conjNode The node representing the conjunction being emitted.
    * @param conjunction The list of constraints that form the conjunction to be added.
    * @throws URIParseException If one of the URIs in the constraint has an invalid syntax.
    * @throws LocalizeException Unable to localize a URI in the expression.

@@ -18,7 +18,7 @@ package org.mulgara.util;
 
 /**
  * Objects of this type are used for mapping longs to longs. This can be easily met
- * with a Map<Long,Long>, or an IntFile, but this interface abstracts the interface
+ * with a Map&lt;Long,Long&gt;, or an IntFile, but this interface abstracts the interface
  * to allow manipulation of the number space if this is more efficient.
  *
  * @created Sep 26, 2008

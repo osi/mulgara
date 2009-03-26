@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility to centralize the port handling for RMI objects.
  * This class is not set to handle different protocols. If this is needed, then the
- * super constructor {@link #UnicastRemoteObject(int,RMIClientSocketFactory,RMIServerSocketFactory)}
+ * super constructor for {@link UnicastRemoteObject} with socket factories
  * would need to be overridden.
  *
  * @created Sep 23, 2008

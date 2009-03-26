@@ -11,7 +11,7 @@
  * under the License.
  *
  * This file is an original work developed by Andrae Muys
- * Copyright (c) 2008 Andrae Muys <andrae@muys.id.au>
+ * Copyright (c) 2008 Andrae Muys andrae@muys.id.au
  * All Rights Reserved.
  */
 package org.mulgara.resolver.spi;

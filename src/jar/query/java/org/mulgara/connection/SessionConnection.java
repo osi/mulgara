@@ -165,7 +165,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
   /**
    * Starts and commits transactions on this connection, by turning the autocommit
    * flag on and off. 
-   * @param autocommit <code>true</code> if the flag is to be on.
+   * @param autoCommit <code>true</code> if the flag is to be on.
    * @throws QueryException The session could not change state.
    */
   public void setAutoCommit(boolean autoCommit) throws QueryException {
@@ -246,7 +246,8 @@ public class SessionConnection extends CommandExecutor implements Connection {
   /**
    * Sets the session information for this connection
    * @param session The session to set to.
-   * @param securityDomainURI The security domain to use for the session.
+   * @param securityDomainUri The security domain to use for the session.
+   * @param serverUri The server the session is connected to.
    */
   private void setSession(Session session, URI securityDomainUri, URI serverUri) {
     this.session = session;

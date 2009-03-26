@@ -38,7 +38,7 @@ public class BlankNode implements Node {
 
   /**
    * Get the label for this node.
-   * @return 
+   * @return The label for this node.
    */
   public String getLabel() {
     return label;

@@ -78,7 +78,7 @@ public class Load extends DataInputTx {
    * @param graphURI The URI of the graph to receive the data.
    * @param stream The local input stream that is the source of data to load.
    * @param contentType the content type for the stream.
-   * @param fileUri
+   * @param file A string form of the uri of the file to load.
    */
   public Load(URI graphURI, InputStream stream, MimeType contentType, String file) {
     this(toUri(file), graphURI, true);
@@ -140,8 +140,8 @@ public class Load extends DataInputTx {
 
   /**
    * Attempt to turn a filename into a URI. If unsuccessful return null.
-   * @param filename
-   * @return
+   * @param filename The path for a file.
+   * @return The URI for the file, or null if the filename could not be converted.
    */
   private static URI toUri(String filename) {
     if (filename == null) return null;

@@ -51,7 +51,7 @@ import org.mulgara.store.tuples.AbstractTuples;
 import org.mulgara.store.tuples.Tuples;
 
 /**
- * Parses an {@link InputStream} into {@link Statements}.
+ * Parses an {@link java.io.InputStream} into {@link Statements}.
  *
  * This particular implementation is complicated by the need to adapt the Jena
  * N3 <q>push</q> parser to be a <q>pull</q> parser instead.

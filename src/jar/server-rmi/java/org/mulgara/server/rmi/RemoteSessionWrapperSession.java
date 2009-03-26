@@ -112,7 +112,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   /**
    * Wrap a remote session to make it appear as a local session.
    * @param remoteSession the wrapped remote session.
-   * @param The server the session is connecting to.
+   * @param serverURI The server the session is connecting to.
    * @throws IllegalArgumentException if <var>remoteSession</var> is <code>null</code>
    */
   protected RemoteSessionWrapperSession(RemoteSession remoteSession, URI serverURI) {

@@ -70,24 +70,19 @@ import org.mulgara.util.StringToLongMap;
 import org.mulgara.util.TempDir;
 
 /**
- * This class parses N3 data. It is implemented as a {@link Runnable} to allow it to be running in
- * the background filling a queue, while a consumer thread drains the queue.
+ * <p>This class parses N3 data. It is implemented as a {@link Runnable} to allow it to be running in
+ * the background filling a queue, while a consumer thread drains the queue.</p>
  *
  * <p>Because ResolverSession (and the underlying StringPoolSession) may not be accessed
  * concurrently from multiple threads, there is some extra complication when creating blank nodes,
  * whereby blank-node instances are created in the parser thread but their id's are allocated later
- * in the app-thread.
+ * in the app-thread.</p>
  *
  * @created 2004-04-02
  * @author <a href="http://staff.pisoftware.com/anewman">Andrew Newman</a>
  * @author <a href="http://staff.pisoftware.com/davidm">David Makepeace</a>
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- * @version $Revision: 1.8 $
- * @modified $Date: 2005/01/05 04:58:02 $ @maintenanceAuthor $Author: newmana $
- * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
- * @copyright &copy; 2004 <a href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</a>
- * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
+ * @copyright &copy; 2004 <a href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</a>
  */
 class Parser extends Thread implements N3ParserEventHandler {
   /** Logger. */
@@ -156,7 +151,7 @@ class Parser extends Thread implements N3ParserEventHandler {
   private URI baseURI;
 
   /**
-   * Map of <code>@prefix</code> directives.
+   * Map of <code>prefix</code> directives.
    *
    * Keys are {@link String}s of the form <code>p3p:</code>.
    * Values are also {@link String}s, and of the form

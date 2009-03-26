@@ -170,8 +170,8 @@ public class RmiSessionFactory implements SessionFactory {
   }
 
   /**
-   * Factory method. The session generated will be an unauthenticated (<q>guest
-   * </q>) session. To authenticate it, the {@link Session#login} method must be
+   * Factory method. The session generated will be an unauthenticated (&quot;guest
+   * &quot;) session. To authenticate it, the {@link Session#login} method must be
    * used.
    *
    * @return an unauthenticated session

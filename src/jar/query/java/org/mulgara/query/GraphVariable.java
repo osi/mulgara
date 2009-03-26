@@ -46,7 +46,7 @@ public class GraphVariable implements Graph {
   /**
    * Construct a model from a {@link URL}.
    *
-   * @param uri the {@link URI} of the model to query
+   * @param variable The variable this expression represents.
    * @throws IllegalArgumentException if <var>url</var> is <code>null</code>
    */
   public GraphVariable(Variable variable) {

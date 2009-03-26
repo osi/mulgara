@@ -70,7 +70,7 @@ public final class SPDateTimeImpl extends AbstractSPTypedLiteral {
 
   /**
    * Creates a dateTime using a LexicalDateTime.
-   * @param date A {@link java.util.Date} representing the dateTime.
+   * @param dateTime A {@link java.util.Date} representing the dateTime.
    */
   SPDateTimeImpl(LexicalDateTime dateTime) {
     super(TYPE_ID, TYPE_URI);

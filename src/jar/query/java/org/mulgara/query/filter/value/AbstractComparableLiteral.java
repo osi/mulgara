@@ -84,7 +84,7 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
    * {@inheritDoc}
    * This method will only return <code>true</code> when the elements are identical.
    * Since this object is a literal, then an incorrect comparison will throw an exception.
-   * {@link http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal}
+   * See: <a href="http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal">http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal</a>
    * <em>produces a type error if the arguments are both literal but are not the same RDF term</em>
    */
   public boolean equals(RDFTerm v) throws QueryException {
@@ -115,7 +115,7 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
    *   <li>XSD strings</li>
    * </ul>
    * Simple strings and numbers are handled elsewhere.
-   * @param vl The other value literal to be compared against.
+   * @param term The other value literal to be compared against.
    * @return <code>true</code> if direct comparison is allowed between these types.
    * @throws QueryException If there is a data error accessing the types.
    */
@@ -134,7 +134,7 @@ public abstract class AbstractComparableLiteral extends AbstractComparable imple
   /**
    * Compares the type of this object to the type of another object. This takes into account
    * that Simple Literals claim to have a string type, when they have no type at all.
-   * @param vl The object to test.
+   * @param term The object to test.
    * @return <code>true</code> if the types are exactly the same. If both types are strings,
    *   then both objects have to be typed literals, or untyped literals.
    * @throws QueryException If there is an error accessing the type data.

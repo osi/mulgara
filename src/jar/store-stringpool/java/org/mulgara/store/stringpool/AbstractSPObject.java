@@ -209,7 +209,7 @@ public abstract class AbstractSPObject implements SPObject {
    * Utility for long comparisons
    * @param a The first long value
    * @param b The second long value
-   * @return +1 if a > b, -1 if a < b, 0 if a == b
+   * @return +1 if a &gt; b, -1 if a &lt; b, 0 if a == b
    */
   public static final int compare(long a, long b) {
     return a == b ? 0 : (a < b ? -1 : 1);

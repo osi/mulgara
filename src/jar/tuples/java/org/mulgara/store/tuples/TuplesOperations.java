@@ -422,7 +422,7 @@ public abstract class TuplesOperations {
 
   /**
    * Flattens any nested joins to allow polyadic join operations.
-   * @param A list of Tuples which may in turn be nested operations.
+   * @param operands A list of Tuples which may in turn be nested operations.
    * @return A flattened list of flattened Tuples. 
    */
   private static List<Tuples> flattenOperands(List<? extends Tuples> operands) throws TuplesException {

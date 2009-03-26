@@ -149,7 +149,8 @@ public class FullTextStringIndex {
    * Create a new FullTextStringIndex object.
    *
    * @param indexerCache the indexer-cache to use to get the indexers
-   * @param newEnableReverseTextIndex true if you can begin Lucene queries with wildcards.
+   * @param forWrites whether to acquire an index writer
+   * @param enableReverseTextIndex true if you can begin Lucene queries with wildcards.
    * @throws FullTextStringIndexException on failure to obtain an index reader or writer
    */
   public FullTextStringIndex(LuceneIndexerCache indexerCache, boolean forWrites,
@@ -657,7 +658,7 @@ public class FullTextStringIndex {
    *
    * @param subject   the subject; may be null
    * @param predicate the predicate; may be null
-   * @param literal   literal to be searched via the analyzer; may be null
+   * @param object   literal to be searched via the analyzer; may be null
    * @return the maximum number of documents
    * @throws FullTextStringIndexException if an error occurred
    */

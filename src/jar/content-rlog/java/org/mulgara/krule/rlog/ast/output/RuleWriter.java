@@ -44,8 +44,8 @@ public class RuleWriter extends XMLFragmentWriter {
   public Collection<Rule> rules;
 
   /**
-   * Creates a new writer for a collection of variables.
-   * @param vars The variables to be written.
+   * Creates a new writer for a collection of rules.
+   * @param rules The rules to be written.
    */
   public RuleWriter(Collection<Rule> rules) {
     this.rules = rules;

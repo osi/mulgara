@@ -170,7 +170,7 @@ public final class SPDoubleImpl extends AbstractSPTypedLiteral implements SPDoub
 
 
   /**
-   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(java.math.BigInteger)
+   * @see org.mulgara.store.stringpool.xa.SPNumber#numericalCompareTo(BigDecimal)
    */
   public int numericalCompareTo(BigDecimal n) {
     double dn = n.doubleValue();

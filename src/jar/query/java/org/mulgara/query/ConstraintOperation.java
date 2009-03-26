@@ -35,7 +35,7 @@ import java.util.*;
 
 /**
  * A constraint expression composed of two subexpressions and a dyadic operator.
- * Implements {@link Transformable}.
+ * Can be transformed.
  *
  * @created 2001-08-12
  *

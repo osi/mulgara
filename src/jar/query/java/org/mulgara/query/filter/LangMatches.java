@@ -18,7 +18,7 @@ import org.mulgara.query.filter.value.ValueLiteral;
 /**
  * The lang matches a language pattern.
  * This is a rudimentary implementation that is equivalent to the Jena langMatch test.
- * TODO: fully implement RFC 4647: {@link http://www.ietf.org/rfc/rfc4647.txt}
+ * TODO: fully implement RFC 4647: <a href="http://www.ietf.org/rfc/rfc4647.txt">http://www.ietf.org/rfc/rfc4647.txt</a>
  *
  * @created Mar 8, 2008
  * @author Paul Gearon

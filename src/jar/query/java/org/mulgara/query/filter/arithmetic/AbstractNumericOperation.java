@@ -36,7 +36,7 @@ public abstract class AbstractNumericOperation extends AbstractComparable implem
   /** @see org.mulgara.query.filter.value.ComparableExpression#getValue() */
   public Number getValue() throws QueryException { return getNumber(); }
 
-  /** @see org.mulgara.query.filter.RDFTerm#equals() */
+  /** @see org.mulgara.query.filter.RDFTerm#equals(RDFTerm) */
   public boolean equals(RDFTerm v) throws QueryException { return compare(getNumber(), v.getValue()) == 0; }
 
   /** @see org.mulgara.query.filter.RDFTerm#isBlank() */
@@ -51,10 +51,10 @@ public abstract class AbstractNumericOperation extends AbstractComparable implem
   /** @see org.mulgara.query.filter.RDFTerm#isURI() */
   public boolean isURI() throws QueryException { return false; }
 
-  /** @see org.mulgara.query.filter.RDFTerm#sameTerm() */
+  /** @see org.mulgara.query.filter.RDFTerm#sameTerm(RDFTerm) */
   public boolean sameTerm(RDFTerm v) throws QueryException { return getNumber().equals(v.getValue()); }
 
-  /** @see org.mulgara.query.filter.Filter#test() */
+  /** @see org.mulgara.query.filter.Filter#test(Context) */
   public boolean test(Context context) throws QueryException {
     setCurrentContext(context);
     return getNumber().doubleValue() != 0.0;

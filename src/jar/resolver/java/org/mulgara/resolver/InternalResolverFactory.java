@@ -49,8 +49,8 @@ import org.mulgara.resolver.spi.ResolverSession;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class InternalResolverFactory implements ResolverFactory
-{
+class InternalResolverFactory implements ResolverFactory {
+
   /**
    * The preallocated node for <code>rdf:type</code>.
    */
@@ -78,9 +78,9 @@ class InternalResolverFactory implements ResolverFactory
    *
    * @param resolverFactory  the instance to wrap, never <code>null</code>
    * @param rdfType  the preallocated node for <code>rdf:type</code>, or
-   *   {@link NodePool#NONE} if unavailable
+   *   {@link org.mulgara.store.nodepool.NodePool#NONE} if unavailable
    * @param systemModel  the preallocated node for the system model
-   *   (<code>#</code>), or {@link NodePool#NONE} if unavailable
+   *   (<code>#</code>), or {@link org.mulgara.store.nodepool.NodePool#NONE} if unavailable
    */
   InternalResolverFactory(ResolverFactory resolverFactory,
                           long            rdfType,

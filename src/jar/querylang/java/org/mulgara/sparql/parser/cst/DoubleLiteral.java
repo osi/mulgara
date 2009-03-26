@@ -30,7 +30,7 @@ public class DoubleLiteral implements NumericLiteral {
 
   /**
    * Constructs the literal from a string image.
-   * @param value The string image of the value for this literal
+   * @param s The string image of the value for this literal
    */
   public DoubleLiteral(String s) {
     this.value = Double.parseDouble(s);

@@ -53,7 +53,7 @@ public interface SystemResolver extends Resolver, ResolverSession
   /**
    * Informs the system resolver of the metadata it uses for managing data.
    * @param systemGraphNode The node for the system graph.
-   * @param rdfTypeNode The node representing <rdf:type>.
+   * @param rdfTypeNode The node representing rdf:type.
    * @param systemGraphTypeNode The node used for the SystemResolver graph type.
    */
   public void initializeSystemNodes(long systemGraphNode, long rdfTypeNode, long systemGraphTypeNode);

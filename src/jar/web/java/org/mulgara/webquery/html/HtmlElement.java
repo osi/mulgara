@@ -211,7 +211,7 @@ public abstract class HtmlElement {
    * Create a string of spaces for indenting.
    * @param i The number of indents to use.
    * @return A string of spaces, equal to i * {@link #INDENT_CHARS}, or <code>null</code>
-   *         if i < 0.
+   *         if i &lt; 0.
    */
   private static String generateIndent(int i) {
     if (i < 0) return null;

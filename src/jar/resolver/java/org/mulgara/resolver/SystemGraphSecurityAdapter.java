@@ -33,10 +33,10 @@ import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.nodepool.NodePool;
 
 /**
- * This {@link SecurityAdapter} enforces the sanctity of the system model
+ * This {@link org.mulgara.resolver.spi.SecurityAdapter} enforces the sanctity of the system model
  * (<code>#</code>).
  *
- * A {@link Session} may only modify the contents of the system model
+ * A {@link org.mulgara.server.Session} may only modify the contents of the system model
  * indirectly, via the <code>backup</code>, <code>create</code>,
  * <code>drop</code> and <code>restore</code> methods.
  *
@@ -51,8 +51,7 @@ import org.mulgara.store.nodepool.NodePool;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-class SystemGraphSecurityAdapter extends NullSecurityAdapter
-{
+class SystemGraphSecurityAdapter extends NullSecurityAdapter {
   /**
    * The preallocated node representing the system model.
    */

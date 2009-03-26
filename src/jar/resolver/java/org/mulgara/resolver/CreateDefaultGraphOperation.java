@@ -26,7 +26,8 @@ import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
 
 /**
- * An {@link Operation} that implements the {@link Session#createDefaultGraph} method.
+ * An {@link Operation} that implements the
+ * {@link org.mulgara.resolver.DatabaseSession#createDefaultGraph(URI, URI)} method.
  *
  * @created May 8, 2008
  * @author Paul Gearon

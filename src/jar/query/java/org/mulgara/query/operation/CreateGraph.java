@@ -75,7 +75,7 @@ public class CreateGraph extends ServerCommand {
 
   /**
    * Perform the action of creating the graph.
-   * @param The connection to a session to create the graph in.
+   * @param conn The connection to a session to create the graph in.
    * @return Text describing the outcome.
    */
   public Object execute(Connection conn) throws QueryException {

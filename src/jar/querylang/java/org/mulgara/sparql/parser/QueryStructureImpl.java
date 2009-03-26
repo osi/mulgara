@@ -269,7 +269,7 @@ class QueryStructureImpl implements QueryStructure {
    * Create a new IRI based on a prefixed name.Note that this implementation
    * only accepts URIs, and not the more complete IRI.
    * @param r The string containing the image of the IRI
-   * @returnA new {@link org.mulgara.sparql.parser.cst.IRIReference} for the string image.
+   * @return A new {@link org.mulgara.sparql.parser.cst.IRIReference} for the string image.
    * @throws ParseException The r parameter was not a syntactically valid URI.
    */
   IRIReference newPrefixedName(String r) throws ParseException {

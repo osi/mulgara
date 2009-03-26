@@ -62,7 +62,7 @@ public class GraphAnswer implements Answer, Serializable {
 
   /**
    * Constructs a new BooleanAnswer.
-   * @param result The result this answer represents.
+   * @param rawAnswer The result this answer represents.
    */
   public GraphAnswer(Answer rawAnswer) {
     int cols = rawAnswer.getNumberOfVariables();

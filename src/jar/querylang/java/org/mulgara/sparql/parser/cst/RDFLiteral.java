@@ -75,7 +75,7 @@ public class RDFLiteral implements Node, PrimaryExpression, LogicExpression {
   /**
    * Constructor for a typed literal.
    * @param value The literal data.
-   * @param datatype The type of the literal.
+   * @param language The language code for the literal.
    */
   public RDFLiteral(String value, String language) {
     this.value = unescape(value);

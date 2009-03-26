@@ -47,9 +47,9 @@ class RemoteXAResourceWrapperXAResource implements XAResource, ResourceManagerIn
   private RemoteXAResource remoteResource;
 
   /**
-   * Wrap a {@link RemoteAnswer} to make it into an {@link Answer}.
+   * Wrap a {@link RemoteAnswer} to make it into an {@link org.mulgara.query.Answer}.
    *
-   * @param remoteAnswer  the instance to wrap
+   * @param remoteResource  the instance to wrap
    * @throws IllegalArgumentException  if <var>remoteAnswer</var> is <code>null</code>
    */
   RemoteXAResourceWrapperXAResource(RemoteXAResource remoteResource) throws RemoteException {

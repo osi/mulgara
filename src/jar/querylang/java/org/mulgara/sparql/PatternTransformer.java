@@ -28,7 +28,7 @@ import org.mulgara.query.filter.Filter;
 import org.mulgara.query.filter.value.Bool;
 
 /**
- * This object transforms a {@link ConstraintExpression} into a minimized {@link ConstraintExpresion}.
+ * This object transforms a {@link ConstraintExpression} into a minimized {@link ConstraintExpression}.
  *
  * @created May 06, 2008
  * @author Paul Gearon
@@ -66,7 +66,7 @@ public class PatternTransformer {
 
   /**
    * Utility method to add a transformer to the map, keyed on the class it transforms.
-   * @param mapper The mapper to add to the map.
+   * @param tx The transformer to add to the map.
    */
   static void addToMap(Transformer<?> tx) {
     txMap.put(tx.getTxType(), tx);

@@ -27,7 +27,8 @@ public class BicSameTerm extends AbstractBinaryOperator implements BuiltInCall, 
 
   /**
    * Construct an invocation to the STR function
-   * @param operand The operand for the function
+   * @param op1 The first operand for the function
+   * @param op2 The second operand for the function
    */
   public BicSameTerm(Expression op1, Expression op2) {
     super(op1, op2);

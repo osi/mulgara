@@ -29,7 +29,7 @@ public class IsUriFn extends AbstractBooleanFn {
 
   /**
    * Create a function for testing a variable
-   * @param The variable to test
+   * @param operand The variable to test
    */
   public IsUriFn(RDFTerm operand) {
     super(operand);

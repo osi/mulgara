@@ -59,8 +59,8 @@ public class AxiomGenerator extends TripleGenerator {
 
 
   /**
-   * Creates a new writer for a collection of variables.
-   * @param vars The variables to be written.
+   * Creates a new writer for a collection of axioms.
+   * @param axioms The axioms to be written.
    * @throws LocalizeException If localized nodes could not be accessed.
    */
   public AxiomGenerator(Collection<Axiom> axioms, ResolverSession resolverSession) throws LocalizeException {

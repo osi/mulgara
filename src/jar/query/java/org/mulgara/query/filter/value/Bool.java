@@ -44,7 +44,7 @@ public class Bool extends TypedLiteral {
 
   /**
    * Creates the value to wrap the boolean
-   * @param n The boolean to wrap
+   * @param b The boolean to wrap
    */
   public Bool(Boolean b) {
     super(b, TYPE);

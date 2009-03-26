@@ -122,11 +122,10 @@ class BackupOperation extends OutputOperation implements BackupConstants, Operat
   /**
    * Dumps the entire database to the specified Writer.
    *
-   * @param stringPool StringPool
-   * @param resolver Resolver
-   * @param metadata DatabaseMetadata
-   * @param writer Writer
-   * @throws Exception
+   * @param systemResolver The system resolver for the database.
+   * @param metadata The Metadata for the database.
+   * @param writer Writer The output to write to.
+   * @throws Exception Due to any error accessing the database or writing to the writer.
    */
   private void backupDatabase(SystemResolver systemResolver, DatabaseMetadata metadata, Writer writer)
       throws Exception {

@@ -649,7 +649,7 @@ class RestoreOperation extends TuplesBasedOperation implements BackupConstants, 
    * @param n2nMap the IntFile that maps from backup file node IDs to current
    *      store node IDs.
    * @param oldNode the backup file node ID.
-   * @param ResolverSession Used to allocate new nodes.
+   * @param resolverSession Used to allocate new nodes.
    * @return the new node ID that the specified backup file node ID maps to.
    * @throws Exception EXCEPTION TO DO
    */

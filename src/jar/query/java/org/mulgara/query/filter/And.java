@@ -41,7 +41,7 @@ public class And extends NAryOperatorFilter {
    * Returns the head of the list ANDed with the product of the remainder of the list.
    * <code>false</code> and Exception is <code>false</code>.
    * <code>true</code> and Exception is Exception.
-   * @see org.mulgara.query.filter.Filter#test()
+   * @see org.mulgara.query.filter.Filter#test(Context)
    */
   boolean testList(Context context, List<Filter> filters) throws QueryException {
     Filter head = filters.get(0);

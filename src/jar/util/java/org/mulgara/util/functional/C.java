@@ -37,7 +37,7 @@ public class C {
   /**
    * Creates a new list by applying an operator to each element of an initial list.
    * The final result meets the condition:
-   * <pre>result.get(i) == op( args.get(i) )   for 0 <= i < args.size()</pre>
+   * <pre>result.get(i) == op( args.get(i) )   for 0 &lt;= i &lt; args.size()</pre>
    * The operation in op may throw an exception.
    * @param <T1> The type of the elements in the arg list, which is also the
    *             argument type for the operation.
@@ -67,7 +67,7 @@ public class C {
   /**
    * Creates a new list by applying an operator to each element of an initial list.
    * The final result meets the condition:
-   * <pre>result.get(i) == op( args.get(i) )   for 0 <= i < args.size()</pre>
+   * <pre>result.get(i) == op( args.get(i) )   for 0 &lt;= i &lt; args.size()</pre>
    * The operation in op may <em>not</em> throw an exception.
    * @param <T1> The type of the elements in the arg list, which is also the
    *             argument type for the operation.

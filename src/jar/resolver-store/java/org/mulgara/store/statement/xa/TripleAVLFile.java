@@ -2286,7 +2286,7 @@ public final class TripleAVLFile {
        * Constructs the Tuples to come from the store.
        * @param startTriple The first triple for this tuples.
        * @param endTriple The first triple pattern that is NOT part of this tuples.
-       *                  This may not appear in the store, but if anything is <= this triple
+       *                  This may not appear in the store, but if anything is &lt;= this triple
        *                  then it is NOT in the tuples.
        * @param prefixLength The number of elements used to identify the requires triples.
        * @throws IOException If there was an I/O error accessing the triples data in the store.

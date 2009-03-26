@@ -57,8 +57,9 @@ public class AnnotatedNode implements Node {
   }
 
   /**
-   * Create an annotated subject node from a collection.
-   * @param list The RDF collection.
+   * Create an annotated subject node from a set of properties.
+   * @param subject The subject for every triple in the list.
+   * @param properties The properties and values for the subject.
    */
   public AnnotatedNode(Node subject, PropertyList properties) {
     this.subject = subject;

@@ -24,7 +24,7 @@ import org.mulgara.connection.Connection;
 public class NullOp extends LocalCommand {
 
   /**
-   * @see org.mulgara.operation.Command#isUICommand()
+   * @see org.mulgara.query.operation.Command#isUICommand()
    */
   public boolean isUICommand() {
     return false;

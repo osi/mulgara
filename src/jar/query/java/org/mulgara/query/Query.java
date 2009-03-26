@@ -269,7 +269,7 @@ public class Query implements Cloneable, Serializable, Command {
   /**
    * Accessor for the <code>variableList</code> property.
    *
-   * @return a {@link List} containing one or more {@link Variable}s, {@link ContantValue}s,
+   * @return a {@link List} containing one or more {@link Variable}s, {@link ConstantValue}s,
    * {@link Count}s or {@link Subquery}
    */
   public List<SelectElement> getVariableList() {

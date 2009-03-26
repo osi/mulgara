@@ -45,7 +45,7 @@ public class PartialColumnComparator implements RowComparator {
    * Compares the LHS and RHS parameters as tuples which are to be compared in column order.
    * @param lhs The left hand side operand.
    * @param rhs The right hand side operand.
-   * @return -1 if lhs<rhs, +1 if lhs>rhs, 0 otherwise.
+   * @return -1 if lhs &lt; rhs, +1 if lhs &gt; rhs, 0 otherwise.
    */
   public int compare(long[] lhs, long[] rhs) {
     if (lhs.length != rhs.length) throw new IllegalArgumentException("Tuples must be the same length for comparison.");
@@ -65,7 +65,7 @@ public class PartialColumnComparator implements RowComparator {
    * The lhs may be shorter than the rhs, as it can be for a beforeFirst search.
    * @param lhs An array to be treated as a Tuples row.
    * @param rhs A Tuples, with the current row to be compared.
-   * @return -1 if lhs<rhs, +1 if lhs>rhs, 0 otherwise.
+   * @return -1 if lhs &lt; rhs, +1 if lhs &gt; rhs, 0 otherwise.
    * @throws TuplesException If there is an error accessing the Tuples.
    */
   public int compare(long[] lhs, Tuples rhs) throws TuplesException {
@@ -98,7 +98,7 @@ public class PartialColumnComparator implements RowComparator {
    * Compares in column order the current rows of two Tuples.
    * @param lhs A Tuples with the current row to be compared.
    * @param rhs A Tuples with the current row to be compared.
-   * @return -1 if lhs<rhs, +1 if lhs>rhs, 0 otherwise.
+   * @return -1 if lhs &lt; rhs, +1 if lhs &gt; rhs, 0 otherwise.
    * @throws TuplesException If there is an error accessing the Tuples.
    */
   public int compare(Tuples lhs, Tuples rhs) throws TuplesException {

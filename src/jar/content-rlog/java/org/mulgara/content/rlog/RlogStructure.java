@@ -683,7 +683,7 @@ public class RlogStructure {
 
   /**
    * Scans nodes that are URIReferences, and adds them to the list of namespaces if not already there.
-   * @param r A node that may be a reference to be scanned.
+   * @param n A node that may be a reference to be scanned.
    */
   void addToNamespace(Node n) {
     if (!(n instanceof URIReference)) return;

@@ -41,37 +41,22 @@ import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.resolver.spi.*;
 
 /**
- * An {@link Operation} that implements the {@link Session#insert} and
- * {@link Session#delete} methods.
+ * An {@link Operation} that implements the {@link org.mulgara.server.Session#insert(URI, Query)} and
+ * {@link org.mulgara.server.Session#delete(URI, Query)} methods.
  *
  * The operation is really two closely-related operations combined into one
  * class: modification by a specified set of {@link Triple}s, and modification
  * by the result of a specified {@link Query}.
  *
  * @created 2004-11-24
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:24 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
- *
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class ModifyGraphOperation implements Operation
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(ModifyGraphOperation.class.getName());
+class ModifyGraphOperation implements Operation {
+
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(ModifyGraphOperation.class.getName());
 
   /**
    * The URI of the model to be removed.

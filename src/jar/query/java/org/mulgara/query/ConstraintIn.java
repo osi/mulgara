@@ -73,7 +73,9 @@ public class ConstraintIn implements ConstraintExpression {
     return constraint;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * @return The graph described in this constraint
+   */
   public ConstraintElement getModel() {
     return graph;
   }
@@ -85,7 +87,9 @@ public class ConstraintIn implements ConstraintExpression {
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return <code>true</code> If the constraint wrapped by this constraint is a ConstraintIs.
+   */
   public boolean isInnerConstraintIs() {
     return constraint instanceof ConstraintIs;
   }

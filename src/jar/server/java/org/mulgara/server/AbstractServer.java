@@ -218,8 +218,9 @@ public abstract class AbstractServer implements ServerMBean {
 
   /**
    * Allow access by subclasses to the session factory.
-   * @return <code>null</code> in the {@link #UNINITIALIZED} state, the {@link SessionFactory}
-   *         instance otherwise
+   * @return <code>null</code> in the
+   *         {@link org.mulgara.server.ServerMBean.ServerState#UNINITIALIZED} state,
+   *         the {@link SessionFactory} instance otherwise
    */
   public SessionFactory getSessionFactory() {
     return sessionFactory;
@@ -286,7 +287,7 @@ public abstract class AbstractServer implements ServerMBean {
 
   /**
    * Make the server available over the network. If successful the new state
-   * should be {@link #STARTED}.
+   * should be {@link org.mulgara.server.ServerMBean.ServerState#STARTED}.
    * @throws IllegalStateException The service is not configured, or is already running.
    * @throws Exception A service specific error occurred during startup.
    */
@@ -335,7 +336,7 @@ public abstract class AbstractServer implements ServerMBean {
 
   /**
    * Make the server unavailable over the network. If successful the new state
-   * will be {@link #STOPPED}.
+   * will be {@link org.mulgara.server.ServerMBean.ServerState#STOPPED}.
    * @throws IllegalStateException If the server is not running
    * @throws Exception There was a service specific error in shutting down.
    */

@@ -441,8 +441,8 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
    *
    * @param graph  the local node of a graph
    * @return the local node representing the type of the <var>graph</var>, or
-   *   {@link NodePool#NONE} if the <var>graph</var> isn't stored within the
-   *   system
+   *   {@link org.mulgara.store.nodepool.NodePool#NONE} if the <var>graph</var>
+   *   isn't stored within the system
    * @throws QueryException if the graph type can't be determined
    */
   private URI findGraphTypeURI(long graph) throws QueryException, GlobalizeException {

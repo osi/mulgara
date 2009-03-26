@@ -43,8 +43,7 @@ import org.mulgara.store.nodepool.NodePool;
 import org.mulgara.util.QueryParams;
 
 /**
- * An {@link Operation} that implements the {@link Session#createModel} method.
- * TODO: Rename to CreateGraphOperation.
+ * An {@link Operation} that implements the {@link org.mulgara.server.Session#createModel(URI, URI)} method.
  *
  * @created 2004-11-24
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
@@ -246,7 +245,7 @@ class CreateGraphOperation implements Operation {
   /**
    * Test if the given URI is in a scheme which differentiates graphs based on fragments
    * and there is no sub-graph name encoded in the URI.
-   * @param graphUri The URI to test for the graph.
+   * @param u The URI to test for the graph.
    * @return <code>true</code> only of the URI is in the known graph schemes.
    */
   private static boolean fragmentScheme(URI u) {

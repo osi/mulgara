@@ -30,7 +30,7 @@ public class IntegerLiteral implements NumericLiteral {
 
   /**
    * Constructs the literal from a string image.
-   * @param value The string image of the value for this literal
+   * @param s The string image of the value for this literal
    */
   public IntegerLiteral(String s) {
     this.value = Integer.parseInt(s);

@@ -52,7 +52,9 @@ public abstract class AbstractComparable extends AbstractContextOwner implements
     return !lessThan(v);
   }
 
-  /** {@inheritDoc} */
+  /**
+   * Equality comparison used for other objects that are explicitly comparable.
+   */
   public boolean equals(ComparableExpression v) throws QueryException {
     return compare(getValue(), v.getValue()) == 0;
   }

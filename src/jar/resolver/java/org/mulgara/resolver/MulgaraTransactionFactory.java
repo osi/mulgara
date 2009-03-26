@@ -250,7 +250,7 @@ public abstract class MulgaraTransactionFactory {
     }
   }
 
-  /** 
+  /**
    * Acquire the mutex. The mutex is re-entrant, but {@link #releaseMutex} must be called as many
    * times as this is called.
    *
@@ -258,8 +258,9 @@ public abstract class MulgaraTransactionFactory {
    * can reliably get the current mutex-owner, and we use a lock around the mutex acquisition and
    * release to do atomic tests and settting of additional variables associated with the mutex.
    * 
+   * @param <T> the type of exception to throw on failure
    * @param timeout how many milliseconds to wait for the mutex, or 0 to wait indefinitely
-   * @param T       the type of exception to throw on failure
+   * @param exc An exception class that is the type that will be thrown in case of failure.
    * @throws T if the mutex could not be acquired, either due to a timeout or due to an interrupt
    */
   public final <T extends Throwable> void acquireMutex(long timeout, Class<T> exc) throws T {
@@ -294,8 +295,9 @@ public abstract class MulgaraTransactionFactory {
   /** 
    * Acquire the mutex, interrupting the existing holder if there is one. 
    * 
+   * @param <T> the type of exception to throw on failure
    * @param timeout how many milliseconds to wait for the mutex, or 0 to wait indefinitely
-   * @param T       the type of exception to throw on failure
+   * @param exc An exception class that is the type that will be thrown in case of failure.
    * @throws T if the mutex could not be acquired, either due to a timeout or due to an interrupt
    * @see #acquireMutex
    */

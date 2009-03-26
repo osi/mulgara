@@ -39,7 +39,7 @@ import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
 
 /**
- * An {@link Operation} that implements the {@link Session#query} method.
+ * An {@link Operation} that implements the {@link org.mulgara.server.Session#query(Query)} method.
  *
  * @created 2004-11-25
  *
@@ -50,8 +50,7 @@ import org.mulgara.resolver.spi.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class QueryOperation implements Operation
-{
+class QueryOperation implements Operation {
   /** Logger. */
   // private static final Logger logger = Logger.getLogger(QueryOperation.class.getName());
 
@@ -75,7 +74,7 @@ class QueryOperation implements Operation
   //
 
   /**
-   * Constructor for {@link Session#query(Query)} calls.
+   * Constructor for {@link org.mulgara.server.Session#query(Query)} calls.
    *
    * @param query  the query to be evaluated, never <code>null</code>
    * @param databaseSession  never <code>null</code>
@@ -100,16 +99,14 @@ class QueryOperation implements Operation
   }
 
   /**
-   * Constructor for {@link Session#query(List)} calls.
+   * Constructor for {@link org.mulgara.server.Session#query(List)} calls.
    *
-   * @param queryList  the {@link Query} instances to be evaluated, never
-   *   <code>null</code>
+   * @param queryList  the {@link Query} instances to be evaluated, never <code>null</code>
    * @param databaseSession  never <code>null</code>
    * @throws IllegalArgumentException if <var>queryList</var> or
    *   <var>databaseSession</var> are <code>null</code>
    */
-  QueryOperation(List<Query> queryList, DatabaseSession databaseSession)
-  {
+  QueryOperation(List<Query> queryList, DatabaseSession databaseSession) {
     // Validate "query" parameter
     if (queryList == null) {
       throw new IllegalArgumentException("Null \"query\" parameter");

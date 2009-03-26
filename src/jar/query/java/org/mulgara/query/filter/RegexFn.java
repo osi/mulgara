@@ -42,18 +42,19 @@ public class RegexFn extends BinaryTestFilter {
   private String oldFlags = null;
 
   /**
-   * Creates an equality test operation with default flags
-   * @param lhs The first term to compare
-   * @param rhs The second term to compare
+   * Creates an RegEx test operation with default flags.
+   * @param str The string value to be tested.
+   * @param patternStr The pattern to match the string against.
    */
   public RegexFn(ValueLiteral str, ValueLiteral patternStr) {
     super(str, patternStr);
   }
 
   /**
-   * Creates an equality test operation with default flags
-   * @param lhs The first term to compare
-   * @param rhs The second term to compare
+   * Creates an RegEx test operation with specified flags.
+   * @param str The string value to be tested.
+   * @param patternStr The pattern to match the string against.
+   * @param flagExpression The flags to be used in the expression.
    */
   public RegexFn(ValueLiteral str, ValueLiteral patternStr, ValueLiteral flagExpression) {
     super(str, patternStr);

@@ -294,7 +294,7 @@ public class TqlSession {
   }
 
   /**
-   * Executes a script given by URL name. {@see executeScript} for implementation.
+   * Executes a script given by URL name. See {@link #executeScript(URL)} for implementation.
    * @param script The string for the script URL.
    * @throws MalformedURLException The given script name cannot be represented as a URL.
    */
@@ -483,9 +483,6 @@ public class TqlSession {
 
   /**
    * Initiates a session using the given <code>session</code>
-   * @param session the interactive session to issue commands to
-   * @param in the stream to read commands from
-   * @param out the stream to print responses to
    */
   private void motdInitialization() {
     gui.print("TQL Command Line Interface" + EOL);

@@ -34,8 +34,7 @@ public class KruleWriter extends RDFXMLWriter {
 
   /**
    * Construct a writer for writing Krule RDF/XML files.
-   * @param varWriter The object to write the variables.
-   * @param ruleWriter The object to write the rules.
+   * @param interpreter The object used for parsing the RLog text.
    */
   public KruleWriter(Interpreter interpreter) {
     this.interpreter = interpreter;

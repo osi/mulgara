@@ -38,15 +38,15 @@ import org.mulgara.query.rdf.*;
  *
  * <p>RDF Vocabulary for describing points:
  * <code>
- * <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ * &lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
  *       xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
- *   <geo:Point>
- *     <geo:lat>54.5722</geo:lat>
- *     <geo:long>0.014024</geo:long>
- *   </geo:Point>
- * </rdf:RDF>
+ *   &lt;geo:Point&gt;
+ *     &lt;geo:lat&gt;54.5722&lt;/geo:lat&gt;
+ *     &lt;geo:long&gt;0.014024&lt;/geo:long&gt;
+ *   &lt;/geo:Point&gt;
+ * &lt;/rdf:RDF&gt;
  *
- * (eg. <geo:Point geo:lat="54.5722" geo:long="0.014024"/> )
+ * (eg. &lt;geo:Point geo:lat="54.5722" geo:long="0.014024"/&gt; )
  * </code>
  *
  * @created 2004-11-17

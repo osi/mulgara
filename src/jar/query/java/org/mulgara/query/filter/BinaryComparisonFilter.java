@@ -47,7 +47,7 @@ public abstract class BinaryComparisonFilter extends AbstractFilterValue impleme
   }
 
   /**
-   * @see org.mulgara.query.filter.Filter#test()
+   * @see org.mulgara.query.filter.Filter#test(Context)
    */
   public boolean test(Context context) throws QueryException {
     setCurrentContext(context);

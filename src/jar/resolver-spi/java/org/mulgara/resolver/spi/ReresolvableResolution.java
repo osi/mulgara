@@ -52,7 +52,7 @@ public interface ReresolvableResolution extends Resolution
   /**
    * Reresolve resolution given additional knowledge derived from other constraints in the query.
    *
-   * Note: assign/x and Resolution <=> assign/x and Resolution.reresolve(x).
+   * Note: assign/x and Resolution &lt;=&gt; assign/x and Resolution.reresolve(x).
    *
    * Reresolve is analogous to beta-reduction in the lambda calculus, it is defined as
    * project({this.vars - bindings.vars}, restrict(bindings, this))

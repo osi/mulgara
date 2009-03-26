@@ -85,7 +85,6 @@ public abstract class DataOutputTx extends DataTx {
    * and receive over the connection. Delegates to the {@link #doTx(Connection, OutputStream)}
    * abstract method to send the data over the connection.
    * @param conn The connection to the server.
-   * @return The number of statements inserted.
    * @throws QueryException There was an error working with data at the server end.
    * @throws IOException There was an error transferring data over the network.
    */

@@ -106,7 +106,7 @@ public class QueryResponsePage {
 
   /**
    * Construct this page for responsing to a particular request environment.
-   * @param reqThe request that asked for this page.
+   * @param req The request that asked for this page.
    * @param resp The structure for sending the page back to the client.
    * @param tagMap A map of tags to the values that should replace them
    */
@@ -170,9 +170,8 @@ public class QueryResponsePage {
 
   /**
    * Write a summary for the results of all the executed commands.
-   * @param out The stream to write the results to.
    * @param time The time taken to execute the commands, in milliseconds.
-   * @param size The number of commands executed.
+   * @param nrCommands The number of commands executed.
    */
   private void writeResultSummary(long time, int nrCommands) throws IOException {
     // short circuit if we don't have a summary
@@ -203,7 +202,6 @@ public class QueryResponsePage {
   /**
    * Write a simple result into a row of an existing table.
    * @param cmd The command executed to give this result.
-   * @param result The result for the command cmd.
    * @throws IOException Occurs for an error writing the response.
    */
   private void writeSimpleResult(Command cmd) throws IOException {

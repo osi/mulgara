@@ -29,7 +29,7 @@ public class IsLiteralFn extends AbstractBooleanFn {
 
   /**
    * Create a function for testing if a value it a Literal
-   * @param The variable to test
+   * @param operand The variable to test
    */
   public IsLiteralFn(RDFTerm operand) {
     super(operand);

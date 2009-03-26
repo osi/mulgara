@@ -67,11 +67,11 @@ public interface SableCCInterpreter extends Interpreter {
    *
    * Resolution will treat the token as an XML
    * <a href="http://www.w3.org/TR/REC-xml-names/#ns-qualnames">qualified
-   * names</a> if the {@link #aliasMap} <code>aliasMap</code> contains a key
+   * names</a> if the <code>aliasMap</code> contains a key
    * for the URI scheme part that can be treated as an XML namespace prefix.
    * For example, <kbd>dc:title</kbd> is treated as a qname and mapped to the
    * to the URI <kbd>http://purl.org/dc/elements/1.1/title</kbd>, assuming the
-   * {@link #aliasMap} had an entry mapping <code>"dc"</code> to the Dublin
+   * aliasMap had an entry mapping <code>"dc"</code> to the Dublin
    * Core namespace.
    *
    * @param token  the token to be converted, which should actually be a

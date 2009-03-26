@@ -29,7 +29,7 @@ public class IsBlankFn extends AbstractBooleanFn {
 
   /**
    * Create a function for testing a variable
-   * @param The variable to test
+   * @param operand The variable to test
    */
   public IsBlankFn(RDFTerm operand) {
     super(operand);

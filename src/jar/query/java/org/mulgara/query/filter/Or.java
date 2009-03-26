@@ -41,7 +41,7 @@ public class Or extends NAryOperatorFilter {
    * Returns the head of the list ORed with the sum of the remainder of the list.
    * <code>true</code> or Exception is <code>true</code>.
    * <code>false</code> or Exception is Exception.
-   * @see org.mulgara.query.filter.Filter#test()
+   * @see org.mulgara.query.filter.Filter#test(Context)
    */
   boolean testList(Context context, List<Filter> filters) throws QueryException {
     Filter head = filters.get(0);

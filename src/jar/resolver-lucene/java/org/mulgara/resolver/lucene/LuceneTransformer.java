@@ -44,9 +44,9 @@ import org.mulgara.resolver.spi.SymbolicTransformationException;
  * A query transformer for lucene. This accept constraints like in the following example:
  * <pre>
  *   select $x $score from ... where
- *     $x <mulgara:search> $s in <lucene> and
- *     $s <foo> 'story' in <lucene> and
- *     $s <mulgara:score> $score in <lucene>
+ *     $x &lt;mulgara:search&gt; $s in &lt;lucene&gt; and
+ *     $s &lt;foo&gt; 'story' in &lt;lucene&gt; and
+ *     $s &lt;mulgara:score&gt; $score in &lt;lucene&gt;
  * </pre>
  *
  * @created 2008-09-28
@@ -64,8 +64,8 @@ public class LuceneTransformer extends AbstractSymbolicTransformer {
    * Create a new tranformer to rewrite lucene queries.
    *
    * @param modelTypeURI  the uri of the lucene model type
-   * @param searchPredURI the uri of the search predicate
-   * @param scorePredURI  the uri of the score predicate
+   * @param searchPredUri the uri of the search predicate
+   * @param scorePredUri  the uri of the score predicate
    */
   public LuceneTransformer(URI modelTypeURI, URI searchPredUri, URI scorePredUri) {
     this.modelTypeURI = modelTypeURI;

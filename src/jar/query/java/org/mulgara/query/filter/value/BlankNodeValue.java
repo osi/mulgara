@@ -36,7 +36,7 @@ public class BlankNodeValue implements RDFTerm {
 
   /**
    * Creates the value to wrap the string
-   * @param s The string to wrap
+   * @param node The string to wrap
    */
   public BlankNodeValue(BlankNode node) {
     this.node = node;

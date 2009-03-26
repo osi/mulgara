@@ -130,8 +130,8 @@ public interface ServerMBean {
    * using the {@link #init}, {@link #start}, {@link #stop} and {@link #destroy}
    * methods.
    *
-   * @return The current server state, always one of the values {@link
-   *      #UNINITIALIZED}, {@link #STOPPED} or {@link #STARTED}
+   * @return The current server state, always one of the values
+   *   {@link ServerState#UNINITIALIZED}, {@link ServerState#STOPPED} or {@link ServerState#STARTED}
    */
   public ServerState getState();
 

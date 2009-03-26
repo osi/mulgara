@@ -34,8 +34,8 @@ public class ReferenceWriter extends XMLFragmentWriter {
   public Collection<URIReference> refs;
 
   /**
-   * Creates a new writer for a collection of variables.
-   * @param vars The variables to be written.
+   * Creates a new writer for a collection of references.
+   * @param refs The references to be written.
    */
   public ReferenceWriter(Collection<URIReference> refs) {
     this.refs = refs;

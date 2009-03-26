@@ -33,7 +33,7 @@ public class Not extends AbstractFilterValue implements Filter {
 
   /**
    * Create an inversion of a filter
-   * @param filter The filter to invert
+   * @param operand The filter to invert
    */
   public Not(Filter operand) {
     super(operand);
@@ -41,7 +41,7 @@ public class Not extends AbstractFilterValue implements Filter {
   }
 
   /**
-   * @see org.mulgara.query.filter.Filter#test()
+   * @see org.mulgara.query.filter.Filter#test(Context)
    */
   public boolean test(Context context) throws QueryException {
     setCurrentContext(context);

@@ -55,7 +55,7 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
 
   /**
    * Instantiate a variable.
-   * @param n The boolean to wrap
+   * @param name The boolean to wrap
    */
   public Var(String name) {
     this.name = name;

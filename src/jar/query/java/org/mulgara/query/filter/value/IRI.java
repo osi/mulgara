@@ -37,8 +37,8 @@ public class IRI implements RDFTerm {
   private final URI value;
 
   /**
-   * Creates the value to wrap the string
-   * @param s The string to wrap
+   * Creates the value to wrap the uri.
+   * @param u The URI to wrap
    */
   public IRI(URI u) {
     value = u;

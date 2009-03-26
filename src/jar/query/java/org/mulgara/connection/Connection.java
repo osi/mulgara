@@ -125,7 +125,7 @@ public interface Connection {
   /**
    * Starts and commits transactions on this connection, by turning the autocommit
    * flag on and off. 
-   * @param autocommit <code>true</code> if the flag is to be on.
+   * @param autoCommit <code>true</code> if the flag is to be on.
    * @throws QueryException The session could not change state.
    */
   public void setAutoCommit(boolean autoCommit) throws QueryException;
@@ -152,7 +152,7 @@ public interface Connection {
 
   /**
    * Generic command execution method.
-   * @param The command to execute.
+   * @param cmd The command to execute.
    * @return A status message
    * @throws Exception A general exception catchall
    */

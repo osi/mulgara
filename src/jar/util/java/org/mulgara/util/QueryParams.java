@@ -161,9 +161,8 @@ public class QueryParams {
   }
 
   /**
-   * Retrieves a value for a given parameter.
-   * @param param The parameter name.
-   * @return The decoded string for this value.
+   * Retrieves the names of the parameters in this query.
+   * @return A set of the decoded parameter names.
    */
   public Set<String> getNames() {
     return params.keySet();

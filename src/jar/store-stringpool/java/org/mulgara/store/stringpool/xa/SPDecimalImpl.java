@@ -302,7 +302,7 @@ class SPDecimalBaseImpl extends SPDecimalImpl {
     }
 
     /**
-     * @see org.mulgara.store.stringpool.SPComparator#compare(java.nio.ByteBuffer, java.nio.ByteBuffer)
+     * @see org.mulgara.store.stringpool.SPComparator#compare(ByteBuffer, int, ByteBuffer, int)
      * This comparator WILL compare between xsd:decimal and the extending types
      */
     public int compare(ByteBuffer d1, int subtypeId1, ByteBuffer d2, int subtypeId2) {
@@ -452,7 +452,7 @@ class SPDecimalExtImpl extends SPDecimalImpl {
     }
 
     /**
-     * @see org.mulgara.store.stringpool.SPComparator#compare(java.nio.ByteBuffer, java.nio.ByteBuffer)
+     * @see org.mulgara.store.stringpool.SPComparator#compare(ByteBuffer, int, ByteBuffer, int)
      * This comparator WILL compare between xsd:decimal and the extending types
      */
     public int compare(ByteBuffer d1, int subtypeId1, ByteBuffer d2, int subtypeId2) {

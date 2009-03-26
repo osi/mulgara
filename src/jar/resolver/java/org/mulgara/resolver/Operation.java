@@ -32,7 +32,7 @@ import org.mulgara.resolver.spi.DatabaseMetadata;
 import org.mulgara.resolver.spi.SystemResolver;
 
 /**
- * {@link Operation}s correspond to methods of the {@link Session} interface
+ * {@link Operation}s correspond to methods of the {@link org.mulgara.server.Session} interface
  * which need to be performed in a transactional context.
  *
  * They are created and used by {@link DatabaseSession}.
@@ -46,8 +46,7 @@ import org.mulgara.resolver.spi.SystemResolver;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-interface Operation
-{
+interface Operation {
   /**
    * Perform a transactional operation.
    *

@@ -32,7 +32,7 @@ public class DecimalLiteral implements NumericLiteral {
 
   /**
    * Constructs the literal from a string image.
-   * @param value The string image of the value for this literal
+   * @param s The string image of the value for this literal
    */
   public DecimalLiteral(String s) {
     this.value = new BigDecimal(s);

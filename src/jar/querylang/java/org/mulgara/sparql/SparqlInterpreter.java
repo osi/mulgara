@@ -114,7 +114,7 @@ public class SparqlInterpreter implements Interpreter {
 
   /**
    * Sets the default graphs to use in parsed queries.
-   * @param graph The graph URIs to use as the default graphs. A <code>null</code> value
+   * @param graphUris The graph URIs to use as the default graphs. A <code>null</code> value
    *        is treated the same as an empty list.
    */
   public SparqlInterpreter setDefaultGraphUris(List<URI> graphUris) {

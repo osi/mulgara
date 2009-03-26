@@ -61,7 +61,7 @@ import org.mulgara.store.tuples.Tuples;
  * Parses an {@link InputStream} into {@link Statements}.
  *
  * This particular implementation is complicated by the need to adapt the Jena
- * ARP RDF/XML <q>push</q> parser to be a <q>pull</q> parser instead.
+ * ARP RDF/XML &quot;push&quot; parser to be a &quot;pull&quot; parser instead.
  *
  * @created 2004-04-02
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>

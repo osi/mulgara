@@ -33,7 +33,7 @@ public abstract class AbstractBooleanFn extends AbstractFilterValue implements F
 
   /**
    * Create a function for testing a term
-   * @param The term to test
+   * @param operand The term to test
    */
   public AbstractBooleanFn(RDFTerm operand) {
     super(operand);
@@ -41,7 +41,7 @@ public abstract class AbstractBooleanFn extends AbstractFilterValue implements F
   }
 
   /**
-   * @see org.mulgara.query.filter.Filter#test()
+   * @see org.mulgara.query.filter.Filter#test(Context)
    */
   public boolean test(Context context) throws QueryException {
     setCurrentContext(context);

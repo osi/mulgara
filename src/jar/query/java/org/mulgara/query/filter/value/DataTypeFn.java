@@ -42,7 +42,7 @@ public class DataTypeFn extends AbstractAccessorFn {
     return false;
   }
 
-  /** @see org.mulgara.query.filter.RDFTerm#isIri() */
+  /** @see org.mulgara.query.filter.RDFTerm#isIRI() */
   public boolean isIRI() throws QueryException {
     return true;
   }

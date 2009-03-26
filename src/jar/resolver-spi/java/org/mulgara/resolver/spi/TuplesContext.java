@@ -53,7 +53,7 @@ public class TuplesContext implements Context {
   /**
    * Creates a new context for processing a filter, based on an existing context and a new Tuples.
    * @param tuples The variables and bindings to use in filtering. Not all variables need be bound.
-   * @param TuplesContext An existing context to get session information from.
+   * @param otherContext An existing context to get session information from.
    */
   public TuplesContext(Tuples tuples, TuplesContext otherContext) {
     this.tuples = tuples;

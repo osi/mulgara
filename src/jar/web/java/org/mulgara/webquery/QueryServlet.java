@@ -127,9 +127,7 @@ public class QueryServlet extends MulgaraServlet {
 
 
   /**
-   * Creates the servlet for the named host.
-   * @param hostname The host name to use, or <code>null</code> if this is not known.
-   * @param servername The name of the current server.
+   * Creates the servlet for the current host.
    */
   public QueryServlet() {
     initialized = false;
@@ -608,7 +606,7 @@ public class QueryServlet extends MulgaraServlet {
 
   /**
    * Creates the default graph name for the sample data.
-   * @param The graph name that the user has already set.
+   * @param graphParam The graph name that the user has already set.
    * @return The default graph name to use when no graph has been set.
    */
   private String defaultGraph(String graphParam) {

@@ -26,7 +26,7 @@ import org.mulgara.server.Session;
  * rollbacks through a different method to the standard call path, while the normal
  * call will pass in a {@link org.mulgara.connection.DummyConnection}.
  *
- * After performing a rollback, all connections are removed {@link #cleanup(Iterator)} and
+ * After performing a rollback, all connections are removed and
  * the transaction is closed {@link #stayInTx()}.
  * 
  * @created 2007-08-09

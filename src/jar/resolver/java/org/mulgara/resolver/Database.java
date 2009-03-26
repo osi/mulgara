@@ -83,7 +83,7 @@ import org.mulgara.transaction.TransactionManagerFactory;
  * A database capable of managing and querying RDF models using a collection of
  * {@link ResolverFactory} instances.
  *
- * This class is essentially a transaction manager for the {@link Resolver}s.
+ * This class is essentially a transaction manager for the {@link org.mulgara.resolver.spi.Resolver}s.
  *
  * @created 2004-04-26
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
@@ -95,11 +95,10 @@ import org.mulgara.transaction.TransactionManagerFactory;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class Database implements SessionFactory
-{
+public class Database implements SessionFactory {
+
   /** Logger.  */
-  private static final Logger logger =
-    Logger.getLogger(Database.class.getName());
+  private static final Logger logger = Logger.getLogger(Database.class.getName());
 
   /** Startup Logger - will always have info enabled  */
   private static final Logger startupLogger = Logger.getLogger("Startup");
@@ -108,7 +107,7 @@ public class Database implements SessionFactory
    * Placeholder indicating a nonexistent local node.
    *
    * This is a stopgap measure to deal with the lack of a defined negative
-   * return value from {@link StringPool#findGNode}.
+   * return value from {@link org.mulgara.store.stringpool.StringPool#findGNode(org.mulgara.store.stringpool.SPObject)}.
    */
   @SuppressWarnings("unused")
   private final long NONE = NodePool.NONE;
@@ -174,7 +173,7 @@ public class Database implements SessionFactory
     Collections.unmodifiableMap(externalResolverFactoryMap);
 
   /**
-   * Keyed on model type {@link LocalNode}s, mapping to an
+   * Keyed on model type {@link org.mulgara.query.LocalNode}s, mapping to an
    * {@link InternalResolverFactory} instance that wraps the actual
    * {@link ResolverFactory} instance which manages that model type.
    */
@@ -371,7 +370,7 @@ public class Database implements SessionFactory
    * @param securityDomainURI  the {@link URI} of the security domain this
    *   database is within, or <code>null</code> if this database is unsecured
    * @param transactionManagerFactory  the source for the
-   *   {@link TransactionManager}, never <code>null</code>
+   *   {@link javax.transaction.TransactionManager}, never <code>null</code>
    * @param transactionTimeout  the default number of seconds before transactions
    *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
    *   never negative
@@ -379,25 +378,25 @@ public class Database implements SessionFactory
    *   it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
    *   default; never negative
    * @param persistentNodePoolFactoryClassName  the name of a
-   *   {@link NodePoolFactory} implementation which will be used to generate
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
    *   persistent local nodes, never <code>null</code>
    * @param persistentStringPoolFactoryClassName  the name of a
-   *   {@link StringPoolFactory} implementation which will be used to manage
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
    *   persistent RDF literals, never <code>null</code>
    * @param systemResolverFactoryClassName  the name of a
    *   {@link ResolverFactory} implementation which will be used to store
    *   system models; this class is required to register a model type
    * @param temporaryNodePoolFactoryClassName  the name of a
-   *   {@link NodePoolFactory} implementation which will be used to generate
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
    *   temporary local nodes, never <code>null</code>
    * @param temporaryStringPoolFactoryClassName  the name of a
-   *   {@link StringPoolFactory} implementation which will be used to manage
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
    *   temporary RDF literals, never <code>null</code>
    * @param temporaryResolverFactoryClassName  the name of a
    *   {@link ResolverFactory} implementation which will be used to store
    *   temporary statements, never <code>null</code>
    * @param ruleLoaderClassName  the name of a
-   *   {@link RuleLoader} implementation which will be used for loading
+   *   {@link org.mulgara.rules.RuleLoader} implementation which will be used for loading
    *   rule frameworks, never <code>null</code>
    * @param defaultContentHandlerClassName the name of the class that should be
    *   used to parse external content of unknown MIME type, or
@@ -405,8 +404,8 @@ public class Database implements SessionFactory
    * @throws IllegalArgumentException if <var>uri</var>,
    *   <var>systemResolverFactory</var> are <code>null</code>, or if the
    *   <var>uri</var> has a fragment part
-   * @throws InitializerException  if the {@link NodePoolFactory},
-   *   {@link ResolverFactory}, or {@link StringPoolFactory} instances
+   * @throws InitializerException  if the {@link org.mulgara.store.nodepool.NodePoolFactory},
+   *   {@link ResolverFactory}, or {@link org.mulgara.store.stringpool.StringPoolFactory} instances
    *   generated from the various class names can't be initialized
    * @throws SystemException if <var>transactionTimeout</var> is negative
    */
@@ -462,12 +461,12 @@ public class Database implements SessionFactory
    * @param uri  the unique {@link URI} naming this database, never
    *   <code>null</code>; this mustn't have a fragment part, because the
    *   fragment is used to represent models within the database
-   * @param directory  an area on the filesystem for the database's use; if this
+   * @param directories  an array of areas on the filesystem for the database's use; if this
    *   is <code>null</code>, resolvers which require a filesystem can't be added
    * @param securityDomainURI  the {@link URI} of the security domain this
    *   database is within, or <code>null</code> if this database is unsecured
    * @param transactionManagerFactory  the source for the
-   *   {@link TransactionManager}, never <code>null</code>
+   *   {@link javax.transaction.TransactionManager}, never <code>null</code>
    * @param transactionTimeout  the default number of seconds before transactions
    *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
    *   never negative
@@ -475,25 +474,25 @@ public class Database implements SessionFactory
    *   it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
    *   default; never negative
    * @param persistentNodePoolFactoryClassName  the name of a
-   *   {@link NodePoolFactory} implementation which will be used to generate
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
    *   persistent local nodes, never <code>null</code>
    * @param persistentStringPoolFactoryClassName  the name of a
-   *   {@link StringPoolFactory} implementation which will be used to manage
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
    *   persistent RDF literals, never <code>null</code>
    * @param systemResolverFactoryClassName  the name of a
    *   {@link ResolverFactory} implementation which will be used to store
    *   system models; this class is required to register a model type
    * @param temporaryNodePoolFactoryClassName  the name of a
-   *   {@link NodePoolFactory} implementation which will be used to generate
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
    *   temporary local nodes, never <code>null</code>
    * @param temporaryStringPoolFactoryClassName  the name of a
-   *   {@link StringPoolFactory} implementation which will be used to manage
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
    *   temporary RDF literals, never <code>null</code>
    * @param temporaryResolverFactoryClassName  the name of a
    *   {@link ResolverFactory} implementation which will be used to store
    *   temporary statements, never <code>null</code>
    * @param ruleLoaderClassName  the name of a
-   *   {@link RuleLoader} implementation which will be used for loading
+   *   {@link org.mulgara.rules.RuleLoader} implementation which will be used for loading
    *   rule frameworks, never <code>null</code>
    * @param defaultContentHandlerClassName the name of the class that should be
    *   used to parse external content of unknown MIME type, or
@@ -501,8 +500,8 @@ public class Database implements SessionFactory
    * @throws IllegalArgumentException if <var>uri</var>,
    *   <var>systemResolverFactory</var> are <code>null</code>, or if the
    *   <var>uri</var> has a fragment part
-   * @throws InitializerException  if the {@link NodePoolFactory},
-   *   {@link ResolverFactory}, or {@link StringPoolFactory} instances
+   * @throws InitializerException  if the {@link org.mulgara.store.nodepool.NodePoolFactory},
+   *   {@link ResolverFactory}, or {@link org.mulgara.store.stringpool.StringPoolFactory} instances
    *   generated from the various class names can't be initialized
    * @throws SystemException if <var>transactionTimeout</var> is negative
    */
@@ -827,11 +826,11 @@ public class Database implements SessionFactory
 
 
   /**
-   * Register a new kind of {@link Content} with this database.
+   * Register a new kind of {@link org.mulgara.content.Content} with this database.
    *
-   * @param className  the name of a class implementing {@link ContentHandler}
+   * @param className  the name of a class implementing {@link org.mulgara.content.ContentHandler}
    * @throws IllegalArgumentException if <var>className</var> is
-   *   <code>null</code> or isn't a valid {@link ContentHandler}
+   *   <code>null</code> or isn't a valid {@link org.mulgara.content.ContentHandler}
    */
   public void addContentHandler(String className) {
     if (logger.isDebugEnabled()) {

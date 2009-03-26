@@ -1501,9 +1501,9 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     /**
      * Iterates over all graphs, finding requested tuples, and joining all the results together into a single tuples.
      * @param variableMask Pre-calculated from the bound node parameters.
-     * @param node0 The bound value for node0, or < 0 if not bound.
-     * @param node1 The bound value for node1, or < 0 if not bound.
-     * @param node2 The bound value for node2, or < 0 if not bound.
+     * @param node0 The bound value for node0, or &lt; 0 if not bound.
+     * @param node1 The bound value for node1, or &lt; 0 if not bound.
+     * @param node2 The bound value for node2, or &lt; 0 if not bound.
      * @return A StoreTuples with all the intermediate tuples appended.
      * @throws StatementStoreException On an error accessing the store.
      */
@@ -1770,7 +1770,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
    * @see org.mulgara.store.xa.XAStatementStore#initializeSystemNodes(long, long, long)
    * Set the various system graph nodes. These may only be set once, but will allow duplicate calls if the values are the same.
    * @param systemGraphNode The new system graph node.
-   * @param rdfTypeNode The node for <rdf:graph>.
+   * @param rdfTypeNode The node for rdf:graph.
    * @param systemGraphTypeNode The node for the system graph type.
    */
   public void initializeSystemNodes(long systemGraphNode, long rdfTypeNode, long systemGraphTypeNode) {

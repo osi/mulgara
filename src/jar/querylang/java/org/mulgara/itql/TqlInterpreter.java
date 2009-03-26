@@ -924,7 +924,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
 
   /**
-   * @see org.mulgara.itql.QueryInterpreter#toLiteralImpl(org.mulgara.itql.node.PLiteral)
+   * @see org.mulgara.itql.SableCCInterpreter#toLiteralImpl(PLiteral)
    * Despite onyl being accessed from within this package (both locally and from
    * {@link VariableBuilder}) this method must be public, as it has to appear in
    * the {@link Interpreter} interface.
@@ -950,7 +950,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
 
   /**
-   * @see org.mulgara.itql.QueryInterpreter#toURI(org.mulgara.itql.node.Token)
+   * @see org.mulgara.itql.SableCCInterpreter#toURI(Token)
    */
   public URI toURI(Token token) {
   
@@ -960,7 +960,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
 
   /**
-   * @see org.mulgara.itql.QueryInterpreter#nextAnonVariable()
+   * @see org.mulgara.itql.SableCCInterpreter#nextAnonVariable()
    * Called by {@link ConstraintExpressionBuilder}
    */
   public Variable nextAnonVariable() {
@@ -1120,7 +1120,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    * the <code>rawVariableList</code> and the returned list will <strong>not
    * </strong> contain the variable prefix <code>$</code> in their name.
    *
-   * @param rawOrderList The SableCC list of elements to order by.
+   * @param orderClause The SableCC list of elements to order by.
    * @return a list of {@link org.mulgara.query.Variable}s, suitable for use
    *      in creating a {@link org.mulgara.query.Query}, or an empty list if
    *      there are no elements to be ordered by.
@@ -1183,7 +1183,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    * to resolve aliases.  To comply with a HAVING clause the predicate must be one of:
    * mulgara:occurs mulgara:occursLessThan mulgara:occursMoreThan.
    *
-   * @param expression a constraint expression from the parser
+   * @param havingClause a constraint expression from the parser
    * @return A new ConstraintExpression representing the HAVING condition
    * @throws QueryException if <code>rawConstraintExpression</code> does not
    *      represent a valid query

@@ -152,8 +152,8 @@ public class BlankNodeAllocator {
 
   /**
    * Convert a blank node code to a counter value.
-   * @param blankGNode The blank node value.
-   * @return A value with the blank node bit turned off.
+   * @param counter The blank node value, with the blank node bit turned off.
+   * @return A value with the blank node bit turned on.
    */
   public static final long counterToNode(long counter) {
     return counter | BLANK_NODE_BIT;

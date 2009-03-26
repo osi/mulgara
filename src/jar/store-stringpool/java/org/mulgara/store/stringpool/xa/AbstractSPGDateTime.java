@@ -156,7 +156,7 @@ public abstract class AbstractSPGDateTime extends AbstractSPTypedLiteral {
    * Compares this gDay representation to another object to see if they are
    * the same values.  First the typing is checked and then the value.
    * @param object The object we are comparing against
-   * @return Whether the gDay value is greater than (> 0), less than (< 0), or equal to (0) this value
+   * @return Whether the gDay value is greater than (&gt; 0), less than (&lt; 0), or equal to (0) this value
    */
   public int compareTo(SPObject object) {
     // Compare types.
@@ -310,7 +310,7 @@ public abstract class AbstractSPGDateTime extends AbstractSPTypedLiteral {
 
   /**
    * Calculate an encoding byte for the timezone.
-   * @return A code for the presence of a timezone.
+   * Sets a code for the presence of a timezone.
    */
   private void setTzByte(byte tzData) {
     tz = null;
@@ -345,7 +345,7 @@ public abstract class AbstractSPGDateTime extends AbstractSPTypedLiteral {
      * @param d2 The second gDay's byte buffer
      * @param d2Size The number of bytes to compare
      *
-     * @return Whether the first prefix is greater than (> 0), less than (< 0),
+     * @return Whether the first prefix is greater than (&gt; 0), less than (&lt; 0),
      *         or equal to (0) the other
      */
     public int comparePrefix(ByteBuffer d1, ByteBuffer d2, int d2Size) {
@@ -358,8 +358,8 @@ public abstract class AbstractSPGDateTime extends AbstractSPTypedLiteral {
      *
      * @param d1 The first byte buffer
      * @param d2 The second byte buffer
-     * @return Whether the first buffer's content is greater than (> 0), less
-     *         than (< 0), or equal to (0) the other
+     * @return Whether the first buffer's content is greater than (&gt; 0), less
+     *         than (&lt; 0), or equal to (0) the other
      */
     public int compare(ByteBuffer d1, int st1, ByteBuffer d2, int st2) {
       int c = AbstractSPObject.compare(d1.getLong(), d2.getLong());

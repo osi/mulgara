@@ -134,10 +134,8 @@ public interface Literal extends ObjectNode, TypedNodeVisitable, org.openrdf.mod
    * Provide a legible representation of a literal, following the N-Triples
    * format defined in
    * <a href="http://www.w3.org/TR/2004/REC-rdf-testcases-20040210/#ntrip_strings">&sect;3.2</a>
-   * of the <a href="http://www.w3.org/">
-   * <acronym title="World Wide Web Consortium">W3C</acronym></a>'s
-   * <a href="http://www.w3.org/TR/2004/REC-rdf-testcases-20040210">RDF Test
-   * Cases</a> Recommendation.
+   * of the <a href="http://www.w3.org/">W3C</a>'s (World Wide Web Consortium)
+   * <a href="http://www.w3.org/TR/2004/REC-rdf-testcases-20040210">RDF Test Cases</a> Recommendation.
    *
    * Well-formed Unicode surrogate pairs in the lexical form are escaped as a
    * single 8-digit hexadecimal <code>\U</code> escape sequence rather than a

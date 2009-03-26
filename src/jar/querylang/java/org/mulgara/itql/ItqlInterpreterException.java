@@ -29,7 +29,7 @@ package org.mulgara.itql;
 
 
 /**
- * Exception thrown by {@link ItqlInterpreter} operations when the query returns
+ * Exception thrown by {@link TqlInterpreter} operations when the query returns
  * an expection.
  *
  * @created 2002-01-10

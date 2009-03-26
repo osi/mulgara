@@ -135,7 +135,7 @@ class DatabaseSession implements Session {
   /** A fallback rule loader */
   private static final String DUMMY_RULE_LOADER = "org.mulgara.rules.DummyRuleLoader";
 
-  /** The registered {@link ContentHandler} instances.  */
+  /** The registered {@link org.mulgara.content.ContentHandler} instances.  */
   private ContentHandlerManager contentHandlers;
 
   /** The temporary model type-URI. */
@@ -321,7 +321,7 @@ class DatabaseSession implements Session {
    *
    * @param node  an RDF node
    * @return the preallocated local node number corresponding to the
-   *   <var>node</var>, never {@link NodePool#NONE}
+   *   <var>node</var>, never {@link org.mulgara.store.nodepool.NodePool#NONE}
    * @throws QueryException if the local node number can't be obtained
    */
   long preallocate(Node node) throws QueryException {

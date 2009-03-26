@@ -76,7 +76,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
     Logger.getLogger(StringPoolSession.class.getName());
 
   /**
-   * Stopgap to deal with the lack of a <q>no match</q> return value from the
+   * Stopgap to deal with the lack of a &quot;no match&quot; return value from the
    * string pool.
    */
   private static final long NONE = NodePool.NONE;

@@ -48,7 +48,9 @@ import org.mulgara.query.rdf.*;
 import org.mulgara.resolver.spi.*;
 
 /**
- * An {@link Operation} that implements the {@link Session#setModel} method.
+ * An {@link Operation} that implements the
+ * {@link org.mulgara.server.Session#setModel(URI, GraphExpression)} and
+ * {@link org.mulgara.server.Session#setModel(InputStream, URI, GraphExpression, MimeType)} methods.
  *
  * @created 2004-11-04
  *
@@ -65,15 +67,10 @@ import org.mulgara.resolver.spi.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class SetGraphOperation implements Operation
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(SetGraphOperation.class.getName());
+class SetGraphOperation implements Operation {
+
+  /** Logger. */
+  private static final Logger logger = Logger.getLogger(SetGraphOperation.class.getName());
 
   private final URI         srcModelURI;
   private final URI         destModelURI;

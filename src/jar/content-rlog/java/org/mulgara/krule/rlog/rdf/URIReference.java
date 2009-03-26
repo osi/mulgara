@@ -104,7 +104,7 @@ public class URIReference implements RDFNode {
    * Creates a URIReference. This requires the URI to be pre-built.
    * @param prefix A namespace prefix.
    * @param value The value within the namespace.
-   * @param uri The string for the URI to wrap, and that is represented by prefix:value
+   * @param uriStr The string for the URI to wrap, and that is represented by prefix:value
    * @return A new URIReference.
    */
   public static URIReference create(String prefix, String value, String uriStr) {

@@ -51,7 +51,7 @@ public class Break extends HtmlElement {
 
 
   /**
-   * @see org.mulgara.webquery.html.HtmlElement#addAttr(org.mulgara.webquery.html.HtmlElement.Attr, java.lang.String)
+   * @see org.mulgara.webquery.html.HtmlElement#addAttr(Attr, Object)
    */
   public HtmlElement addAttr(Attr attr, String val) {
     if (attr != Attr.ID && attr != Attr.CLASS && attr != Attr.STYLE && attr != Attr.TITLE) {

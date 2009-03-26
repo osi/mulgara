@@ -55,7 +55,7 @@ public class TableRow extends HtmlElement implements TableStructure {
 
   /**
    * Creates an row with no initial indenting, and a list of data elements.
-   * @param subElements a list of data elements to go inside this row.
+   * @param rowData an array of data elements to go inside this row.
    */
   public TableRow(HtmlElement... rowData) {
     this(0, rowData);

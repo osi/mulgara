@@ -185,7 +185,7 @@ class DataStruct {
 
   /**
    * Write this object to a file. This will update the gNode for the object.
-   * @param file The file to write to.
+   * @param fc The file channed of the file to write to.
    * @return The number of bytes written.
    * @throws IOException Caused by errors writing to the file.
    */
@@ -220,7 +220,6 @@ class DataStruct {
   /**
    * Writes this object to the payload in an AVLNode.
    * @param node The node to write to.
-   * @param gNode The gNode this object is associated with.
    */
   public void writeTo(AVLNode node) {
     node.putPayloadByte(IDX_TYPE_CATEGORY_B, typeCategoryId);

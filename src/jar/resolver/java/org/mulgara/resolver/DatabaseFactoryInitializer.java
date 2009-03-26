@@ -40,7 +40,7 @@ import org.mulgara.resolver.spi.*;
 
 /**
  * The database initialiser used to provide configuration information to
- * {@link NodePool} and {@link StringPool} instances.
+ * {@link org.mulgara.store.nodepool.NodePool} and {@link org.mulgara.store.stringpool.StringPool} instances.
  *
  * The {@link #close} method can be called after initialization to prevent
  * access to the interface.

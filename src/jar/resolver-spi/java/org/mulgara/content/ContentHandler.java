@@ -47,8 +47,7 @@ import org.mulgara.resolver.spi.Statements;
  *   Technology Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface ContentHandler
-{
+public interface ContentHandler {
   /**
    * Parse {@link Content} into {@link Statements}.
    *

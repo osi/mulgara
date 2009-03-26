@@ -33,14 +33,14 @@ public interface SPNumber {
 
   /**
    * Compare the value of current object to a BigInteger.
-   * @param n The double to compare to.
+   * @param d The double to compare to.
    * @return -1 if the value of this object is smaller, +1 if larger, 0 if equal.
    */
   public int numericalCompareTo(double d);
 
   /**
    * Compare the current object to a long.
-   * @param n The long to compare to.
+   * @param l The long to compare to.
    * @return -1 if the value of this object is smaller, +1 if larger, 0 if equal.
    */
   public int numericalCompareTo(long l);

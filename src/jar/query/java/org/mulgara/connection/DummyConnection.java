@@ -73,7 +73,7 @@ public class DummyConnection extends CommandExecutor implements Connection {
   /**
    * Starts and commits transactions on this connection, by turning the autocommit
    * flag on and off. 
-   * @param autocommit <code>true</code> if the flag is to be on.
+   * @param autoCommit <code>true</code> if the flag is to be on.
    * @throws QueryException The session could not change state.
    */
   public void setAutoCommit(boolean autoCommit) throws QueryException {

@@ -121,7 +121,7 @@ class StreamContent implements Content {
 
   /**
    * @return {@inheritDoc}; always returns <code>null</code> because Java
-   *   {@link File}s don't have any inherent MIME type
+   *   {@link java.io.File}s don't have any inherent MIME type
    */
   public MimeType getContentType() {
     return contentType;

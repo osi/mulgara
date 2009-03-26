@@ -52,16 +52,15 @@ import org.mulgara.server.SessionFactory;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class DatabaseSecurityAdapterInitializer extends DatabaseInitializer
-  implements SecurityAdapterInitializer
-{
+class DatabaseSecurityAdapterInitializer extends DatabaseInitializer implements SecurityAdapterInitializer {
+
   /** The {@link Database} to initialize. */
   private final Database database;
 
   /** The metadata of the {link Database} to initialize. */
   private final DatabaseMetadata databaseMetadata;
 
-  /** A {@link SessionFactory} which produces unsecured {@link Session}s. */
+  /** A {@link SessionFactory} which produces unsecured {@link org.mulgara.server.Session}s. */
   private final SessionFactory unsecuredSessionFactory;
 
   /**

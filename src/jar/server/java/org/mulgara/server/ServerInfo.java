@@ -93,7 +93,7 @@ public class ServerInfo {
    * Session session = EmbeddedMulgaraServer.getLocalSessionFactory().newSession();
    * ItqlInterpreterBean interpreter = new ItqlInterpreterBean(session);
    * String answer = interpreter.executeQueryToString(
-   *     "select $s $p $o from <rmi://localhost/server1#model> where $s $p $o;");
+   *     "select $s $p $o from &lt;rmi://localhost/server1#model&gt; where $s $p $o;");
    * </pre>
    *
    * @return the local {@link org.mulgara.server.SessionFactory} of this

@@ -41,7 +41,8 @@ public class ReferenceGenerator extends TripleGenerator {
 
   /**
    * Creates a new writer for a collection of references.
-   * @param vars The variables to be written.
+   * @param refs The references to be written.
+   * @param resolverSession The session used for globalizing data.
    * @throws LocalizeException If localized nodes could not be accessed.
    */
   public ReferenceGenerator(Collection<URIReference> refs, ResolverSession resolverSession) throws LocalizeException {

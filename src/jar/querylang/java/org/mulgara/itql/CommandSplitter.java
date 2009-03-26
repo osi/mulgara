@@ -28,7 +28,7 @@ interface CommandSplitter {
   
   /**
    * Split the given string into an array of strings containing individual elements.
-   * @param All the commands in a long string.
+   * @param commands All the commands in a long string.
    * @return An array of individual commands.
    */
   List<String> split(String commands);

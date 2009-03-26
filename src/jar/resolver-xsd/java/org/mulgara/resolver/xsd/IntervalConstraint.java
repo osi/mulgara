@@ -321,7 +321,7 @@ public class IntervalConstraint implements Constraint {
 
   /**
    * @return a legible representation of the constraint, for instance
-   *   <pre>[1.5 < $x <= 2.5]</pre>
+   *   <code>[1.5 &lt; $x &lt;= 2.5]</code>
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer("[");

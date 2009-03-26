@@ -39,7 +39,7 @@ public class LiteralGraphTuples extends LiteralTuples implements StoreTuples {
 
   /**
    * Creates a new literal tuples containing graphs.
-   * @param sorted
+   * @param graph The localnode for the graph to be represented.
    */
   public LiteralGraphTuples(long graph) {
     super(META_NAMES, true);

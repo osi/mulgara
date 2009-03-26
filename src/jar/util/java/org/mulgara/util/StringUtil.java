@@ -47,7 +47,7 @@ import java.util.*;
  *
  * Copyright &copy; 2000 Plugged In Software Pty Ltd
  * (http://www.pisoftware.com/) <BR>
- * License: <LGPL by default, or as assigned>
+ * License: LGPL by default, or as assigned
  */
 public class StringUtil {
 

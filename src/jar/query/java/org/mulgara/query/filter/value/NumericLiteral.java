@@ -44,6 +44,7 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
    * Creates the value to wrap a number. This is the same as the previous
    * constructor, but allows the caller to provide a hint for the URI.
    * @param n The number to wrap
+   * @param typeUri The XSD URI for the type of number.
    */
   public NumericLiteral(Number n, URI typeUri) {
     super(getValueFor(n, typeUri), typeUri);
@@ -65,7 +66,7 @@ public class NumericLiteral extends TypedLiteral implements NumericExpression {
 
   /**
    * Tests if a URI represents a numeric type.
-   * @param The URI to test.
+   * @param type The URI to test.
    * @return <code>true</code> iff type represents a numeric type.
    */
   public static boolean isNumeric(URI type) {

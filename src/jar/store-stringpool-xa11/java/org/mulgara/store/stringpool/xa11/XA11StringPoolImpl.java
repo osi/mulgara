@@ -987,7 +987,6 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
 
     /**
      * Clears out a block holding metaroot information.
-     * @param block The block to clear.
      */
     public Metaroot clear() {
       block.putInt(IDX_MAGIC, FILE_MAGIC);
@@ -1029,7 +1028,7 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
 
     /**
      * Reads metaroot information out of a block and into this structure.
-     * @param block The block to read.
+     * @param currentPool Unused.
      */
     public Metaroot read(XA11StringPoolImpl currentPool) throws IOException {
       valid = block.getInt(IDX_VALID);
@@ -1229,7 +1228,6 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
     /**
      * A constructor from a block on disk.
      * @param b The block to read from.
-     * @param offset The offset into the block to read.
      * @throws IOException Caused by an IO error reading the block.
      */
     TreePhase(Block b) throws IOException {
@@ -1249,8 +1247,8 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
 
     /**
      * Inserts a node into the tree, mapping data onto a long.
-     * @param spObject The Data to use as the index key.
-     * @param gNode The long to map the data to.
+     * @param objectData The node to insert.
+     * @param spComparator The comparison mechanism to use to search the tree.
      */
     public void put(DataStruct objectData, SPComparator spComparator) throws StringPoolException {
       if (objectData.getGNode() < NodePool.MIN_NODE) throw new IllegalArgumentException("gNode < MIN_NODE. Object = " + objectData);
@@ -1714,13 +1712,14 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
        * Constructs a GNodeTuplesImpl that represents nodes in the AVLFile
        * index that range from lowAVLNode up to but not including the node with
        * ID highAVLNodeId.
-       * @param avlFilePhase The phase this tuples applies to.
        * @param typeCategory The type of data this Tuples returns.
        * @param typeId The ID of the data being returned.
+       * @param lowValue The lower bound of the sequence in this tuples.
+       * @param highValue The upper bound of the sequence in this tuples.
        * @param lowAVLNode the AVLNode that has the first graph node that is
-       * included in the Tuples.
+       *        included in the Tuples.
        * @param highAVLNodeId the ID of the AVLNode that has the first graph
-       * node that is not included in the Tuples.
+       *        node that is not included in the Tuples.
        */
       GNodeTuplesImpl(
           SPObject.TypeCategory typeCategory, int typeId,

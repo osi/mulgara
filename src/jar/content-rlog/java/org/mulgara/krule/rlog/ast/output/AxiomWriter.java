@@ -35,8 +35,8 @@ public class AxiomWriter extends XMLFragmentWriter {
   public Collection<Axiom> axioms;
 
   /**
-   * Creates a new writer for a collection of variables.
-   * @param vars The variables to be written.
+   * Creates a new writer for a collection of axioms.
+   * @param axioms The axioms to be written.
    */
   public AxiomWriter(Collection<Axiom> axioms) {
     this.axioms = axioms;

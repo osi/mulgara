@@ -71,7 +71,7 @@ public class Span extends HtmlElement {
    * Creates a span with a given indent, and a list of sub elements.
    * @param indent The amount to indent by.
    * @param spanClass The name of the class for the span.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Span(int indent, String spanClass, String text) {
     super(indent, new Text(text));
@@ -82,7 +82,7 @@ public class Span extends HtmlElement {
   /**
    * Creates a span with no initial indenting, and a list of sub elements.
    * @param spanClass The name of the class for the span.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Span(String spanClass, String text) {
     this(-1, spanClass, new Text(text));

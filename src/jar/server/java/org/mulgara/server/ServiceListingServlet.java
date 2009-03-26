@@ -43,7 +43,7 @@ public class ServiceListingServlet extends HttpServlet {
   /**
    * Creates the servlet for listing the given paths.
    * @param servicePaths The names of all the services.
-   * @param servername The name of the current server.
+   * @param defaultPath The default path to use when not using this servlet.
    */
   public ServiceListingServlet(Map<String,String> servicePaths, String defaultPath) throws IOException {
     this.servicePaths = servicePaths;

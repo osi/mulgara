@@ -57,7 +57,7 @@ public class MultiplyOperation extends BinaryOperation {
 
   /**
    * A recursive method to build a NumericExpression that represents the product of all multipliers in the list.
-   * @param operands The list of multipliers to multiply.
+   * @param ops The list of multipliers to multiply.
    * @return A NumericExpression which represents the product of everything in the ops list.
    */
   private static NumericExpression createNestedMultiply(List<NumericExpression> ops) {

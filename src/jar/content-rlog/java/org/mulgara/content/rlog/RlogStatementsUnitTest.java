@@ -62,7 +62,7 @@ public class RlogStatementsUnitTest extends TestCase {
 
 
   /**
-   * Test {@link N3Statements} parsing the file <tt>test0014.rdf</tt>..
+   * Test {@link RlogStatements} parsing a file.
    *
    * @throws Exception if there's an error running the test (note that if the
    *   test merely fails, this should <em>not</em> throw any exception

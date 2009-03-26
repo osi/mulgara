@@ -57,7 +57,7 @@ public class AddOperation extends BinaryOperation {
 
   /**
    * A recursive method to build a NumericExpression that represents the addition of all addends in the list.
-   * @param operands The list of addends to sum.
+   * @param ops The list of addends to sum.
    * @return A NumericExpression which represents the addition of everything in the ops list.
    */
   private static NumericExpression createNestedAdd(List<NumericExpression> ops) {

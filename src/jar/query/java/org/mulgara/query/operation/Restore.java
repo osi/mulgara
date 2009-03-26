@@ -63,7 +63,7 @@ public class Restore extends DataInputTx {
    * constructor for API calls that use their own server connections.  The server URI
    * is not an argument for the restore operation, and will be specified by the existing
    * connection.
-   * @param source The input stream that will provide the restore contents.
+   * @param inputStream The input stream that will provide the restore contents.
    */
   public Restore(InputStream inputStream) {
     this(null, null, true);

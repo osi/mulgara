@@ -27,7 +27,7 @@ public interface TxOp {
 
   /**
    * Perform the operation for manipulating this transaction.
-   * @param s The session to perform the operation on.
+   * @param conn The connection to perform the operation on.
    * @return The resulting message.
    * @throws QueryException The operation failed.
    */

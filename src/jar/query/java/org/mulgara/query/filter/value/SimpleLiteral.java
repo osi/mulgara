@@ -85,7 +85,7 @@ public class SimpleLiteral extends AbstractComparableLiteral {
   }
 
   /**
-   * @see org.mulgara.query.filter.value.ComparableExpression#test()
+   * @see org.mulgara.query.filter.value.ComparableExpression#test(Context)
    */
   public boolean test(Context context) throws QueryException {
     return value != null && ((String)value).length() != 0;
@@ -108,7 +108,7 @@ public class SimpleLiteral extends AbstractComparableLiteral {
    * This method will only return <code>true</code> when the elements are identical, and
    * <code>false</code> when they are the same type, but different values.
    * Since this object is a literal, then a comparison with another type will throw an exception.
-   * {@link http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal}
+   * See: <a href="http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal">http://www.w3.org/TR/rdf-sparql-query/#func-RDFterm-equal</a>
    * <em>produces a type error if the arguments are both literal but are not the same RDF term</em>
    */
   public boolean equals(RDFTerm v) throws QueryException {

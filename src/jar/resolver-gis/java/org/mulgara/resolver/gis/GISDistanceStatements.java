@@ -49,8 +49,8 @@ import org.mulgara.store.tuples.*;
  * generates the following distance statements for each row:
  * $x   $z           $y
  * $y   $z           $x
- * $z   <:type>      <:distance>
- * $z   <:magnitude> "f($xlat,$xlong,$ylat,$ylong)"^^xsd:double
+ * $z   &lt;:type&gt;      &lt;:distance&gt;
+ * $z   &lt;:magnitude&gt; "f($xlat,$xlong,$ylat,$ylong)"^^xsd:double
  *
  * @created 2004-11-17
  *
@@ -71,11 +71,9 @@ import org.mulgara.store.tuples.*;
  */
 public class GISDistanceStatements implements Statements {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger log = Logger.getLogger(GISDistanceStatements.class.
-      getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(GISDistanceStatements.class.getName());
 
   /** Number of statements generated per row of the Tuples */
   private static final int STATEMENTS_PER_ROW = 4;

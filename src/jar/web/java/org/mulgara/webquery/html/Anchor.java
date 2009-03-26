@@ -100,7 +100,7 @@ public class Anchor extends HtmlElement {
    * Creates an anchor with a given indent, and the text for a subelement.
    * @param indent The amount to indent by.
    * @param name The name of the anchor.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Anchor(int indent, String name, String text) {
     super(indent, new Text(text));
@@ -111,7 +111,7 @@ public class Anchor extends HtmlElement {
   /**
    * Creates an anchor with no initial indenting, and the text for a subelement.
    * @param name The name of the anchor.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Anchor(String name, String text) {
     this(-1, name, new Text(text));
@@ -122,7 +122,7 @@ public class Anchor extends HtmlElement {
    * Creates an anchor with a given indent, and the text for a subelement.
    * @param indent The amount to indent by.
    * @param ref The reference to point to.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Anchor(int indent, URL ref, String text) {
     super(indent, new Text(text));
@@ -133,7 +133,7 @@ public class Anchor extends HtmlElement {
   /**
    * Creates an anchor with no initial indenting, the text for a subelement.
    * @param ref The reference to point to.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Anchor(URL ref, String text) {
     this(-1, ref, new Text(text));
@@ -144,7 +144,7 @@ public class Anchor extends HtmlElement {
    * Creates an anchor with a given indent, and the text for a subelement.
    * @param indent The amount to indent by.
    * @param ref The reference to point to.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Anchor(int indent, URI ref, String text) {
     super(indent, new Text(text));
@@ -155,7 +155,7 @@ public class Anchor extends HtmlElement {
   /**
    * Creates an anchor with no initial indenting, and the text for a subelement.
    * @param ref The reference to point to.
-   * @param test The text for a Text subElement.
+   * @param text The text for a Text subElement.
    */
   public Anchor(URI ref, String text) {
     this(-1, ref, new Text(text));

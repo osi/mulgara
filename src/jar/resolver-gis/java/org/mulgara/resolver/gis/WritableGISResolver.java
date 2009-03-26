@@ -397,7 +397,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
   }
 
   /**
-   * Resolves the constraint: $var <rdf:type> <geo:Point> <model>
+   * Resolves the constraint: $var &lt;rdf:type&gt; &lt;geo:Point&gt; <model>
    *
    * @param var Variable
    * @param model long
@@ -441,7 +441,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
   }
 
   /**
-   * Resolves the constraint: $var <geo:lat> $lat <model>
+   * Resolves the constraint: $var &lt;geo:lat&gt; $lat <model>
    *
    * @param var Variable
    * @param lat Variable
@@ -463,7 +463,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
   }
 
   /**
-   * Resolves the constraint: $var <geo:long> $lon <model>
+   * Resolves the constraint: $var &lt;geo:long&gt; $lon <model>
    *
    * @param var Variable
    * @param lon Variable

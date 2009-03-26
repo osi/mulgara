@@ -49,7 +49,7 @@ import org.mulgara.resolver.spi.TestResolverSession;
  */
 public class N3WriterUnitTest extends TestCase {
   /**
-   * Test {@link N3Wrtier} writing.
+   * Test {@link N3Writer} writing.
    *
    * @throws Exception if there's an error running the test (note that if the test
    *                   merely fails, this should <em>not</em> throw any exception

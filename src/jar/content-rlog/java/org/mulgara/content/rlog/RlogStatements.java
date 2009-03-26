@@ -52,7 +52,7 @@ import org.mulgara.krule.rlog.parser.TypeException;
 import org.mulgara.krule.rlog.parser.URIParseException;
 
 /**
- * Parses an {@link InputStream} into {@link Statements}.
+ * Parses an {@link java.io.InputStream} into {@link Statements}.
  * This parser uses memory and does not stream.
  *
  * @created Feb 24, 2009

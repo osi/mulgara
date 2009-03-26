@@ -42,7 +42,7 @@ import org.mulgara.store.tuples.AbstractTuples;
  * RHS for matching rows.  For efficient searching, the RHS must be
  * ordered according to the matching variables.  This class is not responsible for
  * ensuring the sort order of the RHS; that responsibility falls to
- * {@link TuplesOperations#optionalJoin(Tuples, Tuples)}.
+ * {@link TuplesOperations#optionalJoin(Tuples, Tuples, Filter, QueryEvaluationContext)}.
  *
  * @created 2008-04-04
  * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>

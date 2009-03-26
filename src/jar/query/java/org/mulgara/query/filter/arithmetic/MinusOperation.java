@@ -57,7 +57,7 @@ public class MinusOperation extends BinaryOperation {
 
   /**
    * A recursive method to build a NumericExpression that represents the subtraction of all values in the list.
-   * @param operands The list of values to subtract.
+   * @param ops The list of values to subtract.
    * @return A NumericExpression which represents the ordered subtraction of everything in the ops list.
    */
   private static NumericExpression createNestedSubtraction(List<NumericExpression> ops) {

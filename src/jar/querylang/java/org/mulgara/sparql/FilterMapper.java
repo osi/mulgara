@@ -216,15 +216,14 @@ public class FilterMapper {
   /** Defines an interface for mapping expressions into an equivalent Filter operation. */
   private static interface ExpressionToTerm<T extends Expression> {
     /**
-     * A main entry point for the mapper, which will do the casting into {@link #typedMap(Expression, FilterMapper)}.
+     * A main entry point for the mapper, which will do the casting into {@link #typedMap(Expression)}.
      * @param expr The expression to map to an RDFTerm.
-     * @param parent The surrounding FilterMapper class.
      * @return A {@link RDFTerm} that is the equivalent to the given expression.
      */
     public RDFTerm map(Expression expr) throws MulgaraParserException;
     /**
      * Convert an Expression to a RDFTerm for Mulgara.
-     * @param expr The Expression to convert. Should be specific to the mapper.
+     * @param pattern The Expression to convert. Should be specific to the mapper.
      * @return The RDFTerm relevant to the mapper.
      */
     RDFTerm typedMap(T pattern) throws MulgaraParserException;
