@@ -46,11 +46,6 @@ import org.mulgara.resolver.jrdf.ClosableIteratorImpl;
 import org.mulgara.resolver.jrdf.JRDFGraph;
 */
 import org.jrdf.graph.*;
-import org.mulgara.query.Order;
-import org.mulgara.query.Value;
-import org.mulgara.store.*;
-import org.mulgara.store.statement.StatementStore;
-import org.mulgara.store.tuples.RowComparator;
 import org.mulgara.util.*;
 
 /**
@@ -73,14 +68,11 @@ import org.mulgara.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class GraphXMLWriter
-    implements GraphWriter {
+public class GraphXMLWriter implements GraphWriter {
 
-  /**
-   * Logger. This is named after the class.
-   */
-  private final static Logger log = Logger.getLogger(GraphXMLWriter.class.
-      getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(GraphXMLWriter.class.getName());
 
   /** Prefix used to abbreviate RDF Namespace */
   private static final String RDF_PREFIX = "rdf";
@@ -92,7 +84,7 @@ public class GraphXMLWriter
   private static final String NEWLINE = System.getProperty("line.separator");
 
   /** Map used to replace commonly used namespaces with prefixes */
-  protected Map namespaces = null;
+  protected Map<String,String> namespaces = null;
 
   /**
    * Default Constructor
@@ -251,33 +243,24 @@ public class GraphXMLWriter
       out.print(NEWLINE + "<!DOCTYPE rdf:RDF [");
 
       //print namespaces
-      Set keys = this.namespaces.keySet();
+      Set<String> keys = namespaces.keySet();
 
       if (keys != null) {
 
-        Iterator keyIter = keys.iterator();
-        Object currentKey = null;
-        Object currentValue = null;
+        for(String currentKey: keys) {
+          String currentValue = namespaces.get(currentKey);
 
-        while (keyIter.hasNext()) {
-
-          currentKey = keyIter.next();
-          currentValue = this.namespaces.get(currentKey);
-
-          if ( (currentKey != null)
-              && (currentValue != null)) {
+          if ((currentKey != null) && (currentValue != null)) {
 
             //write as: <!ENTITY ns 'http://example.org/abc#'>
-            out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" +
-                      currentValue + "'>");
+            out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" + currentValue + "'>");
           }
         }
       }
 
       //close the opening tag (add a space for readability)
       out.print("]>" + NEWLINE + NEWLINE);
-    }
-    else {
+    } else {
 
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }
@@ -298,33 +281,24 @@ public class GraphXMLWriter
       out.print("<rdf:RDF ");
 
       //print namespaces
-      Set keys = this.namespaces.keySet();
+      Set<String> keys = namespaces.keySet();
 
       if (keys != null) {
 
-        Iterator keyIter = keys.iterator();
-        Object currentKey = null;
-        Object currentValue = null;
+        for(String currentKey: keys) {
+          String currentValue = namespaces.get(currentKey);
 
-        while (keyIter.hasNext()) {
-
-          currentKey = keyIter.next();
-          currentValue = this.namespaces.get(currentKey);
-
-          if ( (currentKey != null)
-              && (currentValue != null)) {
+          if ((currentKey != null) && (currentValue != null)) {
 
            //use entities: xmlns:ns="&ns;"
-            out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey +
-                      ";\"");
+            out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey + ";\"");
           }
         }
       }
 
       //close the opening tag (add a space for readability)
       out.print(">" + NEWLINE + NEWLINE);
-    }
-    else {
+    } else {
 
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }
@@ -336,36 +310,27 @@ public class GraphXMLWriter
    * @param out PrintWriter
    * @throws IOException
    */
-  protected void writeBody(Graph graph, PrintWriter out) throws IOException,
-      GraphException {
+  protected void writeBody(Graph graph, PrintWriter out) throws IOException, GraphException {
 
     //validate
-    if ( (out != null)
-        && (graph != null)) {
+    if ((out != null) && (graph != null)) {
 
       //iterator used to access subjects
-      ClosableIterator subjectIter = graph.find(null, null, null);
+      ClosableIterator<Triple> subjectIter = graph.find(null, null, null);
 
       //write every (unique) subject
       if (subjectIter != null) {
 
-        //current Triple
-        Object triple = null;
-
-        //current Subject
-        SubjectNode subject = null;
-
-        Set writtenSubjectSet = new HashSet();
+        Set<SubjectNode> writtenSubjectSet = new HashSet<SubjectNode>();
 
         while (subjectIter.hasNext()) {
 
           //get the next triple
-          triple = subjectIter.next();
+          Triple triple = subjectIter.next();
 
-          if ( (triple != null)
-              && (triple instanceof Triple)) {
+          if (triple != null) {
 
-            subject = ( (Triple) triple).getSubject();
+            SubjectNode subject = ((Triple)triple).getSubject();
 
             if (!writtenSubjectSet.contains(subject)) {
               this.writeSubject(graph, subject, out);
@@ -377,20 +342,13 @@ public class GraphXMLWriter
         //close the Iterator
         subjectIter.close();
       }
-    }
-    else {
+    } else {
 
       //message for exception to be thrown
       String message = "Could not write Graph. Invlaid arguments provided. ";
 
-      if (out == null) {
-
-        message += "Writer is null. ";
-      }
-      if (graph == null) {
-
-        message += "Graph is null. ";
-      }
+      if (out == null) message += "Writer is null. ";
+      if (graph == null) message += "Graph is null. ";
 
       throw new IllegalArgumentException(message);
     }
@@ -406,12 +364,9 @@ public class GraphXMLWriter
 
     //validate
     if (out != null) {
-
       //print closing RDF tag
       out.println("</" + RDF_PREFIX + ":RDF>");
-    }
-    else {
-
+    } else {
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }
   }
@@ -461,18 +416,13 @@ public class GraphXMLWriter
         if (subject instanceof BlankNode) {
 
           this.writeOpeningTag(graph, (BlankNode) subject, writer);
-        }
-        else {
+        } else {
 
           writer.print("  <" + RDF_PREFIX + ":Description " + RDF_PREFIX +
-                       ":about=\"" + this.getNodeString(subject) + "\">" +
-                       NEWLINE);
+                       ":about=\"" + this.getNodeString(subject) + "\">" + NEWLINE);
         }
-      }
-      else {
-
-        throw new IllegalArgumentException("Could not write opening tag for " +
-                                           "subject. Subject Node is null.");
+      } else {
+        throw new IllegalArgumentException("Could not write opening tag for subject. Subject Node is null.");
       }
     }
   }
@@ -495,8 +445,7 @@ public class GraphXMLWriter
 
       //opening tag
       writer.print("  <" + this.getURI(subjectType) + ">" + NEWLINE);
-    }
-    else {
+    } else {
 
       //opening tag
       writer.print("  <" + RDF_PREFIX + ":Description>" + NEWLINE);
@@ -546,8 +495,7 @@ public class GraphXMLWriter
 
       //closing tag
       writer.print("  </" + this.getURI(subjectType) + ">" + NEWLINE);
-    }
-    else {
+    } else {
 
       //closing tag
       writer.print("  </" + RDF_PREFIX + ":Description>" + NEWLINE);
@@ -557,8 +505,8 @@ public class GraphXMLWriter
   /**
    * Writes the Resources for a subject (one per line).
    *
-   * eg. <predicateURI rdf:resource="resourceURI"/>
-   * (<predicateURI rdf:nodeID="resourceURI"/> for Blank Nodes)
+   * eg. &lt;predicateURI rdf:resource="resourceURI"/&gt;
+   * (&lt;predicateURI rdf:nodeID="resourceURI"/&gt; for Blank Nodes)
    *
    * @param graph Graph
    * @param subject SubjectNode
@@ -577,20 +525,12 @@ public class GraphXMLWriter
     */
 
     //get all statements for the Subject
-    //statements are sorted by predicate (for sequences).
-    List orderList = new ArrayList();
-    ClosableIterator tripleIter = graph.find(subject, null, null);
+    ClosableIterator<Triple> tripleIter = graph.find(subject, null, null);
 
     if (tripleIter != null) {
 
       //current Triple
       Object triple = null;
-
-      //current predicate
-      PredicateNode predicate = null;
-
-      //current object (URIReference)
-      ObjectNode object = null;
 
       //evaluate all triples
       while (tripleIter.hasNext()) {
@@ -598,17 +538,15 @@ public class GraphXMLWriter
         triple = tripleIter.next();
 
         //validate triple
-        if ( (triple != null)
-            && (triple instanceof Triple)) {
+        if (triple != null) {
 
           //retrieve Predicate and Object
-          predicate = ( (Triple) triple).getPredicate();
-          object = ( (Triple) triple).getObject();
+          PredicateNode predicate = ((Triple)triple).getPredicate();
+          ObjectNode object = ((Triple)triple).getObject();
 
           //Literals and Resources are written differently
           if (object != null) {
-
-            this.writeStatement(graph, subject, predicate, object, writer);
+            writeStatement(graph, subject, predicate, object, writer);
           }
         }
       }
@@ -635,8 +573,7 @@ public class GraphXMLWriter
     if (object instanceof Literal) {
 
       this.writeStatement(graph, subject, predicate, (Literal) object, writer);
-    }
-    else if (object instanceof BlankNode) {
+    } else if (object instanceof BlankNode) {
 
       //write as:  <predicateURI> *blank node as subject* </predicateURI>
       writer.println("    <" + this.getURI(predicate) + ">");
@@ -645,8 +582,7 @@ public class GraphXMLWriter
       this.writeSubject(graph, (BlankNode) object, writer);
 
       writer.println("    </" + this.getURI(predicate) + ">");
-    }
-    else if (subject instanceof BlankNode) {
+    } else if (subject instanceof BlankNode) {
 
       //predicatNode representing RDF Type
       PredicateNode rdfTypeNode = null;
@@ -654,11 +590,9 @@ public class GraphXMLWriter
       try {
 
         rdfTypeNode = graph.getElementFactory().createResource(RDF.TYPE);
-      }
-      catch (GraphElementFactoryException factoryException) {
+      } catch (GraphElementFactoryException factoryException) {
 
-        throw new GraphException("Could not create RDF Type node.",
-                                 factoryException);
+        throw new GraphException("Could not create RDF Type node.", factoryException);
       }
 
       //do not write the RDF Type element
@@ -666,16 +600,13 @@ public class GraphXMLWriter
 
         //write as:  <predicateURI rdf:resource="resourceURI"/>
         writer.println("    <" + this.getURI(predicate) + " " + RDF_PREFIX +
-                       ":resource=\"" + this.getNodeString(object) + "\"" +
-                       "/>");
+                       ":resource=\"" + this.getNodeString(object) + "\"/>");
       }
-    }
-    else {
+    } else {
 
       //write as:  <predicateURI rdf:resource="resourceURI"/>
       writer.println("    <" + this.getURI(predicate) + " " + RDF_PREFIX +
-                     ":resource=\"" + this.getNodeString(object) + "\"" +
-                     "/>");
+                     ":resource=\"" + this.getNodeString(object) + "\"/>");
     }
   }
 
@@ -712,8 +643,7 @@ public class GraphXMLWriter
                      ":datatype=\"" + datatype + "\">" +
                      buffer.toString() +
                      "</" + this.getURI(predicate) + ">");
-    }
-    else {
+    } else {
 
       //write as:  <predicateURI>"Literal value"</predicateURI>
       writer.println("    <" + this.getURI(predicate) + ">" +
@@ -730,15 +660,13 @@ public class GraphXMLWriter
    * @throws GraphException
    * @return ObjectNode
    */
-  protected ObjectNode getSubjectType(Graph graph, SubjectNode subject) throws
-      GraphException {
+  protected ObjectNode getSubjectType(Graph graph, SubjectNode subject) throws GraphException {
 
     //value to be returned
     ObjectNode type = null;
 
     //validate graph
-    if ( (graph == null)) {
-
+    if ((graph == null)) {
       throw new IllegalArgumentException("Graph argument must not be null.");
     }
 
@@ -746,34 +674,25 @@ public class GraphXMLWriter
     PredicateNode rdfType = null;
 
     try {
-
       rdfType = graph.getElementFactory().createResource(RDF.TYPE);
-    }
-    catch (GraphElementFactoryException factoryException) {
+    } catch (GraphElementFactoryException factoryException) {
 
-      throw new GraphException("Could not create RDF Type node.",
-                               factoryException);
+      throw new GraphException("Could not create RDF Type node.", factoryException);
     }
 
     //get the Subject's RDF type
-    ClosableIterator typeIter = graph.find(subject, rdfType, null);
+    ClosableIterator<Triple> typeIter = graph.find(subject, rdfType, null);
 
     if (typeIter != null) {
-
-      Object typeTriple = null;
 
       //validate "first" triple and extract it's object (rdf type)
       if (typeIter.hasNext()) {
 
-        typeTriple = typeIter.next();
+        Triple typeTriple = typeIter.next();
 
-        if ( (typeTriple != null)
-            && (typeTriple instanceof Triple)) {
-
-          type = ( (Triple) typeTriple).getObject();
-        }
-        else {
-
+        if (typeTriple != null) {
+          type = ((Triple)typeTriple).getObject();
+        } else {
           throw new GraphException("Could not find RDF type for Subject: " +
                                    subject + " . Invalid Triple returned.");
         }
@@ -804,28 +723,17 @@ public class GraphXMLWriter
       try {
 
         if (node instanceof URIReference) {
-
           uri = ( (URIReference) node).getURI().toString();
-        }
-        else if (node instanceof BlankNode) {
-
-          uri = new URI("#" + ( (BlankNode) node).toString()).toString();
-        }
-        else {
-
+        } else if (node instanceof BlankNode) {
+          uri = new URI("#" + ((BlankNode)node).toString()).toString();
+        } else {
           uri = node.toString();
         }
+      } catch (URISyntaxException uriException) {
+        throw new GraphException("Could not get URI for Node: " + node + ".", uriException);
       }
-      catch (URISyntaxException uriException) {
-
-        throw new GraphException("Could not get URI for Node: " + node +
-                                 ".", uriException);
-      }
-    }
-    else {
-
-      throw new GraphException("Could not get URI for Node: " + node +
-                               ". Node is null.");
+    } else {
+      throw new GraphException("Could not get URI for Node: " + node + ". Node is null.");
     }
 
     //return the URI with any namespaces replaced with prefixes
@@ -851,31 +759,19 @@ public class GraphXMLWriter
       try {
 
         if (node instanceof URIReference) {
-
-          object = ( (URIReference) node).getURI().toString();
-        }
-        else if (node instanceof BlankNode) {
-
-          object = new URI("#" + ( (BlankNode) node).toString()).toString();
-        }
-        else if (node instanceof Literal) {
-
-          object = ((Literal) node).getLexicalForm();
+          object = ((URIReference)node).getURI().toString();
+        } else if (node instanceof BlankNode) {
+          object = new URI("#" + ((BlankNode) node).toString()).toString();
+        } else if (node instanceof Literal) {
+          object = ((Literal)node).getLexicalForm();
         } else {
-
           object = node.toString();
         }
+      } catch (URISyntaxException uriException) {
+        throw new GraphException("Could not get String for ObjectNode: " + node + ".", uriException);
       }
-      catch (URISyntaxException uriException) {
-
-        throw new GraphException("Could not get String for ObjectNode: " + node +
-                                 ".", uriException);
-      }
-    }
-    else {
-
-      throw new GraphException("Could not get String for ObjectNode: " + node +
-                               ". ObjectNode is null.");
+    } else {
+      throw new GraphException("Could not get String for ObjectNode: " + node + ". ObjectNode is null.");
     }
 
     return object;
@@ -896,35 +792,19 @@ public class GraphXMLWriter
     if (original != null) {
 
       //replace any URI occurances with namespace prefixes
-      Set keys = this.namespaces.keySet();
+      for (String currentKey: namespaces.keySet()) {
 
-      Iterator keyIter = keys.iterator();
-      Object currentKey = null;
-      Object currentValue = null;
+        String currentValue = namespaces.get(currentKey);
 
-      if (keyIter != null) {
+        //validate the Objects
+        if ((currentKey != null) && (currentValue != null)) {
 
-        while (keyIter.hasNext()) {
-
-          currentKey = keyIter.next();
-          currentValue = this.namespaces.get(currentKey);
-
-          //validate the Objects
-          if ( (currentKey != null)
-              && (currentValue != null)) {
-
-//            int index = uriAsString.indexOf(currentValue.toString());
-            //if the entire namespace is used, replace it with an entity
-            if (original.equals(currentValue.toString())) {
-
-              uri = "&" + currentKey + ";";
-            }
-            else if (original.startsWith(currentValue.toString())) {
-
-              //replace with namespace
-              uri = original.replaceAll(currentValue.toString(),
-                                        currentKey + ":");
-            }
+          //if the entire namespace is used, replace it with an entity
+          if (original.equals(currentValue)) {
+            uri = "&" + currentKey + ";";
+          } else if (original.startsWith(currentValue.toString())) {
+            //replace with namespace
+            uri = original.replaceAll(currentValue.toString(), currentKey + ":");
           }
         }
       }
@@ -948,9 +828,7 @@ public class GraphXMLWriter
 
     //validate URI
     if (original != null) {
-
       uri = original.replaceAll("_[0-9]+", "li");
-
     }
 
     return uri;
@@ -966,52 +844,43 @@ public class GraphXMLWriter
   protected void populateNamespaces(Graph graph) throws GraphException {
 
     //default namespaces
-    this.namespaces = new HashMap();
-    this.namespaces.put(RDF_PREFIX, RDF.BASE_URI);
-    this.namespaces.put(RDFS_PREFIX, RDFS.BASE_URI);
-    this.namespaces.put("owl", "http://www.w3.org/2002/07/owl#");
-    this.namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
+    namespaces = new HashMap<String,String>();
+    namespaces.put(RDF_PREFIX, RDF.BASE_URI.toString());
+    namespaces.put(RDFS_PREFIX, RDFS.BASE_URI.toString());
+    namespaces.put("owl", "http://www.w3.org/2002/07/owl#");
+    namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
 
     //validate graph before reading
     if (graph == null) {
-
       throw new IllegalArgumentException("Graph argument is null.");
     }
 
     //get all statements
-    ClosableIterator tripleIter = graph.find(null, null, null);
+    ClosableIterator<Triple> tripleIter = graph.find(null, null, null);
 
     if (tripleIter != null) {
-
-      //current Triple/Predicate
-      Triple triple = null;
-      SubjectNode subject = null;
-      PredicateNode predicate = null;
-      ObjectNode object = null;
 
       while (tripleIter.hasNext()) {
 
         //get the next triple
-        triple = (Triple) tripleIter.next();
+        Triple triple = tripleIter.next();
 
         if (triple != null) {
 
           //evaluate subject
-          subject = triple.getSubject();
+          SubjectNode subject = triple.getSubject();
           if (subject instanceof URIReference) {
-
-            this.addNamespaceURI(((URIReference) subject).getURI());
+            addNamespaceURI(((URIReference)subject).getURI());
           }
 
           //evaluate predicate (must be URIReference)
-          predicate = triple.getPredicate();
-          this.addNamespaceURI(((URIReference) predicate).getURI());
+          PredicateNode predicate = triple.getPredicate();
+          addNamespaceURI(((URIReference)predicate).getURI());
 
           //evaluate object
-          object = triple.getObject();
+          ObjectNode object = triple.getObject();
           if (object instanceof URIReference) {
-
-            this.addNamespaceURI(((URIReference) object).getURI());
+            addNamespaceURI(((URIReference)object).getURI());
           }
         }
       }
@@ -1021,7 +890,7 @@ public class GraphXMLWriter
     }
   }
 
-  /**
+  /*
    * Populates the namespaces map with default namespaces and namespaces used
    * by the graph.
    *
@@ -1037,11 +906,11 @@ public class GraphXMLWriter
     }
 
     //default namespaces
-    this.namespaces = new HashMap();
-    this.namespaces.put(RDF_PREFIX, RDF.baseURI);
-    this.namespaces.put(RDFS_PREFIX, RDFS.baseURI);
-    this.namespaces.put("owl", "http://www.w3.org/2002/07/owl#");
-    this.namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
+    namespaces = new HashMap();
+    namespaces.put(RDF_PREFIX, RDF.baseURI);
+    namespaces.put(RDFS_PREFIX, RDFS.baseURI);
+    namespaces.put("owl", "http://www.w3.org/2002/07/owl#");
+    namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
 
     //validate graph before reading
     if (graph == null) {
@@ -1097,7 +966,6 @@ public class GraphXMLWriter
   protected void addNamespaceURI(URI uri) {
 
     if (uri == null) {
-
       throw new IllegalArgumentException("URI argument is null.");
     }
 
@@ -1113,7 +981,6 @@ public class GraphXMLWriter
 
       //validate (URI must contain a forward slash)
       if (slashindex == -1) {
-
         //namespace may have been evaluated already
         return;
       }
@@ -1124,19 +991,16 @@ public class GraphXMLWriter
         //remove everything after the last '/'
         int index = uriString.lastIndexOf('/');
         newURI = uriString.substring(0, index) + "/";
-      }
-      else {
+      } else {
 
         //'#' comes after last '/' (remove entire fragment)
         newURI = uriString.replaceAll(uri.getFragment(), "");
       }
 
       //only add namespace if it is new
-      if ( (newURI != null)
-          && (!this.namespaces.containsValue(newURI))) {
-
+      if ((newURI != null) && (!namespaces.containsValue(newURI))) {
         //add to namespaces
-        this.namespaces.put("ns" + this.namespaces.size(), newURI);
+        namespaces.put("ns" + namespaces.size(), newURI);
       }
     }
   }
