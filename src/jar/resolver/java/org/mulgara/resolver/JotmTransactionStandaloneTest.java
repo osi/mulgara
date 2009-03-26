@@ -69,23 +69,15 @@ public class JotmTransactionStandaloneTest extends TestCase {
 
   private static final URI databaseURI;
 
-  private static final URI systemModelURI;
 
   private static final URI modelURI;
   private static final URI model2URI;
-  private static final URI model3URI;
-  private static final URI model4URI;
-  private static final URI model5URI;
 
   static {
     try {
       databaseURI    = new URI("rmi://localhost/server1");
-      systemModelURI = new URI("rmi://localhost/server1#");
       modelURI       = new URI("rmi://localhost/server1#jotmmodel");
       model2URI      = new URI("rmi://localhost/server1#jotmmodel2");
-      model3URI      = new URI("rmi://localhost/server1#jotmmodel3");
-      model4URI      = new URI("rmi://localhost/server1#jotmmodel4");
-      model5URI      = new URI("rmi://localhost/server1#jotmmodel5");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }
@@ -136,6 +128,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
   // Test cases
   //
 
+  @SuppressWarnings("unused")
   private static class TestXid implements Xid {
     private int xid;
     public TestXid(int xid) {
@@ -162,7 +155,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
   }
 
   /**
-   * Test the {@link DatabaseSession#create} method.
+   * Test the {@link DatabaseSession#createModel(URI, URI)} method.
    * As a side-effect, creates the model required by the next tests.
    */
   public void testTrivalExplicit() throws URISyntaxException {
@@ -496,7 +489,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
@@ -530,7 +523,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
           new UnconstrainedAnswer()                         // GIVEN
         ));
 
-        Transaction tx1 = txManager.suspend();
+        txManager.suspend();
 
         answer.beforeFirst();
 
@@ -1592,6 +1585,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
     fail(stringWriter.toString());
   }
 
+  @SuppressWarnings("unused")
   private static class DummyXAResource implements XAResource {
     public void end(Xid xid, int flags) throws XAException {}
     public void forget(Xid xid) throws XAException {}
