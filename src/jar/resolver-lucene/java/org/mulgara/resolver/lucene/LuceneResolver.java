@@ -79,20 +79,10 @@ import org.mulgara.util.conversion.html.HtmlToTextConverter;
  * @created 2004-04-01
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.9 $
- *
- * @modified $Date: 2005/02/22 08:16:13 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy; 2003 <A href="http://www.PIsoftware.com/">Plugged In
- *      Software Pty Ltd</A>
- *
+ * @copyright &copy; 2003 <A href="http://www.PIsoftware.com/">Plugged In Software Pty Ltd</A>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
+@SuppressWarnings("unused")
 public class LuceneResolver implements Resolver {
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(LuceneResolver.class);
@@ -141,16 +131,15 @@ public class LuceneResolver implements Resolver {
   //
 
   /**
-   * Create a model by treating the <var>model</var> as the {@link URL} of an
+   * Create a model by treating the <var>model</var> as the {@link java.net.URL} of an
    * RDF document and downloading it into the database.
    *
-   * @param model  {@inheritDoc}.  In this case, it should be the {@link URL} of
+   * @param model  {@inheritDoc}.  In this case, it should be the {@link java.net.URL} of
    *   an RDF/XML document.
    * @param modelTypeURI  {@inheritDoc}.  This field is ignored, because URL
    *   models are external.
    */
-  public void createModel(long model, URI modelTypeURI)
-      throws ResolverException, LocalizeException {
+  public void createModel(long model, URI modelTypeURI) throws ResolverException, LocalizeException {
     if (logger.isDebugEnabled()) {
       logger.debug("Create Lucene model " + model);
     }
@@ -163,8 +152,7 @@ public class LuceneResolver implements Resolver {
   /**
    * Insert or delete RDF statements in a model at a URL.
    */
-  public void modifyModel(long model, Statements statements, boolean occurs)
-      throws ResolverException {
+  public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {
     if (logger.isDebugEnabled()) {
       logger.debug("Modify URL model " + model);
     }
