@@ -30,7 +30,6 @@ package org.mulgara.server.rmi;
 // Java 2 standard packages
 import java.net.URI;
 import java.rmi.*;
-import javax.security.auth.login.Configuration;
 
 // Locally written packages
 import org.mulgara.query.QueryException;
@@ -87,8 +86,8 @@ interface RemoteSessionFactory extends Remote {
   public URI getDefaultServerURI() throws RemoteException;
 
   /**
-   * Factory method. The session generated will be an unauthenticated (<q>guest
-   * </q>) session. To authenticate it, the {@link Session#login} method must be
+   * Factory method. The session generated will be an unauthenticated (&quot;guest
+   * &quot;) session. To authenticate it, the {@link Session#login} method must be
    * used.
    *
    * @return an unauthenticated session
@@ -107,8 +106,8 @@ interface RemoteSessionFactory extends Remote {
   public Session newJRDFSession() throws QueryException, RemoteException;
 
   /**
-   * Factory method. The session generated will be an unauthenticated (<q>guest
-   * </q>) session. To authenticate it, the {@link Session#login} method must be
+   * Factory method. The session generated will be an unauthenticated (&quot;guest
+   * &quot;) session. To authenticate it, the {@link Session#login} method must be
    * used.  The remote session should be wrapped in a Session object.
    *
    * @return an unauthenticated RemoteSession
