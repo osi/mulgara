@@ -28,13 +28,10 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.URI;
-import java.util.*;
 
 // Third party packages
 import org.apache.log4j.Logger;
-import org.jrdf.graph.*;
 
 // Local packages
 import org.mulgara.query.*;
@@ -43,7 +40,7 @@ import org.mulgara.resolver.spi.*;
 import org.mulgara.store.nodepool.NodePool;
 
 /**
- * An {@link Operation} that implements the {@link Session#removeModel} method.
+ * An {@link Operation} that implements the {@link org.mulgara.server.Session#removeModel(URI)} method.
  *
  * @created 2004-11-24
  *
@@ -60,15 +57,11 @@ import org.mulgara.store.nodepool.NodePool;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class RemoveGraphOperation implements Operation
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(RemoveGraphOperation.class.getName());
+class RemoveGraphOperation implements Operation {
+
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(RemoveGraphOperation.class.getName());
 
   /**
    * The URI of the model to be removed.
@@ -104,16 +97,12 @@ class RemoveGraphOperation implements Operation
 
   public void execute(OperationContext       operationContext,
                       SystemResolver         systemResolver,
-                      DatabaseMetadata       metadata) throws Exception
-  {
+                      DatabaseMetadata       metadata) throws Exception {
+
     long model = systemResolver.localize(new URIReferenceImpl(modelURI));
     model = operationContext.getCanonicalModel(model);
 
-    // Make sure security adapters are satisfied
-    for (Iterator i = operationContext.getSecurityAdapterList().iterator();
-         i.hasNext(); )
-    {
-      SecurityAdapter securityAdapter = (SecurityAdapter) i.next();
+    for (SecurityAdapter securityAdapter: operationContext.getSecurityAdapterList()) {
 
       // Lie to the user
       if (model == NodePool.NONE || !securityAdapter.canSeeModel(model, systemResolver)) {
