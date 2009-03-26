@@ -1115,7 +1115,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
 
     /**
-     * @see org.mulgara.store.stringpool.StringPool#put(org.mulgara.store.stringpool.SPObject)
+     * @see org.mulgara.store.stringpool.StringPool#put(long, SPObject)
      */
     public long put(SPObject spObject) {
       throw new UnsupportedOperationException("Trying to modify a read-only string pool.");
@@ -2264,9 +2264,11 @@ public final class XAStringPoolImpl implements XAStringPool {
     final class GNodeTuplesImpl implements Tuples {
 
       // Defines the constraining type.
+      @SuppressWarnings("unused")
       private SPObject.TypeCategory typeCategory;
 
       // Defines the constraining type.
+      @SuppressWarnings("unused")
       private int typeId;
 
       // The low value of the range (inclusive) or null to indicate the lowest
@@ -2465,8 +2467,8 @@ public final class XAStringPoolImpl implements XAStringPool {
         return null;
       }
 
-      public java.util.List getOperands() {
-        return java.util.Collections.EMPTY_LIST;
+      public java.util.List<Tuples> getOperands() {
+        return java.util.Collections.emptyList();
       }
 
       public void beforeFirst(long[] prefix, int suffixTruncation) throws TuplesException {
@@ -2647,7 +2649,7 @@ public final class XAStringPoolImpl implements XAStringPool {
       /**
        * Copied from AbstractTuples
        */
-      public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+      public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
         return null;
       }
     }
@@ -2957,7 +2959,7 @@ public final class XAStringPoolImpl implements XAStringPool {
 
     public synchronized boolean isBlankNode(Long gNodeL) {
       assert gNodeL != null;
-      Cache cache = getCache();
+      Cache<Long,SPObject> cache = getCache();
       return cache.containsKey(gNodeL) && cache.get(gNodeL) == null;
     }
 
