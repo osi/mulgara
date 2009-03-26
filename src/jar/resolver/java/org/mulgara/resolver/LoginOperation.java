@@ -29,7 +29,6 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.net.URI;
-import java.util.Iterator;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -38,32 +37,18 @@ import org.apache.log4j.Logger;
 import org.mulgara.resolver.spi.*;
 
 /**
- * An {@link Operation} that implements the {@link Session#login} method.
+ * An {@link Operation} that implements the {@link org.mulgara.server.Session#login(URI, String, char[])} method.
  *
  * @created 2004-11-24
- *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
- *
- * @version $Revision: 1.8 $
- *
- * @modified $Date: 2005/01/05 04:58:24 $ by $Author: newmana $
- *
- * @maintenanceAuthor $Author: newmana $
- *
- * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana
- *   Technology, Inc</a>
- *
+ * @copyright &copy;2004 <a href="http://www.tucanatech.com/">Tucana Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class LoginOperation implements Operation
-{
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(LoginOperation.class.getName());
+class LoginOperation implements Operation {
+
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(LoginOperation.class.getName());
 
   /**
    * The URI of the security domain to authenticate to.
@@ -117,10 +102,8 @@ class LoginOperation implements Operation
   {
     if (securityDomain.equals(metadata.getSecurityDomainURI())) {
       // Propagate the login event to the security adapters
-      for (Iterator i = operationContext.getSecurityAdapterList().iterator();
-           i.hasNext();)
-      {
-        ((SecurityAdapter) i.next()).login(user, password);
+      for (SecurityAdapter adapter: operationContext.getSecurityAdapterList()) {
+        adapter.login(user, password);
       }
     } 
   }
