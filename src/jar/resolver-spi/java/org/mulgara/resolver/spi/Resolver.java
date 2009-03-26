@@ -28,7 +28,6 @@
 package org.mulgara.resolver.spi;
 
 // Java 2 standard packages
-import javax.transaction.xa.XAResource;
 import java.net.URI;
 
 // Local packages
@@ -52,8 +51,7 @@ import org.mulgara.store.tuples.Tuples;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public interface Resolver extends EnlistableResource
-{
+public interface Resolver extends EnlistableResource {
   /**
    * Create a model of a specified type.
    *
