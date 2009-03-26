@@ -32,7 +32,6 @@ import java.lang.reflect.*;
 
 // Java 2 standard packages
 import java.net.*;
-import java.util.*;
 
 // Log4J
 import org.apache.log4j.*;
@@ -140,8 +139,8 @@ public class HttpSessionFactory implements SessionFactory {
   }
 
   /**
-   * Factory method. The session generated will be an unauthenticated (<q>guest
-   * </q>) session.
+   * Factory method. The session generated will be an unauthenticated (&quot;guest
+   * &quot;) session.
    *
    * @return an unauthenticated session
    * @throws QueryException if a session couldn't be generated
