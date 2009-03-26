@@ -504,7 +504,7 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
       // support re-ordering the variables so any variables can be bound in the prefix
       if (annotationClass == DefinablePrefixAnnotation.class) {
         return new DefinablePrefixAnnotation() {
-          public void definePrefix(Set boundVars) throws TuplesException {
+          public void definePrefix(Set<Variable> boundVars) throws TuplesException {
             if (boundVars.contains(constraint.getScoreVar()))
               throw new TuplesException("Score variable may not be bound");
 
