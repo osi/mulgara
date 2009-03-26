@@ -32,10 +32,7 @@ package org.mulgara.extractor.tag;
 // Java 2 enterprise packages
 import java.io.*;
 import java.net.*;
-import java.sql.*;
-import java.util.*;
 
-import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
@@ -45,7 +42,6 @@ import org.apache.log4j.*;
 // Apache Soap packages
 import org.apache.soap.*;
 import org.apache.soap.rpc.*;
-import org.apache.soap.util.xml.*;
 import org.mulgara.util.*;
 
 /**
@@ -67,6 +63,9 @@ import org.mulgara.util.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class MetadataTag extends TagSupport {
+
+  /** Serialization ID */
+  private static final long serialVersionUID = -2907904987343759108L;
 
   /**
    * the name of the id attribute
@@ -125,6 +124,7 @@ public class MetadataTag extends TagSupport {
   /**
    * the title property
    */
+  @SuppressWarnings("unused")
   private final static String TITLE_PROPERTY =
     "http://mulgara.org/mulgara/Document#title";
 
@@ -143,70 +143,82 @@ public class MetadataTag extends TagSupport {
   /**
    * the date property
    */
+  @SuppressWarnings("unused")
   private final static String DATE_PROPERTY =
     "http://mulgara.org/mulgara/Document#containsDate";
 
   /**
    * the processed property
    */
+  @SuppressWarnings("unused")
   private final static String PROCESSED_PROPERTY =
     "http://mulgara.org/mulgara/Document#processed";
 
   /**
    * the company property
    */
+  @SuppressWarnings("unused")
   private final static String COMPANY_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasCompanyName";
 
   /**
    * the person property
    */
+  @SuppressWarnings("unused")
   private final static String PERSON_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasPersonalName";
 
   /**
    * the key phrase property
    */
+  @SuppressWarnings("unused")
   private final static String KEYPHRASE_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasKeyPhrase";
 
   /**
    * the highlight property
    */
+  @SuppressWarnings("unused")
   private final static String HIGHLIGHT_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasHighlight";
 
   /**
    * the link property
    */
+  @SuppressWarnings("unused")
   private final static String LINK_PROPERTY = "";
 
   /**
    * the generic feature property
    */
+  @SuppressWarnings("unused")
   private final static String GENERIC_FEATURE_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasGenericFeature";
 
   /**
    * the geographic feature property
    */
+  @SuppressWarnings("unused")
   private final static String GEO_FEATURE_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasGeographicFeature";
 
   /**
    * the image property
    */
+  @SuppressWarnings("unused")
   private final static String IMAGE_PROPERTY = "";
 
   /**
    * the email property
    */
+  @SuppressWarnings("unused")
   private final static String EMAIL_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasEmailAddress";
 
   /**
    * the case property
    */
+  @SuppressWarnings("unused")
   private final static String CASE_PROPERTY =
     "http://mulgara.org/mulgara/Document#hasCaseName";
 
@@ -243,8 +255,8 @@ public class MetadataTag extends TagSupport {
    * tag. </p>
    *
    * @param model the model to issue queries against
-   * @throws JspTagException if <code>model</code> violates <a
-   *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
+   * @throws JspTagException if <code>model</code> violates
+   *      <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   public void setModel(String model) throws JspTagException {
 
@@ -613,6 +625,7 @@ public class MetadataTag extends TagSupport {
    * @param document the URL of the document to find the title of
    * @return a query to retrieve the
    */
+  @SuppressWarnings("unused")
   private String getTitleQuery(URI model, URL document) {
 
     return "select $docNode $predicate $classNode $propertyLabel $value " +
