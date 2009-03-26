@@ -32,10 +32,7 @@ package org.mulgara.extractor.tag;
 // Java 2 enterprise packages
 import java.io.*;
 import java.net.*;
-import java.sql.*;
-import java.util.*;
 
-import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
@@ -45,7 +42,6 @@ import org.apache.log4j.*;
 // Apache Soap packages
 import org.apache.soap.*;
 import org.apache.soap.rpc.*;
-import org.apache.soap.util.xml.*;
 import org.mulgara.util.*;
 
 /**
@@ -70,6 +66,9 @@ import org.mulgara.util.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class AlldocsTag extends TagSupport {
+
+  /** Serialization ID */
+  private static final long serialVersionUID = 1797208266423531210L;
 
   /**
    * the name of the id attribute
@@ -167,8 +166,8 @@ public class AlldocsTag extends TagSupport {
    * tag. </p>
    *
    * @param model the model to issue queries against
-   * @throws JspTagException if <code>model</code> violates <a
-   *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
+   * @throws JspTagException if <code>model</code> violates
+   *      <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   public void setModel(String model) throws JspTagException {
 
@@ -440,8 +439,8 @@ public class AlldocsTag extends TagSupport {
    * @return the model containing the documents processed by TMex, or null if
    *      the model URI has not been defined as an attribute to this tag or
    *      using the <code>init</code> tag
-   * @throws URISyntaxException if the model URI violates <a
-   *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
+   * @throws URISyntaxException if the model URI violates
+   *      <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   private URI getTmexModel() throws URISyntaxException {
 
