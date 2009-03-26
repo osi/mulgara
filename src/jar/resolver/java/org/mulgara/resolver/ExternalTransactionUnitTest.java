@@ -70,23 +70,19 @@ public class ExternalTransactionUnitTest extends TestCase {
 
   private static final URI databaseURI;
 
-  private static final URI systemModelURI;
 
   private static final URI modelURI;
   private static final URI model2URI;
   private static final URI model3URI;
   private static final URI model4URI;
-  private static final URI model5URI;
 
   static {
     try {
       databaseURI    = new URI("local://database");
-      systemModelURI = new URI("local://database#");
       modelURI       = new URI("local://database#model");
       model2URI      = new URI("local://database#model2");
       model3URI      = new URI("local://database#model3");
       model4URI      = new URI("local://database#model4");
-      model5URI      = new URI("local://database#model5");
     } catch (URISyntaxException e) {
       throw new Error("Bad hardcoded URI", e);
     }
@@ -170,9 +166,6 @@ public class ExternalTransactionUnitTest extends TestCase {
       String tempResolverFactoryClassName =
         "org.mulgara.resolver.memory.MemoryResolverFactory";
 
-      String ruleLoaderFactoryClassName =
-        "org.mulgara.rules.RuleLoaderFactory";
-
       // Create a database which keeps its system models on the Java heap
       database = new Database(
                    databaseURI,
@@ -238,7 +231,7 @@ public class ExternalTransactionUnitTest extends TestCase {
   }
 
   /**
-   * Test the {@link DatabaseSession#create} method.
+   * Test the {@link DatabaseSession#createModel(URI, URI)} method.
    * As a side-effect, creates the model required by the next tests.
    */
   public void testSimpleOnePhaseCommit() throws URISyntaxException {
@@ -596,7 +589,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
@@ -677,7 +670,7 @@ public class ExternalTransactionUnitTest extends TestCase {
         Variable predicateVariable = new Variable("predicate");
         Variable objectVariable    = new Variable("object");
 
-        List selectList = new ArrayList(3);
+        List<SelectElement> selectList = new ArrayList<SelectElement>(3);
         selectList.add(subjectVariable);
         selectList.add(new Subquery(new Variable("k0"), new Query(
           Collections.singletonList(objectVariable),
@@ -871,11 +864,9 @@ public class ExternalTransactionUnitTest extends TestCase {
       try {
         Session session2 = database.newSession();
         try {
-          XAResource roResource = session1.getReadOnlyXAResource();
           XAResource rwResource = session1.getXAResource();
           Xid xid1 = new TestXid(1); // Initial create model.
           Xid xid2 = new TestXid(2); // Main Test.
-          Xid xid3 = new TestXid(3); // Cleanup test.
 
           rwResource.start(xid1, XAResource.TMNOFLAGS);
           session1.createModel(model3URI, null);
