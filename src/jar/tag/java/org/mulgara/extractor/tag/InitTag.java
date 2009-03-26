@@ -29,7 +29,6 @@ package org.mulgara.extractor.tag;
 
 // Java 2 enterprise packages
 import java.net.*;
-import java.util.*;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
@@ -58,6 +57,9 @@ import org.apache.log4j.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class InitTag extends TagSupport {
+
+  /** Serialization ID */
+  private static final long serialVersionUID = 403333945644243185L;
 
   /**
    * variables to have page scope
@@ -172,8 +174,8 @@ public class InitTag extends TagSupport {
    * Sets the model to issue queries against.
    *
    * @param model the model to issue queries against
-   * @throws JspTagException if <code>model</code> violates <a
-   *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
+   * @throws JspTagException if <code>model</code> violates
+   *      <a href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   public void setModel(String model) throws JspTagException {
 
