@@ -279,7 +279,6 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    * currently empty then the current contents of the database will be replaced
    * with the content of the backup file when this method returns.
    *
-   * @param serverURI The URI of the server to restore.
    * @param sourceURI The URI of the backup file to restore from.
    * @throws QueryException if the restore cannot be completed.
    */
@@ -318,9 +317,9 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    * @throws QueryException Unable to create the new graph.
    * @throws RemoteException Network error attempting to create the new graph.
    */
-  public void createModel(URI modelURI, URI modelTypeURI) throws QueryException, RemoteException {
+  public void createModel(URI graphURI, URI graphTypeURI) throws QueryException, RemoteException {
     try {
-      session.createModel(modelURI, modelTypeURI);
+      session.createModel(graphURI, graphTypeURI);
     } catch (Throwable t) {
       throw convertToQueryException(t);
     }
