@@ -405,10 +405,8 @@ public class Query implements Cloneable, Serializable, Command {
    * Close this {@link Query}, and the underlying {@link Answer} objects.
    */
   public void close() throws TuplesException {
-    if (answer != null) {
-      answer.close();
-      answer = null;
-    }
+    answer.close();
+    answer = null;
 
     if (mutableVariableList != null) {
       for (SelectElement v: mutableVariableList) {
