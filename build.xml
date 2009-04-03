@@ -825,9 +825,11 @@
       <sourcepath path="${content-n3.src.dir}/java"/>
       <sourcepath path="${content-rdfxml.src.dir}/java"/>
       <sourcepath path="${content-rlog.src.dir}/java"/>
+      <sourcepath path="${content-rlog.src.dir}/javacc"/>
       <sourcepath path="${driver.src.dir}/java"/>
       <sourcepath path="${dtd.src.dir}/java"/>
       <sourcepath path="${querylang.src.dir}/java"/>
+      <sourcepath path="${querylang.src.dir}/javacc"/>
       <sourcepath path="${jrdf.src.dir}/java"/>
       <sourcepath path="${krule.src.dir}/java"/>
       <sourcepath path="${rules.src.dir}/java"/>
@@ -870,7 +872,6 @@
       <sourcepath path="${obj.dir}/jar/util/java"/>
       <link href="${j2ee.javadoc}"/>
       <link href="${java.javadoc}"/>
-      <link href="${jrdf.javadoc}"/>
     </javadoc>
   </target>
 
