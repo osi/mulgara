@@ -54,6 +54,9 @@ public abstract class AbstractComparable extends AbstractContextOwner implements
 
   /**
    * Equality comparison used for other objects that are explicitly comparable.
+   *
+   * @param v the expression to compare against
+   * @return true if this values equals the expression's value
    */
   public boolean equals(ComparableExpression v) throws QueryException {
     return compare(getValue(), v.getValue()) == 0;

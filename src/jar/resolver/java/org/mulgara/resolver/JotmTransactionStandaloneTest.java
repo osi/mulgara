@@ -155,7 +155,7 @@ public class JotmTransactionStandaloneTest extends TestCase {
   }
 
   /**
-   * Test the {@link DatabaseSession#createModel(URI, URI)} method.
+   * Test explicit transaction.
    * As a side-effect, creates the model required by the next tests.
    */
   public void testTrivalExplicit() throws URISyntaxException {

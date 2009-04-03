@@ -61,6 +61,7 @@ public class AxiomGenerator extends TripleGenerator {
   /**
    * Creates a new writer for a collection of axioms.
    * @param axioms The axioms to be written.
+   * @param resolverSession the resolver-session
    * @throws LocalizeException If localized nodes could not be accessed.
    */
   public AxiomGenerator(Collection<Axiom> axioms, ResolverSession resolverSession) throws LocalizeException {

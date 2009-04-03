@@ -119,6 +119,7 @@ public class QueryServlet extends MulgaraServlet {
    * Creates the servlet for the named host.
    * @param hostname The host name to use, or <code>null</code> if this is not known.
    * @param servername The name of the current server.
+   * @param server the server
    */
   public QueryServlet(String hostname, String servername, SessionFactoryProvider server) {
     super(server);

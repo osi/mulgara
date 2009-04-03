@@ -924,10 +924,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
 
   /**
-   * @see org.mulgara.itql.SableCCInterpreter#toLiteralImpl(PLiteral)
    * Despite onyl being accessed from within this package (both locally and from
    * {@link VariableBuilder}) this method must be public, as it has to appear in
    * the {@link Interpreter} interface.
+   *
+   * @see org.mulgara.itql.SableCCInterpreter#toLiteralImpl(PLiteral)
    */
   public LiteralImpl toLiteralImpl(PLiteral p) {
   
@@ -960,8 +961,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
 
   /**
-   * @see org.mulgara.itql.SableCCInterpreter#nextAnonVariable()
    * Called by {@link ConstraintExpressionBuilder}
+   * @see org.mulgara.itql.SableCCInterpreter#nextAnonVariable()
    */
   public Variable nextAnonVariable() {
     return new Variable("av__" + this.anonSuffix++);

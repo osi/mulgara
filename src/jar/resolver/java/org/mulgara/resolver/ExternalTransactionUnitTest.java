@@ -231,7 +231,7 @@ public class ExternalTransactionUnitTest extends TestCase {
   }
 
   /**
-   * Test the {@link DatabaseSession#createModel(URI, URI)} method.
+   * Test single-phase commit.
    * As a side-effect, creates the model required by the next tests.
    */
   public void testSimpleOnePhaseCommit() throws URISyntaxException {

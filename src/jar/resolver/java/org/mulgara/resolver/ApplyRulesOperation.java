@@ -60,8 +60,8 @@ class ApplyRulesOperation implements Operation {
   }
 
   /**
-   * @see org.mulgara.resolver.Operation#execute(OperationContext, SystemResolver, DatabaseMetadata)
    * Runs the rules over the configured data.
+   * @see org.mulgara.resolver.Operation#execute(OperationContext, SystemResolver, DatabaseMetadata)
    */
   public void execute(OperationContext         operationContext,
                       SystemResolver           systemResolver,

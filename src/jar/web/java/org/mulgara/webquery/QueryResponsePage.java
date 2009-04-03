@@ -109,6 +109,8 @@ public class QueryResponsePage {
    * @param req The request that asked for this page.
    * @param resp The structure for sending the page back to the client.
    * @param tagMap A map of tags to the values that should replace them
+   * @param headFile the header
+   * @param tailFile the footer
    */
   @SuppressWarnings("unchecked")
   public QueryResponsePage(HttpServletRequest req, HttpServletResponse resp, Map<String,String> tagMap, String headFile, String tailFile) {

@@ -482,7 +482,7 @@ public class TqlSession {
 
 
   /**
-   * Initiates a session using the given <code>session</code>
+   * Print the message-of-the-day.
    */
   private void motdInitialization() {
     gui.print("TQL Command Line Interface" + EOL);
