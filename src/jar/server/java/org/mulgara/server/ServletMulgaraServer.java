@@ -48,10 +48,10 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 // locall written packages
-import org.mulgara.resolver.Database;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.SessionFactoryException;
 import org.mulgara.server.SessionFactoryFactory;
+import org.mulgara.util.Closable;
 
 /**
  * Servlet startup wrapper for a Mulgara server. <p>
@@ -104,23 +104,26 @@ public class ServletMulgaraServer extends HttpServlet {
 
 
   /** the database of this server */
-  private static Database database = null;
+  private static SessionFactory database = null;
 
+
+  public ServletMulgaraServer() {
+  }
 
   /**
    * Sets the database of this server.
-   * @param database the database of this server
+   * @param database the database of this server, refered to as a SessionFactory.
    */
-  public static void setDatabase(Database database) {
+  public static void setDatabase(SessionFactory database) {
     ServletMulgaraServer.database = database;
   }
 
 
   /**
-   * Sets the database of this server.
-   * @return The Database value
+   * Gets the sessionFactory/database of this server.
+   * @return The database value as a SessionFactory
    */
-  public static Database getDatabase() {
+  public static SessionFactory getDatabase() {
     return ServletMulgaraServer.database;
   }
 
@@ -156,7 +159,11 @@ public class ServletMulgaraServer extends HttpServlet {
 
     // if it we don't have one already, create a new database
     if (ServletMulgaraServer.getDatabase() == null) {
-      ServletMulgaraServer.setDatabase(createDatabase());
+      try {
+        ServletMulgaraServer.setDatabase(createDatabase());
+      } catch (Throwable t) {
+        log.info("No local database available. Using RMI.");
+      }
     }
 
   }
@@ -170,7 +177,11 @@ public class ServletMulgaraServer extends HttpServlet {
       // log that we're stopping the database
       if (log.isInfoEnabled()) log.info("Stopping Mulgara server");
 
-      getDatabase().close();
+      try {
+        ((Closable)getDatabase()).close();
+      } catch (Exception e) {
+        log.error("Unable to close database cleanly", e);
+      }
       setDatabase(null);
     }
 
@@ -283,7 +294,7 @@ public class ServletMulgaraServer extends HttpServlet {
    * @return The created database.
    * @throws ServletException if the database could not be created.
    */
-  private synchronized Database createDatabase() throws ServletException {
+  private synchronized SessionFactory createDatabase() throws ServletException {
     try {
       // configure the system properties
       if (log.isDebugEnabled()) log.debug("Configuring system properties");
@@ -312,7 +323,7 @@ public class ServletMulgaraServer extends HttpServlet {
       SessionFactoryFactory factory = new SessionFactoryFactory();
       SessionFactory sessionFactory = factory.newSessionFactory(serverURI, statePath);
 
-      return (Database)sessionFactory;
+      return sessionFactory;
 
     } catch (SessionFactoryException sfe) {
       // log the error
