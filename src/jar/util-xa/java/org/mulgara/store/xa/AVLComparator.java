@@ -27,8 +27,6 @@
 
 package org.mulgara.store.xa;
 
-import java.nio.*;
-
 /**
  * Describes the comparison method used to compare {@link AVLNode}s to one another.
  *
@@ -51,11 +49,11 @@ import java.nio.*;
 public interface AVLComparator {
 
   /**
-   * METHOD TO DO
+   * Compares raw data to the data that will be found in an AVL Node
    *
-   * @param key PARAMETER TO DO
-   * @param node PARAMETER TO DO
-   * @return RETURNED VALUE TO DO
+   * @param key The raw data that does not belong to a node.
+   * @param node A node containing data to be compared.
+   * @return &lt; 0 if key &lt; node data, &gt; 0 if key &gt; node data, or 0 if equal.
    */
   public int compare(long[] key, AVLNode node);
 }
