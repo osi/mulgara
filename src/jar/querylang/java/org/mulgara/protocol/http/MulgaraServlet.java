@@ -1,6 +1,7 @@
 package org.mulgara.protocol.http;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -42,6 +43,9 @@ public abstract class MulgaraServlet extends HttpServlet {
   /** The default name to use for the server. */
   protected static final String DEFAULT_SERVERNAME = "server1";
 
+  /** The name of the servlet that will create a database instance, in a WAR file. */
+  protected static final String SERVLET_MULGARA_SERVER = "org.mulgara.server.ServletMulgaraServer";
+
   /** The server for finding a session factory. */
   protected SessionFactoryProvider server;
 
@@ -49,16 +53,15 @@ public abstract class MulgaraServlet extends HttpServlet {
   private URI serverUri;
 
   /** Session factory for accessing the database. */
-  private SessionFactory cachedSessionFactory;
+  protected SessionFactory cachedSessionFactory;
 
   /** Factory for building and caching connections, based on URI. */
   private ConnectionFactory connectionFactory;
 
-
   public MulgaraServlet() {
     server = null;
     cachedSessionFactory = null;
-    connectionFactory = new ConnectionFactory();
+    connectionFactory = null;
     serverUri = null;
   }
 
@@ -90,6 +93,7 @@ public abstract class MulgaraServlet extends HttpServlet {
     } catch (URISyntaxException e) {
       logger.error("Badly formed server URI: " + uri);
     }
+    cachedSessionFactory = getServletDatabase();
   }
 
 
@@ -120,12 +124,12 @@ public abstract class MulgaraServlet extends HttpServlet {
    * @throws QueryException If there was an error asking an internal server for a connection.
    */
   private Connection getConnection() throws QueryException, IOException {
-    assert connectionFactory != null ^ server != null;
-    if (connectionFactory == null) {
-      return new SessionConnection(getSessionFactory().newSession(), null, null);
+    SessionFactory sessionFactory = getSessionFactory();
+    if (sessionFactory != null) {
+      return new SessionConnection(sessionFactory.newSession(), null, null);
     } else {
       try {
-        return connectionFactory.newConnection(serverUri);
+        return getConnectionFactory().newConnection(serverUri);
       } catch (ConnectionException e) {
         throw new IOException("Unable to create a connection to the database identified by: " + serverUri + " (" + e.getMessage() + ")");
       }
@@ -134,15 +138,52 @@ public abstract class MulgaraServlet extends HttpServlet {
 
   /**
    * This method allows us to put off getting a session factory until the server is
-   * ready to provide one.
-   * @return A new session factory.
+   * ready to provide one. The session factory will be a local database, or a database
+   * created by another servlet called ServletMulgaraServer.
+   * @return A new session factory, or <code>null</code> if one cannot be created.
    */
   private SessionFactory getSessionFactory() throws IllegalStateException {
     if (cachedSessionFactory == null) {
-      cachedSessionFactory = server.getSessionFactory();
-      if (cachedSessionFactory == null) throw new IllegalStateException("Server not yet ready. Try again soon.");
+      cachedSessionFactory = (server == null)
+                           ? getServletDatabase()
+                           : server.getSessionFactory();
     }
     return cachedSessionFactory;
+  }
+
+
+  /**
+   * Use reflection to ask the ServletMulgaraServer for a reference to the Database.
+   * @return The database that was set up by the server-servlet.
+   */
+  private SessionFactory getServletDatabase() {
+    try {
+      Class<?> dbServlet = Class.forName(SERVLET_MULGARA_SERVER);
+      return (SessionFactory)dbServlet.getMethod("getDatabase", (Class<?>[])null).invoke(null, (Object[])null);
+    } catch (ClassNotFoundException e) {
+      logger.error("Unable to find Database provider servlet", e);
+    } catch (SecurityException e) {
+      logger.error("Security Error while accessing Database provider servlet", e);
+    } catch (NoSuchMethodException e) {
+      logger.error("Missing functionality on Database provider servlet", e);
+    } catch (IllegalArgumentException e) {
+      logger.error("Bad method structure in Database provider servlet", e);
+    } catch (IllegalAccessException e) {
+      logger.error("Access Error while accessing Database provider servlet", e);
+    } catch (InvocationTargetException e) {
+      logger.error("Error encountered accessing Database provider servlet", e);
+    }
+    return null;
+  }
+
+
+  /**
+   * Gets the connection factory, creating it if it has not been initialized.
+   * @return A new or cached connection factory.
+   */
+  private ConnectionFactory getConnectionFactory() {
+    if (connectionFactory == null) connectionFactory = new ConnectionFactory();
+    return connectionFactory;
   }
 
 }
