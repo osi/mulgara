@@ -91,8 +91,20 @@ public class StackTrace {
   private String getStringTrace() {
     StringBuilder b = new StringBuilder("STACK TRACE:\n");
     StackTraceElement[] stack = throwable.getStackTrace();
-    for (int level = offset; level < stack.length; level ++) {
+    for (int level = offset; level < stack.length; level++) {
       b.append("  ").append(stack[level].toString()).append("\n");
+    }
+    Throwable reason = throwable.getCause();
+    while (reason != null) {
+      b.append(" Caused by:");
+      b.append(reason.getClass().toString());
+      b.append(": ");
+      b.append(reason.getMessage());
+      stack = reason.getStackTrace();
+      for (int level = 0; level < stack.length; level++) {
+        b.append("  ").append(stack[level].toString()).append("\n");
+      }
+      reason = reason.getCause();
     }
     return b.toString();
   }
