@@ -78,6 +78,7 @@ import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.transaction.TransactionManagerFactory;
+import org.mulgara.util.Closable;
 
 /**
  * A database capable of managing and querying RDF models using a collection of
@@ -95,7 +96,7 @@ import org.mulgara.transaction.TransactionManagerFactory;
  *   Technology, Inc</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class Database implements SessionFactory {
+public class Database implements SessionFactory, Closable {
 
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(Database.class.getName());
