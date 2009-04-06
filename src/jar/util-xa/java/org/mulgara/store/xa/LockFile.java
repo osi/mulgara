@@ -64,7 +64,7 @@ public class LockFile {
   private final static Logger logger = Logger.getLogger(LockFile.class);
 
   /** The set of lock files that are in use by this JVM. */
-  private static final Set internalLocks = new HashSet();
+  private static final Set<File> internalLocks = new HashSet<File>();
 
   /** The lock file name. */
   File lockFile;
@@ -77,7 +77,6 @@ public class LockFile {
 
   /** The exclusive FileLock object. */
   FileLock fl;
-
 
   /**
    * Create the lock file if it doesn't already exist and lock it with
