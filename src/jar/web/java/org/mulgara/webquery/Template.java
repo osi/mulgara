@@ -55,6 +55,9 @@ public class Template {
   /** The tag to replace in the template file for the user-set graph URI. */
   public static final String GRAPH_TAG = "graph";
 
+  /** The tag to replace in the template file for the base path of the application. */
+  public static final String BASE_PATH_TAG = "base";
+
   /** The amount of indenting to use for the rows in the template. */
   public static final int ROW_INDENT = 8;
 

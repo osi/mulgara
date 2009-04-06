@@ -6,7 +6,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Mulgara Viewer</title>
-  <link href="styles/ui.css" rel="stylesheet" type="text/css" />
+  <link href="@@base@@styles/ui.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" type="text/javascript">
   <!--
   // Validate the form and submit it if all is OK
@@ -47,7 +47,7 @@
   <div id="wrapper">
     <div id="header">
       <div id="logo">
-        <a href="http://mulgara.org/"><img src="images/logo.jpg" alt="Mulgara - Semantic Store" border="0" /></a>
+        <a href="http://mulgara.org/"><img src="@@base@@images/logo.jpg" alt="Mulgara - Semantic Store" border="0" /></a>
       </div>
     </div>
     <div id="content">
@@ -55,7 +55,7 @@
         <tr>
           <td>
             <table class="queryTable" summary="Enter a query">
-              <form action="@@execute@@" method="post" name="QueryForm">
+              <form action="@@base@@@@execute@@" method="post" name="QueryForm">
                 <tr>
                   <td><strong>Graph URI:</strong> </td>
                   <td><input name="GraphURI" size="60" type="text" value=""/> </td>

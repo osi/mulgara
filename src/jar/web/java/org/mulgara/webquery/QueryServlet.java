@@ -81,6 +81,9 @@ public class QueryServlet extends MulgaraServlet {
   /** Serialization by default */
   private static final long serialVersionUID = -8407263937557243990L;
 
+  /** This path is needed to help with variations in different servlet environments. */
+  public static final String SERVLET_PATH = "/webui";
+
   /** Session value for the TQL interpreter. */
   private static final String TQL_INTERPRETER = "session.tql.interpreter";
 
@@ -111,9 +114,11 @@ public class QueryServlet extends MulgaraServlet {
   /** Debugging text. */
   private String debugText = "";
 
+  /** The path of the base servlet. */
+  private String basePath = SERVLET_PATH;
+
   /** Indicates if this servlet has been initialized. */
   private boolean initialized = false;
-
 
   /**
    * Creates the servlet for the named host.
@@ -171,17 +176,19 @@ public class QueryServlet extends MulgaraServlet {
    * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    String path = req.getPathInfo();
+    String path = req.getRequestURI();
+    basePath = calcBasePath(path);
     debugText = path;
     // case analysis for request type
     String ext = getExtension(path);
     if (ext.equals(".jpg") || ext.equals(".png") || ext.equals(".jpeg")) {
       resp.setContentType("image/jpeg");
-      new ResourceBinaryFile(path).sendTo((OutputStream)resp.getOutputStream());
+      new ResourceBinaryFile(relPath(path)).sendTo((OutputStream)resp.getOutputStream());
     } else if (ext.equals(".css")) {
       resp.setContentType("text/css");
-      new ResourceBinaryFile(path).sendTo(resp.getOutputStream());
+      new ResourceBinaryFile(relPath(path)).sendTo(resp.getOutputStream());
     } else {
+
       // file request
       resp.setContentType("text/html");
       resp.setHeader("pragma", "no-cache");
@@ -208,7 +215,9 @@ public class QueryServlet extends MulgaraServlet {
    * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    if (!req.getPathInfo().startsWith("/" + EXECUTE_LINK)) {
+    log("POST request: " + req);
+    basePath = calcBasePath(req.getRequestURI());
+    if (!req.getRequestURI().contains("/" + EXECUTE_LINK)) {
       resp.sendError(SC_BAD_REQUEST, "Sent a command to the wrong page.");
       return;
     }
@@ -585,12 +594,13 @@ public class QueryServlet extends MulgaraServlet {
    *         the second string is the value to repace the tag with.
    */
   private String[][] getTemplateTags() {
-    return new String[][] {
+   return new String[][] {
         new String[] {HOSTNAME_TAG, hostname},
         new String[] {SERVERNAME_TAG, servername},
         new String[] {JARURL_TAG, resourcePath},
         new String[] {EXECUTE_TAG, EXECUTE_LINK},
         new String[] {DEBUG_TAG, debugText},
+        new String[] {BASE_PATH_TAG, basePath}
     };
   }
 
@@ -722,9 +732,33 @@ public class QueryServlet extends MulgaraServlet {
    * @return The extension, including the . character. If there is no extension, then an empty string.
    */
   private static String getExtension(String path) {
+    if (path == null) return "";
     int dot = path.lastIndexOf('.');
     if (dot < 0) return "";
     return path.substring(dot);
+  }
+
+
+
+  private String calcBasePath(String fullpath) {
+    if (!fullpath.contains(SERVLET_PATH)) return "/";
+    return fullpath.substring(0, fullpath.indexOf(SERVLET_PATH) + SERVLET_PATH.length()) + "/";
+  }
+
+
+  /**
+   * Returns a relative path, starting from a given base.
+   * @param full The full path to be truncated.
+   * @return The new relative path.
+   */
+  private String relPath(String full) {
+    if (full.startsWith(basePath)) {
+      log("Calculating relpath for: " + full + " | " + basePath);
+      String path = full.substring(basePath.length());
+      return path.startsWith("/") ? path : "/" + path;
+    }
+    log("Path does not start with base: " + full + " | " + basePath);
+    return full;
   }
 
 

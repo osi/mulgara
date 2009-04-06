@@ -63,7 +63,7 @@
   </target>
 
   <target name="web-compile"
-          depends="-web-prepare, util-jar, config-jar, querylang-jar, query-jar, -web-unjar-config"
+          depends="-web-prepare, util-jar, config-jar, querylang-jar, query-jar, -web-unjar-config, server-jar"
           description="Compiles all web related files included generated
                        source code"
           unless="web.classes.uptodate">
