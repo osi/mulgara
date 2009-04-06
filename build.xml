@@ -320,8 +320,8 @@
   <!-- =================================================================== -->
   <!-- Removed server-local, jrdf -->
   <target name="dist"
-          depends="querylang-dist, driver-dist, descriptor-dist, mulgara-war,
-                   embedded-dist, lite-dist, raw-dist, core-dist"
+          depends="querylang-dist, driver-dist, descriptor-dist,
+                   embedded-dist, lite-dist, raw-dist, core-dist, mulgara-war"
           description="Creates the distribution files">
 
     <copy file="${bin.dir}/${mulgara.war}" tofile="${dist.dir}/${mulgara.war}"/>
@@ -757,7 +757,6 @@
     <javadoc destdir="${javadoc.dir}"
         maxmemory="256m"
         packagenames="org.mulgara.ant.*,
-                      org.mulgara.barracuda.*,
                       org.mulgara.client.*,
                       org.mulgara.config,
                       org.mulgara.content.*,
@@ -800,6 +799,14 @@
         bottom="Copyright &amp;copy; ${year} Tucana Technologies, Inc. (http://www.tucanatech.com/)."
         author="true"
         additionalParam="-breakiterator -source 1.5">
+<!--
+        packagenames="org.mulgara.ant.*,
+                      org.mulgara.client.*,
+                      org.mulgara.config,
+                      org.mulgara.content.mbox,
+                      org.mulgara.content.mp3,
+                      org.mulgara.content.n3"
+-->
       <tag name="company" description="Company:"/>
       <tag name="copyright" description="Copyright:"/>
       <tag name="created" description="Creation date:"/>
@@ -1376,12 +1383,21 @@
   <target name="mulgara-war"
       description="Builds the Mulgara Semantic Store (Mulgara) WAR"
       depends="driver-jar, querylang-jar, query-jar, rmi-jar, server-jar,
-      server-rmi-jar, util-jar, config-jar, descriptor-jar, dtd-compile,
-      set.host.name, mulgara.war-uptodate"
+      server-rmi-jar, util-jar, config-jar, web-jar, descriptor-jar, dtd-compile,
+      set.host.name, mulgara.war-uptodate, mulgara-servlet-jar"
       unless="mulgara.war-uptodate">
 
     <copy file="${mulgara.war.src.dir}/WEB-INF/web.xml"
       tofile="${obj.dir}/war/mulgara/WEB-INF/web.xml"/>
+
+    <copy file="${mulgara.war.src.dir}/index.html"
+      tofile="${obj.dir}/war/mulgara/index.html"/>
+
+    <mkdir dir="${obj.dir}/war/mulgara/webui"/>
+
+    <copy todir="${obj.dir}/war/mulgara/webui">
+      <fileset dir="${web.src.dir}/resources"/>
+    </copy>
 
     <replace file="${obj.dir}/war/mulgara/WEB-INF/web.xml"
        token="@@hostname@@" value="${host.name}"/>
@@ -1398,12 +1414,12 @@
       <fileset dir="${src.dir}/war/mulgara"
           includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 
-        <lib dir="${lib.dir}" includes="log4j-core-*.jar, icu4j.jar, jena-*.jar, ${iri.jar}, antlr*.jar,
-        lucene*.jar, apache-soap-*.jar, ${joda-time.jar}, ${commons-logging.jar}, ${sesame-model.jar}"/>
-      <lib dir="${bin.dir}" includes="${query.jar},
-        ${driver.jar}, ${querylang.jar}, ${rules.jar}, ${rmi.jar},
-          ${server.jar}, ${server-rmi.jar},
-          ${util.jar}, ${config.jar}"/>
+      <fileset dir="${src.dir}/war/mulgara" includes="index.html"/>
+
+      <fileset dir="${obj.dir}/war/mulgara" includes="webui/images/,webui/styles/"/>
+
+      <lib dir="${lib.dir}" excludes="ant-*.jar, javacc.jar, jsp-*.jar, servlet-api-*.jar, xalan-*.jar, xercesImpl-*.jar, xml-apis-*.jar"/>
+      <lib dir="${bin.dir}" includes="${mulgara-servlet.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>
     </war>
   </target>
@@ -2005,6 +2021,176 @@
       <srcfiles dir="${obj.dir}/war" includes="webservices.war"/>
     </uptodate>
   </target>
+
+
+  <target name="mulgara-servlet-jar"
+          depends="client-jrdf-jar,
+             config-jar,
+             content-mbox-jar,
+             content-mp3-jar,
+             content-n3-jar,
+             content-rdfxml-jar,
+             content-rlog-jar,
+             create-manifest,
+             demo-jar,
+             dtd-jar,
+             driver-jar,
+             dtd-jar,
+             querylang-jar,
+             javadoc-dist,
+             jrdf-jar,
+             store-jar,
+             store-xa-jar,
+             store-nodepool-jar,
+             store-nodepool-memory-jar,
+             store-nodepool-xa-jar,
+             query-jar,
+             resolver-jar,
+             resolver-null-jar,
+             resolver-file-jar,
+             resolver-filesystem-jar,
+             resolver-http-jar,
+             resolver-memory-jar,
+             resolver-spi-jar,
+             resolver-store-jar,
+             resolver-url-jar,
+             resolver-lucene-jar,
+             resolver-view-jar,
+             resolver-nodetype-jar,
+             resolver-prefix-jar,
+             resolver-jar-jar,
+             resolver-relational-jar,
+             resolver-distributed-jar,
+             resolver-xsd-jar,
+             resolver-test-jar,
+             rmi-jar,
+             server-jar,
+             server-rmi-jar,
+             rules-jar,
+             krule-jar,
+             store-stringpool-jar,
+             store-stringpool-memory-jar,
+             store-stringpool-xa-jar,
+             store-stringpool-xa11-jar,
+             tuples-jar,
+             tuples-hybrid-jar,
+             util-jar,
+             util-xa-jar,
+             webservices-war,
+             web-jar,
+             -embedded-dist-uptodate"
+          description="Creates the executable JAR for the Mulgara servlet"
+          unless="embedded.dist.uptodate">
+
+    <!-- build the executable jar file -->
+    <jar jarfile="${bin.dir}/${mulgara-servlet.jar}">
+
+      <zipfileset dir="${conf.dir}" prefix="conf" includes="log4j-mulgara.xml, webdefault.xml, mulgara-rmi.policy, mulgara.policy"/>
+
+      <!-- third party libraries -->
+      <zipfileset src="${lib.dir}/${activation.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${antlr.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${axis.jar}" excludes="META-INF/**, log4j.properties"/>
+      <zipfileset src="${lib.dir}/${carol.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-xml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-xml-schema.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${castor-codegen.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-discovery.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-httpclient.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${commons-codec.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${emory-util.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${howl.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${icu4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jakarta-oro.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jargs.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jasper.runtime.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jasper.compiler.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jaxrpc.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jca.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jena.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${iri.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jetty.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jetty.plus.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jid3.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${joda-time.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jotm.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jotm.jrmp.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${jta.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${log4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${lucene.core.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${serializer.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
+
+      <!-- core libraries -->
+      <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${config.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${descriptor.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${server-local.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-spi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-filesystem.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-nodepool.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-nodepool-memory.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-nodepool-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-stringpool.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-memory.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-xa11.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-http.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-lucene.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-memory.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-store.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-url.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-view.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${tuples.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${tuples-hybrid.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-mp3.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-distributed.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-xsd.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-test.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
+
+
+      <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
+
+      <!-- Schemas -->
+      <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs,**/*.rss,**/*.n3"/>
+
+      <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>
+
+    </jar>
+  </target>
+
+
+
 
   <target name="create-manifest" depends="-prepare-build">
 
