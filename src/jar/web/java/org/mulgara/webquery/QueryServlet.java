@@ -215,7 +215,6 @@ public class QueryServlet extends MulgaraServlet {
    * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    log("POST request: " + req);
     basePath = calcBasePath(req.getRequestURI());
     if (!req.getRequestURI().contains("/" + EXECUTE_LINK)) {
       resp.sendError(SC_BAD_REQUEST, "Sent a command to the wrong page.");
@@ -753,11 +752,9 @@ public class QueryServlet extends MulgaraServlet {
    */
   private String relPath(String full) {
     if (full.startsWith(basePath)) {
-      log("Calculating relpath for: " + full + " | " + basePath);
       String path = full.substring(basePath.length());
       return path.startsWith("/") ? path : "/" + path;
     }
-    log("Path does not start with base: " + full + " | " + basePath);
     return full;
   }
 
