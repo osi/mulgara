@@ -622,7 +622,21 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
           String query = uri.getQuery();
           String ssp = databaseURI.getSchemeSpecificPart();
           if (query != null) ssp += '?' + query;
-          spObject = spObjectFactory.newSPURI(new URI(databaseURI.getScheme(), ssp, uri.getFragment()));
+          String fragment = uri.getFragment();
+          if (fragment != null) {
+            // this is a graph fragment
+            spObject = spObjectFactory.newSPURI(new URI(databaseURI.getScheme(), ssp, uri.getFragment()));
+          } else {
+            // this is a path-relative URI
+            String relPath = uri.getSchemeSpecificPart();
+            // ensure that the relPath can be concatenated to the ssp
+            if (ssp.endsWith("/")) {
+              if (relPath.startsWith("/")) relPath = relPath.substring(1);
+            } else {
+              if (!relPath.startsWith("/")) relPath = "/" + relPath;
+            }
+            spObject = spObjectFactory.newSPURI(new URI(databaseURI.getScheme(), ssp + relPath, null));
+          }
         } catch (URISyntaxException ex) {
           logger.warn(
               "Cannot create absolute URI with base:\"" + databaseURI +
@@ -678,7 +692,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
           }
         } else {
           // databaseURI is hierarchial.
-          String path;
+          String path = null;
           String host;
 
           if (
@@ -689,7 +703,7 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
                       (host = uri.getHost()) != null &&
                       uri.getPort() == databaseURI.getPort() &&
                       (path = uri.getPath()) != null &&
-                      path.equals(databaseURI.getPath()) &&
+                      path.startsWith(databaseURI.getPath()) &&
                       hostnameAliases.contains(host.toLowerCase())
                   )
               )
@@ -699,13 +713,27 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
             SPObjectFactory spObjectFactory = persistentStringPool.getSPObjectFactory();
             QueryParams query = QueryParams.decode(uri);
             String gName = query.get(GRAPH);
+            if (path == null) path = uri.getPath();
+            String dbPath = databaseURI.getPath();
+
             if (gName != null) {
+              // wrapped graph name
               try {
                 spObject = spObjectFactory.newSPURI(new URI(gName));
               } catch (URISyntaxException ex) {
                 logger.warn("Cannot extract a valid URI from:\"" + gName + "\"", ex);
               }
+            } else if (!path.equals(dbPath)) {
+              // relative URI
+              path = path.substring(dbPath.length());
+              if (path.startsWith("/")) path = path.substring(1);
+              try {
+                spObject = spObjectFactory.newSPURI(new URI(null, null, path, uri.getQuery(), fragment));
+              } catch (URISyntaxException ex) {
+                logger.warn("Cannot create relative URI with path:\"" + path + "\"", ex);
+              }
             } else if (fragment != null) {
+              // fragment graph name
               try {
                 spObject = spObjectFactory.newSPURI(new URI(null, null, null, uri.getQuery(), fragment));
               } catch (URISyntaxException ex) {
