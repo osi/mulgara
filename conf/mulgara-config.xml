@@ -101,7 +101,8 @@ Mulgara Semantic Store configuration file.
   <TemporaryNodePoolFactory  type="org.mulgara.store.nodepool.memory.MemoryNodePoolFactory"/>
   <PersistentStringPoolFactory type="org.mulgara.store.stringpool.xa11.XA11StringPoolFactory" dir="xaStringPool"/>
   <TemporaryStringPoolFactory type="org.mulgara.store.stringpool.memory.MemoryStringPoolFactory"/>
-  <PersistentResolverFactory type="org.mulgara.resolver.store.XA11StatementStoreResolverFactory" dir="xaStatementStore"/>
+  <PersistentResolverFactory type="org.mulgara.resolver.store.StatementStoreResolverFactory" dir="xaStatementStore"/>
+  <!-- <PersistentResolverFactory type="org.mulgara.resolver.store.XA11StatementStoreResolverFactory" dir="xaStatementStore"/> -->
   <TemporaryResolverFactory type="org.mulgara.resolver.memory.MemoryResolverFactory" dir="tempStatementStore"/>
 
   <!--
