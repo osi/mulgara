@@ -1904,6 +1904,8 @@
   <target name="core-dist"
     depends="client-jrdf-jar,
              config-jar,
+             content-mbox-jar,
+  	         content-mp3-jar,
              content-n3-jar,
              content-rdfxml-jar,
              content-rlog-jar,
@@ -1922,8 +1924,10 @@
              store-nodepool-xa-jar,
              query-jar,
              resolver-jar,
+             resolver-jar-jar,
              resolver-null-jar,
              resolver-file-jar,
+             resolver-filesystem-jar,
              resolver-http-jar,
              resolver-memory-jar,
              resolver-spi-jar,
@@ -1979,8 +1983,10 @@
       <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${store-stringpool-xa11.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="**/*.xml, META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="**/*.xml, META-INF/**"/>
+      <zipfileset src="${bin.dir}/${resolver-filesystem.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-http.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-lucene.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-memory.jar}" excludes="**/*.xml, META-INF/**"/>
@@ -1989,6 +1995,8 @@
       <zipfileset src="${bin.dir}/${resolver-view.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${tuples.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${tuples-hybrid.jar}" excludes="**/*.xml, META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${content-mp3.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="**/*.xml, META-INF/**"/>
