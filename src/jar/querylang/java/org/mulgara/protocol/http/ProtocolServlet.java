@@ -719,7 +719,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    */
   enum Output {
     XML("application/sparql-results+xml", false),
-    JSON("application/sparql-results+json", false),
+    JSON("application/sparql-results+json", true),
     RDFXML("application/rdf+xml", true),
     N3("text/rdf+n3", true);
 
