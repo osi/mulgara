@@ -1,4 +1,47 @@
 ------------------------------------------------------------------------
+r1677 | pag | 2009-04-21 02:07:59 -0500 (Tue, 21 Apr 2009) | 1 line
+Changed paths:
+   M /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ProtocolServlet.java
+
+Returning better response codes
+------------------------------------------------------------------------
+r1676 | pag | 2009-04-21 01:13:30 -0500 (Tue, 21 Apr 2009) | 1 line
+Changed paths:
+   M /trunk/src/jar/querylang/java/org/mulgara/protocol/http/ProtocolServlet.java
+
+Added JSON as a graph encoding type
+------------------------------------------------------------------------
+r1675 | pag | 2009-04-21 00:32:32 -0500 (Tue, 21 Apr 2009) | 1 line
+Changed paths:
+   M /trunk/src/war/mulgara/WEB-INF/web.xml
+
+Removed a comment for a public endpoint from the TQL servlet section
+------------------------------------------------------------------------
+r1674 | pag | 2009-04-20 23:58:46 -0500 (Mon, 20 Apr 2009) | 1 line
+Changed paths:
+   M /trunk/src/war/mulgara/WEB-INF/web.xml
+
+Fixed the SPARQL endpoint, and added in the TQL endpoint
+------------------------------------------------------------------------
+r1673 | pag | 2009-04-20 23:58:08 -0500 (Mon, 20 Apr 2009) | 1 line
+Changed paths:
+   M /trunk/build.properties
+   M /trunk/build.xml
+
+Added a stripped down WAR for dealing with classpath conflicts
+------------------------------------------------------------------------
+r1672 | eddie | 2009-04-18 17:49:44 -0500 (Sat, 18 Apr 2009) | 1 line
+Changed paths:
+   M /trunk/build.xml
+
+r1457 updated conf/core/mulgara-x-config.xml to include new content handlers (mp3, mbox) and resolver factories (jar, filesystem). This updates the core-dist build target to include the corresponding jars.
+------------------------------------------------------------------------
+r1670 | pag | 2009-04-14 13:47:32 -0500 (Tue, 14 Apr 2009) | 1 line
+Changed paths:
+   A /trunk/KOWARI-MODIFICATIONS/mods-mulgara-2.1.0.txt
+
+New release log
+------------------------------------------------------------------------
 r1669 | pag | 2009-04-14 11:51:03 -0500 (Tue, 14 Apr 2009) | 1 line
 Changed paths:
    M /trunk/common.properties
