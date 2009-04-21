@@ -325,6 +325,7 @@
           description="Creates the distribution files">
 
     <copy file="${bin.dir}/${mulgara.war}" tofile="${dist.dir}/${mulgara.war}"/>
+    <copy file="${bin.dir}/${mulgara-core.war}" tofile="${dist.dir}/${mulgara-core.war}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -1420,6 +1421,24 @@
 
       <lib dir="${lib.dir}" excludes="ant-*.jar, javacc.jar, jsp-*.jar, servlet-api-*.jar, xalan-*.jar, xercesImpl-*.jar, xml-apis-*.jar"/>
       <lib dir="${bin.dir}" includes="${mulgara-servlet.jar}"/>
+      <lib dir="${dist.dir}" includes="expires.txt"/>
+    </war>
+
+    <war warfile="${bin.dir}/${mulgara-core.war}"
+        webxml="${obj.dir}/war/mulgara/WEB-INF/web.xml">
+
+      <zipfileset dir="${conf.dir}" prefix="WEB-INF/conf"
+          includes="mulgara-config-war.xml, mulgara-rmi.policy, mulgara.policy,
+          log4j-mulgara-war.properties, expires.txt"/>
+
+      <fileset dir="${src.dir}/war/mulgara"
+          includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
+
+      <fileset dir="${src.dir}/war/mulgara" includes="index.html"/>
+
+      <fileset dir="${obj.dir}/war/mulgara" includes="webui/images/,webui/styles/"/>
+
+      <lib dir="${bin.dir}" includes="${mulgara-core.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>
     </war>
   </target>
