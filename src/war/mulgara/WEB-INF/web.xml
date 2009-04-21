@@ -58,19 +58,32 @@
 
   <servlet>
     <servlet-name>SPARQL</servlet-name>
-    <servlet-class>org.mulgara.protocol.http.ProtocolServlet</servlet-class>
+    <servlet-class>org.mulgara.protocol.http.SparqlServlet</servlet-class>
+    <!-- <servlet-class>org.mulgara.protocol.http.PublicSparqlServlet</servlet-class> -->
     <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>TQL</servlet-name>
+    <servlet-class>org.mulgara.protocol.http.TqlServlet</servlet-class>
+    <!-- <servlet-class>org.mulgara.protocol.http.PublicSparqlServlet</servlet-class> -->
+    <load-on-startup>3</load-on-startup>
   </servlet>
 
   <servlet>
     <servlet-name>MulgaraWebUI</servlet-name>
     <servlet-class>org.mulgara.webquery.QueryServlet</servlet-class>
-    <load-on-startup>3</load-on-startup>
+    <load-on-startup>4</load-on-startup>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>SPARQL</servlet-name>
     <url-pattern>/sparql</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>TQL</servlet-name>
+    <url-pattern>/tql</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
