@@ -34,6 +34,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 
 import org.apache.log4j.Logger;
 import org.mulgara.connection.Connection;
@@ -231,6 +232,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
       Connection conn = getConnection(req);
       if (triple == null) createGraph(conn, graph);
       else createTriple(conn, graph, triple);
+      resp.setStatus(SC_CREATED);
     } catch (ServletException e) {
       e.sendResponseTo(resp);
     }
@@ -248,6 +250,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
       Connection conn = getConnection(req);
       if (triple == null) deleteGraph(conn, graph);
       else deleteTriple(conn, graph, triple);
+      resp.setStatus(SC_NO_CONTENT);
     } catch (ServletException e) {
       e.sendResponseTo(resp);
     }
