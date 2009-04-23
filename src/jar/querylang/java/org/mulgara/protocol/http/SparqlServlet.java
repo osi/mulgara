@@ -54,6 +54,13 @@ public class SparqlServlet extends ProtocolServlet {
   }
 
 
+  /**
+   * Creates the servlet in a default application server environment.
+   */
+  public SparqlServlet() throws IOException {
+  }
+
+
   /** @see org.mulgara.protocol.http.ProtocolServlet#initializeBuilders() */
   protected void initializeBuilders() {
     AnswerStreamConstructor jsonBuilder = new AnswerStreamConstructor() {

@@ -53,6 +53,13 @@ public class TqlServlet extends ProtocolServlet {
   }
 
 
+  /**
+   * Creates the servlet in a default application server environment.
+   */
+  public TqlServlet() throws IOException {
+  }
+
+
   /** @see org.mulgara.protocol.http.ProtocolServlet#initializeBuilders() */
   protected void initializeBuilders() {
     // TODO: create a JSON answer and a XML object for TQL.
