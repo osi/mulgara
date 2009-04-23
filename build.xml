@@ -1419,7 +1419,7 @@
 
       <fileset dir="${obj.dir}/war/mulgara" includes="webui/images/,webui/styles/"/>
 
-      <lib dir="${lib.dir}" excludes="ant-*.jar, javacc.jar, jsp-*.jar, servlet-api-*.jar, xalan-*.jar, xercesImpl-*.jar, xml-apis-*.jar"/>
+      <lib dir="${lib.dir}" excludes="ant-*.jar, javacc.jar, jsp-*.jar, servlet-api-*.jar, xalan-*.jar, xml-apis-*.jar"/>
       <lib dir="${bin.dir}" includes="${mulgara-servlet.jar}"/>
       <lib dir="${dist.dir}" includes="expires.txt"/>
     </war>
