@@ -77,12 +77,12 @@
 
   <servlet-mapping>
     <servlet-name>SPARQL</servlet-name>
-    <url-pattern>/sparql</url-pattern>
+    <url-pattern>/sparql/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>TQL</servlet-name>
-    <url-pattern>/tql</url-pattern>
+    <url-pattern>/tql/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
