@@ -66,6 +66,9 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
   /** option to change the host the server is bound to */
   public final static Option SERVER_HOST = new StringOption('k', "serverhost");
 
+  /** option to set the default graph to use with SPARQL */
+  public final static Option DEFAULT_GRAPH = new StringOption('g', "defaultgraph");
+
   /** option to disble the automatic starting of a RMI Registry */
   public final static Option NO_RMI = new BooleanOption('n', "normi");
 
@@ -120,6 +123,7 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
     addOption(HTTP_HOST);
     addOption(NO_HTTP);
     addOption(SERVER_HOST);
+    addOption(DEFAULT_GRAPH);
     addOption(PORT);
     addOption(PUBLIC_PORT);
     addOption(NO_RMI);

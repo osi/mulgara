@@ -551,6 +551,16 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         ServerInfo.setRMIPort(rmiPort);
         System.setProperty(Context.PROVIDER_URL, "rmi://" + ServerInfo.getBoundHostname() + ":" + rmiPort + "/");
 
+        // set up the default graph to use for SPARQL
+        String defaultGraph = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.DEFAULT_GRAPH);
+        if (defaultGraph != null) {
+          ServerInfo.setDefaultGraphURI(new URI(defaultGraph));
+        } else {
+          defaultGraph = mulgaraConfig.getDefaultGraph();
+          if (defaultGraph != null) ServerInfo.setDefaultGraphURI(new URI(defaultGraph));
+        }
+
+        // set up system properties that are used by external packages
         configureSystemProperties();
 
         // load an external logging configuration
@@ -782,6 +792,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
     usage.append("-k, --serverhost    the hostname to bind the server to" + eol);
     usage.append("-o, --httphost      the hostname for HTTP requests" + eol);
     usage.append("-p, --port          the port for HTTP requests" + eol);
+    usage.append("-g, --defaultgraph  the default graph to use for SPARQL connections" + eol);
     usage.append("-r, --rmiport       the RMI registry port" + eol);
     usage.append("-t, --rmiobjectport the RMI peer port for objects" + eol);
     usage.append("-s, --servername    the (RMI) name of the server" + eol);
