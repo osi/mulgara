@@ -29,6 +29,7 @@ package org.mulgara.server;
 
 // Java packages
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,11 +61,20 @@ import org.mulgara.server.SessionFactory;
  */
 public class ServerInfo {
 
+  /**
+   * The system property to use for setting the default graph. Defined here, as this is
+   * the only central point for any servlet configuration.
+   */
+  private static final String DEFAULT_GRAPH_PROPERTY = "sparql.default.graph";
+
   /** The session factory for the local database. */
   private static SessionFactory localSessionFactory = null;
 
   /** The server URI for this server. */
   private static URI serverURI = null;
+
+  /** The default graph to use in SPARQL. */
+  private static URI defaultGraphURI = null;
 
   /** The host name that this server is bound to. */
   private static String boundHostname = null;
@@ -114,6 +124,23 @@ public class ServerInfo {
    */
   public static URI getServerURI() {
     return serverURI;
+  }
+
+
+  /**
+   * Return the default graph to use for SPARQL.
+   * @return The default graph.
+   */
+  public static URI getDefaultGraphURI() {
+    if (defaultGraphURI != null) return defaultGraphURI;
+
+    // If this has not been set, then default to using the system property
+    try {
+      String property = System.getProperty(DEFAULT_GRAPH_PROPERTY);
+      return property != null ? new URI(property) : null;
+    } catch (URISyntaxException e) {
+      return null;
+    }
   }
 
 
@@ -206,6 +233,15 @@ public class ServerInfo {
   static void setServerURI(URI serverURI) {
     ServerInfo.serverURI = serverURI;
     hostnames.add(serverURI.getHost().toLowerCase());
+  }
+
+
+  /**
+   * Sets the default graph URI to use with SPARQL.
+   * @param defaultGraphURI The URI of the default graph.
+   */
+  static void setDefaultGraphURI(URI defaultGraphURI) {
+    ServerInfo.defaultGraphURI = defaultGraphURI;
   }
 
 
