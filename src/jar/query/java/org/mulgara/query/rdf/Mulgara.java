@@ -51,6 +51,9 @@ public class Mulgara {
   /** A general identifier for an empty graph */
   public final static String NULL_GRAPH = "sys:null";
 
+  /** A general identifier for a default graph */
+  public final static String DEFAULT_GRAPH = "sys:default";
+
   /** An identifier for a prefix graph */
   public final static String PREFIX_GRAPH = "sys:prefix";
 
