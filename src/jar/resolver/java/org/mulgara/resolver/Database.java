@@ -767,12 +767,14 @@ public class Database implements SessionFactory, Closable {
 
 
     URI systemModelURI = new URI(uri.getScheme(), uri.getSchemeSpecificPart(), "");
+    URI defaultGraphURI = getDefaultURI();
     metadata = new DatabaseMetadataImpl(uri,
                                hostnameAliases,
                                securityDomainURI,
                                systemModelURI,
                                RDF.TYPE,
-                               systemResolverFactory.getSystemModelTypeURI());
+                               systemResolverFactory.getSystemModelTypeURI(),
+                               defaultGraphURI);
 
     DatabaseSession session = new DatabaseSession(
         transactionManager,
@@ -1327,18 +1329,57 @@ public class Database implements SessionFactory, Closable {
 
 
   /**
+   * Sets a property on the ServerInfo, if it is available
+   * @param name The name of the property. Case sensitive.
+   * @param value The value of the property to be set.
+   */
+  private void setServerInfoProperty(String name, Object value) {
+    try {
+      Class<?> si = Class.forName("org.mulgara.server.ServerInfo");
+      java.lang.reflect.Method setter = si.getMethod("set" + name, new Class[] { value.getClass() });
+      setter.invoke(null, new Object[] { value });
+    } catch (Exception e) {
+      /* Not much that can be done here */
+      logger.info("Unable to set '" + name + "' for Server Info", e);
+    }
+  }
+
+
+  /**
+   * Gets a property from the ServerInfo, if it is available
+   * @param name The name of the property. Case sensitive.
+   * @return The value, or <code>null</code> if not available.
+   */
+  private Object getServerInfoProperty(String name) {
+    try {
+      Class<?> si = Class.forName("org.mulgara.server.ServerInfo");
+      java.lang.reflect.Method setter = si.getMethod("get" + name, new Class[] { });
+      return setter.invoke(null, new Object[] { });
+    } catch (Exception e) {
+      /* Not much that can be done here */
+      logger.info("Unable to get '" + name + "' from Server Info", e);
+      return null;
+    }
+  }
+
+
+  /**
    * Sets the hostnames on the ServerInfo object, if it is visible.
    *
    * @param names The set of hostnames to set on ServerInfo
    */
   private void setHostnameAliases(Set<String> names) {
-    try {
-      Class<?> si = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method setter = si.getMethod("setHostnameAliases", new Class[] { Set.class });
-      setter.invoke(null, new Object[] { names });
-    } catch (Exception e) {
-      /* Not much that can be done here */
-      logger.info("Unable to set the host names for Server Info", e);
-    }
+    setServerInfoProperty("HostnameAliases", names);
+  }
+
+
+  /**
+   * Sets the hostnames on the ServerInfo object, if it is visible.
+   *
+   * @return The default graph URI, used by SPARQL
+   */
+  private URI getDefaultURI() {
+    URI u = (URI)getServerInfoProperty("DefaultGraphURI");
+    return u == null ? URI.create(Mulgara.DEFAULT_GRAPH) : u;
   }
 }

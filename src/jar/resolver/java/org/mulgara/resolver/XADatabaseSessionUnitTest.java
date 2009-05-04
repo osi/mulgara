@@ -197,14 +197,14 @@ public class XADatabaseSessionUnitTest extends TestCase {
                  new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V4 V2))",
                  "M11",
-                 "(result _node84 _node85)",
+                 "(result _node85 _node86)",
                  "testSubjectVarObjModelPrimitive"),
 
     parser.parse("testModel",
                  new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V0 (| V0 V4 V7))",
                  "M11",
-                 "(result _node84)",
+                 "(result _node85)",
                  "testSubjectLitObjModelPrimitive"),
 
     parser.parse("testModel",
@@ -601,7 +601,6 @@ public class XADatabaseSessionUnitTest extends TestCase {
   // Test cases
   //
 
-  @SuppressWarnings("unchecked")
   public void testModel() {
     try {
       logger.debug("Testing: " + test.errorString);

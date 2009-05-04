@@ -55,6 +55,11 @@ class BootstrapOperation implements Operation
     systemResolver.modifyModel(graph, new SingletonStatements(graph, rdfType, graphType), true);
     databaseMetadata.initializeSystemNodes(graph, rdfType, graphType);
 
+    // set up the default graph
+    long defaultGraph = systemResolver.localizePersistent(
+        new URIReferenceImpl(databaseMetadata.getDefaultGraphURI()));
+    systemResolver.modifyModel(graph, new SingletonStatements(defaultGraph, rdfType, graphType), true);
+
     long preSubject = systemResolver.localizePersistent(
         new URIReferenceImpl(databaseMetadata.getPreallocationSubjectURI()));
     long prePredicate = systemResolver.localizePersistent(

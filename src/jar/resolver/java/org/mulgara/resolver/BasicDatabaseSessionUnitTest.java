@@ -64,10 +64,16 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
   private static final URI databaseURI = URI.create("local:database");
 
   /**
-  * The URI of the {@link #database}'s system model:
-  * <code>local:database#</code>.
-  */
+   * The URI of the {@link #database}'s system model:
+   * <code>local:database#</code>.
+   */
   private static final URI systemModelURI = URI.create("local:database#");
+
+  /**
+    * The URI of the {@link #database}'s default graph:
+    * <code>sys:default</code>.
+    */
+   private static final URI defaultGraphURI = URI.create("sys:default");
 
   /** The URI of the {@link #database}'s system model type.  */
   private static final URI memoryModelURI = URI.create(Mulgara.NAMESPACE+"MemoryModel");
@@ -214,6 +220,10 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
             new Variable[] { subjectVariable, predicateVariable, objectVariable },
             new Object[] {
               new URIReferenceImpl(systemModelURI),
+              new URIReferenceImpl(RDF.TYPE),
+              new URIReferenceImpl(memoryModelURI),
+
+              new URIReferenceImpl(defaultGraphURI),
               new URIReferenceImpl(RDF.TYPE),
               new URIReferenceImpl(memoryModelURI)
             });

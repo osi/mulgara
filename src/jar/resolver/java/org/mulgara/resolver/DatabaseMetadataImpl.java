@@ -61,6 +61,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata {
   private URI systemModelURI;
   private URI rdfTypeURI;
   private URI systemModelTypeURI;
+  private URI defaultGraphURI;
 
   /** The set of alternative hostnames for the current host. */
   private final Set<String> hostnameAliases;
@@ -71,7 +72,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata {
   private String serverName;
 
 
-  DatabaseMetadataImpl(URI uri, Set<String> hostnameAliases, URI securityDomainURI, URI systemModelURI, URI rdfTypeURI, URI systemModelTypeURI) {
+  DatabaseMetadataImpl(URI uri, Set<String> hostnameAliases, URI securityDomainURI, URI systemModelURI, URI rdfTypeURI, URI systemModelTypeURI, URI defaultGraphURI) {
     // Validate parameters.
     if (uri == null) {
       throw new IllegalArgumentException("uri null");
@@ -88,6 +89,10 @@ public class DatabaseMetadataImpl implements DatabaseMetadata {
     if (systemModelTypeURI == null) {
       throw new IllegalArgumentException("systemModelTypeURI null");
     }
+    if (defaultGraphURI == null) {
+      throw new IllegalArgumentException("defaultGraphURI null");
+    }
+
 
     this.uri = uri;
     this.hostnameAliases = hostnameAliases;
@@ -95,6 +100,7 @@ public class DatabaseMetadataImpl implements DatabaseMetadata {
     this.systemModelURI = systemModelURI;
     this.rdfTypeURI = rdfTypeURI;
     this.systemModelTypeURI = systemModelTypeURI;
+    this.defaultGraphURI = defaultGraphURI;
 
     // Set server name from the path part of the server URI.
     serverName = getServerName(uri);
@@ -118,6 +124,11 @@ public class DatabaseMetadataImpl implements DatabaseMetadata {
 
   public URI getSystemModelTypeURI() {
     return systemModelTypeURI;
+  }
+
+
+  public URI getDefaultGraphURI() {
+    return defaultGraphURI;
   }
 
 
