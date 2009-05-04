@@ -23,6 +23,7 @@
     <fileset file="${driver.dist.dir}/${driver.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
+    <fileset file="${server.dist.dir}/${server.jar}"/>
   </path>
   <path id="querylang-test-classpath">
     <path refid="querylang-classpath"/>
@@ -31,6 +32,7 @@
     <fileset file="${bin.dir}/${rmi.jar}"/>
     <fileset file="${querylang.dist.dir}/${querylang.jar}"/>
     <fileset file="${rules.dist.dir}/${rules.jar}"/>
+    <fileset file="${server.dist.dir}/${server.jar}"/>
   </path>
 
   <target name="querylang-clean" description="Removes all compile generated files for the querylang">

@@ -51,6 +51,7 @@ import org.mulgara.query.operation.Deletion;
 import org.mulgara.query.operation.DropGraph;
 import org.mulgara.query.operation.Insertion;
 import org.mulgara.query.operation.Load;
+import org.mulgara.server.ServerInfo;
 import org.mulgara.server.SessionFactoryProvider;
 import org.mulgara.util.functional.C;
 import org.mulgara.util.functional.Fn1E;
@@ -111,12 +112,6 @@ public abstract class ProtocolServlet extends MulgaraServlet {
   /** The parameter identifying the graph. We don't set these in SPARQL yet. */
   protected static final String NAMED_GRAPH_ARG = "named-graph-uri";
 
-  /** The name of the default graph. This is a null graph. */
-  protected static final URI DEFAULT_NULL_GRAPH = URI.create("sys:null");
-
-  /** An empty graph for those occasions when no graph is set. */
-  protected static final List<URI> DEFAULT_NULL_GRAPH_LIST = Collections.singletonList(DEFAULT_NULL_GRAPH);
-
   /** The content type of the results. */
   protected static final String CONTENT_TYPE = "application/sparql-results+xml";
 
@@ -129,7 +124,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
   /** The name of the posted data. */
   protected static final String GRAPH_DATA = "graph";
 
-  /** The header used to indicate a statement count. */ //HDR_CANNOT_LOAD
+  /** The header used to indicate a statement count. */
   protected static final String HDR_STMT_COUNT = "Statements-Loaded";
 
   /** The header used to indicate a part that couldn't be loaded. */
@@ -510,7 +505,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    */
   protected List<URI> getRequestedDefaultGraphs(HttpServletRequest req) throws BadRequestException {
     String[] defaults = req.getParameterValues(DEFAULT_GRAPH_ARG);
-    if (defaults == null) return DEFAULT_NULL_GRAPH_LIST;
+    if (defaults == null) return Collections.singletonList(ServerInfo.getDefaultGraphURI());
     try {
       return C.map(defaults, new Fn1E<String,URI,URISyntaxException>(){public URI fn(String s)throws URISyntaxException{return new URI(s);}});
     } catch (URISyntaxException e) {
@@ -551,7 +546,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
         throw new BadRequestException("Bad MIME data: " + e.getMessage());
       }
     }
-    return DEFAULT_NULL_GRAPH;
+    return ServerInfo.getDefaultGraphURI();
   }
 
 

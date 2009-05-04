@@ -19,7 +19,7 @@ package org.mulgara.sparql;
 import static org.jrdf.vocabulary.RDF.TYPE;
 import static org.jrdf.vocabulary.RDFS.LITERAL;
 import static org.mulgara.query.rdf.Mulgara.NODE_TYPE_GRAPH;
-import static org.mulgara.query.rdf.Mulgara.NULL_GRAPH;
+import static org.mulgara.query.rdf.Mulgara.DEFAULT_GRAPH;
 
 import java.io.IOException;
 import java.net.URI;
@@ -82,7 +82,7 @@ import org.mulgara.util.functional.Fn1;
 public class SparqlInterpreter implements Interpreter {
 
   /** The default graph to use if none has been set. */
-  private static final List<URI> INTERNAL_DEFAULT_GRAPH_URIS = Collections.singletonList(URI.create(NULL_GRAPH));
+  private static final List<URI> INTERNAL_DEFAULT_GRAPH_URIS = Collections.singletonList(URI.create(DEFAULT_GRAPH));
 
   /** The column variables used to build a graph. */
   private static final Variable[] GRAPH_VARS = GraphAnswer.getGraphVariables();
