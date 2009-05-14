@@ -38,6 +38,7 @@ import java.util.*;
 
 // Java 2 enterprise packages
 import javax.activation.MimeType;
+import javax.activation.MimeTypeParameterList;
 import javax.activation.MimeTypeParseException;
 
 //Third party packages
@@ -417,6 +418,7 @@ public class HttpContent implements Content {
    * @return The MimeType for the URL.
    * @throws NotModifiedException if the content validates against the cache
    */
+  @SuppressWarnings("unchecked")
   private MimeType readMimeType(HttpMethod method) throws NotModifiedException {
     MimeType result = null;
     String contentType = null;
@@ -426,15 +428,33 @@ public class HttpContent implements Content {
       Header header = method.getResponseHeader("Content-Type");
       if (header != null) {
         contentType = header.getValue();
-        result = new MimeType(contentType);
+        // find the parameter separator so we can protect against bad params
+        int sep = contentType.indexOf(';');
+        // no params, just create the MimeType
+        if (sep < 0) result = new MimeType(contentType);
+        else {
+          // create the MimeType from the type/subtype
+          result = new MimeType(contentType.substring(0, sep));
+          // parse parameters separately and set the result accordingly
+          try {
+            MimeTypeParameterList params = new MimeTypeParameterList(contentType.substring(sep + 1));
+            Enumeration<String> names = (Enumeration<String>)params.getNames();
+            while (names.hasMoreElements()) {
+              String name = names.nextElement();
+              result.setParameter(name, params.get(name));
+            }
+          } catch (MimeTypeParseException e) {
+            logger.warn("Ignoring bad parameters in '" + contentType.substring(sep + 1) + "' from the content type for " + httpUri);
+          }
+        }
         if (logger.isInfoEnabled()) {
           logger.info("Obtain content type " + result + "  from " + httpUri);
         }
       }
-    } catch (MimeTypeParseException e) {
-      logger.warn("Unable to parse " + contentType + " as a content type for " + httpUri);
     } catch (java.lang.IllegalStateException e) {
       logger.info("Unable to obtain content type for " + httpUri);
+    } catch (MimeTypeParseException e) {
+      logger.warn("Unexpected parameters before ; in '" + contentType + "' as a content type for " + httpUri);
     }
     return result;
   }
