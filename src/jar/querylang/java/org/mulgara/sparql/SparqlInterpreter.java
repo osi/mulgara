@@ -57,6 +57,7 @@ import org.mulgara.query.operation.Command;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
+import org.mulgara.server.ServerInfo;
 import org.mulgara.sparql.parser.ParseException;
 import org.mulgara.sparql.parser.QueryStructure;
 import org.mulgara.sparql.parser.QueryType;
@@ -109,13 +110,16 @@ public class SparqlInterpreter implements Interpreter {
   private static final ConstraintImpl URI_ONLY_CONSTRAINT = new ConstraintImpl(GRAPH_VARS[2], TYPE_REF, URI_REF, NODE_TYPE_GRAPH_REF);
 
 
-  /** The default graph to use when none has been parsed. */
+  /** The default graphs to use as set by the protocol. */
   private List<IRIReference> defaultGraphIris = Collections.emptyList();
 
+  /** The named graphs to use as set by the protocol. */
+  private List<IRIReference> namedGraphIris = Collections.emptyList();
+
   /**
-   * Sets the default graphs to use in parsed queries.
+   * Sets the graphs to use in parsed queries, overriding what is found in the query.
    * @param graphUris The graph URIs to use as the default graphs. A <code>null</code> value
-   *        is treated the same as an empty list.
+   *        is treated the same as an empty list, and is used to unset this override.
    */
   public SparqlInterpreter setDefaultGraphUris(List<URI> graphUris) {
     defaultGraphIris = toIRIs(graphUris);
@@ -123,9 +127,9 @@ public class SparqlInterpreter implements Interpreter {
   }
 
   /**
-   * Sets the single default graph to use in parsed queries.
+   * Sets the single default graph to use in parsed queries, overriding what is found in the query.
    * @param graphUri The graph URI to use as the default graph, or <code>null</code> if the
-   *        default graph is not desired.
+   *        override graph is to be unset.
    */
   public SparqlInterpreter setDefaultGraphUri(URI graphUri) {
     if (graphUri == null) defaultGraphIris = Collections.emptyList();
@@ -136,11 +140,21 @@ public class SparqlInterpreter implements Interpreter {
   /**
    * Sets the single default graph to use in parsed queries.
    * @param graph The graph URI to use as the default graph, or <code>null</code> if the
-   *        default graph is not desired.
+   *        default graph is to be unset.
    * @throws URISyntaxException The graph was not a valid URI.
    */
   public SparqlInterpreter setDefaultGraphUri(String graph) throws URISyntaxException {
     return setDefaultGraphUri(new URI(graph));
+  }
+
+  /**
+   * Sets the graphs to use as named graphs in parsed queries, overriding what is found in the query.
+   * @param graphUris The graph URIs to use as the named graphs. A <code>null</code> value
+   *        is treated the same as an empty list, and is used to unset this override.
+   */
+  public SparqlInterpreter setNamedGraphUris(List<URI> graphUris) {
+    namedGraphIris = toIRIs(graphUris);
+    return this;
   }
 
   /**
@@ -157,6 +171,14 @@ public class SparqlInterpreter implements Interpreter {
    */
   public List<IRIReference> getDefaultGraphIris() {
     return defaultGraphIris.isEmpty() ? toIRIs(INTERNAL_DEFAULT_GRAPH_URIS) : defaultGraphIris;
+  }
+
+  /**
+   * Gets the default graph to use when none has been parsed from the query.
+   * @return The graph that parsed queries will default to when no FROM graph is supplied.
+   */
+  public List<IRIReference> getNamedGraphIris() {
+    return namedGraphIris;
   }
 
   /**
@@ -382,9 +404,16 @@ public class SparqlInterpreter implements Interpreter {
    * @return A GraphExpression containing all the required graphs as a union. TODO: this should be a merge.
    */
   GraphExpression getFrom(QueryStructure queryStruct) {
-    List<IRIReference> iris = queryStruct.getDefaultFroms();
-    // accumulate the graphs as a union, using the default if no graphs supplied
-    return graphUnion(iris.isEmpty() ? getDefaultGraphIris() : iris);
+    // get the overriding defaults
+    List<IRIReference> graphs = defaultGraphIris;
+    if (graphs == null || graphs.isEmpty()) {
+      // no override set, so get the data from the query
+      graphs = queryStruct.getDefaultFroms();
+      // nothing in the query, so fall back to the system default
+      if (graphs == null || graphs.isEmpty()) graphs = getSystemDefaultGraph();
+    }
+    // accumulate the graphs as a union
+    return graphUnion(graphs);
   }
 
   /**
@@ -450,11 +479,23 @@ public class SparqlInterpreter implements Interpreter {
     ConstraintExpression result = patternMapper.mapToConstraints();
     // apply the FROM NAMED expression
     // TODO: This needs to become a Constraint that wraps LiteralTuples.
-    List<IRIReference> namedFroms = queryStruct.getNamedFroms();
+    List<IRIReference> namedFroms = getNamedFroms(queryStruct);
     if (!namedFroms.isEmpty()) result = addNamedFroms(result, namedFroms, patternMapper.getGraphVars());
     // possible to ask for non-variables that were employed in GRAPH statements as a parser check.
     return result;
   }
+
+
+  /**
+   * Get the NAMED FROM clauses to be used in this query.
+   * @param queryStruct the parse structure for the query.
+   * @return The NAMED FROM IRIs to be used, using the protocol values if these are set.
+   */
+  List<IRIReference> getNamedFroms(QueryStructure queryStruct) {
+    if (namedGraphIris != null && !namedGraphIris.isEmpty()) return namedGraphIris;
+    return queryStruct.getNamedFroms();
+  }
+
 
   /**
    * Add in the FROM NAMED values to provide a binding list for each variable used in GRAPH statements.
@@ -538,11 +579,25 @@ public class SparqlInterpreter implements Interpreter {
     return new ConstraintDisjunction(literals, uris);
   }
 
+
+  /**
+   * Get the default graph to use in this system.
+   * Without configuration, this value will be <code>sys:default</code>.
+   * @return A list of the graphs to be used by default when no graphs are specified.
+   */
+  List<IRIReference> getSystemDefaultGraph() {
+    URI d = ServerInfo.getDefaultGraphURI();
+    if (d != null) return Collections.singletonList(new IRIReference(d));
+    // can't find a configured default, use the hard-coded default
+    return toIRIs(INTERNAL_DEFAULT_GRAPH_URIS);
+  }
+
+
   /**
    * Get the column names used in a Graph.
    * @return A list of Variables used when defining a graph.
    */
-  List<? extends SelectElement> graphVariables() {
+  static List<? extends SelectElement> graphVariables() {
     return Arrays.asList(GRAPH_VARS);
   }
 

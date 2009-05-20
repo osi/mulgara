@@ -37,6 +37,8 @@ import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 
 import org.apache.log4j.Logger;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.URIReference;
 import org.mulgara.connection.Connection;
 import org.mulgara.parser.Interpreter;
 import org.mulgara.protocol.StreamedAnswer;
@@ -145,6 +147,9 @@ public abstract class ProtocolServlet extends MulgaraServlet {
   /** The various parameter names used to identify an object in a request */
   private static final String[] OBJECT_PARAM_NAMES = { "object", "obj", "o" };
 
+  /** A query to get the entire contents of a graph */
+  private static final String CONSTRUCT_ALL_QUERY = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
+
   /** This object maps request types to the constructors for that output. */
   protected final Map<Output,AnswerStreamConstructor> streamBuilders = new EnumMap<Output,AnswerStreamConstructor>(Output.class);
 
@@ -180,12 +185,22 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    String queryStr = req.getParameter(QUERY_ARG);
     try {
-      Query query = getQuery(queryStr, req);
-  
-      Answer result = executeQuery(query, req);
+      RestParams params = new RestParams(req);
+      RestParams.ResourceType type = params.getType();
 
+      // build a query based on either the resource being requested, or an explicit query
+      Query query = null;
+      if (type == RestParams.ResourceType.QUERY) {
+        query = getQuery(params.getQuery(), req);
+      } else if (type == RestParams.ResourceType.GRAPH) {
+        query = getQuery(CONSTRUCT_ALL_QUERY, req);
+      } else if (type == RestParams.ResourceType.STATEMENT) {
+        query = getQuery(createAskQuery(params.getTriple()), req);
+      }
+
+      Answer result = executeQuery(query, req);
+      
       Output outputType = getOutputType(req, query);
       sendAnswer(result, outputType, resp);
 
@@ -505,7 +520,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    */
   protected List<URI> getRequestedDefaultGraphs(HttpServletRequest req) throws BadRequestException {
     String[] defaults = req.getParameterValues(DEFAULT_GRAPH_ARG);
-    if (defaults == null) return Collections.singletonList(ServerInfo.getDefaultGraphURI());
+    if (defaults == null) return null;
     try {
       return C.map(defaults, new Fn1E<String,URI,URISyntaxException>(){public URI fn(String s)throws URISyntaxException{return new URI(s);}});
     } catch (URISyntaxException e) {
@@ -613,6 +628,25 @@ public abstract class ProtocolServlet extends MulgaraServlet {
 
 
   /**
+   * Creates a string query asking if a given triple exists.
+   * @param triple The triple to ask the existence of.
+   * @return A string containing an ASK query.
+   */
+  private String createAskQuery(LocalTriple triple) {
+    StringBuffer query = new StringBuffer("ASK ?s ?p ?o { ?s ?p ?o ");
+    query.append(". ?s <http://mulgara.org/is> <").append(triple.getSubject()).append(">");
+    query.append(". ?p <http://mulgara.org/is> <").append(triple.getPredicate()).append(">");
+    ObjectNode o = triple.getObject();
+    query.append(". ?o <http://mulgara.org/is> ");
+    if (o instanceof URIReference) query.append("<");
+    query.append(triple.getObject());
+    if (o instanceof URIReference) query.append(">");
+    query.append(" }");
+    return query.toString();
+  }
+
+
+  /**
    * Compare a parameter name to a set of known parameter names.
    * @param name The name to check.
    * @return <code>true</code> if the name is known. <code>false</code> if not known or <code>null</code>.
@@ -658,7 +692,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    * @return The value for the parameter, or <code>null</code> if not found.
    * @throws ServletException If the parameter appear more than once.
    */
-  private String getParam(String[] keyNames, Map<String,String[]> params) throws ServletException {
+  private static String getParam(String[] keyNames, Map<String,String[]> params) throws ServletException {
     boolean found = false;
     String result = null;
     for (String k: keyNames) {
@@ -736,4 +770,205 @@ public abstract class ProtocolServlet extends MulgaraServlet {
     static Output forMime(String mimeText) { return outputs.get(mimeText); }
   }
 
+  /**
+   * A structure containing the possible params for a read request.
+   */
+  static class RestParams {
+
+    /** The default graph URIs for use in the SPARQL protocol. */
+    List<URI> defaultGraphUris = null;
+
+    /** The named graph URIs for use in the SPARQL protocol. */
+    List<URI> namedGraphUris = null;
+
+    /** The query or command, for use in the SPARQL protocol. */
+    String query = null;
+
+    /** A graph, for use in defining a resource. */
+    URI graph = null;
+
+    /** A triple, for use in defining a resource. */
+    LocalTriple triple = null;
+
+    /** The type of resource. */
+    final ResourceType type;
+
+    @SuppressWarnings("unchecked")
+    public RestParams(HttpServletRequest req) throws ServletException {
+      Map<String,String[]> params = req.getParameterMap();
+
+      defaultGraphUris = getUriParamList(DEFAULT_GRAPH_ARG, params);
+      namedGraphUris = getUriParamList(NAMED_GRAPH_ARG, params);
+      
+      graph = getUriParam(GRAPH_DATA, params);
+
+      // a single default-graph-uri is equivalent to a graph
+      if (graph == null && defaultGraphUris != null && defaultGraphUris.size() == 1) {
+        graph = defaultGraphUris.get(0);
+      }
+
+      // a graph is equivalent to a single default-graph-uri
+      if (graph != null && defaultGraphUris == null) {
+        defaultGraphUris = Collections.singletonList(graph);
+      }
+
+      query = getStringParam(QUERY_ARG, params);
+
+      String s = getParam(SUBJECT_PARAM_NAMES, params);
+      String p = getParam(PREDICATE_PARAM_NAMES, params);
+      String o = getParam(OBJECT_PARAM_NAMES, params);
+      if (s != null || p != null || o != null) triple = new LocalTriple(s, p, o, true);
+
+      type = testForType();
+    }
+
+
+    /**
+     * @return the default-graph-uri parameters in a list, or <code>null</code> if not set.
+     */
+    public List<URI> getDefaultGraphUris() {
+      return defaultGraphUris;
+    }
+
+
+    /**
+     * @return the named-graph-uri parameters in a list, or <code>null</code> if not set.
+     */
+    public List<URI> getNamedGraphUris() {
+      return namedGraphUris;
+    }
+
+
+    /**
+     * @return the query parameter, or <code>null</code> if not set.
+     */
+    public String getQuery() {
+      return query;
+    }
+
+
+    /**
+     * @return the graph parameter, or <code>null</code> if not set.
+     */
+    public URI getGraph() {
+      return graph;
+    }
+
+
+    /**
+     * @return the triple, or <code>null</code> if not set.
+     */
+    public LocalTriple getTriple() {
+      return triple;
+    }
+
+
+    /**
+     * @return the type of resource represented by these parameters.
+     */
+    public ResourceType getType() {
+      return type;
+    }
+
+
+    /**
+     * Test that all the parameters are as expected, and determine the resource type.
+     * @return The type of resource represented with these parameters.
+     * @throws ServletException If the combination of parameters is not valid for a resource.
+     */
+    private ResourceType testForType() throws ServletException {
+      if (triple != null) {
+        // if a triple is defined, then a graph must be defined
+        if (graph == null) throw new BadRequestException("No graph parameter defined for triple.");
+        // no query allowed
+        if (query != null) throw new BadRequestException("Cannot define a statement resource with a query.");
+        return ResourceType.STATEMENT;
+      }
+
+      // If a query, then the only parameters we may not have are the triple,
+      // which has already been tested for.
+      if (query != null) return ResourceType.QUERY;
+
+      // So this is a graph resource
+
+      // May not have named graphs, or more than one default graph
+      if (defaultGraphUris != null && defaultGraphUris.size() != 1) {
+        throw new BadRequestException("Multiple graph resources not permitted.");
+      }
+
+      if (namedGraphUris != null && !namedGraphUris.isEmpty()) {
+        throw new BadRequestException("Named graphs not valid with a graph resource.");
+      }
+      
+      return ResourceType.GRAPH;
+    }
+
+
+    /**
+     * Retrieves all parameters with a given name, and convert to a list of URIs
+     * @param paramName The name of the parameter to retrieve.
+     * @param params The full set of parameters to retrieve.
+     * @return A List of URIs, or <code>null</code> if there are no parameters for <var>paramName</var>.
+     * @throws ServletException If one of the parameter strings is not a valid URI.
+     */
+    static List<URI> getUriParamList(String paramName, Map<String,String[]> params) throws ServletException {
+      String[] uris = params.get(paramName);
+      if (uris == null || uris.length == 0) return null;
+      // convert the default graph strings to URIs
+      // report an error if an invalid URI is found
+      return C.map(uris,
+          new Fn1E<String,URI,ServletException>() {
+            public URI fn(String u) throws ServletException {
+              try {
+                return new URI(u);
+              } catch (URISyntaxException e) {
+                throw new BadRequestException("Bad graph URI: " + e.getMessage());
+              }
+            }
+          }
+      );
+    }
+
+
+    /**
+     * Retrieves a parameter with a given name, and converts it into a URI.
+     * @param paramName The name of the parameter to retrieve.
+     * @param params The full set of parameters to retrieve.
+     * @return A URI, or <code>null</code> if there are no parameters for <var>paramName</var>.
+     * @throws ServletException If the parameter string is not a valid URI, or if there is more than one value.
+     */
+    static URI getUriParam(String paramName, Map<String,String[]> params) throws ServletException {
+      try {
+        String p = getStringParam(paramName, params);
+        return p == null ? null : new URI(p);
+      } catch (URISyntaxException e) {
+        throw new BadRequestException("Bad graph URI: " + e.getMessage());
+      }
+    }
+
+
+    /**
+     * Retrieves a parameter with a given name.
+     * @param paramName The name of the parameter to retrieve.
+     * @param params The full set of parameters to retrieve.
+     * @return A string value, or <code>null</code> if there are no parameters for <var>paramName</var>.
+     * @throws ServletException If there is more than one value.
+     */
+    static String getStringParam(String paramName, Map<String,String[]> params) throws ServletException {
+      String[] vals = params.get(paramName);
+      if (vals == null || vals.length == 0) return null;
+      if (vals.length > 1) throw new BadRequestException("More that one value for: " + paramName);
+      return vals[0];
+    }
+
+
+    /**
+     * Resources being referenced by an HTTP method.
+     */
+    enum ResourceType {
+      STATEMENT,
+      GRAPH,
+      QUERY
+    }
+  }
 }
