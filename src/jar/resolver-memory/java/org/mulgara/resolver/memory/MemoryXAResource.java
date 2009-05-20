@@ -47,6 +47,7 @@ import org.mulgara.store.xa.XAResolverSession;
  *   Technoogies, Inc.</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
+@SuppressWarnings("unused")
 public class MemoryXAResource
     extends AbstractXAResource<RMInfo<MemoryXAResource.MemoryTxInfo>,MemoryXAResource.MemoryTxInfo> {
   private final XAResolverSession session;
