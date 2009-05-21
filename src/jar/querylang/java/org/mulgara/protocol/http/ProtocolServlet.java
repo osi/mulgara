@@ -739,7 +739,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
     if (cmd instanceof ConstructQuery) {
       if (!type.isGraphType) type = DEFAULT_GRAPH_OUTPUT_TYPE;
     } else {
-      if (type.isGraphType) type = DEFAULT_OUTPUT_TYPE;
+      if (!type.isBindingType) type = DEFAULT_OUTPUT_TYPE;
     }
 
     return type;
@@ -750,16 +750,18 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    * Enumeration of the various output types, depending on mime type.
    */
   enum Output {
-    XML("application/sparql-results+xml", false),
-    JSON("application/sparql-results+json", true),
-    RDFXML("application/rdf+xml", true),
-    N3("text/rdf+n3", true);
+    XML("application/sparql-results+xml", false, true),
+    JSON("application/sparql-results+json", true, true),
+    RDFXML("application/rdf+xml", true, false),
+    N3("text/rdf+n3", true, false);
 
     final String mimeText;
     final boolean isGraphType;
-    private Output(String mimeText, boolean isGraphType) { 
+    final boolean isBindingType;
+    private Output(String mimeText, boolean isGraphType, boolean isBindingType) { 
       this.mimeText = mimeText;
       this.isGraphType = isGraphType;
+      this.isBindingType = isBindingType;
     }
 
     static private Map<String,Output> outputs = new HashMap<String,Output>();
