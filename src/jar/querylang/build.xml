@@ -22,7 +22,6 @@
     <fileset file="${query.dist.dir}/${query.jar}"/>
     <fileset file="${driver.dist.dir}/${driver.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
     <fileset file="${server.dist.dir}/${server.jar}"/>
   </path>
   <path id="querylang-test-classpath">
@@ -31,7 +30,6 @@
     <fileset file="${lib.dir}/commons-discovery-1.2.jar"/>
     <fileset file="${bin.dir}/${rmi.jar}"/>
     <fileset file="${querylang.dist.dir}/${querylang.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
     <fileset file="${server.dist.dir}/${server.jar}"/>
   </path>
 
@@ -138,7 +136,6 @@
       <zipfileset src="${query.dist.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${util.dist.dir}/${util.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${activation.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${commons-logging.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${concurrent.jar}" excludes="META-INF/**"/>

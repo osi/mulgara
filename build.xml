@@ -52,7 +52,6 @@
   <property file="${jar.src.dir}/server-local/server-local-build.properties"/>
   <property file="${jar.src.dir}/server-rmi/server-rmi-build.properties"/>
   <property file="${jar.src.dir}/krule/krule-build.properties"/>
-  <property file="${jar.src.dir}/rules/rules-build.properties"/>
   <property file="${jar.src.dir}/store/store-build.properties"/>
   <property file="${jar.src.dir}/store-xa/store-xa-build.properties"/>
   <property file="${jar.src.dir}/store-nodepool/store-nodepool-build.properties"/>
@@ -116,7 +115,6 @@
   <import file="${jar.src.dir}/server-local/build.xml"/>
   <import file="${jar.src.dir}/server-rmi/build.xml"/>
   <import file="${jar.src.dir}/krule/build.xml"/>
-  <import file="${jar.src.dir}/rules/build.xml"/>
   <import file="${jar.src.dir}/store/build.xml"/>
   <import file="${jar.src.dir}/store-xa/build.xml"/>
   <import file="${jar.src.dir}/store-nodepool/build.xml"/>
@@ -262,7 +260,6 @@
       <classpath path="${bin.dir}/${query.jar}"/>
       <classpath path="${bin.dir}/${driver.jar}"/>
       <classpath path="${bin.dir}/${querylang.jar}"/>
-      <classpath path="${bin.dir}/${rules.jar}"/>
       <classpath path="${bin.dir}/${server.jar}"/>
       <classpath path="${bin.dir}/${util.jar}"/>
 
@@ -306,7 +303,7 @@
                    resolver-url-dist, resolver-view-dist, resolver-xsd-dist,
                    resolver-jar-dist, resolver-test-dist,
                    server-dist, server-http-dist, server-local-dist,
-                   server-rmi-dist, krule-dist, rules-dist,
+                   server-rmi-dist, krule-dist,
                    store-stringpool-dist, store-stringpool-memory-dist,
                    store-stringpool-xa-dist,
                    store-stringpool-xa11-dist, tag-dist,
@@ -457,7 +454,7 @@
   <!-- Creates the lite distribution file for the Embedded Mulgara server   -->
   <!-- =================================================================== -->
   <target name="lite-dist"
-          depends="driver-jar, querylang-jar, rules-jar, query-jar, rmi-jar,
+          depends="driver-jar, querylang-jar, query-jar, rmi-jar,
                    server-jar, server-local-jar,
                    server-rmi-jar, util-jar, config-jar, dtd-jar, jrdf-jar, ant-task-jar,
                    store-dist, store-xa-dist, store-nodepool-dist,
@@ -546,7 +543,6 @@
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-distributed.jar}" excludes="META-INF/**"/>
@@ -747,7 +743,7 @@
              resolver-url-jar, resolver-view-jar, resolver-xsd-jar,
              resolver-test-jar,
              server-jar, server-rmi-jar,
-             krule-jar, rules-jar,
+             krule-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
              tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, web-jar"
@@ -840,7 +836,6 @@
       <sourcepath path="${querylang.src.dir}/javacc"/>
       <sourcepath path="${jrdf.src.dir}/java"/>
       <sourcepath path="${krule.src.dir}/java"/>
-      <sourcepath path="${rules.src.dir}/java"/>
       <sourcepath path="${query.src.dir}/java"/>
       <!--sourcepath path="${rdql.src.dir}/java"/-->
       <sourcepath path="${resolver.src.dir}/java"/>
@@ -913,7 +908,7 @@
                    resolver-test-javadoc, resolver-javadoc, resolver-relational-javadoc,
                    server-http-javadoc,
                    server-local-javadoc, server-rmi-javadoc, server-javadoc,
-                   rules-javadoc, krule-javadoc,
+                   krule-javadoc,
                    store-stringpool-javadoc,
                    store-stringpool-memory-javadoc, store-stringpool-xa-javadoc,
                    store-stringpool-xa11-javadoc,
@@ -1019,7 +1014,6 @@
         <pathelement path="${bin.dir}/${query.jar}"/>
         <pathelement path="${bin.dir}/${driver.jar}"/>
         <pathelement path="${bin.dir}/${querylang.jar}"/>
-        <pathelement path="${bin.dir}/${rules.jar}"/>
         <pathelement path="${bin.dir}/${server.jar}"/>
         <pathelement path="${bin.dir}/${server-http.jar}"/>
         <pathelement path="${bin.dir}/${server-local.jar}"/>
@@ -1343,7 +1337,7 @@
 
         <path refid="query-classpath"/>
 
-        <fileset dir="${bin.dir}" includes="${dtd.jar}, ${querylang.jar}, ${rules.jar}, ${query.jar},
+        <fileset dir="${bin.dir}" includes="${dtd.jar}, ${querylang.jar}, ${query.jar},
                  ${driver.jar}, ${rmi.jar}, ${server-rmi.jar}"/>
         <fileset dir="${lib.dir}" includes="${xerces.jar}, ${xmlParserAPIs.jar}, jxunit*.jar, junit.jar, junitpp.jar"/>
       </classpath>
@@ -1449,7 +1443,7 @@
        targetfile="${bin.dir}/${mulgara.war}">
 
       <srcfiles dir="${bin.dir}" includes="${query.jar},
-          ${driver.jar}, ${querylang.jar}, ${rules.jar}, ${rmi.jar},
+          ${driver.jar}, ${querylang.jar}, ${rmi.jar},
           ${server.jar}, ${server-rmi.jar},
           ${util.jar}, ${config.jar}, ${descriptor.jar}"/>
       <srcfiles dir="${dist.dir}" includes="expires.txt"/>
@@ -1638,7 +1632,6 @@
              rmi-jar,
              server-jar,
              server-rmi-jar,
-             rules-jar,
              krule-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar,
@@ -1761,7 +1754,6 @@
       <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
@@ -1833,7 +1825,6 @@
              rmi-jar,
              server-jar,
              server-rmi-jar,
-             rules-jar,
              krule-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar,
@@ -1901,7 +1892,6 @@
       <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
@@ -1962,7 +1952,6 @@
              rmi-jar,
              server-jar,
              server-rmi-jar,
-             rules-jar,
              krule-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar,
@@ -2026,7 +2015,6 @@
       <zipfileset src="${bin.dir}/${resolver-xsd.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="**/*.xml, META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rules.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="**/*.xml, META-INF/**"/>
 
       <!-- Schemas -->
@@ -2093,7 +2081,6 @@
              rmi-jar,
              server-jar,
              server-rmi-jar,
-             rules-jar,
              krule-jar,
              store-stringpool-jar,
              store-stringpool-memory-jar,
@@ -2201,7 +2188,6 @@
       <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
@@ -2291,7 +2277,7 @@
   </target>
 
   <target name="utils-test"
-    depends="ant-task-test, dtd-test, rules-test, krule-test, tag-test, util-test, util-xa-test"
+    depends="ant-task-test, dtd-test, krule-test, tag-test, util-test, util-xa-test"
     description="Runs miscellaneous utility tests">
   </target>
 

@@ -25,7 +25,6 @@
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
     <!-- Need to separate UnitTests into their own hierarchy so we don't pollute the classpath -->
     <fileset file="${resolver.dist.dir}/${resolver.jar}"/>
     <fileset file="${store-nodepool-memory.dist.dir}/${store-nodepool-memory.jar}"/>

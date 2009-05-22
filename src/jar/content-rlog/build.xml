@@ -24,7 +24,6 @@
     <fileset file="${resolver-file.dist.dir}/${resolver-file.jar}"/>
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
     <fileset file="${krule.dist.dir}/${krule.jar}"/>
   </path>
 

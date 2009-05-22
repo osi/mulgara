@@ -44,7 +44,6 @@
     <fileset file="${store-stringpool-memory.dist.dir}/${store-stringpool-memory.jar}"/>
     <fileset file="${tuples-hybrid.dist.dir}/${tuples-hybrid.jar}"/>
     <fileset file="${util-xa.dist.dir}/${util-xa.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
 
     <fileset file="${lib.dir}/connector-1_5.jar"/>
     <fileset file="${lib.dir}/icu4j.jar"/>

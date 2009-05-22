@@ -25,7 +25,6 @@
     <fileset file="${jrdf.dist.dir}/${jrdf.base.jar}"/>
     <fileset file="${server.dist.dir}/${server.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
   </path>
 
   <path id="server-rmi-test-classpath">
@@ -57,7 +56,7 @@
   </target>
 
   <target name="server-rmi-compile"
-          depends="-server-rmi-prepare, resolver-spi-jar, server-jar, jrdf-jar, rules-jar"
+          depends="-server-rmi-prepare, resolver-spi-jar, server-jar, jrdf-jar"
           unless="server-rmi.classes.uptodate"
           description="Compiles all server-rmi related files included generated
                        source code">

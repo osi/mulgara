@@ -26,7 +26,6 @@
     <pathelement path="${util.dist.dir}/${util.jar}"/>
     <pathelement path="${querylang.dist.dir}/${querylang.jar}"/>
     <pathelement path="${tuples.dist.dir}/${tuples.jar}"/>
-    <pathelement path="${rules.dist.dir}/${rules.jar}"/>
     <pathelement path="${resolver.dist.dir}/${resolver.jar}"/>
   </path>
 
@@ -58,7 +57,7 @@
   </target>
 
   <target name="krule-compile"
-          depends="-krule-prepare, driver-jar, querylang-jar, rules-jar, tuples-jar, resolver-jar"
+          depends="-krule-prepare, driver-jar, querylang-jar, tuples-jar, resolver-jar"
           description="Compiles all krule related files included generated source code">
 
     <javac destdir="${krule.obj.dir}/classes" debug="on"

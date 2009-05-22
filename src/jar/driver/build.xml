@@ -101,7 +101,6 @@
 
       <zipfileset src="${driver.dist.dir}/${driver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${querylang.dist.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${rules.dist.dir}/${rules.jar}" excludes="META-INF/**"/>
       <zipfileset src="${query.dist.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server.dist.dir}/${server.jar}" excludes="META-INF/**"/>
       <zipfileset src="${server-rmi.dist.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
@@ -123,7 +122,6 @@
 
       <srcfiles dir="${driver.dist.dir}" includes="${driver.jar}"/>
       <srcfiles dir="${querylang.dist.dir}" includes="${querylang.jar}"/>
-      <srcfiles dir="${rules.dist.dir}" includes="${rules.jar}"/>
       <srcfiles dir="${query.dist.dir}" includes="${query.jar}"/>
       <srcfiles dir="${server.dist.dir}" includes="${server.jar}"/>
       <srcfiles dir="${server-rmi.dist.dir}" includes="${server-rmi.jar}"/>

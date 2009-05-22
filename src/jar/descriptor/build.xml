@@ -25,7 +25,6 @@
 
     <fileset dir="${driver.dist.dir}" includes="${driver.jar}" />
     <fileset dir="${querylang.dist.dir}" includes="${querylang.jar}" />
-    <fileset dir="${rules.dist.dir}" includes="${rules.jar}" />
     <fileset dir="${query.dist.dir}" includes="${query.jar}" />
     <fileset dir="${server.dist.dir}" includes="${server.jar}" />
     <fileset dir="${util.dist.dir}" includes="${util.jar}" />

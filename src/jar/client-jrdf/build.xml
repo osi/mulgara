@@ -27,7 +27,6 @@
     <pathelement path="${jrdf.dist.dir}/${jrdf.base.jar}"/>
     <pathelement path="${server-rmi.dist.dir}/${server-rmi.jar}"/>
     <pathelement path="${querylang.dist.dir}/${querylang.jar}"/>
-    <pathelement path="${rules.dist.dir}/${rules.jar}"/>
     <pathelement path="${lib.dir}/${jrdf.jar}"/>
     <pathelement path="${lib.dir}/${sesame-model.jar}"/>
   </path>

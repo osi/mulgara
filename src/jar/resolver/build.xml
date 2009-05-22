@@ -22,7 +22,6 @@
     <path refid="common-classpath"/>
 
     <fileset file="${query.dist.dir}/${query.jar}"/>
-    <fileset file="${rules.dist.dir}/${rules.jar}"/>
     <fileset file="${resolver-spi.dist.dir}/${resolver-spi.jar}"/>
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
@@ -81,7 +80,7 @@
   </target>
 
   <target name="resolver-compile"
-          depends="-resolver-prepare, resolver-spi-jar, rules-jar,
+          depends="-resolver-prepare, resolver-spi-jar,
                    resolver-http-jar, resolver-file-jar, resolver-url-jar,
                    resolver-jar-jar, content-rdfxml-jar, content-n3-jar, content-rlog-jar,
                    client-jrdf-jar, jrdf-jar, resolver-xsd-jar, driver-jar"
