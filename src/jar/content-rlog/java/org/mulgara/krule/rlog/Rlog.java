@@ -175,7 +175,7 @@ public class Rlog implements Interpreter {
   private void calculateRuleDependencies() throws TypeException, URIParseException {
     for (Rule trigger: rules) {
       for (Rule potentialTarget: rules) {
-        if (potentialTarget.triggeredBy(trigger)) potentialTarget.addTrigger(trigger);
+        if (potentialTarget.triggeredBy(trigger)) trigger.addTrigger(potentialTarget);
       }
     }
   }
