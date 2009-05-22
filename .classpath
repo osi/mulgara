@@ -37,7 +37,6 @@
 	<classpathentry kind="src" path="src/jar/resolver-url/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-view/java"/>
 	<classpathentry kind="src" path="src/jar/resolver-xsd/java"/>
-	<classpathentry kind="src" path="src/jar/rules/java"/>
 	<classpathentry kind="src" path="src/jar/server/java"/>
 	<classpathentry kind="src" path="src/jar/server-http/java"/>
 	<classpathentry kind="src" path="src/jar/server-local/java"/>
