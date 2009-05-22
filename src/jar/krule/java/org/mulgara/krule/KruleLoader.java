@@ -64,8 +64,8 @@ public class KruleLoader implements RuleLoader {
   /** The Graph resource represented by ruleGraphUri. */
   private final GraphResource ruleGraph;
 
-  /** The URI of the graph containing the base data. */
-  private URI baseGraphUri;
+  /** The graph expression containing the base data. */
+  private GraphExpression baseGraphExpr;
 
   /** The URI of the graph to receive the entailed data. */
   private URI destGraphUri;
@@ -98,11 +98,11 @@ public class KruleLoader implements RuleLoader {
    * Principle constructor.
    *
    * @param ruleGraphUri The name of the graph with the rules to run.
-   * @param baseGraphUri The name of the graph with the base data.
+   * @param baseGraphExpr The graph expression with the base data.
    * @param destGraphUri The name of the graph which will receive the entailed data.
    */
-  KruleLoader(URI ruleGraphUri, URI baseGraphUri, URI destGraphUri) {
-    this.baseGraphUri = baseGraphUri;
+  KruleLoader(URI ruleGraphUri, GraphExpression baseGraphExpr, URI destGraphUri) {
+    this.baseGraphExpr = baseGraphExpr;
     this.destGraphUri = destGraphUri;
 
     ruleGraph = new GraphResource(ruleGraphUri);
@@ -122,12 +122,12 @@ public class KruleLoader implements RuleLoader {
    * Factory method.
    *
    * @param ruleModel The name of the model with the rules to run.
-   * @param baseModel The name of the model with the base data.
+   * @param baseGraph The graph expression with the base data.
    * @param destModel The name of the model which will receive the entailed data.
    * @return A new KruleLoader instance.
    */
-  public static RuleLoader newInstance(URI ruleModel, URI baseModel, URI destModel) {
-    return new KruleLoader(ruleModel, baseModel, destModel);
+  public static RuleLoader newInstance(URI ruleModel, GraphExpression baseGraph, URI destModel) {
+    return new KruleLoader(ruleModel, baseGraph, destModel);
   }
 
 
@@ -389,7 +389,7 @@ public class KruleLoader implements RuleLoader {
 
       if (logger.isDebugEnabled()) logger.debug("Setting models for the query");
       // set the models
-      queryStruct.setModelExpression(baseGraphUri, destGraphUri);
+      queryStruct.setGraphExpression(baseGraphExpr, destGraphUri);
 
       if (logger.isDebugEnabled()) logger.debug("Setting query structure for the rule");
       // create a new query and set it for the rule

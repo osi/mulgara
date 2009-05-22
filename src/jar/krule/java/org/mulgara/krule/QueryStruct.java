@@ -68,8 +68,8 @@ public class QueryStruct implements Serializable {
   /** List of elements which are variables, or ConstantValues. */
   private List<SelectElement> variables;
 
-  /** The model expresison for the query. */
-  private GraphExpression models;
+  /** The graph expresison for the query. */
+  private GraphExpression graphs;
 
   /** The where clause of the query. */
   private ConstraintExpression where;
@@ -153,7 +153,7 @@ public class QueryStruct implements Serializable {
       }
     }
 
-    models = null;
+    graphs = null;
     having = null;
   }
 
@@ -201,26 +201,26 @@ public class QueryStruct implements Serializable {
 
 
   /**
-   * Sets the default models for the query.
+   * Sets the default graph expression for the query.
    *
-   * @param modelUri The URI of the model for the query.
+   * @param expr The graph expression for the query.
    */
-  public void setModelExpression(URI modelUri) {
-    this.models = new GraphResource(modelUri);
+  public void setGraphExpression(GraphExpression expr) {
+    this.graphs = expr;
   }
 
 
   /**
-   * Sets the default models for the query.
+   * Sets the default graph expression for the query.
    *
-   * @param firstModelUri The first URI of the model for the query.
-   * @param secondModelUri The second URI of the model for the query.
+   * @param expr The base graph expression for the query.
+   * @param secondGraphUri The secondary graph URI for the query.
    */
-  public void setModelExpression(URI firstModelUri, URI secondModelUri) {
-    if (firstModelUri.equals(secondModelUri)) {
-      setModelExpression(firstModelUri);
+  public void setGraphExpression(GraphExpression expr, URI secondGraphUri) {
+    if (GraphResource.sameAs(expr, secondGraphUri)) {
+      setGraphExpression(expr);
     } else {
-      this.models = new GraphUnion(new GraphResource(firstModelUri), new GraphResource(secondModelUri));
+      setGraphExpression(new GraphUnion(expr, new GraphResource(secondGraphUri)));
     }
   }
 
@@ -233,7 +233,7 @@ public class QueryStruct implements Serializable {
   @SuppressWarnings("unchecked")
   public Query extractQuery() {
     logger.debug("Extracting query");
-    return new Query(variables, models, where, having, (List<Order>)Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
+    return new Query(variables, graphs, where, having, (List<Order>)Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
   }
 
 }

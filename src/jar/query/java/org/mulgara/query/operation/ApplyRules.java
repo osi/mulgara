@@ -15,9 +15,10 @@ import java.net.URI;
 import java.rmi.RemoteException;
 
 import org.mulgara.connection.Connection;
+import org.mulgara.query.GraphExpression;
+import org.mulgara.query.GraphResource;
 import org.mulgara.query.QueryException;
 import org.mulgara.rules.InitializerException;
-import org.mulgara.rules.RulesException;
 import org.mulgara.rules.RulesRef;
 
 /**
@@ -34,7 +35,7 @@ public class ApplyRules extends ServerCommand {
   private final URI ruleGraph;
   
   /** The graph containing the data to apply the rules to. */
-  private final URI baseGraph;
+  private final GraphExpression baseGraph;
   
   /** The graph to put the rule productions into. */
   private final URI destGraph;
@@ -46,6 +47,16 @@ public class ApplyRules extends ServerCommand {
    * @param destGraph The graph to put the rule productions into.
    */
   public ApplyRules(URI ruleGraph, URI baseGraph, URI destGraph) {
+    this(ruleGraph, new GraphResource(baseGraph), destGraph);
+  }
+  
+  /**
+   * Create a new rules command.
+   * @param ruleGraph The graph containing the rules to be run.
+   * @param baseGraph The graph expression containing the data to apply the rules to.
+   * @param destGraph The graph to put the rule productions into.
+   */
+  public ApplyRules(URI ruleGraph, GraphExpression baseGraph, URI destGraph) {
     super(destGraph);
     this.ruleGraph = ruleGraph;
     this.baseGraph = baseGraph;
@@ -62,7 +73,7 @@ public class ApplyRules extends ServerCommand {
   /**
    * @return the baseGraph
    */
-  public URI getBaseGraph() {
+  public GraphExpression getBaseGraph() {
     return baseGraph;
   }
 
@@ -80,9 +91,8 @@ public class ApplyRules extends ServerCommand {
    * @throws InitializerException The rules were not structured correctly.
    * @throws QueryException Unable to read the rules.
    * @throws RemoteException There was a connectivity problem with the server.
-   * @throws RulesException There was an error with the application of the rules.
    */
-  public Object execute(Connection conn) throws RemoteException, RulesException, QueryException, InitializerException {
+  public Object execute(Connection conn) throws RemoteException, QueryException, InitializerException {
     return execute(conn, conn);
   }
 
@@ -94,15 +104,14 @@ public class ApplyRules extends ServerCommand {
    * @throws InitializerException The rules were not structured correctly.
    * @throws QueryException Unable to read the rules.
    * @throws RemoteException There was a connectivity problem with the server.
-   * @throws RulesException There was an error with the application of the rules.
    */
-  public Object execute(Connection conn, Connection ruleConn) throws RemoteException, RulesException, QueryException, InitializerException {
+  public Object execute(Connection conn, Connection ruleConn) throws RemoteException, QueryException, InitializerException {
     if (conn == null) throw new IllegalArgumentException("Connection may not be null");
     // get the structure from the rule model
     RulesRef rules = ruleConn.getSession().buildRules(ruleGraph, baseGraph, destGraph);
     // create apply the rules to the model
     conn.getSession().applyRules(rules);
-    return setResultMessage("Successfully applied " + ruleGraph + " to " + baseGraph + (destGraph == baseGraph ? "" : " => " + destGraph));
+    return setResultMessage("Successfully applied " + ruleGraph + " to " + baseGraph + (GraphResource.sameAs(baseGraph, destGraph) ? "" : " => " + destGraph));
   }
 
 }

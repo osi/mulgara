@@ -29,18 +29,20 @@
 package org.mulgara.server.rmi;
 
 // Java 2 standard packages
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
-import java.rmi.*;
+import java.rmi.RemoteException;
 import java.rmi.server.Unreferenced;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.activation.MimeType;
 
-// Third party packages
 import org.apache.log4j.Logger;
-
-// Locally written packages
 import org.jrdf.graph.Triple;
 import org.mulgara.query.Answer;
 import org.mulgara.query.ArrayAnswer;
@@ -51,8 +53,7 @@ import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.rules.InitializerException;
-import org.mulgara.rules.Rules;  // Required only for Javadoc
-import org.mulgara.rules.RulesException;
+import org.mulgara.rules.Rules;
 import org.mulgara.rules.RulesRef;
 import org.mulgara.server.Session;
 
@@ -469,13 +470,13 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    * Extract {@link Rules} from the data found in a model.
    *
    * @param ruleModel The URI of the model with the rule structure.
-   * @param baseModel The URI of the model with the base data to read.
+   * @param baseModel The graph expression with the base data to read.
    * @param destModel The URI of the model to receive the entailed data.
    * @return The extracted rule structure.
    * @throws InitializerException If there was a problem accessing the rule loading module.
    * @throws QueryException If there was a problem loading the rule structure.
    */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, RemoteException {
+  public RulesRef buildRules(URI ruleModel, GraphExpression baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, RemoteException {
     RulesRef r = null;
     try {
       r = session.buildRules(ruleModel, baseModel, destModel);
@@ -493,7 +494,6 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
    * Rules a set of {@link Rules} on its defined model.
    *
    * @param rules The rules to be run.
-   * @throws RulesException An error was encountered executing the rules.
    */ 
   public void applyRules(RulesRef rules) throws QueryException, RemoteException {
     try {

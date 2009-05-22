@@ -596,7 +596,7 @@ class DatabaseSession implements Session {
   /**
    * {@inheritDoc}
    */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
+  public RulesRef buildRules(URI ruleModel, GraphExpression baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
     if (logger.isDebugEnabled()) logger.debug("BUILD RULES: " + ruleModel);
 
     BuildRulesOperation operation = new BuildRulesOperation(ruleLoaderClassName, ruleModel, baseModel, destModel);

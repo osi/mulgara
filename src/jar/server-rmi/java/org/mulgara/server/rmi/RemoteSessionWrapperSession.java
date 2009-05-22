@@ -696,7 +696,7 @@ class RemoteSessionWrapperSession implements Serializable, Session {
   /**
    * {@inheritDoc}
    */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
+  public RulesRef buildRules(URI ruleModel, GraphExpression baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
     try {
       RulesRef ref = remoteSession.buildRules(ruleModel, baseModel, destModel);
       if (logger.isDebugEnabled()) logger.debug("got rules from RMI");

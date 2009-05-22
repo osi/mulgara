@@ -331,13 +331,13 @@ interface RemoteSession extends Remote {
    * Extract {@link Rules} from the data found in a model.
    *
    * @param ruleModel The URI of the model with the rule structure.
-   * @param baseModel The URI of the model with the base data to read.
+   * @param baseModel The graph expression with the base data to read.
    * @param destModel The URI of the model to receive the entailed data.
    * @return The extracted rule structure.
    * @throws InitializerException If there was a problem accessing the rule loading module.
    * @throws QueryException If there was a problem loading the rule structure.
    */
-  public RulesRef buildRules(URI ruleModel, URI baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, RemoteException;
+  public RulesRef buildRules(URI ruleModel, GraphExpression baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException, RemoteException;
 
   /**
    * Rules a set of {@link Rules} on its defined model.

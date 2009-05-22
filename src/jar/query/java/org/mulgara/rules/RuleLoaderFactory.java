@@ -20,8 +20,8 @@ package org.mulgara.rules;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-// Third party packages
-import org.apache.log4j.Logger;  // Apache Log4J
+import org.apache.log4j.Logger;
+import org.mulgara.query.GraphExpression;
 
 /**
  * Constructs {@link RuleLoader} instances, given a classname.
@@ -47,7 +47,7 @@ public abstract class RuleLoaderFactory {
    * @param target  the destination for rule consequences.
    * @return the constructed {@link RuleLoader}
    */
-  public static RuleLoader newRuleLoader(String className, URI source, URI base, URI target) throws InitializerException {
+  public static RuleLoader newRuleLoader(String className, URI source, GraphExpression base, URI target) throws InitializerException {
 
     if (logger.isDebugEnabled()) logger.debug("Creating rule loader " + className);
 
@@ -68,7 +68,7 @@ public abstract class RuleLoaderFactory {
       Method newInstanceMethod =
         ruleLoaderClass.getMethod(
           "newInstance",
-           new Class[] { URI.class, URI.class, URI.class }
+           new Class[] { URI.class, GraphExpression.class, URI.class }
         );
 
       RuleLoader ruleLoader = (RuleLoader)

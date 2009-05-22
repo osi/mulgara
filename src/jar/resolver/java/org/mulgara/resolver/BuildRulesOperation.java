@@ -15,16 +15,15 @@ package org.mulgara.resolver;
 // Java 2 standard packages
 import java.net.URI;
 
-// Local packages
-import org.mulgara.resolver.spi.*;
+import org.apache.log4j.Logger;
+import org.mulgara.query.GraphExpression;
+import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.rules.RuleLoader;
 import org.mulgara.rules.RuleLoaderFactory;
 import org.mulgara.rules.Rules;
 import org.mulgara.rules.RulesRef;
 import org.mulgara.rules.RulesRefImpl;
-
-//Third party packages
-import org.apache.log4j.Logger;
 
 /**
  * Represents an operation to build a Rule structure for later execution
@@ -44,7 +43,7 @@ class BuildRulesOperation implements Operation {
   private URI ruleGraph = null;
 
   /** The graph containing the intrinsic data */
-  private URI baseGraph = null;
+  private GraphExpression baseGraph = null;
 
   /** The graph to contain the generated extrinsic data */
   private URI destGraph = null;
@@ -63,7 +62,7 @@ class BuildRulesOperation implements Operation {
    * @param baseGraph The graph the rules will be run on.
    * @param destGraph The graph the rules will insert generated statements into.
    */
-  BuildRulesOperation(String ruleLoaderClassName, URI ruleGraph, URI baseGraph, URI destGraph) {
+  BuildRulesOperation(String ruleLoaderClassName, URI ruleGraph, GraphExpression baseGraph, URI destGraph) {
     this.ruleLoaderClassName = ruleLoaderClassName;
     this.ruleGraph = ruleGraph;
     this.baseGraph = baseGraph;

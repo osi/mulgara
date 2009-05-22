@@ -54,6 +54,18 @@ import org.apache.log4j.Logger;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class GraphResource implements Graph {
+  
+  /**
+   * Static utility to test whether the given expression is a GraphResource
+   * instance with the given URI.
+   * @param expr An arbitrary graph expression.
+   * @param uri An arbitrary URI.
+   * @return <tt>true</tt> iff the graph expression is a GraphResource whose URI is equal
+   * to the given URI.
+   */
+  public static boolean sameAs(GraphExpression expr, URI uri) {
+    return expr != null && expr instanceof GraphResource && ((GraphResource)expr).getURI().equals(uri);
+  }
 
   /**
    * Allow newer compiled version of the stub to operate when changes
