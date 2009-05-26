@@ -77,7 +77,6 @@ Tokens
   {def}                walk        = 'walk';
   {def}                where       = 'where';
   {def}                having      = 'having';
-  {def}                xor         = 'xor';
   {def}                local       = 'local';
   {def}                remote      = 'remote';
 
@@ -216,12 +215,8 @@ Productions
     {or}   model_expression or model_term ;
 
   model_term =
-    {part}   model_part                |
-    {and}    model_term and model_part ;
-
-  model_part =
     {factor} model_factor                |
-    {xor}    model_part xor model_factor ;
+    {and}    model_term and model_factor ;
 
   model_factor =
     {resource} resource                     |

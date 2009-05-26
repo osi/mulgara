@@ -37,19 +37,15 @@ import org.apache.log4j.Logger;
 // Automatically generated packages (SableCC)
 import org.mulgara.itql.node.AAndModelTerm;
 import org.mulgara.itql.node.AExpressionModelFactor;
-import org.mulgara.itql.node.AFactorModelPart;
 import org.mulgara.itql.node.AOrModelExpression;
-import org.mulgara.itql.node.APartModelTerm;
+import org.mulgara.itql.node.AFactorModelTerm;
 import org.mulgara.itql.node.AResourceModelFactor;
 import org.mulgara.itql.node.ATermModelExpression;
-import org.mulgara.itql.node.AXorModelPart;
 import org.mulgara.itql.node.PModelExpression;
 import org.mulgara.itql.node.PModelFactor;
-import org.mulgara.itql.node.PModelPart;
 import org.mulgara.itql.node.PModelTerm;
 import org.mulgara.query.GraphExpression;
 import org.mulgara.query.GraphIntersection;
-import org.mulgara.query.GraphPartition;
 import org.mulgara.query.GraphResource;
 import org.mulgara.query.GraphUnion;
 import org.mulgara.query.QueryException;
@@ -285,7 +281,7 @@ public class GraphExpressionBuilder {
     GraphExpression graphExpression = null;
 
     // drill down into the model term
-    if (rawModelTerm instanceof APartModelTerm) {
+    if (rawModelTerm instanceof AFactorModelTerm) {
 
       // logger that we've got a factor model term
       if (logger.isDebugEnabled()) {
@@ -293,15 +289,15 @@ public class GraphExpressionBuilder {
       }
 
       // get the model factor
-      PModelPart modelPart = ((APartModelTerm) rawModelTerm).getModelPart();
+      PModelFactor modelFactor = ((AFactorModelTerm) rawModelTerm).getModelFactor();
 
       // logger that we're recursing with a model part
       if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with model part " + modelPart);
+        logger.debug("Recursing with model part " + modelFactor);
       }
 
       // drill down into the model part
-      graphExpression = buildModelExpression(modelPart, aliasMap);
+      graphExpression = buildModelExpression(modelFactor, aliasMap);
 
     } else if (rawModelTerm instanceof AAndModelTerm) {
 
@@ -314,17 +310,17 @@ public class GraphExpressionBuilder {
       PModelTerm modelTerm = ((AAndModelTerm)rawModelTerm).getModelTerm();
 
       // get the model part
-      PModelPart modelPart = ((AAndModelTerm)rawModelTerm).getModelPart();
+      PModelFactor modelFactor = ((AAndModelTerm)rawModelTerm).getModelFactor();
 
       // logger that we've found the operands of the union
       if (logger.isDebugEnabled()) {
         logger.debug("Recursing with model term " + modelTerm +
-            " & model part " + modelPart);
+            " & model factor " + modelFactor);
       }
 
       // get the LHS and RHS operands of the intersection
       GraphExpression lhs = buildModelExpression(modelTerm, aliasMap);
-      GraphExpression rhs = buildModelExpression(modelPart, aliasMap);
+      GraphExpression rhs = buildModelExpression(modelFactor, aliasMap);
 
       // logger that we've resolved the operands
       if (logger.isDebugEnabled()) {
@@ -354,105 +350,6 @@ public class GraphExpressionBuilder {
   }
 
   // buildModelExpression()
-
-  /**
-   * Recursively builds a {@link org.mulgara.query.GraphExpression} from a
-   * {@link org.mulgara.itql.node.PModelPart}.
-   *
-   * @param rawModelPart a raw model part from the parser
-   * @return a {@link org.mulgara.query.GraphExpression} suitable for use in
-   *      creating a {@link org.mulgara.query.Query}
-   * @throws QueryException if <code>rawModelExpression</code> does not
-   *      represent a valid query
-   * @throws URISyntaxException if the <code>rawModelExpression</code> contains
-   *      a resource whose text violates <a
-   *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
-   */
-  private static GraphExpression buildModelExpression(
-      PModelPart rawModelPart, Map<String,URI> aliasMap
-    ) throws QueryException, URISyntaxException {
-
-    // validate the rawModelPart parameter
-    if (rawModelPart == null) {
-      throw new IllegalArgumentException("Null \"rawModelPart\" " +
-        "parameter");
-    }
-
-    // end if
-    // logger that we're building a model expression
-    if (logger.isDebugEnabled()) {
-      logger.debug("Building model expression from " + rawModelPart);
-    }
-
-    // create a new model expression that we can return
-    GraphExpression graphExpression = null;
-
-    // drill down into the model term
-    if (rawModelPart instanceof AFactorModelPart) {
-
-      // logger that we've got a factor model term
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found factor contraint term " + rawModelPart);
-      }
-
-      // get the model factor
-      PModelFactor modelFactor = ((AFactorModelPart)rawModelPart).getModelFactor();
-
-      // logger that we're recursing with a model factor
-      if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with model factor " + modelFactor);
-      }
-
-      // drill down into the model part
-      graphExpression = buildModelExpression(modelFactor, aliasMap);
-    } else if (rawModelPart instanceof AXorModelPart) {
-
-      // logger that we've got a AND model term
-      if (logger.isDebugEnabled()) {
-        logger.debug("Found AND contraint term " + rawModelPart);
-      }
-
-      // get the model term
-      PModelPart modelPart = ((AXorModelPart)rawModelPart).getModelPart();
-
-      // get the model factor
-      PModelFactor modelFactor = ((AXorModelPart)rawModelPart).getModelFactor();
-
-      // logger that we've found the operands of the union
-      if (logger.isDebugEnabled()) {
-        logger.debug("Recursing with model part " + modelPart + " & model factor " + modelFactor);
-      }
-
-      // get the LHS and RHS operands of the intersection
-      GraphExpression lhs = buildModelExpression(modelPart, aliasMap);
-      GraphExpression rhs = buildModelExpression(modelFactor, aliasMap);
-
-      // logger that we've resolved the operands
-      if (logger.isDebugEnabled()) {
-        logger.debug("Resolved LHS intersection operand " + lhs);
-        logger.debug("Resolved RHS intersection operand " + rhs);
-      }
-
-      // apply the intersection
-      graphExpression = new GraphPartition(lhs, rhs);
-    }
-
-    // end if
-    // we should not be returning null
-    if (graphExpression == null) {
-
-      throw new QueryException("Unable to parse ITQL model term into a valid model expression");
-    }
-
-    // end if
-    // logger that we've created a model expression
-    if (logger.isDebugEnabled()) {
-      logger.debug("Created model expression " + graphExpression);
-    }
-
-    // return the built up expression
-    return graphExpression;
-  }
 
   // buildModelExpression()
 
