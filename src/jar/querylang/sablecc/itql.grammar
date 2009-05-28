@@ -43,6 +43,7 @@ Tokens
   {def}                create      = 'create';
   {def}                delete      = 'delete';
   {def}                desc        = 'desc';
+  {def}                destination = 'destination';
   {def}                directory   = 'directory';
   {def}                drop        = 'drop';
   {def}                echo        = 'echo';
@@ -121,7 +122,7 @@ Productions
   command =
     {alias}     alias [target]:resource as [prefix]:identifier               |
     {aliasl}    alias                                                        |
-    {apply}     apply [rules]:resource to [base]:resource [destination]:resource? |
+    {apply}     apply [rules]:resource to [base]:model_expression [destination]:destination_clause? |
     {backup}    backup [source]:resource? to [locality]:locality? [destination]:resource |
     {commit}    commit                                                       |
     {create}    create [model]:resource [model_type]:resource?               |
@@ -140,6 +141,9 @@ Productions
     {set}       set set_option set_option_mode                               |
     {su}        su resource [user]:identifier [password]:identifier          ;
 
+  destination_clause =
+    destination? resource;
+    
   base_clause =
     base resource;
 

@@ -1,4 +1,7 @@
 <jxu>
+  <!-- This test duplicates the entailment tests from rdfs-domain-and-range, 
+       but it uses rules applied to a complex graph expression instead of 
+       loading all test data into the same graph. -->
   <set name="debug" value="false" />
 
   <!-- Load the RDFS rules -->
@@ -11,11 +14,10 @@
     <fail>Output failed loading rule data.  Check badLoadResult1.xml for output.</fail>
   </ifEqual>
 
-
-  <!-- Load the first 4 test files: test001 + test002 + test003 = test004 -->
+  <!-- Load the first 3 test files: test001 + test002 + test003 = test004 -->
   <!-- Load test001 -->
-  <set name="modelName" value="@server@#test" />
-  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-domain-and-range/test001.rdf&gt; into &lt;@server@#test&gt; ;" />
+  <set name="modelName" value="@server@#test001" />
+  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-complex-graph-expression/test001.rdf&gt; into &lt;@server@#test001&gt; ;" />
   <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="loadResult2.txt" name="loadResult">
@@ -25,9 +27,9 @@
 
 
   <!-- Load test002.  Do not clear the model. -->
-  <set name="modelName" value="@server@#test" />
+  <set name="modelName" value="@server@#test002" />
   <set name="clearModel" value="false" />
-  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-domain-and-range/test002.rdf&gt; into &lt;@server@#test&gt; ;" />
+  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-complex-graph-expression/test002.rdf&gt; into &lt;@server@#test002&gt; ;" />
   <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="loadResult3.txt" name="loadResult">
@@ -37,9 +39,9 @@
 
 
   <!-- Load test003.  Do not clear the model. -->
-  <set name="modelName" value="@server@#test" />
+  <set name="modelName" value="@server@#test003" />
   <set name="clearModel" value="false" />
-  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-domain-and-range/test003.rdf&gt; into &lt;@server@#test&gt; ;" />
+  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-complex-graph-expression/test003.rdf&gt; into &lt;@server@#test003&gt; ;" />
   <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
 
   <ifEqual converse="true" file="loadResult4.txt" name="loadResult">
@@ -47,13 +49,20 @@
     <fail>Output failed loading part 3 of the test data.  Check badLoadResult4.xml for output.</fail>
   </ifEqual>
 
-  <!-- Reset the model clear flag, for the tests after this point -->
-  <set name="clearModel" value="true" />
+  <!-- Create the output graph. -->
+  <set name="query"
+  value="create &lt;@server@#test&gt; ;"/>
+
+  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
+  <ifEqual converse="true" file="createResult1.txt" name="queryResult">
+    <save name="queryResult" file="badCreate1Result.xml"/>
+    <fail>Output failed creating graph.  Check badCreate1Result.xml for output.</fail>
+  </ifEqual>
 
 
   <!-- Apply the rules -->
   <set name="query"
-  value="apply &lt;@server@#krule&gt; to &lt;@server@#test&gt; ;"/>
+  value="apply &lt;@server@#krule&gt; to &lt;@server@#test001&gt; or &lt;@server@#test002&gt; or &lt;@server@#test003&gt; destination &lt;@server@#test&gt; ;"/>
 
   <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
   <ifEqual converse="true" file="ruleResult1.txt" name="queryResult">
@@ -140,56 +149,6 @@
   <ifEqual converse="true" file="queryResultCommon.txt" name="queryResult">
     <save name="queryResult" file="badQuery6Result.xml"/>
     <fail>Output failed for part 6 of first test.  Check badQuery6Result.xml for output.</fail>
-  </ifEqual>
-
-
-  <!-- Load the first non-entailment test model -->
-  <!-- Load premises005.rdf -->
-  <set name="modelName" value="@server@#test" />
-  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-domain-and-range/premises005.rdf&gt; into &lt;@server@#test&gt; ;" />
-  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
-
-  <ifEqual converse="true" file="loadResult5.txt" name="loadResult">
-    <save name="loadResult" file="badLoadResult5.xml"/>
-    <fail>Output failed loading the second test's data.  Check badLoadResult5.xml for output.</fail>
-  </ifEqual>
-
-
-  <set name="query"
-  value="select $o
-      from &lt;@server@#test&gt;
-      where &lt;http://www.w3.org/2000/10/rdf-tests/rdfcore/rdfs-domain-and-range/premises005.rdf#prop&gt; &lt;http://www.w3.org/2000/01/rdf-schema#range&gt; $o
-      order by $o ;"/>
-
-  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <ifEqual converse="true" file="queryResult7.txt" name="queryResult">
-    <save name="queryResult" file="badQuery7Result.xml"/>
-    <fail>Output failed for second test.  Check badQuery7Result.xml for output.</fail>
-  </ifEqual>
-
-
-  <!-- Load the third non-entailment test model -->
-  <!-- Load premises006.rdf -->
-  <set name="modelName" value="@server@#test" />
-  <set name="loadCommand" value="load &lt;@baseuri@/jxdata/iTQL/rdfs/rdfs-domain-and-range/premises006.rdf&gt; into &lt;@server@#test&gt; ;" />
-  <eval stepClass="org.mulgara.store.jxunit.LoadDataJX" />
-
-  <ifEqual converse="true" file="loadResult6.txt" name="loadResult">
-    <save name="loadResult" file="badLoadResult6.xml"/>
-    <fail>Output failed loading the third test's data.  Check badLoadResult6.xml for output.</fail>
-  </ifEqual>
-
-
-  <set name="query"
-  value="select $o
-      from &lt;@server@#test&gt;
-      where &lt;http://www.w3.org/2000/10/rdf-tests/rdfcore/rdfs-domain-and-range/premises006.rdf#prop&gt; &lt;http://www.w3.org/2000/01/rdf-schema#domain&gt; $o
-      order by $o ;"/>
-
-  <eval stepClass="org.mulgara.store.jxunit.QueryJX" />
-  <ifEqual converse="true" file="queryResult8.txt" name="queryResult">
-    <save name="queryResult" file="badQuery8Result.xml"/>
-    <fail>Output failed for third test.  Check badQuery8Result.xml for output.</fail>
   </ifEqual>
 
 

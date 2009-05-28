@@ -528,13 +528,33 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // log the command
     if (logger.isDebugEnabled()) logger.debug("Processing apply command " + node);
 
-    // get the rule graph and target graph
-    URI ruleGraph = toURI(node.getRules());
-    URI baseGraph = toURI(node.getBase());
-    Token dest = node.getDestination();
-    URI destGraph = (dest == null) ? baseGraph : toURI(dest);
+    try {
+      // get the rule graph and target graph
+      URI ruleGraph = toURI(node.getRules());
+      PModelExpression rawModelExpression = node.getBase();
+      GraphExpression baseGraph = GraphExpressionBuilder.build(aliasMap, rawModelExpression);
+      
+      Token dest = null;
+      PDestinationClause rawDestinationClause = node.getDestination();
+      if (rawDestinationClause != null) {
+        dest = ((ADestinationClause)rawDestinationClause).getResource();
+      }
+      
+      URI destGraph = null;
+      if (dest == null) {
+        destGraph = baseGraph instanceof GraphResource ? ((GraphResource)baseGraph).getURI() : URI.create(Mulgara.DEFAULT_GRAPH);
+      } else {
+        destGraph = toURI(dest);
+      }
 
-    lastCommand = new ApplyRules(ruleGraph, baseGraph, destGraph);
+      lastCommand = new ApplyRules(ruleGraph, baseGraph, destGraph);
+    } catch (QueryException qe) {
+      logger.warn("Couldn't apply rules", qe);
+      lastError = qe;
+    } catch (URISyntaxException use) {
+      logger.warn("Invalid resource URI. " + use.getMessage());
+      lastError = use;
+    }
   }
 
 
