@@ -40,7 +40,14 @@ public class Triple extends BasicGraphPattern {
   public Triple(Node s, Node p, Node o) {
     subject = s;
     predicate = p;
+    assert !(o instanceof AnnotatedNode): "Can't make a single triple with an annotated node";
     object = o;
+  }
+
+  public Triple(Node s, Node p, AnnotatedNode o) {
+    subject = s;
+    predicate = p;
+    object = o.getSubject();
   }
 
   /**

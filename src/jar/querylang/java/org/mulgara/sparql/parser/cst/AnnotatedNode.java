@@ -19,8 +19,7 @@ package org.mulgara.sparql.parser.cst;
  * A query syntax node, which has a series of triples related to it.
  * The related triples should be incorporated into a conjunction with anything
  * that uses the initial node.
- * An example is an RDF collection, where the first node represents the entire
- * list, and the list is built from triples.
+ * An example is an RDF blank node with a property list attached.
  *
  * @created Feb 26, 2008
  * @author Paul Gearon

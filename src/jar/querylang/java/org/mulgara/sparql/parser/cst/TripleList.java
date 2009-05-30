@@ -46,7 +46,17 @@ public class TripleList extends BasicGraphPattern {
    */
   public TripleList(Node subject, PropertyList properties) {
     this();
-    for (PropertyList.Property p: properties) triples.add(new Triple(subject, p.getPredicate(), p.getObject()));
+    List<AnnotatedNode> objectAnnotations = new LinkedList<AnnotatedNode>();
+    for (PropertyList.Property p: properties) {
+      Node obj = p.getObject();
+      if (obj instanceof AnnotatedNode) {
+        AnnotatedNode an = (AnnotatedNode)obj;
+        objectAnnotations.add(an);
+        obj = an.getSubject();
+      }
+      triples.add(new Triple(subject, p.getPredicate(), obj));
+    }
+    addAll(objectAnnotations);
   }
   
   /**
@@ -57,8 +67,11 @@ public class TripleList extends BasicGraphPattern {
   public TripleList(AnnotatedNode an, PropertyList properties) {
     // start with the existing triples
     triples = new LinkedList<Triple>(an.getAnnotation().triples);
+    Node commonSubject = an.getSubject();
     // add in the triples for the properties
-    for (PropertyList.Property p: properties) triples.add(new Triple(an.getSubject(), p.getPredicate(), p.getObject()));
+    for (PropertyList.Property p: properties) {
+      triples.add(new Triple(commonSubject, p.getPredicate(), p.getObject()));
+    }
   }
   
   /**
@@ -118,6 +131,46 @@ public class TripleList extends BasicGraphPattern {
     StringBuffer result = new StringBuffer();
     for (Triple t: triples) result.append(" ").append(t.getImage()).append(" .");
     return addPatterns(result.toString());
+  }
+
+
+  /**
+   * Adds all annotations to the current list.
+   * @param anl A list of annotations on resources.
+   */
+  void addAll(List<AnnotatedNode> anl) {
+    if (anl == null || anl.isEmpty()) return;
+    // pick up any new annotations on the subjects or objects of this list
+    List<AnnotatedNode> annotations = new LinkedList<AnnotatedNode>();
+
+    for (AnnotatedNode an: anl) {
+      Node subject = an.getSubject();
+      TripleList anTriples = an.getAnnotation();
+
+      // add all the triples in this annotation
+      for (Triple t: anTriples.triples) {
+
+        Node s = t.getSubject();
+        Node p = t.getPredicate();
+        Node o = t.getObject();
+        assert subject.equals(s) : "The subjects in an annotation should all equal the annotated node.";
+
+        // if the subject is annotated, then get the annotated node, and remember the annotation
+        if (s instanceof AnnotatedNode) {
+          annotations.add((AnnotatedNode)s);
+          s = ((AnnotatedNode)s).getSubject();
+        }
+        // if the object is annotated, then get the annotated node, and remember the annotation
+        if (o instanceof AnnotatedNode) {
+          annotations.add((AnnotatedNode)o);
+          o = ((AnnotatedNode)o).getSubject();
+        }
+
+        triples.add(new Triple(s, p, o));
+      }
+    }
+    // recursively add any new annotations
+    addAll(annotations);
   }
 
 }
