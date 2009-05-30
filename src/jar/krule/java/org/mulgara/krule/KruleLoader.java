@@ -235,6 +235,7 @@ public class KruleLoader implements RuleLoader {
 
     try {
       // create all the rules
+      ruleAnswer.beforeFirst();
       while (ruleAnswer.next()) {
         // create the rule and add it to the set
         URIReference type = (URIReference)ruleAnswer.getObject(1);
@@ -268,6 +269,7 @@ public class KruleLoader implements RuleLoader {
 
     try {
       // link all the rules together
+      answer.beforeFirst();
       while (answer.next()) {
         String src = answer.getObject(0).toString();
         String dest = answer.getObject(1).toString();
@@ -329,6 +331,7 @@ public class KruleLoader implements RuleLoader {
       List<URIReference> elements = new ArrayList<URIReference>();
       List<URIReference> types = new ArrayList<URIReference>();
       try {
+        answer.beforeFirst();
         while (answer.next()) {
           if (logger.isDebugEnabled()) logger.debug("Getting element from " + answer.getObject(0));
           // work out the position of the element.  Subject=0 Predicate=1 Object=2
@@ -372,6 +375,7 @@ public class KruleLoader implements RuleLoader {
 
       try {
         // attach the correct constraint tree to the query structure
+        answer.beforeFirst();
         if (answer.next()) {
           if (logger.isDebugEnabled()) logger.debug("Setting where clause for rule: " + rule.getName() + "");
           Node whereClauseNode = (Node)answer.getObject(0);
@@ -434,6 +438,7 @@ public class KruleLoader implements RuleLoader {
       Node pn = null;
       Node on = null;
       try {
+        answer.beforeFirst();
         while (answer.next()) {
           // use general nodes first to get the data from the answer
           sn = (Node)answer.getObject(0);
@@ -510,6 +515,7 @@ public class KruleLoader implements RuleLoader {
     uriReferences = new HashMap<URIReference,URIReference>();
     // map each reference to the associated URI
     try {
+      answer.beforeFirst();
       while (answer.next()) {
         URIReference ref = (URIReference)answer.getObject(0);
         URIReference uri = (URIReference)answer.getObject(1);
@@ -551,6 +557,7 @@ public class KruleLoader implements RuleLoader {
     varReferences = new HashMap<URIReference,Variable>();
     try {
       // map each reference to the associated variable
+      answer.beforeFirst();
       while (answer.next()) {
         URIReference ref = (URIReference)answer.getObject(0);
         Literal name = (Literal)answer.getObject(1);
@@ -590,6 +597,7 @@ public class KruleLoader implements RuleLoader {
     literalReferences = new HashMap<Node,Literal>();
     try {
       // map each reference to the associated String
+      answer.beforeFirst();
       while (answer.next()) {
         Node litRef = (Node)answer.getObject(0);
         Literal lit = (Literal)answer.getObject(1);
@@ -641,6 +649,7 @@ public class KruleLoader implements RuleLoader {
     Map<Node,Map<Node,Node>> simpleConstraints = new HashMap<Node,Map<Node,Node>>();
     try {
       // map each reference to the associated property/values
+      answer.beforeFirst();
       while (answer.next()) {
         Node constraintNode = (Node)answer.getObject(0);
         URIReference predicate = (URIReference)answer.getObject(1);
@@ -732,6 +741,7 @@ public class KruleLoader implements RuleLoader {
 
     try {
       // map each reference to the associated argument and type
+      answer.beforeFirst();
       while (answer.next()) {
         Node constraintNode = (Node)answer.getObject(0);
         URIReference arg = (URIReference)answer.getObject(1);
@@ -796,6 +806,7 @@ public class KruleLoader implements RuleLoader {
     if (logger.isDebugEnabled()) logger.debug("Found all having constraints.");
 
     try {
+      answer.beforeFirst();
       if (answer.next()) throw new KruleStructureException("Having structures not yet implemented");
     } finally {
       answer.close();
@@ -838,6 +849,7 @@ public class KruleLoader implements RuleLoader {
 
     try {
       // accumulate the transitive arguments
+      answer.beforeFirst();
       while (answer.next()) {
         Node transConstraint = (Node)answer.getObject(0);
         URIReference predicate = (URIReference)answer.getObject(1);
@@ -1054,7 +1066,7 @@ public class KruleLoader implements RuleLoader {
     return new Query(
         selectList,                                 // SELECT
         ruleGraph,                                  // FROM
-        constraintExpression,                                      // WHERE
+        constraintExpression,                       // WHERE
         null,                                       // HAVING
         (List<Order>)Collections.EMPTY_LIST,        // ORDER BY
         null,                                       // LIMIT
