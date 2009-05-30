@@ -84,6 +84,9 @@ public class QueryServlet extends MulgaraServlet {
   /** This path is needed to help with variations in different servlet environments. */
   public static final String SERVLET_PATH = "/webui";
 
+  /** This tutorial path is needed to help with variations in different servlet environments. */
+  public static final String TUTORIAL_PATH = "/tutorial";
+
   /** Session value for the TQL interpreter. */
   private static final String TQL_INTERPRETER = "session.tql.interpreter";
 
@@ -740,8 +743,13 @@ public class QueryServlet extends MulgaraServlet {
 
 
   private String calcBasePath(String fullpath) {
-    if (!fullpath.contains(SERVLET_PATH)) return "/";
-    return fullpath.substring(0, fullpath.indexOf(SERVLET_PATH) + SERVLET_PATH.length()) + "/";
+    if (fullpath.contains(SERVLET_PATH)) {
+      return fullpath.substring(0, fullpath.indexOf(SERVLET_PATH) + SERVLET_PATH.length()) + "/";
+    }
+    if (fullpath.contains(TUTORIAL_PATH)) {
+      return fullpath.substring(0, fullpath.indexOf(TUTORIAL_PATH) + TUTORIAL_PATH.length()) + "/";
+    }
+    return "/";
   }
 
 
