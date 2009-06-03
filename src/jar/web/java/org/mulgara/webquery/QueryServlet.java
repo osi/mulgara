@@ -658,7 +658,7 @@ public class QueryServlet extends MulgaraServlet {
   private void setDefaultGraph(Interpreter i, String graph) throws RequestException {
     // set the default graph, if applicable
     try {
-      if (graph != null && !"".equals(graph)) i.setDefaultGraphUri(graph);
+      i.setDefaultGraphUri(graph);
     } catch (Exception e) {
       try {
         i.setDefaultGraphUri(defaultGraphUri);
