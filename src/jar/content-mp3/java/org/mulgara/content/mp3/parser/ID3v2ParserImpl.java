@@ -27,16 +27,10 @@
 
 package org.mulgara.content.mp3.parser;
 
-// Java
-import java.util.Iterator;
-import java.net.URISyntaxException;
-
 // Log4j
 import org.apache.log4j.*;
 
 // Mp3 Library
-import org.blinkenlights.id3.*;
-import org.blinkenlights.id3.v1.*;
 import org.blinkenlights.id3.v2.*;
 
 // JRDF

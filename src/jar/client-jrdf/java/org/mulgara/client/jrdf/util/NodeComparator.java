@@ -65,14 +65,13 @@ import org.jrdf.graph.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class NodeComparator
-    implements Comparator {
+public class NodeComparator<T> implements Comparator<T> {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(NodeComparator.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(NodeComparator.class.getName());
 
   /** Value of a URIReference when compared to another type */
   private static final int URI_NODE_VALUE = 3;
@@ -96,14 +95,12 @@ public class NodeComparator
     //validate
     if (! (node1 instanceof Node)) {
 
-      throw new IllegalArgumentException("'node1' is not a JRDF Node. node1: " +
-                                         node1);
+      throw new IllegalArgumentException("'node1' is not a JRDF Node. node1: " + node1);
     }
 
     if (! (node2 instanceof Node)) {
 
-      throw new IllegalArgumentException("'node2' is not a JRDF Node. node2: " +
-                                         node1);
+      throw new IllegalArgumentException("'node2' is not a JRDF Node. node2: " + node1);
     }
 
     return this.compare( (Node) node1, (Node) node2);
@@ -129,23 +126,19 @@ public class NodeComparator
     if (nodeValue1 != nodeValue2) {
 
       compare = nodeValue1 - nodeValue2;
-    }
-    else {
+    } else {
 
       //determine types and call appropriate method
       if (nodeValue1 == URI_NODE_VALUE) {
 
         compare = this.compare( (URIReference) node1, (URIReference) node2);
-      }
-      else if (nodeValue1 == LITERAL_NODE_VALUE) {
+      } else if (nodeValue1 == LITERAL_NODE_VALUE) {
 
         compare = this.compare( (Literal) node1, (Literal) node2);
-      }
-      else if (nodeValue1 == BLANK_NODE_VALUE) {
+      } else if (nodeValue1 == BLANK_NODE_VALUE) {
 
         compare = this.compare( (BlankNode) node1, (BlankNode) node2);
-      }
-      else {
+      } else {
 
         //should not get here...
         throw new IllegalStateException("Invalid Node type: " +

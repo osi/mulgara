@@ -28,9 +28,7 @@
 package org.mulgara.client.jrdf.test;
 
 // Java packages
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 // JRDF
 import org.jrdf.graph.*;
@@ -101,11 +99,11 @@ public class SessionGraphUnitTest extends AbstractGraphTest {
   public Graph newGraph() throws Exception {
 
     //reset graph
-    this.dropModel(this.modelURI);
-    this.createModel(this.modelURI);
+    this.dropModel(modelURI);
+    this.createModel(modelURI);
 
     //create and return graph
-    return AbstractGraphFactory.createGraph(this.serverURI, this.modelURI);
+    return AbstractGraphFactory.createGraph(serverURI, modelURI);
   }
 
   /**
@@ -161,7 +159,7 @@ public class SessionGraphUnitTest extends AbstractGraphTest {
     assertEquals(1, graph.getNumberOfTriples());
 
     // Create iterator.
-    ClosableIterator iter = graph.find(null, null, null);
+    graph.find(null, null, null);
 
     // Close the graph.
     graph.close();
@@ -181,7 +179,7 @@ public class SessionGraphUnitTest extends AbstractGraphTest {
     assertEquals(1, graph.getNumberOfTriples());
 
     // Create iterator.
-    ClosableIterator iter = graph.find(null, null, null);
+    ClosableIterator<Triple> iter = graph.find(null, null, null);
     iter.close();
 
     // Close the graph.
@@ -201,31 +199,26 @@ public class SessionGraphUnitTest extends AbstractGraphTest {
     try {
 
       String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-      this.serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
-      this.modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
+      serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
+      modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
 
       //get session
-      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(
-          this.serverURI, true);
+      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, true);
       this.session = (JRDFSession) sessionFactory.newJRDFSession();
 
       //initialize model
-      this.createModel(this.modelURI);
+      this.createModel(modelURI);
 
       //let superclass set up too
       super.setUp();
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
 
       //try to tear down first
       try {
 
         tearDown();
-      }
-      finally {
-
-        throw exception;
-      }
+      } catch (Throwable t) { }
+      throw exception;
     }
   }
 
@@ -236,7 +229,7 @@ public class SessionGraphUnitTest extends AbstractGraphTest {
    */
   public void tearDown() throws Exception {
 
-    this.dropModel(this.modelURI);
+    this.dropModel(modelURI);
 
     //allow super to close down too
     super.tearDown();

@@ -35,17 +35,13 @@ import java.net.URI;
 import java.net.MalformedURLException;
 
 // Java enterprise packages
-import javax.activation.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
 // Third party packages
 import org.apache.log4j.*;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 
 // Other quoll tool packages
-import org.mulgara.content.mbox.parser.config.*;
 import org.mulgara.content.mbox.parser.exception.*;
 import org.mulgara.util.TempDir;
 
@@ -77,9 +73,6 @@ public final class MimeMessageToPart {
 
   /** The category to log to. */
   private static Logger logger = Logger.getLogger(MimeMessageToPart.class);
-
-  /** Output directory */
-  private File outDirectory;
 
   /** The mbox splitter's session */
   private Session session;
@@ -589,39 +582,6 @@ public final class MimeMessageToPart {
     } else {
       return new QuollEmailAddress(address.toString());
     }
-  }
-
-  /**
-   * Strip the path info from a filename.
-   *
-   * @param fileName The filename which may contain path info.
-   * @return The filename without path info.
-   */
-  private static String stripPath(String fileName) {
-
-    // Windows path
-    if (fileName.indexOf("\\") != -1) {
-      if (fileName.endsWith("\\")) {
-        fileName = fileName.substring(0, fileName.length() - 1);
-      }
-      int lastForwardslash = fileName.lastIndexOf('\\');
-      if (lastForwardslash != -1) {
-        fileName = fileName.substring(lastForwardslash + 1, fileName.length());
-      }
-    }
-
-    // Unix path
-    if (fileName.indexOf("/") != -1) {
-      if (fileName.endsWith("/")) {
-        fileName = fileName.substring(0, fileName.length() - 1);
-      }
-      int lastBackslash = fileName.lastIndexOf('/');
-      if (lastBackslash != -1) {
-        fileName = fileName.substring(lastBackslash + 1, fileName.length());
-      }
-    }
-
-    return fileName;
   }
 
   /**

@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mp3.parser.exception;
 
-import java.io.*;
-
 /**
  * Exception thrown when a problem occurs while the parser is parsing a
  * document.
@@ -51,6 +49,9 @@ import java.io.*;
  * @licence <A href="{@docRoot}/../../LICENCE">Quoll Licence</A>
  */
 public class ParserException extends Exception {
+
+  /** Generated serialization ID */
+  private static final long serialVersionUID = 1446485953659117050L;
 
   /**
    * Constructor.

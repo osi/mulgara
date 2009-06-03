@@ -27,16 +27,8 @@
 
 package org.mulgara.content.mbox.parser;
 
-import java.text.*;
 import java.io.*;
 import java.net.*;
-import java.util.*;
-
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.mail.search.*;
-
-import junit.framework.*;
 
 /**
  * Handler for the mbox URL.  Basically, uses a file to implement the handler.

@@ -35,7 +35,6 @@ import org.jrdf.graph.*;
 
 // Local packages
 import org.mulgara.query.*;
-import org.mulgara.server.*;
 
 /**
  * A JRDF session.

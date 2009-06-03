@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mp3.parser.exception;
 
-import java.io.*;
-
 /**
  * Exception thrown when a problem occurs within an MP3 Conversion.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <A href="{@docRoot}/../../LICENCE">Quoll Licence</A>
  */
 public class ConversionException extends Exception {
+
+  /** Generated serialization ID */
+  private static final long serialVersionUID = -5845974988713848747L;
 
   /**
    * Constructor.

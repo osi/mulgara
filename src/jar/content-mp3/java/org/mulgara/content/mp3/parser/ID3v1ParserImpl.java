@@ -31,9 +31,7 @@ package org.mulgara.content.mp3.parser;
 import org.apache.log4j.*;
 
 // MP3 Library
-import org.blinkenlights.id3.*;
 import org.blinkenlights.id3.v1.*;
-import org.blinkenlights.id3.v2.*;
 
 // JRDF Library
 import org.jrdf.graph.*;
@@ -96,8 +94,7 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
 
       // Populate the processor
       processor.createMappings(graph);
-    }
-    catch (IdentifierException identifierException) {
+    } catch (IdentifierException identifierException) {
 
       throw new ParserException(
           "Unable to initialise the identifier processor.",
@@ -107,15 +104,13 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
     try {
 
       // Add the album property
-      graph.add(mp3Resource, processor.resolveIdentifier(processor.TALB),
+      graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.TALB),
           factory.createLiteral(id3v1.getAlbum()));
-    }
-    catch (GraphException graphException) {
+    } catch (GraphException graphException) {
 
       throw new ParserException("Unable to add album to id3v1 resource.",
           graphException);
-    }
-    catch (GraphElementFactoryException graphElementFactoryException) {
+    } catch (GraphElementFactoryException graphElementFactoryException) {
 
       throw new ParserException("Unable to create a literal for album name.",
           graphElementFactoryException);
@@ -124,15 +119,13 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
     try {
 
       // Add the artist property
-      graph.add(mp3Resource, processor.resolveIdentifier(processor.TCOM),
+      graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.TCOM),
           factory.createLiteral(id3v1.getArtist()));
-    }
-    catch (GraphException graphException) {
+    } catch (GraphException graphException) {
 
       throw new ParserException("Unable to add artist to id3v1 resource.",
           graphException);
-    }
-    catch (GraphElementFactoryException graphElementFactoryException) {
+    } catch (GraphElementFactoryException graphElementFactoryException) {
 
       throw new ParserException("Unable to create a literal for artist name.",
           graphElementFactoryException);
@@ -141,15 +134,13 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
     try {
 
       // Add the comment property
-      graph.add(mp3Resource, processor.resolveIdentifier(processor.COMM),
+      graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.COMM),
           factory.createLiteral(id3v1.getComment()));
-    }
-    catch (GraphException graphException) {
+    } catch (GraphException graphException) {
 
       throw new ParserException("Unable to add comment to id3v1 resource.",
           graphException);
-    }
-    catch (GraphElementFactoryException graphElementFactoryException) {
+    } catch (GraphElementFactoryException graphElementFactoryException) {
 
       throw new ParserException("Unable to create a literal for comment.",
           graphElementFactoryException);
@@ -158,7 +149,7 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
     try {
 
       // Add the genre property
-      graph.add(mp3Resource, processor.resolveIdentifier(processor.MCDI),
+      graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.MCDI),
           factory.createLiteral("" + id3v1.getGenre()));
     }
     catch (GraphException graphException) {
@@ -175,15 +166,13 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
     try {
 
       // Add the title property
-      graph.add(mp3Resource, processor.resolveIdentifier(processor.TOAL),
+      graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.TOAL),
           factory.createLiteral(id3v1.getTitle()));
-    }
-    catch (GraphException graphException) {
+    } catch (GraphException graphException) {
 
       throw new ParserException("Unable to add title to id3v1 resource.",
           graphException);
-    }
-    catch (GraphElementFactoryException graphElementFactoryException) {
+    } catch (GraphElementFactoryException graphElementFactoryException) {
 
       throw new ParserException("Unable to create a literal for title.",
           graphElementFactoryException);
@@ -198,15 +187,13 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
     try {
 
       // Add the year property
-      graph.add(mp3Resource, processor.resolveIdentifier(processor.TYER),
+      graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.TYER),
           factory.createLiteral(id3v1.getYear()));
-    }
-    catch (GraphException graphException) {
+    } catch (GraphException graphException) {
 
       throw new ParserException("Unable to add year to id3v1 resource.",
           graphException);
-    }
-    catch (GraphElementFactoryException graphElementFactoryException) {
+    } catch (GraphElementFactoryException graphElementFactoryException) {
 
       throw new ParserException("Unable to create a literal for year.",
           graphElementFactoryException);
@@ -221,16 +208,14 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
 
       try {
         // Add the track property
-        graph.add(mp3Resource, processor.resolveIdentifier(processor.TRCK),
+        graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.TRCK),
             factory.createLiteral("" + ((ID3V1_1Tags) id3v1).getAlbumTrack()));
-      }
-      catch (GraphException graphException) {
+      } catch (GraphException graphException) {
 
         throw new ParserException(
             "Unable to add track number to id3v1 resource.",
             graphException);
-      }
-      catch (GraphElementFactoryException graphElementFactoryException) {
+      } catch (GraphElementFactoryException graphElementFactoryException) {
 
         throw new ParserException(
             "Unable to create a literal for track number.",

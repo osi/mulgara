@@ -53,40 +53,13 @@ import org.jrdf.graph.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class PredicateNodeComparator
-    extends NodeComparator {
+public class PredicateNodeComparator extends NodeComparator<Triple> {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(PredicateNodeComparator.class.
-      getName());
-
-  /**
-   * Compares the PredicateNode for two JRDF Triples. PredicateNode must be an
-   * URIReference, Literal or BlankNode.
-   *
-   * @param triple1 Object
-   * @param triple2 Object
-   * @return int
-   */
-  public int compare(Object triple1, Object triple2) {
-
-    //validate
-    if (! (triple1 instanceof Triple)) {
-
-      throw new IllegalArgumentException("'triple1' is not a JRDF Triple. " +
-                                         "triple1: " + triple1);
-    }
-
-    if (! (triple2 instanceof Triple)) {
-
-      throw new IllegalArgumentException("'triple2' is not a JRDF Triple. " +
-                                         "triple2: " + triple2);
-    }
-
-    return this.compare((Triple) triple1, (Triple) triple2);
-  }
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(PredicateNodeComparator.class.getName());
 
   /**
    * Compares two JRDF Triples.
@@ -95,7 +68,7 @@ public class PredicateNodeComparator
    * @param triple2 Triple
    * @return int
    */
-  private int compare (Triple triple1, Triple triple2) {
+  public int compare (Triple triple1, Triple triple2) {
 
     //validate
     if (triple1 == null) {

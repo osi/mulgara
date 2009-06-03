@@ -63,8 +63,8 @@ public class GraphElementBuilder implements GraphElementFactory {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(GraphElementBuilder.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(GraphElementBuilder.class.getName());
 
   /** Does most of the work */
   private GraphElementFactory factory = null;
@@ -187,10 +187,10 @@ public class GraphElementBuilder implements GraphElementFactory {
    * @param triples Triple[]
    * @return ClientClosableIterator
    */
-  public ClientClosableIterator createClosableIterator(RemoteGraphProxy creator, Triple [] triples) {
+  public ClientClosableIterator<Triple> createClosableIterator(RemoteGraphProxy creator, Triple [] triples) {
 
     ClosableArrayIteratorProxy proxy = new ClosableArrayIteratorProxy(triples);
 
-    return new ClientClosableIterator(creator, proxy);
+    return new ClientClosableIterator<Triple>(creator, proxy);
   }
 }

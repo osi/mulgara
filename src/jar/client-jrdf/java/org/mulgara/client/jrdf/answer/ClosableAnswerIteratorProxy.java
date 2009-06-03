@@ -63,12 +63,12 @@ import org.mulgara.query.*;
  * Portions by Paul Gearon.
  * @copyright &copy;2006 <a href="http://www.herzumsoftware.com/">Herzum Software LLC</a>
  */
-public class ClosableAnswerIteratorProxy
-    implements VirtualClosableIteratorProxy {
+public class ClosableAnswerIteratorProxy implements VirtualClosableIteratorProxy<Triple> {
 
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(
       ClosableAnswerIteratorProxy.class.getName());
 
@@ -225,7 +225,7 @@ public class ClosableAnswerIteratorProxy
    * @return the next element in the iteration.
    * @exception NoSuchElementException iteration has no more elements.
    */
-  public Object next() {
+  public Triple next() {
 
     //ensure the iterator is not closed
     if (this.closed) {
@@ -458,7 +458,7 @@ public class ClosableAnswerIteratorProxy
           throw new IllegalStateException(JRDF_STATE_ERROR_STRING);
         }
         //wrap the last triple to be returned in an Iterator
-        Set lastTriple = new HashSet();
+        Set<Triple> lastTriple = new HashSet<Triple>();
         lastTriple.add(this.lastTriple);
 
         //remove

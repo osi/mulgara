@@ -27,9 +27,6 @@
 
 package org.mulgara.server;
 
-// Java 2 Standard Packages
-import java.net.URI;
-
 /**
 * Exception thrown if {@link SessionFactoryFactory} methods fail.
 *
@@ -41,8 +38,11 @@ import java.net.URI;
 *   <a href="http://www.pisoftware.com/">Plugged In Software Pty Ltd</a>
 * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
 */
-public class SessionFactoryException extends Exception
-{
+public class SessionFactoryException extends Exception {
+
+  /** Generated serialization ID */
+  private static final long serialVersionUID = 5814669573216206645L;
+
   /**
   * @param message  diagnostic text
   */

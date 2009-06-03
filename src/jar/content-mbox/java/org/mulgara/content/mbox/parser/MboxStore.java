@@ -27,11 +27,7 @@
 
 package org.mulgara.content.mbox.parser;
 
-import java.io.*;
-import java.net.*;
 import javax.mail.*;
-import javax.mail.event.*;
-import java.util.Hashtable;
 
 /*
  * MboxStore.java

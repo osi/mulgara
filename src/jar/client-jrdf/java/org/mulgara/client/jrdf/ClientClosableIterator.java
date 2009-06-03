@@ -55,17 +55,16 @@ import org.jrdf.util.ClosableIterator;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ClientClosableIterator
-    implements ClosableIterator {
+public class ClientClosableIterator<T> implements ClosableIterator<T> {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(ClientClosableIterator.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(ClientClosableIterator.class.getName());
 
   /** Proxy that does all of the real work */
-  private VirtualClosableIteratorProxy proxy = null;
+  private VirtualClosableIteratorProxy<T> proxy = null;
 
   /** Graph that created this iterator */
   private RemoteGraphProxy creator = null;
@@ -75,7 +74,7 @@ public class ClientClosableIterator
    *
    */
   public ClientClosableIterator(RemoteGraphProxy creator,
-                                VirtualClosableIteratorProxy proxy) {
+                                VirtualClosableIteratorProxy<T> proxy) {
 
     super();
 
@@ -86,8 +85,7 @@ public class ClientClosableIterator
     }
     if (proxy == null) {
 
-      throw new IllegalArgumentException("VirtualClosableIteratorProxy cannot " +
-                                         " be null.");
+      throw new IllegalArgumentException("VirtualClosableIteratorProxy cannot be null.");
     }
 
     this.creator = creator;
@@ -124,7 +122,7 @@ public class ClientClosableIterator
    * @return the next element in the iteration.
    * @exception NoSuchElementException iteration has no more elements.
    */
-  public Object next() {
+  public T next() {
 
     return proxy.next();
   }

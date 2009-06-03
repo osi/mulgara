@@ -31,15 +31,9 @@ package org.mulgara.server;
 import java.net.*;
 import java.io.*;
 import java.util.*;
-import javax.naming.*;
-
-// Third party packages
-import org.apache.log4j.Logger; // Apache Log4J
 
 // Locally written packages
 import org.mulgara.server.SessionFactory;
-
-import java.lang.reflect.Constructor;
 
 /**
  * Stores configuration properties used to instantiate a
@@ -129,11 +123,11 @@ public class SessionFactoryConfiguration {
    * @throws SessionFactoryException
    * @return Class[]
    */
-  public Class [] getConfigurationTypes() throws SessionFactoryException {
+  public Class<?>[] getConfigurationTypes() throws SessionFactoryException {
 
     try {
 
-      List classes = new ArrayList();
+      List<Class<?>> classes = new ArrayList<Class<?>>();
 
       //serverURI
       if ( (this.serverURI != null)
@@ -173,7 +167,7 @@ public class SessionFactoryConfiguration {
 
     try {
 
-      List objects = new ArrayList();
+      List<Object> objects = new ArrayList<Object>();
 
       //serverURI
       if ( (this.serverURI != null)
@@ -195,8 +189,8 @@ public class SessionFactoryConfiguration {
 
       //return as an array
       return (Object[]) objects.toArray(new Object[objects.size()]);
-    }
-    catch (URISyntaxException uriException) {
+
+    } catch (URISyntaxException uriException) {
 
       throw new SessionFactoryException("Could not get configuration types.",
                                         uriException);

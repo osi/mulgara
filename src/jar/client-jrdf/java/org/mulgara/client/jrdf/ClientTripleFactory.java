@@ -60,6 +60,7 @@ public class ClientTripleFactory extends AbstractTripleFactory {
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(ClientTripleFactory.class.getName());
 
 

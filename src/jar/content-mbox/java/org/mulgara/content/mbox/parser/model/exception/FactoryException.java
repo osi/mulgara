@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mbox.parser.model.exception;
 
-import java.io.*;
-
 /**
  * An exception that should be used when the factory is unable to produce objects.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class FactoryException extends Exception {
+
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = 7549780829727662107L;
 
   /**
    * Constructor.

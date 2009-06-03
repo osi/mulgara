@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mbox.parser.model.exception;
 
-import java.io.*;
-
 /**
  * An exception that should be used when the vocabulary for the parser is
  * incorrect.
@@ -51,6 +49,9 @@ import java.io.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class VocabularyException extends Exception {
+
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = -8023095730007470849L;
 
   /**
    * Constructor.

@@ -74,8 +74,8 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(ItqlGraphProxy.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(ItqlGraphProxy.class.getName());
 
   /** Database Session */
   private JRDFSession session = null;
@@ -87,7 +87,7 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
   private GraphElementBuilder builder = null;
 
   /** Map of Clasable iterator to be closed with this graph */
-  private List iterators = null;
+  private List<ClosableIterator<Triple>> iterators = null;
 
   /** Indicates the Proxy has been closed */
   private boolean closed = false;
@@ -99,19 +99,16 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @param modelURI URI
    * @throws GraphException
    */
-  public ItqlGraphProxy(JRDFSession session, URI modelURI)
-      throws GraphException {
+  public ItqlGraphProxy(JRDFSession session, URI modelURI) throws GraphException {
 
     super();
 
     //validate
     if (session == null) {
-
       throw new GraphException("Session cannot be null.");
     }
 
     if (modelURI == null) {
-
       throw new GraphException("Graph URI cannot be null.");
     }
 
@@ -119,7 +116,7 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
     this.session = session;
     this.modelURI = modelURI;
     this.builder = new GraphElementBuilder();
-    this.iterators = new ArrayList();
+    this.iterators = new ArrayList<ClosableIterator<Triple>>();
   }
 
   /**
@@ -151,7 +148,7 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @throws GraphException If there was an error accessing the graph.
    * @return ClosableIterator
    */
-  public ClosableIterator find(Triple triple) throws GraphException {
+  public ClosableIterator<Triple> find(Triple triple) throws GraphException {
 
     //ensure the graph is not closed
     if (this.closed) {
@@ -163,10 +160,9 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
       Answer answer = this.session.find(this.modelURI, triple.getSubject(),
           triple.getPredicate(), triple.getObject());
       return this.createClosableIterator(answer);
-    }
-    catch (JRDFClientException clientException) {
-      throw new GraphException("Could not create new ClosableIterator.",
-          clientException);
+
+    } catch (JRDFClientException clientException) {
+      throw new GraphException("Could not create new ClosableIterator.", clientException);
     }
   }
 
@@ -176,26 +172,23 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @param triples The triple iterator.
    * @throws GraphException If the statements can't be made.
    */
-  public void add(Iterator triples) throws GraphException {
+  public void add(Iterator<Triple> triples) throws GraphException {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
     //insert a set of triples into the session
     try {
 
-      Set tripleSet = new HashSet();
+      Set<Triple> tripleSet = new HashSet<Triple>();
       while (triples.hasNext()) {
-
         tripleSet.add(triples.next());
       }
       session.insert(this.modelURI, tripleSet);
-    }
-    catch (QueryException queryException) {
 
+    } catch (QueryException queryException) {
       throw new GraphException("Could not add triples.", queryException);
     }
   }
@@ -206,11 +199,10 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @param triples The triple iterator.
    * @throws GraphException If the statements can't be revoked.
    */
-  public void remove(Iterator triples) throws GraphException {
+  public void remove(Iterator<Triple> triples) throws GraphException {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
@@ -218,10 +210,10 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
     try {
 
       Triple currentTriple = null;
-      Set tripleSet = new HashSet();
+      Set<Triple> tripleSet = new HashSet<Triple>();
       while (triples.hasNext()) {
 
-        currentTriple = (Triple) triples.next();
+        currentTriple = triples.next();
 
         //check that the triple occurs before adding it
         if (!this.contains(currentTriple)) {
@@ -233,9 +225,8 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
         tripleSet.add(currentTriple);
       }
       session.delete(this.modelURI, tripleSet);
-    }
-    catch (QueryException queryException) {
 
+    } catch (QueryException queryException) {
       throw new GraphException("Could not remove triples.", queryException);
     }
   }
@@ -249,7 +240,6 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
@@ -265,7 +255,6 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
@@ -276,26 +265,20 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
       //execute and get row count
       answer = this.session.find(this.modelURI, null, null, null);
       return answer.getRowCount();
-    }
-    catch (Exception exception) {
 
+    } catch (Exception exception) {
       //rethrow
-      throw new JRDFClientException("Could not determine number of Triples.",
-          exception);
-    }
-    finally {
+      throw new JRDFClientException("Could not determine number of Triples.", exception);
+    } finally {
 
       //close the answer
       if (answer != null) {
 
         try {
-
           answer.close();
-        }
-        catch (TuplesException tuplesException) {
 
-          throw new JRDFClientException("Could not close Answer.",
-              tuplesException);
+        } catch (TuplesException tuplesException) {
+          throw new JRDFClientException("Could not close Answer.", tuplesException);
         }
       }
     }
@@ -310,7 +293,6 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
@@ -330,7 +312,7 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
 
       //close all created ClosableIterators
       while (iterators.size() != 0) {
-        ((ClosableIterator) iterators.remove(0)).close();
+        iterators.remove(0).close();
       }
     }
 
@@ -342,7 +324,7 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    *
    * @param iter Iterator
    */
-  public void unregister(Iterator iter) {
+  public void unregister(Iterator<?> iter) {
     if (iterators.contains(iter)) {
       this.iterators.remove(iter);
     }
@@ -354,17 +336,15 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @param triples Triple[]
    * @return ClientClosableIterator
    */
-  public ClientClosableIterator createClosableIterator(Triple[] triples) {
+  public ClientClosableIterator<Triple> createClosableIterator(Triple[] triples) {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
     //create iterator and hold a reference to it
-    ClientClosableIterator iterator = this.builder.createClosableIterator(this,
-        triples);
+    ClientClosableIterator<Triple> iterator = this.builder.createClosableIterator(this, triples);
     this.iterators.add(iterator);
 
     return iterator;
@@ -378,20 +358,17 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @return ClientClosableIterator
    * @throws JRDFClientException
    */
-  public ClientClosableIterator createClosableIterator(Triple filter,
-      Answer answer) throws JRDFClientException {
+  public ClientClosableIterator<Triple> createClosableIterator(Triple filter, Answer answer) throws JRDFClientException {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
-    ClosableAnswerIteratorProxy proxy = new ClosableAnswerIteratorProxy(this,
-        filter, answer);
+    ClosableAnswerIteratorProxy proxy = new ClosableAnswerIteratorProxy(this, filter, answer);
 
     //create iterator and hold a reference to it (for closing)
-    ClientClosableIterator iterator = new ClientClosableIterator(this, proxy);
+    ClientClosableIterator<Triple> iterator = new ClientClosableIterator<Triple>(this, proxy);
     this.iterators.add(iterator);
 
     return iterator;
@@ -404,12 +381,10 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
    * @return ClientClosableIterator
    * @throws JRDFClientException
    */
-  public ClientClosableIterator createClosableIterator(Answer answer) throws
-      JRDFClientException {
+  public ClientClosableIterator<Triple> createClosableIterator(Answer answer) throws JRDFClientException {
 
     //ensure the graph is not closed
     if (this.closed) {
-
       throw new JRDFClientException("Graph has been closed.");
     }
 
@@ -418,11 +393,9 @@ public class ItqlGraphProxy implements RemoteGraphProxy {
       //this filter will allow all triples through
       Triple filter = this.builder.createTriple(null, null, null);
       return this.createClosableIterator(filter, answer);
-    }
-    catch (GraphElementFactoryException factoryException) {
+    } catch (GraphElementFactoryException factoryException) {
 
-      throw new JRDFClientException("Could not create null filter Triple.",
-          factoryException);
+      throw new JRDFClientException("Could not create null filter Triple.", factoryException);
     }
   }
 

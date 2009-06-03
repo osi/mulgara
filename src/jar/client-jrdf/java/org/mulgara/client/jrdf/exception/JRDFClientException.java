@@ -81,6 +81,9 @@ package org.mulgara.client.jrdf.exception;
  */
 public class JRDFClientException extends RuntimeException {
 
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = 228262747346817478L;
+
   /**
    * Create an exception.
    *

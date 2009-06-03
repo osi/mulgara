@@ -27,16 +27,9 @@
 
 package org.mulgara.content.mbox.parser;
 
-import java.text.*;
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.mail.search.*;
-
-import junit.framework.*;
 
 /**
  * This is the handler for the mbox protocol.  This will treat the address

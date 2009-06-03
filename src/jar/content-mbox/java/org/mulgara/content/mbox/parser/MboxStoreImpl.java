@@ -28,9 +28,7 @@
 package org.mulgara.content.mbox.parser;
 
 import java.io.*;
-import java.net.*;
 import javax.mail.*;
-import javax.mail.event.*;
 import java.util.Hashtable;
 
 import org.apache.log4j.*;
@@ -86,21 +84,19 @@ import org.apache.log4j.*;
  *
  * @licence <A href="{@docRoot}/../../LICENCE_LGPL.txt">Licence description</A>
  */
-public class MboxStoreImpl extends Store implements MboxStore
-{
+public class MboxStoreImpl extends Store implements MboxStore {
 
   /** Logger */
   private static Logger log = Logger.getLogger(MboxStoreImpl.class);
 
   static boolean attemptFallback = false;
-  Hashtable folders = new Hashtable();
+  Hashtable<String,Folder> folders = new Hashtable<String,Folder>();
   public static int fetchsize = 1024;
 
   /**
    * Constructor.
    */
-  public MboxStoreImpl(Session session, URLName urlname)
-  {
+  public MboxStoreImpl(Session session, URLName urlname) {
     super(session, urlname);
 /**    String ccs = session.getProperty("mail.mbox.fetchsize");
     if (ccs!=null)
@@ -123,19 +119,14 @@ public class MboxStoreImpl extends Store implements MboxStore
    * There isn't a protocol to implement, so this method just returns.
    */
   protected boolean protocolConnect(String host, int port, String username, String password)
-    throws MessagingException
-  {
+        throws MessagingException {
     return true;
   }
 
-  public Folder getDefaultFolder()
-    throws MessagingException
-  {
-    if (url!=null)
-    {
+  public Folder getDefaultFolder() throws MessagingException {
+    if (url != null) {
       String file = url.getFile();
-      if (file!=null && file.length()>0)
-      {
+      if (file != null && file.length() > 0) {
         String name = File.separator+file.replace('/', File.separatorChar);
 
         if (log.isDebugEnabled()) {
@@ -148,11 +139,10 @@ public class MboxStoreImpl extends Store implements MboxStore
         return folder;
       }
     }
-    try
-    {
+
+    try {
       String defaultDir = session.getProperty("mail.mbox.userhome");
-      if (defaultDir == null)
-      {
+      if (defaultDir == null) {
         defaultDir = System.getProperty("user.home");
       }
 
@@ -162,43 +152,36 @@ public class MboxStoreImpl extends Store implements MboxStore
       }
 
       return new MboxDefaultFolder(this, defaultDir);
-    }
-    catch (SecurityException e)
-    {
+    } catch (SecurityException e) {
       throw new MessagingException("Access denied", e);
     }
   }
 
-  public Folder getFolder(String filename)
-    throws MessagingException
-  {
-    Folder folder = (Folder)folders.get(filename);
-    if (folder==null)
-    {
-      if ("inbox".equals(filename.toLowerCase()))
-      {
+  public Folder getFolder(String filename) throws MessagingException {
+
+    Folder folder = folders.get(filename);
+    if (folder==null) {
+
+      if ("inbox".equals(filename.toLowerCase())) {
+
         // First try the session property mail.mbox.inbox.
         String m = session.getProperty("mail.mbox.inbox");
-        if (m!=null && new File(m).exists())
-        {
+        
+        if (m!=null && new File(m).exists()) {
           filename = m;
-        }
-        else if (attemptFallback)
-        { // If that fails try some common (UNIX) locations.
-          try
-          {
+
+        } else if (attemptFallback) { // If that fails try some common (UNIX) locations.
+
+          try {
             m = File.separator+"var"+File.separator+"spool"+File.separator+"mail"+File.separator+System.getProperty("user.name");
-            if (new File(m).exists())
+            if (new File(m).exists()) {
               filename = m;
-            else
-            {
+            } else {
               m = System.getProperty("user.home")+File.separator+"mbox";
               if (new File(m).exists())
                 filename = m;
             }
-          }
-          catch (SecurityException e)
-          { // not allowed to read system properties
+          } catch (SecurityException e) { // not allowed to read system properties
           }
         }
       }
@@ -207,21 +190,16 @@ public class MboxStoreImpl extends Store implements MboxStore
     return folder;
   }
 
-  public Folder getFolder(URLName urlname)
-    throws MessagingException
-  {
-    String fileName = File.separator+urlname.getFile().replace('/',
-        File.separatorChar);
+  public Folder getFolder(URLName urlname) throws MessagingException {
+    String fileName = File.separator+urlname.getFile().replace('/', File.separatorChar);
     return getFolder(fileName);
   }
 
-  public Session getSession()
-  {
+  public Session getSession() {
     return session;
   }
 
-  public static int getFetchSize()
-  {
+  public static int getFetchSize() {
     return fetchsize;
   }
 }

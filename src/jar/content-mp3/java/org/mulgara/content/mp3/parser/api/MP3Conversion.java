@@ -69,6 +69,7 @@ import org.mulgara.content.mp3.parser.exception.*;
 public class MP3Conversion {
 
   /** The category to log to. */
+  @SuppressWarnings("unused")
   private static Logger log = Logger.getLogger(MP3Conversion.class);
 
   /** The RDF conversion path */

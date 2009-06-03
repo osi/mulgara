@@ -52,7 +52,11 @@ import org.apache.log4j.*;
  */
 public class ConfigManager extends Exception {
 
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = 7047786961447856712L;
+
   /** The category to log to. */
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(ConfigManager.class);
 
   /** Singleton instance */

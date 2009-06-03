@@ -82,6 +82,6 @@ import org.jrdf.util.ClosableIterator;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public interface VirtualClosableIteratorProxy extends ClosableIterator {
+public interface VirtualClosableIteratorProxy<T> extends ClosableIterator<T> {
 
 }

@@ -251,7 +251,7 @@ public class ClientGraphUnitTest extends TestCase {
 
     //create a triple and use it to filter the objects
     Triple triple = factory.createTriple(null, null, null);
-    ClosableIterator iter = client.find(triple);
+    ClosableIterator<Triple> iter = client.find(triple);
 
     //compare with answer
     compareAnswerToIterator(answer, iter, factory);
@@ -286,7 +286,7 @@ public class ClientGraphUnitTest extends TestCase {
     Triple triple = factory.createTriple(factory.createResource(URI.create(
         subject)),
                                          null, null);
-    ClosableIterator iter = client.find(triple);
+    ClosableIterator<Triple> iter = client.find(triple);
     compareAnswerToIterator(getSubject("<" + subject + ">"), iter,
                                  factory);
     iter.close();
@@ -325,7 +325,7 @@ public class ClientGraphUnitTest extends TestCase {
                                          factory.createResource(URI.create(
         predicate)),
                                          null);
-    ClosableIterator iter = client.find(triple);
+    ClosableIterator<Triple> iter = client.find(triple);
     compareAnswerToIterator(getPredicate("<" + predicate + ">"), iter,
                                  factory);
     iter.close();
@@ -365,7 +365,7 @@ public class ClientGraphUnitTest extends TestCase {
     Triple triple = factory.createTriple(null, null,
                                          factory.createResource(URI.
         create(object)));
-    ClosableIterator iter = client.find(triple);
+    ClosableIterator<Triple> iter = client.find(triple);
     compareAnswerToIterator(getObject("<" + object + ">"), iter,
                                  factory);
     iter.close();
@@ -420,7 +420,7 @@ public class ClientGraphUnitTest extends TestCase {
    * @param iterator ClosableITerator
    * @throws Exception
    */
-  private void compareAnswerToIterator(Answer answer, ClosableIterator iterator,
+  private void compareAnswerToIterator(Answer answer, ClosableIterator<Triple> iterator,
                                        GraphElementFactory factory) throws
       Exception {
 

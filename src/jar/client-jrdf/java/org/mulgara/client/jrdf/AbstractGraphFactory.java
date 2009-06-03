@@ -70,8 +70,8 @@ public abstract class AbstractGraphFactory {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger logger = Logger.getLogger(AbstractGraphFactory.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(AbstractGraphFactory.class.getName());
 
   /**
    * Returns a ClientGraph backed by an Answer.

@@ -29,16 +29,13 @@ package org.mulgara.content.mp3.parser;
 
 // Standard Java
 import java.io.*;
-import java.net.*;
 
 // Apache logging
 import org.apache.log4j.*;
-import org.apache.log4j.xml.*;
 
 // Mp3 Library
 import org.blinkenlights.id3.*;
 import org.blinkenlights.id3.v1.*;
-import org.blinkenlights.id3.v2.*;
 
 // JRDF
 import org.jrdf.graph.mem.*;
@@ -319,7 +316,7 @@ public class ID3ParsersUnitTest extends TestCase {
       try {
 
         // Get all statements in the graph
-        ClosableIterator iterator = model.find(null, null, null);
+        ClosableIterator<Triple> iterator = model.find(null, null, null);
 
         while (iterator.hasNext()) {
 
@@ -364,11 +361,10 @@ public class ID3ParsersUnitTest extends TestCase {
 
       // Create a resource object to match the resource name we gave the mp3 data
       // plus the id3 v1 tag information
-      SubjectNode v1Resource = model.getElementFactory().createResource();
+      model.getElementFactory().createResource();
 
       // Create a property to signify the type
-      PredicateNode property = model.getElementFactory().createResource(RDF.
-          TYPE);
+      PredicateNode property = model.getElementFactory().createResource(RDF.TYPE);
 
       // create a resource to represent the ID3v1 type
       ObjectNode typeResource = (ObjectNode) processor.resolveIdentifier(
@@ -379,7 +375,7 @@ public class ID3ParsersUnitTest extends TestCase {
           model.contains(null, property, typeResource));
 
       // Create a property to signify the album
-      property = processor.resolveIdentifier(processor.TALB);
+      property = processor.resolveIdentifier(IdentifierProcessor.TALB);
 
       // Check that we have the correct album
       assertTrue("Album was not 'Residence' as expected for id3v1 resource.",
@@ -388,7 +384,7 @@ public class ID3ParsersUnitTest extends TestCase {
           "Residence")));
 
       // Create a property to signify the artist
-      property = processor.resolveIdentifier(processor.TCOM);
+      property = processor.resolveIdentifier(IdentifierProcessor.TCOM);
 
       // Check that we have the correct artist
       assertTrue(
@@ -398,7 +394,7 @@ public class ID3ParsersUnitTest extends TestCase {
           "Karaoke Tundra")));
 
       // Create a property to signify the comment
-      property = processor.resolveIdentifier(processor.COMM);
+      property = processor.resolveIdentifier(IdentifierProcessor.COMM);
 
       // Check that we have the correct comment
       assertTrue(
@@ -408,7 +404,7 @@ public class ID3ParsersUnitTest extends TestCase {
           "http://www.kikapu.com")));
 
       // Create a property to signify the genre
-      property = processor.resolveIdentifier(processor.MCDI);
+      property = processor.resolveIdentifier(IdentifierProcessor.MCDI);
 
       // Check that we have the correct genre
       assertTrue("Genre was not " + ID3V1Tags.Genre.Electronic + " as " +
@@ -417,7 +413,7 @@ public class ID3ParsersUnitTest extends TestCase {
           model.getElementFactory().createLiteral(ID3V1Tags.Genre.Electronic.toString())));
 
       // Create a property to signify the title
-      property = processor.resolveIdentifier(processor.TOAL);
+      property = processor.resolveIdentifier(IdentifierProcessor.TOAL);
 
       // Check that we have the correct title
       assertTrue(
@@ -427,7 +423,7 @@ public class ID3ParsersUnitTest extends TestCase {
           "Green & Parrot")));
 
       // Create a property to signify the release year
-      property = processor.resolveIdentifier(processor.TYER);
+      property = processor.resolveIdentifier(IdentifierProcessor.TYER);
 
       // Check that we have the correct release year
       assertTrue("Title was not '2004' as expected for id3v1 resource.",
@@ -561,7 +557,7 @@ public class ID3ParsersUnitTest extends TestCase {
       try {
 
         // Get all statements in the graph
-        ClosableIterator iterator = model.find(null, null, null);
+        ClosableIterator<Triple> iterator = model.find(null, null, null);
 
         while (iterator.hasNext()) {
 
@@ -613,7 +609,7 @@ public class ID3ParsersUnitTest extends TestCase {
                  model.contains(null, property, typeResource));
 
       // Create a property to signify the artist
-      property = processor.resolveIdentifier(processor.TCOM);
+      property = processor.resolveIdentifier(IdentifierProcessor.TCOM);
 
       // Check that we have the correct artist
       assertTrue(
@@ -623,7 +619,7 @@ public class ID3ParsersUnitTest extends TestCase {
           "Yasunori Mitsuda")));
 
       // Create a property to signify the title description
-      property = processor.resolveIdentifier(processor.TIT2);
+      property = processor.resolveIdentifier(IdentifierProcessor.TIT2);
 
       // Check that we have the correct title description
       assertTrue("Title description was not 'Chrono Trigger 600 A.D. in Piano OC Remix' as expected for id3v2 resource.",
@@ -642,7 +638,7 @@ public class ID3ParsersUnitTest extends TestCase {
 //          "2003-09-16T22:20:22")));
 
       // Create a property to signify the copyright message
-      property = processor.resolveIdentifier(processor.TCOP);
+      property = processor.resolveIdentifier(IdentifierProcessor.TCOP);
 
       // Check that we have the correct copyright message
       assertTrue(
@@ -668,7 +664,7 @@ public class ID3ParsersUnitTest extends TestCase {
 //          "OCR01040")));
 
       // Create a property to signify the release type
-      property = processor.resolveIdentifier(processor.TCON);
+      property = processor.resolveIdentifier(IdentifierProcessor.TCON);
 
       // Check that we have the correct release type
       assertTrue("Release type was not 'Game' as expected for id3v2 resource.",
@@ -676,7 +672,7 @@ public class ID3ParsersUnitTest extends TestCase {
                                 model.getElementFactory().createLiteral("Game")));
 
       // Create a property to signify the BPM
-      property = processor.resolveIdentifier(processor.TBPM);
+      property = processor.resolveIdentifier(IdentifierProcessor.TBPM);
 
       // Check that we have the correct BPM
       assertTrue("BPM was not '00000' as expected for id3v2 resource.",
@@ -684,7 +680,7 @@ public class ID3ParsersUnitTest extends TestCase {
                                 model.getElementFactory().createLiteral("0")));
 
       // Create a property to signify the lead performer
-      property = processor.resolveIdentifier(processor.TPE1);
+      property = processor.resolveIdentifier(IdentifierProcessor.TPE1);
 
       if (log.isDebugEnabled()) {
 
@@ -700,7 +696,7 @@ public class ID3ParsersUnitTest extends TestCase {
                          model.getElementFactory().createLiteral("kLuTz")));
 
       // Create a property to signify the original performer
-      property = processor.resolveIdentifier(processor.TOPE);
+      property = processor.resolveIdentifier(IdentifierProcessor.TOPE);
 
       // Check that we have the correct original performer
       assertTrue(
@@ -709,7 +705,7 @@ public class ID3ParsersUnitTest extends TestCase {
                          model.getElementFactory().createLiteral("SNES")));
 
       // Create a property to signify the album
-      property = processor.resolveIdentifier(processor.TALB);
+      property = processor.resolveIdentifier(IdentifierProcessor.TALB);
 
       // Check that we have the correct album
       assertTrue(
@@ -728,7 +724,7 @@ public class ID3ParsersUnitTest extends TestCase {
 //                         model.getElementFactory().createLiteral("2003-09-16")));
 
       // Create a property to signify the original title
-      property = processor.resolveIdentifier(processor.TOAL);
+      property = processor.resolveIdentifier(IdentifierProcessor.TOAL);
 
       // Check that we have the correct original title
       assertTrue(

@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mp3.parser.exception;
 
-import java.io.*;
-
 /**
  * Exception thrown when a problem occurs within the factory.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <A href="{@docRoot}/../../LICENCE">Quoll Licence</A>
  */
 public class FactoryException extends Exception {
+
+  /** Generated serialization ID */
+  private static final long serialVersionUID = -3533635683221379829L;
 
   /**
    * Constructor.

@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mbox.parser.exception;
 
-import java.io.*;
-
 /**
  * When header parsing or mime message splitting has failed.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <A href="{@docRoot}/../../LICENCE">Quoll Licence</A>
  */
 public class IOProcessingException extends Exception {
+
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = -5553656691811868619L;
 
   /**
    * Constructor.

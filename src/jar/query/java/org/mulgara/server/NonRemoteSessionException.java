@@ -48,6 +48,9 @@ package org.mulgara.server;
  */
 public class NonRemoteSessionException extends Exception {
 
+  /** Generated serialization ID */
+  private static final long serialVersionUID = 259493692361932153L;
+
   /**
    * Main Constructor.
    *

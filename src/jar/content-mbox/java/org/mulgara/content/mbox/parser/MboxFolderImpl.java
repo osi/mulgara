@@ -31,7 +31,6 @@ import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
-import java.util.zip.*;
 import javax.mail.*;
 import javax.mail.event.*;
 import javax.mail.internet.*;
@@ -105,7 +104,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   public Flags permanentFlags = null;
 
   private MboxReader reader;
-  private ArrayList messages;
+  private ArrayList<Message> messages;
   private boolean open = false;
   private boolean readOnly = true;
   private int type = HOLDS_MESSAGES;
@@ -284,24 +283,19 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    * This deletes all the messages marked as deleted.
    * @exception MessagingException if a messaging error occurred
    */
-  public synchronized Message[] expunge()
-    throws MessagingException
-  {
-    ArrayList ve = new ArrayList();
-    if (open && this.messages !=null)
-    {
-      ArrayList vm = new ArrayList();
-      Iterator iter = messages.iterator();
-      while(iter.hasNext())
-      {
-        Message message = (Message) iter.next();
+  public synchronized Message[] expunge() throws MessagingException {
+
+    ArrayList<Message> ve = new ArrayList<Message>();
+    if (open && this.messages != null) {
+      ArrayList<Message> vm = new ArrayList<Message>();
+      Iterator<Message> iter = messages.iterator();
+      while (iter.hasNext()) {
+
+        Message message = iter.next();
         Flags flags = message.getFlags();
-        if (flags.contains(Flags.Flag.DELETED))
-        {
+        if (flags.contains(Flags.Flag.DELETED)) {
           ve.add(message);
-        }
-        else
-        {
+        } else {
           vm.add(message);
         }
       }
@@ -309,8 +303,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
     }
 
     Message[] expunged = collectionToMessageArray(ve);
-    if (expunged.length > 0)
-    {
+    if (expunged.length > 0) {
       notifyMessageRemovedListeners(true, expunged);
     }
     return expunged;
@@ -319,18 +312,15 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   /**
    * Indicates whether this folder is open.
    */
-  public boolean isOpen()
-  {
+  public boolean isOpen() {
     return open;
   }
 
   /**
    * Returns the permanent flags for this folder.
    */
-  public Flags getPermanentFlags()
-  {
-    if (permanentFlags == null)
-    {
+  public Flags getPermanentFlags() {
+    if (permanentFlags == null) {
       Flags tmpFlags = new Flags();
       tmpFlags.add(Flags.Flag.DELETED);
       tmpFlags.add(Flags.Flag.SEEN);
@@ -347,8 +337,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    * @return the number of messages in this folder.
    * @exception MessagingException if a messaging error occurred
    */
-  public int getMessageCount() throws MessagingException
-  {
+  public int getMessageCount() throws MessagingException {
     return reader.getMessageCount();
   }
 
@@ -357,8 +346,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *
    * @exception MessagingException if a messaging error occurred
    */
-  public Message getMessage(int msgnum) throws MessagingException
-  {
+  public Message getMessage(int msgnum) throws MessagingException {
 
     if (logger.isDebugEnabled()) {
 
@@ -366,13 +354,10 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
     }
 
     // Use a reader to get that getFile().
-    try
-    {
+    try {
 
-      return reader.getMessage(msgnum-1);
-    }
-    catch (ArrayIndexOutOfBoundsException e)
-    {
+      return reader.getMessage(msgnum - 1);
+    } catch (ArrayIndexOutOfBoundsException e) {
       throw new MessagingException("No such message", e);
     }
   }
@@ -382,8 +367,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *
    * @exception MessagingException if a messaging error occurred
    */
-  public synchronized Message[] getMessages()	throws MessagingException
-  {
+  public synchronized Message[] getMessages()	throws MessagingException {
     this.synchronizeMessages();
     this.saveMessages();
 
@@ -393,24 +377,18 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   /**
    * Appends messages to this folder.
    */
-  public synchronized void appendMessages(Message[] messages)
-      throws MessagingException
-  {
+  public synchronized void appendMessages(Message[] messages) throws MessagingException {
     synchronizeMessages();
 
-    ArrayList added = new ArrayList();
-    for (int i=0; i<messages.length; i++)
-    {
-      if (messages[i] instanceof MimeMessage)
-      {
-        MboxMessage message = new MboxMessage(this,
-          (MimeMessage) messages[i], i);
+    ArrayList<Message> added = new ArrayList<Message>();
+    for (int i = 0; i < messages.length; i++) {
+      if (messages[i] instanceof MimeMessage) {
+        MboxMessage message = new MboxMessage(this, (MimeMessage)messages[i], i);
         added.add(message);
         this.messages.add(message);
       }
     }
-    if (added.size()>0)
-    {
+    if (added.size() > 0) {
       Message[] n = this.collectionToMessageArray(added);
       notifyMessageAddedListeners(n);
     }
@@ -424,9 +402,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *
    * @exception MessagingException ignore
    */
-  public void fetch(Message amessage[], FetchProfile fetchprofile)
-    throws MessagingException
-  {
+  public void fetch(Message amessage[], FetchProfile fetchprofile) throws MessagingException {
   }
 
   /**
@@ -434,9 +410,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *
    * @return the parent folder.
    */
-  public Folder getParent()
-    throws MessagingException
-  {
+  public Folder getParent() throws MessagingException {
     return store.getFolder(getFile().getParent());
   }
 
@@ -445,11 +419,8 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *
    * @return the subfolders of this folder.
    */
-  public Folder[] list()
-    throws MessagingException
-  {
-    if (type!=HOLDS_FOLDERS)
-    {
+  public Folder[] list() throws MessagingException {
+    if (type != HOLDS_FOLDERS) {
       throw new MessagingException("This folder can't contain subfolders");
     }
 
@@ -457,15 +428,11 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
     {
       String[] files = getFile().list();
       Folder[] folders = new Folder[files.length];
-      for (int i=0; i<files.length; i++)
-      {
-        folders[i] = store.getFolder(getFile().getAbsolutePath()+
-          getFile().separator+files[i]);
+      for (int i = 0; i < files.length; i++) {
+        folders[i] = store.getFolder(getFile().getAbsolutePath() + File.separator + files[i]);
       }
       return folders;
-    }
-    catch (SecurityException e)
-    {
+    } catch (SecurityException e) {
       throw new MessagingException("Access denied", e);
     }
   }
@@ -473,23 +440,19 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   /**
    * Returns the subfolders of this folder matching the specified pattern.
    */
-  public Folder[] list(String pattern)
-    throws MessagingException
-  {
-    if (type!=HOLDS_FOLDERS)
-    {
+  public Folder[] list(String pattern) throws MessagingException {
+    if (type!=HOLDS_FOLDERS) {
       throw new MessagingException("This folder can't contain subfolders");
     }
-    try
-    {
+    try {
       String[] files = getFile().list(new MboxFilenameFilter(pattern));
       Folder[] folders = new Folder[files.length];
-      for (int i=0; i<files.length; i++)
-        folders[i] = store.getFolder(getFile().getAbsolutePath()+getFile().separator+files[i]);
+      for (int i=0; i<files.length; i++) {
+        folders[i] = store.getFolder(getFile().getAbsolutePath() + File.separator + files[i]);
+      }
       return folders;
-    }
-    catch (SecurityException e)
-    {
+
+    } catch (SecurityException e) {
       throw new MessagingException("Access denied", e);
     }
   }
@@ -499,48 +462,39 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *
    * @return the separator character.
    */
-  public char getSeparator()
-    throws MessagingException
-  {
-    return getFile().separatorChar;
+  public char getSeparator() throws MessagingException {
+    return File.separatorChar;
   }
 
   /**
    * Creates this folder in the store.
    */
-  public boolean create(int type)
-    throws MessagingException
-  {
-    if (getFile().exists())
-      throw new MessagingException("Folder already exists");
-    switch (type)
-    {
-      case HOLDS_FOLDERS:
-      try
-      {
+  public boolean create(int type) throws MessagingException {
+
+    if (getFile().exists()) throw new MessagingException("Folder already exists");
+    switch (type) {
+
+    case HOLDS_FOLDERS:
+      try {
         getFile().mkdirs();
         this.type = type;
         notifyFolderListeners(FolderEvent.CREATED);
         return true;
-      }
-      catch (SecurityException e)
-      {
+
+      } catch (SecurityException e) {
         throw new MessagingException("Access denied", e);
       }
       case HOLDS_MESSAGES:
-      try
-      {
+      try {
         // save the changes
-        synchronized (this)
-        {
-          if (messages==null) messages = new ArrayList();
+        synchronized (this) {
+          if (messages == null) messages = new ArrayList<Message>();
           OutputStream os = new BufferedOutputStream(getOutputStream());
           Message[] m = this.collectionToMessageArray(this.messages);
-          for (int i=0; i<m.length; i++)
-          {
+          for (int i = 0; i < m.length; i++) {
             Address[] f = m[i].getFrom();
-            String top = "From "+((f.length>0) ? f[0].toString() : "-")+" "+
-                df.format(m[i].getSentDate())+"\n";
+            String top = "From " + ((f.length>0) ? f[0].toString() : "-") + " "+
+                df.format(m[i].getSentDate()) + "\n";
             os.write(top.getBytes());
             m[i].writeTo(os);
           }
@@ -549,13 +503,9 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
         this.type = type;
         notifyFolderListeners(FolderEvent.CREATED);
         return true;
-      }
-      catch (IOException e)
-      {
+      } catch (IOException e) {
         throw new MessagingException("I/O error writing mailbox", e);
-      }
-      catch (SecurityException e)
-      {
+      } catch (SecurityException e) {
         throw new MessagingException("Access denied", e);
       }
     }
@@ -565,45 +515,32 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   /**
    * Deletes this folder.
    */
-  public boolean delete(boolean recurse)
-    throws MessagingException
-  {
-    if (recurse)
-    {
-      try
-      {
-        if (type==HOLDS_FOLDERS)
-        {
+  public boolean delete(boolean recurse) throws MessagingException {
+    if (recurse) {
+      try {
+        if (type == HOLDS_FOLDERS) {
           Folder[] folders = list();
-          for (int i=0; i<folders.length; i++)
-            if (!folders[i].delete(recurse))
-              return false;
+          for (int i = 0; i < folders.length; i++) {
+            if (!folders[i].delete(recurse)) return false;
+          }
         }
         getFile().delete();
         notifyFolderListeners(FolderEvent.DELETED);
         return true;
-      }
-      catch (SecurityException e)
-      {
+      } catch (SecurityException e) {
         throw new MessagingException("Access denied", e);
       }
-    }
-    else
-    {
-      try
-      {
-        if (type==HOLDS_FOLDERS)
-        {
+    } else {
+      try {
+        if (type == HOLDS_FOLDERS) {
           Folder[] folders = list();
-          if (folders.length>0)
-            return false;
+          if (folders.length > 0) return false;
         }
         getFile().delete();
         notifyFolderListeners(FolderEvent.DELETED);
         return true;
-      }
-      catch (SecurityException e)
-      {
+
+      } catch (SecurityException e) {
         throw new MessagingException("Access denied", e);
       }
     }
@@ -612,24 +549,18 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   /**
    * Mbox folders cannot be created, deleted, or renamed.
    */
-  public boolean renameTo(Folder folder)
-    throws MessagingException
-  {
-    try
-    {
+  public boolean renameTo(Folder folder) throws MessagingException {
+    try {
       String filename = folder.getFullName();
-      if (filename!=null)
-      {
+      if (filename != null) {
         getFile().renameTo(new File(filename));
         ((MboxStoreImpl)store).folders.clear();
         notifyFolderListeners(FolderEvent.RENAMED);
         return true;
-      }
-      else
+      } else {
         throw new MessagingException("Illegal filename: null");
-    }
-    catch (SecurityException e)
-    {
+      }
+    } catch (SecurityException e) {
       throw new MessagingException("Access denied", e);
     }
   }
@@ -637,57 +568,45 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   /**
    * Mbox folders cannot contain subfolders.
    */
-  public Folder getFolder(String filename)
-    throws MessagingException
-  {
-    return store.getFolder(getFile().getAbsolutePath() + getFile().separator +
-      filename);
+  public Folder getFolder(String filename) throws MessagingException {
+    return store.getFolder(getFile().getAbsolutePath() + File.separator + filename);
   }
 
-  public Message[] search(SearchTerm term) throws MessagingException
-  {
+  public Message[] search(SearchTerm term) throws MessagingException {
     return super.search(term);
   }
 
-  public Message[] search(SearchTerm term, Message[] messages)
-    throws MessagingException
-  {
+  public Message[] search(SearchTerm term, Message[] messages) throws MessagingException {
     return super.search(term, messages);
   }
 
   /**
    * Locks this mailbox.  Not implementented yet.
    */
-  public synchronized boolean acquireLock()
-  {
+  public synchronized boolean acquireLock() {
     return true;
   }
 
   /**
    * Unlocks this mailbox.  Not implemented yet.
    */
-  public synchronized boolean releaseLock()
-  {
+  public synchronized boolean releaseLock() {
     return true;
   }
 
   // Reads messages from the disk getFile().
-  private ArrayList readMessages() throws MessagingException
-  {
-    synchronized (this)
-    {
-      return reader.getMessagesAsArrayList(0, reader.getMessageCount()-1);
+  private ArrayList<Message> readMessages() throws MessagingException {
+    synchronized (this) {
+      return reader.getMessagesAsArrayList(0, reader.getMessageCount() - 1);
     }
   }
 
   /**
    * Synchronizes the source file with the current message list.
    */
-  private void synchronizeMessages() throws MessagingException
-  {
+  private void synchronizeMessages() throws MessagingException {
     // Modified this to speed it up.
-    if (getFile().lastModified() != fileLastModified)
-    {
+    if (getFile().lastModified() != fileLastModified) {
       fileLastModified = getFile().lastModified();
 
       // we should never be in the position where we've removed messages
@@ -702,38 +621,31 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
       // FIXME:  these are both really, really, really bad assumptions.
       //
 
-      ArrayList tmpMessages = readMessages();
+      ArrayList<Message> tmpMessages = readMessages();
 
-      if (messages == null)
-      {
+      if (messages == null) {
         messages = tmpMessages;
-      }
-      else
-      {
-        ArrayList messagesAdded = new ArrayList();
-        ArrayList finalMessages = new ArrayList();
+      } else {
+        ArrayList<Message> messagesAdded = new ArrayList<Message>();
+        ArrayList<Message> finalMessages = new ArrayList<Message>();
         int j = -1;
         MboxMessage tmpMessage;
 
-        for (int index =0; index < tmpMessages.size(); index++)
-        {
+        for (int index =0; index < tmpMessages.size(); index++) {
+
           tmpMessage = (MboxMessage) tmpMessages.get(index);
           String tmpUniqueId = tmpMessage.getMessageID();
           String uniqueId = null;
 
           while (uniqueId != tmpUniqueId &&
-                 (!tmpUniqueId.equals(uniqueId)) && j < messages.size() - 1)
-          {
+                 (!tmpUniqueId.equals(uniqueId)) && j < messages.size() - 1) {
             uniqueId = ((MboxMessage)messages.get(++j)).getMessageID();
           }
 
-          if (j < messages.size() -1)
-          {
+          if (j < messages.size() -1) {
             finalMessages.add(messages.get(j));
-          }
-          else
-          {
-            Object newMessage = tmpMessages.get(index);
+          } else {
+            Message newMessage = tmpMessages.get(index);
             finalMessages.add(newMessage);
             messagesAdded.add(newMessage);
           }
@@ -741,8 +653,7 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
         }
 
         messages = finalMessages;
-        if (messagesAdded.size() > 0)
-        {
+        if (messagesAdded.size() > 0) {
           Message[] n = collectionToMessageArray(messagesAdded);
           notifyMessageAddedListeners(n);
           saveMessages();
@@ -752,58 +663,47 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
   }
 
   // Saves messages to the disk getFile().
-  private void saveMessages() throws MessagingException
-  {
-    if (readOnly)
-    {
+  private void saveMessages() throws MessagingException {
+    if (readOnly) {
       return;
     }
-    synchronized (this)
-    {
-      if (messages!=null)
-      {
-        try
-        {
+    synchronized (this) {
+      if (messages != null) {
+        try {
           Message[] m = this.collectionToMessageArray(messages);
 
           // make sure content has been retrieved for all messages
-          for (int i=0; i<m.length; i++)
-          {
-            if (m[i] instanceof MboxMessage)
-            {
-              ((MboxMessage) m[i]).retrieveContent();
+          for (int i = 0; i < m.length; i++) {
+            if (m[i] instanceof MboxMessage) {
+              ((MboxMessage)m[i]).retrieveContent();
             }
           }
 
           OutputStream os = new BufferedOutputStream(getOutputStream());
           MboxOutputStream mos = new MboxOutputStream(os);
-          for (int i=0; i<m.length; i++)
-          {
+
+          for (int i = 0; i < m.length; i++) {
             Address[] f = m[i].getFrom();
             String from = "-";
-            if (f.length>0)
-            {
-              if (f[0] instanceof InternetAddress)
+            if (f.length > 0) {
+              if (f[0] instanceof InternetAddress) {
                 from = ((InternetAddress)f[0]).getAddress();
-              else
+              } else {
                 from = f[0].toString();
+              }
             }
             Date date = m[i].getSentDate();
-            if (date==null)
-              date = m[i].getReceivedDate();
-            if (date==null)
-              date = new Date();
+            if (date == null) date = m[i].getReceivedDate();
+            if (date == null) date = new Date();
 
-            String top = "From "+from+ " "+df.format(date)+"\n";
+            String top = "From " + from + " " + df.format(date) + "\n";
             os.write(top.getBytes());
             m[i].writeTo(mos);
             mos.flush();
           }
           os.close();
           fileLastModified = getFile().lastModified();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
           throw new MessagingException("I/O error writing mailbox", e);
         }
       }
@@ -814,20 +714,8 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    * Creates an output stream that possibly will compress
    * whatever is sent to it, based on the current filename.
    */
-  private OutputStream getOutputStream()
-    throws IOException
-  {
+  private OutputStream getOutputStream() throws IOException {
     return reader.getOutputStream();
-  }
-
-  /**
-   * Creates an input stream that possibly will decompress the
-   * file contents.
-   */
-  private InputStream getInputStream()
-    throws IOException
-  {
-    return reader.getInputStream();
   }
 
   /**
@@ -837,42 +725,38 @@ public class MboxFolderImpl	extends Folder implements MboxFolder
    *               to contain Message objects.
    * @return the list of messages contained in the collection.
    */
-  private Message[] collectionToMessageArray(Collection source)
-  {
-    return (Message[]) source.toArray(new Message[] {});
+  private Message[] collectionToMessageArray(Collection<Message> source) {
+    return source.toArray(new Message[source.size()]);
   }
 
   /**
    * A filter to return a list of files based on patters on * and %.
    */
-  class MboxFilenameFilter implements FilenameFilter
-  {
+  class MboxFilenameFilter implements FilenameFilter {
 
      String pattern;
      int asteriskIndex, percentIndex;
 
-     MboxFilenameFilter(String pattern)
-     {
+     MboxFilenameFilter(String pattern) {
        this.pattern = pattern;
        asteriskIndex = pattern.indexOf('*');
        percentIndex = pattern.indexOf('%');
      }
 
-     public boolean accept(File directory, String name)
-     {
-       if (asteriskIndex>-1)
-       {
+     public boolean accept(File directory, String name) {
+
+       if (asteriskIndex > -1) {
          String start = pattern.substring(0, asteriskIndex),
-            end = pattern.substring(asteriskIndex+1, pattern.length());
+                end = pattern.substring(asteriskIndex+1, pattern.length());
          return (name.startsWith(start) && name.endsWith(end));
-       }
-       else if (percentIndex>-1)
-       {
+
+       } else if (percentIndex > -1) {
+
          String start = pattern.substring(0, percentIndex),
-            end = pattern.substring(percentIndex+1, pattern.length());
-         return (directory.equals(getFile()) && name.startsWith(start) &&
-            name.endsWith(end));
+                end = pattern.substring(percentIndex+1, pattern.length());
+         return (directory.equals(getFile()) && name.startsWith(start) && name.endsWith(end));
        }
+
        return name.equals(pattern);
      }
   }

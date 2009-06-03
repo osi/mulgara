@@ -139,8 +139,8 @@ public class MP3StatementsUnitTest extends TestCase {
                          "Chrono_Trigger_600_AD_in_Piano.mp3");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -252,8 +252,8 @@ public class MP3StatementsUnitTest extends TestCase {
                          "Chrono_Trigger_600_AD_in_Piano.mp3");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -392,8 +392,8 @@ public class MP3StatementsUnitTest extends TestCase {
                          "Chrono_Trigger_600_AD_in_Piano.mp3");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -518,8 +518,8 @@ public class MP3StatementsUnitTest extends TestCase {
                          "Chrono_Trigger_600_AD_in_Piano.mp3");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -658,11 +658,11 @@ public class MP3StatementsUnitTest extends TestCase {
 
         log.debug("Globalized values of first entry: [" +
                   resolverSession.globalize(statements.getColumnValue(
-            statements.SUBJECT)) + ", " +
+                      MP3Statements.SUBJECT)) + ", " +
                   resolverSession.globalize(statements.getColumnValue(
-            statements.PREDICATE)) + ", " +
+                      MP3Statements.PREDICATE)) + ", " +
                   resolverSession.globalize(statements.getColumnValue(
-            statements.OBJECT)) + "]");
+                      MP3Statements.OBJECT)) + "]");
       } catch (TuplesException tuplesException) {
 
         // Ignore the exception as we are debugging
@@ -680,7 +680,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Get the subject node id
-      subject = statements.getColumnValue(statements.SUBJECT);
+      subject = statements.getColumnValue(MP3Statements.SUBJECT);
     } catch (TuplesException tuplesException) {
 
       // Log the exception
@@ -696,7 +696,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Get the predicate node id
-      predicate = statements.getColumnValue(statements.PREDICATE);
+      predicate = statements.getColumnValue(MP3Statements.PREDICATE);
     } catch (TuplesException tuplesException) {
 
       // Log the exception
@@ -712,7 +712,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Get the object node id
-      object = statements.getColumnValue(statements.OBJECT);
+      object = statements.getColumnValue(MP3Statements.OBJECT);
     } catch (TuplesException tuplesException) {
 
       // Log the exception
@@ -808,8 +808,8 @@ public class MP3StatementsUnitTest extends TestCase {
                                   "data"), "camera.owl");
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {
@@ -878,9 +878,6 @@ public class MP3StatementsUnitTest extends TestCase {
     // Obtain a resolver session
     ResolverSession resolverSession = new TestResolverSession();
 
-    // Container for our statements object
-    MP3Statements statements = null;
-
     // Boolean to show we failed to initialise (assumed false)
     boolean failed = false;
 
@@ -888,7 +885,7 @@ public class MP3StatementsUnitTest extends TestCase {
 
       // Construct a new statements object which will represent the content of
       // the non mp3 file
-      statements = new MP3Statements(content, resolverSession);
+      new MP3Statements(content, resolverSession);
     } catch (NotModifiedException notModifiedException) {
 
       // Set that we have failed during construction

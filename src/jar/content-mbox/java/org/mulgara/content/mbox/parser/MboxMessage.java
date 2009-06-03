@@ -142,7 +142,7 @@ public class MboxMessage extends MimeMessage {
       if (in instanceof ByteArrayInputStream) {
         fetchsize = in.available();
         bytes = new byte[fetchsize];
-        int len = in.read(bytes, 0, fetchsize);
+        in.read(bytes, 0, fetchsize);
       } else {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bytes = new byte[fetchsize];
@@ -219,12 +219,14 @@ public class MboxMessage extends MimeMessage {
    * This is called by the MboxFolder when appending.
    * It creates a copy of the specified message for the new folder.
    */
+  @SuppressWarnings("unchecked")
   protected MboxMessage(MboxFolderImpl folder, MimeMessage message, int msgnum) throws
       MessagingException {
     super(folder, msgnum);
     headers = new InternetHeaders();
-    for (Enumeration enumeration = message.getAllHeaderLines(); enumeration.hasMoreElements(); )
+    for (Enumeration<String> enumeration = (Enumeration<String>)message.getAllHeaderLines(); enumeration.hasMoreElements();) {
       headers.addHeaderLine((String) enumeration.nextElement());
+    }
     try {
       InputStream in = message.getInputStream();
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -295,8 +297,6 @@ public class MboxMessage extends MimeMessage {
     if (contentOffset < 0 || content != null) {
       return;
     }
-    int fetchsize = MboxStoreImpl.fetchsize;
-    byte bytes[];
     RandomAccessFile file =
         new RandomAccessFile(((MboxFolderImpl) folder).getFile(), "r");
     file.seek(contentOffset);
@@ -397,7 +397,7 @@ public class MboxMessage extends MimeMessage {
   protected Address[] parseAddress(String in, String defhost) throws
       AddressException {
     //Vector v = new Vector();
-    ArrayList v = new ArrayList();
+    ArrayList<Address> v = new ArrayList<Address>();
     for (StringTokenizer st = new StringTokenizer(in, ","); st.hasMoreTokens(); ) {
       String s = st.nextToken().trim();
       try {

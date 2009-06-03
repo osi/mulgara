@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 
 // JRDF
 import org.mulgara.client.jrdf.*;
-import org.jrdf.graph.*;
 
 /**
  * A Non-scalable ClosableIteratorProxy that orders the contents of another
@@ -58,23 +57,24 @@ import org.jrdf.graph.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class OrderedClosableIteratorProxy
-    implements VirtualClosableIteratorProxy {
+public class OrderedClosableIteratorProxy<T>
+    implements VirtualClosableIteratorProxy<T> {
 
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(
       OrderedClosableIteratorProxy.class.getName());
 
   /** Data Source used by the iterator */
-  private List data = null;
+  private List<T> data = null;
 
   /** Does all the work */
-  private Iterator iterator = null;
+  private Iterator<T> iterator = null;
 
   /** Needs to be closed when this Iterator is closed */
-  private VirtualClosableIteratorProxy proxy = null;
+  private VirtualClosableIteratorProxy<T> proxy = null;
 
   /** Indicates that the Iterator has already been closed */
   private boolean closed = false;
@@ -85,8 +85,8 @@ public class OrderedClosableIteratorProxy
    * @param proxy VirtualClosableIteratorProxy
    * @param comparator Comparator
    */
-  public OrderedClosableIteratorProxy(VirtualClosableIteratorProxy proxy,
-                                      Comparator comparator) {
+  public OrderedClosableIteratorProxy(VirtualClosableIteratorProxy<T> proxy,
+                                      Comparator<T> comparator) {
 
     super();
 
@@ -100,7 +100,7 @@ public class OrderedClosableIteratorProxy
     this.proxy = proxy;
 
     //copy data to List
-    this.data = new ArrayList();
+    this.data = new ArrayList<T>();
     while (this.proxy.hasNext()) {
 
       this.data.add(this.proxy.next());
@@ -155,7 +155,7 @@ public class OrderedClosableIteratorProxy
    * @return the next element in the iteration.
    * @exception NoSuchElementException iteration has no more elements.
    */
-  public Object next() {
+  public T next() {
 
     //ensure the iterator is not closed
     if (this.closed) {

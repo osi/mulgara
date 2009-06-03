@@ -68,8 +68,8 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(RemoteAnswerGraphProxy.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(RemoteAnswerGraphProxy.class.getName());
 
   /** Data source */
   private Answer answer = null;
@@ -78,7 +78,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
   private GraphElementBuilder builder = null;
 
   /** Map of Clasable iterator to be closed with this graph */
-  private Set iterators = null;
+  private Set<ClosableIterator<Triple>> iterators = null;
 
   /** Indicates the Proxy has been closed */
   private boolean closed = false;
@@ -108,7 +108,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
     this.session = session;
     this.answer = dataSource;
     this.builder = new GraphElementBuilder();
-    this.iterators = new HashSet();
+    this.iterators = new HashSet<ClosableIterator<Triple>>();
   }
 
   /**
@@ -129,7 +129,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
     }
 
     //do a search for the triple
-    ClosableIterator iter = this.find(triple);
+    ClosableIterator<Triple> iter = this.find(triple);
 
     //if a null iterator gets returned there is a problem
     if (iter == null) {
@@ -148,7 +148,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
    * @param triple The triple to find.
    * @throws GraphException If there was an error accessing the graph.
    */
-  public ClosableIterator find(Triple triple) throws GraphException {
+  public ClosableIterator<Triple> find(Triple triple) throws GraphException {
 
     //ensure the graph is not closed
     if (this.closed) {
@@ -173,7 +173,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
    * @param triples The triple iterator.
    * @throws GraphExcepotion If the statements can't be made.
    */
-  public void add(Iterator triples) throws GraphException {
+  public void add(Iterator<Triple> triples) throws GraphException {
 
     throw new UnsupportedOperationException("RemoteAnswerGraphProxy does not " +
                                             "support add(Triple). Graph is " +
@@ -186,7 +186,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
    * @param triples The triple iterator.
    * @throws GraphExcepotion If the statements can't be revoked.
    */
-  public void remove(Iterator triples) throws GraphException {
+  public void remove(Iterator<Triple> triples) throws GraphException {
 
     throw new UnsupportedOperationException("RemoteAnswerGraphProxy does not " +
                                             "support remove(Triple). Graph is " +
@@ -251,12 +251,10 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
 
       //check if there are 0 rows (returns 0, 1 or N)
       return (this.answer.getRowCardinality() <= 0);
-    }
-    catch (TuplesException tuplesException) {
+    } catch (TuplesException tuplesException) {
 
       //rethrow
-      throw new JRDFClientException("Could not determine if Answer is empty.",
-                                    tuplesException);
+      throw new JRDFClientException("Could not determine if Answer is empty.", tuplesException);
     }
   }
 
@@ -275,10 +273,10 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
 //        this.answer.close();
 
         //close all created ClosableIterators
-        Iterator iter = this.iterators.iterator();
+        Iterator<ClosableIterator<Triple>> iter = this.iterators.iterator();
         while (iter.hasNext()) {
 
-          ( (ClosableIterator) iter.next()).close();
+          iter.next().close();
         }
       }
 
@@ -296,7 +294,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
    *
    * @param iter Iterator
    */
-  public void unregister(Iterator iter) {
+  public void unregister(Iterator<?> iter) {
 
     this.iterators.remove(iter);
   }
@@ -307,7 +305,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
    * @param triples Triple[]
    * @return ClientClosableIterator
    */
-  public ClientClosableIterator createClosableIterator(Triple[] triples) {
+  public ClientClosableIterator<Triple> createClosableIterator(Triple[] triples) {
 
     //ensure the graph is not closed
     if (this.closed) {
@@ -316,7 +314,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
     }
 
     //create iterator and hold a reference to it
-    ClientClosableIterator iterator = this.builder.createClosableIterator(
+    ClientClosableIterator<Triple> iterator = this.builder.createClosableIterator(
         this, triples);
     this.iterators.add(iterator);
 
@@ -330,7 +328,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
    * @param answer Answer
    * @return ClientClosableIterator
    */
-  public ClientClosableIterator createClosableIterator(Triple filter,
+  public ClientClosableIterator<Triple> createClosableIterator(Triple filter,
       Answer answer) throws JRDFClientException {
 
     //ensure the graph is not closed
@@ -344,7 +342,7 @@ public class RemoteAnswerGraphProxy implements RemoteGraphProxy {
         (Answer) answer.clone());
 
     //create iterator and hold a reference to it (for closing)
-    ClientClosableIterator iterator = new ClientClosableIterator(this, proxy);
+    ClientClosableIterator<Triple> iterator = new ClientClosableIterator<Triple>(this, proxy);
     this.iterators.add(iterator);
 
     return iterator;

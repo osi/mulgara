@@ -19,10 +19,7 @@ package org.mulgara.server;
 
 
 // Java 2 Standard Packages
-import java.net.*;
-import java.util.*;
 import java.io.*;
-import javax.transaction.xa.XAResource;
 
 /**
  * Interface to identify a Resource Manager through an XAResource.

@@ -82,7 +82,7 @@ public interface RemoteGraphProxy {
    * @param triple The triple to find.
    * @throws GraphException If there was an error accessing the graph.
    */
-  public ClosableIterator find(Triple triple) throws GraphException;
+  public ClosableIterator<Triple> find(Triple triple) throws GraphException;
 
   /**
    * Adds an iterator containing triples into the graph.
@@ -90,7 +90,7 @@ public interface RemoteGraphProxy {
    * @param triples The triple iterator.
    * @throws GraphExcepotion If the statements can't be made.
    */
-  public void add(Iterator triples) throws GraphException;
+  public void add(Iterator<Triple> triples) throws GraphException;
 
   /**
    * Removes an iterator containing triples from the graph.
@@ -98,7 +98,7 @@ public interface RemoteGraphProxy {
    * @param triples The triple iterator.
    * @throws GraphExcepotion If the statements can't be revoked.
    */
-  public void remove(Iterator triples) throws GraphException;
+  public void remove(Iterator<Triple> triples) throws GraphException;
 
   /**
    * Returns the node factory for the graph, or creates one.
@@ -134,7 +134,7 @@ public interface RemoteGraphProxy {
    *
    * @param iter Iterator
    */
-  public void unregister(Iterator iter);
+  public void unregister(Iterator<?> iter);
 
   /**
    * Factory method used to create an iterator for the Triples.
@@ -142,7 +142,7 @@ public interface RemoteGraphProxy {
    * @param triples Triple[]
    * @return ClientClosableIterator
    */
-  public ClientClosableIterator createClosableIterator(Triple [] triples);
+  public ClientClosableIterator<Triple> createClosableIterator(Triple [] triples);
 
   /**
    * Returns the session associated with the graph.

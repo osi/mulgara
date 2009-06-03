@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mp3.parser.exception;
 
-import java.io.*;
-
 /**
  * Exception thrown when a problem occurs within the Identifier processor.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <A href="{@docRoot}/../../LICENCE">Quoll Licence</A>
  */
 public class IdentifierException extends Exception {
+
+  /** Generated serialization ID */
+  private static final long serialVersionUID = -8593528312915875457L;
 
   /**
    * Constructor.

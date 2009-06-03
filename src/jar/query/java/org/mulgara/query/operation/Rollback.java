@@ -13,8 +13,6 @@
 package org.mulgara.query.operation;
 
 
-import java.util.Iterator;
-
 import org.mulgara.connection.Connection;
 import org.mulgara.query.QueryException;
 import org.mulgara.server.Session;

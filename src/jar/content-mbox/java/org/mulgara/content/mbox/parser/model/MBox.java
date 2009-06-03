@@ -34,7 +34,6 @@ import java.net.URI;
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.Triple;
 
-import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
 import org.mulgara.content.mbox.parser.model.exception.InvalidMBoxException;
 import org.mulgara.content.mbox.parser.model.exception.ModelException;

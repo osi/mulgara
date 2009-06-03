@@ -27,11 +27,6 @@
 
 package org.mulgara.content.mbox.parser.model;
 
-import java.io.InputStream;
-import java.net.URI;
-
-import org.jrdf.graph.Graph;
-
 import org.mulgara.content.Content;
 import org.mulgara.content.mbox.parser.model.exception.ModelException;
 

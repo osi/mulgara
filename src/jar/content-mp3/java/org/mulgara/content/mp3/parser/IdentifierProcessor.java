@@ -36,8 +36,6 @@ import java.net.URISyntaxException;
 import org.apache.log4j.*;
 
 // MP3 Library
-import org.blinkenlights.id3.*;
-import org.blinkenlights.id3.v1.*;
 import org.blinkenlights.id3.v2.*;
 
 // JRDF
@@ -69,6 +67,7 @@ import org.mulgara.content.mp3.parser.exception.*;
 public final class IdentifierProcessor {
 
   /** The category to log to. */
+  @SuppressWarnings("unused")
   private static Logger log = Logger.getLogger(IdentifierProcessor.class);
 
   /** The identifiers we expect to come across in ID3 tags */
@@ -151,10 +150,7 @@ public final class IdentifierProcessor {
   public static final String ID3_NAMESPACE = "http://mulgara.org/mulgara/id3#";
 
   /** Mapping of identifiers to their RDF equivalent */
-  private HashMap idMap;
-
-  /** Singleton instance */
-  private static IdentifierProcessor instance;
+  private HashMap<String,URIReference> idMap;
 
   /**
    * Constructor.
@@ -162,7 +158,7 @@ public final class IdentifierProcessor {
   public IdentifierProcessor() {
 
     // Set up the hash map
-    idMap = new HashMap();
+    idMap = new HashMap<String,URIReference>();
   }
 
   /**

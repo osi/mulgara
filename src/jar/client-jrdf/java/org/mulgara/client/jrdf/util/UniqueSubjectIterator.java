@@ -58,16 +58,16 @@ import org.mulgara.client.jrdf.exception.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class UniqueSubjectIterator
-    implements VirtualClosableIteratorProxy {
+    implements VirtualClosableIteratorProxy<Triple> {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(
-      UniqueSubjectIterator.class.getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(UniqueSubjectIterator.class.getName());
 
   /** Needs to be closed when this Iterator is closed */
-  private OrderedClosableIteratorProxy proxy = null;
+  private OrderedClosableIteratorProxy<Triple> proxy = null;
 
   /** Pre-cached "next" triple with an Unique SubjectNode */
   private Triple nextTriple = null;
@@ -87,7 +87,7 @@ public class UniqueSubjectIterator
    * @param proxy OrderedClosableIteratorProxy
    * @throws GraphException
    */
-  public UniqueSubjectIterator(OrderedClosableIteratorProxy proxy) throws
+  public UniqueSubjectIterator(OrderedClosableIteratorProxy<Triple> proxy) throws
       GraphException {
 
     super();
@@ -95,8 +95,7 @@ public class UniqueSubjectIterator
     //validate
     if (proxy == null) {
 
-      throw new IllegalArgumentException("OrderedClosableIteratorProxy cannot "+
-                                         "be null.");
+      throw new IllegalArgumentException("OrderedClosableIteratorProxy cannot be null.");
     }
 
     //initialize members
@@ -107,11 +106,9 @@ public class UniqueSubjectIterator
     try {
 
       this.getNext();
-    }
-    catch (GraphElementFactoryException factoryException) {
+    } catch (GraphElementFactoryException factoryException) {
 
-      throw new GraphException("Could not retrieve first Triple.",
-                               factoryException);
+      throw new GraphException("Could not retrieve first Triple.", factoryException);
     }
   }
 
@@ -156,7 +153,7 @@ public class UniqueSubjectIterator
    * @exception NoSuchElementException iteration has no more elements.
    * @exception JRDFClientException Cannot retrieve next Triple.
    */
-  public Object next() {
+  public Triple next() {
 
     //ensure the iterator is not closed
     if (this.closed) {
@@ -171,11 +168,9 @@ public class UniqueSubjectIterator
     try {
 
       this.getNext();
-    }
-    catch (GraphElementFactoryException factoryException) {
+    } catch (GraphElementFactoryException factoryException) {
 
-      throw new JRDFClientException("Could not get next value.",
-                                    factoryException);
+      throw new JRDFClientException("Could not get next value.", factoryException);
     }
 
     return triple;
@@ -220,8 +215,7 @@ public class UniqueSubjectIterator
 
         //create new Triple
         this.currentSubject = proxyTriple.getSubject();
-        this.nextTriple = this.builder.createTriple(this.currentSubject, null,
-                                                    null);
+        this.nextTriple = this.builder.createTriple(this.currentSubject, null, null);
 
         //stop looking
         break;

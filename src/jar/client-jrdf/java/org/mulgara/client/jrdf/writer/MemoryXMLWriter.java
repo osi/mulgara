@@ -72,8 +72,8 @@ public class MemoryXMLWriter {
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(MemoryXMLWriter.class.
-      getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(MemoryXMLWriter.class.getName());
 
   /** Prefix used to abbreviate RDF Namespace */
   private static final String RDF_PREFIX = "rdf";
@@ -84,8 +84,11 @@ public class MemoryXMLWriter {
   /** Convenience reference to the new line character */
   private static final String NEWLINE = System.getProperty("line.separator");
 
-  /** Map used to replace commonly used namespaces with prefixes */
-  protected Map namespaces = null;
+  /**
+   * Map used to replace commonly used namespaces with prefixes. Values can be
+   * either Strings or URIs, so a general type is used.
+   */
+  protected Map<String,Object> namespaces = null;
 
   /**
    * Default Constructor
@@ -233,12 +236,12 @@ public class MemoryXMLWriter {
       out.print(NEWLINE + "<!DOCTYPE rdf:RDF [");
 
       //print namespaces
-      Set keys = this.namespaces.keySet();
+      Set<String> keys = this.namespaces.keySet();
 
       if (keys != null) {
 
-        Iterator keyIter = keys.iterator();
-        Object currentKey = null;
+        Iterator<String> keyIter = keys.iterator();
+        String currentKey = null;
         Object currentValue = null;
 
         while (keyIter.hasNext()) {
@@ -250,16 +253,14 @@ public class MemoryXMLWriter {
               && (currentValue != null)) {
 
             //write as: <!ENTITY ns 'http://example.org/abc#'>
-            out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" +
-                      currentValue + "'>");
+            out.print(NEWLINE + "  <!ENTITY " + currentKey + " '" + currentValue + "'>");
           }
         }
       }
 
       //close the opening tag (add a space for readability)
       out.print("]>" + NEWLINE + NEWLINE);
-    }
-    else {
+    } else {
 
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }
@@ -280,12 +281,12 @@ public class MemoryXMLWriter {
       out.print("<rdf:RDF ");
 
       //print namespaces
-      Set keys = this.namespaces.keySet();
+      Set<String> keys = this.namespaces.keySet();
 
       if (keys != null) {
 
-        Iterator keyIter = keys.iterator();
-        Object currentKey = null;
+        Iterator<String> keyIter = keys.iterator();
+        String currentKey = null;
         Object currentValue = null;
 
         while (keyIter.hasNext()) {
@@ -297,16 +298,14 @@ public class MemoryXMLWriter {
               && (currentValue != null)) {
 
            //use entities: xmlns:ns="&ns;"
-            out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey +
-                      ";\"");
+            out.print(NEWLINE + "  xmlns:" + currentKey + "=\"&" + currentKey + ";\"");
           }
         }
       }
 
       //close the opening tag (add a space for readability)
       out.print(">" + NEWLINE + NEWLINE);
-    }
-    else {
+    } else {
 
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }
@@ -328,13 +327,13 @@ public class MemoryXMLWriter {
         && (graph != null)) {
 
       //iterator used to access subjects
-      ClosableIterator subjectIter = ClientGraphUtil.getUniqueSubjects(graph);
+      ClosableIterator<Triple> subjectIter = ClientGraphUtil.getUniqueSubjects(graph);
 
       //write every (unique) subject
       if (subjectIter != null) {
 
         //current Triple
-        Object triple = null;
+        Triple triple = null;
 
         //current Subject
         SubjectNode subject = null;
@@ -344,10 +343,9 @@ public class MemoryXMLWriter {
           //get the next triple
           triple = subjectIter.next();
 
-          if ( (triple != null)
-              && (triple instanceof Triple)) {
+          if (triple != null) {
 
-            subject = ( (Triple) triple).getSubject();
+            subject = triple.getSubject();
 
             this.writeSubject(graph, subject, out);
           }
@@ -356,8 +354,7 @@ public class MemoryXMLWriter {
         //close the Iterator
         subjectIter.close();
       }
-    }
-    else {
+    } else {
 
       //message for exception to be thrown
       String message = "Could not write Graph. Invlaid arguments provided. ";
@@ -389,8 +386,7 @@ public class MemoryXMLWriter {
 
       //print closing RDF tag
       out.println("</" + RDF_PREFIX + ":RDF>");
-    }
-    else {
+    } else {
 
       throw new IllegalArgumentException("Cannot write to null Writer.");
     }
@@ -428,8 +424,7 @@ public class MemoryXMLWriter {
    * @param writer PrintWriter
    * @throws GraphException
    */
-  protected void writeOpeningTag(Graph graph, SubjectNode subject,
-                                 PrintWriter writer) throws
+  protected void writeOpeningTag(Graph graph, SubjectNode subject, PrintWriter writer) throws
       GraphException {
 
     if (writer != null) {
@@ -441,18 +436,15 @@ public class MemoryXMLWriter {
         if (subject instanceof BlankNode) {
 
           this.writeOpeningTag(graph, (BlankNode) subject, writer);
-        }
-        else {
+        } else {
 
           writer.print("  <" + RDF_PREFIX + ":Description " + RDF_PREFIX +
                        ":about=\"" + this.getNodeString(subject) + "\">" +
                        NEWLINE);
         }
-      }
-      else {
+      } else {
 
-        throw new IllegalArgumentException("Could not write opening tag for " +
-                                           "subject. Subject Node is null.");
+        throw new IllegalArgumentException("Could not write opening tag for subject. Subject Node is null.");
       }
     }
   }
@@ -475,8 +467,7 @@ public class MemoryXMLWriter {
 
       //opening tag
       writer.print("  <" + this.getURI(subjectType) + ">" + NEWLINE);
-    }
-    else {
+    } else {
 
       //opening tag
       writer.print("  <" + RDF_PREFIX + ":Description>" + NEWLINE);
@@ -491,16 +482,14 @@ public class MemoryXMLWriter {
    * @param writer PrintWriter
    * @throws GraphException
    */
-  protected void writeClosingTag(Graph graph, SubjectNode subject,
-                                 PrintWriter writer) throws
+  protected void writeClosingTag(Graph graph, SubjectNode subject, PrintWriter writer) throws
       GraphException {
 
     //Blank Nodes are written differently
     if (subject instanceof BlankNode) {
 
       this.writeClosingTag(graph, (BlankNode) subject, writer);
-    }
-    else {
+    } else {
 
       //closing tag
       writer.print("  </" + RDF_PREFIX + ":Description>" + NEWLINE);
@@ -515,8 +504,7 @@ public class MemoryXMLWriter {
    * @param writer PrintWriter
    * @throws GraphException
    */
-  protected void writeClosingTag(Graph graph, BlankNode subject,
-                                 PrintWriter writer) throws
+  protected void writeClosingTag(Graph graph, BlankNode subject, PrintWriter writer) throws
       GraphException {
 
     ObjectNode subjectType = this.getSubjectType(graph, subject);
@@ -526,8 +514,7 @@ public class MemoryXMLWriter {
 
       //closing tag
       writer.print("  </" + this.getURI(subjectType) + ">" + NEWLINE);
-    }
-    else {
+    } else {
 
       //closing tag
       writer.print("  </" + RDF_PREFIX + ":Description>" + NEWLINE);
@@ -550,10 +537,10 @@ public class MemoryXMLWriter {
                                   PrintWriter writer) throws GraphException {
 
     //get all statements for the Subject
-    ClosableIterator subjectIter = graph.find(subject, null, null);
+    ClosableIterator<Triple> subjectIter = graph.find(subject, null, null);
 
     //order the statements by predicate, then object (for sequences).
-    ClosableIterator tripleIter = ClientGraphUtil.orderBySPO(subjectIter);
+    ClosableIterator<Triple> tripleIter = ClientGraphUtil.orderBySPO(subjectIter);
 
     if (tripleIter != null) {
 
@@ -609,8 +596,7 @@ public class MemoryXMLWriter {
     if (object instanceof Literal) {
 
       this.writeStatement(graph, subject, predicate, (Literal) object, writer);
-    }
-    else if (object instanceof BlankNode) {
+    } else if (object instanceof BlankNode) {
 
       //write as:  <predicateURI> *blank node as subject* </predicateURI>
       writer.println("    <" + this.getURI(predicate) + ">");
@@ -619,8 +605,7 @@ public class MemoryXMLWriter {
       this.writeSubject(graph, (BlankNode) object, writer);
 
       writer.println("    </" + this.getURI(predicate) + ">");
-    }
-    else if (subject instanceof BlankNode) {
+    } else if (subject instanceof BlankNode) {
 
       //predicatNode representing RDF Type
       PredicateNode rdfTypeNode = null;
@@ -628,11 +613,9 @@ public class MemoryXMLWriter {
       try {
 
         rdfTypeNode = graph.getElementFactory().createResource(RDF.TYPE);
-      }
-      catch (GraphElementFactoryException factoryException) {
+      } catch (GraphElementFactoryException factoryException) {
 
-        throw new GraphException("Could not create RDF Type node.",
-                                 factoryException);
+        throw new GraphException("Could not create RDF Type node.", factoryException);
       }
 
       //do not write the RDF Type element
@@ -640,16 +623,13 @@ public class MemoryXMLWriter {
 
         //write as:  <predicateURI rdf:resource="resourceURI"/>
         writer.println("    <" + this.getURI(predicate) + " " + RDF_PREFIX +
-                       ":resource=\"" + this.getNodeString(object) + "\"" +
-                       "/>");
+                       ":resource=\"" + this.getNodeString(object) + "\"/>");
       }
-    }
-    else {
+    } else {
 
       //write as:  <predicateURI rdf:resource="resourceURI"/>
       writer.println("    <" + this.getURI(predicate) + " " + RDF_PREFIX +
-                     ":resource=\"" + this.getNodeString(object) + "\"" +
-                     "/>");
+                     ":resource=\"" + this.getNodeString(object) + "\"/>");
     }
   }
 
@@ -686,8 +666,7 @@ public class MemoryXMLWriter {
                      ":datatype=\"" + datatype + "\">" +
                      buffer.toString() +
                      "</" + this.getURI(predicate) + ">");
-    }
-    else {
+    } else {
 
       //write as:  <predicateURI>"Literal value"</predicateURI>
       writer.println("    <" + this.getURI(predicate) + ">" +
@@ -704,8 +683,7 @@ public class MemoryXMLWriter {
    * @throws GraphException
    * @return ObjectNode
    */
-  protected ObjectNode getSubjectType(Graph graph, SubjectNode subject) throws
-      GraphException {
+  protected ObjectNode getSubjectType(Graph graph, SubjectNode subject) throws GraphException {
 
     //value to be returned
     ObjectNode type = null;
@@ -722,15 +700,13 @@ public class MemoryXMLWriter {
     try {
 
       rdfType = graph.getElementFactory().createResource(RDF.TYPE);
-    }
-    catch (GraphElementFactoryException factoryException) {
+    } catch (GraphElementFactoryException factoryException) {
 
-      throw new GraphException("Could not create RDF Type node.",
-                               factoryException);
+      throw new GraphException("Could not create RDF Type node.", factoryException);
     }
 
     //get the Subject's RDF type
-    ClosableIterator typeIter = graph.find(subject, rdfType, null);
+    ClosableIterator<Triple> typeIter = graph.find(subject, rdfType, null);
 
     if (typeIter != null) {
 
@@ -741,13 +717,10 @@ public class MemoryXMLWriter {
 
         typeTriple = typeIter.next();
 
-        if ( (typeTriple != null)
-            && (typeTriple instanceof Triple)) {
+        if (typeTriple != null) {
 
           type = ( (Triple) typeTriple).getObject();
-        }
-        else {
-
+        } else {
           throw new GraphException("Could not find RDF type for Subject: " +
                                    subject + " . Invalid Triple returned.");
         }
@@ -780,26 +753,22 @@ public class MemoryXMLWriter {
         if (node instanceof URIReference) {
 
           uri = ( (URIReference) node).getURI().toString();
-        }
-        else if (node instanceof BlankNode) {
+
+        } else if (node instanceof BlankNode) {
 
           uri = new URI("#" + ( (BlankNode) node).toString()).toString();
-        }
-        else {
+
+        } else {
 
           uri = node.toString();
         }
-      }
-      catch (URISyntaxException uriException) {
+      } catch (URISyntaxException uriException) {
 
-        throw new GraphException("Could not get URI for Node: " + node +
-                                 ".", uriException);
+        throw new GraphException("Could not get URI for Node: " + node + ".", uriException);
       }
-    }
-    else {
+    } else {
 
-      throw new GraphException("Could not get URI for Node: " + node +
-                               ". Node is null.");
+      throw new GraphException("Could not get URI for Node: " + node + ". Node is null.");
     }
 
     //return the URI with any namespaces replaced with prefixes
@@ -827,29 +796,26 @@ public class MemoryXMLWriter {
         if (node instanceof URIReference) {
 
           object = ( (URIReference) node).getURI().toString();
-        }
-        else if (node instanceof BlankNode) {
+
+        } else if (node instanceof BlankNode) {
 
           object = new URI("#" + ( (BlankNode) node).toString()).toString();
-        }
-        else if (node instanceof Literal) {
+
+        } else if (node instanceof Literal) {
 
           object = ((Literal) node).getLexicalForm();
+
         } else {
 
           object = node.toString();
         }
-      }
-      catch (URISyntaxException uriException) {
+      } catch (URISyntaxException uriException) {
 
-        throw new GraphException("Could not get String for ObjectNode: " + node +
-                                 ".", uriException);
+        throw new GraphException("Could not get String for ObjectNode: " + node + ".", uriException);
       }
-    }
-    else {
+    } else {
 
-      throw new GraphException("Could not get String for ObjectNode: " + node +
-                               ". ObjectNode is null.");
+      throw new GraphException("Could not get String for ObjectNode: " + node + ". ObjectNode is null.");
     }
 
     return object;
@@ -870,10 +836,10 @@ public class MemoryXMLWriter {
     if (original != null) {
 
       //replace any URI occurances with namespace prefixes
-      Set keys = this.namespaces.keySet();
+      Set<String> keys = this.namespaces.keySet();
 
-      Iterator keyIter = keys.iterator();
-      Object currentKey = null;
+      Iterator<String> keyIter = keys.iterator();
+      String currentKey = null;
       Object currentValue = null;
 
       if (keyIter != null) {
@@ -884,7 +850,7 @@ public class MemoryXMLWriter {
           currentValue = this.namespaces.get(currentKey);
 
           //validate the Objects
-          if ( (currentKey != null)
+          if ((currentKey != null)
               && (currentValue != null)) {
 
 //            int index = uriAsString.indexOf(currentValue.toString());
@@ -892,12 +858,11 @@ public class MemoryXMLWriter {
             if (original.equals(currentValue.toString())) {
 
               uri = "&" + currentKey + ";";
-            }
-            else if (original.startsWith(currentValue.toString())) {
+
+            } else if (original.startsWith(currentValue.toString())) {
 
               //replace with namespace
-              uri = original.replaceAll(currentValue.toString(),
-                                        currentKey + ":");
+              uri = original.replaceAll(currentValue.toString(), currentKey + ":");
             }
           }
         }
@@ -940,7 +905,7 @@ public class MemoryXMLWriter {
   protected void populateNamespaces(Graph graph) throws GraphException {
 
     //default namespaces
-    this.namespaces = new HashMap();
+    this.namespaces = new HashMap<String,Object>();
     this.namespaces.put(RDF_PREFIX, RDF.BASE_URI);
     this.namespaces.put(RDFS_PREFIX, RDFS.BASE_URI);
     this.namespaces.put("owl", "http://www.w3.org/2002/07/owl#");
@@ -953,7 +918,7 @@ public class MemoryXMLWriter {
     }
 
     //get all statements
-    ClosableIterator tripleIter = graph.find(null, null, null);
+    ClosableIterator<Triple> tripleIter = graph.find(null, null, null);
 
     if (tripleIter != null) {
 
@@ -1030,8 +995,7 @@ public class MemoryXMLWriter {
         //remove everything after the last '/'
         int index = uriString.lastIndexOf('/');
         newURI = uriString.substring(0, index) + "/";
-      }
-      else {
+      } else {
 
         //'#' comes after last '/' (remove entire fragment)
         newURI = uriString.replaceAll(uri.getFragment(), "");

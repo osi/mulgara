@@ -28,14 +28,9 @@
 package org.mulgara.content.mbox.parser;
 
 import java.io.*;
-import java.net.*;
-import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.mail.*;
-import javax.mail.event.*;
-import javax.mail.internet.*;
-import javax.mail.search.*;
 
 // logging
 import org.apache.log4j.*;
@@ -102,8 +97,6 @@ import org.apache.log4j.*;
  */
 public class MboxReader {
 
-  private static final DateFormat df = new
-      SimpleDateFormat("EEE MMM d H:m:s yyyy");
   private static final String INDEX_EXTENSION = ".idx";
 
   /** Log category */
@@ -111,9 +104,7 @@ public class MboxReader {
 
   private File file;
   private File indexFile;
-  private WeakHashMap messages;
   private boolean indexExists = false;
-  private long fileLastModified = 0;
   private boolean readOnly = false;
   private MboxFolderImpl myFolder;
   private int messageCount = -1;
@@ -205,8 +196,15 @@ public class MboxReader {
    * Sets the readOnly flag of this mail box to true.  No writes will be
    * allowed.
    */
-  public void isReadOnly() {
+  public void setReadOnly() {
     readOnly = true;
+  }
+
+  /**
+   * Tests if the flag of this mail box is set to read-only.
+   */
+  public boolean isReadOnly() {
+    return readOnly;
   }
 
   /**
@@ -248,7 +246,7 @@ public class MboxReader {
       if (!isIndexed()) {
         int noMails = 0;
         long offset = 0;
-        ArrayList offsets = new ArrayList();
+        ArrayList<Long> offsets = new ArrayList<Long>();
 
         // Read in the offsets to a array list.
         try {
@@ -380,10 +378,8 @@ public class MboxReader {
             index.writeInt(noMails);
 
             // Write offsets
-            Iterator iter = offsets.iterator();
-            while (iter.hasNext()) {
-              offset = ((Long) iter.next()).longValue();
-              index.writeLong(offset);
+            for (Long offsetl: offsets) {
+              index.writeLong(offsetl);
             }
             index.close();
             index = null;
@@ -473,7 +469,7 @@ public class MboxReader {
    * @return the specified messages in a given range.
    * @exception MessagingException if a messaging error occurred.
    */
-  public ArrayList getMessagesAsArrayList(int msgStart, int msgEnd) throws
+  public ArrayList<Message> getMessagesAsArrayList(int msgStart, int msgEnd) throws
       MessagingException {
     //Test to see if it above the max number of messages
     long numberOfMessages = getMessageCount();
@@ -484,7 +480,7 @@ public class MboxReader {
           "of messages.");
     }
 
-    ArrayList messages = new ArrayList();
+    ArrayList<Message> messages = new ArrayList<Message>();
 //    messages.add(getMessage(0, 1));
 
     // Read the location of the message using the index
@@ -603,7 +599,7 @@ public class MboxReader {
    *               to contain Message objects.
    * @return the list of messages contained in the collection.
    */
-  private Message[] collectionToMessageArray(Collection source) {
-    return (Message[]) source.toArray(new Message[] {});
+  private Message[] collectionToMessageArray(Collection<Message> source) {
+    return source.toArray(new Message[source.size()]);
   }
 }

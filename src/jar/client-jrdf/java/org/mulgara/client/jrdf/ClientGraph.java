@@ -59,9 +59,13 @@ import java.util.*;
  */
 public class ClientGraph implements Graph {
 
+  /** Generated serialization ID */
+  private static final long serialVersionUID = 4410126271252082706L;
+
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(ClientGraph.class.getName());
 
   /** Proxy that does all of the real work */
@@ -100,18 +104,16 @@ public class ClientGraph implements Graph {
    * @return True if the statement is found in the model, otherwise false.
    * @throws GraphException If there was an error accessing the graph.
    */
-  public boolean contains(SubjectNode subject, PredicateNode predicate,
-      ObjectNode object) throws GraphException {
+  public boolean contains(SubjectNode subject, PredicateNode predicate, ObjectNode object) throws GraphException {
 
     //create a triple from the arguments and use
     try {
 
-      Triple triple = this.getElementFactory().createTriple(subject, predicate,
-          object);
+      Triple triple = this.getElementFactory().createTriple(subject, predicate, object);
 
       return this.contains(triple);
-    }
-    catch (GraphElementFactoryException factoryException) {
+
+    } catch (GraphElementFactoryException factoryException) {
 
       throw new GraphException("Could not create Triple.", factoryException);
     }
@@ -142,18 +144,17 @@ public class ClientGraph implements Graph {
    * @throws GraphException If there was an error accessing the graph.
    * @return ClosableIterator
    */
-  public ClosableIterator find(SubjectNode subject, PredicateNode predicate,
+  public ClosableIterator<Triple> find(SubjectNode subject, PredicateNode predicate,
       ObjectNode object) throws GraphException {
 
     //create a triple from the arguments and use
     try {
 
-      Triple triple = this.getElementFactory().createTriple(subject, predicate,
-          object);
+      Triple triple = this.getElementFactory().createTriple(subject, predicate, object);
 
       return this.find(triple);
-    }
-    catch (GraphElementFactoryException factoryException) {
+
+    } catch (GraphElementFactoryException factoryException) {
 
       throw new GraphException("Could not create Triple.", factoryException);
     }
@@ -168,7 +169,7 @@ public class ClientGraph implements Graph {
    * @throws GraphException If there was an error accessing the graph.
    * @return ClosableIterator
    */
-  public ClosableIterator find(Triple triple) throws GraphException {
+  public ClosableIterator<Triple> find(Triple triple) throws GraphException {
 
     return proxy.find(triple);
   }
@@ -181,18 +182,16 @@ public class ClientGraph implements Graph {
    * @param object The object.
    * @throws GraphException If the statement can't be made.
    */
-  public void add(SubjectNode subject, PredicateNode predicate,
-      ObjectNode object) throws GraphException {
+  public void add(SubjectNode subject, PredicateNode predicate, ObjectNode object) throws GraphException {
 
     //create a triple from the arguments and use
     try {
 
-      Triple triple = this.getElementFactory().createTriple(subject, predicate,
-          object);
+      Triple triple = this.getElementFactory().createTriple(subject, predicate, object);
 
       this.add(triple);
-    }
-    catch (GraphElementFactoryException factoryException) {
+
+    } catch (GraphElementFactoryException factoryException) {
 
       throw new GraphException("Could not create Triple.", factoryException);
     }
@@ -207,7 +206,7 @@ public class ClientGraph implements Graph {
   public void add(Triple triple) throws GraphException {
 
     //create an Iterator from a single element Triple array
-    Iterator iter = proxy.createClosableIterator(new Triple [] {triple});
+    Iterator<Triple> iter = proxy.createClosableIterator(new Triple [] {triple});
 
     this.add(iter);
   }
@@ -218,7 +217,7 @@ public class ClientGraph implements Graph {
    * @param triples The triple iterator.
    * @throws GraphException
    */
-  public void add(Iterator triples) throws GraphException {
+  public void add(Iterator<Triple> triples) throws GraphException {
 
      proxy.add(triples);
   }
@@ -238,12 +237,10 @@ public class ClientGraph implements Graph {
     //create a triple from the arguments and use
     try {
 
-      Triple triple = this.getElementFactory().createTriple(subject, predicate,
-          object);
+      Triple triple = this.getElementFactory().createTriple(subject, predicate, object);
 
       this.remove(triple);
-    }
-    catch (GraphElementFactoryException factoryException) {
+    } catch (GraphElementFactoryException factoryException) {
 
       throw new GraphException("Could not create Triple.", factoryException);
     }
@@ -259,7 +256,7 @@ public class ClientGraph implements Graph {
   public void remove(Triple triple) throws GraphException {
 
     //create an Iterator from a single element Triple array
-    Iterator iter = proxy.createClosableIterator(new Triple [] {triple});
+    Iterator<Triple> iter = proxy.createClosableIterator(new Triple [] {triple});
 
     this.remove(iter);
   }
@@ -270,7 +267,7 @@ public class ClientGraph implements Graph {
    * @param triples The triple iterator.
    * @throws GraphException
    */
-  public void remove(Iterator triples) throws GraphException {
+  public void remove(Iterator<Triple> triples) throws GraphException {
 
     proxy.remove(triples);
   }

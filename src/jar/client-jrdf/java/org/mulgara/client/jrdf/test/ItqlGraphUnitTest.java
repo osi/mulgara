@@ -28,7 +28,6 @@
 package org.mulgara.client.jrdf.test;
 
 // Java packages
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -102,11 +101,11 @@ public class ItqlGraphUnitTest extends AbstractGraphTest {
   public Graph newGraph() throws Exception {
 
     //reset graph
-    this.dropModel(this.modelURI);
-    this.createModel(this.modelURI);
+    this.dropModel(modelURI);
+    this.createModel(modelURI);
 
     //create and return graph
-    return new ClientGraph(new ItqlGraphProxy(session, this.modelURI));
+    return new ClientGraph(new ItqlGraphProxy(session, modelURI));
   }
 
   /**
@@ -163,7 +162,7 @@ public class ItqlGraphUnitTest extends AbstractGraphTest {
     assertEquals(1, graph.getNumberOfTriples());
 
     // Create iterator.
-    ClosableIterator iter = graph.find(null, null, null);
+    graph.find(null, null, null);
 
     // Close the graph.
     graph.close();
@@ -183,7 +182,7 @@ public class ItqlGraphUnitTest extends AbstractGraphTest {
     assertEquals(1, graph.getNumberOfTriples());
 
     // Create iterator.
-    ClosableIterator iter = graph.find(null, null, null);
+    ClosableIterator<Triple> iter = graph.find(null, null, null);
     iter.close();
 
     // Close the graph.
@@ -228,7 +227,7 @@ public class ItqlGraphUnitTest extends AbstractGraphTest {
     assertEquals(2, graph.getNumberOfTriples());
 
     // Add using iterator
-    ArrayList list = new ArrayList();
+    ArrayList<Triple> list = new ArrayList<Triple>();
     list.add(graph.getElementFactory().createTriple(ref2, ref2, ref1));
     list.add(graph.getElementFactory().createTriple(ref1, ref2, ref2));
 
@@ -250,31 +249,26 @@ public class ItqlGraphUnitTest extends AbstractGraphTest {
     try {
 
       String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-      this.serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
-      this.modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
+      serverURI = new URI("rmi", hostname, "/" + SERVER_NAME, null);
+      modelURI = new URI("rmi", hostname, "/" + SERVER_NAME, MODEL_NAME);
 
       //get session
-      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(
-          this.serverURI, true);
+      SessionFactory sessionFactory = SessionFactoryFinder.newSessionFactory(serverURI, true);
       this.session = (JRDFSession) sessionFactory.newJRDFSession();
 
       //initialize model
-      this.createModel(this.modelURI);
+      this.createModel(modelURI);
 
       //let superclass set up too
       super.setUp();
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
 
       //try to tear down first
       try {
-
         tearDown();
-      }
-      finally {
+      } catch (Throwable t) { }
 
-        throw exception;
-      }
+      throw exception;
     }
   }
 
@@ -285,7 +279,7 @@ public class ItqlGraphUnitTest extends AbstractGraphTest {
    */
   public void tearDown() throws Exception {
 
-    this.dropModel(this.modelURI);
+    this.dropModel(modelURI);
 
     //allow super to close down too
     super.tearDown();

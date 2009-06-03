@@ -39,6 +39,7 @@ import org.jrdf.graph.*;
 
 /**
  * A VirtualClosableIteratorProxy implementation that uses an array of Triples.
+ * This might have been a general implementation but was specifically created for Triples.
  *
  * @created 2004-07-29
  *
@@ -58,20 +59,21 @@ import org.jrdf.graph.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class ClosableArrayIteratorProxy
-    implements VirtualClosableIteratorProxy {
+    implements VirtualClosableIteratorProxy<Triple> {
 
   /**
    * Logger. This is named after the class.
    */
+  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(
       ClosableArrayIteratorProxy.class.
       getName());
 
   /** Data Source used by the iterator */
-  private List data = null;
+  private List<Triple> data = null;
 
   /** does all the work */
-  private Iterator iterator = null;
+  private Iterator<Triple> iterator = null;
 
   /** Indicates the Iterator has been closed */
   private boolean closed = false;
@@ -92,7 +94,7 @@ public class ClosableArrayIteratorProxy
     }
 
     //copy data to List
-    this.data = new ArrayList();
+    this.data = new ArrayList<Triple>();
     final int length = dataSource.length;
     for (int i = 0; i < length; i++) {
 
@@ -144,7 +146,7 @@ public class ClosableArrayIteratorProxy
    * @return the next element in the iteration.
    * @exception NoSuchElementException iteration has no more elements.
    */
-  public Object next() {
+  public Triple next() {
 
     //ensure the iterator is not closed
     if (this.closed) {

@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mbox.parser.exception;
 
-import java.io.*;
-
 /**
  * An exception that should be used when an MBox encouters a problem while it is
  * processing.
@@ -51,6 +49,9 @@ import java.io.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class MBoxProcessException extends Exception {
+
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = 7650567189127489929L;
 
   /**
    * Constructor.

@@ -27,14 +27,7 @@
 
 package org.mulgara.content.mbox.parser;
 
-import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
-import java.util.zip.*;
 import javax.mail.*;
-import javax.mail.event.*;
-import javax.mail.internet.*;
 import javax.mail.search.*;
 
 /*

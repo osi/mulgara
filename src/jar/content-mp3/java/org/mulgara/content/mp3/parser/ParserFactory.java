@@ -163,10 +163,10 @@ public class ParserFactory {
     Object object = null;
 
     //class that classNameProperty represents from the properties file
-    Class objectClass = null;
+    Class<?> objectClass = null;
 
     //class type that object should be instantiated as
-    Class type = null;
+    Class<?> type = null;
 
     try {
 
@@ -178,24 +178,24 @@ public class ParserFactory {
 
       // Instantiate an instance of the class
       object = objectClass.newInstance();
-    }
-    catch (ClassNotFoundException classNotFoundException) {
+
+    } catch (ClassNotFoundException classNotFoundException) {
 
       // An exception has occurred so report it and throw it as a factory exception
       log.error(classNameProperty + " was not found.",
                 classNotFoundException);
       throw new FactoryException(classNameProperty + " was not found.",
                                  classNotFoundException);
-    }
-    catch (InstantiationException instantiationException) {
+
+    } catch (InstantiationException instantiationException) {
 
       // An exception has occurred so report it and throw it as a factory exception
       log.error("Could not instantiate " + classNameProperty + ".",
                 instantiationException);
       throw new FactoryException("Could not instantiate " + classNameProperty
                                  + ".", instantiationException);
-    }
-    catch (IllegalAccessException illegalAccessException) {
+
+    } catch (IllegalAccessException illegalAccessException) {
 
       // An exception has occurred so report it and throw it as a factory exception
       log.error("Illegal access when creating " + classNameProperty + ".",

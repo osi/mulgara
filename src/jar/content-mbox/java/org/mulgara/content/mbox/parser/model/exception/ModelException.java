@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mbox.parser.model.exception;
 
-import java.io.*;
-
 /**
  * An exception that should be used when an MBox model object encounters errors.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class ModelException extends Exception {
+
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = 6221972947920256706L;
 
   /**
    * Constructor.

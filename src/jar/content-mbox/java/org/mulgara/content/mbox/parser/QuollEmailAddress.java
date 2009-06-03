@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 public class QuollEmailAddress implements Serializable {
 
   /** The logger to log to */
+  @SuppressWarnings("unused")
   private static final Logger log =
       Logger.getLogger(QuollEmailAddress.class.getName());
 

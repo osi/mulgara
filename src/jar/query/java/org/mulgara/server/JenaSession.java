@@ -31,7 +31,6 @@ package org.mulgara.server;
 import java.net.URI;
 
 // Jena packages
-import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node_Variable;
 
 // Local packages

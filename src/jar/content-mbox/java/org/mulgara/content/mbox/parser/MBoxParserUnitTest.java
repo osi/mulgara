@@ -29,7 +29,6 @@ package org.mulgara.content.mbox.parser;
 
 // Java 2 standard packages
 import java.io.*;
-import java.text.*;
 import java.util.*;
 import java.net.*;
 import java.lang.reflect.Constructor;
@@ -46,11 +45,8 @@ import org.jrdf.vocabulary.RDF;
 // Local packages
 import org.mulgara.content.Content;
 import org.mulgara.content.NotModifiedException;
-import org.mulgara.content.mbox.parser.*;
-import org.mulgara.content.mbox.parser.exception.*;
 import org.mulgara.content.mbox.parser.model.*;
 import org.mulgara.content.mbox.parser.model.exception.*;
-import org.mulgara.util.TempDir;
 
 /**
  * Unit testing for the mime message to RDF parser.
@@ -2017,21 +2013,17 @@ public class MBoxParserUnitTest extends TestCase {
     if (log.isDebugEnabled()) {
 
       // Container for our iterator
-      ClosableIterator attachmentIterator = null;
+      ClosableIterator<Triple> attachmentIterator = null;
 
       try {
 
         // Get all "filename" triples
-        attachmentIterator = graph.find(null,
-                                        (PredicateNode) vocab.get(EmailVocab.
-            SIZE),
-                                        null);
+        attachmentIterator = graph.find(null, (PredicateNode)vocab.get(EmailVocab.SIZE), null);
 
       } catch (GraphException graphException) {
 
         // Log the error
-        log.debug("Unable to find attachment filenames in mbox graph.",
-                  graphException);
+        log.debug("Unable to find attachment filenames in mbox graph.", graphException);
 
         // Since this debugging we don't really need to do anything
         // with the exception
@@ -2039,8 +2031,7 @@ public class MBoxParserUnitTest extends TestCase {
 
       while (attachmentIterator.hasNext()) {
 
-        log.debug("Invalid Attachment filename: " +
-                  (Triple) attachmentIterator.next());
+        log.debug("Invalid Attachment filename: " + (Triple)attachmentIterator.next());
       }
     }
 
@@ -2063,8 +2054,7 @@ public class MBoxParserUnitTest extends TestCase {
 
       // Check that we have the correct attachment filename value
       assertTrue("Could not find attachment 'attachment.atmt' as expected.",
-                 graph.find(null,
-                            (PredicateNode) vocab.get(EmailVocab.FILE_NAME),
+                 graph.find(null, (PredicateNode)vocab.get(EmailVocab.FILE_NAME),
                             objectNode).hasNext());
     } catch (GraphException graphException) {
 
@@ -2077,21 +2067,17 @@ public class MBoxParserUnitTest extends TestCase {
     }
 
     // Container for our iterator
-    ClosableIterator attachmentIterator = null;
+    ClosableIterator<Triple> attachmentIterator = null;
 
     try {
 
       // Get all "filename" triples
-      attachmentIterator = graph.find(null,
-                                      (PredicateNode) vocab.get(EmailVocab.
-          FILE_NAME),
-                                      null);
+      attachmentIterator = graph.find(null, (PredicateNode)vocab.get(EmailVocab.FILE_NAME), null);
 
     } catch (GraphException graphException) {
 
       // Log the error
-      log.debug("Unable to find attachment filenames in mbox graph.",
-                graphException);
+      log.debug("Unable to find attachment filenames in mbox graph.", graphException);
 
       // Fail the test
       fail("Unable to find attachment filenames in mbox graph.");
@@ -2122,8 +2108,8 @@ public class MBoxParserUnitTest extends TestCase {
   public Content createContentObject(File contentFile) {
 
     // Containers for construction of content object
-    Class contentClass = null;
-    Constructor constructor = null;
+    Class<?> contentClass = null;
+    Constructor<?> constructor = null;
     Content content = null;
 
     try {

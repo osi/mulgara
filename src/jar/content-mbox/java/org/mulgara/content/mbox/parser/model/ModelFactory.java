@@ -27,7 +27,6 @@
 
 package org.mulgara.content.mbox.parser.model;
 
-import java.util.Set;
 import java.util.Properties;
 import java.io.*;
 import java.net.URL;
@@ -145,20 +144,20 @@ public class ModelFactory {
    * @throws FactoryException
    */
   private Object createObject(String classNameProperty, String classType,
-                              Class[] parameterTypes, Object[] parameters) throws
+                              Class<?>[] parameterTypes, Object[] parameters) throws
       FactoryException {
 
     //The instance of the "classNameProperty" to be returned
     Object object = null;
 
     //class that classNameProperty represents from the properties file
-    Class objectClass = null;
+    Class<?> objectClass = null;
 
     //class type that object should be instantiated as
-    Class type = null;
+    Class<?> type = null;
 
     // Constructor for our object
-    Constructor constructor = null;
+    Constructor<?> constructor = null;
 
     try {
 
@@ -249,8 +248,7 @@ public class ModelFactory {
    *
    * @return The created mbox object
    */
-  public MBox createMBox(Class[] parameterTypes, Object[] parameters) throws
-      FactoryException {
+  public MBox createMBox(Class<?>[] parameterTypes, Object[] parameters) throws FactoryException {
 
     // Container for parser object
     MBox mbox = null;
@@ -275,7 +273,7 @@ public class ModelFactory {
     MBoxManager mboxManager = null;
 
     // Create an array of the types for the mbox constructor
-    Class[] parameterTypes = new Class[0];
+    Class<?>[] parameterTypes = new Class[0];
 
     // Create an array of parameters for the mbox constructor
     Object[] parameters = new Object[0];

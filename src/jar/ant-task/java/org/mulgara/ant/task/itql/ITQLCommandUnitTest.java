@@ -60,7 +60,6 @@ import org.mulgara.query.Answer;
 public class ITQLCommandUnitTest extends TestCase {
 
   /** Log category */
-  @SuppressWarnings("unused")
   private final static Logger log = Logger.getLogger(ITQLCommandUnitTest.class);
 
   /** Description of the Field */

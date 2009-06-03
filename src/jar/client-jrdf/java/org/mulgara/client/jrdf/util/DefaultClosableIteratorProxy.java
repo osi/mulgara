@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 
 // JRDF
 import org.mulgara.client.jrdf.*;
-import org.jrdf.graph.*;
 import org.jrdf.util.*;
 
 /**
@@ -58,23 +57,23 @@ import org.jrdf.util.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class DefaultClosableIteratorProxy
-    implements VirtualClosableIteratorProxy {
+public class DefaultClosableIteratorProxy<T>
+    implements VirtualClosableIteratorProxy<T> {
 
   /**
    * Logger. This is named after the class.
    */
-  private final static Logger log = Logger.getLogger(
-      DefaultClosableIteratorProxy.class.getName());
+  @SuppressWarnings("unused")
+  private final static Logger log = Logger.getLogger(DefaultClosableIteratorProxy.class.getName());
 
   /** does all the work */
-  private ClosableIterator iterator = null;
+  private ClosableIterator<T> iterator = null;
 
   /**
    * Default Constructor
    *
    */
-  public DefaultClosableIteratorProxy(ClosableIterator iterator) {
+  public DefaultClosableIteratorProxy(ClosableIterator<T> iterator) {
 
     super();
 
@@ -111,7 +110,7 @@ public class DefaultClosableIteratorProxy
    * @return the next element in the iteration.
    * @exception NoSuchElementException iteration has no more elements.
    */
-  public Object next() {
+  public T next() {
 
     return this.iterator.next();
   }

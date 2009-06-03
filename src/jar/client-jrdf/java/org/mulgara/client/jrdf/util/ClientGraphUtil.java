@@ -58,9 +58,6 @@
 
 package org.mulgara.client.jrdf.util;
 
-//Java 2 packages
-import java.util.Iterator;
-
 //local packages
 import org.jrdf.graph.*;
 import org.jrdf.util.ClosableIterator;
@@ -97,7 +94,7 @@ public abstract class ClientGraphUtil {
    * @return ClosableIterator
    * @throws GraphException
    */
-  public static ClosableIterator orderBySubject(ClosableIterator iterator) throws
+  public static ClosableIterator<Triple> orderBySubject(ClosableIterator<Triple> iterator) throws
       GraphException {
 
     //validate
@@ -107,11 +104,11 @@ public abstract class ClientGraphUtil {
     }
 
     //Get all Triples
-    VirtualClosableIteratorProxy allTriplesProxy = new
-        DefaultClosableIteratorProxy(iterator);
+    VirtualClosableIteratorProxy<Triple> allTriplesProxy = new
+        DefaultClosableIteratorProxy<Triple>(iterator);
 
     //Order the Triples
-    return new OrderedClosableIteratorProxy(allTriplesProxy,
+    return new OrderedClosableIteratorProxy<Triple>(allTriplesProxy,
                                             new SubjectNodeComparator());
   }
 
@@ -123,7 +120,7 @@ public abstract class ClientGraphUtil {
    * @return ClosableIterator
    * @throws GraphException
    */
-  public static ClosableIterator orderBySPO(ClosableIterator iterator) throws
+  public static ClosableIterator<Triple> orderBySPO(ClosableIterator<Triple> iterator) throws
       GraphException {
 
     //validate
@@ -133,11 +130,11 @@ public abstract class ClientGraphUtil {
     }
 
     //wrap the iterator
-    VirtualClosableIteratorProxy allTriplesProxy = new
-        DefaultClosableIteratorProxy(iterator);
+    VirtualClosableIteratorProxy<Triple> allTriplesProxy = new
+        DefaultClosableIteratorProxy<Triple>(iterator);
 
     //Order the Triples
-    return new OrderedClosableIteratorProxy(allTriplesProxy, new SPOComparator());
+    return new OrderedClosableIteratorProxy<Triple>(allTriplesProxy, new SPOComparator());
   }
 
   /**
@@ -148,7 +145,7 @@ public abstract class ClientGraphUtil {
    * @return ClosableIterator
    * @throws GraphException
    */
-  public static ClosableIterator getUniqueSubjects(Graph graph) throws
+  public static ClosableIterator<Triple> getUniqueSubjects(Graph graph) throws
       GraphException {
 
     //validate
@@ -158,10 +155,10 @@ public abstract class ClientGraphUtil {
     }
 
     //Get all Triples
-    ClosableIterator allTriples = graph.find(null, null, null);
+    ClosableIterator<Triple> allTriples = graph.find(null, null, null);
 
     //Order the Triples
-    OrderedClosableIteratorProxy orderedTriples = (OrderedClosableIteratorProxy)
+    OrderedClosableIteratorProxy<Triple> orderedTriples = (OrderedClosableIteratorProxy<Triple>)
         orderBySubject(allTriples);
 
     //return an UniqueSubjectIterator.

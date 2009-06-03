@@ -27,8 +27,6 @@
 
 package org.mulgara.content.mbox.parser.exception;
 
-import java.io.*;
-
 /**
  * When the encoding was not supported.
  *
@@ -50,6 +48,9 @@ import java.io.*;
  * @licence <A href="{@docRoot}/../../LICENCE">Quoll Licence</A>
  */
 public class UnsupportedEncodingProcessingException extends Exception {
+
+  /** Generated serialization ID. */
+  private static final long serialVersionUID = 9173311111532213158L;
 
   /**
    * Constructor.
