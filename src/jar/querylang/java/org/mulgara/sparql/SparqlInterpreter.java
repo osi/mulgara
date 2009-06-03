@@ -144,6 +144,7 @@ public class SparqlInterpreter implements Interpreter {
    * @throws URISyntaxException The graph was not a valid URI.
    */
   public SparqlInterpreter setDefaultGraphUri(String graph) throws URISyntaxException {
+    if (graph == null || graph.trim().length() == 0) return setDefaultGraphUri((URI)null);
     return setDefaultGraphUri(new URI(graph));
   }
 
