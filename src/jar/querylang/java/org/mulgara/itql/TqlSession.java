@@ -18,7 +18,6 @@ package org.mulgara.itql;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -383,7 +382,6 @@ public class TqlSession {
         history.setHistoryFile(historyFile);
         history.setMaxSize(50);
         reader.setBellEnabled(false);
-        reader.setDebug(new PrintWriter(new FileWriter("writer.debug", true)));
         reader.addCompletor(new GraphNameCompletor(prefetchModels(getModelHost())));
 
         String line;
