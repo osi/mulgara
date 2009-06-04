@@ -237,6 +237,7 @@ public class TransactionalAnswer implements Answer {
     }
   }
 
+  @SuppressWarnings("unused")
   private void warnReport(String desc) {
     logger.warn(desc + ": " + System.identityHashCode(this) + ", xa=" + System.identityHashCode(transaction));
   }
