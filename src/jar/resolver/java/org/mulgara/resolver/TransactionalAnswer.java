@@ -96,7 +96,7 @@ public class TransactionalAnswer implements Answer {
         public void execute() throws TuplesException {
           returnObject(answer.getObject(columnName));
         }
-      });
+      }).getObject();
   }
 
   public void beforeFirst() throws TuplesException {
