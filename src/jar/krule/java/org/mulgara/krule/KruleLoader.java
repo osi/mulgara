@@ -70,9 +70,6 @@ public class KruleLoader implements RuleLoader {
   /** The URI of the graph to receive the entailed data. */
   private URI destGraphUri;
 
-  /** A map of namespace names to the URIs. */
-  private Map<String,URI> aliases;
-
   /** Map of krule:URIReference nodes to their associated URIs. */
   private Map<URIReference,URIReference> uriReferences;
 
@@ -109,9 +106,6 @@ public class KruleLoader implements RuleLoader {
 
     // set the query objects to null
     operationContext = null;
-
-    // initialize the aliases
-    newAliases();
 
     // initialize the constriant map
     constraintMap = new HashMap<Node,ConstraintExpression>();
@@ -326,7 +320,7 @@ public class KruleLoader implements RuleLoader {
       Answer answer = query(query);
 
       // get the length of the sequence prefix
-      int prefixLength = ((URI)aliases.get("rdf")).toString().length() + 1;
+      int prefixLength = RDF.BASE_URI.toString().length() + 1;
       // get the variables and values as elements with the appropriate type
       List<URIReference> elements = new ArrayList<URIReference>();
       List<URIReference> types = new ArrayList<URIReference>();
@@ -359,7 +353,7 @@ public class KruleLoader implements RuleLoader {
         }
       }
       // convert these elements into ConstraintElements for the query
-      QueryStruct queryStruct = new QueryStruct(elements, types, aliases, uriReferences, varReferences, literalReferences);
+      QueryStruct queryStruct = new QueryStruct(elements, types, uriReferences, varReferences, literalReferences);
 
       // read in the WHERE reference
 
@@ -468,24 +462,6 @@ public class KruleLoader implements RuleLoader {
       answer.close();
     }
     return axioms;
-  }
-
-
-  /**
-   * Set up query aliases.
-   *
-   * @return A map of aliases to their fully qualified names
-   */
-  private Map<String,URI> newAliases() {
-    aliases = new HashMap<String,URI>();
-    aliases.put("rdf", URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-    aliases.put("rdfs", URI.create("http://www.w3.org/2000/01/rdf-schema#"));
-    aliases.put("owl", URI.create("http://www.w3.org/2002/07/owl#"));
-    aliases.put("mulgara", URI.create("http://mulgara.org/mulgara#"));
-    aliases.put("krule", URI.create("http://mulgara.org/owl/krule/#"));
-    aliases.put("foaf", URI.create("http://xmlns.com/foaf/0.1/"));
-    aliases.put("skos", URI.create("http://www.w3.org/2004/02/skos/core#"));
-    return aliases;
   }
 
 

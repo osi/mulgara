@@ -83,14 +83,13 @@ public class QueryStruct implements Serializable {
    *
    * @param valueSelection The element nodes.
    * @param selTypes The types of the elements, defined in the krule namespace.
-   * @param alias The aliases used in the query process.
    * @param uriReferences A map of all krule:ref_* objects to the appropriate {@link org.jrdf.graph.URIReference}s. 
    * @param varReferences A map of all krule:var_* objects to the appropriate name.
    * @throws IllegalArgumentException If the types are incorrect, the elements are not named as expected,
    *         or the references are not found in the references map.
    */
   public QueryStruct(
-      List<URIReference> valueSelection, List<URIReference> selTypes, Map<String,URI> alias,
+      List<URIReference> valueSelection, List<URIReference> selTypes,
       Map<URIReference,URIReference> uriReferences, Map<URIReference,Variable> varReferences,
       Map<Node,Literal> litReferences
   ) {
