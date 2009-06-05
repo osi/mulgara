@@ -169,6 +169,18 @@ public class LiteralImplUnitTest extends TestCase {
         (new LiteralImpl("Deseret short ah: \ud801\udc09", "")).getEscapedForm()
         );
 
+    // Test a plain literal with an embedded 4 byte UTF-8 encoding
+    assertEquals(
+        "\"Deseret short ah: \\U00010409\"",
+        (new LiteralImpl("Deseret short ah: \u00f0\u0090\u0090\u0089", "")).getEscapedForm()
+        );
+
+    // Test a plain literal with an embedded 3 byte UTF-8 encoding
+    assertEquals(
+        "\"Devanagari letter i: \\u0907\"",
+        (new LiteralImpl("Devanagari letter i: \u00e0\u00a4\u0087", "")).getEscapedForm()
+        );
+
     // Test a plain literal with broken Unicode surrogates -- they should be
     // formatted the same way non-ASCII characters are (4-digit hex)
     assertEquals(

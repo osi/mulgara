@@ -215,7 +215,7 @@ public abstract class AbstractLiteral extends LiteralImpl implements Literal, Se
    * @return this instance in N-Triples format
    */
   public String getEscapedForm() {
-    String escaped = EscapeUtil.escape(getLexicalForm());
+    String escaped = EscapeUtil.escapeUTF8(getLexicalForm());
     return '\"' + escaped + '\"' + appendType();
   }
 
