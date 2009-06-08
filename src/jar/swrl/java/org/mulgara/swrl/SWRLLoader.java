@@ -139,7 +139,6 @@ public class SWRLLoader implements RuleLoader {
   /* (non-Javadoc)
    * @see org.mulgara.rules.RuleLoader#readRules(java.lang.Object)
    */
-  @Override
   public Rules readRules(Object session) throws InitializerException, RemoteException {
     this.operationContext = (OperationContext)session;
     
