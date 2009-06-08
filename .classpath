@@ -50,6 +50,7 @@
 	<classpathentry kind="src" path="src/jar/store-stringpool-xa/java"/>
 	<classpathentry kind="src" path="src/jar/store-stringpool-xa11/java"/>
 	<classpathentry kind="src" path="src/jar/store-xa/java"/>
+	<classpathentry kind="src" path="src/jar/swrl/java"/>
 	<classpathentry kind="src" path="src/jar/tag/java"/>
 	<classpathentry kind="src" path="src/jar/tuples/java"/>
 	<classpathentry kind="src" path="src/jar/tuples-hybrid/java"/>

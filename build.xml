@@ -61,6 +61,7 @@
   <property file="${jar.src.dir}/store-stringpool-memory/store-stringpool-memory-build.properties"/>
   <property file="${jar.src.dir}/store-stringpool-xa/store-stringpool-xa-build.properties"/>
   <property file="${jar.src.dir}/store-stringpool-xa11/store-stringpool-xa11-build.properties"/>
+  <property file="${jar.src.dir}/swrl/swrl-build.properties"/>
   <property file="${jar.src.dir}/tag/tag-build.properties"/>
   <property file="${jar.src.dir}/tuples-hybrid/tuples-hybrid-build.properties"/>
   <property file="${jar.src.dir}/tuples/tuples-build.properties"/>
@@ -124,6 +125,7 @@
   <import file="${jar.src.dir}/store-stringpool-memory/build.xml"/>
   <import file="${jar.src.dir}/store-stringpool-xa/build.xml"/>
   <import file="${jar.src.dir}/store-stringpool-xa11/build.xml"/>
+  <import file="${jar.src.dir}/swrl/build.xml"/>
   <import file="${jar.src.dir}/tag/build.xml"/>
   <import file="${jar.src.dir}/tuples-hybrid/build.xml"/>
   <import file="${jar.src.dir}/tuples/build.xml"/>
@@ -306,7 +308,7 @@
                    server-rmi-dist, krule-dist,
                    store-stringpool-dist, store-stringpool-memory-dist,
                    store-stringpool-xa-dist,
-                   store-stringpool-xa11-dist, tag-dist,
+                   store-stringpool-xa11-dist, swrl-dist, tag-dist,
                    tuples-dist, tuples-hybrid-dist,
                    util-dist, util-xa-dist, web-dist"
           description="Creates the distribution base jars">
@@ -745,7 +747,7 @@
              server-jar, server-rmi-jar,
              krule-jar,
              store-stringpool-jar,
-             store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar,
+             store-stringpool-memory-jar, store-stringpool-xa-jar, store-stringpool-xa11-jar, swrl-jar,
              tuples-jar, tuples-hybrid-jar, util-jar, util-xa-jar, web-jar"
     unless="javadoc.uptodate"
     description="Creates the project javadoc">
@@ -784,6 +786,7 @@
                       org.mulgara.store.stringpool.xa.*,
                       org.mulgara.store.tuples.*,
                       org.mulgara.store.xa.*,
+                      org.mulgara.swrl.*,
                       org.mulgara.webquery.*,
                       org.mulgara.util,
                       org.mulgara.xml.*"
@@ -863,6 +866,7 @@
       <sourcepath path="${store-stringpool-memory.src.dir}/java"/>
       <sourcepath path="${store-stringpool-xa.src.dir}/java"/>
       <sourcepath path="${store-stringpool-xa11.src.dir}/java"/>
+      <sourcepath path="${swrl.src.dir}/java"/>
       <sourcepath path="${tuples.src.dir}/java"/>
       <sourcepath path="${tuples-hybrid.src.dir}/java"/>
       <sourcepath path="${util.src.dir}/java"/>
@@ -911,7 +915,7 @@
                    krule-javadoc,
                    store-stringpool-javadoc,
                    store-stringpool-memory-javadoc, store-stringpool-xa-javadoc,
-                   store-stringpool-xa11-javadoc,
+                   store-stringpool-xa11-javadoc, swrl-javadoc,
                    tag-javadoc, tuples-hybrid-javadoc, tuples-javadoc,
                    util-xa-javadoc, util-javadoc"
       unless="javadoc.uptodate"
@@ -1637,6 +1641,7 @@
              store-stringpool-memory-jar,
              store-stringpool-xa-jar,
              store-stringpool-xa11-jar,
+             swrl-jar,
              tuples-jar,
              tuples-hybrid-jar,
              util-jar,
@@ -1755,6 +1760,7 @@
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${swrl.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
 
@@ -1830,6 +1836,7 @@
              store-stringpool-memory-jar,
              store-stringpool-xa-jar,
              store-stringpool-xa11-jar,
+             swrl-jar,
              tuples-jar,
              tuples-hybrid-jar,
              util-jar,
@@ -1893,6 +1900,7 @@
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${swrl.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
 
@@ -1957,6 +1965,7 @@
              store-stringpool-memory-jar,
              store-stringpool-xa-jar,
              store-stringpool-xa11-jar,
+             swrl-jar,
              tuples-jar,
              tuples-hybrid-jar,
              util-jar,
@@ -2016,6 +2025,7 @@
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="**/*.xml, META-INF/**"/>
+      <zipfileset src="${bin.dir}/${swrl.jar}" excludes="**/*.xml, META-INF/**"/>
 
       <!-- Schemas -->
       <fileset dir="${src.dir}/jar/dtd" includes="DTD/**"/>
@@ -2086,6 +2096,7 @@
              store-stringpool-memory-jar,
              store-stringpool-xa-jar,
              store-stringpool-xa11-jar,
+             swrl-jar,
              tuples-jar,
              tuples-hybrid-jar,
              util-jar,
@@ -2189,6 +2200,7 @@
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${swrl.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
 
 
@@ -2277,7 +2289,7 @@
   </target>
 
   <target name="utils-test"
-    depends="ant-task-test, dtd-test, krule-test, tag-test, util-test, util-xa-test"
+    depends="ant-task-test, dtd-test, krule-test, swrl-test, tag-test, util-test, util-xa-test"
     description="Runs miscellaneous utility tests">
   </target>
 

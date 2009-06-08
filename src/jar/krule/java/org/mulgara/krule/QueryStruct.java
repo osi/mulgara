@@ -62,20 +62,17 @@ public class QueryStruct implements Serializable {
   /** Logger.  */
   private static Logger logger = Logger.getLogger(QueryStruct.class.getName());
 
-  /** The selection list. */
-  private ConstraintElement[] select;
-
   /** List of elements which are variables, or ConstantValues. */
-  private List<SelectElement> variables;
+  private List<SelectElement> variables = null;
 
   /** The graph expresison for the query. */
-  private GraphExpression graphs;
+  private GraphExpression graphs = null;
 
   /** The where clause of the query. */
-  private ConstraintExpression where;
+  private ConstraintExpression where = null;
 
   /** The having clause for the query. */
-  private ConstraintHaving having;
+  private ConstraintHaving having = null;
 
 
   /**
@@ -109,10 +106,10 @@ public class QueryStruct implements Serializable {
 
     // set up a list of variables
     variables = new ArrayList<SelectElement>();
-    select = new ConstraintElement[vs.length];
 
     // convert the parameters to usable objects
     for (int i = 0; i < vs.length; i++) {
+      ConstraintElement select = null;
       URIReference element = vs[i];
       // check the type
       if (types[i].equals(Krule.URI_REF)) {
@@ -121,15 +118,15 @@ public class QueryStruct implements Serializable {
         if (varsOnly) throw new IllegalArgumentException("Wrong number of elements for a rule query: " + vs.length);
 
         // get the referred value from the map
-        select[i] = (URIReferenceImpl)uriReferences.get(element);
+        select = (URIReferenceImpl)uriReferences.get(element);
         // assume that literals do not have the "Value" type inferred
-        variables.add(new ConstantValue(variableFactory.newVariable(), (URIReferenceImpl)select[i]));
+        variables.add(new ConstantValue(variableFactory.newVariable(), (URIReferenceImpl)select));
 
       } else if (types[i].equals(Krule.VARIABLE)) {
 
         // get the variable
-        select[i] = (Variable)varReferences.get(element);
-        variables.add((Variable)select[i]);
+        select = (Variable)varReferences.get(element);
+        variables.add((Variable)select);
 
       } else if (types[i].equals(Krule.LITERAL)) {
         
@@ -141,19 +138,40 @@ public class QueryStruct implements Serializable {
         if (varsOnly) throw new IllegalArgumentException("Wrong number of elements for a rule query: " + vs.length);
 
         // get the literal
-        select[i] = (LiteralImpl)litReferences.get(element);
-        variables.add(new ConstantValue(variableFactory.newVariable(), (LiteralImpl)select[i]));
+        select = (LiteralImpl)litReferences.get(element);
+        variables.add(new ConstantValue(variableFactory.newVariable(), (LiteralImpl)select));
       } else {
         throw new IllegalArgumentException("Unknown selection type in rule query.");
       }
 
-      if (select[i] == null) {
+      if (select == null) {
         throw new IllegalArgumentException("Unable to resolve a reference for: " + element);
       }
     }
-
-    graphs = null;
-    having = null;
+  }
+  
+  /**
+   * Construct a query structure with a known list of select elements.
+   * @param vars The select elements for this query.
+   */
+  public QueryStruct(List<SelectElement> vars) {
+    if (vars.size() <= 0) throw new IllegalArgumentException("Wrong number of elements for a rule query");
+    this.variables = new ArrayList<SelectElement>(vars);
+    
+    // If there is a non-multiple of 3 in the selection variables, then this is a check rule
+    // and we can only select variables in check rules
+    boolean varsOnly = variables.size() % 3 != 0;
+    
+    // Validate the select elements.
+    for (int i = 0; i < variables.size(); i++) {
+      SelectElement var = variables.get(i);
+      if (varsOnly && !(var instanceof Variable)) {
+        throw new IllegalArgumentException("Wrong number of elements for a rule query: " + variables.size());
+      }
+      if ((var instanceof ConstantValue) && (((ConstantValue)var).getValue() instanceof Literal) && i % 3 != 2) {
+        throw new IllegalArgumentException("Selection literal in illegal position in query");
+      }
+    }
   }
 
 
@@ -162,20 +180,7 @@ public class QueryStruct implements Serializable {
    * @return The number of selection elements from the query.
    */
   public int elementCount() {
-    return select.length;
-  }
-
-
-  /**
-   * Retrieve the element <em>n</em>.
-   *
-   * @param n The element number to retrieve.
-   * @return The <em>n</em>th element.
-   * @throws IndexOutOfBoundsException If n is larger than 3.
-   */
-  public ConstraintElement getElement(int n) {
-    assert n < select.length;
-    return select[n];
+    return variables.size();
   }
 
 

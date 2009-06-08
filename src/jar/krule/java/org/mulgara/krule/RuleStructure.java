@@ -135,6 +135,17 @@ public class RuleStructure implements Rules, Serializable {
   public void setAxioms(Set<org.jrdf.graph.Triple> axioms) {
     this.axioms = axioms;
   }
+  
+  
+  /**
+   * Adds a single axiom to these rules.
+   * 
+   * @param axiom A triple comprising an axiomatic statement.
+   */
+  public void addAxiom(org.jrdf.graph.Triple axiom) {
+    if (axioms == null) axioms = new HashSet<org.jrdf.graph.Triple>();
+    axioms.add(axiom);
+  }
 
 
   /**
