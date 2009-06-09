@@ -301,11 +301,11 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    * @return The Command object specified by the cmd string.
    * @throws BadRequestException Due to an invalid command string.
    */
-  Command getCommand(String cmd, HttpServletRequest req) throws BadRequestException {
+  List<Command> getCommand(String cmd, HttpServletRequest req) throws BadRequestException {
     if (cmd == null) throw new BadRequestException("Command must be supplied");
     try {
       Interpreter interpreter = getInterpreter(req);
-      return interpreter.parseCommand(cmd);
+      return interpreter.parseCommands(cmd);
     } catch (Exception e) {
       throw new BadRequestException(e.getMessage());
     }
@@ -466,15 +466,33 @@ public abstract class ProtocolServlet extends MulgaraServlet {
    */
   protected void handleUpdateQuery(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
     String queryStr = req.getParameter(QUERY_ARG);
-    Command cmd = getCommand(queryStr, req);
+    List<Command> cmds = getCommand(queryStr, req);
 
-    Object result = executeCommand(cmd, req);
+    Object finalResult = null;
+    Output finalOutputType = null;
 
-    Output outputType = getOutputType(req, cmd);
-    if (result instanceof Answer) {
-      sendAnswer((Answer)result, outputType, resp);
+    Object tmpResult = null;
+    Output tmpOutputType = null;
+    for (Command cmd: cmds) {
+      tmpResult = executeCommand(cmd, req);
+      tmpOutputType = getOutputType(req, cmd);
+      // remember the last answer we see
+      if (finalResult instanceof Answer) {
+        finalResult = tmpResult;
+        finalOutputType = tmpOutputType;
+      }
+    }
+
+    // if there is no result, then take the last one
+    if (finalResult == null) {
+      finalResult = tmpResult;
+      finalOutputType = tmpOutputType;
+    }
+
+    if (finalResult instanceof Answer) {
+      sendAnswer((Answer)finalResult, finalOutputType, resp);
     } else {
-      sendStatus(result, outputType, resp);
+      sendStatus(finalResult, finalOutputType, resp);
     }
   }
 
