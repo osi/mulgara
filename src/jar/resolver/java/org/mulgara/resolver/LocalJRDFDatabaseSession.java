@@ -28,7 +28,6 @@
 package org.mulgara.resolver;
 
 // Java 2 standard packages
-import java.io.*;
 import java.net.URI;
 import java.util.*;
 
@@ -117,13 +116,18 @@ public class LocalJRDFDatabaseSession extends DatabaseSession
    */
   LocalJRDFDatabaseSession(MulgaraTransactionManager transactionManager, 
       TransactionManagerFactory transactionManagerFactory,
-      List securityAdapterList, List symbolicTransformationList,
+      List<SecurityAdapter> securityAdapterList,
+      List<SymbolicTransformation> symbolicTransformationList,
       ResolverSessionFactory resolverSessionFactory,
       SystemResolverFactory systemResolverFactory,
-      ResolverFactory temporaryResolverFactory, List resolverFactoryList,
-      Map externalResolverFactoryMap, Map internalResolverFactoryMap,
-      DatabaseMetadata metadata, ContentHandlerManager contentHandlers,
-      Set cachedResolverFactorySet, URI temporaryModelTypeURI)
+      ResolverFactory temporaryResolverFactory,
+      List<ResolverFactory> resolverFactoryList,
+      Map<String,ResolverFactory> externalResolverFactoryMap,
+      Map<URI,InternalResolverFactory> internalResolverFactoryMap,
+      DatabaseMetadata metadata,
+      ContentHandlerManager contentHandlers,
+      Set<ResolverFactory> cachedResolverFactorySet,
+      URI temporaryModelTypeURI)
       throws ResolverFactoryException {
     super(transactionManager, transactionManagerFactory, securityAdapterList,
         symbolicTransformationList, resolverSessionFactory,

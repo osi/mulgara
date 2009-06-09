@@ -164,7 +164,6 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
         null,
         systemResolverFactoryClassName,   // temporary
         null,
-        "",                               // no rules engine
         "org.mulgara.content.rdfxml.RDFXMLContentHandler");
   }
 

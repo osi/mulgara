@@ -169,7 +169,6 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
         null,
         systemResolverFactoryClassName, // temporary
         null,
-        "",                          // no rule loader
         null);  // no default content handler
 
     //create and populate models

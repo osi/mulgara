@@ -199,7 +199,6 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
                    null,                            // no dir for temp strings
                    tempResolverFactoryClassName,    // temporary models
                    null,                            // no dir for temp models
-                   "",                              // no rule loader
                    "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
       database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);

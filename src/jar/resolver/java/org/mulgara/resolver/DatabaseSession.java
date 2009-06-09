@@ -130,16 +130,38 @@ class DatabaseSession implements Session {
   private long idleTimeout;
 
   /** The name of the rule loader to use */
-  private String ruleLoaderClassName;
-
-  /** A fallback rule loader */
-  private static final String DUMMY_RULE_LOADER = "org.mulgara.rules.DummyRuleLoader";
+  private List<String> ruleLoaderClassNames;
 
   /** The registered {@link org.mulgara.content.ContentHandler} instances.  */
   private ContentHandlerManager contentHandlers;
 
   /** The temporary model type-URI. */
   private final URI temporaryModelTypeURI;
+
+
+  /**
+   * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
+   */
+  DatabaseSession(MulgaraTransactionManager transactionManager,
+      TransactionManagerFactory transactionManagerFactory,
+      List<SecurityAdapter> securityAdapterList,
+      List<SymbolicTransformation> symbolicTransformationList,
+      ResolverSessionFactory resolverSessionFactory,
+      SystemResolverFactory systemResolverFactory,
+      ResolverFactory temporaryResolverFactory,
+      List<ResolverFactory> resolverFactoryList,
+      Map<String,ResolverFactory> externalResolverFactoryMap,
+      Map<URI,InternalResolverFactory> internalResolverFactoryMap,
+      DatabaseMetadata metadata,
+      ContentHandlerManager contentHandlers,
+      Set<ResolverFactory> cachedResolverFactorySet,
+      URI temporaryModelTypeURI) throws ResolverFactoryException {
+    this(transactionManager, transactionManagerFactory, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
+      systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
+      internalResolverFactoryMap, metadata, contentHandlers, cachedResolverFactorySet,
+      temporaryModelTypeURI, 0, 0, null);
+  }
+
 
   /**
    * Construct a database session.
@@ -180,7 +202,7 @@ class DatabaseSession implements Session {
    * @param idleTimeout  the default number of milli-seconds a transaction may be idle
    *   before it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
    *   default; never negative
-   * @param ruleLoaderClassName  the rule-loader class to use; may be null 
+   * @param ruleLoaderClassNames  the rule-loader classes to use; may be null 
    * @throws IllegalArgumentException if any argument is <code>null</code>
    */
   DatabaseSession(MulgaraTransactionManager transactionManager,
@@ -199,7 +221,7 @@ class DatabaseSession implements Session {
       URI temporaryModelTypeURI,
       long transactionTimeout,
       long idleTimeout,
-      String ruleLoaderClassName) throws ResolverFactoryException {
+      List<String> ruleLoaderClassNames) throws ResolverFactoryException {
 
     if (logger.isDebugEnabled()) {
       logger.debug("Constructing DatabaseSession: externalResolverFactoryMap=" +
@@ -240,8 +262,8 @@ class DatabaseSession implements Session {
       throw new IllegalArgumentException("negative 'transactionTimeout' parameter");
     } else if (idleTimeout < 0) {
       throw new IllegalArgumentException("negative 'idleTimeout' parameter");
-    } else if (ruleLoaderClassName == null) {
-      ruleLoaderClassName = DUMMY_RULE_LOADER;
+    } else if (ruleLoaderClassNames == null) {
+      ruleLoaderClassNames = Collections.emptyList();
     }
 
     // Initialize fields
@@ -260,7 +282,7 @@ class DatabaseSession implements Session {
     this.temporaryModelTypeURI      = temporaryModelTypeURI;
     this.defaultTransactionTimeout  = transactionTimeout;
     this.defaultIdleTimeout         = idleTimeout;
-    this.ruleLoaderClassName        = ruleLoaderClassName;
+    this.ruleLoaderClassNames       = ruleLoaderClassNames;
 
     this.transactionFactory = null;
     this.externalFactory = new MulgaraExternalTransactionFactory(this, transactionManager);
@@ -273,29 +295,6 @@ class DatabaseSession implements Session {
     if (logger.isTraceEnabled()) logger.trace("Constructed DatabaseSession");
   }
 
-
-  /**
-   * Non-rule version of the constructor.  Accepts all parameters except ruleLoaderClassName.
-   */
-  DatabaseSession(MulgaraTransactionManager transactionManager,
-      TransactionManagerFactory transactionManagerFactory,
-      List<SecurityAdapter> securityAdapterList,
-      List<SymbolicTransformation> symbolicTransformationList,
-      ResolverSessionFactory resolverSessionFactory,
-      SystemResolverFactory systemResolverFactory,
-      ResolverFactory temporaryResolverFactory,
-      List<ResolverFactory> resolverFactoryList,
-      Map<String,ResolverFactory> externalResolverFactoryMap,
-      Map<URI,InternalResolverFactory> internalResolverFactoryMap,
-      DatabaseMetadata metadata,
-      ContentHandlerManager contentHandlers,
-      Set<ResolverFactory> cachedResolverFactorySet,
-      URI temporaryModelTypeURI) throws ResolverFactoryException {
-    this(transactionManager, transactionManagerFactory, securityAdapterList, symbolicTransformationList, resolverSessionFactory,
-        systemResolverFactory, temporaryResolverFactory, resolverFactoryList, externalResolverFactoryMap,
-        internalResolverFactoryMap, metadata, contentHandlers, cachedResolverFactorySet,
-        temporaryModelTypeURI, 0, 0, null);
-  }
 
   //
   // Internal methods required for database initialisation.
@@ -599,7 +598,7 @@ class DatabaseSession implements Session {
   public RulesRef buildRules(URI ruleModel, GraphExpression baseModel, URI destModel) throws QueryException, org.mulgara.rules.InitializerException {
     if (logger.isDebugEnabled()) logger.debug("BUILD RULES: " + ruleModel);
 
-    BuildRulesOperation operation = new BuildRulesOperation(ruleLoaderClassName, ruleModel, baseModel, destModel);
+    BuildRulesOperation operation = new BuildRulesOperation(ruleLoaderClassNames, ruleModel, baseModel, destModel);
     execute(operation, "Failed to create rules");
     return operation.getResult();
   }

@@ -14,6 +14,8 @@ package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mulgara.query.GraphExpression;
@@ -35,7 +37,6 @@ import org.mulgara.rules.RulesRefImpl;
  */
 class BuildRulesOperation implements Operation {
 
-  @SuppressWarnings("unused")
   /** Logger. */
   private static final Logger logger = Logger.getLogger(BuildRulesOperation.class.getName());
 
@@ -48,8 +49,8 @@ class BuildRulesOperation implements Operation {
   /** The graph to contain the generated extrinsic data */
   private URI destGraph = null;
 
-  /** The name of the class that loads rules */
-  private String ruleLoaderClassName = null;
+  /** The name of the classes that load rules */
+  private List<String> ruleLoaderClassNames = null;
 
   /** The rules structure that can be shipped over RMI */
   private RulesRefImpl result;
@@ -63,7 +64,21 @@ class BuildRulesOperation implements Operation {
    * @param destGraph The graph the rules will insert generated statements into.
    */
   BuildRulesOperation(String ruleLoaderClassName, URI ruleGraph, GraphExpression baseGraph, URI destGraph) {
-    this.ruleLoaderClassName = ruleLoaderClassName;
+    this.ruleLoaderClassNames = Collections.singletonList(ruleLoaderClassName);
+    this.ruleGraph = ruleGraph;
+    this.baseGraph = baseGraph;
+    this.destGraph = destGraph;
+  }
+
+  /**
+   * Create an configure this operation.
+   * @param ruleLoaderClassName The name of the class that can load the configured rules.
+   * @param ruleGraph The graph containing the rules to read.
+   * @param baseGraph The graph the rules will be run on.
+   * @param destGraph The graph the rules will insert generated statements into.
+   */
+  BuildRulesOperation(List<String> ruleLoaderClassNames, URI ruleGraph, GraphExpression baseGraph, URI destGraph) {
+    this.ruleLoaderClassNames = ruleLoaderClassNames;
     this.ruleGraph = ruleGraph;
     this.baseGraph = baseGraph;
     this.destGraph = destGraph;
@@ -76,11 +91,22 @@ class BuildRulesOperation implements Operation {
                       SystemResolver         systemResolver,
                       DatabaseMetadata       metadata) throws Exception {
     // Set up the rule parser
-    RuleLoader ruleLoader = RuleLoaderFactory.newRuleLoader(ruleLoaderClassName, ruleGraph, baseGraph, destGraph);
-    if (ruleLoader == null) throw new org.mulgara.rules.InitializerException("No rule loader available");
-  
-    // read in the rules
-    Rules rules =  ruleLoader.readRules(operationContext);
+    Rules rules = null;
+    // iterate through the parsers until one works
+    for (String className: ruleLoaderClassNames) {
+      RuleLoader ruleLoader = RuleLoaderFactory.newRuleLoader(className, ruleGraph, baseGraph, destGraph);
+      if (ruleLoader == null) {
+        logger.error("Rule loader " + className + " is not available.");
+        continue;
+      }
+
+      // read in the rules
+      rules =  ruleLoader.readRules(operationContext);
+      // found a loader that works. We can leave now.
+      if (rules != null) break;
+    }
+    if (rules == null) throw new org.mulgara.rules.InitializerException("No rule loader available");
+
     result = new RulesRefImpl(rules);
   }
 

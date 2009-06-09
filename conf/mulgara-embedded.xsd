@@ -132,7 +132,7 @@
         <xs:element ref="TemporaryStringPoolFactory"/>
         <xs:element ref="PersistentResolverFactory"/>
         <xs:element ref="TemporaryResolverFactory"/>
-        <xs:element ref="RuleLoader"/>
+        <xs:element ref="RuleLoader" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="DefaultContentHandler" minOccurs="1"/>
         <xs:element ref="ContentHandler" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="ResolverFactory" minOccurs="0" maxOccurs="unbounded"/>

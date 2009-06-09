@@ -59,6 +59,7 @@ import org.mulgara.util.FileUtil;
 
 public class DatabaseUnitTest extends TestCase {
   /** Logger.  */
+  @SuppressWarnings("unused")
   private Logger logger = Logger.getLogger(DatabaseUnitTest.class.getName());
 
   /**
@@ -103,7 +104,7 @@ public class DatabaseUnitTest extends TestCase {
   public void test1Constructor() {
     try {
       new Database(null, (File)null, null, null, 0, 0, null, null, null, null, null,
-                   null, null, null, null, null, null, null, null, null);
+                   null, null, null, null, null, null, null, null);
       fail("Expected " + IllegalArgumentException.class);
     } catch (IllegalArgumentException e) {
       // correct behavior
@@ -160,7 +161,6 @@ public class DatabaseUnitTest extends TestCase {
           "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory",
           null,
           "org.mulgara.resolver.memory.MemoryResolverFactory",
-          null,
           null,
           null);  // no default content handler
     } catch (Exception e) {

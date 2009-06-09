@@ -113,7 +113,6 @@ public abstract class DatabaseFactory {
         subdirs(directory, config.getTemporaryStringPoolFactory().getDir()),
         config.getTemporaryResolverFactory().getType(),
         subdirs(directory, config.getTemporaryResolverFactory().getDir()),
-        config.getRuleLoader().getType(),
         config.getDefaultContentHandler().getType());
 
     if (logger.isDebugEnabled()) logger.debug("Constructed database.");
@@ -228,6 +227,14 @@ public abstract class DatabaseFactory {
 
       // Add the security adapter
       database.addSecurityAdapter(securityAdapterFactory);
+    }
+
+    Enumeration<org.mulgara.config.RuleLoader> ruleLoaders = config.enumerateRuleLoader();
+    while (ruleLoaders.hasMoreElements()) {
+      org.mulgara.config.RuleLoader ruleLoader = ruleLoaders.nextElement();
+
+      if (logger.isInfoEnabled()) logger.info("Loaded resolver factory: " + ruleLoader.getClass());
+      database.addRuleLoader(ruleLoader.getType());
     }
   }
 }

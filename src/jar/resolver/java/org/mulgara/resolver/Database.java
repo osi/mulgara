@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,6 +80,7 @@ import org.mulgara.store.xa.SimpleXARecoveryHandler;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.transaction.TransactionManagerFactory;
 import org.mulgara.util.Closable;
+import org.mulgara.util.ServerInfoRef;
 
 /**
  * A database capable of managing and querying RDF models using a collection of
@@ -112,6 +114,9 @@ public class Database implements SessionFactory, Closable {
    */
   @SuppressWarnings("unused")
   private final long NONE = NodePool.NONE;
+
+  /** A fallback rule loader */
+  private static final String DUMMY_RULE_LOADER = "org.mulgara.rules.DummyRuleLoader";
 
   /** The directory where persistence files are stored.  */
   private final File[] directories;
@@ -199,7 +204,7 @@ public class Database implements SessionFactory, Closable {
   ResolverFactory temporaryResolverFactory;
 
   /** The rule loader factory used to make rule loaders. */
-  String ruleLoaderClassName = null;
+  List<String> ruleLoaderClassNames = Collections.singletonList(DUMMY_RULE_LOADER);
 
   /**
    * The set of {@link SecurityAdapter} instances.
@@ -349,7 +354,7 @@ public class Database implements SessionFactory, Closable {
            directory,
            config.getTemporaryResolverFactory().getDir()
          ),
-         config.getRuleLoader().getType(),
+         null,
          config.getDefaultContentHandler().getType());
 
     if (logger.isDebugEnabled()) {
@@ -357,6 +362,99 @@ public class Database implements SessionFactory, Closable {
     }
 
     DatabaseFactory.configure(this, config);
+  }
+
+
+  /**
+   * Construct a database.
+   *
+   * @param uri  the unique {@link URI} naming this database, never
+   *   <code>null</code>; this mustn't have a fragment part, because the
+   *   fragment is used to represent models within the database
+   * @param directory  an area on the filesystem for the database's use; if this
+   *   is <code>null</code>, resolvers which require a filesystem can't be added
+   * @param securityDomainURI  the {@link URI} of the security domain this
+   *   database is within, or <code>null</code> if this database is unsecured
+   * @param transactionManagerFactory  the source for the
+   *   {@link javax.transaction.TransactionManager}, never <code>null</code>
+   * @param transactionTimeout  the default number of seconds before transactions
+   *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
+   *   never negative
+   * @param idleTimeout  the default number of seconds a transaction may be idle before
+   *   it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
+   *   default; never negative
+   * @param persistentNodePoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
+   *   persistent local nodes, never <code>null</code>
+   * @param persistentStringPoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
+   *   persistent RDF literals, never <code>null</code>
+   * @param systemResolverFactoryClassName  the name of a
+   *   {@link ResolverFactory} implementation which will be used to store
+   *   system models; this class is required to register a model type
+   * @param temporaryNodePoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
+   *   temporary local nodes, never <code>null</code>
+   * @param temporaryStringPoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
+   *   temporary RDF literals, never <code>null</code>
+   * @param temporaryResolverFactoryClassName  the name of a
+   *   {@link ResolverFactory} implementation which will be used to store
+   *   temporary statements, never <code>null</code>
+   * @param defaultContentHandlerClassName the name of the class that should be
+   *   used to parse external content of unknown MIME type, or
+   *   <code>null</code> to disable blind parsing
+   * @throws IllegalArgumentException if <var>uri</var>,
+   *   <var>systemResolverFactory</var> are <code>null</code>, or if the
+   *   <var>uri</var> has a fragment part
+   * @throws InitializerException  if the {@link org.mulgara.store.nodepool.NodePoolFactory},
+   *   {@link ResolverFactory}, or {@link org.mulgara.store.stringpool.StringPoolFactory} instances
+   *   generated from the various class names can't be initialized
+   * @throws SystemException if <var>transactionTimeout</var> is negative
+   */
+  public Database(URI    uri,
+                  File   directory,
+                  URI    securityDomainURI,
+                  TransactionManagerFactory transactionManagerFactory,
+                  int    transactionTimeout,
+                  int    idleTimeout,
+                  String persistentNodePoolFactoryClassName,
+                  File   persistentNodePoolDirectory,
+                  String persistentStringPoolFactoryClassName,
+                  File   persistentStringPoolDirectory,
+                  String systemResolverFactoryClassName,
+                  File   persistentResolverDirectory,
+                  String temporaryNodePoolFactoryClassName,
+                  File   temporaryNodePoolDirectory,
+                  String temporaryStringPoolFactoryClassName,
+                  File   temporaryStringPoolDirectory,
+                  String temporaryResolverFactoryClassName,
+                  File   temporaryResolverDirectory,
+                  String defaultContentHandlerClassName)
+    throws ConfigurationException, InitializerException, LocalizeException,
+           NamingException, NodePoolException, QueryException,
+           ResolverException, ResolverFactoryException, StringPoolException,
+           SystemException, URISyntaxException {
+    this(uri,
+        new File[] {directory},
+        securityDomainURI,
+        transactionManagerFactory,
+        transactionTimeout,
+        idleTimeout,
+        persistentNodePoolFactoryClassName,
+        new File[] {persistentNodePoolDirectory},
+        persistentStringPoolFactoryClassName,
+        new File[] {persistentStringPoolDirectory},
+        systemResolverFactoryClassName,
+        new File[] {persistentResolverDirectory},
+        temporaryNodePoolFactoryClassName,
+        new File[] {temporaryNodePoolDirectory},
+        temporaryStringPoolFactoryClassName,
+        new File[] {temporaryStringPoolDirectory},
+        temporaryResolverFactoryClassName,
+        new File[] {temporaryResolverDirectory},
+        null,
+        defaultContentHandlerClassName);
   }
 
 
@@ -410,6 +508,7 @@ public class Database implements SessionFactory, Closable {
    *   generated from the various class names can't be initialized
    * @throws SystemException if <var>transactionTimeout</var> is negative
    */
+  @Deprecated
   public Database(URI    uri,
                   File   directory,
                   URI    securityDomainURI,
@@ -456,8 +555,91 @@ public class Database implements SessionFactory, Closable {
         defaultContentHandlerClassName);
   }
 
+
   /**
    * Construct a database.
+   *
+   * @param uri  the unique {@link URI} naming this database, never
+   *   <code>null</code>; this mustn't have a fragment part, because the
+   *   fragment is used to represent models within the database
+   * @param directories  an array of areas on the filesystem for the database's use; if this
+   *   is <code>null</code>, resolvers which require a filesystem can't be added
+   * @param securityDomainURI  the {@link URI} of the security domain this
+   *   database is within, or <code>null</code> if this database is unsecured
+   * @param transactionManagerFactory  the source for the
+   *   {@link javax.transaction.TransactionManager}, never <code>null</code>
+   * @param transactionTimeout  the default number of seconds before transactions
+   *   time out, or zero to take the <var>transactionManagerFactory</var>'s default;
+   *   never negative
+   * @param idleTimeout  the default number of seconds a transaction may be idle before
+   *   it is timed out, or zero to take the <var>transactionManagerFactory</var>'s
+   *   default; never negative
+   * @param persistentNodePoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
+   *   persistent local nodes, never <code>null</code>
+   * @param persistentStringPoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
+   *   persistent RDF literals, never <code>null</code>
+   * @param systemResolverFactoryClassName  the name of a
+   *   {@link ResolverFactory} implementation which will be used to store
+   *   system models; this class is required to register a model type
+   * @param temporaryNodePoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.nodepool.NodePoolFactory} implementation which will be used to generate
+   *   temporary local nodes, never <code>null</code>
+   * @param temporaryStringPoolFactoryClassName  the name of a
+   *   {@link org.mulgara.store.stringpool.StringPoolFactory} implementation which will be used to manage
+   *   temporary RDF literals, never <code>null</code>
+   * @param temporaryResolverFactoryClassName  the name of a
+   *   {@link ResolverFactory} implementation which will be used to store
+   *   temporary statements, never <code>null</code>
+   * @param defaultContentHandlerClassName the name of the class that should be
+   *   used to parse external content of unknown MIME type, or
+   *   <code>null</code> to disable blind parsing
+   * @throws IllegalArgumentException if <var>uri</var>,
+   *   <var>systemResolverFactory</var> are <code>null</code>, or if the
+   *   <var>uri</var> has a fragment part
+   * @throws InitializerException  if the {@link org.mulgara.store.nodepool.NodePoolFactory},
+   *   {@link ResolverFactory}, or {@link org.mulgara.store.stringpool.StringPoolFactory} instances
+   *   generated from the various class names can't be initialized
+   * @throws SystemException if <var>transactionTimeout</var> is negative
+   */
+  public Database(URI    uri,
+                  File[] directories,
+                  URI    securityDomainURI,
+                  TransactionManagerFactory transactionManagerFactory,
+                  int    transactionTimeout,
+                  int    idleTimeout,
+                  String persistentNodePoolFactoryClassName,
+                  File[] persistentNodePoolDirectories,
+                  String persistentStringPoolFactoryClassName,
+                  File[] persistentStringPoolDirectories,
+                  String systemResolverFactoryClassName,
+                  File[] persistentResolverDirectories,
+                  String temporaryNodePoolFactoryClassName,
+                  File[] temporaryNodePoolDirectories,
+                  String temporaryStringPoolFactoryClassName,
+                  File[] temporaryStringPoolDirectories,
+                  String temporaryResolverFactoryClassName,
+                  File[] temporaryResolverDirectories,
+                  String defaultContentHandlerClassName)
+    throws ConfigurationException, InitializerException, LocalizeException,
+           NamingException, NodePoolException, QueryException,
+           ResolverException, ResolverFactoryException, StringPoolException,
+           SystemException, URISyntaxException {
+    this(uri, directories, securityDomainURI, transactionManagerFactory, transactionTimeout, idleTimeout,
+        persistentNodePoolFactoryClassName, persistentNodePoolDirectories,
+        persistentStringPoolFactoryClassName, persistentStringPoolDirectories,
+        systemResolverFactoryClassName, persistentResolverDirectories,
+        temporaryNodePoolFactoryClassName, temporaryNodePoolDirectories,
+        temporaryStringPoolFactoryClassName, temporaryStringPoolDirectories,
+        temporaryResolverFactoryClassName, temporaryResolverDirectories,
+        null, defaultContentHandlerClassName
+    );
+  }
+
+  /**
+   * Construct a database.
+   * This includes a parameter for a ruleLoader class, which should now be added though {@link #addRuleLoader(String)}.
    *
    * @param uri  the unique {@link URI} naming this database, never
    *   <code>null</code>; this mustn't have a fragment part, because the
@@ -586,6 +768,9 @@ public class Database implements SessionFactory, Closable {
     if (temporaryResolverFactoryClassName == null) {
       throw new IllegalArgumentException("Null 'temporaryResolverFactoryClassName' parameter");
     }
+    if (ruleLoaderClassName == null) {
+      ruleLoaderClassName = DUMMY_RULE_LOADER;
+    }
 
     // Initialize fields
     this.uri                       = uri;
@@ -656,7 +841,7 @@ public class Database implements SessionFactory, Closable {
     }
 
     hostnameAliases = Collections.unmodifiableSet(hostNames);
-    setHostnameAliases(hostNames);
+    ServerInfoRef.setHostnameAliases(hostNames);
 
     // Create an instance of ResolverSessionFactory
     DatabaseFactoryInitializer persistentStringPoolFactoryInitializer =
@@ -767,7 +952,7 @@ public class Database implements SessionFactory, Closable {
 
 
     URI systemModelURI = new URI(uri.getScheme(), uri.getSchemeSpecificPart(), "");
-    URI defaultGraphURI = getDefaultURI();
+    URI defaultGraphURI = ServerInfoRef.getDefaultURI();
     metadata = new DatabaseMetadataImpl(uri,
                                hostnameAliases,
                                securityDomainURI,
@@ -775,6 +960,10 @@ public class Database implements SessionFactory, Closable {
                                RDF.TYPE,
                                systemResolverFactory.getSystemModelTypeURI(),
                                defaultGraphURI);
+
+    // initialize the list of rule loader class names
+    ruleLoaderClassNames = new LinkedList<String>();
+    ruleLoaderClassNames.add(ruleLoaderClassName);
 
     DatabaseSession session = new DatabaseSession(
         transactionManager,
@@ -793,7 +982,7 @@ public class Database implements SessionFactory, Closable {
         temporaryModelTypeURI,
         defaultTransactionTimeout,
         defaultIdleTimeout,
-        ruleLoaderClassName);
+        ruleLoaderClassNames);
 
     // Updates metadata to reflect bootstrapped system model.
     session.bootstrapSystemModel((DatabaseMetadataImpl)metadata);
@@ -820,7 +1009,6 @@ public class Database implements SessionFactory, Closable {
     );
 
     addSymbolicTransformation(new DuplicateVariableTransformer());
-    this.ruleLoaderClassName = ruleLoaderClassName;
 
     if (logger.isDebugEnabled()) {
       logger.debug("Constructed database");
@@ -938,6 +1126,23 @@ public class Database implements SessionFactory, Closable {
 
 
   /**
+   * Adds the class name of a rule loader to the list of known loaders.
+   * @param loaderClassName The name of a class that can be used for rule loading.
+   *        May be <code>null</code>, in which case this method does nothing.
+   */
+  public void addRuleLoader(String loaderClassName) {
+    // ignore null entries.
+    if (loaderClassName == null) return;
+
+    // If only using a dummy loader, then forget it.
+    if (ruleLoaderClassNames.size() == 1 && ruleLoaderClassNames.get(0).equals(DUMMY_RULE_LOADER)) {
+      ruleLoaderClassNames = new LinkedList<String>();
+    }
+    ruleLoaderClassNames.add(loaderClassName);
+  }
+
+
+  /**
    * Flush all resources associated with the database into a recoverable state.
    */
   public void close() {
@@ -1007,7 +1212,7 @@ public class Database implements SessionFactory, Closable {
         temporaryModelTypeURI,
         defaultTransactionTimeout,
         defaultIdleTimeout,
-        ruleLoaderClassName);
+        ruleLoaderClassNames);
     } catch (ResolverFactoryException e) {
       throw new QueryException("Couldn't create session", e);
     }
@@ -1277,9 +1482,8 @@ public class Database implements SessionFactory, Closable {
           temporaryModelTypeURI,
           defaultTransactionTimeout,
           defaultIdleTimeout,
-          ruleLoaderClassName);
-      }
-      catch (ResolverFactoryException e) {
+          ruleLoaderClassNames);
+      } catch (ResolverFactoryException e) {
         throw new QueryException("Couldn't create session", e);
       }
     }
@@ -1293,7 +1497,7 @@ public class Database implements SessionFactory, Closable {
           transactionManager,
           transactionManagerFactory,
           Collections.singletonList(
-            new SystemGraphSecurityAdapter(metadata.getSystemModelNode())
+            (SecurityAdapter)new SystemGraphSecurityAdapter(metadata.getSystemModelNode())
           ),
           unmodifiableSymbolicTransformationList,
           jrdfSessionFactory,
@@ -1327,59 +1531,4 @@ public class Database implements SessionFactory, Closable {
     }
   }
 
-
-  /**
-   * Sets a property on the ServerInfo, if it is available
-   * @param name The name of the property. Case sensitive.
-   * @param value The value of the property to be set.
-   */
-  private void setServerInfoProperty(String name, Object value) {
-    try {
-      Class<?> si = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method setter = si.getMethod("set" + name, new Class[] { value.getClass() });
-      setter.invoke(null, new Object[] { value });
-    } catch (Exception e) {
-      /* Not much that can be done here */
-      logger.info("Unable to set '" + name + "' for Server Info", e);
-    }
-  }
-
-
-  /**
-   * Gets a property from the ServerInfo, if it is available
-   * @param name The name of the property. Case sensitive.
-   * @return The value, or <code>null</code> if not available.
-   */
-  private Object getServerInfoProperty(String name) {
-    try {
-      Class<?> si = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method setter = si.getMethod("get" + name, new Class[] { });
-      return setter.invoke(null, new Object[] { });
-    } catch (Exception e) {
-      /* Not much that can be done here */
-      logger.info("Unable to get '" + name + "' from Server Info", e);
-      return null;
-    }
-  }
-
-
-  /**
-   * Sets the hostnames on the ServerInfo object, if it is visible.
-   *
-   * @param names The set of hostnames to set on ServerInfo
-   */
-  private void setHostnameAliases(Set<String> names) {
-    setServerInfoProperty("HostnameAliases", names);
-  }
-
-
-  /**
-   * Sets the hostnames on the ServerInfo object, if it is visible.
-   *
-   * @return The default graph URI, used by SPARQL
-   */
-  private URI getDefaultURI() {
-    URI u = (URI)getServerInfoProperty("DefaultGraphURI");
-    return u == null ? URI.create(Mulgara.DEFAULT_GRAPH) : u;
-  }
 }

@@ -42,6 +42,7 @@ import org.mulgara.query.QueryException;
 import org.mulgara.server.NonRemoteSessionException;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
+import org.mulgara.util.ServerInfoRef;
 
 /**
  * Proxy for a remote SessionFactory connected via Java RMI.
@@ -118,7 +119,7 @@ public class RmiSessionFactory implements SessionFactory {
     remoteSessionFactory = (RemoteSessionFactory) rmiRegistryContext.lookup(serverURI.getPath().substring(1));
 
     URI remoteURI = remoteSessionFactory.getDefaultServerURI();
-    URI localURI = getLocalURI();
+    URI localURI = ServerInfoRef.getServerURI();
     if (logger.isDebugEnabled()) logger.debug("remoteURI=" + remoteURI+" localURI="+localURI);
     if (remoteURI == null) {
       logger.warn("host uri is not set, local = " + (localURI == null ? "<client>" : localURI.toString()) + ", remote = " + remoteURI);
@@ -209,23 +210,6 @@ public class RmiSessionFactory implements SessionFactory {
    */
   public void delete() {
     // null implementation
-  }
-
-  /**
-   * Method to ask the ServerInfo for the local server URI.
-   * This will return null if ServerInfo is not available.
-   * @return the local server URI
-   */
-  private URI getLocalURI() {
-    try {
-      Class<?> rsf = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method getServerURI = rsf.getMethod("getServerURI", (Class<?>[])null);
-      Object uri = getServerURI.invoke(null, (Object[])null);
-      return (URI)uri;
-    } catch (Exception e) {
-      logger.info("Unable to find ServerInfo.  This may cause problems if this is a server");
-    }
-    return null;
   }
 
 }

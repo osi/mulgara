@@ -527,7 +527,6 @@ public class DatabaseSessionUnitTest extends TestCase {
         null,
         systemResolverFactoryClassName,  // temporary
         null,
-        "",                              // no rule loader
         null);                           // no default content handler
 
     if (test.resolvers != null) {
