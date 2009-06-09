@@ -57,7 +57,6 @@ import org.mulgara.query.operation.Command;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.server.ServerInfo;
 import org.mulgara.sparql.parser.ParseException;
 import org.mulgara.sparql.parser.QueryStructure;
 import org.mulgara.sparql.parser.QueryType;
@@ -70,6 +69,7 @@ import org.mulgara.sparql.parser.cst.Node;
 import org.mulgara.sparql.parser.cst.Ordering;
 import org.mulgara.sparql.parser.cst.RDFLiteral;
 import org.mulgara.sparql.parser.cst.Triple;
+import org.mulgara.util.ServerInfoRef;
 import org.mulgara.util.functional.C;
 import org.mulgara.util.functional.Fn1;
 
@@ -587,7 +587,7 @@ public class SparqlInterpreter implements Interpreter {
    * @return A list of the graphs to be used by default when no graphs are specified.
    */
   List<IRIReference> getSystemDefaultGraph() {
-    URI d = ServerInfo.getDefaultGraphURI();
+    URI d = ServerInfoRef.getDefaultURI();
     if (d != null) return Collections.singletonList(new IRIReference(d));
     // can't find a configured default, use the hard-coded default
     return toIRIs(INTERNAL_DEFAULT_GRAPH_URIS);

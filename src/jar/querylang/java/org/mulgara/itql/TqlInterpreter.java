@@ -59,6 +59,7 @@ import org.mulgara.parser.MulgaraParserException;
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
 import org.mulgara.server.Session;
+import org.mulgara.util.ServerInfoRef;
 import org.mulgara.util.URIUtil;
 
 
@@ -1496,7 +1497,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     String host = uri.getHost();
     if (host == null) return uri;
 
-    Set<String> hostnames = getHostnameAliases();
+    Set<String> hostnames = ServerInfoRef.getHostnameAliases();
     // Check with a DNS server to see if this host is recognised
     InetAddress addr = null;
     try {
@@ -1514,7 +1515,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     ) {
       // change the host name to one that is recognised
       // use the system uri to find the local host name
-      URI serverURI = getServerURI();
+      URI serverURI = ServerInfoRef.getServerURI();
       if (serverURI == null) {
         return uri;
       }
@@ -1528,50 +1529,6 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     return uri;
   }
 
-
-  /**
-   * Method to ask the ServerInfo for the local server aliases.
-   * This will return an empty set if ServerInfo is not available -
-   * ie. being run on a host which has no local database, such an an iTQL client.
-   *
-   * @return The set of server aliases as strings
-   */
-  @SuppressWarnings("unchecked")
-  private static Set<String> getHostnameAliases() {
-    Set<String> names = (Set<String>)getServerInfoProperty("HostnameAliases");
-    return (names == null) ? (Set<String>)java.util.Collections.EMPTY_SET : names;
-  }
-
-
-  /**
-   * Method to ask the ServerInfo for the local server URI.
-   * This will return null if ServerInfo is not available -
-   * ie. being run on a host which has no local database, such an an iTQL client.
-   *
-   * @return The URI of the local server, or null if this is not a server.
-   */
-  private static URI getServerURI() {
-    return (URI)getServerInfoProperty("ServerURI");
-  }
-
-
-  /**
-   * Method to get the value of a property from the ServerInfo for the local database session.
-   * This will return null if ServerInfo is not available -
-   * ie. being run on a host which has no local database, such an an TQL client.
-   *
-   * @param property The property to return, with the correct case.
-   * @return The object returned from the accessor method named, or null if ServerInfo is not available.
-   */
-  private static Object getServerInfoProperty(String property) {
-    Object o = null;
-    try {
-      Class<?> rsf = Class.forName("org.mulgara.server.ServerInfo");
-      java.lang.reflect.Method getter = rsf.getMethod("get" + property, (Class<?>[])null);
-      o = getter.invoke(null, (Object[])null);
-    } catch (Exception e) { /* no op */ }
-    return o;
-  }
 
   private static class Lexer2 extends Lexer {
   
