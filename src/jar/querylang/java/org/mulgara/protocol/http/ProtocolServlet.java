@@ -53,6 +53,8 @@ import org.mulgara.query.operation.Deletion;
 import org.mulgara.query.operation.DropGraph;
 import org.mulgara.query.operation.Insertion;
 import org.mulgara.query.operation.Load;
+import org.mulgara.query.operation.Rollback;
+import org.mulgara.query.operation.SetAutoCommit;
 import org.mulgara.server.ServerInfo;
 import org.mulgara.server.SessionFactoryProvider;
 import org.mulgara.util.functional.C;
@@ -468,31 +470,48 @@ public abstract class ProtocolServlet extends MulgaraServlet {
     String queryStr = req.getParameter(QUERY_ARG);
     List<Command> cmds = getCommand(queryStr, req);
 
+    boolean tx = cmds.size() > 1;
+    if (tx) executeCommand(new SetAutoCommit(false), req);
     Object finalResult = null;
     Output finalOutputType = null;
 
     Object tmpResult = null;
     Output tmpOutputType = null;
-    for (Command cmd: cmds) {
-      tmpResult = executeCommand(cmd, req);
-      tmpOutputType = getOutputType(req, cmd);
-      // remember the last answer we see
-      if (finalResult instanceof Answer) {
+    try {
+      try {
+        for (Command cmd: cmds) {
+          tmpResult = executeCommand(cmd, req);
+          tmpOutputType = getOutputType(req, cmd);
+          // remember the last answer we see
+          if (tmpResult instanceof Answer) {
+            finalResult = tmpResult;
+            finalOutputType = tmpOutputType;
+          }
+        }
+      } catch (ServletException e) {
+        if (tx) executeCommand(new Rollback(), req);
+        throw e;
+      }
+
+      // if there is no result, then take the last one
+      if (finalResult == null) {
         finalResult = tmpResult;
         finalOutputType = tmpOutputType;
       }
-    }
-
-    // if there is no result, then take the last one
-    if (finalResult == null) {
-      finalResult = tmpResult;
-      finalOutputType = tmpOutputType;
-    }
-
-    if (finalResult instanceof Answer) {
-      sendAnswer((Answer)finalResult, finalOutputType, resp);
-    } else {
-      sendStatus(finalResult, finalOutputType, resp);
+  
+      if (finalResult instanceof Answer) {
+        sendAnswer((Answer)finalResult, finalOutputType, resp);
+      } else {
+        sendStatus(finalResult, finalOutputType, resp);
+      }
+    } finally {
+      // always turn on autocommit since we can't leave a transaction running in HTTP
+      try {
+        executeCommand(new SetAutoCommit(true), req);
+      } catch (Exception e) {
+        // throw away
+        logger.error("Unable to close transaction", e);
+      }
     }
   }
 
