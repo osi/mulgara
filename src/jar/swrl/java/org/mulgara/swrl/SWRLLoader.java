@@ -146,11 +146,16 @@ public class SWRLLoader implements RuleLoader {
     rules.setTargetModel(destGraph);
     
     try {
+      List<Node> ruleNodes = findRules();
+      if (ruleNodes.isEmpty()) {
+        logger.debug("No SWRL data.");
+        return null;
+      }
+      
+      if (logger.isDebugEnabled()) logger.debug("Found rules: " + ruleNodes);
+      
       Map<URIReference,Variable> vars = findVariables();
       if (logger.isDebugEnabled()) logger.debug("Found variables: " + vars);
-      
-      List<Node> ruleNodes = findRules();
-      if (logger.isDebugEnabled()) logger.debug("Found rules: " + ruleNodes);
       
       Map<Node,Pair<URI,ConstraintImpl>> constraintAtoms = new HashMap<Node,Pair<URI,ConstraintImpl>>();
       Map<Node,Pair<URI,Filter>> filterAtoms = new HashMap<Node,Pair<URI,Filter>>();
