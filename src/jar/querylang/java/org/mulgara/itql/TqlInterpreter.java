@@ -268,6 +268,10 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // log the iTQL command - system property itql.command.log must be set
     this.logItql(command);
 
+    // clean up command list
+    command = command.trim();
+    if (!command.endsWith(";")) command = command + ";";
+
     // Reset the variable incrementer in the query.
     variableFactory.reset();
 
