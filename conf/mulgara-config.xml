@@ -108,6 +108,7 @@ Mulgara Semantic Store configuration file.
     Implementations of a rule engine.
   -->
   <RuleLoader type="org.mulgara.krule.KruleLoader"/>
+  <RuleLoader type="org.mulgara.swrl.SWRLLoader"/>
 
   <!--
     Implementations of the ContentHandler interface to use for resolving MIME
