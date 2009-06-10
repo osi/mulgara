@@ -129,7 +129,7 @@ public class KruleLoader implements RuleLoader {
    * Reads the ruleModel in the database and constructs the rules from it.
    *
    * @param opContextParam The operationContext for querying on.
-   * @return A new rule structure.
+   * @return A new rule structure, or <code>null</code> if the rules are not a Krule structure.
    * @throws InitializerException There was a problem reading and creating the rules.
    */
   public Rules readRules(Object opContextParam) throws InitializerException, RemoteException {
@@ -140,6 +140,9 @@ public class KruleLoader implements RuleLoader {
       if (logger.isDebugEnabled()) logger.debug("Initializing for rule queries.");
       // load the objects
       loadRdfObjects();
+
+      // if there is not Krule data, then return null to indicate this loader cannot read these rules
+      if (uriReferences.isEmpty()) return null;
 
       if (logger.isDebugEnabled()) logger.debug("Querying for rules");
       rules = findRules();
@@ -184,6 +187,10 @@ public class KruleLoader implements RuleLoader {
     // get all the URIReferences
     findUriReferences();
     if (logger.isDebugEnabled()) logger.debug("Got URI References");
+    if (uriReferences.isEmpty()) {
+      if (logger.isDebugEnabled()) logger.debug("No Krule data");
+      return;
+    }
     findVarReferences();
     if (logger.isDebugEnabled()) logger.debug("Got Variable references");
     findLiteralReferences();
