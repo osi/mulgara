@@ -64,7 +64,7 @@ public class TypedLiteral extends AbstractComparableLiteral {
     if (type != null) {
       // get the info registered for this type URI
       TypeInfo info = infoMap.get(type);
-      if (info != null) return info.newLiteral(info.toData(value));
+      if (info != null) return info.newLiteral(info.toData(value), normalizeType(type));
       // no type info for the given URI, just pass through as a general typed literal
       return new TypedLiteral(value, type);
     }
@@ -142,6 +142,19 @@ public class TypedLiteral extends AbstractComparableLiteral {
     return test.ebv(value.toString());
   }
 
+  /**
+   * Converts abbreviated URIs for XSD types into the full URI.
+   * @param type The URI of the datatype.
+   * @return The full URI of the datatype.
+   */
+  private static final URI normalizeType(URI type) {
+    if (XSD.DOM.equals(type.getScheme())) {
+      // fragments won't exist for xsd:....
+      type = URI.create(XSD.NAMESPACE + type.getRawSchemeSpecificPart());
+    }
+    return type;
+  }
+
   ///////////////////////////////////////////////////////////////////////////////////
   // Maps to data specific functionality, and supporting functions
   ///////////////////////////////////////////////////////////////////////////////////
@@ -164,9 +177,10 @@ public class TypedLiteral extends AbstractComparableLiteral {
     /**
      * Creates a new ValueLiteral compatible for this data
      * @param data The data in the correct native {@link java.lang.Class} to be converted.
+     * @param type The original datatype for the data.
      * @return A new literal containing the data.
      */
-    public ValueLiteral newLiteral(Object data);
+    public ValueLiteral newLiteral(Object data, URI type);
     /**
      * Get the value of a given number, according to the type of the implementing class.
      * @param n The number to convert.
@@ -183,7 +197,7 @@ public class TypedLiteral extends AbstractComparableLiteral {
     public URI getTypeURI() { return typeURI; }
     public URI getTypeURI2() { return typeURI2; }
     public Number valueOf(Number n) { throw new UnsupportedOperationException("Numeric casts only applicable to numbers"); }
-    public ValueLiteral newLiteral(Object data) { throw new UnsupportedOperationException(); }
+    // public ValueLiteral newLiteral(Object data, URI type) { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -237,7 +251,7 @@ public class TypedLiteral extends AbstractComparableLiteral {
     public boolean ebv(String data) { return data != null && data.length() != 0; }
     public boolean ebv(Number data) { throw new IllegalArgumentException("Found a number in a string operation"); }
     public Object toData(String r) { return r; }
-    public ValueLiteral newLiteral(Object data) { return new TypedLiteral((String)data, getTypeURI()); }
+    public ValueLiteral newLiteral(Object data, URI type) { return new TypedLiteral((String)data, getTypeURI()); }
   }
 
   private static class XSDBoolean extends AbstractXSD {
@@ -246,7 +260,7 @@ public class TypedLiteral extends AbstractComparableLiteral {
     public boolean ebv(String data) { return Boolean.parseBoolean(data); }
     public boolean ebv(Number data) { throw new IllegalArgumentException("Found a number in a boolean operation"); }
     public Object toData(String r) { return Boolean.parseBoolean(r); }
-    public ValueLiteral newLiteral(Object data) { return new Bool((Boolean)data); }
+    public ValueLiteral newLiteral(Object data, URI type) { return new Bool((Boolean)data); }
   }
   
   private static class XSDDecimal extends AbstractXSD {
@@ -271,10 +285,10 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to a Decimal: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      if (data instanceof Double) return new NumericLiteral((Double)data, getTypeURI());
-      if (data instanceof Long) return new NumericLiteral((Long)data, getTypeURI());
-      return new NumericLiteral((BigDecimal)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      if (data instanceof Double) return new NumericLiteral((Double)data, type);
+      if (data instanceof Long) return new NumericLiteral((Long)data, type);
+      return new NumericLiteral((BigDecimal)data, type);
     }
     public Number valueOf(Number n) { return n.doubleValue(); }
   }
@@ -299,8 +313,8 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to a Double: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      return new NumericLiteral((Double)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      return new NumericLiteral((Double)data, type);
     }
     public Number valueOf(Number n) { return n.doubleValue(); }
   }
@@ -325,8 +339,8 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to a Float: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      return new NumericLiteral((Float)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      return new NumericLiteral((Float)data, type);
     }
     public Number valueOf(Number n) { return n.floatValue(); }
   }
@@ -349,8 +363,8 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to a Long: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      return new NumericLiteral((Long)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      return new NumericLiteral((Long)data, type);
     }
     public Number valueOf(Number n) { return n.longValue(); }
   }
@@ -373,8 +387,8 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to an Integer: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      return new NumericLiteral((Integer)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      return new NumericLiteral((Integer)data, type);
     }
     public Number valueOf(Number n) { return n.intValue(); }
   }
@@ -397,8 +411,8 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to a Short: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      return new NumericLiteral((Short)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      return new NumericLiteral((Short)data, type);
     }
     public Number valueOf(Number n) { return n.shortValue(); }
   }
@@ -421,8 +435,8 @@ public class TypedLiteral extends AbstractComparableLiteral {
         throw new QueryException("Type Error: Cannot convert to a Byte: " + r);
       }
     }
-    public ValueLiteral newLiteral(Object data) {
-      return new NumericLiteral((Byte)data, getTypeURI());
+    public ValueLiteral newLiteral(Object data, URI type) {
+      return new NumericLiteral((Byte)data, type);
     }
     public Number valueOf(Number n) { return n.byteValue(); }
   }
@@ -433,7 +447,7 @@ public class TypedLiteral extends AbstractComparableLiteral {
     public boolean ebv(String data) throws QueryException { throw new QueryException("Unable to convert a date to a boolean"); }
     public boolean ebv(Number data) throws QueryException { throw new QueryException("Unable to convert a date to a boolean"); }
     public Object toData(String r) { return DateTime.parseDate(r); }
-    public ValueLiteral newLiteral(Object data) { return new DateTime((Date)data); }
+    public ValueLiteral newLiteral(Object data, URI type) { return new DateTime((Date)data); }
   }
 
 }
