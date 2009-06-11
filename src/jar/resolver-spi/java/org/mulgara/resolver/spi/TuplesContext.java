@@ -11,6 +11,7 @@
  */
 package org.mulgara.resolver.spi;
 
+import org.apache.log4j.Logger;
 import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
@@ -32,6 +33,9 @@ import org.mulgara.store.tuples.Tuples;
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
 public class TuplesContext implements Context {
+
+  /** The logger. */
+  final static Logger logger = Logger.getLogger(TuplesContext.class.getName());
 
   /** The tuples containing variables and bindings. */
   private Tuples tuples;
@@ -92,6 +96,7 @@ public class TuplesContext implements Context {
     try {
       return columnNumber != NOT_BOUND && tuples.getRawColumnValue(columnNumber) != Tuples.UNBOUND;
     } catch (Exception te) {  // TuplesException
+      logger.error("Exception getting column value", te);
       throw new QueryException("Error resolving column", te);
     }
   }
