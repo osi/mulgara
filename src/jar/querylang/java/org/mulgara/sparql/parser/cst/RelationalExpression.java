@@ -31,11 +31,21 @@ public abstract class RelationalExpression implements LogicExpression {
   private Expression rhs;
 
   /**
-   * Creates the binary relation
+   * Creates the binary relation between two numberic expressions
    * @param lhs The left hand side of the relation
    * @param rhs The right hand side of the relation
    */
   public RelationalExpression(NumericExpression lhs, NumericExpression rhs) {
+    this.lhs = lhs;
+    this.rhs = rhs;
+  }
+
+  /**
+   * Creates the binary relation between arbitrary expressions
+   * @param lhs The left hand side of the relation
+   * @param rhs The right hand side of the relation
+   */
+  public RelationalExpression(Expression lhs, Expression rhs) {
     this.lhs = lhs;
     this.rhs = rhs;
   }

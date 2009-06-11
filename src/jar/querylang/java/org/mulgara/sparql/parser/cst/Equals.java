@@ -26,16 +26,16 @@ package org.mulgara.sparql.parser.cst;
 public class Equals extends RelationalExpression {
 
   /**
-   * Create an equality relation
+   * Create an equality relation between arbitrary expressions
    * @param lhs The LHS of the relation
    * @param rhs The LHS of the relation
    */
   public Equals(Expression lhs, Expression rhs) {
-    super((NumericExpression)lhs, (NumericExpression)rhs);
+    super(lhs, rhs);
   }
 
   /**
-   * Create an equality relation
+   * Create an equality relation between numeric expressions
    * @param lhs The LHS of the relation
    * @param rhs The LHS of the relation
    */
