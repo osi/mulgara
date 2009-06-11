@@ -480,6 +480,10 @@ public abstract class ProtocolServlet extends MulgaraServlet {
     try {
       try {
         for (Command cmd: cmds) {
+          // if a transaction is being created, we need to know about it
+          if (!tx && cmd instanceof SetAutoCommit) {
+            tx = !((SetAutoCommit)cmd).isOn();
+          }
           tmpResult = executeCommand(cmd, req);
           tmpOutputType = getOutputType(req, cmd);
           // remember the last answer we see
@@ -507,7 +511,7 @@ public abstract class ProtocolServlet extends MulgaraServlet {
     } finally {
       // always turn on autocommit since we can't leave a transaction running in HTTP
       try {
-        executeCommand(new SetAutoCommit(true), req);
+        if (tx) executeCommand(new SetAutoCommit(true), req);
       } catch (Exception e) {
         // throw away
         logger.error("Unable to close transaction", e);
