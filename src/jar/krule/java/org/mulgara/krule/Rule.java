@@ -17,21 +17,32 @@
 package org.mulgara.krule;
 
 // Java 2 standard packages
+import static org.mulgara.krule.RuleStructure.UNINITIALIZED;
+
 import java.io.Serializable;
-import java.util.*;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-// Third party packages
 import org.apache.log4j.Logger;
-
-// Locally written packages
-import org.mulgara.query.*;
+import org.mulgara.query.Answer;
+import org.mulgara.query.AnswerImpl;
+import org.mulgara.query.Cursor;
+import org.mulgara.query.Query;
+import org.mulgara.query.QueryException;
+import org.mulgara.query.TuplesException;
+import org.mulgara.query.Variable;
 import org.mulgara.resolver.OperationContext;
 import org.mulgara.resolver.spi.LocalizedTuples;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverException;
+import org.mulgara.resolver.spi.Statements;
 import org.mulgara.resolver.spi.SystemResolver;
-import org.mulgara.resolver.spi.TuplesWrapperStatements;
-import static org.mulgara.krule.RuleStructure.UNINITIALIZED;
+import org.mulgara.store.tuples.Tuples;
 
 /**
  * Represents a single executable rule.
@@ -225,7 +236,7 @@ public class Rule implements Serializable {
    * @throws ResolverException There was an error inserting the data.
    */
   private void insertData(Answer answer, Resolver resolver, SystemResolver sysResolver) throws TuplesException, ResolverException {
-    TuplesWrapperStatements statements = convertToStatements(answer, sysResolver);
+    Statements statements = convertToStatements(answer, sysResolver);
     try {
       resolver.modifyModel(targetGraph, statements, true);
     } finally {
@@ -235,16 +246,131 @@ public class Rule implements Serializable {
 
 
   /**
-   * Converts an Answer with 3 selection values to a set of statements for insertion.
+   * Converts an Answer with a multiple of 3 selection values to a set of statements for insertion.
    * @param answer The answer to convert.
    * @param resolver The resolver used for localizing the results, since Answers are globalized.
    *        TODO: remove this round trip of local->global->local.
    * @return A set of Statements.
    * @throws TuplesException The statements could not be instantiated.
    */
-  private TuplesWrapperStatements convertToStatements(Answer answer, SystemResolver resolver) throws TuplesException {
-    Variable[] vars = answer.getVariables();
-    assert vars.length == 3;
-    return new TuplesWrapperStatements(new LocalizedTuples(resolver, answer, true), vars[0], vars[1], vars[2]);
+  private Statements convertToStatements(Answer answer, SystemResolver resolver) throws TuplesException {
+    assert answer.getVariables().length % 3 == 0;
+    return new TuplesStatements(new LocalizedTuples(resolver, answer, true));
+  }
+  
+  /**
+   * Wrapper for converting a Tuples to a Statements object.  Unlike the
+   * TuplesWrapperStatements class, this class handles Tuples whose row length is
+   * an arbitrary multiple of 3.  Subject, predicate, and object are determined
+   * by column index in the Tuples, not by a variable mapping as is the case
+   * in TuplesWrapperStatements.
+   */
+  protected static class TuplesStatements implements Statements {
+    
+    private static List<Variable> variables = 
+      Arrays.asList(Statements.SUBJECT, Statements.PREDICATE, Statements.OBJECT);
+    
+    private static int statementSize = variables.size();
+    
+    private int wrappedRowLength;
+    private int statementsPerRow;
+    private int offsetInRow = 0;
+    private Tuples tuples;
+    
+    /**
+     * Construct a wrapper around the tuples.
+     * @param tuples The Tuples to convert to statements; the number of columns
+     * must be a multiple of three.
+     */
+    public TuplesStatements(Tuples tuples) {
+      this.tuples = tuples;
+      if (tuples.getNumberOfVariables() % 3 != 0) throw new IllegalArgumentException("Number of variables must be a multiple of 3");
+      this.wrappedRowLength = tuples.getNumberOfVariables();
+      this.statementsPerRow = wrappedRowLength / statementSize;
+    }
+
+    public long getObject() throws TuplesException {
+      return tuples.getColumnValue(offsetInRow + 2);
+    }
+
+    public long getPredicate() throws TuplesException {
+      return tuples.getColumnValue(offsetInRow + 1);
+    }
+
+    public long getSubject() throws TuplesException {
+      return tuples.getColumnValue(offsetInRow);
+    }
+
+    public void beforeFirst() throws TuplesException {
+      // Setting the offset past the end of the row forces a call to tuples.next()
+      offsetInRow = wrappedRowLength;
+      tuples.beforeFirst();
+    }
+
+    public Object clone() {
+      try {
+        TuplesStatements cloned = (TuplesStatements)super.clone();
+        cloned.tuples = (Tuples)tuples.clone();
+        return cloned;
+      } catch (CloneNotSupportedException e) {
+        throw new Error("Clone ought to be supported.");
+      }
+    }
+
+    public void close() throws TuplesException {
+      tuples.close();
+    }
+
+    public int getColumnIndex(Variable column) throws TuplesException {
+      return variables.indexOf(column);
+    }
+
+    public int getNumberOfVariables() {
+      return variables.size();
+    }
+
+    public int getRowCardinality() throws TuplesException {
+      int cardinality = tuples.getRowCardinality();
+      if (cardinality == Cursor.ONE && statementsPerRow > 1) {
+        cardinality = Cursor.MANY;
+      }
+      return cardinality;
+    }
+
+    public long getRowCount() throws TuplesException {
+      if (statementsPerRow > 1) {
+        BigInteger rowCount = BigInteger.valueOf(tuples.getRowCount());
+        rowCount = rowCount.multiply(BigInteger.valueOf(statementsPerRow));
+        return rowCount.bitLength() > 63 ? Long.MAX_VALUE : rowCount.longValue();
+      }
+      return tuples.getRowCount();
+    }
+
+    public long getRowUpperBound() throws TuplesException {
+      if (statementsPerRow > 1) {
+        BigInteger rowBound = BigInteger.valueOf(tuples.getRowUpperBound());
+        rowBound = rowBound.multiply(BigInteger.valueOf(statementsPerRow));
+        return rowBound.bitLength() > 63 ? Long.MAX_VALUE : rowBound.longValue();
+      }
+      return tuples.getRowUpperBound();
+    }
+
+    public Variable[] getVariables() {
+      return variables.toArray(new Variable[statementSize]);
+    }
+
+    public boolean isUnconstrained() throws TuplesException {
+      return tuples.isUnconstrained();
+    }
+
+    public boolean next() throws TuplesException {
+      offsetInRow += statementSize;
+      if (offsetInRow >= wrappedRowLength) {
+        offsetInRow = 0;
+        return tuples.next();
+      }
+      return true;
+    }
+    
   }
 }
