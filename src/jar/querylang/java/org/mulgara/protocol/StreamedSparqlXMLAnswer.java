@@ -28,6 +28,7 @@ import org.mulgara.query.Answer;
 import org.mulgara.query.BooleanAnswer;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
+import org.mulgara.util.StringUtil;
 
 /**
  * Represents an Answer as XML.
@@ -184,7 +185,7 @@ public class StreamedSparqlXMLAnswer extends AbstractStreamedXMLAnswer {
     s.append(i(4)).append("<literal");
     if (literal.getLanguage() != null) s.append(" xml:lang=\"").append(literal.getLanguage()).append("\"");
     else if (literal.getDatatype() != null) s.append(" datatype=\"").append(literal.getDatatype().toString()).append("\"");
-    s.append(">").append(literal.getLexicalForm()).append("</literal>");
+    s.append(">").append(StringUtil.quoteAV(literal.getLexicalForm())).append("</literal>");
   }
 
 }
