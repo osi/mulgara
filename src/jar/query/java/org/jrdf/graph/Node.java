@@ -1,10 +1,4 @@
 /*
- * $Header$
- * $Revision: 624 $
- * $Date: 2006-06-24 21:02:12 +1000 (Sat, 24 Jun 2006) $
- *
- * ====================================================================
- *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2003 The JRDF Project.  All rights reserved.
@@ -67,8 +61,26 @@ import org.openrdf.model.Value;
  *
  * @author <a href="http://staff.pisoftware.com/raboczi">Simon Raboczi</a>
  * @author Andrew Newman
+ * @author Paul Gearon
  *
- * @version $Revision: 624 $
  */
 public interface Node extends Serializable, Value {
+
+  /**
+   * Indicates if this object is a literal.
+   * @return <code>true</code> if and only if the node is a Literal.
+   */
+  boolean isLiteral();
+
+  /**
+   * Indicates if this object is a BlankNode.
+   * @return <code>true</code> if and only if the node is a BlankNode.
+   */
+  boolean isBlankNode();
+
+  /**
+   * Indicates if this object is a URIReference.
+   * @return <code>true</code> if and only if the node is a URIReference.
+   */
+  boolean isURIReference();
 }

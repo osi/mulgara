@@ -21,6 +21,7 @@
 
     <path refid="common-classpath"/>
     <fileset file="${util.dist.dir}/${util.jar}"/>
+    <fileset file="${lib.dir}/${jenatest.jar}"/>
   </path>
 
   <path id="query-test-classpath">

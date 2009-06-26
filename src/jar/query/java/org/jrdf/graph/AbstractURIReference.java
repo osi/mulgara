@@ -73,7 +73,7 @@ public abstract class AbstractURIReference implements org.openrdf.model.URI, URI
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  private static final long serialVersionUID = 8034954863132812197L;
+  private static final long serialVersionUID = 9005249520402745489L;
 
   /** The URI of the node. */
   private URI uri;
@@ -196,4 +196,10 @@ public abstract class AbstractURIReference implements org.openrdf.model.URI, URI
   public int hashCode() {
     return toString().hashCode();
   }
+
+  public boolean isLiteral() { return false; }
+
+  public boolean isBlankNode() { return false; }
+
+  public boolean isURIReference() { return true; }
 }

@@ -64,7 +64,7 @@ public class BlankNodeImpl
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  static final long serialVersionUID = -3557083462564312948L;
+  private static final long serialVersionUID = 8304792420513868988L;
 
   /** The unique node id for the blank node. */
   private long nodeId;
@@ -74,6 +74,14 @@ public class BlankNodeImpl
   /** The mask that can remove the BLANK_NODE_BIT on nodes that use it. */
   static final private long COUNTER_MASK = 0x3FFFFFFFFFFFFFFFL;
 
+  /** The bit that indicates a blank node on nodes that use it. */
+  static final long BLANK_NODE_BIT = 0x4000000000000000L;
+
+  /** The label used for printing blank nodes. */
+  static final public String LABEL = "node";
+
+  /** The label used for printing blank nodes. */
+  static final private String _LABEL = "_node";
 
   /**
    * Create an empty blank node.  Just a place holder.
@@ -81,7 +89,7 @@ public class BlankNodeImpl
   public BlankNodeImpl() {
     // Do nothing
     this(0);
-    stringValue = "node0";
+    stringValue = LABEL + "0";
   }
 
   /**
@@ -91,7 +99,7 @@ public class BlankNodeImpl
    */
   public BlankNodeImpl(long newNodeId) {
     nodeId = newNodeId;
-    stringValue = "node" + printable(nodeId);
+    stringValue = LABEL + printable(nodeId);
   }
 
 
@@ -110,7 +118,7 @@ public class BlankNodeImpl
    */
   public void setNodeId(long nodeId) {
     this.nodeId = nodeId;
-    stringValue = "node" + printable(nodeId);
+    stringValue = LABEL + printable(nodeId);
   }
 
 
@@ -159,7 +167,7 @@ public class BlankNodeImpl
    * @return the string value of the uri and node id.
    */
   public String toString() {
-    return "_node" + printable(nodeId);
+    return _LABEL + printable(nodeId);
   }
 
   public String getID() {
@@ -169,5 +177,14 @@ public class BlankNodeImpl
   /** Strips off the blank node bit for blank nodes that use it. */
   private long printable(long l) {
     return l > 0 ? COUNTER_MASK & l : l;
+  }
+
+  /**
+   * Duplicate of the BlankNodeAllocator utility to convert a blank node code to a counter value.
+   * @param counter The blank node value, with the blank node bit turned off.
+   * @return A value with the blank node bit turned on.
+   */
+  public static final long counterToNode(long counter) {
+    return counter | BLANK_NODE_BIT;
   }
 }

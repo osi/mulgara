@@ -148,5 +148,8 @@ public class TestContext implements Context {
     public static final Null NULL = new Null();
     public int hashCode() { return -1; }
     public String stringValue() { return "null"; }
+    public boolean isBlankNode() { return false; }
+    public boolean isLiteral() { return false; }
+    public boolean isURIReference() { return false; }
   }
 }

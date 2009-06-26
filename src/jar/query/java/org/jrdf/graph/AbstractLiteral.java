@@ -82,7 +82,7 @@ public abstract class AbstractLiteral extends LiteralImpl implements Literal, Se
    * NOTE : update this serialVersionUID when a method or a public member is
    * deleted.
    */
-  private static final long serialVersionUID = 2589574733270452078L;
+  private static final long serialVersionUID = 1191947630907453592L;
 
   /**
    * Whether the literal is well formed XML.
@@ -251,4 +251,12 @@ public abstract class AbstractLiteral extends LiteralImpl implements Literal, Se
 
     return appendString;
   }
+
+
+  public boolean isLiteral() { return true; }
+
+  public boolean isBlankNode() { return false; }
+
+  public boolean isURIReference() { return false; }
+
 }

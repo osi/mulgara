@@ -17,6 +17,9 @@ import org.apache.log4j.Logger;
 import org.mulgara.query.QueryException;
 import org.mulgara.server.Session;
 
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.rdf.model.Model;
+
 /**
  * A connection for accepting state changes at the local end with no server involvement
  *
@@ -108,6 +111,56 @@ public class DummyConnection extends CommandExecutor implements Connection {
    */
   public boolean isRemote() {
     return false;
+  }
+
+
+  public Graph connectGraph(String graphURI) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Graph connectGraph(String graphURI, boolean createIfDoesNotExist) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Graph connectGraph(URI graphURI, boolean createIfDoesNotExist) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Model connectModel(String graphURI) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Model connectModel(String graphURI, boolean createIfDoesNotExist) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Model connectModel(URI graphURI, boolean createIfDoesNotExist) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Graph createGraph(String graphURI) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public Model createModel(String graphURI) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public void dropGraph(String graphURI) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  public void dropGraph(URI graphURI) {
+    throw new UnsupportedOperationException();
   }
   
 }
