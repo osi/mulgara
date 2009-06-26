@@ -138,7 +138,7 @@ public class ServerInfoRef {
       return getter.invoke(null, new Object[] { });
     } catch (Exception e) {
       /* Not much that can be done here */
-      logger.info("Unable to get '" + name + "' from Server Info", e);
+      logger.debug("Unable to get '" + name + "' from Server Info", e);
       return null;
     }
   }
