@@ -34,13 +34,10 @@ import java.util.*;
 
 // JRDF
 import org.jrdf.graph.*;
-import org.jrdf.graph.mem.*;
 
 // Locally written packages
 import org.mulgara.jrdf.*;
 import org.mulgara.query.*;
-import org.mulgara.query.rdf.*;
-import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.server.JRDFSession;
 
 /**
@@ -74,7 +71,7 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
    * Contains a reference of in memory blank nodes to internal node ids.  Reset
    * every transaction.
    */
-  private HashMap bNodeMap = new HashMap();
+  private HashMap<org.jrdf.graph.mem.BlankNodeImpl,BlankNode> bNodeMap = new HashMap<org.jrdf.graph.mem.BlankNodeImpl,BlankNode>();
 
   //
   // Constructor
@@ -225,16 +222,16 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
   }
 
 
-  public void insert(URI modelURI, Set statements)
+  public void insert(URI modelURI, Set<? extends Triple> statements)
       throws QueryException, RemoteException {
 
     try {
       JRDFGraph graph = new JRDFGraph((JRDFSession) jrdfSession, modelURI);
-      HashSet newStatements = new HashSet();
+      HashSet<Triple> newStatements = new HashSet<Triple>();
 
       // Iterator through the statements replacing JRDF memory blank nodes with
       // server specific blank nodes from the map.
-      Iterator iter = statements.iterator();
+      Iterator<? extends Triple> iter = statements.iterator();
       while (iter.hasNext()) {
         Triple tmpTriple = (Triple) iter.next();
         SubjectNode subjectNode = tmpTriple.getSubject();
@@ -267,16 +264,16 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
     }
   }
 
-  public void delete(URI modelURI, Set statements) throws QueryException,
+  public void delete(URI modelURI, Set<? extends Triple> statements) throws QueryException,
       RemoteException {
 
     try {
       JRDFGraph graph = new JRDFGraph((JRDFSession) jrdfSession, modelURI);
-      HashSet newStatements = new HashSet();
+      HashSet<Triple> newStatements = new HashSet<Triple>();
 
       // Iterator through the statements replacing JRDF memory blank nodes with
       // server specific blank nodes from the map.
-      Iterator iter = statements.iterator();
+      Iterator<? extends Triple> iter = statements.iterator();
       while (iter.hasNext()) {
         Triple tmpTriple = (Triple) iter.next();
         SubjectNode subjectNode = tmpTriple.getSubject();
@@ -323,8 +320,7 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
       GraphElementFactory factory) throws GraphElementFactoryException {
     if (bNodeMap.containsKey(existingNode)) {
       return (BlankNode) bNodeMap.get(existingNode);
-    }
-    else {
+    } else {
       BlankNode bNode = factory.createResource();
       bNodeMap.put(existingNode, bNode);
       return bNode;

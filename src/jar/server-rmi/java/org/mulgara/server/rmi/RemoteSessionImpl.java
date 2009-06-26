@@ -66,8 +66,8 @@ class RemoteSessionImpl extends SessionWrapperRemoteSession
   /**
    * Logger. This is named after the classname.
    */
-  private final static Logger logger =
-    Logger.getLogger(RemoteSessionImpl.class.getName());
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(RemoteSessionImpl.class.getName());
 
   /**
    * Reference to the RemoteSessionFactory

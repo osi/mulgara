@@ -27,22 +27,13 @@
 package org.mulgara.server.rmi;
 
 // Java 2 standard packages
-import java.net.URI;
 import java.rmi.RemoteException;
 
 // Log4j
 import org.apache.log4j.Logger;
 
-// Jena
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node_Variable;
-
 // Locally written packages
-import org.mulgara.query.Answer;
-import org.mulgara.query.ArrayAnswer;
-import org.mulgara.query.Query;
 import org.mulgara.query.QueryException;
-import org.mulgara.query.TuplesException;
 import org.mulgara.server.*;
 
 /**
@@ -68,11 +59,9 @@ import org.mulgara.server.*;
 class RemoteJenaSessionImpl extends JenaSessionWrapperRemoteJenaSession
     implements RemoteJenaSession {
 
-  /**
-   * Logger. This is named after the classname.
-   */
-  private final static Logger logger =
-    Logger.getLogger(RemoteJenaSessionImpl.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(RemoteJenaSessionImpl.class.getName());
 
   /**
    * Reference to the RemoteSessionFactory

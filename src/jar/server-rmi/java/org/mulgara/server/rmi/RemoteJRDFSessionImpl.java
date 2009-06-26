@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 // Locally written packages
 import org.mulgara.jrdf.*;
 import org.mulgara.query.QueryException;
-import org.mulgara.server.*;
 
 /**
  * {@link RemoteJRDFSession} which generates unpaged answers.
@@ -61,14 +60,11 @@ import org.mulgara.server.*;
  * @see <a href="http://developer.java.sun.com/developer/JDCTechTips/2001/tt0327.html#jndi"/>
  *      <cite>JNDI lookup in distributed systems</cite> </a>
  */
-class RemoteJRDFSessionImpl extends JRDFSessionWrapperRemoteJRDFSession
-    implements RemoteJRDFSession {
+class RemoteJRDFSessionImpl extends JRDFSessionWrapperRemoteJRDFSession implements RemoteJRDFSession {
 
-  /**
-   * Logger. This is named after the classname.
-   */
-  private final static Logger logger =
-    Logger.getLogger(RemoteJRDFSessionImpl.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(RemoteJRDFSessionImpl.class.getName());
 
   /**
    * Reference to the RemoteSessionFactory

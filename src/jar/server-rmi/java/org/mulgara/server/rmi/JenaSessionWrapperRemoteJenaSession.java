@@ -34,7 +34,6 @@ import java.rmi.RemoteException;
 import org.apache.log4j.Logger;
 
 // Jena packages
-import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node_Variable;
 
 // Locally written packages
@@ -65,11 +64,9 @@ import org.mulgara.server.*;
 class JenaSessionWrapperRemoteJenaSession extends SessionWrapperRemoteSession
     implements RemoteJenaSession {
 
-  /**
-   * Logger. This is named after the classname.
-   */
-  private final static Logger logger =
-    Logger.getLogger(JenaSessionWrapperRemoteJenaSession.class.getName());
+  /** Logger.  */
+  @SuppressWarnings("unused")
+  private final static Logger logger = Logger.getLogger(JenaSessionWrapperRemoteJenaSession.class.getName());
 
   /**
    * The wrapped {@link JenaSession}
