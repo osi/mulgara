@@ -501,20 +501,8 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         startServer = false;
       } else {
         // load the Mulgara configuration file
-        URL configURL = null;
         String configURLStr = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_CONFIG);
-
-        if (configURLStr == null) {
-          // get a URL to the default server configuration file
-          configURL = ClassLoader.getSystemResource(CONFIG_PATH);
-          if (configURL == null) throw new IOException("Unable to locate embedded server configuration file");
-        } else {
-          configURL = new URL(configURLStr);
-        }
-
-        // configure the server
-        mulgaraConfig = MulgaraConfig.unmarshal(new InputStreamReader(configURL.openStream()));
-        mulgaraConfig.validate();
+        mulgaraConfig = new MulgaraUserConfig(configURLStr);
 
         // disable automatic starting of the RMI registry
         if (parser.getOptionValue(EmbeddedMulgaraOptionParser.NO_RMI) != null) {
