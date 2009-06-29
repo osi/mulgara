@@ -661,14 +661,14 @@ public abstract class TuplesOperations {
       // This fails to consider the effect on performance of worst case so we
       // incorporate weighted terms to allow for possible skew on each column.
       // We assume a reducing probability of compounded failure so weight each
-      // term by 10**term (0-indexed), this is a fudge factor that needs proper
+      // term by 100**term (0-indexed), this is a fudge factor that needs proper
       // analysis.
       double weightedRowCount = 0.0;
       for (int weight = 0; weight < numLeftBindings + 1; weight++) {
         double term = vars.length > 0
                         ? Math.pow(tuples.getRowUpperBound(), (double)(vars.length - (numLeftBindings - weight)) / vars.length)
                         : tuples.getRowUpperBound();
-        weightedRowCount += term / Math.pow(10.0, weight);
+        weightedRowCount += term / Math.pow(100.0, weight);
       }
 
       if (logger.isDebugEnabled()) {
