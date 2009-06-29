@@ -392,7 +392,7 @@ public class LuceneResolver implements Resolver {
     for (FullTextStringIndex index : indexes) {
       try {
         if (commit) {
-          index.optimize();
+          // index.optimize();
           index.commit();
         } else {
           index.rollback();
