@@ -2,6 +2,10 @@
 
 <!--
 Mulgara Semantic Store configuration file.
+This file can act as a template for user files.
+This system file MUST contain all compulsory top level elements,
+  but this is not enforced with Schema validity - a null pointer exception will occur instead.
+User files may remove any top-level element.
 -->
 
 <MulgaraConfig>
