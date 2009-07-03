@@ -31,6 +31,7 @@
 
     <fileset dir="${bin.dir}" includes="${tuples-hybrid.jar}"/>
     <fileset file="${tuples.dist.dir}/${tuples.jar}"/>
+    <fileset file="${util-xa.dist.dir}/${util-xa.jar}"/>
   </path>
 
   <target name="tuples-clean"
