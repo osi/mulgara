@@ -31,7 +31,6 @@ package org.mulgara.store.tuples;
 
 // Java 2 standard packages
 import java.util.*;
-import java.math.BigInteger;
 
 // Third party packages
 import org.apache.log4j.Logger;
@@ -357,15 +356,22 @@ public class UnboundJoin extends AbstractTuples {
       return operands[0].getRowUpperBound();
     }
 
-    BigInteger rowCount = BigInteger.valueOf(operands[0].getRowUpperBound());
-
+    /*
+      BigInteger rowCount = BigInteger.valueOf(operands[0].getRowUpperBound());
+  
+      for (int i = 1; i < operands.length; i++) {
+        rowCount = rowCount.multiply(BigInteger.valueOf(operands[i].getRowUpperBound()));
+        if (rowCount.bitLength() > 63)
+          return Long.MAX_VALUE;
+      }
+  
+      return rowCount.longValue();
+      */
+    long result = operands[0].getRowUpperBound();
     for (int i = 1; i < operands.length; i++) {
-      rowCount = rowCount.multiply(BigInteger.valueOf(operands[i].getRowUpperBound()));
-      if (rowCount.bitLength() > 63)
-        return Long.MAX_VALUE;
+      result = Math.min(result, operands[i].getRowUpperBound());
     }
-
-    return rowCount.longValue();
+    return result;
   }
 
   public boolean isColumnEverUnbound(int column) throws TuplesException {
