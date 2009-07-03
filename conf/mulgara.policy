@@ -12,6 +12,7 @@ grant
   permission java.lang.RuntimePermission "setContextClassLoader";
   permission java.lang.RuntimePermission "createClassLoader";
   permission java.lang.RuntimePermission "shutdownHooks";
+  permission java.lang.RuntimePermission "setIO";
   permission java.lang.RuntimePermission "exitVM";
   permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
   permission java.net.SocketPermission "*:80", "accept,connect,resolve";
