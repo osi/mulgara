@@ -17,9 +17,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
+import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.XSD;
 import org.mulgara.query.rdf.XSDAbbrev;
 
@@ -97,6 +99,11 @@ public class TypedLiteral extends AbstractComparableLiteral {
     return false;
   }
 
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException {
+    return true;
+  }
+
   /**
    * Gets the language ID of this literal
    * @return The language ID for this literal
@@ -123,6 +130,13 @@ public class TypedLiteral extends AbstractComparableLiteral {
    */
   public String toString() {
     return "'" + lexical + "'^^<" + type + ">";
+  }
+
+  /**
+   * A JRDF Node that represents this literal
+   */
+  public Node getJRDFValue() throws QueryException {
+    return new LiteralImpl(lexical, type);
   }
 
   /**

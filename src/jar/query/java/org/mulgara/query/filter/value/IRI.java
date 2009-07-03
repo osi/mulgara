@@ -13,10 +13,12 @@ package org.mulgara.query.filter.value;
 
 import java.net.URI;
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
 import org.mulgara.query.filter.RDFTerm;
+import org.mulgara.query.rdf.URIReferenceImpl;
 
 
 /**
@@ -50,6 +52,11 @@ public class IRI implements RDFTerm {
   }
 
   /** {@inheritDoc} */
+  public Node getJRDFValue() {
+    return new URIReferenceImpl(value);
+  }
+
+  /** {@inheritDoc} */
   public boolean equals(Object o) {
     try {
       return (o instanceof RDFTerm) ? equals((RDFTerm)o) : false;
@@ -74,6 +81,9 @@ public class IRI implements RDFTerm {
 
   /** {@inheritDoc} */
   public boolean isLiteral() { return false; }
+
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException { return true; }
 
   /** {@inheritDoc} */
   public boolean sameTerm(RDFTerm v) throws QueryException {

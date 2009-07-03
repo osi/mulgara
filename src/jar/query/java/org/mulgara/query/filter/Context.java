@@ -57,4 +57,12 @@ public interface Context {
    */
   public Node globalize(long gNode) throws QueryException;
   
+  /**
+   * Localize a data object into a gNode.
+   * @param o The object to localize.
+   * @return a gNode representing the node.
+   * @throws QueryException If a localize exception is encountered.
+   */
+  public long localize(Node node) throws QueryException;
+  
 }

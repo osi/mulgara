@@ -79,6 +79,11 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
   }
 
   /** {@inheritDoc} */
+  public Node getJRDFValue() throws QueryException {
+    return resolve().getJRDFValue();
+  }
+
+  /** {@inheritDoc} */
   public Number getNumber() throws QueryException {
     Object result = getValue();
     if (result instanceof Number) return (Number)result;
@@ -108,6 +113,9 @@ public class Var extends AbstractContextOwner implements ComparableExpression, V
   public boolean isSimple() throws QueryException {
     return ((ValueLiteral)resolve()).isSimple();
   }
+
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException { return false; }
 
   /** {@inheritDoc} */
   public boolean equals(RDFTerm v) throws QueryException {

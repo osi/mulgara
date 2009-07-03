@@ -37,40 +37,41 @@ public interface SparqlParserConstants {
   int TRUE = 37;
   int SAME_TERM = 38;
   int FALSE = 39;
-  int IRI_REF = 66;
-  int PNAME_NS = 67;
-  int PNAME_LN = 68;
-  int BLANK_NODE_LABEL = 69;
-  int VAR1 = 70;
-  int VAR2 = 71;
-  int LANGTAG = 72;
-  int Z_9 = 73;
-  int Z_9r = 74;
-  int Z_9o = 75;
-  int INTEGER = 76;
-  int DECIMAL = 77;
-  int DOUBLE = 78;
-  int INTEGER_POSITIVE = 79;
-  int DECIMAL_POSITIVE = 80;
-  int DOUBLE_POSITIVE = 81;
-  int INTEGER_NEGATIVE = 82;
-  int DECIMAL_NEGATIVE = 83;
-  int DOUBLE_NEGATIVE = 84;
-  int EXPONENT = 85;
-  int STRING_LITERAL1 = 86;
-  int STRING_LITERAL2 = 87;
-  int STRING_LITERAL_LONG1 = 88;
-  int STRING_LITERAL_LONG2 = 89;
-  int ECHAR = 90;
-  int NIL = 91;
-  int WS = 92;
-  int ANON = 93;
-  int PN_CHARS_BASE = 94;
-  int PN_CHARS_U = 95;
-  int VARNAME = 96;
-  int PN_CHARS = 97;
-  int PN_PREFIX = 98;
-  int PN_LOCAL = 99;
+  int LET = 40;
+  int IRI_REF = 68;
+  int PNAME_NS = 69;
+  int PNAME_LN = 70;
+  int BLANK_NODE_LABEL = 71;
+  int VAR1 = 72;
+  int VAR2 = 73;
+  int LANGTAG = 74;
+  int Z_9 = 75;
+  int Z_9r = 76;
+  int Z_9o = 77;
+  int INTEGER = 78;
+  int DECIMAL = 79;
+  int DOUBLE = 80;
+  int INTEGER_POSITIVE = 81;
+  int DECIMAL_POSITIVE = 82;
+  int DOUBLE_POSITIVE = 83;
+  int INTEGER_NEGATIVE = 84;
+  int DECIMAL_NEGATIVE = 85;
+  int DOUBLE_NEGATIVE = 86;
+  int EXPONENT = 87;
+  int STRING_LITERAL1 = 88;
+  int STRING_LITERAL2 = 89;
+  int STRING_LITERAL_LONG1 = 90;
+  int STRING_LITERAL_LONG2 = 91;
+  int ECHAR = 92;
+  int NIL = 93;
+  int WS = 94;
+  int ANON = 95;
+  int PN_CHARS_BASE = 96;
+  int PN_CHARS_U = 97;
+  int VARNAME = 98;
+  int PN_CHARS = 99;
+  int PN_PREFIX = 100;
+  int PN_LOCAL = 101;
 
   int DEFAULT = 0;
   int IN_COMMENT = 1;
@@ -116,6 +117,7 @@ public interface SparqlParserConstants {
     "\"true\"",
     "\"sameTERM\"",
     "\"false\"",
+    "\"let\"",
     "\"*\"",
     "\"ASC\"",
     "\"DESC\"",
@@ -123,8 +125,9 @@ public interface SparqlParserConstants {
     "\".\"",
     "\"}\"",
     "\"(\"",
-    "\",\"",
+    "\":=\"",
     "\")\"",
+    "\",\"",
     "\";\"",
     "\"a\"",
     "\"[\"",

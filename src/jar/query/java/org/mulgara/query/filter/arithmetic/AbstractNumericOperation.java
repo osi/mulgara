@@ -3,6 +3,7 @@ package org.mulgara.query.filter.arithmetic;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
@@ -35,6 +36,11 @@ public abstract class AbstractNumericOperation extends AbstractComparable implem
 
   /** @see org.mulgara.query.filter.value.ComparableExpression#getValue() */
   public Number getValue() throws QueryException { return getNumber(); }
+
+  /** @see org.mulgara.query.filter.RDFTerm#getJRDFValue() */
+  public Node getJRDFValue() throws QueryException {
+    return new NumericLiteral(getNumber()).getJRDFValue();
+  }
 
   /** @see org.mulgara.query.filter.RDFTerm#equals(RDFTerm) */
   public boolean equals(RDFTerm v) throws QueryException { return compare(getNumber(), v.getValue()) == 0; }

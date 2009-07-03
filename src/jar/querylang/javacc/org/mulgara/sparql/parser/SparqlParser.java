@@ -163,8 +163,8 @@ public class SparqlParser implements SparqlParserConstants {
         }
       }
       break;
-    case 40:
-      jj_consume_token(40);
+    case 41:
+      jj_consume_token(41);
             queryStructure.setSelectAll();
       break;
     default:
@@ -238,8 +238,8 @@ public class SparqlParser implements SparqlParserConstants {
         }
       }
       break;
-    case 40:
-      jj_consume_token(40);
+    case 41:
+      jj_consume_token(41);
             queryStructure.setSelectAll();
       break;
     default:
@@ -261,7 +261,7 @@ public class SparqlParser implements SparqlParserConstants {
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case WHERE:
-    case 43:
+    case 44:
       WhereClause();
       break;
     default:
@@ -419,9 +419,9 @@ public class SparqlParser implements SparqlParserConstants {
       case REGEX:
       case BOUND:
       case SAME_TERM:
-      case 41:
       case 42:
-      case 46:
+      case 43:
+      case 47:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -440,14 +440,14 @@ public class SparqlParser implements SparqlParserConstants {
   final public void OrderCondition() throws ParseException {
                           boolean asc = true; Expression e;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 41:
     case 42:
+    case 43:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 41:
-        jj_consume_token(41);
-        break;
       case 42:
         jj_consume_token(42);
+        break;
+      case 43:
+        jj_consume_token(43);
                        asc = false;
         break;
       default:
@@ -468,7 +468,7 @@ public class SparqlParser implements SparqlParserConstants {
     case REGEX:
     case BOUND:
     case SAME_TERM:
-    case 46:
+    case 47:
     case IRI_REF:
     case PNAME_NS:
     case PNAME_LN:
@@ -486,7 +486,7 @@ public class SparqlParser implements SparqlParserConstants {
       case REGEX:
       case BOUND:
       case SAME_TERM:
-      case 46:
+      case 47:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -532,12 +532,12 @@ public class SparqlParser implements SparqlParserConstants {
   GraphPatternConjunction c = null;
   Expression f;
           g = GroupGraphPattern.EMPTY;
-    jj_consume_token(43);
+    jj_consume_token(44);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TRUE:
     case FALSE:
-    case 46:
-    case 51:
+    case 47:
+    case 53:
     case IRI_REF:
     case PNAME_NS:
     case PNAME_LN:
@@ -571,7 +571,8 @@ public class SparqlParser implements SparqlParserConstants {
       case GRAPH:
       case OPTIONAL:
       case FILTER:
-      case 43:
+      case LET:
+      case 44:
         ;
         break;
       default:
@@ -581,7 +582,8 @@ public class SparqlParser implements SparqlParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case GRAPH:
       case OPTIONAL:
-      case 43:
+      case LET:
+      case 44:
         g = GraphPatternNotTriples(g);
         break;
       case FILTER:
@@ -595,8 +597,8 @@ public class SparqlParser implements SparqlParserConstants {
         throw new ParseException();
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 44:
-        jj_consume_token(44);
+      case 45:
+        jj_consume_token(45);
         break;
       default:
         jj_la1[28] = jj_gen;
@@ -605,8 +607,8 @@ public class SparqlParser implements SparqlParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TRUE:
       case FALSE:
-      case 46:
-      case 51:
+      case 47:
+      case 53:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -642,7 +644,7 @@ public class SparqlParser implements SparqlParserConstants {
         ;
       }
     }
-    jj_consume_token(45);
+    jj_consume_token(46);
       {if (true) return g;}
     throw new Error("Missing return statement in function");
   }
@@ -652,13 +654,13 @@ public class SparqlParser implements SparqlParserConstants {
                                            TripleList l; GraphPatternConjunction g = null;
     l = TriplesSameSubject();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 44:
-      jj_consume_token(44);
+    case 45:
+      jj_consume_token(45);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TRUE:
       case FALSE:
-      case 46:
-      case 51:
+      case 47:
+      case 53:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -704,18 +706,21 @@ public class SparqlParser implements SparqlParserConstants {
     case OPTIONAL:
       g = OptionalGraphPattern(in);
       break;
-    case 43:
+    case 44:
       g = GroupOrUnionGraphPattern(in);
       break;
     case GRAPH:
       g = GraphGraphPattern(in);
+      break;
+    case LET:
+      g = Assignment(in);
       break;
     default:
       jj_la1[32] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
-      {if (true) return g;}
+        {if (true) return g;}
     throw new Error("Missing return statement in function");
   }
 
@@ -736,6 +741,20 @@ public class SparqlParser implements SparqlParserConstants {
     g = GroupGraphPattern();
       g.setGraph(e);
       {if (true) return conjoin(in, g);}
+    throw new Error("Missing return statement in function");
+  }
+
+/* SPARQL Extension */
+/* Assignment  ::=  'LET (' Var ':=' Expression ')' */
+  final public GroupGraphPattern Assignment(GroupGraphPattern in) throws ParseException {
+                                                       Variable v ; Expression expr ;
+    jj_consume_token(LET);
+    jj_consume_token(47);
+    v = Var();
+    jj_consume_token(48);
+    expr = Expression();
+    jj_consume_token(49);
+      {if (true) return new VarAssign(in, v, expr) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -777,7 +796,7 @@ public class SparqlParser implements SparqlParserConstants {
   final public Expression Constraint() throws ParseException {
                             Expression e;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 46:
+    case 47:
       e = BrackettedExpression();
       break;
     case STR:
@@ -823,25 +842,25 @@ public class SparqlParser implements SparqlParserConstants {
     case NIL:
       jj_consume_token(NIL);
       break;
-    case 46:
-      jj_consume_token(46);
+    case 47:
+      jj_consume_token(47);
       e = Expression();
                              list.add(e);
       label_11:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 47:
+        case 50:
           ;
           break;
         default:
           jj_la1[35] = jj_gen;
           break label_11;
         }
-        jj_consume_token(47);
+        jj_consume_token(50);
         e = Expression();
                                                                    list.add(e);
       }
-      jj_consume_token(48);
+      jj_consume_token(49);
       break;
     default:
       jj_la1[36] = jj_gen;
@@ -855,12 +874,12 @@ public class SparqlParser implements SparqlParserConstants {
 /* [30]    ConstructTemplate    ::=    '{' ConstructTriples? '}' */
   final public void ConstructTemplate() throws ParseException {
                              TripleList triples = null;
-    jj_consume_token(43);
+    jj_consume_token(44);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TRUE:
     case FALSE:
-    case 46:
-    case 51:
+    case 47:
+    case 53:
     case IRI_REF:
     case PNAME_NS:
     case PNAME_LN:
@@ -888,7 +907,7 @@ public class SparqlParser implements SparqlParserConstants {
       jj_la1[37] = jj_gen;
       ;
     }
-    jj_consume_token(45);
+    jj_consume_token(46);
       queryStructure.setConstructTemplate(triples);
   }
 
@@ -897,13 +916,13 @@ public class SparqlParser implements SparqlParserConstants {
                                   TripleList triples, t;
     triples = TriplesSameSubject();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 44:
-      jj_consume_token(44);
+    case 45:
+      jj_consume_token(45);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TRUE:
       case FALSE:
-      case 46:
-      case 51:
+      case 47:
+      case 53:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -972,8 +991,8 @@ public class SparqlParser implements SparqlParserConstants {
       pl = PropertyListNotEmpty();
                                               {if (true) return new TripleList(s, pl);}
       break;
-    case 46:
-    case 51:
+    case 47:
+    case 53:
       an = TriplesNode();
       pl = PropertyList();
                                          {if (true) return new TripleList(an, pl);}
@@ -995,16 +1014,16 @@ public class SparqlParser implements SparqlParserConstants {
     label_12:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 49:
+      case 51:
         ;
         break;
       default:
         jj_la1[41] = jj_gen;
         break label_12;
       }
-      jj_consume_token(49);
+      jj_consume_token(51);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 50:
+      case 52:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -1027,7 +1046,7 @@ public class SparqlParser implements SparqlParserConstants {
   final public PropertyList PropertyList() throws ParseException {
                                 PropertyList pl = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 50:
+    case 52:
     case IRI_REF:
     case PNAME_NS:
     case PNAME_LN:
@@ -1052,14 +1071,14 @@ public class SparqlParser implements SparqlParserConstants {
     label_13:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 47:
+      case 50:
         ;
         break;
       default:
         jj_la1[44] = jj_gen;
         break label_13;
       }
-      jj_consume_token(47);
+      jj_consume_token(50);
       Object();
                      l.add(n);
     }
@@ -1087,8 +1106,8 @@ public class SparqlParser implements SparqlParserConstants {
       e = VarOrIRIref();
                       {if (true) return e;}
       break;
-    case 50:
-      jj_consume_token(50);
+    case 52:
+      jj_consume_token(52);
             {if (true) return IRIReference.RDF_TYPE;}
       break;
     default:
@@ -1104,10 +1123,10 @@ public class SparqlParser implements SparqlParserConstants {
   final public AnnotatedNode TriplesNode() throws ParseException {
                                 AnnotatedNode n;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 46:
+    case 47:
       n = Collection();
       break;
-    case 51:
+    case 53:
       n = BlankNodePropertyList();
       break;
     default:
@@ -1122,9 +1141,9 @@ public class SparqlParser implements SparqlParserConstants {
 /* [39]    BlankNodePropertyList    ::=    '[' PropertyListNotEmpty ']' */
   final public AnnotatedNode BlankNodePropertyList() throws ParseException {
                                           PropertyList pl;
-    jj_consume_token(51);
+    jj_consume_token(53);
     pl = PropertyListNotEmpty();
-    jj_consume_token(52);
+    jj_consume_token(54);
       {if (true) return new AnnotatedNode(queryStructure.newBlankNode(), pl);}
     throw new Error("Missing return statement in function");
   }
@@ -1133,7 +1152,7 @@ public class SparqlParser implements SparqlParserConstants {
 /* Returns a *NODE* that is a collection.  The rest of the collection will be conjoined after. */
   final public AnnotatedNode Collection() throws ParseException {
                                Node n; GraphList l = queryStructure.newList();
-    jj_consume_token(46);
+    jj_consume_token(47);
     label_14:
     while (true) {
       n = GraphNode();
@@ -1141,8 +1160,8 @@ public class SparqlParser implements SparqlParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TRUE:
       case FALSE:
-      case 46:
-      case 51:
+      case 47:
+      case 53:
       case IRI_REF:
       case PNAME_NS:
       case PNAME_LN:
@@ -1171,7 +1190,7 @@ public class SparqlParser implements SparqlParserConstants {
         break label_14;
       }
     }
-    jj_consume_token(48);
+    jj_consume_token(49);
       {if (true) return new AnnotatedNode(l);}
     throw new Error("Missing return statement in function");
   }
@@ -1205,8 +1224,8 @@ public class SparqlParser implements SparqlParserConstants {
     case ANON:
       n = VarOrTerm();
       break;
-    case 46:
-    case 51:
+    case 47:
+    case 53:
       n = TriplesNode();
       break;
     default:
@@ -1361,14 +1380,14 @@ public class SparqlParser implements SparqlParserConstants {
     label_15:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 53:
+      case 55:
         ;
         break;
       default:
         jj_la1[53] = jj_gen;
         break label_15;
       }
-      jj_consume_token(53);
+      jj_consume_token(55);
       ae = ConditionalAndExpression();
                                                                         e = new OrExpression(e, ae);
     }
@@ -1383,14 +1402,14 @@ public class SparqlParser implements SparqlParserConstants {
     label_16:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 54:
+      case 56:
         ;
         break;
       default:
         jj_la1[54] = jj_gen;
         break label_16;
       }
-      jj_consume_token(54);
+      jj_consume_token(56);
       e2 = ValueLogical();
                                                 e = new AndExpression(e, e2);
     }
@@ -1411,40 +1430,40 @@ public class SparqlParser implements SparqlParserConstants {
                                       Expression e, e2;
     e = NumericExpression();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 55:
-    case 56:
     case 57:
     case 58:
     case 59:
     case 60:
+    case 61:
+    case 62:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 55:
-        jj_consume_token(55);
-        e2 = NumericExpression();
-                                   e = new Equals(e, e2);
-        break;
-      case 56:
-        jj_consume_token(56);
-        e2 = NumericExpression();
-                                      e = new NotEquals(e, e2);
-        break;
       case 57:
         jj_consume_token(57);
         e2 = NumericExpression();
-                                     e = new LessThan(e, e2);
+                                   e = new Equals(e, e2);
         break;
       case 58:
         jj_consume_token(58);
         e2 = NumericExpression();
-                                     e = new GreaterThan(e, e2);
+                                      e = new NotEquals(e, e2);
         break;
       case 59:
         jj_consume_token(59);
         e2 = NumericExpression();
-                                      e = new LessThanEqual(e, e2);
+                                     e = new LessThan(e, e2);
         break;
       case 60:
         jj_consume_token(60);
+        e2 = NumericExpression();
+                                     e = new GreaterThan(e, e2);
+        break;
+      case 61:
+        jj_consume_token(61);
+        e2 = NumericExpression();
+                                      e = new LessThanEqual(e, e2);
+        break;
+      case 62:
+        jj_consume_token(62);
         e2 = NumericExpression();
                                       e = new GreaterThanEqual(e, e2);
         break;
@@ -1477,8 +1496,8 @@ public class SparqlParser implements SparqlParserConstants {
     label_17:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 61:
-      case 62:
+      case 63:
+      case 64:
       case INTEGER_POSITIVE:
       case DECIMAL_POSITIVE:
       case DOUBLE_POSITIVE:
@@ -1492,13 +1511,13 @@ public class SparqlParser implements SparqlParserConstants {
         break label_17;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 61:
-        jj_consume_token(61);
+      case 63:
+        jj_consume_token(63);
         e2 = MultiplicativeExpression();
                                           e = new Plus(e, e2);
         break;
-      case 62:
-        jj_consume_token(62);
+      case 64:
+        jj_consume_token(64);
         e2 = MultiplicativeExpression();
                                             e = new Minus(e, e2);
         break;
@@ -1531,8 +1550,8 @@ public class SparqlParser implements SparqlParserConstants {
     label_18:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 40:
-      case 63:
+      case 41:
+      case 65:
         ;
         break;
       default:
@@ -1540,13 +1559,13 @@ public class SparqlParser implements SparqlParserConstants {
         break label_18;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 40:
-        jj_consume_token(40);
+      case 41:
+        jj_consume_token(41);
         e2 = UnaryExpression();
                                  e = new Multiply(e, e2);
         break;
-      case 63:
-        jj_consume_token(63);
+      case 65:
+        jj_consume_token(65);
         e2 = UnaryExpression();
                                    e = new Divide(e, e2);
         break;
@@ -1564,18 +1583,18 @@ public class SparqlParser implements SparqlParserConstants {
   final public Expression UnaryExpression() throws ParseException {
                                  Expression e;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 64:
-      jj_consume_token(64);
+    case 66:
+      jj_consume_token(66);
       e = PrimaryExpression();
                                 {if (true) return new Not(e);}
       break;
-    case 61:
-      jj_consume_token(61);
+    case 63:
+      jj_consume_token(63);
       e = PrimaryExpression();
                                   {if (true) return new UnaryPlus(e);}
       break;
-    case 62:
-      jj_consume_token(62);
+    case 64:
+      jj_consume_token(64);
       e = PrimaryExpression();
                                   {if (true) return new UnaryMinus(e);}
       break;
@@ -1592,7 +1611,7 @@ public class SparqlParser implements SparqlParserConstants {
     case TRUE:
     case SAME_TERM:
     case FALSE:
-    case 46:
+    case 47:
     case IRI_REF:
     case PNAME_NS:
     case PNAME_LN:
@@ -1626,7 +1645,7 @@ public class SparqlParser implements SparqlParserConstants {
   final public Expression PrimaryExpression() throws ParseException {
                                    Expression e;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 46:
+    case 47:
       e = BrackettedExpression();
       break;
     case STR:
@@ -1684,9 +1703,9 @@ public class SparqlParser implements SparqlParserConstants {
 /* [56]    BrackettedExpression    ::=    '(' Expression ')' */
   final public Expression BrackettedExpression() throws ParseException {
                                       Expression e;
-    jj_consume_token(46);
+    jj_consume_token(47);
     e = Expression();
-    jj_consume_token(48);
+    jj_consume_token(49);
                              {if (true) return e;}
     throw new Error("Missing return statement in function");
   }
@@ -1707,76 +1726,76 @@ public class SparqlParser implements SparqlParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case STR:
       jj_consume_token(STR);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                    {if (true) return new BicStr(e);}
       break;
     case LANG:
       jj_consume_token(LANG);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                       {if (true) return new BicLang(e);}
       break;
     case LANGMATCHES:
       jj_consume_token(LANGMATCHES);
-      jj_consume_token(46);
-      e = Expression();
       jj_consume_token(47);
+      e = Expression();
+      jj_consume_token(50);
       e2 = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                                                  {if (true) return new BicLangMatches(e, e2);}
       break;
     case DATATYPE:
       jj_consume_token(DATATYPE);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                           {if (true) return new BicDatatype(e);}
       break;
     case BOUND:
       jj_consume_token(BOUND);
-      jj_consume_token(46);
+      jj_consume_token(47);
       v = Var();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                 {if (true) return new BicBound(v);}
       break;
     case SAME_TERM:
       jj_consume_token(SAME_TERM);
-      jj_consume_token(46);
-      e = Expression();
       jj_consume_token(47);
+      e = Expression();
+      jj_consume_token(50);
       e2 = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                                                {if (true) return new BicSameTerm(e, e2);}
       break;
     case IS_IRI:
       jj_consume_token(IS_IRI);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                         {if (true) return new BicIsIri(e);}
       break;
     case IS_URI:
       jj_consume_token(IS_URI);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                         {if (true) return new BicIsUri(e);}
       break;
     case IS_BLANK:
       jj_consume_token(IS_BLANK);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                           {if (true) return new BicIsBlank(e);}
       break;
     case IS_LITERAL:
       jj_consume_token(IS_LITERAL);
-      jj_consume_token(46);
+      jj_consume_token(47);
       e = Expression();
-      jj_consume_token(48);
+      jj_consume_token(49);
                                             {if (true) return new BicIsLiteral(e);}
       break;
     case REGEX:
@@ -1795,20 +1814,20 @@ public class SparqlParser implements SparqlParserConstants {
   final public BuiltInCall RegexExpression() throws ParseException {
                                   Expression e1, e2, e3 = null;
     jj_consume_token(REGEX);
-    jj_consume_token(46);
-    e1 = Expression();
     jj_consume_token(47);
+    e1 = Expression();
+    jj_consume_token(50);
     e2 = Expression();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 47:
-      jj_consume_token(47);
+    case 50:
+      jj_consume_token(50);
       e3 = Expression();
       break;
     default:
       jj_la1[64] = jj_gen;
       ;
     }
-    jj_consume_token(48);
+    jj_consume_token(49);
       {if (true) return new BicRegEx(e1, e2, e3);}
     throw new Error("Missing return statement in function");
   }
@@ -1818,7 +1837,7 @@ public class SparqlParser implements SparqlParserConstants {
                                   IRIReference ref; ArgList list;
     ref = IRIref();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 46:
+    case 47:
     case NIL:
       list = ArgList();
                                    {if (true) return new FunctionCall(ref, list);}
@@ -1837,15 +1856,15 @@ public class SparqlParser implements SparqlParserConstants {
     s = String();
                    l = new RDFLiteral(s);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 65:
+    case 67:
     case LANGTAG:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case LANGTAG:
         t = jj_consume_token(LANGTAG);
                     l.setLanguage(t.image);
         break;
-      case 65:
-        jj_consume_token(65);
+      case 67:
+        jj_consume_token(67);
         ref = IRIref();
                             l.setDatatype(ref);
         break;
@@ -2090,10 +2109,10 @@ public class SparqlParser implements SparqlParserConstants {
       jj_la1_0 = new int[] {0x40820100,0x200,0x10000,0x80000000,0x80000000,0x0,0x0,0x1000,0x1000,0x0,0x0,0x1000,0x2000000,0x1000,0x80000,0x2000000,0x400,0x1040000,0x1000000,0x40000,0x1040000,0x3860c000,0x0,0x3860c000,0x3860c000,0x0,0x102000,0x102000,0x0,0x0,0x0,0x0,0x102000,0x4000000,0x3860c000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3860c000,0x3860c000,0x3860c000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x8,0x8,0x0,0x100,0x0,0x0,0x0,0x100,0x0,0x800,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4656,0x600,0x4056,0x4656,0x840a0,0x801,0x801,0x1000,0x840a0,0x840a0,0x1000,0x800,0x0,0x4056,0x8000,0x4000,0x840a0,0x840a0,0x1000,0x840a0,0x20000,0x40000,0x40000,0x8000,0x40000,0x84000,0x840a0,0x840a0,0xa0,0x0,0x0,0xa0,0x200000,0x400000,0x1f800000,0x1f800000,0x60000000,0x60000000,0x80000100,0x80000100,0x600040f6,0x40f6,0x56,0x8000,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0xa0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x8,0x8,0x0,0x200,0x0,0x0,0x0,0x200,0x0,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8c56,0xc00,0x8056,0x8c56,0x2080a0,0x1101,0x1101,0x2000,0x2080a0,0x2080a0,0x2000,0x1100,0x0,0x8056,0x40000,0x8000,0x2080a0,0x2080a0,0x2000,0x2080a0,0x80000,0x100000,0x100000,0x40000,0x100000,0x208000,0x2080a0,0x2080a0,0xa0,0x0,0x0,0xa0,0x800000,0x1000000,0x7e000000,0x7e000000,0x80000000,0x80000000,0x200,0x200,0x800080f6,0x80f6,0x56,0x40000,0x8000,0x0,0x0,0x0,0x0,0x0,0x0,0xa0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0xc0,0xc0,0x0,0x0,0xdc,0xdc,0x0,0x0,0x0,0x1c,0x0,0x0,0x0,0x0,0x0,0x0,0xdc,0x0,0xdc,0xdc,0x2bdff0fc,0x0,0x0,0x0,0x2bdff0fc,0x2bdff0fc,0x0,0x0,0x0,0x1c,0x0,0x8000000,0x2bdff0fc,0x2bdff0fc,0x0,0x2bdff0fc,0x0,0xdc,0xdc,0x0,0xdc,0x0,0x2bdff0fc,0x2bdff0fc,0x2bdff0fc,0xdc,0xc0,0x2bdff03c,0x0,0x0,0x0,0x0,0x1f8000,0x1f8000,0x0,0x0,0x3dff0dd,0x3dff0dc,0x0,0x0,0x8000000,0x102,0x102,0x1ff000,0x7000,0x38000,0x1c0000,0x0,0x3c00000,0x1c,0x18,0x20000020,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x300,0x300,0x0,0x0,0x370,0x370,0x0,0x0,0x0,0x70,0x0,0x0,0x0,0x0,0x0,0x0,0x370,0x0,0x370,0x370,0xaf7fc3f0,0x0,0x0,0x0,0xaf7fc3f0,0xaf7fc3f0,0x0,0x0,0x0,0x70,0x0,0x20000000,0xaf7fc3f0,0xaf7fc3f0,0x0,0xaf7fc3f0,0x0,0x370,0x370,0x0,0x370,0x0,0xaf7fc3f0,0xaf7fc3f0,0xaf7fc3f0,0x370,0x300,0xaf7fc0f0,0x0,0x0,0x0,0x0,0x7e0001,0x7e0001,0x2,0x2,0xf7fc375,0xf7fc370,0x0,0x0,0x20000000,0x408,0x408,0x7fc000,0x1c000,0xe0000,0x700000,0x0,0xf000000,0x70,0x60,0x80000080,};
    }
    private static void jj_la1_3() {
       jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
@@ -2201,8 +2220,8 @@ public class SparqlParser implements SparqlParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[100];
-    for (int i = 0; i < 100; i++) {
+    boolean[] la1tokens = new boolean[102];
+    for (int i = 0; i < 102; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -2227,7 +2246,7 @@ public class SparqlParser implements SparqlParserConstants {
         }
       }
     }
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 102; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

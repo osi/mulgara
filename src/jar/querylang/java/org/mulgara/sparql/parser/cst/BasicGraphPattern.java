@@ -75,7 +75,10 @@ public abstract class BasicGraphPattern implements GroupGraphPattern {
    * @see org.mulgara.sparql.parser.cst.GroupGraphPattern#setFilter(org.mulgara.sparql.parser.cst.Expression)
    */
   public void setFilter(Expression f) {
-    filter = f;
+    if (filter == null) filter = f;
+    else {
+      filter = new AndExpression(filter, f);
+    }
   }
 
   /**

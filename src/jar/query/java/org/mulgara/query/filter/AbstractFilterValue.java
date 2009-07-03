@@ -11,6 +11,7 @@
  */
 package org.mulgara.query.filter;
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.value.Bool;
 import org.mulgara.query.filter.value.ComparableExpression;
@@ -68,6 +69,13 @@ public abstract class AbstractFilterValue extends AbstractContextOwner implement
    */
   public Object getValue() throws QueryException { return resolve().getValue(); }
 
+  /**
+   * @see org.mulgara.query.filter.value.ValueLiteral#getValue()
+   * @return an object, for the result.  Never null.
+   * @throws QueryException if this function does not resolve to a literal
+   */
+  public Node getJRDFValue() throws QueryException {return resolve().getJRDFValue(); }
+
   /** @see org.mulgara.query.filter.value.ValueLiteral#test(org.mulgara.query.filter.Context) */
   public boolean test(Context context) throws QueryException {
     setCurrentContext(context);
@@ -94,6 +102,12 @@ public abstract class AbstractFilterValue extends AbstractContextOwner implement
 
   /** @see org.mulgara.query.filter.RDFTerm#isURI() */
   public boolean isURI() throws QueryException { return isIRI(); }
+
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException {
+    for (RDFTerm o: operands) if (!o.isGrounded()) return false;
+    return true;
+  }
 
   /** @see org.mulgara.query.filter.RDFTerm#sameTerm(org.mulgara.query.filter.RDFTerm) */
   public boolean sameTerm(RDFTerm v) throws QueryException { return resolve().sameTerm(v); }

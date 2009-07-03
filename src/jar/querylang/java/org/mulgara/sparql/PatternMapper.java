@@ -40,7 +40,9 @@ import org.mulgara.sparql.parser.cst.Node;
 import org.mulgara.sparql.parser.cst.RDFLiteral;
 import org.mulgara.sparql.parser.cst.Triple;
 import org.mulgara.sparql.parser.cst.TripleList;
+import org.mulgara.sparql.parser.cst.VarAssign;
 import org.mulgara.parser.MulgaraParserException;
+import org.mulgara.query.ConstraintAssignment;
 import org.mulgara.query.ConstraintConjunction;
 import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.ConstraintElement;
@@ -231,6 +233,7 @@ public class PatternMapper {
     addToMap(new GraphPatternConjunctionToConstraint());
     addToMap(new GraphPatternDisjunctionToConstraint());
     addToMap(new GraphPatternOptionalToConstraint());
+    addToMap(new VarAssignToConstraint());
     addToMap(new TripleToConstraint());
     addToMap(new TripleListToConstraint());
   }
@@ -278,6 +281,17 @@ public class PatternMapper {
       } else {
         return new ConstraintOptionalJoin(mapper.mapPattern(pattern.getMain()), opt);
       }
+    }
+  }
+
+  /** Map the assignment patterns to ConstraintAssignment. */
+  private static class VarAssignToConstraint extends PatternToConstraintMapper<VarAssign> {
+    public Class<VarAssign> getMapType() { return VarAssign.class; }
+    ConstraintExpression typedMap(VarAssign pattern, PatternMapper mapper) throws MulgaraParserException {
+      ConstraintExpression main = mapper.mapPattern(pattern.getMain());
+      org.mulgara.query.Variable v = new org.mulgara.query.Variable(pattern.getVar().getName());
+      FilterMapper filterMapper = new FilterMapper(pattern.getExpression());
+      return new ConstraintAssignment(main, v, filterMapper.getFilter());
     }
   }
 

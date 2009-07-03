@@ -38,6 +38,7 @@ import org.apache.log4j.*;
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.query.filter.Filter;
+import org.mulgara.query.filter.RDFTerm;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.util.StackTrace;
 
@@ -378,9 +379,7 @@ public abstract class TuplesOperations {
       if (optional.getRowCardinality() == Cursor.ZERO) {
         // need to return standard, projected out to the extra variables
         if (optional.getNumberOfVariables() == 0) {
-          logger.warn("Lost variables on empty optional");
-          // TODO: This may be a problem. Throw an exception? A fix may require variables
-          // to be attached to empty tuples
+          // This may be empty due to having zero rows (since the columns are truncated in this case)
           return (Tuples)standard.clone();
         }
       }
@@ -790,6 +789,21 @@ public abstract class TuplesOperations {
   public static Tuples filter(Tuples tuples, Filter filter, QueryEvaluationContext context) {
     // The incoming context needs to be updated for the tuples, so that clones are not inadvertantly used
     return new FilteredTuples(tuples, filter, context);
+  }
+
+
+  /**
+   * Assign a variable to an expression, with variables coming from a provided tuples.
+   * @param tuples The Tuples to provide the variable context.
+   * @param var The variable to be bound.
+   * @param expr The expression to bind the variable to.
+   * @param context The context in which the expression is to be resolved. This can go beyond
+   *        what has already been determined for the tuples parameter.
+   * @return A new Tuples which expands the provided Tuples to include the new variable.
+   * @throws IllegalArgumentException If tuples is <code>null</code>
+   */
+  public static Tuples assign(Tuples tuples, Variable var, RDFTerm expr, QueryEvaluationContext context) {
+    return new LetTuples(tuples, var, expr, context);
   }
 
 

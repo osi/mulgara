@@ -13,6 +13,7 @@ package org.mulgara.query.filter;
 
 import java.io.Serializable;
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 
 
@@ -32,6 +33,13 @@ public interface RDFTerm extends Serializable, ContextOwner {
    * @throws QueryException Resolving the data for this value leads to an error.
    */
   public Object getValue() throws QueryException;
+
+  /**
+   * Returns the data represented by this expression as a JRDF node.
+   * @return The represented data.
+   * @throws QueryException Resolving the data for this value leads to an error.
+   */
+  public Node getJRDFValue() throws QueryException;
 
   /**
    * A value based equality test.
@@ -69,5 +77,13 @@ public interface RDFTerm extends Serializable, ContextOwner {
    * @return <code>true</code> if the terms are the same
    */
   public boolean sameTerm(RDFTerm v) throws QueryException;
-  
+
+  /**
+   * Tests if this term is based on an expression that uses unbound variables
+   * or if it is grounded in a value.
+   * @return <code>true</code> iff the expression is based only on grounded terms,
+   *         or on variables which are themselves based on grounded terms.
+   */
+  public boolean isGrounded() throws QueryException;
+
 }

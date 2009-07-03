@@ -49,6 +49,11 @@ public abstract class BinaryOperation extends AbstractNumericOperation implement
     rhs.setContextOwner(this);
   }
 
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException {
+    return lhs.isGrounded() && rhs.isGrounded();
+  }
+
   // Not using generics in NumberOps as we can't know the types at this stage, but they are handy
   // for defining the classes correctly
   /**

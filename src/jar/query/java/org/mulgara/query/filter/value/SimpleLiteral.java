@@ -11,10 +11,13 @@
  */
 package org.mulgara.query.filter.value;
 
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
 import org.mulgara.query.filter.RDFTerm;
+import org.mulgara.query.rdf.LiteralImpl;
+
 import static org.mulgara.query.rdf.XSD.STRING_URI;
 
 
@@ -79,8 +82,20 @@ public class SimpleLiteral extends AbstractComparableLiteral {
     return STRING_TYPE;
   }
 
+  /**
+   * @see org.mulgara.query.filter.RDFTerm#getJRDFValue()
+   */
+  public Node getJRDFValue() throws QueryException {
+    return lang == EMPTY ? new LiteralImpl(getLexical()) : new LiteralImpl(getLexical(), lang.getLexical());
+  }
+
   /** @see org.mulgara.query.filter.value.ValueLiteral#isSimple() */
   public boolean isSimple() throws QueryException {
+    return true;
+  }
+
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException {
     return true;
   }
 
@@ -164,4 +179,5 @@ public class SimpleLiteral extends AbstractComparableLiteral {
   private int compareLang(ValueLiteral sl) throws QueryException {
     return ((String)lang.getValue()).compareTo((String)sl.getLang().getValue());
   }
+
 }

@@ -216,6 +216,13 @@ class DefaultConstraintHandlers
                                            ((LocalNode)context.localize(constraint.getValueNode())).getValue());
           }
         }),
+        new NVPair(ConstraintAssignment.class, new ConstraintResolutionHandler() {
+          public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
+            ConstraintAssignment assignment = (ConstraintAssignment)constraintExpr;
+            Tuples arg = ConstraintOperations.resolveConstraintExpression(context, modelExpr, assignment.getContextConstraint());
+            return TuplesOperations.assign(arg, assignment.getVariable(), assignment.getExpression(), context);
+          }
+        }),
         new NVPair(ConstraintImpl.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
             ConstraintImpl constraint = (ConstraintImpl)constraintExpr;

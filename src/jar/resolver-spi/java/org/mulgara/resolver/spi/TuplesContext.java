@@ -128,5 +128,20 @@ public class TuplesContext implements Context {
       throw new QueryException("Unable to globalize id <" + gNode + ">", te);
     }
   }
+
+
+  /**
+   * Localize a data object into a gNode.
+   * @param o The object to localize.
+   * @return a gNode representing the node.
+   * @throws QueryException If a localize exception is encountered.
+   */
+  public long localize(Node node) throws QueryException {
+    try {
+      return session.localize(node);
+    } catch (LocalizeException te) {
+      throw new QueryException("Unable to localize: " + node, te);
+    }
+  }
   
 }

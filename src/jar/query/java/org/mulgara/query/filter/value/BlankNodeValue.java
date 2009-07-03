@@ -12,6 +12,7 @@
 package org.mulgara.query.filter.value;
 
 import org.jrdf.graph.BlankNode;
+import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
 import org.mulgara.query.filter.ContextOwner;
@@ -48,6 +49,11 @@ public class BlankNodeValue implements RDFTerm {
   }
 
   /** {@inheritDoc} */
+  public Node getJRDFValue() throws QueryException {
+    return node;
+  }
+
+  /** {@inheritDoc} */
   public boolean equals(RDFTerm v) throws QueryException {
     return v.isBlank() && node.equals(v.getValue());
   }
@@ -68,6 +74,9 @@ public class BlankNodeValue implements RDFTerm {
 
   /** {@inheritDoc} */
   public boolean isURI() { return false; }
+
+  /** {@inheritDoc} */
+  public boolean isGrounded() throws QueryException { return true; }
 
   /** This value does not need a context */
   public ContextOwner getContextOwner() {  return null; }

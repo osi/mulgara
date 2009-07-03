@@ -105,6 +105,13 @@ public class TestContext implements Context {
     return n != Null.NULL ? n : null;
   }
 
+  /** @see org.mulgara.query.filter.Context#localize(org.jrdf.graph.Node) */
+  public long localize(Node node) throws QueryException {
+    Long l = localizer.get(node);
+    if (l == null) throw new QueryException("Unable to localize id <" + node + ">");
+    return l.longValue();
+  }
+
   /** @see org.mulgara.query.filter.Context#isBound(int) */
   public boolean isBound(int columnNumber) throws QueryException {
     if (columnNumber >= columnNames.size()) throw new QueryException("Unexpected column: " + columnNumber);
@@ -152,4 +159,5 @@ public class TestContext implements Context {
     public boolean isLiteral() { return false; }
     public boolean isURIReference() { return false; }
   }
+
 }

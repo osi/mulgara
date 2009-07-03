@@ -138,6 +138,7 @@ TOKEN [IGNORE_CASE] :
 |   < TRUE : "true" >
 |   < SAME_TERM : "sameTERM" >
 |   < FALSE : "false" >
+|   < LET : "let" >
 }
 
 
@@ -335,8 +336,12 @@ GraphPatternConjunction TriplesBlock() : { TripleList l; GraphPatternConjunction
 /* [22]    GraphPatternNotTriples    ::=    OptionalGraphPattern | GroupOrUnionGraphPattern | GraphGraphPattern */
 GroupGraphPattern GraphPatternNotTriples(GroupGraphPattern in) : { GroupGraphPattern g; }
 {
-    ( g=OptionalGraphPattern(in) | g=GroupOrUnionGraphPattern(in) | g=GraphGraphPattern(in) )
-    { return g; }
+    (
+        g=OptionalGraphPattern(in)
+      | g=GroupOrUnionGraphPattern(in)
+      | g=GraphGraphPattern(in)
+      | g=Assignment(in)
+    ) { return g; }
 }
 
 /* [23]    OptionalGraphPattern    ::=    'OPTIONAL' GroupGraphPattern */
@@ -353,6 +358,16 @@ GroupGraphPattern GraphGraphPattern(GroupGraphPattern in) : { Expression e; Grou
       return conjoin(in, g);
     }
 }
+
+/* SPARQL Extension */
+/* Assignment  ::=  'LET (' Var ':=' Expression ')' */
+GroupGraphPattern Assignment(GroupGraphPattern in) : { Variable v ; Expression expr ; }
+{
+    <LET> "(" v = Var() ":=" expr = Expression() ")"
+    { return new VarAssign(in, v, expr) ; }
+}
+
+
 
 /* [25]    GroupOrUnionGraphPattern    ::=    GroupGraphPattern ( 'UNION' GroupGraphPattern )* */
 GroupGraphPattern GroupOrUnionGraphPattern(GroupGraphPattern in) : { GroupGraphPattern g1, g2; GraphPatternDisjunction d = null; }
