@@ -177,8 +177,36 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
       s.append("\"type\": \"literal\", ");
       if (literal.getLanguage() != null) s.append("\"xml:lang\": \"").append(literal.getLanguage()).append("\", ");
     }
-    s.append("\"value\": \"").append(literal.getLexicalForm()).append("\"");
+    s.append("\"value\": \"").append(jsonEscape(literal.getLexicalForm())).append("\"");
   }
+
+
+  /**
+   * Escapes strings to be JSON compatible. JSON only expects 16 bit characters.
+   * @param in The string to be escaped.
+   * @return The escaped string.
+   */
+  protected String jsonEscape(String in) {
+    StringBuffer out = new StringBuffer();
+    for (int i = 0; i < in.length(); i++) {
+      char c = in.charAt(i);
+      if (c == '/') out.append("\\/");
+      else if (c == '\\') out.append("\\\\");
+      else if (c == '"') out.append("\\\"");
+      else  if (Character.isISOControl(c)) {
+        if (c == '\b') out.append("\\b");
+        else if (c == '\t') out.append("\\t");
+        else if (c == '\n') out.append("\\n");
+        else if (c == '\f') out.append("\\f");
+        else if (c == '\r') out.append("\\r");
+        else out.append("\\u").append(String.format("%04x", (int)c));
+      } else {
+        out.append(c);
+      }
+    }
+    return out.toString();
+  }
+
 
   /**
    * Adds a comma if needed at this point. Commas are usually needed.
