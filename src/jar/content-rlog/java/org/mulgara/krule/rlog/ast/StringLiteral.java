@@ -17,8 +17,10 @@
 package org.mulgara.krule.rlog.ast;
 
 import org.mulgara.krule.rlog.ParseContext;
+import org.mulgara.krule.rlog.parser.URIParseException;
 import org.mulgara.krule.rlog.rdf.Literal;
 import org.mulgara.krule.rlog.rdf.RDFNode;
+import org.mulgara.krule.rlog.rdf.URIReference;
 
 /**
  * A quoted string in the AST.
@@ -32,6 +34,12 @@ public class StringLiteral extends Node implements PredicateParam {
   /** The string value. */
   public final String value;
 
+  /** The language code for the string. */
+  public String lang = null;
+
+  /** The datatype for the literal. */
+  public PredicateLiteral type = null;
+
   /**
    * A new string literal.
    * @param value The contents of the quoted string.
@@ -41,6 +49,14 @@ public class StringLiteral extends Node implements PredicateParam {
   public StringLiteral(String value, ParseContext context) {
     super(context);
     this.value = value;
+  }
+
+  public void setLang(String lang) {
+    this.lang = lang;
+  }
+
+  public void setType(PredicateLiteral type) {
+    this.type = type;
   }
 
   // inheritdoc
@@ -55,7 +71,11 @@ public class StringLiteral extends Node implements PredicateParam {
 
   //inheritdoc
   public boolean equals(Object o) {
-    return o instanceof StringLiteral && value.equals(((StringLiteral)o).value);
+    if (o instanceof StringLiteral) {
+      StringLiteral ol = (StringLiteral)o;
+      return value.equals(ol.value) && nullEq(lang, ol.lang) && nullEq(type, ol.type);
+    }
+    return false;
   }
 
   // inheritdoc
@@ -64,7 +84,9 @@ public class StringLiteral extends Node implements PredicateParam {
   }
 
   /** {@inheritDoc} */
-  public RDFNode getRDFNode() {
+  public RDFNode getRDFNode() throws URIParseException {
+    if (lang != null) return new Literal(value, lang);
+    if (type != null) return new Literal(value, (URIReference)type.getRDFNode());
     return new Literal(value.toString());
   }
 
@@ -86,5 +108,14 @@ public class StringLiteral extends Node implements PredicateParam {
     return STRING_LITERAL_ID;
   }
 
+  /**
+   * Convenience method for equality testing on objects that might be null.
+   * @param a The first object to compare.
+   * @param b The second object to compare.
+   * @return <code>true</code> if both objects are null, or equal by value.
+   */
+  static final boolean nullEq(Object a, Object b) {
+    return (a == null) ? b == null : a.equals(b);
+  }
 }
 
