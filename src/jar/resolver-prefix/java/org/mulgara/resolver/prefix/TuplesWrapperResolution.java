@@ -316,11 +316,21 @@ class TuplesWrapperResolution implements Resolution {
    * This method returns an upper bound on the number of rows which this instance contains.
    *
    * @return The upper bound of the number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
    */
   public long getRowUpperBound() throws TuplesException {
     return tuples.getRowUpperBound();
   }
+
+ /**
+  * This method returns the expected count on the number of rows which this instance contains.
+  *
+  * @return The expected value of the number of rows that this instance contains.
+  * @throws TuplesException Error accessing the underlying data.
+  */
+ public long getRowExpectedCount() throws TuplesException {
+   return tuples.getRowExpectedCount();
+ }
 
   /**
    * Returns the number of variables (columns).

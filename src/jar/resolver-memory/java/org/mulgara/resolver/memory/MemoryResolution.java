@@ -209,6 +209,10 @@ public class MemoryResolution extends AbstractTuples implements Resolution {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowCount();
+  }
+
   public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }

@@ -135,8 +135,8 @@ public final class HybridTuples implements Tuples {
 
     // Create a lookup up list of unique variables to their position in an
     // index.
-    HashSet uniqueVars = new HashSet();
-    List uniqueVarIndex = new ArrayList();
+    HashSet<Variable> uniqueVars = new HashSet<Variable>();
+    List<Variable> uniqueVarIndex = new ArrayList<Variable>();
     varLookupList = new int[vars.length];
     int varIndex = -1;
     for (int index = 0; index < vars.length; index++) {
@@ -299,7 +299,7 @@ public final class HybridTuples implements Tuples {
   }
 
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.singletonList(tuples);
   }
 
@@ -395,14 +395,17 @@ public final class HybridTuples implements Tuples {
   }
 
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     return getRowCount();
   }
 
 
-  public int getRowCardinality() throws TuplesException
-  {
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowCount();
+  }
+
+
+  public int getRowCardinality() throws TuplesException {
     switch ((int)getRowCount()) {
       case 0:
         return Cursor.ZERO;
@@ -565,7 +568,7 @@ public final class HybridTuples implements Tuples {
     } else {
       initialiseBlockFile();
 
-      ArrayList tmpHeap = new ArrayList();
+      ArrayList<BlockCacheLine> tmpHeap = new ArrayList<BlockCacheLine>();
 
       tmpHeap.add(new BlockCacheLine(blockFile, BLOCK_SIZE, buffer, size));
       do {
@@ -575,7 +578,7 @@ public final class HybridTuples implements Tuples {
         }
       } while (size == buffer.getLength());
 
-      this.heapCache = (CacheLine[])tmpHeap.toArray(new CacheLine[0]);
+      this.heapCache = tmpHeap.toArray(new CacheLine[0]);
     }
 
     return this.heapCache.length;
@@ -640,9 +643,10 @@ public final class HybridTuples implements Tuples {
   /*
    * Used for debugging cache.
    */
+  @SuppressWarnings("unused")
   private void checkHeapIds(String marker) throws TuplesException {
-    Set lines = new HashSet();
-    Set dups = new HashSet();
+    Set<CacheLine> lines = new HashSet<CacheLine>();
+    Set<Integer> dups = new HashSet<Integer>();
 
     for (int i = 0; i < heapCache.length; i++) {
       if (lines.contains(heapCache[i])) {
@@ -689,6 +693,7 @@ public final class HybridTuples implements Tuples {
     }
   }
 
+  @SuppressWarnings("unused")
   private void dumpCacheStatus(String marker) {
     StringBuffer buff = new StringBuffer(marker + ": CacheStatus: [");
     for (int i = 0; i < heapCache.length; i++) {
@@ -698,6 +703,7 @@ public final class HybridTuples implements Tuples {
     logger.warn(buff.toString());
   }
 
+  @SuppressWarnings("unused")
   private void debugHeapStatus() {
     if (heapCache[0].isEmpty()) {
       logger.debug("Head is still empty after restoreHeap");
@@ -846,7 +852,7 @@ public final class HybridTuples implements Tuples {
   /**
    * Copied from AbstractTuples
    */
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
     return null;
   }
 }
