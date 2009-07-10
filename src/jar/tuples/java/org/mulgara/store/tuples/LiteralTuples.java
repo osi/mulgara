@@ -175,6 +175,10 @@ public class LiteralTuples extends AbstractTuples {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowCount();
+  }
+
   public boolean isColumnEverUnbound(int column) throws TuplesException {
     return columnContainsUnbound[column];
   }

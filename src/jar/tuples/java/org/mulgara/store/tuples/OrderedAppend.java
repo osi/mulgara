@@ -201,6 +201,17 @@ public class OrderedAppend extends AbstractTuples {
     return bound;
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    long bound = 0;
+
+    for (int i = 0; i < operands.length; i++) {
+      bound += operands[i].getRowExpectedCount();
+      if (bound < 0) return Long.MAX_VALUE;
+    }
+
+    return bound;
+  }
+
   /**
    * A column is unbound if it's unbound in any of the operands.
    */

@@ -133,6 +133,12 @@ public class LetTuples extends AbstractTuples implements ContextOwner {
 
 
   /** {@inheritDoc} */
+  public long getRowExpectedCount() throws TuplesException {
+    return innerTuples.getRowExpectedCount();
+  }
+
+
+  /** {@inheritDoc} */
   public boolean isColumnEverUnbound(int column) throws TuplesException {
     return column == lastCol || innerTuples.isColumnEverUnbound(column);
   }

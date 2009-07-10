@@ -163,13 +163,15 @@ public class WrappedTuples implements Tuples {
     return tuples.getRowCount();
   }
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     return tuples.getRowUpperBound();
   }
 
-  public int getRowCardinality() throws TuplesException
-  {
+  public long getRowExpectedCount() throws TuplesException {
+    return tuples.getRowExpectedCount();
+  }
+
+  public int getRowCardinality() throws TuplesException {
     return tuples.getRowCardinality();
   }
 
@@ -180,7 +182,6 @@ public class WrappedTuples implements Tuples {
    * @return The Variables value
    */
   public Variable[] getVariables() {
-
     return tuples.getVariables();
   }
 
@@ -190,7 +191,6 @@ public class WrappedTuples implements Tuples {
    * @return The NumberOfVariables value
    */
   public int getNumberOfVariables() {
-
     return tuples.getNumberOfVariables();
   }
 
@@ -198,8 +198,7 @@ public class WrappedTuples implements Tuples {
    * Delegates to the {@link Tuples#isColumnEverUnbound} method of the wrapped
    * instance.
    */
-  public boolean isColumnEverUnbound(int column) throws TuplesException
-  {
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
     return tuples.isColumnEverUnbound(column);
   }
 

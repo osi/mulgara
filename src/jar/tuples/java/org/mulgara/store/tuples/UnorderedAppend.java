@@ -61,9 +61,8 @@ import org.mulgara.query.TuplesException;
  */
 class UnorderedAppend extends AbstractTuples {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(UnorderedAppend.class);
 
   /**
@@ -164,8 +163,7 @@ class UnorderedAppend extends AbstractTuples {
 
     for (int i = 0; i < operands.length; i++) {
       rowCount += operands[i].getRowCount();
-      if (rowCount < 0)
-        return Long.MAX_VALUE;
+      if (rowCount < 0) return Long.MAX_VALUE;
     }
 
     return rowCount;
@@ -176,15 +174,24 @@ class UnorderedAppend extends AbstractTuples {
 
     for (int i = 0; i < operands.length; i++) {
       bound += operands[i].getRowUpperBound();
-      if (bound < 0)
-        return Long.MAX_VALUE;
+      if (bound < 0) return Long.MAX_VALUE;
     }
 
     return bound;
   }
 
-  public boolean isColumnEverUnbound(int column) throws TuplesException
-  {
+  public long getRowExpectedCount() throws TuplesException {
+    long bound = 0;
+
+    for (int i = 0; i < operands.length; i++) {
+      bound += operands[i].getRowExpectedCount();
+      if (bound < 0) return Long.MAX_VALUE;
+    }
+
+    return bound;
+  }
+
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
     assert(operand >= 0) || (operand < operands.length):"No column " +
         column;
 
@@ -219,7 +226,7 @@ class UnorderedAppend extends AbstractTuples {
   }
 
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Arrays.asList(operands);
   }
 

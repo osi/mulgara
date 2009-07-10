@@ -90,17 +90,14 @@ class OrderedProjection extends AbstractTuples {
    *
    * @param operand the tuples to project
    * @param variables the columns to retain
-       * @throws IllegalArgumentException if <var>operand</var> is <code>null</code>
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws IllegalArgumentException if <var>operand</var> is <code>null</code>
+   * @throws TuplesException Error while accessing the operand data.
    */
-  OrderedProjection(Tuples operand, Collection variables)
+  OrderedProjection(Tuples operand, Collection<Variable> variables)
       throws TuplesException {
 
     // Validate "operand" parameter
-    if (operand == null) {
-
-      throw new IllegalArgumentException("Null \"operand\" parameter");
-    }
+    if (operand == null) throw new IllegalArgumentException("Null \"operand\" parameter");
 
     // Validate "variables" parameter
     if (variables == null) {
@@ -110,28 +107,24 @@ class OrderedProjection extends AbstractTuples {
 
     // Determine which columns haven't been projected away
     Variable[] operandVariables = operand.getVariables();
-    List columnMappingList = new ArrayList(operandVariables.length);
-    List variableList = new ArrayList(operandVariables.length);
+    List<Integer> columnMappingList = new ArrayList<Integer>(operandVariables.length);
+    List<Variable> variableList = new ArrayList<Variable>(operandVariables.length);
 
     for (int i = 0; i < operandVariables.length; i++) {
-
       if (variables.contains(operandVariables[i])) {
-
         variableList.add(operandVariables[i]);
         columnMappingList.add(new Integer(i));
       }
     }
 
     // Initialize fields
-    this.operand = (Tuples) operand.clone();
-    this.variables =
-        (Variable[]) variableList.toArray(new Variable[variableList.size()]);
+    this.operand = (Tuples)operand.clone();
+    this.variables = variableList.toArray(new Variable[variableList.size()]);
 
     // Create column mapping
     columnMapping = new int[columnMappingList.size()];
 
     for (int i = 0; i < columnMapping.length; i++) {
-
       columnMapping[i] = ( (Integer) columnMappingList.get(i)).intValue();
     }
 
@@ -190,7 +183,7 @@ class OrderedProjection extends AbstractTuples {
    * Gets the RowCount attribute of the OrderedProjection object
    *
    * @return The RowCount value
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error on underlying data
    */
   public long getRowCount() throws TuplesException {
     return operand.getRowCount();
@@ -198,6 +191,10 @@ class OrderedProjection extends AbstractTuples {
 
   public long getRowUpperBound() throws TuplesException {
     return operand.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    return operand.getRowExpectedCount();
   }
 
   /**
@@ -241,7 +238,7 @@ class OrderedProjection extends AbstractTuples {
   }
 
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.singletonList(operand);
   }
 

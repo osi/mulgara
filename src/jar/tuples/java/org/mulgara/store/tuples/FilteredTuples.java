@@ -94,6 +94,12 @@ public class FilteredTuples extends AbstractTuples implements ContextOwner {
 
 
   /** {@inheritDoc} */
+  public long getRowExpectedCount() throws TuplesException {
+    return (long)(unfiltered.getRowExpectedCount() * getMatchRatio());
+  }
+
+
+  /** {@inheritDoc} */
   public boolean isColumnEverUnbound(int column) throws TuplesException {
     return unfiltered.isColumnEverUnbound(column);
   }
@@ -248,4 +254,12 @@ public class FilteredTuples extends AbstractTuples implements ContextOwner {
     contextListeners.add(l);
   }
 
+  /**
+   * The expected ratio for matching on the filter. This value should update over time.
+   * TODO: calculate this value, update it over time, and record it against the filter pattern.
+   * @return A value between 1.0 (100% match) and 0.0 (no match).
+   */
+  private double getMatchRatio() {
+    return 0.5;
+  }
 }

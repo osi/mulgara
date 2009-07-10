@@ -107,11 +107,12 @@ public abstract class SimpleTuplesFormat {
         buffer.append("(");
         buffer.append(cloned.getRowCount());
         buffer.append(" rows)" + eol);
-      }
-      else {
+      } else {
         buffer.append("(unevaluated, ");
         buffer.append(cloned.getRowUpperBound());
-        buffer.append(" rows max)" + eol);
+        buffer.append(" rows max, ");
+        buffer.append(cloned.getRowExpectedCount());
+        buffer.append(" rows expected)").append(eol);
       }
 
       // Display rows

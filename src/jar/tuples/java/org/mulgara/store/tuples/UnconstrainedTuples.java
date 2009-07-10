@@ -27,8 +27,8 @@
 
 package org.mulgara.store.tuples;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 // Locally written packages
 import org.mulgara.query.TuplesException;
@@ -134,6 +134,10 @@ public class UnconstrainedTuples extends AbstractTuples implements StoreTuples {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() {
+    return getRowCount();
+  }
+
   /**
    * Unconstrained has no columns that can be unbound.
    *
@@ -157,8 +161,8 @@ public class UnconstrainedTuples extends AbstractTuples implements StoreTuples {
     return true;
   }
 
-  public List getOperands() {
-    return new ArrayList(0);
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
   /**

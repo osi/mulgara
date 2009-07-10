@@ -59,9 +59,8 @@ import org.mulgara.store.statement.StatementStore;
  */
 public class OrderedAppendUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private Logger logger = Logger.getLogger(OrderedAppendUnitTest.class.getName());
 
   /**
@@ -243,7 +242,6 @@ public class OrderedAppendUnitTest extends TestCase {
 
     Variable subject = StatementStore.VARIABLES[0];
     Variable predicate = StatementStore.VARIABLES[1];
-    Variable object = StatementStore.VARIABLES[2];
 
     Tuples lhs = new TestTuples(subject, 1).and(predicate, 8).or(subject, 3);
 
@@ -271,7 +269,7 @@ public class OrderedAppendUnitTest extends TestCase {
 
     newTuples.renameVariables(newConstraint);
 
-    assertEquals(eol + "{$x      $y      (unevaluated, 4 rows max)" + eol +
+    assertEquals(eol + "{$x      $y      (unevaluated, 4 rows max, 4 rows expected)" + eol +
         "[000001  000008  ]" + eol +
         "[000002  000006  ]" + eol +
         "[000003  000000  ]" + eol +

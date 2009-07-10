@@ -1,13 +1,16 @@
 /*
- * The contents of this file are subject to the Open Software License
- * Version 3.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.opensource.org/licenses/osl-3.0.txt
+ * Copyright 2008 Fedora Commons
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
- * the License for the specific language governing rights and limitations
- * under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.mulgara.store.tuples;
@@ -37,10 +40,9 @@ import org.mulgara.store.tuples.AbstractTuples;
  * ensuring the sort order of the subtrahend; that responsibility falls to
  * {@link TuplesOperations#subtract}.
  *
- * @created 2005-03
- * @author <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
- * @copyright &copy; 2008 <A href="http://www.topazproject.org/">The Topaz Project</A>
- * @licence <a href="{@docRoot}/../../LICENCE">Open Software License v3.0</a>
+ * @created March, 2005
+ * @author Paul Gearon
+ * @licence <a href="{@docRoot}/../LICENCE.txt">Apache License, Version 2.0</a>
  */
 public class Difference extends AbstractTuples {
 
@@ -67,7 +69,6 @@ public class Difference extends AbstractTuples {
    * @throws IllegalArgumentException If the <var>minuend</var> and  <var>subtrahend</var>
    *         contain no variables in common.
    */
-  @SuppressWarnings("unchecked")
   Difference(Tuples minuend, Tuples subtrahend) throws TuplesException, IllegalArgumentException {
     // store the operands
     this.minuend = (Tuples)minuend.clone();
@@ -126,6 +127,29 @@ public class Difference extends AbstractTuples {
    */
   public long getRowUpperBound() throws TuplesException {
     return minuend.getRowUpperBound();
+  }
+
+  /**
+   * This is a factor that we can expect the subtrahend to match on the minuend.
+   * 1.0 indicates that the subtrahend is a subset of the minuend. 0.0 indicates
+   * there is no match at all.
+   * TODO: update this value statistically, rather than using a constant value.
+   */
+  private static final double MATCH_RATIO = 0.25; 
+
+  /**
+   * @return {@inheritDoc}  This is estimated as the size of the minuend,
+   * though it will probably be smaller.
+   * @throws TuplesException {@inheritDoc}
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    long minCount = minuend.getRowExpectedCount();
+    long subCount = subtrahend.getRowExpectedCount();
+    long guess = minCount - (long)(MATCH_RATIO * subCount);
+    // if the guess is large enough (by some fudge factor), then we'll use it
+    if (guess > minCount / 2) return guess;
+
+    return (long)(minCount * MATCH_RATIO);
   }
 
 

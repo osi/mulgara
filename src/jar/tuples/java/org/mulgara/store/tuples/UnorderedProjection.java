@@ -94,7 +94,7 @@ class UnorderedProjection extends AbstractTuples {
    * @throws IllegalArgumentException if <var>operand</var> is <code>null</code>
    * @throws TuplesException EXCEPTION TO DO
    */
-  UnorderedProjection(Tuples operand, List columnList) throws TuplesException {
+  UnorderedProjection(Tuples operand, List<Variable> columnList) throws TuplesException {
 
     // Validate "operand" parameter
     if (operand == null) {
@@ -111,7 +111,7 @@ class UnorderedProjection extends AbstractTuples {
     }
 
     // Initialize fields
-    this.operand = (Tuples) operand.clone();
+    this.operand = (Tuples)operand.clone();
     setVariables(columnList);
 
     // Create column mapping
@@ -181,15 +181,18 @@ class UnorderedProjection extends AbstractTuples {
    * Gets the RowCount attribute of the UnorderedProjection object
    *
    * @return The RowCount value
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing underlying data
    */
   public long getRowCount() throws TuplesException {
-
     return operand.getRowCount();
   }
 
   public long getRowUpperBound() throws TuplesException {
     return operand.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    return operand.getRowExpectedCount();
   }
 
   /**
@@ -233,7 +236,7 @@ class UnorderedProjection extends AbstractTuples {
         (getVariables().length > 0 && operand.isUnconstrained()));
   }
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.singletonList(operand);
   }
 

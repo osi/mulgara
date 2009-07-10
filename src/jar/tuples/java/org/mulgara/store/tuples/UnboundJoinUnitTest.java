@@ -32,7 +32,6 @@ import junit.framework.*; // JUnit
 import org.apache.log4j.Logger; // Log4J
 
 // Locally written packages
-import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
 
 /**
@@ -171,6 +170,7 @@ public class UnboundJoinUnitTest extends TestCase {
 
     Tuples joinedTuples = new UnboundJoin(new Tuples[] {});
     assertTrue(joinedTuples.isUnconstrained());
+    assertEquals(0, ((UnboundJoin)joinedTuples).getNrGroups());
   }
 
   /**
@@ -183,12 +183,11 @@ public class UnboundJoinUnitTest extends TestCase {
 
     Tuples operand =
         TuplesFactory.newInstance().newTuples(new TestTuples(x, 1).and(y, 2)
-        .or(x, 3).and(y,
-        4));
+        .or(x, 3).and(y, 4));
     assert operand != null;
 
-    Tuples joinedTuples = new UnboundJoin(new Tuples[] {
-        operand});
+    Tuples joinedTuples = new UnboundJoin(new Tuples[] {operand});
+    assertEquals(1, ((UnboundJoin)joinedTuples).getNrGroups());
 
     joinedTuples.beforeFirst();
 
@@ -210,16 +209,14 @@ public class UnboundJoinUnitTest extends TestCase {
 
     Tuples lhs =
         TuplesFactory.newInstance().newTuples(new TestTuples(x, 1).and(y, 2)
-        .or(x, 3).and(y,
-        4));
+        .or(x, 3).and(y, 4));
 
     Tuples rhs =
         TuplesFactory.newInstance().newTuples(new TestTuples(z, 5).and(w, 6)
-        .or(z, 7).and(w,
-        8));
+        .or(z, 7).and(w, 8));
 
-    Tuples joined = new UnboundJoin(new Tuples[] {
-        lhs, rhs});
+    Tuples joined = new UnboundJoin(new Tuples[] {lhs, rhs});
+    assertEquals(2, ((UnboundJoin)joined).getNrGroups());
 
     Variable[] variables = joined.getVariables();
 
@@ -249,21 +246,18 @@ public class UnboundJoinUnitTest extends TestCase {
 
     Tuples lhs =
         TuplesFactory.newInstance().newTuples(new TestTuples(x, 1).and(y, 2)
-        .or(x, 3).and(y,
-        4));
+        .or(x, 3).and(y, 4));
 
     Tuples mhs =
         TuplesFactory.newInstance().newTuples(new TestTuples(z, 5).and(w, 6)
-        .or(z, 7).and(w,
-        8));
+        .or(z, 7).and(w, 8));
 
     Tuples rhs =
         TuplesFactory.newInstance().newTuples(new TestTuples(u, 9).and(v, 10)
-        .or(u, 11).and(v,
-        12));
+        .or(u, 11).and(v, 12));
 
-    Tuples joined = new UnboundJoin(new Tuples[] {
-        lhs, mhs, rhs});
+    Tuples joined = new UnboundJoin(new Tuples[] {lhs, mhs, rhs});
+    assertEquals(3, ((UnboundJoin)joined).getNrGroups());
 
     Variable[] variables = joined.getVariables();
     assertEquals(6, variables.length);
@@ -317,11 +311,11 @@ public class UnboundJoinUnitTest extends TestCase {
     rhs.appendTuple(new long[] {4, 6});
 
     TuplesFactory.newInstance().newTuples(new TestTuples(y, 2).and(z, 5)
-        .or(y, 4).and(z,
-        6));
+        .or(y, 4).and(z, 6));
 
-    Tuples actual = TuplesOperations.sort(new UnboundJoin(new Tuples[] {lhs,
-        rhs}));
+    UnboundJoin joined = new UnboundJoin(new Tuples[] {lhs, rhs});
+    assertEquals(1, joined.getNrGroups());
+    Tuples actual = TuplesOperations.sort(joined);
 
     // First, try a straightforward iteration through all rows
     actual.beforeFirst();
@@ -606,7 +600,9 @@ public class UnboundJoinUnitTest extends TestCase {
     LiteralTuples lhs = LiteralTuples.create(lvars, lhsValues);
     LiteralTuples rhs = LiteralTuples.create(rvars, rhsValues);
 
-    Tuples actual = TuplesOperations.sort(new UnboundJoin(new Tuples[] {lhs, rhs}));
+    UnboundJoin joined = new UnboundJoin(new Tuples[] {lhs, rhs});
+    assertEquals(1, joined.getNrGroups());
+    Tuples actual = TuplesOperations.sort(joined);
 
     logger.warn("testPartialMGR36 result = " + actual);
 

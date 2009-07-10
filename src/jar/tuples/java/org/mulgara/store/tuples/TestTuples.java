@@ -69,22 +69,22 @@ public class TestTuples extends AbstractTuples {
   /**
    * Description of the Field
    */
-  private final List termList;
+  private final List<Map<Variable,Long>> termList;
 
   /**
    * Description of the Field
    */
-  private final List variableList;
+  private final List<Variable> variableList;
 
   /**
    * Description of the Field
    */
-  private Map rowMap = null;
+  private Map<Variable,Long> rowMap = null;
 
   /**
    * Description of the Field
    */
-  private Map lastMap = new HashMap();
+  private Map<Variable,Long> lastMap = new HashMap<Variable,Long>();
 
   /**
    * The number of columns in common for sort order.
@@ -98,8 +98,8 @@ public class TestTuples extends AbstractTuples {
    */
   public TestTuples() {
 
-    termList = new ArrayList();
-    variableList = new ArrayList();
+    termList = new ArrayList<Map<Variable,Long>>();
+    variableList = new ArrayList<Variable>();
   }
 
   /**
@@ -196,11 +196,11 @@ public class TestTuples extends AbstractTuples {
     return true;
   }
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     if (tuples != null) {
       return Collections.singletonList(tuples);
     } else {
-      return new ArrayList(0);
+      return Collections.emptyList();
     }
   }
 
@@ -234,19 +234,20 @@ public class TestTuples extends AbstractTuples {
    * @return The RowCount value
    */
   public long getRowCount() {
-
     return termList.size();
   }
 
   public long getRowUpperBound() {
+    return getRowCount();
+  }
 
+  public long getRowExpectedCount() {
     return getRowCount();
   }
 
   /**
   * This method isn't really implemented; it just assumes all columns might be
   * unbound.
-  *
   * @return <code>true</code>
   */
   public boolean isColumnEverUnbound(int column) throws TuplesException {
@@ -393,7 +394,7 @@ public class TestTuples extends AbstractTuples {
    */
   private TestTuples or() {
 
-    lastMap = new HashMap();
+    lastMap = new HashMap<Variable,Long>();
     termList.add(lastMap);
 
     return this;
@@ -410,14 +411,11 @@ public class TestTuples extends AbstractTuples {
     assert row <= termList.size();
 
     if (row == termList.size()) {
-
       rowMap = null;
       return false;
-    }
-    else {
-
+    } else {
       assert row < termList.size();
-      rowMap = (Map) termList.get(row);
+      rowMap = (Map<Variable,Long>) termList.get(row);
       row++;
 
       return true;

@@ -665,9 +665,9 @@ public abstract class TuplesOperations {
       double weightedRowCount = 0.0;
       for (int weight = 0; weight < numLeftBindings + 1; weight++) {
         double term = vars.length > 0
-                        ? Math.pow(tuples.getRowUpperBound(), (double)(vars.length - (numLeftBindings - weight)) / vars.length)
-                        : tuples.getRowUpperBound();
-        weightedRowCount += term / Math.pow(100.0, weight);
+                        ? Math.pow(tuples.getRowExpectedCount(), (double)(vars.length - (numLeftBindings - weight)) / vars.length)
+                        : tuples.getRowExpectedCount();
+        weightedRowCount += term / Math.pow(10.0, weight);
       }
 
       if (logger.isDebugEnabled()) {
@@ -1018,7 +1018,9 @@ public abstract class TuplesOperations {
     else buff.append("=");
 
     try {
-      buff.append(tuples.getRowUpperBound()).append("]");
+      buff.append(tuples.getRowUpperBound());
+      buff.append(" (~").append(tuples.getRowExpectedCount());
+      buff.append(")]");
     } catch (TuplesException et) {
       buff.append(et.toString()).append("]");
     }

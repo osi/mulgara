@@ -295,6 +295,8 @@ public abstract class AbstractTuples implements Tuples {
 
   public abstract long getRowUpperBound() throws TuplesException;
 
+  public abstract long getRowExpectedCount() throws TuplesException;
+
   public int getRowCardinality() throws TuplesException {
     if (rowCardinality != -1) return rowCardinality;
 

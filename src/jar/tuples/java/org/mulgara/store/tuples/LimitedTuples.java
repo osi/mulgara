@@ -55,9 +55,8 @@ import org.mulgara.query.TuplesException;
  */
 class LimitedTuples extends WrappedTuples {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(LimitedTuples.class);
 
   /**
@@ -103,11 +102,20 @@ class LimitedTuples extends WrappedTuples {
    * Gets the RowCount attribute of the WrappedTuples object
    *
    * @return The RowCount value
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing underlying tuples.
    */
   public long getRowCount() throws TuplesException {
-
     long rowCount = tuples.getRowCount();
+    return (rowCount < limit) ? rowCount : limit;
+  }
+
+  public long getRowUpperBound() throws TuplesException {
+    long rowCount = tuples.getRowUpperBound();
+    return (rowCount < limit) ? rowCount : limit;
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    long rowCount = tuples.getRowExpectedCount();
     return (rowCount < limit) ? rowCount : limit;
   }
 

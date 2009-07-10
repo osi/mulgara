@@ -181,6 +181,13 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
   }
 
 
+  /** {@inheritDoc} */
+  public long getRowExpectedCount() throws TuplesException {
+    // TODO: work out a better expected value. Maybe add about 10%
+    return lhs.getRowExpectedCount();
+  }
+
+
   /** {@inheritDoc}  Relies on the lhs of the optional. */
   public boolean isColumnEverUnbound(int column) throws TuplesException {
     int nrLeftVars = lhs.getNumberOfVariables();
@@ -707,6 +714,11 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
     /** @see org.mulgara.query.Cursor#getRowUpperBound() */
     public long getRowUpperBound() throws TuplesException {
       return wrapped.getRowUpperBound();
+    }
+    
+    /** @see org.mulgara.query.Cursor#getRowExpectedCount() */
+    public long getRowExpectedCount() throws TuplesException {
+      return wrapped.getRowExpectedCount();
     }
     
   }

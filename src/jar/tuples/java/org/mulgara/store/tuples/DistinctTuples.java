@@ -143,12 +143,15 @@ class DistinctTuples extends AbstractTuples {
    * @return The Comparator value
    */
   public RowComparator getComparator() {
-
     return operand.getComparator();
   }
 
   public long getRowUpperBound() throws TuplesException {
     return operand.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    return operand.getRowExpectedCount();
   }
 
   /**
@@ -187,7 +190,7 @@ class DistinctTuples extends AbstractTuples {
     return operand.isUnconstrained();
   }
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.singletonList(operand);
   }
 

@@ -27,7 +27,7 @@
 
 package org.mulgara.store.tuples;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // Locally written packages
@@ -131,6 +131,10 @@ public class EmptyTuples extends AbstractTuples implements StoreTuples {
     return 0;
   }
 
+  public long getRowExpectedCount() {
+    return 0;
+  }
+
   /**
    * Empty has no rows that can be unbound.
    *
@@ -155,8 +159,8 @@ public class EmptyTuples extends AbstractTuples implements StoreTuples {
     return true;
   }
 
-  public List getOperands() {
-    return new ArrayList(0);
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
   /**

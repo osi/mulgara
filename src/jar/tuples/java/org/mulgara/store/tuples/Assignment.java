@@ -27,8 +27,8 @@
 
 package org.mulgara.store.tuples;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 // Third party packages
 import org.apache.log4j.*;
@@ -61,11 +61,9 @@ import org.mulgara.query.Variable;
  */
 class Assignment extends AbstractTuples {
 
-  /**
-   * Logger.
-   */
-  private static Logger logger =
-      Logger.getLogger(Assignment.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(Assignment.class.getName());
 
   /**
    * The value the variable is assigned.
@@ -251,6 +249,10 @@ class Assignment extends AbstractTuples {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() {
+    return getRowCount();
+  }
+
   /**
    * METHOD TO DO
    *
@@ -279,8 +281,8 @@ class Assignment extends AbstractTuples {
     return true;
   }
 
-  public List getOperands() {
-    return new ArrayList(0);
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
   public RowComparator getRowComparator() {

@@ -30,6 +30,7 @@
 package org.mulgara.store.tuples;
 
 // Java 2 standard packages
+import java.math.BigInteger;
 import java.util.*;
 
 // Third party packages
@@ -161,6 +162,11 @@ public class UnboundJoin extends AbstractTuples {
   protected long[] prefix = null;
 
   /**
+   * The variable groups formed in this operation. If more than one there will be a cartesian product in the result.
+   */
+  protected List<VarGroup> varGroups = null;
+
+  /**
    * Conjoin a list of propositions.
    *
    * @param operands the propositions to conjoin; the order affects efficiency,
@@ -185,7 +191,7 @@ public class UnboundJoin extends AbstractTuples {
       if (logger.isDebugEnabled()) {
         logger.debug("Operands " + i + " : " + operands[i]);
         logger.debug("Operands variables " + i + " : " + Arrays.asList(operands[i].getVariables()));
-        logger.debug("Ooperands types " + i + " : " + operands[i].getClass());
+        logger.debug("Operands types " + i + " : " + operands[i].getClass());
       }
       operandBinding[i] = new long[operands[i].getVariables().length];
       if (!operands[i].hasNoDuplicates()) {
@@ -268,6 +274,8 @@ public class UnboundJoin extends AbstractTuples {
         }
       }
     }
+
+    buildVarGroups();
   }
 
   /**
@@ -349,29 +357,52 @@ public class UnboundJoin extends AbstractTuples {
    * @throws TuplesException {@inheritDoc}
    */
   public long getRowUpperBound() throws TuplesException {
-    if (operands.length == 0) {
-      return 0;
-    }
-    if (operands.length == 1) {
-      return operands[0].getRowUpperBound();
+    if (operands.length == 0) return 0;
+    if (operands.length == 1) return operands[0].getRowUpperBound();
+
+    BigInteger rowCount = BigInteger.valueOf(operands[0].getRowUpperBound());
+
+    for (int i = 1; i < operands.length; i++) {
+      rowCount = rowCount.multiply(BigInteger.valueOf(operands[i].getRowUpperBound()));
+      if (rowCount.bitLength() > 63)
+        return Long.MAX_VALUE;
     }
 
-    /*
-      BigInteger rowCount = BigInteger.valueOf(operands[0].getRowUpperBound());
-  
+    return rowCount.longValue();
+  }
+
+  /**
+   * @return {@inheritDoc}  This is estimated as the size of the minumum
+   *         of the row counts of all the {@link #operands}.
+   * @throws TuplesException {@inheritDoc}
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    if (operands.length == 0) return 0;
+    if (operands.length == 1) return operands[0].getRowExpectedCount();
+
+    // simple joined group. Get the minimum as a guess.
+    if (varGroups.size() == 1) {
+      long result = operands[0].getRowExpectedCount();
       for (int i = 1; i < operands.length; i++) {
-        rowCount = rowCount.multiply(BigInteger.valueOf(operands[i].getRowUpperBound()));
-        if (rowCount.bitLength() > 63)
-          return Long.MAX_VALUE;
+        result = Math.min(result, operands[i].getRowExpectedCount());
       }
-  
+      return result;
+    } else {
+      // cartesian product. Get the simple joins, and multiply.
+      BigInteger rowCount = null;
+      for (VarGroup vg: varGroups) {
+        // calculate the size of this group
+        List<Integer> ops = vg.getOps();
+        long groupResult = operands[ops.get(0)].getRowExpectedCount();
+        for (int i = 1; i < ops.size(); i++) {
+          groupResult = Math.min(groupResult, operands[ops.get(i)].getRowExpectedCount());
+        }
+        // merge the current group into the running total
+        if (rowCount == null) rowCount = BigInteger.valueOf(groupResult);
+        else rowCount = rowCount.multiply(BigInteger.valueOf(groupResult));
+      }
       return rowCount.longValue();
-      */
-    long result = operands[0].getRowUpperBound();
-    for (int i = 1; i < operands.length; i++) {
-      result = Math.min(result, operands[i].getRowUpperBound());
     }
-    return result;
   }
 
   public boolean isColumnEverUnbound(int column) throws TuplesException {
@@ -457,6 +488,15 @@ public class UnboundJoin extends AbstractTuples {
     cloned.isAfterLast = isAfterLast;
 
     return cloned;
+  }
+
+  /**
+   * Get the number of groups in this join, based on their shared variables.
+   * This indicates the number of cartesian products required.
+   * @return The number of variable groups discovered between the operands
+   */
+  int getNrGroups() {
+    return varGroups.size();
   }
 
   //
@@ -551,6 +591,124 @@ public class UnboundJoin extends AbstractTuples {
       }
 
       return true;
+    }
+  }
+
+
+  /**
+   * Creates the groupings of variables formed during this join.
+   * An inner join will form if there is just one group.
+   */
+  void buildVarGroups() {
+    varGroups = new LinkedList<VarGroup>();
+
+    // go over all the operands
+    G: for (int i = 0; i < operands.length; i++) {
+      Variable[] vars = operands[i].getVariables();
+      // test if any group already matches this operand
+      for (VarGroup v: varGroups) {
+        if (v.joinsTo(vars)) {
+          // found a match, so add it
+          v.addOperand(i);
+          // this may join in other groups, so test
+          Iterator<VarGroup> vgi = varGroups.iterator();
+          while (vgi.hasNext()) {
+            VarGroup ov = vgi.next();
+            // don't test if this group joins to itself
+            if (ov == v) continue;
+            if (v.joinsTo(ov)) {
+              // groups join, so merge them
+              v.merge(ov);
+              vgi.remove();
+            }
+          }
+          // we've matched this operand in, so move to the next operand
+          continue G;
+        }
+      }
+      // no matches, so create a new group
+      varGroups.add(new VarGroup(i));
+    }
+  }
+
+
+  /**
+   * A class to record a group of variables and the operands they are associated with.
+   */
+  class VarGroup {
+    /** The variables for the group */
+    HashSet<Variable> variables = new HashSet<Variable>();
+
+    /** The operands this group's variables can be found in */
+    ArrayList<Integer> opList = new ArrayList<Integer>();
+
+    /**
+     * Create a group, starting with a given operand.
+     * @param opIndex The index of the operand to seed the group with.
+     */
+    public VarGroup(int opIndex) {
+      addOperand(opIndex);
+    }
+
+
+    /**
+     * Adds a new operand's variables to the group.
+     * @param i The index of the operand to add.
+     */
+    public void addOperand(int i) {
+      assert !opList.contains(operands[i]);
+      opList.add(i);
+      for (Variable v: operands[i].getVariables()) {
+        variables.add(v);
+      }
+    }
+
+
+    /**
+     * Adds another group to this one, based on shared variables.
+     * @param v The other variable group to merge.
+     */
+    @SuppressWarnings("unchecked")
+    public void merge(VarGroup v) {
+      // check that some variables are shared
+      assert ((HashSet<Variable>)variables.clone()).removeAll(v.variables);
+      // check that no operands are shared
+      assert !((ArrayList<Integer>)opList.clone()).removeAll(v.opList);
+      variables.addAll(v.variables);
+      opList.addAll(v.opList);
+    }
+
+
+    /**
+     * Tests if this group joins to a given set of variables.
+     * @param vars An array of variables to test.
+     * @return <code>true</code> if the variables join to this group.
+     */
+    public boolean joinsTo(Variable[] vars) {
+      for (Variable v: vars) {
+        if (variables.contains(v)) return true;
+      }
+      return false;
+    }
+
+
+    /**
+     * Tests if this group joins to another group.
+     * @param og The other group.
+     * @return <code>true</code> if the groups share variables.
+     */
+    @SuppressWarnings("unchecked")
+    public boolean joinsTo(VarGroup og) {
+      return ((HashSet<Variable>)variables.clone()).removeAll(og.variables);
+    }
+
+
+    /**
+     * Get the list of operands for this group.
+     * @return The operand list.
+     */
+    public List<Integer> getOps() {
+      return opList;
     }
   }
 }
