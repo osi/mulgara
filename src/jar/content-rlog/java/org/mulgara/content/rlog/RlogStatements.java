@@ -228,6 +228,13 @@ public class RlogStatements extends AbstractTuples implements Statements {
   }
 
   /**
+   * @see org.mulgara.store.tuples.AbstractTuples#getRowExpectedCount()
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    return getTriples().size();
+  }
+
+  /**
    * @see org.mulgara.store.tuples.Tuples#hasNoDuplicates()
    */
   public boolean hasNoDuplicates() throws TuplesException {
