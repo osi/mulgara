@@ -483,6 +483,9 @@ public class SparqlInterpreter implements Interpreter {
     List<IRIReference> namedFroms = getNamedFroms(queryStruct);
     if (!namedFroms.isEmpty()) result = addNamedFroms(result, namedFroms, patternMapper.getGraphVars());
     // possible to ask for non-variables that were employed in GRAPH statements as a parser check.
+
+    // grammar-level optimizations
+    result = PatternTransformer.transform(result);
     return result;
   }
 

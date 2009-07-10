@@ -16,10 +16,15 @@
 
 package org.mulgara.sparql;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mulgara.parser.MulgaraParserException;
+import org.mulgara.query.ConstraintConjunction;
+import org.mulgara.query.ConstraintDifference;
+import org.mulgara.query.ConstraintDisjunction;
 import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.ConstraintFilter;
 import org.mulgara.query.ConstraintOptionalJoin;
@@ -78,7 +83,11 @@ public class PatternTransformer {
   static {
     addToMap(new FilterTx());
     addToMap(new LeftJoinTx());
+    addToMap(new ConjunctionTx());
+    addToMap(new DisjunctionTx());
+    addToMap(new DifferenceTx());
   }
+
 
   /**
    * Creates a conjunction of filters, skipping any TRUE values on the way.
@@ -94,17 +103,36 @@ public class PatternTransformer {
 
 
   /**
+   * Maps a list of constraint expressions to a list of transformed constraint expressions.
+   * This would be better done as a closure, but we can't, especially with the "changed" flag.
+   * @param elements The list to be transformed
+   * @return A new list full of transformed items, or else the original if nothing was changed.
+   * @throws MulgaraParserException Due to a bad transformation.
+   */
+  private static List<ConstraintExpression> txList(List<ConstraintExpression> elements) throws MulgaraParserException {
+    boolean changed = false;
+    List<ConstraintExpression> newList = new ArrayList<ConstraintExpression>();
+    for (ConstraintExpression c: elements) {
+      ConstraintExpression tx = transform(c);
+      if (tx != c) changed = true;
+      newList.add(tx);
+    }
+    return changed ? newList : elements;
+  }
+
+
+  /**
    * Map filtered constraints to the flattening operation.
    *   Filter(X1,Filter(X2,A)) => Filter(X2 && X1, A)
    */
   private static class FilterTx extends Transformer<ConstraintFilter> {
     public Class<ConstraintFilter> getTxType() { return ConstraintFilter.class; }
     public ConstraintExpression tx(ConstraintFilter constraint) throws MulgaraParserException {
-      ConstraintExpression subConstraint = constraint.getUnfilteredConstraint();
-      if (subConstraint instanceof ConstraintFilter) {
+      ConstraintExpression innerConstraint = constraint.getUnfilteredConstraint();
+      if (innerConstraint instanceof ConstraintFilter) {
         // found Filter(X1,Filter(X2,A))
-        ConstraintFilter subFilter = (ConstraintFilter)transform(subConstraint); // Filter(X2,A)
-        return new ConstraintFilter(subFilter.getUnfilteredConstraint(), and(subFilter.getFilter(), constraint.getFilter()));
+        ConstraintFilter innerFiltered = (ConstraintFilter)transform(innerConstraint); // Filter(X2,A)
+        return new ConstraintFilter(innerFiltered.getUnfilteredConstraint(), and(innerFiltered.getFilter(), constraint.getFilter()));
       }
       return constraint;
     }
@@ -123,17 +151,56 @@ public class PatternTransformer {
         // found LeftJoin(A, Filter(X1, B), X2)
         ConstraintFilter filter = (ConstraintFilter)transform(op);  // Filter(X1, B)
         Filter f = and(filter.getFilter(), leftJoin.getFilter());  // X1 && X2
-        return new ConstraintOptionalJoin(leftJoin.getMain(), filter.getUnfilteredConstraint(), f);
+        return new ConstraintOptionalJoin(transform(leftJoin.getMain()), filter.getUnfilteredConstraint(), f);
       }
       if (op instanceof ConstraintOptionalJoin) {
         // found LeftJoin(A, LeftJoin(B, C, X1), X2)
         ConstraintOptionalJoin subJoin = (ConstraintOptionalJoin)transform(op);  // LeftJoin(B, C, X1)
         ConstraintOptionalJoin newSubJoin = new ConstraintOptionalJoin(subJoin.getMain(), subJoin.getOptional(), Bool.TRUE);
         Filter newFilter = and(subJoin.getFilter(), leftJoin.getFilter());  // X1 && X2
-        return new ConstraintOptionalJoin(leftJoin.getMain(), newSubJoin, newFilter);
+        return new ConstraintOptionalJoin(transform(leftJoin.getMain()), newSubJoin, newFilter);
       }
       return leftJoin;
     }
   }
 
+  /**
+   * Recurse the transformations down.
+   * Normalization to sum of products can be done here (but isn't).
+   */
+  private static class DifferenceTx extends Transformer<ConstraintDifference> {
+    public Class<ConstraintDifference> getTxType() { return ConstraintDifference.class; }
+    public ConstraintExpression tx(ConstraintDifference constraint) throws MulgaraParserException {
+      ConstraintExpression minuend = transform(constraint.getLhs());
+      ConstraintExpression subtrahend = transform(constraint.getRhs());
+      return minuend == constraint.getLhs() && subtrahend == constraint.getRhs() ?
+             new ConstraintDifference(minuend, subtrahend) : constraint;
+    }
+  }
+
+  /**
+   * Recurse the transformations down.
+   * Normalization to sum of products can be done here (but isn't).
+   */
+  private static class ConjunctionTx extends Transformer<ConstraintConjunction> {
+    public Class<ConstraintConjunction> getTxType() { return ConstraintConjunction.class; }
+    public ConstraintExpression tx(ConstraintConjunction constraint) throws MulgaraParserException {
+      List<ConstraintExpression> elements = constraint.getElements();
+      List<ConstraintExpression> newElements = txList(elements);
+      return elements != newElements ? new ConstraintConjunction(newElements) : constraint;
+    }
+  }
+
+  /**
+   * Recurse the transformations down.
+   * Normalization to sum of products can be done here (but isn't).
+   */
+  private static class DisjunctionTx extends Transformer<ConstraintDisjunction> {
+    public Class<ConstraintDisjunction> getTxType() { return ConstraintDisjunction.class; }
+    public ConstraintExpression tx(ConstraintDisjunction constraint) throws MulgaraParserException {
+      List<ConstraintExpression> elements = constraint.getElements();
+      List<ConstraintExpression> newElements = txList(elements);
+      return elements != newElements ? new ConstraintDisjunction(newElements) : constraint;
+    }
+  }
 }
