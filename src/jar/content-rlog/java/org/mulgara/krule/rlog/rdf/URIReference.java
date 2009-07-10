@@ -16,8 +16,10 @@
 
 package org.mulgara.krule.rlog.rdf;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import org.mulgara.krule.rlog.ParseContext;
 import org.mulgara.krule.rlog.parser.NSUtils;
@@ -60,6 +62,16 @@ public class URIReference implements RDFNode {
     this.prefix = NSUtils.getDefaultPrefix();
     this.value = value;
     this.uri = context.newURI(prefix, value);
+  }
+
+  public URIReference(URI raw) {
+    uri = raw;
+    prefix = "";
+    String u = "";
+    try {
+      u = URLEncoder.encode(raw.toString(), "UTF-8");
+    } catch (UnsupportedEncodingException e) {  }
+    value = u;
   }
 
   /** Internal mechanism for setting each element manually from a factory. */
