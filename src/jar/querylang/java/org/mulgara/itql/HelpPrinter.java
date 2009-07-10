@@ -99,7 +99,6 @@ public class HelpPrinter {
 
       // we've got an empty help command (they want basic help)
       public void caseAEmptyCommandPrefix(AEmptyCommandPrefix node) {
-
         helpMsg.append(printDefaultHelp());
       }
 
@@ -115,21 +114,18 @@ public class HelpPrinter {
 
       // we've got an alias
       public void caseAAliasCommandPrefix(AAliasCommandPrefix node) {
-
         helpMsg.append(printAliasHelp());
       }
 
       // caseAAliasCommandPrefix()
       // we've got a create
       public void caseACreateCommandPrefix(ACreateCommandPrefix node) {
-
         helpMsg.append(printCreateHelp());
       }
 
       // caseACreateCommandPrefix()
       // we've got a delete
       public void caseADeleteCommandPrefix(ADeleteCommandPrefix node) {
-
         helpMsg.append(printDeleteHelp());
       }
 
@@ -145,99 +141,77 @@ public class HelpPrinter {
 
       // we've got a drop
       public void caseADropCommandPrefix(ADropCommandPrefix node) {
-
         helpMsg.append(printDropHelp());
       }
 
-      // caseADropCommandPrefix()
       // we've got an execute
       public void caseAExecuteCommandPrefix(AExecuteCommandPrefix node) {
-
         helpMsg.append(printExecuteHelp());
       }
 
-      // caseAExecuteCommandPrefix()
       // we've got a help
       public void caseAHelpCommandPrefix(AHelpCommandPrefix node) {
-
         helpMsg.append(printHelpHelp());
       }
 
-      // caseAHelpCommandPrefix()
       // we've got an insert
       public void caseAInsertCommandPrefix(AInsertCommandPrefix node) {
-
         helpMsg.append(printInsertHelp());
       }
 
-      // caseAInsertCommandPrefix()
       // we've got a load
       public void caseALoadCommandPrefix(ALoadCommandPrefix node) {
-
         helpMsg.append(printLoadHelp());
       }
 
-      // caseALoadCommandPrefix()
+      // we've got a load
+      public void caseAExportCommandPrefix(AExportCommandPrefix node) {
+        helpMsg.append(printExportHelp());
+      }
+
       // we've got a quit
       public void caseAQuitCommandPrefix(AQuitCommandPrefix node) {
-
         helpMsg.append(printQuitHelp());
       }
 
-      // caseAQuitCommandPrefix()
       // we've got a select
       public void caseASelectCommandPrefix(ASelectCommandPrefix node) {
-
         helpMsg.append(printSelectHelp());
       }
 
-      // caseASelectCommandPrefix()
       // we've got a set
       public void caseASetCommandPrefix(ASetCommandPrefix node) {
-
         helpMsg.append(printSetHelp());
       }
 
-      // caseASetCommandPrefix()
       // we've got an su
       public void caseASuCommandPrefix(ASuCommandPrefix node) {
-
         helpMsg.append(printSuHelp());
       }
 
-      // caseASuCommandPrefix()
       // we've got a backup
       public void caseABackupCommandPrefix(ABackupCommandPrefix node) {
-
         helpMsg.append(printBackupHelp());
       }
 
-      // caseABackupCommandPrefix()
       // we've got a restore
       public void caseARestoreCommandPrefix(ARestoreCommandPrefix node) {
-
         helpMsg.append(printRestoreHelp());
       }
 
-      // caseARestoreCommandPrefix()
       // we've got a commit
       public void caseACommitCommandPrefix(ACommitCommandPrefix node) {
-
         helpMsg.append(printCommitHelp());
       }
 
-      // caseACommitCommandPrefix()
       // we've got a rollback
       public void caseARollbackCommandPrefix(ARollbackCommandPrefix node) {
-
         helpMsg.append(printRollbackHelp());
       }
 
       // caseARollbackCommandPrefix()
 
-      // caseAApplyCommandPrefix()
       public void caseAApplyCommandPrefix(AApplyCommandPrefix node) {
-
         helpMsg.append(printApplyHelp());
       }
 
@@ -283,12 +257,13 @@ public class HelpPrinter {
     helpMsg.append("  set      set a property" + eol);
     helpMsg.append("  execute  execute an iTQL script" + eol);
     helpMsg.append("  alias    define an alias" + eol);
-    helpMsg.append("  create   create a model" + eol);
+    helpMsg.append("  create   create a graph" + eol);
     helpMsg.append("  commit   commits a transaction" + eol);
     helpMsg.append("  drop     drop an entire resource" + eol);
     helpMsg.append("  insert   insert a set of triples" + eol);
     helpMsg.append("  delete   delete a set of triples" + eol);
-    helpMsg.append("  load     load contents of a file          " + eol);
+    helpMsg.append("  load     load contents of a file info a graph" + eol);
+    helpMsg.append("  export   export contents of a graph intoa file" + eol);
     helpMsg.append("  backup   backup the contents of a server to a file" + eol);
     helpMsg.append("  restore  restore a server from a backup file" + eol);
     helpMsg.append("  rollback rolls back a transaction" + eol);
@@ -399,7 +374,7 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append("\nCreates an alias to a URL, model or database." + eol);
+    helpMsg.append("\nCreates an alias to a URL, graph or database." + eol);
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  TQL> alias <http://www.w3.org/2000/01/rdf-schema#> as " +
@@ -425,7 +400,7 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append(eol + "Creates a new (empty) model." + eol);
+    helpMsg.append(eol + "Creates a new (empty) graph." + eol);
     helpMsg.append(eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  TQL> create <rmi://localhost/foo#bar> ;" + eol);
@@ -448,7 +423,7 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append(eol + "Drops a model." + eol);
+    helpMsg.append(eol + "Drops a graph." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  TQL> drop <rmi://localhost/foo#bar> ;" + eol);
@@ -471,8 +446,8 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append("\nInserts a triple, model, database or the results of a " +
-        "query into a model or database." + eol);
+    helpMsg.append("\nInserts a triple, graph, database or the results of a " +
+        "query into a graph or database." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  TQL> insert (<http://purl.org/dc/elements/1.1/subject> " +
@@ -497,8 +472,8 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append("\nDeletes a triple, model, database or the results of a " +
-        "query from a model or database." + eol);
+    helpMsg.append("\nDeletes a triple, graph, database or the results of a " +
+        "query from a graph or database." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  TQL> delete (<http://purl.org/dc/elements/1.1/subject> " +
@@ -523,7 +498,7 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append("\nLoads the contents of a file into a model." + eol);
+    helpMsg.append("\nLoads the contents of a file into a graph." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append("  TQL> load <http://foo.com/bar.rdf> into " +
@@ -532,6 +507,29 @@ public class HelpPrinter {
         "<rmi://localhost/foo#foo> ;" + eol);
     helpMsg.append("  TQL> load remote <file:/m:/files/foo.rdf> into " +
         "<rmi://localhost/foo#foo> ;" + eol);
+    helpMsg.append("" + eol);
+    helpMsg.append("'local' refers to the file system on the client" + eol);
+    helpMsg.append("'remote' refers to the file system on the server [default]" + eol);
+
+    // return the help mesage
+    return helpMsg;
+  }
+
+  /**
+   * Print the load help message.
+   * @return The text for the export command.
+   */
+  private static StringBuffer printExportHelp() {
+    // log the command we're printing help for
+    log.debug("Printing export help screen");
+
+    // create the help message
+    StringBuffer helpMsg = new StringBuffer();
+    helpMsg.append("\nExports the contents of a graph to a file." + eol);
+    helpMsg.append("" + eol);
+    helpMsg.append("For example:" + eol + eol);
+    helpMsg.append("  TQL> export <rmi://localhost/server1#foo> to local <file:/tmp/foo.rdf> ;" + eol);
+    helpMsg.append("  TQL> export local <rmi://localhost/server1#foo> to local <file:/home/me/foo.rdf> ;" + eol);
     helpMsg.append("" + eol);
     helpMsg.append("'local' refers to the file system on the client" + eol);
     helpMsg.append("'remote' refers to the file system on the server [default]" + eol);
@@ -554,13 +552,11 @@ public class HelpPrinter {
 
     // create the help message
     StringBuffer helpMsg = new StringBuffer();
-    helpMsg.append("\nPerforms a backup of a server or model." + eol);
+    helpMsg.append("\nPerforms a backup of a server." + eol);
     helpMsg.append("" + eol);
     helpMsg.append("For example:" + eol + eol);
     helpMsg.append(
         "  TQL> backup <rmi://localhost/server1> to remote <file:/tmp/server1backup> ;" + eol);
-    helpMsg.append(
-        "  TQL> backup <rmi://localhost/server1#foo> to local <file:/tmp/foo.rdf> ;" + eol);
     helpMsg.append("" + eol);
     helpMsg.append("'local' refers to the file system on the client" + eol);
     helpMsg.append("'remote' refers to the file system on the server [default]" + eol);
@@ -689,7 +685,7 @@ public class HelpPrinter {
     helpMsg.append("For example:" + eol);
     helpMsg.append("  TQL> apply <rmi://localhost/server1#krule> to <rmi://localhost/server1#camera>;" + eol);
     helpMsg.append("This puts entailed statements into <rmi://localhost/server1#camera>" + eol);
-    helpMsg.append("Or to put the entailed statements into another model:" + eol);
+    helpMsg.append("Or to put the entailed statements into another graph:" + eol);
     helpMsg.append("  TQL> apply <rmi://localhost/server1#krule> to <rmi://localhost/server1#camera> <rmi://localhost/server1#entailed>;" + eol);
     return helpMsg;
   }
