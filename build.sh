@@ -17,10 +17,10 @@ JAVAC=classic
 PROJECTDIR=.
 
 # Directory contain jars required for runtime
-LIBDIR=${PROJECTDIR}/lib
+LIBDIR="${PROJECTDIR}/lib"
 
 # Directory contain jars required for compilation
-BUILDDIR=${PROJECTDIR}/lib
+BUILDDIR="${PROJECTDIR}/lib"
 
 # set the base directory
 if [ "$BASEDIR" = "" ]; then
@@ -44,12 +44,12 @@ if test -z "${JAVA_HOME}" ; then
   exit
 fi
 
-PATH=${JAVA_HOME}/bin:$PATH
+PATH="${JAVA_HOME}/bin:$PATH"
 
 # Try to find Java Home directory, from JAVA_HOME environment
 # or java executable found in PATH
 
-JAVABIN=${JAVA_HOME}/bin/java
+JAVABIN="${JAVA_HOME}/bin/java"
 
 # convert the existing path to unix
 if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
@@ -64,12 +64,12 @@ fi
 
 
 # Add the ant libraries to the classpath
-CLASSPATH=${CLASSPATH}:lib/ant-1.7.0.jar:lib/bsf-2.3.0.jar
-CLASSPATH=${CLASSPATH}:lib/ant-launcher-1.7.0.jar:lib/junit-3.8.1.jar
-CLASSPATH=${CLASSPATH}:lib/ant-junit-1.7.0.jar:lib/ant-apache-bsf-1.7.0.jar
-CLASSPATH=${CLASSPATH}:lib/ant-trax-1.7.0.jar
-CLASSPATH=${CLASSPATH}:lib/js-1.5r3.jar:lib/ant-nodeps-1.7.0.jar
-CLASSPATH=${CLASSPATH}:lib/javacc-3.2.jar
+CLASSPATH="${CLASSPATH}:lib/ant-1.7.0.jar:lib/bsf-2.3.0.jar"
+CLASSPATH="${CLASSPATH}:lib/ant-launcher-1.7.0.jar:lib/junit-3.8.1.jar"
+CLASSPATH="${CLASSPATH}:lib/ant-junit-1.7.0.jar:lib/ant-apache-bsf-1.7.0.jar"
+CLASSPATH="${CLASSPATH}:lib/ant-trax-1.7.0.jar"
+CLASSPATH="${CLASSPATH}:lib/js-1.5r3.jar:lib/ant-nodeps-1.7.0.jar"
+CLASSPATH="${CLASSPATH}:lib/javacc-3.2.jar"
 
 # Add known external dependencies
 #for lib in ${JAR_DEPENDENCIES}
@@ -78,11 +78,11 @@ CLASSPATH=${CLASSPATH}:lib/javacc-3.2.jar
 #done
 
 # Try to include tools.jar for compilation
-if test -f ${JAVA_HOME}/lib/tools.jar ; then
-    CLASSPATH=${CLASSPATH}:${JAVA_HOME}/lib/tools.jar
+if test -f "${JAVA_HOME}/lib/tools.jar" ; then
+    CLASSPATH="${CLASSPATH}:${JAVA_HOME}/lib/tools.jar"
 fi
 
-JAVAC=${JAVA_HOME}/bin/javac
+JAVAC="${JAVA_HOME}/bin/javac"
 
 # If jikes is in PATH, use jikes
 #if type jikes >/dev/null 2>/dev/null
@@ -116,8 +116,8 @@ if [ "$OSNAME" = "solaris" ] ; then
 fi
 
 # Call Ant
-${JAVABIN} ${ARCH} -Xms64m -Xmx256m -Dant.home=${ANT_HOME} -DJAVAC=${JAVAC} \
+"${JAVABIN}" ${ARCH} -Xms64m -Xmx256m "-Dant.home=${ANT_HOME}" "-DJAVAC=${JAVAC}" \
            -Darch.bits=${ARCH} \
-           -Ddir.base=${BASEDIR} \
+           "-Ddir.base=${BASEDIR}" \
            -classpath "${CLASSPATH}" org.apache.tools.ant.Main \
            -buildfile "${BUILDFILE}" "$@"
