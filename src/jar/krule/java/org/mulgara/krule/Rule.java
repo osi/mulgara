@@ -355,6 +355,15 @@ public class Rule implements Serializable {
       return tuples.getRowUpperBound();
     }
 
+    public long getRowExpectedCount() throws TuplesException {
+      if (statementsPerRow > 1) {
+        BigInteger rowExpected = BigInteger.valueOf(tuples.getRowExpectedCount());
+        rowExpected = rowExpected.multiply(BigInteger.valueOf(statementsPerRow));
+        return rowExpected.bitLength() > 63 ? Long.MAX_VALUE : rowExpected.longValue();
+      }
+      return tuples.getRowUpperBound();
+    }
+
     public Variable[] getVariables() {
       return variables.toArray(new Variable[statementSize]);
     }
