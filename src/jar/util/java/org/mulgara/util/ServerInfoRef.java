@@ -175,7 +175,7 @@ public class ServerInfoRef {
   private static final Method findSetter(String name, Object value) throws SecurityException, NoSuchMethodException, ClassNotFoundException {
     String fullName = "set" + name;
     Method setter = setters.get(fullName);
-    if (fullName == null) {
+    if (setter == null) {
       setter = getServerInfoClass().getMethod(fullName, new Class[] { value.getClass() });
       setters.put(fullName, setter);
     }
