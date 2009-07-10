@@ -331,6 +331,15 @@ public class N3Statements extends AbstractTuples implements Statements {
            parser.getStatementCount() : Long.MAX_VALUE;
   }
 
+  /** Guess at a large number */
+  private static final Long LARGE_FILE_SIZE = 1000000L;
+
+  public long getRowExpectedCount() throws TuplesException {
+    // If the row count isn't yet available, return an absurdly huge value
+    return parser != null && parser.isStatementCountTotal() ?
+           parser.getStatementCount() : LARGE_FILE_SIZE;
+  }
+
   public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }

@@ -126,6 +126,13 @@ public class BooleanAnswer implements Answer, Serializable {
   }
 
   /**
+   * @see org.mulgara.query.Cursor#getRowExpectedCount()
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    return 1;
+  }
+
+  /**
    * @see org.mulgara.query.Cursor#getVariables()
    */
   public Variable[] getVariables() {

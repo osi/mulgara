@@ -261,6 +261,10 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     return (results != null) ? results.getRowUpperBound() : getRowUpperBoundEstimate();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return (results != null) ? results.getRowExpectedCount() : getRowUpperBoundEstimate();
+  }
+
   private long getRowUpperBoundEstimate() throws TuplesException {
     if (rowUpperBound == -1) {
       try {
@@ -440,6 +444,10 @@ class FullTextStringIndexTuples extends AbstractTuples implements Resolution, Cl
     }
 
     public long getRowUpperBound() throws TuplesException {
+      return hits.length();
+    }
+
+    public long getRowExpectedCount() throws TuplesException {
       return hits.length();
     }
 

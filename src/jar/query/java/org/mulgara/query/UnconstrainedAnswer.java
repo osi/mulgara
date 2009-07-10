@@ -193,6 +193,10 @@ public class UnconstrainedAnswer implements Answer, Serializable {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() {
+    return getRowCount();
+  }
+
   public int getRowCardinality() {
     return Cursor.ONE;
   }

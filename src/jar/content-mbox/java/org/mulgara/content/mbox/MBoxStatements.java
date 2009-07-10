@@ -393,6 +393,10 @@ public class MBoxStatements extends AbstractTuples implements Statements {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowExpectedCount();
+  }
+
   public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }

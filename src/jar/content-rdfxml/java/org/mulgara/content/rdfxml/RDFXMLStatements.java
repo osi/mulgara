@@ -335,20 +335,26 @@ public class RDFXMLStatements extends AbstractTuples implements Statements {
     return rowCount;
   }
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     // If the row count isn't yet available, return an absurdly huge value
     return parser != null && parser.isStatementCountTotal() ?
            parser.getStatementCount() : Long.MAX_VALUE;
   }
 
-  public boolean hasNoDuplicates() throws TuplesException
-  {
+  /** Guess at a large number */
+  private static final Long LARGE_FILE_SIZE = 1000000L;
+
+  public long getRowExpectedCount() throws TuplesException {
+    // If the row count isn't yet available, return an absurdly huge value
+    return parser != null && parser.isStatementCountTotal() ?
+           parser.getStatementCount() : LARGE_FILE_SIZE;
+  }
+
+  public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }
 
-  public boolean isColumnEverUnbound(int column) throws TuplesException
-  {
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
     switch (column) {
     case 0: case 1: case 2:
       return false;

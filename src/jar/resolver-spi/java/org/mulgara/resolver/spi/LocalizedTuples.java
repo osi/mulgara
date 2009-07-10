@@ -41,6 +41,7 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.BlankNodeImpl;
 import org.mulgara.store.nodepool.NodePoolException;
 import org.mulgara.store.tuples.AbstractTuples;
+import org.mulgara.store.tuples.Tuples;
 import org.mulgara.util.IntFile;
 import org.mulgara.util.StringToLongMap;
 import org.mulgara.util.TempDir;
@@ -71,8 +72,8 @@ public class LocalizedTuples extends AbstractTuples {
   /**
    * Logger.
    */
-  private static Logger logger =
-      Logger.getLogger(LocalizedTuples.class.getName());
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(LocalizedTuples.class.getName());
 
   /** The session to localize into. */
   protected final ResolverSession session;
@@ -188,9 +189,12 @@ public class LocalizedTuples extends AbstractTuples {
     return answer.getRowCount();
   }
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     return answer.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    return answer.getRowExpectedCount();
   }
 
 
@@ -212,8 +216,8 @@ public class LocalizedTuples extends AbstractTuples {
   }
 
 
-  public List getOperands() {
-    return new ArrayList(0);
+  public List<Tuples> getOperands() {
+    return new ArrayList<Tuples>(0);
   }
 
 

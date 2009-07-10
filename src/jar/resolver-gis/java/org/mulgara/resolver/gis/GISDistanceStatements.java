@@ -348,6 +348,16 @@ public class GISDistanceStatements implements Statements {
   }
 
   /**
+   * getRowExpectedCount
+   *
+   * @return The expected wize of this result
+   * @throws TuplesException when accessing data
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    return points.getRowExpectedCount() * STATEMENTS_PER_ROW;
+  }
+
+  /**
    * getRowCardinality
    *
    * @return int

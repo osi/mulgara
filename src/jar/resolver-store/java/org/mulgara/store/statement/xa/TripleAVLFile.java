@@ -1871,6 +1871,11 @@ public final class TripleAVLFile {
       }
 
 
+      public long getRowExpectedCount() throws TuplesException {
+        return getRowCount();
+      }
+
+
       public int getRowCardinality() throws TuplesException {
         if (rowCardinality != -1) return rowCardinality;
         Tuples temp = (Tuples)this.clone();

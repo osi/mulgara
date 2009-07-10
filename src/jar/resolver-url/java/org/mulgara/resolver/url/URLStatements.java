@@ -72,8 +72,7 @@ import org.mulgara.store.tuples.Tuples;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class URLStatements extends AbstractTuples implements Statements
-{
+public class URLStatements extends AbstractTuples implements Statements {
   /**
    * Logger.
    */
@@ -321,8 +320,7 @@ public class URLStatements extends AbstractTuples implements Statements
                                  Cursor.MANY;
   }
 
-  public long getRowCount() throws TuplesException
-  {
+  public long getRowCount() throws TuplesException {
     if (!rowCountIsValid) {
       if (parser != null && parser.isStatementCountTotal()) {
         // Get the statement count from the parser.
@@ -342,20 +340,27 @@ public class URLStatements extends AbstractTuples implements Statements
     return rowCount;
   }
 
-  public long getRowUpperBound() throws TuplesException
-  {
+  public long getRowUpperBound() throws TuplesException {
     // If the row count isn't yet available, return an absurdly huge value
     return parser != null && parser.isStatementCountTotal() ?
            parser.getStatementCount() : Long.MAX_VALUE;
   }
 
-  public boolean hasNoDuplicates() throws TuplesException
-  {
+  /** Guess at a large number */
+  private static final Long LARGE_FILE_SIZE = 1000000L;
+
+  public long getRowExpectedCount() throws TuplesException {
+    // If the row count isn't yet available, return an absurdly huge value
+    return parser != null && parser.isStatementCountTotal() ?
+           parser.getStatementCount() : LARGE_FILE_SIZE;
+  }
+
+
+  public boolean hasNoDuplicates() throws TuplesException {
     return false;
   }
 
-  public boolean isColumnEverUnbound(int column) throws TuplesException
-  {
+  public boolean isColumnEverUnbound(int column) throws TuplesException {
     switch (column) {
     case 0: case 1: case 2:
       return false;
@@ -364,8 +369,7 @@ public class URLStatements extends AbstractTuples implements Statements
     }
   }
 
-  public boolean next() throws TuplesException
-  {
+  public boolean next() throws TuplesException {
     if (parser == null) {
       // no current row
       return false;
@@ -391,8 +395,7 @@ public class URLStatements extends AbstractTuples implements Statements
   /**
    * Stops the thread if it is running, and clears the current row.
    */
-  private void stopThread()
-  {
+  private void stopThread() {
     if (parser != null) {
       parser.abort();
       parser = null;
@@ -405,11 +408,8 @@ public class URLStatements extends AbstractTuples implements Statements
 /**
  * This {@link Runnable}
  */
-class Parser extends Thread implements ErrorHandler, StatementHandler
-{
-  /**
-   * Logger.
-   */
+class Parser extends Thread implements ErrorHandler, StatementHandler {
+  /** Logger. */
   private static final Logger logger =
     Logger.getLogger(Parser.class.getName());
 

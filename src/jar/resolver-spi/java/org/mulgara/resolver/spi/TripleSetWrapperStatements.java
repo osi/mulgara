@@ -55,8 +55,7 @@ import org.mulgara.store.tuples.Tuples;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class TripleSetWrapperStatements implements Statements
-{
+public class TripleSetWrapperStatements implements Statements {
   // /** Logger.  */
   // private final Logger logger = Logger.getLogger(TripleSetWrapperStatements.class.getName());
 
@@ -69,7 +68,7 @@ public class TripleSetWrapperStatements implements Statements
 
   ResolverSession resolverSession;
   
-  TObjectLongHashMap nodeMap;
+  TObjectLongHashMap<Node> nodeMap;
 
   Set<? extends Triple> triples;
   Iterator<? extends Triple> iter;
@@ -84,7 +83,7 @@ public class TripleSetWrapperStatements implements Statements
       throws TuplesException {
     this.triples = triples;
     this.resolverSession = resolverSession;
-    this.nodeMap = new TObjectLongHashMap();
+    this.nodeMap = new TObjectLongHashMap<Node>();
     this.persistent = (persistent == PERSIST);
   }
 
@@ -127,6 +126,10 @@ public class TripleSetWrapperStatements implements Statements
   }
 
   public long getRowUpperBound() {
+    return triples.size();
+  }
+
+  public long getRowExpectedCount() {
     return triples.size();
   }
 

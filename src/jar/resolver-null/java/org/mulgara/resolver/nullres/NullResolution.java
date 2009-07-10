@@ -199,6 +199,11 @@ public class NullResolution implements Resolution {
     return 0;
   }
 
+  /** @see org.mulgara.query.Cursor#getRowExpectedCount() */
+  public long getRowExpectedCount() throws TuplesException {
+    return 0;
+  }
+
   /**
    * All implementations must support cloning.
    * @return the cloned instance

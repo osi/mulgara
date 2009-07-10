@@ -2406,6 +2406,10 @@ public final class XAStringPoolImpl implements XAStringPool {
         return getRowCount();
       }
 
+      public long getRowExpectedCount() throws TuplesException {
+        return getRowCount();
+      }
+
       /**
        * Return the cardinality of the tuples.
        *

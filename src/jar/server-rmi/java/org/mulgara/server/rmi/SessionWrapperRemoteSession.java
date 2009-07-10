@@ -444,7 +444,7 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
         Object servedAnswer = null;
         Answer ans = i.next();
         try {
-          if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+          if (ans.getRowExpectedCount() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
             // don't need to wrap this in an
             // AnswerWrapperRemoteAnswerSerialised as the other end can handle
             // any kind of object as it comes out of the list
@@ -635,7 +635,7 @@ class SessionWrapperRemoteSession implements RemoteSession, Unreferenced  {
   private RemoteAnswer convertToRemoteAnswer(Answer ans) throws QueryException, RemoteException {
     try {
       try {
-        if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+        if (ans.getRowExpectedCount() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
           RemoteAnswer serialAnswer = new AnswerWrapperRemoteAnswerSerialised(new ArrayAnswer(ans));
           ans.close();
           return serialAnswer;

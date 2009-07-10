@@ -114,6 +114,11 @@ public class CacheStatements implements Cloneable, Statements
     return statements.getRowUpperBound();
   }
 
+  public long getRowExpectedCount() throws TuplesException
+  {
+    return statements.getRowExpectedCount();
+  }
+
   public int getRowCardinality() throws TuplesException
   {
     return statements.getRowCardinality();

@@ -111,11 +111,10 @@ class AppendAggregateTuples extends AbstractTuples {
    * @throws TuplesException  if there's trouble reading <var>tuples</var>
    */
   AppendAggregateTuples(ResolverSession session,
-      LocalQueryResolver context, Tuples tuples,
-      List variableList) throws TuplesException {
+                        LocalQueryResolver context, Tuples tuples,
+                        List<? extends SelectElement> variableList) throws TuplesException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Generating variable list for " + tuples + " and " +
-          variableList);
+      logger.debug("Generating variable list for " + tuples + " and " + variableList);
       logger.debug("AppendAggregateTuples instantiated " + hashCode());
     }
     if (session == null) {
@@ -138,7 +137,7 @@ class AppendAggregateTuples extends AbstractTuples {
     // while the size of the tuples may be larger due to aggregates
     int uniqueTupleVarLen = Math.min(variableList.size(), tupleVars.length);
 
-    Set newVariableList = new LinkedHashSet();
+    Set<Variable> newVariableList = new LinkedHashSet<Variable>();
     for (int i = 0; i < uniqueTupleVarLen; i++) {
       assert variableList.contains(tupleVars[i]);
 
@@ -177,7 +176,7 @@ class AppendAggregateTuples extends AbstractTuples {
       logger.info("Generated variable list " + newVariableList);
     }
 
-    setVariables(new ArrayList(newVariableList));
+    setVariables(new ArrayList<Variable>(newVariableList));
 
     if (logger.isDebugEnabled()) {
       logger.debug("Set variable list " + Arrays.asList(getVariables()));
@@ -322,6 +321,10 @@ class AppendAggregateTuples extends AbstractTuples {
     return tuples.getRowUpperBound();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return tuples.getRowExpectedCount();
+  }
+
   public int getRowCardinality() throws TuplesException {
     return tuples.getRowCardinality();
   }
@@ -346,7 +349,7 @@ class AppendAggregateTuples extends AbstractTuples {
     return tuples.hasNoDuplicates();
   }
 
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return Collections.singletonList(tuples);
   }
 

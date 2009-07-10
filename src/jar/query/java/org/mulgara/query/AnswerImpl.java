@@ -223,6 +223,10 @@ public class AnswerImpl implements Answer, Serializable {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowCount();
+  }
+
   public int getRowCardinality() throws TuplesException {
     switch ((int)getRowCount()) {
       case 0:

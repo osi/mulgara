@@ -61,23 +61,23 @@ public interface Cursor {
   /**
    * Reset to iterate through every single element.
    *
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public void beforeFirst() throws TuplesException;
 
   /**
    * Free resources associated with this instance.
    *
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public void close() throws TuplesException;
 
   /**
    * Find the index of a variable.
    *
-   * @param column PARAMETER TO DO
+   * @param column The variable to search for.
    * @return The ColumnIndex value
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException If the variable is null or not in this tuples.
    */
   public int getColumnIndex(Variable column) throws TuplesException;
 
@@ -106,7 +106,7 @@ public interface Cursor {
    * row.
    *
    * @return The Unconstrained value
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public boolean isUnconstrained() throws TuplesException;
 
@@ -114,7 +114,7 @@ public interface Cursor {
    * This method returns the exact number of rows which this instance contains.
    *
    * @return The exact number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public long getRowCount() throws TuplesException;
 
@@ -122,15 +122,25 @@ public interface Cursor {
    * This method returns an upper bound on the number of rows which this instance contains.
    *
    * @return The upper bound of the number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public long getRowUpperBound() throws TuplesException;
+
+
+  /**
+   * This method returns the expected number of rows which this instance contains.
+   * This number should be updated statistically over time, when possible.
+   *
+   * @return An expected value for the rows.
+   * @throws TuplesException Due to an error accessing the underlying data.
+   */
+  public long getRowExpectedCount() throws TuplesException;
 
   /**
    * This method returns cardinality of the number of rows which this instance contains.
    *
    * @return The cardinality of this tuples. {0,1,N} rows.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public int getRowCardinality() throws TuplesException;
 
@@ -144,7 +154,7 @@ public interface Cursor {
    *
    * @return whether a subsequent row exists
    * @throws IllegalStateException if the current row is unspecified.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Due to an error accessing the underlying data.
    */
   public boolean next() throws TuplesException;
 }

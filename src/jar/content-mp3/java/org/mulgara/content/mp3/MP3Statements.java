@@ -375,17 +375,18 @@ public class MP3Statements extends AbstractTuples implements Statements {
   }
 
   public long getRowCount() throws TuplesException {
-
     return rowCount;
   }
 
   public long getRowUpperBound() throws TuplesException {
+    return getRowCount();
+  }
 
+  public long getRowExpectedCount() throws TuplesException {
     return getRowCount();
   }
 
   public boolean hasNoDuplicates() throws TuplesException {
-
     return false;
   }
 

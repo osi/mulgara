@@ -153,6 +153,10 @@ class GlobalizedAnswer implements Answer, Cloneable {
     return tuples.getRowUpperBound();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return tuples.getRowExpectedCount();
+  }
+
   public int getRowCardinality() throws TuplesException {
     return tuples.getRowCardinality();
   }

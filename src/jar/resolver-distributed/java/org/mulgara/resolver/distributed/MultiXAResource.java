@@ -32,8 +32,8 @@ import org.apache.log4j.Logger;
 
 import org.mulgara.resolver.spi.AbstractXAResource;
 import org.mulgara.resolver.spi.AbstractXAResource.RMInfo;
-import org.mulgara.resolver.spi.AbstractXAResource.TxInfo;
 import org.mulgara.resolver.spi.ResolverFactory;
+import org.mulgara.resolver.spi.AbstractXAResource.TxInfo;
 
 /**
  * This is an implementation of {@link XAResource} that presents a collection of xa-resources as
@@ -64,6 +64,7 @@ import org.mulgara.resolver.spi.ResolverFactory;
  * @copyright &copy;2008 <a href="http://www.topazproject.org/">Topaz Project</a>
  * @licence Apache License v2.0
  */
+@SuppressWarnings("unused")
 public class MultiXAResource
     extends AbstractXAResource<RMInfo<MultiXAResource.MultiTxInfo>,MultiXAResource.MultiTxInfo> {
 

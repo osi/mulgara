@@ -187,8 +187,8 @@ public class StatementsWrapperTuples
    * Returns the wrapped statements object as a singleton list.
    * @return List
    */
-  public List getOperands() {
-    return Collections.singletonList(statements);
+  public List<Tuples> getOperands() {
+    return Collections.singletonList((Tuples)statements);
   }
 
   /**
@@ -207,6 +207,15 @@ public class StatementsWrapperTuples
    */
   public long getRowUpperBound() throws TuplesException {
     return statements.getRowUpperBound();
+  }
+
+  /**
+   * Delegated to the wrapped statements.
+   * @throws TuplesException
+   * @return long
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    return statements.getRowExpectedCount();
   }
 
   /**

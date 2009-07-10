@@ -46,8 +46,7 @@ import org.mulgara.query.Variable;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class SingletonStatements implements Cloneable, Statements
-{
+public class SingletonStatements implements Cloneable, Statements {
   /**
    * The columns of the single statement:
    * <code>$subject $predicate $object</code>.
@@ -77,8 +76,7 @@ public class SingletonStatements implements Cloneable, Statements
   /**
    * Construct a single localized RDF statement.
    */
-  public SingletonStatements(long subject, long predicate, long object)
-  {
+  public SingletonStatements(long subject, long predicate, long object) {
     // Validate "subject" parameter
     if (subject == NONE) {
       throw new IllegalArgumentException("NONE is not a valid subject");
@@ -104,18 +102,15 @@ public class SingletonStatements implements Cloneable, Statements
   // Methods implementing Cursor (superinterface of Statements)
   //
 
-  public void beforeFirst()
-  {
+  public void beforeFirst() {
     row = -1;
   }
 
-  public void close()
-  {
+  public void close() {
     // null implementation
   }
 
-  public int getColumnIndex(Variable variable) throws TuplesException
-  {
+  public int getColumnIndex(Variable variable) throws TuplesException {
     // Validate "variable" parameter
     if (variable == null) {
       throw new IllegalArgumentException("Null \"variable\" parameter");
@@ -142,38 +137,35 @@ public class SingletonStatements implements Cloneable, Statements
     }
   }
 
-  public int getNumberOfVariables()
-  {
+  public int getNumberOfVariables() {
     return 3;
   }
 
-  public long getRowCount()
-  {
+  public long getRowCount() {
     return 1;
   }
 
-  public long getRowUpperBound()
-  {
+  public long getRowExpectedCount() {
+    return 1;
+  }
+
+  public long getRowUpperBound() {
     return getRowCount();
   }
 
-  public int getRowCardinality()
-  {
+  public int getRowCardinality() {
     return Cursor.ONE;
   }
 
-  public Variable[] getVariables()
-  {
+  public Variable[] getVariables() {
     return variables;
   }
 
-  public boolean isUnconstrained()
-  {
+  public boolean isUnconstrained() {
     return false;
   }
 
-  public boolean next() throws TuplesException
-  {
+  public boolean next() throws TuplesException {
     switch (row) {
     case -1:
       row++;
@@ -195,26 +187,22 @@ public class SingletonStatements implements Cloneable, Statements
   // Methods implementing Statements
   //
 
-  public long getSubject() throws TuplesException
-  {
+  public long getSubject() throws TuplesException {
     return subject;
   }
 
-  public long getPredicate() throws TuplesException
-  {
+  public long getPredicate() throws TuplesException {
     return predicate;
   }
 
-  public long getObject() throws TuplesException
-  {
+  public long getObject() throws TuplesException {
     return object;
   }
 
   /**
    * Cloning is always supported.
    */
-  public Object clone()
-  {
+  public Object clone() {
     try {
       return super.clone();
     } catch (CloneNotSupportedException e) {
@@ -222,8 +210,7 @@ public class SingletonStatements implements Cloneable, Statements
     }
   }
 
-  public String toString()
-  {
+  public String toString() {
     return "Singleton[" + subject + " " + predicate + " " + object + "]";
   }
 }

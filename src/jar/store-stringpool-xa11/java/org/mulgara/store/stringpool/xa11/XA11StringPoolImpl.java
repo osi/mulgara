@@ -1824,6 +1824,11 @@ public class XA11StringPoolImpl implements XAStringPool, XANodePool {
         return getRowCount();
       }
 
+      /** Delegates this work to {@link #getRowCount()} */
+      public long getRowExpectedCount() throws TuplesException {
+        return getRowCount();
+      }
+
       /**
        * Return the cardinality of the tuples.
        *

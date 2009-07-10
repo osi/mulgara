@@ -52,8 +52,7 @@ import org.mulgara.util.StackTrace;
  *      Software Pty Ltd</a>
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-class RemoteAnswerWrapperAnswer
-    implements Answer, Cloneable {
+class RemoteAnswerWrapperAnswer implements Answer, Cloneable {
   /** logger */
   private static Logger logger =
       Logger.getLogger(AnswerWrapperRemoteAnswer.class.getName());
@@ -371,6 +370,18 @@ class RemoteAnswerWrapperAnswer
       throw new RuntimeException("Timeout waiting on server", rmie);
     } catch (RemoteException e) {
       throw new TuplesException("Can't get remote row upper bound", e);
+    }
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    try {
+      waitForPrefetchThread();
+      assert prefetchThread == null || prefetchThread.hasFinished();
+      return remoteAnswer.getRowExpectedCount();
+    } catch (RMITimeoutException rmie) {
+      throw new RuntimeException("Timeout waiting on server", rmie);
+    } catch (RemoteException e) {
+      throw new TuplesException("Can't get remote expected row count", e);
     }
   }
 

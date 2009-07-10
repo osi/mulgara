@@ -462,6 +462,10 @@ class StatementStoreResolution extends AbstractTuples implements ReresolvableRes
     return getRowCount();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowCount();
+  }
+
   public int getRowCardinality() throws TuplesException {
     if (isEmpty) return Cursor.ZERO;
 

@@ -165,6 +165,13 @@ public class GraphAnswer implements Answer, Serializable {
   }
 
   /**
+   * @see org.mulgara.query.Cursor#getRowExpectedCount()
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    return rawAnswer.getRowExpectedCount() * rowsPerCol;
+  }
+
+  /**
    * @see org.mulgara.query.Cursor#getVariables()
    */
   public Variable[] getVariables() {

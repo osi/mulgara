@@ -29,12 +29,10 @@ package org.mulgara.server.rmi;
 
 // Java 2 standard packages
 import java.rmi.*;
-import java.util.*;
 
 // Third party packages
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.util.MulgaraResultSet;
 
 /**
  * Remote ITQL answer. An answer is a set of solutions, where a solution is a
@@ -109,7 +107,7 @@ public interface RemoteAnswer extends Remote
    * was obtained from.
    *
    * @return the {@link Variable}s bound within this answer.
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws RemoteException Due to network error.
    */
   public Variable[] getVariables() throws RemoteException;
 
@@ -120,8 +118,8 @@ public interface RemoteAnswer extends Remote
    * row.
    *
    * @return The Unconstrained value
-   * @throws TuplesException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
+   * @throws RemoteException Due to network error.
    */
   public boolean isUnconstrained() throws TuplesException, RemoteException;
 
@@ -129,25 +127,20 @@ public interface RemoteAnswer extends Remote
    * Advance to the next term in the solution.
    *
    * @return <code>false<code> if there was no further term to advance to.
-   *
-   *
-   *
-   * @throws TuplesException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
+   * @throws RemoteException Due to network error.
    */
   public boolean next() throws TuplesException, RemoteException;
 
   /**
-   * Accessor for the binding of a given variable within the current product
-   * term (row).
+   * Accessor for the binding of a given variable within the current product term (row).
    *
    * @param column PARAMETER TO DO
    * @return the bound value, or {@link org.mulgara.store.tuples.Tuples#UNBOUND}
    *      if there is no binding within the current product term (row)
    * @throws TuplesException if there is no current row (before first or after
-   *      last) or if <var>variable</var> isn't an element of {@link
-   *      #getVariables}
-   * @throws RemoteException EXCEPTION TO DO
+   *      last) or if <var>variable</var> isn't an element of {@link #getVariables}
+   * @throws RemoteException Due to network error. 
    */
   public int getColumnIndex(Variable column)
     throws TuplesException, RemoteException;
@@ -156,7 +149,7 @@ public interface RemoteAnswer extends Remote
    * This method returns the exact number of rows which this instance contains.
    *
    * @return The exact number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
    */
   public long getRowCount() throws TuplesException, RemoteException;
 
@@ -164,9 +157,18 @@ public interface RemoteAnswer extends Remote
    * This method returns an upper bound on the number of rows which this instance contains.
    *
    * @return The upper bound of the number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
    */
   public long getRowUpperBound() throws TuplesException, RemoteException;
+
+  /**
+   * This method returns an expected value of the number of rows which this instance contains.
+   *
+   * @return The expected value of the number of rows that this instance contains.
+   * @throws TuplesException Error accessing the underlying data.
+   */
+  public long getRowExpectedCount() throws TuplesException, RemoteException;
+
 
   public static final int ZERO = 0;
   public static final int ONE  = 1;
@@ -176,14 +178,14 @@ public interface RemoteAnswer extends Remote
    * This method returns cardinality of the number of rows which this instance contains.
    *
    * @return The cardinality of this tuples. {0,1,N} rows.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
    */
   public int getRowCardinality() throws TuplesException, RemoteException;
 
   /**
    * Free resources associated with this instance.
    *
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
    */
   public void close() throws TuplesException, RemoteException;
 

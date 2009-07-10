@@ -51,7 +51,7 @@ public abstract class ConstraintBinaryOperation extends ConstraintOperation {
    * Get the LHS of this operation
    * @return The LHS operand.
    */
-  protected ConstraintExpression getLhs() {
+  public ConstraintExpression getLhs() {
     return elements.get(0);
   }
 
@@ -59,7 +59,7 @@ public abstract class ConstraintBinaryOperation extends ConstraintOperation {
    * Get the RHS of this operation
    * @return The RHS operand.
    */
-  protected ConstraintExpression getRhs() {
+  public ConstraintExpression getRhs() {
     return elements.get(1);
   }
 

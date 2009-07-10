@@ -71,7 +71,8 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
    * Contains a reference of in memory blank nodes to internal node ids.  Reset
    * every transaction.
    */
-  private HashMap<org.jrdf.graph.mem.BlankNodeImpl,BlankNode> bNodeMap = new HashMap<org.jrdf.graph.mem.BlankNodeImpl,BlankNode>();
+  private HashMap<BlankNode,BlankNode> bNodeMap = new HashMap<BlankNode,BlankNode>();
+//  private HashMap<org.jrdf.graph.mem.BlankNodeImpl,BlankNode> bNodeMap = new HashMap<org.jrdf.graph.mem.BlankNodeImpl,BlankNode>();
 
   //
   // Constructor
@@ -131,7 +132,7 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
           subjectNode, predicateNode, objectNode), bNodeMap);
 
       try {
-        if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+        if (ans.getRowExpectedCount() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
           RemoteAnswer serialAnswer = new AnswerWrapperRemoteAnswerSerialised(new
               ArrayAnswer(ans));
           ans.close();
@@ -362,7 +363,7 @@ class JRDFSessionWrapperRemoteJRDFSession extends SessionWrapperRemoteSession
 
   private RemoteAnswer convertToRemoteAnswer(Answer ans) throws QueryException, RemoteException {
     try {
-      if (ans.getRowUpperBound() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
+      if (ans.getRowExpectedCount() <= RemoteAnswer.MARSHALL_SIZE_LIMIT) {
         RemoteAnswer serialAnswer = new AnswerWrapperRemoteAnswerSerialised(new ArrayAnswer(ans));
         ans.close();
         return serialAnswer;

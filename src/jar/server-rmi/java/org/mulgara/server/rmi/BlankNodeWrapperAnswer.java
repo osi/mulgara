@@ -60,11 +60,9 @@ import org.mulgara.query.Variable;
  */
 public class BlankNodeWrapperAnswer implements Answer {
 
-  /**
-   * Logger
-   */
-  private static Logger logger =
-      Logger.getLogger(BlankNodeWrapperAnswer.class.getName());
+  /** Logger */
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(BlankNodeWrapperAnswer.class.getName());
 
   /**
    * The wrapped instance.
@@ -74,7 +72,7 @@ public class BlankNodeWrapperAnswer implements Answer {
   /**
    * The blank node map.
    */
-  protected Map blankNodeMap = null;
+  protected Map<BlankNode,BlankNode> blankNodeMap = null;
 
   /**
    * Creates a new wrapper for converting answers with blank nodes.
@@ -84,7 +82,7 @@ public class BlankNodeWrapperAnswer implements Answer {
    *   in memory blank nodes.
    * @throws IllegalArgumentException if <var>answer</var> is <code>null</code>
    */
-  public BlankNodeWrapperAnswer(Answer answer, Map newBlankNodeMap)
+  public BlankNodeWrapperAnswer(Answer answer, Map<BlankNode,BlankNode> newBlankNodeMap)
       throws RemoteException {
     this.answer = answer;
     blankNodeMap = newBlankNodeMap;
@@ -136,11 +134,11 @@ public class BlankNodeWrapperAnswer implements Answer {
    *   memory blank node.
    * @return the JRDF memory blank node or null if not found.
    */
-  private Object getKey(Object serverBlankNode) {
-    Set entrySet = blankNodeMap.entrySet();
-    Iterator iter = entrySet.iterator();
+  private BlankNode getKey(Object serverBlankNode) {
+    Set<Map.Entry<BlankNode,BlankNode>> entrySet = blankNodeMap.entrySet();
+    Iterator<Map.Entry<BlankNode,BlankNode>> iter = entrySet.iterator();
     while (iter.hasNext()) {
-      Map.Entry entry = (Map.Entry) iter.next();
+      Map.Entry<BlankNode,BlankNode> entry = (Map.Entry<BlankNode,BlankNode>) iter.next();
       if (entry.getValue().equals(serverBlankNode)) {
         return entry.getKey();
       }
@@ -178,6 +176,10 @@ public class BlankNodeWrapperAnswer implements Answer {
 
   public long getRowUpperBound() throws TuplesException {
     return answer.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    return answer.getRowExpectedCount();
   }
 
   public int getRowCardinality() throws TuplesException {

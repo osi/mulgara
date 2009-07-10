@@ -165,7 +165,7 @@ public class AnswerWrapperRemoteAnswer extends Rmi implements RemoteAnswer, Clon
       // Standard answers are not serializable, so either instantiate it into a serializable object
       // or wrap in a remote reference
       Answer ans = (Answer) obj;
-      if (ans.getRowUpperBound() <= MARSHALL_SIZE_LIMIT) {
+      if (ans.getRowExpectedCount() <= MARSHALL_SIZE_LIMIT) {
         obj = new ArrayAnswer(ans); // return a serialised answer
         ans.close();
       }
@@ -277,6 +277,10 @@ public class AnswerWrapperRemoteAnswer extends Rmi implements RemoteAnswer, Clon
 
   public long getRowUpperBound() throws TuplesException, RemoteException {
     return answer.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException, RemoteException {
+    return answer.getRowExpectedCount();
   }
 
   public int getRowCardinality() throws TuplesException {

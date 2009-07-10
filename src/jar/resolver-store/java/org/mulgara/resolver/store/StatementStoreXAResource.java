@@ -37,11 +37,11 @@ import org.apache.log4j.Logger;
 
 import org.mulgara.resolver.spi.AbstractXAResource;
 import org.mulgara.resolver.spi.AbstractXAResource.RMInfo;
-import org.mulgara.resolver.spi.AbstractXAResource.TxInfo;
 import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.store.xa.SimpleXAResource;
 import org.mulgara.store.xa.SimpleXAResourceException;
 import org.mulgara.store.xa.XAResolverSession;
+import org.mulgara.resolver.spi.AbstractXAResource.TxInfo;
 
 /**
  * Implements the XAResource for the {@link StatementStoreResolver}.
@@ -56,6 +56,7 @@ import org.mulgara.store.xa.XAResolverSession;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
+@SuppressWarnings("unused")
 public class StatementStoreXAResource
     extends AbstractXAResource<RMInfo<StatementStoreXAResource.StatementStoreTxInfo>, StatementStoreXAResource.StatementStoreTxInfo> {
   /** Logger.  */

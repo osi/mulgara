@@ -50,11 +50,9 @@ import org.jrdf.graph.URIReference;
 // Local packages
 import org.mulgara.query.*;
 import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.resolver.spi.MutableLocalQuery;
 import org.mulgara.resolver.spi.AbstractSymbolicTransformer;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SymbolicTransformationException;
-import org.mulgara.store.stringpool.StringPoolException;
 
 /**
  * A transformation rule that converts XSD ordering constraints into

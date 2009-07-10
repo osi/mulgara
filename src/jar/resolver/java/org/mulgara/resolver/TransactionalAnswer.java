@@ -198,6 +198,15 @@ public class TransactionalAnswer implements Answer {
       }).getLong();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    notClosed();
+    return transaction.execute(new AnswerOperation() {
+        public void execute() throws TuplesException {
+          returnLong(answer.getRowExpectedCount());
+        }
+      }).getLong();
+  }
+
   public int getRowCardinality() throws TuplesException {
     notClosed();
     return transaction.execute(new AnswerOperation() {

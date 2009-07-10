@@ -114,11 +114,11 @@ public class StatementsWrapperResolution extends AbstractTuples implements
     // Calculate columnIndex and set the variable list
     int length = 0;
     int[] temp = new int[3];
-    List variableList = new ArrayList(3);
+    List<Variable> variableList = new ArrayList<Variable>(3);
     for (int i = 0; i < 3; i++) {
       if (constraint.getElement(i) instanceof Variable) {
         temp[length++] = i;
-        variableList.add(constraint.getElement(i));
+        variableList.add((Variable)constraint.getElement(i));
       }
     }
     columnIndex = new int[length];
@@ -212,8 +212,8 @@ public class StatementsWrapperResolution extends AbstractTuples implements
     }
   }
 
-  public List getOperands() {
-    return Collections.singletonList(statements);
+  public List<Tuples> getOperands() {
+    return Collections.singletonList((Tuples)statements);
   }
 
   public long getRowCount() throws TuplesException {
@@ -222,6 +222,10 @@ public class StatementsWrapperResolution extends AbstractTuples implements
 
   public long getRowUpperBound() throws TuplesException {
     return statements.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException {
+    return statements.getRowExpectedCount();
   }
 
   public boolean hasNoDuplicates() throws TuplesException {

@@ -54,13 +54,9 @@ import org.mulgara.store.tuples.Tuples;
  */
 public class TuplesWrapperResolution implements Resolution {
 
-  /**
-   * Logger.
-   *
-   * This is named after the class.
-   */
-  private static final Logger logger =
-    Logger.getLogger(TuplesWrapperResolution.class.getName());
+  /** Logger. */
+  @SuppressWarnings("unused")
+  private static final Logger logger = Logger.getLogger(TuplesWrapperResolution.class.getName());
 
   /** The constraint.  */
   private final Constraint constraint;
@@ -270,7 +266,7 @@ public class TuplesWrapperResolution implements Resolution {
    * Be aware that the tuples returned from this method are not cloned, and should
    * be considered immutable.
    */
-  public List getOperands() {
+  public List<Tuples> getOperands() {
     return tuples.getOperands();
   }
 
@@ -336,10 +332,20 @@ public class TuplesWrapperResolution implements Resolution {
    * This method returns an upper bound on the number of rows which this instance contains.
    *
    * @return The upper bound of the number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
+   * @throws TuplesException Error accessing the underlying data.
    */
   public long getRowUpperBound() throws TuplesException {
     return tuples.getRowUpperBound();
+  }
+
+  /**
+   * This method returns an expected count on the number of rows which this instance contains.
+   *
+   * @return The expected value of the number of rows that this instance contains.
+   * @throws TuplesException Error accessing the underlying data.
+   */
+  public long getRowExpectedCount() throws TuplesException {
+    return tuples.getRowExpectedCount();
   }
 
   /**
@@ -372,7 +378,7 @@ public class TuplesWrapperResolution implements Resolution {
   /**
    * Copied from AbstractTuples
    */
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
     return null;
   }
 }

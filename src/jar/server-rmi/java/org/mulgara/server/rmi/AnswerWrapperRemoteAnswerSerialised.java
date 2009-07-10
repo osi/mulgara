@@ -29,7 +29,6 @@ package org.mulgara.server.rmi;
 
 // Java 2 standard packages
 import java.rmi.*;
-import java.util.*;
 import java.io.Serializable;
 
 // Third party packages
@@ -282,8 +281,8 @@ public class AnswerWrapperRemoteAnswerSerialised implements RemoteAnswer,
    * This method returns the number of rows which this instance contains.
    *
    * @return the number of rows that this instance contains.
-   * @throws TuplesException EXCEPTION TO DO
-   * @throws RemoteException EXCEPTION TO DO
+   * @throws TuplesException Error in the underlying data.
+   * @throws RemoteException Due to network error.
    */
   public long getRowCount() throws TuplesException, RemoteException {
     return answer.getRowCount();
@@ -291,6 +290,10 @@ public class AnswerWrapperRemoteAnswerSerialised implements RemoteAnswer,
 
   public long getRowUpperBound() throws TuplesException, RemoteException {
     return answer.getRowUpperBound();
+  }
+
+  public long getRowExpectedCount() throws TuplesException, RemoteException {
+    return answer.getRowExpectedCount();
   }
 
   public int getRowCardinality() throws TuplesException, RemoteException {

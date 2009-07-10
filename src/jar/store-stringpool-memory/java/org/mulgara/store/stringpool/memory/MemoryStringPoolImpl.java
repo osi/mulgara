@@ -520,6 +520,13 @@ public final class MemoryStringPoolImpl implements XAStringPool {
     /**
      * {@inheritDoc}
      */
+    public long getRowExpectedCount() throws TuplesException {
+      return set.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public int getRowCardinality() throws TuplesException {
       int size = set.size();
       return size == 0 ? ZERO :

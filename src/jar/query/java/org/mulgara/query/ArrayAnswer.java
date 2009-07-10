@@ -227,6 +227,10 @@ public class ArrayAnswer implements Answer, Cloneable, Serializable {
     return getRowCount();
   }
 
+  public long getRowExpectedCount() throws TuplesException {
+    return getRowCount();
+  }
+
   public int getRowCardinality() throws TuplesException {
     if (getRowCount() > 1) {
       return Cursor.MANY;
