@@ -42,7 +42,6 @@
 package org.mulgara.resolver.relational.d2rq;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.mulgara.resolver.spi.Resolver;
@@ -61,8 +60,8 @@ public class ClassMapElem extends D2RQDefn {
   public final TranslationTableElem translateWith;
   public final String dataStorage;
 //  public final String containsDuplicates;
-  public final List additionalProperties;
-  public final List condition;
+  public final List<AdditionalPropertyElem> additionalProperties;
+  public final List<String> condition;
 
   public ClassMapElem(Resolver resolver, ResolverSession session, long classMap, long defModel, D2RQDefn parent) throws LocalizeException, QueryException, TuplesException, GlobalizeException {
     super(resolver, session, parent);
@@ -79,11 +78,10 @@ public class ClassMapElem extends D2RQDefn {
     LocalNode ttable = getLocalNodeObject(map, Constants.translateWith, model, true);
     translateWith = (ttable != null) ? new TranslationTableElem(resolver, session, ttable, defModel) : null;
 
-    additionalProperties = new ArrayList();
-    List apropNodes = getLocalNodeObjects(map, Constants.additionalProperty, model);
-    Iterator i = apropNodes.iterator();
-    while (i.hasNext()) {
-      additionalProperties.add(new AdditionalPropertyElem(resolver, session, (LocalNode)i.next(), defModel));
+    additionalProperties = new ArrayList<AdditionalPropertyElem>();
+    List<LocalNode> apropNodes = getLocalNodeObjects(map, Constants.additionalProperty, model);
+    for (LocalNode n: apropNodes) {
+      additionalProperties.add(new AdditionalPropertyElem(resolver, session, n, defModel));
     }
 
   }

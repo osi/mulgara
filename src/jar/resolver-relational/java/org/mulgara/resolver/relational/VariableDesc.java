@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jrdf.graph.Node;
+import org.jrdf.graph.URIReference;
 import org.mulgara.query.TuplesException;
 import org.mulgara.resolver.relational.d2rq.Constants;
 import org.mulgara.resolver.relational.d2rq.D2RQDefn;
@@ -61,10 +62,10 @@ public abstract class VariableDesc {
   /** Logger.  */
   private static final Logger logger = Logger.getLogger(VariableDesc.class.getName());
 
-  protected Map columnTypeMap;
+  protected Map<String,URIReference> columnTypeMap;
   protected D2RQDefn defn;
-  protected List join;
-  protected List condition;
+  protected List<String> join;
+  protected List<String> condition;
 
   protected VariableDesc(ClassMapElem defn) {
     this((D2RQDefn)defn);
@@ -80,28 +81,28 @@ public abstract class VariableDesc {
   protected VariableDesc(D2RQDefn defn) {
     this.defn = defn;
     this.columnTypeMap = defn.getColumnTypeMap();
-    this.join = new ArrayList();
-    this.condition = new ArrayList();
+    this.join = new ArrayList<String>();
+    this.condition = new ArrayList<String>();
   }
 
   public abstract Node getNode(ResultSet result) throws SQLException, TuplesException;
   public abstract void assignColumnIndex(String column, int index);
-  public abstract Set getTables();
-  public abstract Set getColumns();
+  public abstract Set<String> getTables();
+  public abstract Set<String> getColumns();
 
-  public void addJoin(List join) {
+  public void addJoin(List<String> join) {
     this.join.addAll(join);
   }
 
-  public List getJoin() {
+  public List<String> getJoin() {
     return join;
   }
 
-  public void addCondition(List condition) {
+  public void addCondition(List<String> condition) {
     this.condition.addAll(condition);
   }
 
-  public List getCondition() {
+  public List<String> getCondition() {
     return condition;
   }
 

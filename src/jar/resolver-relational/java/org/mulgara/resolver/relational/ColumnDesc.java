@@ -63,6 +63,7 @@ import org.mulgara.resolver.relational.d2rq.ObjectPropertyBridgeElem;
 import org.mulgara.resolver.relational.d2rq.TranslationTableElem;
 
 public class ColumnDesc extends VariableDesc {
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(ColumnDesc.class);
 
   private String column;
@@ -70,7 +71,7 @@ public class ColumnDesc extends VariableDesc {
   private int index;
   private TranslationTableElem ttable;
 
-  private Class resourceType;
+  private Class<? extends Node> resourceType;
 
   public ColumnDesc(ClassMapElem classMap) {
     super(classMap);
@@ -132,11 +133,11 @@ public class ColumnDesc extends VariableDesc {
     return getColumn() + " = " + encode(getColumn(), value);
   }
 
-  public Set getTables() {
+  public Set<String> getTables() {
     return Collections.singleton(table);
   }
 
-  public Set getColumns() {
+  public Set<String> getColumns() {
     return Collections.singleton(column);
   }
 

@@ -52,11 +52,11 @@ import org.mulgara.query.QueryException;
 
 public class PropertyBridgeElem extends D2RQDefn {
   public final String property;
-  public final List join;
+  public final List<String> join;
   public final String alias;
   public final String valueMaxLength;
   public final String valueContains;
-  public final List condition;
+  public final List<String> condition;
   public final TranslationTableElem translateWith;
 
   public PropertyBridgeElem(Resolver resolver, ResolverSession session, long propMap, long defModel, D2RQDefn parent) throws LocalizeException, QueryException, TuplesException, GlobalizeException {

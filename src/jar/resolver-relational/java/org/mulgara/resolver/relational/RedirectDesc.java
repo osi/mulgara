@@ -54,14 +54,15 @@ import org.jrdf.graph.Node;
 import org.mulgara.query.TuplesException;
 
 public class RedirectDesc extends VariableDesc {
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(RedirectDesc.class);
 
-  private List descs;
+  private List<VariableDesc> descs;
   private int index;
 
   public RedirectDesc(VariableDesc desc) {
     super(desc.defn);
-    this.descs = new ArrayList();
+    this.descs = new ArrayList<VariableDesc>();
   }
 
   /**
@@ -91,11 +92,11 @@ public class RedirectDesc extends VariableDesc {
     throw new IllegalStateException("Can't restrict using a RedirectDesc");
   }
 
-  public Set getTables() {
+  public Set<String> getTables() {
     throw new IllegalStateException("RedirectDesc has no tables");
   }
 
-  public Set getColumns() {
+  public Set<String> getColumns() {
     throw new IllegalStateException("RedirectDesc has no columns");
   }
 

@@ -41,7 +41,6 @@
  */
 package org.mulgara.resolver.relational;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
@@ -63,24 +62,24 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.resolver.relational.d2rq.ClassMapElem;
-import org.mulgara.resolver.relational.d2rq.D2RQDefn;
 import org.mulgara.resolver.relational.d2rq.DatatypePropertyBridgeElem;
 import org.mulgara.resolver.relational.d2rq.ObjectPropertyBridgeElem;
 import org.mulgara.resolver.relational.d2rq.TranslationTableElem;
 
 
 public class PatternDesc extends VariableDesc {
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(PatternDesc.class);
 
-  private Set tables;
-  private Set columns;
+  private Set<String> tables;
+  private Set<String> columns;
 
-  private List pattern; // Order is str : column : str : column : ....
-  private Class anticipClass;
+  private List<String> pattern; // Order is str : column : str : column : ....
+  private Class<? extends Node> anticipClass;
 
   private URI datatype;
   private String lang;
-  private Map columnIndices;
+  private Map<String,Integer> columnIndices;
 
   private TranslationTableElem ttable;
 
@@ -109,7 +108,7 @@ public class PatternDesc extends VariableDesc {
     }
   }
 
-  private void init(String rawPattern, TranslationTableElem ttable, Class anticipatedClass) {
+  private void init(String rawPattern, TranslationTableElem ttable, Class<? extends Node> anticipatedClass) {
     if (rawPattern == null) {
       throw new IllegalArgumentException("Attempt to create PatternDesc with null pattern");
     }
@@ -117,10 +116,10 @@ public class PatternDesc extends VariableDesc {
     this.ttable = ttable;
     anticipClass = anticipatedClass;
     String[] split = rawPattern.split("@@");
-    tables =  new HashSet();
-    columns = new HashSet();
-    pattern = new ArrayList();
-    columnIndices = new HashMap();
+    tables =  new HashSet<String>();
+    columns = new HashSet<String>();
+    pattern = new ArrayList<String>();
+    columnIndices = new HashMap<String,Integer>();
     boolean isColumn = true;
     for (int i = 0; i < split.length; i++) {
       isColumn = !isColumn;  // Note this makes the initial state *false*
@@ -138,15 +137,14 @@ public class PatternDesc extends VariableDesc {
 
   public Node getNode(ResultSet resultSet) throws SQLException, TuplesException {
     StringBuffer buff = new StringBuffer();
-    Iterator i = pattern.iterator();
     boolean isColumn = true;
-    while (i.hasNext()) {
+    for (String p: pattern) {
       isColumn = !isColumn;  // Note this makes the initial state *false*
       if (isColumn) {
-        int index = ((Integer)columnIndices.get(i.next())).intValue();
+        int index = columnIndices.get(p).intValue();
         buff.append(resultSet.getString(index + 1));
       } else {
-        buff.append((String)i.next());
+        buff.append(p);
       }
     }
 
@@ -179,15 +177,17 @@ public class PatternDesc extends VariableDesc {
     }
   }
 
-  public Set getTables() {
+  public Set<String> getTables() {
     return tables;
   }
 
-  public Set getColumns() {
+  public Set<String> getColumns() {
     return columns;
   }
 
-  private class EscapeContinuation extends Exception {}
+  private class EscapeContinuation extends Exception {
+    private static final long serialVersionUID = -7899849917859481249L;
+  }
 
   public String restrict(String rdfValue) {
     // Note: There are two possible approaches to this function.  The first (simpler) approach is to 
@@ -199,9 +199,9 @@ public class PatternDesc extends VariableDesc {
     // independent terms.  The resulting query can therefore be run against indicies where available, 
     // and is amenable to optimisation by the sql engine.
     try {
-      List terms = new ArrayList();
+      List<String> terms = new ArrayList<String>();
       String value = rdfValue;
-      Iterator i = pattern.iterator();
+      Iterator<String> i = pattern.iterator();
       String str = (String)i.next();
       if (!value.startsWith(str)) {
         throw new EscapeContinuation();

@@ -41,23 +41,18 @@
  */
 package org.mulgara.resolver.relational.d2rq;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.net.URI;
 
+import org.jrdf.graph.URIReference;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.LocalizeException;
 import org.mulgara.resolver.spi.GlobalizeException;
-import org.mulgara.query.ConstraintElement;
-import org.mulgara.query.ConstraintExpression;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.LocalNode;
-import org.mulgara.store.tuples.Tuples;
 
 
 public class DatabaseElem extends D2RQDefn {
@@ -65,9 +60,9 @@ public class DatabaseElem extends D2RQDefn {
   public final String jdbcDriver;
   public final String username;
   public final String password;
-  public final List numericColumns;
-  public final List textColumns;
-  public final List dateColumns;
+  public final List<String> numericColumns;
+  public final List<String> textColumns;
+  public final List<String> dateColumns;
 
   public DatabaseElem(Resolver resolver, ResolverSession session, long rdftype, long defModel) throws LocalizeException, QueryException, TuplesException, GlobalizeException {
     super(resolver, session);
@@ -89,18 +84,12 @@ public class DatabaseElem extends D2RQDefn {
     textColumns = getStringObjects(database, Constants.textColumn, model);
     dateColumns = getStringObjects(database, Constants.dateColumn, model);
 
-    Map typeMap = new HashMap();
+    Map<String,URIReference> typeMap = new HashMap<String,URIReference>();
     // "_" is a dummy anonymous column to describe the types of literals within a query (always text)
     typeMap.put("_", Constants.textColumn);
-    for (Iterator i = numericColumns.iterator(); i.hasNext();) {
-      typeMap.put(i.next(), Constants.numericColumn);
-    }
-    for (Iterator i = textColumns.iterator(); i.hasNext();) {
-      typeMap.put(i.next(), Constants.textColumn);
-    }
-    for (Iterator i = dateColumns.iterator(); i.hasNext();) {
-      typeMap.put(i.next(), Constants.dateColumn);
-    }
+    for (String nc: numericColumns) typeMap.put(nc, Constants.numericColumn);
+    for (String nc: textColumns) typeMap.put(nc, Constants.textColumn);
+    for (String nc: dateColumns) typeMap.put(nc, Constants.dateColumn);
     initColumnTypeMap(typeMap);
   }
 }

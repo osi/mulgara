@@ -54,10 +54,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import org.jrdf.graph.URIReference;
-import org.jrdf.graph.Literal
-;
+import org.jrdf.graph.Literal;
 import org.mulgara.query.TuplesException;
-import org.mulgara.query.QueryException;
 import org.mulgara.query.Variable;
 
 
@@ -75,30 +73,28 @@ public class RelationalQuery {
   /** Logger */
   private static Logger logger = Logger.getLogger(RelationalQuery.class);
 
-  private Set tableSet;
-  private List columnList;
-  private Set restrictionSet;
-  private Map variableMap;
-  private Set variableSet;
+  private Set<String> tableSet;
+  private List<String> columnList;
+  private Set<String> restrictionSet;
+  private Map<Variable,VariableDesc> variableMap;
+  private Set<Variable> variableSet;
 
-  private Map unionCases;
-  private List selectExtension;
+  private Map<LiteralDesc,List<UnionCase>> unionCases;
 
   public RelationalQuery() {
-    tableSet = new HashSet();
-    columnList = new ArrayList();
-    restrictionSet = new HashSet();
-    variableMap = new HashMap();
-    unionCases = new HashMap();
-    selectExtension = new ArrayList();
-    variableSet = new HashSet();
+    tableSet = new HashSet<String>();
+    columnList = new ArrayList<String>();
+    restrictionSet = new HashSet<String>();
+    variableMap = new HashMap<Variable,VariableDesc>();
+    unionCases = new HashMap<LiteralDesc,List<UnionCase>>();
+    variableSet = new HashSet<Variable>();
   }
 
   public void addTable(String table) {
     tableSet.add(table);
   }
 
-  public void addTables(Set tables) {
+  public void addTables(Set<String> tables) {
     tableSet.addAll(tables);
   }
 
@@ -128,9 +124,9 @@ public class RelationalQuery {
     // variable predicate.  This would result in multiple restrictions/variables associated
     // with each union case.  To handle that we probably would need to move the map generation
     // out into the Resolution.
-    List unionCaseList = (List)unionCases.get(predVariable);
+    List<UnionCase> unionCaseList = unionCases.get(predVariable);
     if (unionCaseList == null) {
-      unionCaseList = new ArrayList();
+      unionCaseList = new ArrayList<UnionCase>();
       unionCases.put(predVariable, unionCaseList);
     }
 
@@ -139,7 +135,7 @@ public class RelationalQuery {
     // Allow for the existence of variables in the object position that do not participate
     // elsewhere in the constraint.
     if (unionCase.obj instanceof Variable) {
-      variableSet.add(unionCase.obj);
+      variableSet.add((Variable)unionCase.obj);
     }
   }
 
@@ -148,7 +144,7 @@ public class RelationalQuery {
     restrictionSet.add(restriction);
   }
 
-  public List getQuery() {
+  public List<String> getQuery() {
     if (unionCases.size() == 0) {
       String sql = "SELECT " + toList(columnList, ", ") + " FROM " + toList(tableSet, ", ");
       if (restrictionSet.size() > 0) {
@@ -158,8 +154,8 @@ public class RelationalQuery {
       return Collections.singletonList(sql);
     } else {
       // Too many side-effects here.  There must be a better way of doing this.
-      List indexList = assignIndicies();
-      List selectList = generateSelectQueries(new ArrayList(), new SubQuery(), indexList, 0);
+      List<LiteralDesc> indexList = assignIndicies();
+      List<String> selectList = generateSelectQueries(new ArrayList<String>(), new SubQuery(), indexList, 0);
 
       if (!variableSet.equals(variableMap.keySet())) {
         throw new IllegalStateException("Post query generated variableMap must match variableSet. map=" + variableMap + ", set=" + variableSet);
@@ -170,11 +166,9 @@ public class RelationalQuery {
   }
 
 
-  private List assignIndicies() {
-    List indexList = new ArrayList();
-    Iterator i = unionCases.keySet().iterator();
-    while (i.hasNext()) {
-      LiteralDesc desc = (LiteralDesc)i.next();
+  private List<LiteralDesc> assignIndicies() {
+    List<LiteralDesc> indexList = new ArrayList<LiteralDesc>();
+    for (LiteralDesc desc: unionCases.keySet()) {
       indexList.add(desc);
     }
 
@@ -182,18 +176,19 @@ public class RelationalQuery {
   }
 
   private class SubQuery implements Cloneable {
-    public ArrayList columnList = new ArrayList();
-    public ArrayList objColumnList = new ArrayList();
-    public HashSet restrictionSet = new HashSet();
-    public HashSet tableSet = new HashSet();
+    public ArrayList<String> columnList = new ArrayList<String>();
+    public ArrayList<String> objColumnList = new ArrayList<String>();
+    public HashSet<String> restrictionSet = new HashSet<String>();
+    public HashSet<String> tableSet = new HashSet<String>();
 
+    @SuppressWarnings("unchecked")
     public Object clone() {
       try {
         SubQuery c = (SubQuery)super.clone();
-        c.columnList = (ArrayList)columnList.clone();
-        c.objColumnList = (ArrayList)objColumnList.clone();
-        c.restrictionSet = (HashSet)restrictionSet.clone();
-        c.tableSet = (HashSet)tableSet.clone();
+        c.columnList = (ArrayList<String>)columnList.clone();
+        c.objColumnList = (ArrayList<String>)objColumnList.clone();
+        c.restrictionSet = (HashSet<String>)restrictionSet.clone();
+        c.tableSet = (HashSet<String>)tableSet.clone();
 
         return c;
       } catch (CloneNotSupportedException ec) {
@@ -245,15 +240,13 @@ public class RelationalQuery {
   /**
    * @return The accumulator is returned having accumulated the required select queries.
    */
-  private List generateSelectQueries(List accum, SubQuery subQuery, List indexList, int index) {
+  private List<String> generateSelectQueries(List<String> accum, SubQuery subQuery, List<LiteralDesc> indexList, int index) {
     if (index >= indexList.size()) {
       accum.add(generateSelectQuery(subQuery));
     } else {
-      LiteralDesc desc = (LiteralDesc)indexList.get(index);
-      List cases = (List)unionCases.get(desc);
-      Iterator i = cases.iterator();
-      while (i.hasNext()) {
-        UnionCase cse = (UnionCase)i.next();
+      LiteralDesc desc = indexList.get(index);
+      List<UnionCase> cases = unionCases.get(desc);
+      for (UnionCase cse: cases) {
         SubQuery sq = (SubQuery)subQuery.clone();
 
         sq.columnList.add("'" + cse.pred + "'");
@@ -264,7 +257,7 @@ public class RelationalQuery {
 
         if (cse.obj instanceof Variable) { // Variable object.
           // Obtain a redirect descriptor for variable.
-          VariableDesc od = (VariableDesc)variableMap.get(cse.obj);
+          VariableDesc od = variableMap.get(cse.obj);
           RedirectDesc rdesc;
           if (od == null) {
             rdesc = new RedirectDesc(desc);
@@ -284,9 +277,7 @@ public class RelationalQuery {
           sq.tableSet.addAll(cse.desc.getTables());
           
           // Handle conditions and joins.  cut-n-paste from includePropertyBridge - refactor required
-          Iterator vjoins = cse.desc.getJoin().iterator();
-          while (vjoins.hasNext()) {
-            String join = (String)vjoins.next();
+          for (String join: cse.desc.getJoin()) {
             sq.tableSet.addAll(RelationalResolver.extractTablesFromJoin(join));
             sq.restrictionSet.add(join);
           }
@@ -296,9 +287,7 @@ public class RelationalQuery {
           sq.columnList.add(Integer.toString(rdesc.addVariableDesc(cse.desc)));
 
           // Handle Columns
-          Iterator cols = cse.desc.getColumns().iterator();
-          while (cols.hasNext()) {
-            String c = (String)cols.next();
+          for (String c: cse.desc.getColumns()) {
             int newIndex = columnList.indexOf(c);
             if (newIndex == -1) {
               newIndex = sq.columnList.indexOf(c);
@@ -317,9 +306,7 @@ public class RelationalQuery {
           sq.tableSet.addAll(cse.desc.getTables());
 
           // Handle conditions and joins.  cut-n-paste from includePropertyBridge - refactor required
-          Iterator ljoins = cse.desc.getJoin().iterator();
-          while (ljoins.hasNext()) {
-            String join = (String)ljoins.next();
+          for (String join: cse.desc.getJoin()) {
             sq.tableSet.addAll(RelationalResolver.extractTablesFromJoin(join));
             sq.restrictionSet.add(join);
           }
@@ -344,12 +331,12 @@ public class RelationalQuery {
     return accum;
   }
 
-  public List getVariables() {
-    return new ArrayList(variableSet);
+  public List<Variable> getVariables() {
+    return new ArrayList<Variable>(variableSet);
   }
 
   public VariableDesc getVariableDesc(Variable var) throws TuplesException {
-    VariableDesc desc = (VariableDesc)variableMap.get(var);
+    VariableDesc desc = variableMap.get(var);
     if (desc == null) {
       throw new TuplesException("Variable not found: " + var);
     }
@@ -357,25 +344,16 @@ public class RelationalQuery {
     return desc;
   }
 
-  public static String toList(Collection strings, String delim) {
+  public static String toList(Collection<String> strings, String delim) {
     StringBuffer result;
-    Iterator i = strings.iterator();
+    Iterator<String> i = strings.iterator();
     if (!i.hasNext()) {
       return "";
     } else {
-      Object o = i.next();
-      try {
-        result = new StringBuffer((String)o);
-      } catch (ClassCastException ec) {
-        logger.warn("Attempting to cast " + o + " to string");
-        throw ec;
-      }
+      String s = i.next();
+      result = new StringBuffer(s);
     }
-
-    while (i.hasNext()) {
-      result.append(delim + i.next().toString());
-    }
-
+    while (i.hasNext()) result.append(delim + i.next().toString());
     return result.toString();
   }
 

@@ -44,16 +44,8 @@ package org.mulgara.resolver.relational;
 // Java 2 standard packages
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.transaction.xa.XAResource;
@@ -64,13 +56,9 @@ import org.jrdf.graph.URIReference;
 import org.jrdf.graph.Node;
 
 // Locally written packages
-import org.mulgara.query.Answer;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.ConstraintElement;
 import org.mulgara.query.LocalNode;
-import org.mulgara.query.ConstraintConjunction;
-import org.mulgara.query.ConstraintExpression;
-import org.mulgara.query.ConstraintImpl;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
@@ -79,7 +67,6 @@ import org.mulgara.resolver.relational.d2rq.Definition;
 import org.mulgara.resolver.spi.DummyXAResource;
 import org.mulgara.resolver.spi.GlobalizeException;
 import org.mulgara.resolver.spi.LocalizeException;
-import org.mulgara.resolver.spi.LocalizedTuples;
 import org.mulgara.resolver.spi.EmptyResolution;
 import org.mulgara.resolver.spi.Resolution;
 import org.mulgara.resolver.spi.Resolver;
@@ -87,9 +74,6 @@ import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.ResolverException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
-import org.mulgara.store.tuples.AbstractTuples;
-import org.mulgara.store.tuples.Tuples;
-import org.mulgara.store.tuples.TuplesOperations;
 
 
 /**
@@ -297,10 +281,10 @@ public class RelationalResolver implements Resolver {
   }
 
 
-  public static Set extractTablesFromJoin(String join) {
+  public static Set<String> extractTablesFromJoin(String join) {
     Pattern p = Pattern.compile("\\w+\\.\\w+");
     Matcher m = p.matcher(join);
-    Set result =  new HashSet();
+    Set<String> result =  new HashSet<String>();
     while (m.find()) {
       result.add(parseTableFromColumn(m.group()));
     }

@@ -43,11 +43,8 @@ package org.mulgara.resolver.relational.d2rq;
 
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 import org.mulgara.query.LocalNode;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.TuplesException;
@@ -64,13 +61,14 @@ import org.mulgara.store.tuples.TuplesOperations;
 public class Definition {
 
   /** Logger */
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(Definition.class);
 
   public DatabaseElem databaseDefn;
-  public Map classMaps;  // Map of class-type to class-defn.
-  public Map nodeClassMaps;  // Map of classMap node to class-defn.
-  public Map objPropBridges;  // Map of class-type to list objectPropertyMaps
-  public Map dataPropBridges;  // Map of class-type to list datatypePropertyMaps
+  public Map<String,ClassMapElem> classMaps;  // Map of class-type to class-defn.
+  public Map<LocalNode,ClassMapElem> nodeClassMaps;  // Map of classMap node to class-defn.
+  public Map<String,Map<String,ObjectPropertyBridgeElem>> objPropBridges;  // Map of class-type to list objectPropertyMaps
+  public Map<String,Map<String,DatatypePropertyBridgeElem>> dataPropBridges;  // Map of class-type to list datatypePropertyMaps
 
   public Definition(Resolver resolver, ResolverSession session, long rdftype, long defModel) throws QueryException {
     try {
@@ -82,10 +80,10 @@ public class Definition {
       LocalNode classMap = new LocalNode(session.localize(Constants.TypeClassMap));
 
       Resolution maps = resolver.resolve(new ConstraintImpl(subj, type, classMap, model));
-      this.classMaps = new HashMap();
-      this.objPropBridges = new HashMap();
-      this.dataPropBridges = new HashMap();
-      this.nodeClassMaps = new HashMap();
+      this.classMaps = new HashMap<String,ClassMapElem>();
+      this.objPropBridges = new HashMap<String,Map<String,ObjectPropertyBridgeElem>>();
+      this.dataPropBridges = new HashMap<String,Map<String,DatatypePropertyBridgeElem>>();
+      this.nodeClassMaps = new HashMap<LocalNode,ClassMapElem>();
       maps.beforeFirst();
       while (maps.next()) {
         long map = maps.getColumnValue(0);
@@ -101,9 +99,7 @@ public class Definition {
       }
       maps.close();
 
-      Iterator i = nodeClassMaps.keySet().iterator();
-      while (i.hasNext()) {
-        LocalNode map = (LocalNode)i.next();
+      for (LocalNode map: nodeClassMaps.keySet()) {
         ClassMapElem cmap = (ClassMapElem)nodeClassMaps.get(map);
 
         populateObjPropBridges(resolver, session, subj, type, model, map, cmap.klass, nodeClassMaps);
@@ -119,11 +115,11 @@ public class Definition {
   }
 
   void populateObjPropBridges(Resolver resolver, ResolverSession session,
-      Variable subj, LocalNode type, LocalNode model, LocalNode map, String klass, Map nodeClassMaps)
+      Variable subj, LocalNode type, LocalNode model, LocalNode map, String klass, Map<LocalNode,ClassMapElem> nodeClassMaps)
       throws LocalizeException, QueryException, TuplesException, GlobalizeException {
-    Map pmap = (Map)objPropBridges.get(klass);
+    Map<String,ObjectPropertyBridgeElem> pmap = objPropBridges.get(klass);
     if (pmap == null) {
-      pmap = new HashMap();
+      pmap = new HashMap<String,ObjectPropertyBridgeElem>();
       objPropBridges.put(klass, pmap);
     }
 
@@ -150,9 +146,9 @@ public class Definition {
   void populateDataPropBridges(Resolver resolver, ResolverSession session,
       Variable subj, LocalNode type, LocalNode model, LocalNode map, String klass)
       throws LocalizeException, QueryException, TuplesException, GlobalizeException {
-    Map pmap = (Map)dataPropBridges.get(klass);
+    Map<String,DatatypePropertyBridgeElem> pmap = dataPropBridges.get(klass);
     if (pmap == null) {
-      pmap = new HashMap();
+      pmap = new HashMap<String,DatatypePropertyBridgeElem>();
       dataPropBridges.put(klass, pmap);
     }
 

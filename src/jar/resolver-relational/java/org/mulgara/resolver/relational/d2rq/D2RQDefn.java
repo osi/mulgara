@@ -43,9 +43,6 @@ package org.mulgara.resolver.relational.d2rq;
 
 import org.apache.log4j.Logger;
 
-import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +73,7 @@ public abstract class D2RQDefn {
   protected final ResolverSession session;
   
   // Maps columns to sql datatypes.
-  protected Map columnTypeMap;
+  protected Map<String,URIReference> columnTypeMap;
 
   public D2RQDefn(Resolver resolver, ResolverSession session, D2RQDefn parent) {
     this.resolver = resolver;
@@ -93,14 +90,14 @@ public abstract class D2RQDefn {
     this.columnTypeMap = null;
   }
 
-  protected void initColumnTypeMap(Map typeMap) {
+  protected void initColumnTypeMap(Map<String,URIReference> typeMap) {
     if (columnTypeMap != null) {
       throw new IllegalStateException("Only parent node may initialise type map, and only once");
     }
     columnTypeMap = typeMap;
   }
 
-  public Map getColumnTypeMap() {
+  public Map<String,URIReference> getColumnTypeMap() {
     return columnTypeMap;
   }
 
@@ -121,14 +118,14 @@ public abstract class D2RQDefn {
     }
   }
 
-  protected List getStringObjects(Value subj, Value pred, Value model) throws LocalizeException, TuplesException, GlobalizeException, QueryException {
+  protected List<String> getStringObjects(Value subj, Value pred, Value model) throws LocalizeException, TuplesException, GlobalizeException, QueryException {
 
     long[] res = getObjects(
         (subj instanceof LocalNode) ? ((LocalNode)subj).getValue() : session.localize((Node)subj),
         (pred instanceof LocalNode) ? ((LocalNode)pred).getValue() : session.localize((Node)pred),
         (model instanceof LocalNode) ? ((LocalNode)model).getValue() : session.localize((Node)model));
     
-    List ans = new ArrayList();
+    List<String> ans = new ArrayList<String>();
 
     for (int i = 0; i < res.length; i++) {
       Object obj = session.globalize(res[i]);
@@ -143,14 +140,14 @@ public abstract class D2RQDefn {
     return ans;
   }
 
-  protected List getLocalNodeObjects(Value subj, Value pred, Value model) throws LocalizeException, TuplesException, QueryException {
+  protected List<LocalNode> getLocalNodeObjects(Value subj, Value pred, Value model) throws LocalizeException, TuplesException, QueryException {
 
     long[] res = getObjects(
         (subj instanceof LocalNode) ? ((LocalNode)subj).getValue() : session.localize((Node)subj),
         (pred instanceof LocalNode) ? ((LocalNode)pred).getValue() : session.localize((Node)pred),
         (model instanceof LocalNode) ? ((LocalNode)model).getValue() : session.localize((Node)model));
 
-    List result = new ArrayList();
+    List<LocalNode> result = new ArrayList<LocalNode>();
     for (int i = 0; i < res.length; i++) {
       result.add(new LocalNode(res[i]));
     }

@@ -53,14 +53,14 @@ import org.mulgara.query.TuplesException;
 import org.mulgara.query.QueryException;
 
 public class TranslationTableElem extends D2RQDefn {
-  public Map db2rdf;
-  public Map rdf2db;
+  public Map<String,String> db2rdf;
+  public Map<String,String> rdf2db;
 
   public TranslationTableElem(Resolver resolver, ResolverSession session, LocalNode ttable, long defModel) throws LocalizeException, QueryException, TuplesException, GlobalizeException {
     super(resolver, session);
 
-    db2rdf = new HashMap();
-    rdf2db = new HashMap();
+    db2rdf = new HashMap<String,String>();
+    rdf2db = new HashMap<String,String>();
 
     LocalNode model = new LocalNode(defModel);
 

@@ -181,6 +181,7 @@ public class RelationalResolverUnitTest extends TestCase {
   /**
   * Create test objects.
   */
+  @SuppressWarnings("deprecation")
   public void setUp() throws Exception {
     if (database == null) {
       // Create the persistence directory

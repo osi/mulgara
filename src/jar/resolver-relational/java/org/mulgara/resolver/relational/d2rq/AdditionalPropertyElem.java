@@ -41,9 +41,6 @@
  */
 package org.mulgara.resolver.relational.d2rq;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.LocalizeException;

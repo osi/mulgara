@@ -41,7 +41,6 @@
  */
 package org.mulgara.resolver.relational.d2rq;
 
-import java.util.List;
 import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.LocalizeException;

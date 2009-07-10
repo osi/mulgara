@@ -91,12 +91,12 @@ public class LiteralDesc extends VariableDesc {
     throw new IllegalStateException("Can't restrict literal");
   }
 
-  public Set getTables() {
-    return Collections.EMPTY_SET;
+  public Set<String> getTables() {
+    return Collections.emptySet();
   }
 
-  public Set getColumns() {
-    return Collections.EMPTY_SET;
+  public Set<String> getColumns() {
+    return Collections.emptySet();
   }
 
   public String getTable() {

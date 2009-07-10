@@ -46,6 +46,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,6 @@ import org.mulgara.query.*;
 import org.mulgara.resolver.spi.EmptyResolution;
 import org.mulgara.resolver.spi.LocalizedTuples;
 import org.mulgara.resolver.spi.Resolution;
-import org.mulgara.resolver.spi.Resolver;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.tuples.TuplesOperations;
@@ -102,6 +102,7 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
   private int[] refCount;
   private ResolverSession resolverSession;
   private int[] columnMapping;
+  private long cachedCount = -1;
 
   /**
    * @param constraint  the constraint to resolver, never <code>null</code>
@@ -141,11 +142,11 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
   }
 
   public long getRowCount() throws TuplesException {
-    if (result == null) {
-      beforeFirst();
+    if (cachedCount == -1) {
+      if (result == null) beforeFirst();
+      cachedCount = result.getRowCount();
     }
-
-    return result.getRowCount();
+    return cachedCount;
   }
 
   public long getRowUpperBound() throws TuplesException {
@@ -160,7 +161,12 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
     //
     // My intuition tells me that we want to be as far right as possible, so maybe this is the optimal
     // solution..
-    return Long.MAX_VALUE;
+    return cachedCount == -1 ? Long.MAX_VALUE : cachedCount;
+  }
+
+
+  public long getRowExpectedCount() throws TuplesException {
+    return cachedCount == -1 ? Long.MAX_VALUE : cachedCount;
   }
 
 
@@ -212,8 +218,8 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
     }
   }
 
-  public List getOperands() {
-    return new ArrayList();
+  public List<Tuples> getOperands() {
+    return Collections.emptyList();
   }
 
   public void beforeFirst() throws TuplesException {
@@ -266,7 +272,7 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
   }
 
 
-  public Annotation getAnnotation(Class annotationClass) throws TuplesException {
+  public Annotation getAnnotation(Class<? extends Annotation> annotationClass) throws TuplesException {
     return null;
   }
 
@@ -292,11 +298,11 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
       throw new TuplesException("RelationalResolution does not support suffix != 0");
     }
 
-    Iterator i = constraint.getRdfTypeConstraints().iterator();
+    Iterator<ConstraintExpression> i = constraint.getRdfTypeConstraints().iterator();
     if (!i.hasNext()) {
       this.result = new EmptyResolution(constraint, true);
     } else {
-      List result = new ArrayList();
+      List<Tuples> result = new ArrayList<Tuples>();
       try {
         while (i.hasNext()) {
           Constraint head = (Constraint)i.next();
@@ -305,7 +311,7 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
 
         this.result = TuplesOperations.join(result);
       } finally {
-        close((Tuples[]) result.toArray(new Tuples[result.size()]));
+        close(result.toArray(new Tuples[result.size()]));
       }
     }
 
@@ -383,14 +389,11 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
     includeInstanceQuery(query, subj, classMap);
 
     // Include properties
-    List additionalProperties = new ArrayList();
-    Map propBs = (Map)defn.objPropBridges.get(classMap.klass);
-    Map dataBs = (Map)defn.dataPropBridges.get(classMap.klass);
-    List constraints = (List)constraint.getConstraintsBySubject(subj);
-    Iterator i = constraints.iterator();
-    while (i.hasNext()) {
-      Constraint c = (Constraint)i.next();
-
+    List<Tuples> additionalProperties = new ArrayList<Tuples>();
+    Map<String,? extends PropertyBridgeElem> propBs = defn.objPropBridges.get(classMap.klass);
+    Map<String,? extends PropertyBridgeElem> dataBs = defn.dataPropBridges.get(classMap.klass);
+    List<Constraint> constraints = constraint.getConstraintsBySubject(subj);
+    for (Constraint c: constraints) {
       ConstraintElement pred = c.getElement(1);
       if (pred instanceof Variable) {
         includeVariablePropertyBridge(query, (Variable)pred, c, propBs, dataBs);
@@ -399,9 +402,7 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
         includePropertyBridge(query, c, dataBs);
 
         // If we find a matching additional property then save it for distribution over the result.
-        Iterator aprops = classMap.additionalProperties.iterator();
-        while (aprops.hasNext()) {
-          AdditionalPropertyElem ape = (AdditionalPropertyElem)aprops.next();
+        for (AdditionalPropertyElem ape: classMap.additionalProperties) {
 
           if (ape.name.equals(c.getElement(1).toString())) {
             if (c.getElement(2) instanceof Variable) {
@@ -471,16 +472,13 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
         throw new TuplesException("Error in PK definition: " + classMap + " - " + desc);
       }
       query.addTables(desc.getTables());
-      Iterator i = desc.getColumns().iterator();
-      while (i.hasNext()) {
-        String c = (String)i.next();
+      for (String c: desc.getColumns()) {
         desc.assignColumnIndex(c, query.addColumn(c));
       }
       query.addVariable((Variable)instance, desc);
 
-      Iterator j = classMap.condition.iterator();
-      while (j.hasNext()) {
-        query.addRestriction((String)j.next());
+      for (String c: classMap.condition) {
+        query.addRestriction(c);
       }
     } else { // subj !instanceof Variable
       VariableDesc desc;
@@ -498,17 +496,16 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
       query.addTables(desc.getTables());
       query.addRestriction(desc.restrict(instance.toString()));
 
-      Iterator j = classMap.condition.iterator();
-      while (j.hasNext()) {
-        query.addRestriction((String)j.next());
+      for (String r: classMap.condition) {
+        query.addRestriction(r);
       }
     }
   }
 
-  private void includePropertyBridge(RelationalQuery query, Constraint c, Map propBs)
+  private void includePropertyBridge(RelationalQuery query, Constraint c, Map<String,? extends PropertyBridgeElem> propBs)
       throws TuplesException {
     ConstraintElement pred = c.getElement(1);
-    PropertyBridgeElem propB = (PropertyBridgeElem)propBs.get(pred.toString());
+    PropertyBridgeElem propB = propBs.get(pred.toString());
     if (propB != null) {
       if (propB instanceof ObjectPropertyBridgeElem) {
         includeObjectPropertyBridge(query, c.getElement(2), (ObjectPropertyBridgeElem)propB);
@@ -518,14 +515,11 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
         throw new TuplesException("Unknown propertybridge type");
       }
 
-      Iterator i = propB.condition.iterator();
-      while (i.hasNext()) {
-        query.addRestriction((String)i.next());
+      for (String r: propB.condition) {
+        query.addRestriction(r);
       }
 
-      Iterator j = propB.join.iterator();
-      while (j.hasNext()) {
-        String join = (String)j.next();
+      for (String join: propB.join) {
         query.addTables(RelationalResolver.extractTablesFromJoin(join));
         query.addRestriction(join);
       }
@@ -534,30 +528,26 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
 
 
   private void includeVariablePropertyBridge(RelationalQuery query, Variable p, Constraint c,
-      Map propBs, Map dataBs) throws TuplesException {
+        Map<String,? extends PropertyBridgeElem> propBs,
+        Map<String,? extends PropertyBridgeElem> dataBs) throws TuplesException {
 
-    PropertyBridgeElem defn = (PropertyBridgeElem)(propBs.values().iterator().next());
+    PropertyBridgeElem defn = propBs.values().iterator().next();
     LiteralDesc predDesc = new LiteralDesc(defn, p);
     query.addVariable(p, predDesc);
 
-    List descs = new ArrayList();
     ConstraintElement obj = c.getElement(2);
-    Iterator i = propBs.entrySet().iterator();
-    while (i.hasNext()) {
-      Map.Entry entry = (Map.Entry)i.next();
-      String predicate = (String)entry.getKey();
-      PropertyBridgeElem propB = (PropertyBridgeElem)entry.getValue();
+    for (Map.Entry<String,? extends PropertyBridgeElem> entry: propBs.entrySet()) {
+      String predicate = entry.getKey();
+      PropertyBridgeElem propB = entry.getValue();
       VariableDesc vdesc = obtainDescForVariableProperty(propB);
       if (vdesc != null) {
         query.addUnionCase(predDesc, new UnionCase(predDesc, predicate, vdesc, obj));
       }
     }
 
-    i = dataBs.entrySet().iterator();
-    while (i.hasNext()) {
-      Map.Entry entry = (Map.Entry)i.next();
-      String predicate = (String)entry.getKey();
-      PropertyBridgeElem pb = (PropertyBridgeElem)entry.getValue();
+    for (Map.Entry<String,? extends PropertyBridgeElem> entry: dataBs.entrySet()) {
+      String predicate = entry.getKey();
+      PropertyBridgeElem pb = entry.getValue();
       VariableDesc vdesc = obtainDescForVariableProperty(pb);
       if (vdesc != null) {
         query.addUnionCase(predDesc, new UnionCase(predDesc, predicate, vdesc, obj));
@@ -655,9 +645,7 @@ public class RelationalResolution extends AbstractTuples implements Resolution {
         throw new TuplesException("Error in property definition: " + desc);
       }
       query.addTables(desc.getTables());
-      Iterator i = desc.getColumns().iterator();
-      while (i.hasNext()) {
-        String c = (String)i.next();
+      for (String c: desc.getColumns()) {
         desc.assignColumnIndex(c, query.addColumn(c));
       }
       query.addVariable(v, desc);

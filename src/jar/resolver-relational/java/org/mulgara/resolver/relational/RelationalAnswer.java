@@ -45,28 +45,17 @@ import org.apache.log4j.*;
 
 // Standard Java packages.
 import java.sql.Connection;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Iterator;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.jrdf.graph.URIReference;
-import org.jrdf.graph.Literal;
 
 // Local packages
 import org.mulgara.query.Answer;
 import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.Variable;
-import org.mulgara.query.rdf.URIReferenceImpl;
-import org.mulgara.query.rdf.LiteralImpl;
-import org.mulgara.store.tuples.AbstractTuples;
 
 public class RelationalAnswer implements Answer {
   private static Logger logger = Logger.getLogger(RelationalAnswer.class.getName());
@@ -74,10 +63,10 @@ public class RelationalAnswer implements Answer {
   private Connection conn;
   private Statement statement;
   private ResultSet result;
-  private List variables;
+  private List<Variable> variables;
   private RelationalQuery query;
-  private List queryList;
-  private Iterator queries;
+  private List<String> queryList;
+  private Iterator<String> queries;
 
   public RelationalAnswer(RelationalQuery query, Connection conn) throws TuplesException {
     if (logger.isDebugEnabled()) {
@@ -101,7 +90,7 @@ public class RelationalAnswer implements Answer {
   }
 
   public Object getObject(int column) throws TuplesException {
-    return getObject((Variable)variables.get(column));
+    return getObject(variables.get(column));
   }
 
   public Object getObject(String columnName) throws TuplesException {
@@ -131,7 +120,7 @@ public class RelationalAnswer implements Answer {
 
       queries = queryList.iterator();
       if (queries.hasNext()) {
-        result = statement.executeQuery((String)queries.next());
+        result = statement.executeQuery(queries.next());
       }
     } catch (SQLException es) {
       throw new TuplesException("Failed to resolve query '" + query.getQuery() + "'", es);
@@ -162,7 +151,7 @@ public class RelationalAnswer implements Answer {
   }
 
   public Variable[] getVariables() {
-    return (Variable[])variables.toArray(new Variable[] {});
+    return variables.toArray(new Variable[] {});
   }
 
   public boolean isUnconstrained() {
@@ -175,6 +164,10 @@ public class RelationalAnswer implements Answer {
   }
 
   public long getRowUpperBound() {
+    return getRowCount();
+  }
+
+  public long getRowExpectedCount() {
     return getRowCount();
   }
 

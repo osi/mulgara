@@ -41,48 +41,39 @@
  */
 package org.mulgara.resolver.relational;
 
-import java.util.Arrays;
 import java.util.Set;
-import java.util.List;
 import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.jrdf.graph.Node;
-import org.jrdf.graph.URIReference;
-import org.jrdf.graph.Literal;
 
 import org.mulgara.query.TuplesException;
 import org.mulgara.query.rdf.VariableNodeImpl;
 import org.mulgara.resolver.relational.d2rq.ClassMapElem;
-import org.mulgara.resolver.relational.d2rq.DatatypePropertyBridgeElem;
-import org.mulgara.resolver.relational.d2rq.ObjectPropertyBridgeElem;
 
 
 public class BNodeDesc extends VariableDesc {
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(RelationalResolver.class);
 
-  private final Set tables;
-  private final Set columns;
+  private final Set<String> tables;
+  private final Set<String> columns;
   private String bnodeClass;
 
-  private Map columnIndices;
+  private Map<String,Integer> columnIndices;
 
   public BNodeDesc(ClassMapElem cmap) {
     super(cmap);
     this.bnodeClass = cmap.klass;
 
     String[] split = cmap.bNodeIdColumns.split("\\s*,\\s*");
-    tables =  new HashSet();
-    columns = new HashSet();
-    columnIndices = new HashMap();
+    tables =  new HashSet<String>();
+    columns = new HashSet<String>();
+    columnIndices = new HashMap<String,Integer>();
 
     for (int i = 0; i < split.length; i++) {
       columns.add(split[i]);
@@ -96,9 +87,8 @@ public class BNodeDesc extends VariableDesc {
 
   public Node getNode(ResultSet resultSet) throws SQLException, TuplesException {
     StringBuffer buff = new StringBuffer(bnodeClass);
-    Iterator i = columns.iterator();
-    while (i.hasNext()) {
-      int index = ((Integer)columnIndices.get(i.next())).intValue();
+    for (String c: columns) {
+      int index = columnIndices.get(c).intValue();
       buff.append("|||");
       buff.append(resultSet.getString(index + 1));
     }
@@ -106,11 +96,11 @@ public class BNodeDesc extends VariableDesc {
     return new VariableNodeImpl(buff.toString());
   }
 
-  public Set getTables() {
+  public Set<String> getTables() {
     return tables;
   }
 
-  public Set getColumns() {
+  public Set<String> getColumns() {
     return columns;
   }
 

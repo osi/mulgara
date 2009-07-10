@@ -41,7 +41,6 @@
  */
 package org.mulgara.resolver.relational.d2rq;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -62,7 +61,7 @@ public class ObjectPropertyBridgeElem extends PropertyBridgeElem {
   public final String pattern;
   public final ClassMapElem refersToClassMap;
 
-  public ObjectPropertyBridgeElem(Resolver resolver, ResolverSession session, long propMap, long defModel, Map nodeClassMaps, D2RQDefn parent)
+  public ObjectPropertyBridgeElem(Resolver resolver, ResolverSession session, long propMap, long defModel, Map<LocalNode,ClassMapElem> nodeClassMaps, D2RQDefn parent)
       throws LocalizeException, QueryException, TuplesException, GlobalizeException {
     super(resolver, session, propMap, defModel, parent);
 

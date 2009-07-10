@@ -64,6 +64,7 @@ import org.mulgara.resolver.spi.SymbolicTransformationException;
 
 public class RelationalTransformer extends AbstractSymbolicTransformer {
   /** Logger */
+  @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(RelationalTransformer.class);
 
   private URI modelTypeURI;
@@ -101,19 +102,17 @@ public class RelationalTransformer extends AbstractSymbolicTransformer {
   }
 
   public ConstraintExpression transformConj(SymbolicTransformationContext context, ConstraintConjunction cc) throws SymbolicTransformationException {
-    List retainedArgs = new ArrayList();
-    Map relationalArgs = new HashMap();
+    List<ConstraintExpression> retainedArgs = new ArrayList<ConstraintExpression>();
+    Map<ConstraintElement,List<RelationalConstraint>> relationalArgs = new HashMap<ConstraintElement,List<RelationalConstraint>>();
 
     boolean transformed = false;
 
-    Iterator args = cc.getElements().iterator();
-    while (args.hasNext()) {
-      ConstraintExpression arg = (ConstraintExpression)args.next();
+    for (ConstraintExpression arg: cc.getElements()) {
       if (arg instanceof RelationalConstraint) {
         RelationalConstraint rc = (RelationalConstraint)arg;
-        List rcArgs = (List)relationalArgs.get(rc.getModel());
+        List<RelationalConstraint> rcArgs = relationalArgs.get(rc.getModel());
         if (rcArgs == null) {
-          rcArgs = new ArrayList();
+          rcArgs = new ArrayList<RelationalConstraint>();
           relationalArgs.put(rc.getModel(), rcArgs);
         }
         rcArgs.add(rc);
@@ -126,21 +125,16 @@ public class RelationalTransformer extends AbstractSymbolicTransformer {
       }
     }
 
-    Iterator argLists = relationalArgs.values().iterator();
-    while (argLists.hasNext()) {
-      Iterator rarg = ((List)argLists.next()).iterator();
+    for (List<RelationalConstraint> rargl: relationalArgs.values()) {
+      Iterator<RelationalConstraint> rarg = rargl.iterator();
       RelationalConstraint rc = null;
-      if (rarg.hasNext()) {
-        rc = (RelationalConstraint)rarg.next();
-      }
+      if (rarg.hasNext()) rc = rarg.next();
       while (rarg.hasNext()) {
         transformed = true;
-        rc.conjoinWith((RelationalConstraint)rarg.next());
+        rc.conjoinWith(rarg.next());
       }
 
-      if (rc != null) {
-        retainedArgs.add(rc);
-      }
+      if (rc != null) retainedArgs.add(rc);
     }
 
 
