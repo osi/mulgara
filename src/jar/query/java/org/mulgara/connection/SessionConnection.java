@@ -12,21 +12,14 @@
 package org.mulgara.connection;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.apache.log4j.Logger;
-import org.mulgara.jena.GraphMulgara;
 import org.mulgara.query.QueryException;
 import org.mulgara.server.NonRemoteSessionException;
 import org.mulgara.server.Session;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.driver.SessionFactoryFinder;
 import org.mulgara.server.driver.SessionFactoryFinderException;
-
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.shared.JenaException;
 
 /**
  * A connection for sending commands to a server using a session object.
@@ -48,7 +41,7 @@ public class SessionConnection extends CommandExecutor implements Connection {
   private URI securityDomainUri;
   
   /** The session to use for this connection. */
-  private Session session;
+  Session session;
   
   /** The factory used to create this connection */
   private ConnectionFactory factory = null;
@@ -308,136 +301,13 @@ public class SessionConnection extends CommandExecutor implements Connection {
   }
 
 
-  ///////////////////////////////////////////////////////////////////////
-  // The JenaConnection interface
-  ///////////////////////////////////////////////////////////////////////
-
   /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Model. Does not create the remote model.
-   * @param graphURI The URI,as a string, of the Mulgara model in the server 
-   * @return A Jena Model
+   * Provides access to a JenaConnection. This interface is isolated from this class
+   * to avoid needing Jena on the classpath.
+   * @return A new JenaConnection object which refers back to this object.
    */
-  public Graph connectGraph(String graphURI) {
-    return connectGraph(graphURI, false);
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Graph.
-   * @param graphURI The URI,as a string, of the Mulgara model in the server 
-   * @param createIfDoesNotExist Create the Mulgara model if it does not already exist.
-   * @return A Jena Model
-   */
-  public Graph connectGraph(String graphURI, boolean createIfDoesNotExist) {
-    try {
-      return connectGraph(new URI(graphURI), createIfDoesNotExist);
-    } catch (URISyntaxException ex) {
-      throw new JenaException("JenaMulgara.connectGraph", ex);
-    }
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Graph.
-   * @param graphURI The URI of the Mulgara model.
-   * @param createIfDoesNotExist Create the Mulgara model if it does not already exist.
-   * @return A Jena Graph
-   */
-  public Graph connectGraph(URI graphURI, boolean createIfDoesNotExist) {
-    if (createIfDoesNotExist) {
-      try {
-        if (!session.modelExists(graphURI)) session.createModel(graphURI, null);
-      } catch (QueryException ex) {
-        throw new JenaException(ex);
-      }
-    }
-    return new GraphMulgara(session, graphURI) ;
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Model.  
-   * Does not create the remote model.
-   * @param graphURI The URI,as a string, of the Mulgara model in the server 
-   * @return A Jena Model
-   */
-  public Model connectModel(String graphURI) {
-    return connectModel(graphURI, false);
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Model.
-   * @param graphURI The URI,as a string, of the Mulgara model in the server 
-   * @param createIfDoesNotExist Create the Mulgara model if it does not already exist.
-   * @return A Jena Model
-   */
-  public Model connectModel(String graphURI, boolean createIfDoesNotExist) {
-    try {
-      return connectModel(new URI(graphURI), createIfDoesNotExist);
-    } catch (URISyntaxException ex) {
-      throw new JenaException("JenaMulgara.createModel", ex);
-    }
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Model.
-   * @param graphURI The URI of the Mulgara model.
-   * @param createIfDoesNotExist Create the Mulgara model if it does not already exist.
-   * @return A Jena Model
-   */
-  public Model connectModel(URI graphURI, boolean createIfDoesNotExist) {
-    Graph g = connectGraph(graphURI, createIfDoesNotExist);
-    return ModelFactory.createModelForGraph(g);
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Model.  
-   * Creates the remote graph if it does not already exist.
-   * @param graphURI The URI,as a string, of the Mulgara model in the server 
-   * @return A Jena Model
-   */
-  public Graph createGraph(String graphURI) {
-    return connectGraph(graphURI, true);
-  }
-
-
-  /**
-   * Connect to RDF data stored in a Mulgara server as a Jena Model,
-   * creating the model if it does not already exist.
-   * @param graphURI The URI,as a string, of the Mulgara model in the server 
-   * @return A Jena Model
-   */
-  public Model createModel(String graphURI) {
-    return connectModel(graphURI, true);
-  }
-
-
-  /**
-   * Drop the Mulgara graph/model.
-   * @param graphURI The URI of the graph
-   */
-  public void dropGraph(String graphURI) {
-    try {
-      dropGraph(new URI(graphURI)) ;
-    } catch (URISyntaxException ex) {
-      throw new JenaException("JenaMulgara.dropGraph", ex);
-    }
-  }
-
-
-  /**
-   * Drop the Mulgara graph/model.
-   * @param graphURI The URI of the graph
-   */
-  public void dropGraph(URI graphURI) {
-    try {
-      session.removeModel(graphURI);
-    } catch (Exception ex) {
-      throw new JenaException("JenaMulgara.dropGraph", ex);
-    }
+  public JenaConnection getJenaConnection() {
+    return new JenaConnectionImpl(this);
   }
 
 }

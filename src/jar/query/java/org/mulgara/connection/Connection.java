@@ -87,7 +87,7 @@ import org.mulgara.query.operation.*;
  * @copyright &copy; 2007 <a href="mailto:pgearon@users.sourceforge.net">Paul Gearon</a>
  * @licence <a href="{@docRoot}/../../LICENCE.txt">Open Software License v3.0</a>
  */
-public interface Connection extends JenaConnection {
+public interface Connection {
 
   /**
    * Give login credentials and security domain to the current session.  This should only be needed
