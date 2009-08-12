@@ -47,7 +47,6 @@ import java.util.*;
 
 // Third party packages
 // import org.apache.log4j.Logger;
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;          // JUnit
 import junit.framework.TestSuite;
@@ -569,26 +568,27 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     }
 
     public ConstraintExpression constructConstraintExpression(ConstraintElement model,
-        Map byVarSubject, Map byConstSubject) throws SymbolicTransformationException {
+        Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>> byVarSubject,
+        Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>> byConstSubject) throws SymbolicTransformationException {
 
       String id = model.toString() +
-          "|V" + sortedMap((Map<?,?>)byVarSubject) +
-          "|C" + sortedMap((Map<?,?>)byConstSubject);
+          "|V" + sortedMap(byVarSubject) +
+          "|C" + sortedMap(byConstSubject);
       return new TestConstraint(id);
     }
 
-    String sortedMap(Map<?,?> map) {
+    String sortedMap(Map<ConstraintElement,?> map) {
       if (map == null) return "{}";
       return createSortedMap(map).toString();
     }
     
     @SuppressWarnings("unchecked")
-    SortedMap<?,?> createSortedMap(Map<?,?> m) {
-      SortedMap<?,?> sm = new TreeMap(m);
+    SortedMap<ConstraintElement,?> createSortedMap(Map<ConstraintElement,?> m) {
+      SortedMap<ConstraintElement,?> sm = new TreeMap(m);
       for (Map.Entry entry: sm.entrySet()) {
         Object v = entry.getValue();
         if (v instanceof Map) {
-          entry.setValue(createSortedMap((Map<?,?>)v));
+          entry.setValue(createSortedMap((Map<ConstraintElement,?>)v));
         }
       }
       return sm;

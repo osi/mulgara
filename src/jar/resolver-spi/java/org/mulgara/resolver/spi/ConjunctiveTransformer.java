@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
@@ -75,6 +74,7 @@ import org.mulgara.query.QueryException;
  */
 public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer {
   /** Logger */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(ConjunctiveTransformer.class.getName());
 
   protected URI modelTypeURI;
@@ -83,7 +83,7 @@ public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer
     this.modelTypeURI = modelTypeURI;
   }
 
-  public abstract ConstraintExpression constructConstraintExpression(ConstraintElement model, Map byVarSubject, Map byConstSubject) throws SymbolicTransformationException;
+  public abstract ConstraintExpression constructConstraintExpression(ConstraintElement model, Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>> byVarSubject, Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>> byConstSubject) throws SymbolicTransformationException;
 
 
   @Override
@@ -125,19 +125,17 @@ public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer
       return cc;
     }
 
-    List args = new ArrayList();
+    List<ConstraintExpression> args = new ArrayList<ConstraintExpression>();
     args.addAll(acc.getResidualArgs());
 
-    Map varSubByModel = acc.getVarArgsByModel();
-    Map constSubByModel = acc.getConstArgsByModel();
+    ArgMap varSubByModel = acc.getVarArgsByModel();
+    ArgMap constSubByModel = acc.getConstArgsByModel();
 
-    Set modelSet = new HashSet();
+    Set<ConstraintElement> modelSet = new HashSet<ConstraintElement>();
     modelSet.addAll(varSubByModel.keySet());
     modelSet.addAll(constSubByModel.keySet());
-    Iterator models = modelSet.iterator();
-    while (models.hasNext()) {
-      ConstraintElement model = (ConstraintElement)models.next();
-      args.add(constructConstraintExpression(model, (Map)varSubByModel.get(model), (Map)constSubByModel.get(model)));
+    for (ConstraintElement model: modelSet) {
+      args.add(constructConstraintExpression(model, varSubByModel.get(model), constSubByModel.get(model)));
     }
 
     return new ConstraintConjunction(args);
@@ -147,9 +145,7 @@ public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer
   public ConjAccumulator transformConj(SymbolicTransformationContext context, ConstraintConjunction cc, ConjAccumulator acc)
       throws SymbolicTransformationException {
 
-    Iterator args = cc.getElements().iterator();
-    while (args.hasNext()) {
-      ConstraintExpression arg = (ConstraintExpression)args.next();
+    for (ConstraintExpression arg: cc.getElements()) {
       if (arg instanceof ConstraintConjunction) {
         acc = transformConj(context, (ConstraintConjunction)arg, acc);
       } else if (arg instanceof ConstraintDisjunction) {
@@ -163,20 +159,32 @@ public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer
     return acc;
   }
 
+  /**
+   * Convenience interface to avoid having to work with the full template pattern of:
+   * Map<ConstraintElement,Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>>>
+   */
+  private interface ArgMap extends Map<ConstraintElement,Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>>> {
+  }
+
+  /** Convenience class for implementing ArgMap with a HashMap. */
+  private class ArgHashMap extends HashMap<ConstraintElement,Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>>>
+                           implements ArgMap {
+    private static final long serialVersionUID = -5787565491022825665L;
+  }
 
   private class ConjAccumulator {
     private SymbolicTransformationContext context;
 
-    private Map varArgsByModel;
-    private Map constArgsByModel;
-    private List residualArgs;
-    private boolean transformed;
+    // Map<ConstraintElement,Map<Variable,Map>> varArgsByModel;
+    private ArgMap varArgsByModel;
+    private ArgMap constArgsByModel;
+    private List<ConstraintExpression> residualArgs;
 
     public ConjAccumulator(SymbolicTransformationContext context) {
       this.context = context;
-      varArgsByModel = new HashMap();
-      constArgsByModel = new HashMap();
-      residualArgs = new ArrayList();
+      varArgsByModel = new ArgHashMap();
+      constArgsByModel = new ArgHashMap();
+      residualArgs = new ArrayList<ConstraintExpression>();
     }
 
 
@@ -215,22 +223,22 @@ public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer
     }
 
 
-    private void insertByModel(ConstraintElement model, Map target, Constraint arg) {
-      Map bySubject = (Map)target.get(model);
+    private void insertByModel(ConstraintElement model, Map<ConstraintElement,Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>>> target, Constraint arg) {
+      Map<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>> bySubject = target.get(model);
       if (bySubject == null) {
-        bySubject = new HashMap();
+        bySubject = new HashMap<ConstraintElement,Map<ConstraintElement,List<ConstraintElement>>>();
         target.put(model, bySubject);
       }
 
-      Map byPredicate = (Map)bySubject.get(arg.getElement(0));
+      Map<ConstraintElement,List<ConstraintElement>> byPredicate = bySubject.get(arg.getElement(0));
       if (byPredicate == null) {
-        byPredicate = new HashMap();
+        byPredicate = new HashMap<ConstraintElement,List<ConstraintElement>>();
         bySubject.put(arg.getElement(0), byPredicate);
       }
 
-      List objects = (List)byPredicate.get(arg.getElement(1));
+      List<ConstraintElement> objects = byPredicate.get(arg.getElement(1));
       if (objects == null) {
-        objects = new ArrayList();
+        objects = new ArrayList<ConstraintElement>();
         byPredicate.put(arg.getElement(1), objects);
       }
 
@@ -242,15 +250,15 @@ public abstract class ConjunctiveTransformer extends AbstractSymbolicTransformer
       return (varArgsByModel.size() != 0) || (constArgsByModel.size() != 0);
     }
 
-    public List getResidualArgs() {
+    public List<ConstraintExpression> getResidualArgs() {
       return residualArgs;
     }
 
-    public Map getVarArgsByModel() {
+    public ArgMap getVarArgsByModel() {
       return varArgsByModel;
     }
 
-    public Map getConstArgsByModel() {
+    public ArgMap getConstArgsByModel() {
       return constArgsByModel;
     }
   }
