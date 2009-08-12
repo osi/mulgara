@@ -34,6 +34,7 @@ import junit.framework.*;
 import org.apache.log4j.Logger;
 
 // locally written packages
+import org.mulgara.query.Cursor;
 import org.mulgara.query.Variable;
 
 /**
@@ -62,6 +63,7 @@ public class UnorderedAppendUnitTest extends TestCase {
    * Logger.
    *
    */
+  @SuppressWarnings("unused")
   private static final Logger logger = Logger.getLogger(UnorderedAppendUnitTest.class);
 
   /**
@@ -130,7 +132,7 @@ public class UnorderedAppendUnitTest extends TestCase {
 
   /**
    * Test {@link UnorderedAppend}. When passed two arguments with common
-   * variables, the result should be correctly sorted.
+   * variables, the result should be sorted in insertion order.
    *
    * @throws Exception if query fails when it should have succeeded
    */
@@ -152,7 +154,7 @@ public class UnorderedAppendUnitTest extends TestCase {
   /**
    * Test {@link UnorderedAppend} in the presence of unspecified column values.
    * When passed two arguments with common variables, the result should be
-   * correctly sorted.
+   * sorted in insertion order.
    *
    * @throws Exception if query fails when it should have succeeded
    */
@@ -170,4 +172,36 @@ public class UnorderedAppendUnitTest extends TestCase {
         new TestTuples(new UnorderedAppend(new Tuples[] {
         lhs, rhs})));
   }
+
+  /**
+   * Test {@link UnorderedAppend} cardinality. When passed two arguments with common
+   * variables, the result should be correctly sorted.
+   *
+   * @throws Exception if query fails when it should have succeeded
+   */
+  public void testCardinality() throws Exception {
+
+    Tuples appendedTuples = new UnorderedAppend(new Tuples[] {});
+    assertEquals(Cursor.ZERO, appendedTuples.getRowCardinality());
+
+    Variable x = new Variable("x");
+    Variable y = new Variable("y");
+
+    Tuples operand = new TestTuples(x, 1).and(y, 2);
+    appendedTuples = new UnorderedAppend(new Tuples[] { operand});
+    assertEquals(Cursor.ONE, appendedTuples.getRowCardinality());
+
+    operand = new TestTuples(x, 1).and(y, 2).or(x, 3).and(y, 4);;
+    appendedTuples = new UnorderedAppend(new Tuples[] { operand});
+    assertEquals(Cursor.MANY, appendedTuples.getRowCardinality());
+
+    Tuples lhs = new TestTuples(x, 1).and(y, 8).or(x, 3).and(y, 7);
+    Tuples rhs = new TestTuples(x, 2).and(y, 6).or(x, 4).and(y, 5);
+    assertEquals(Cursor.MANY, new UnorderedAppend(new Tuples[] { lhs, rhs}).getRowCardinality());
+
+    lhs = new TestTuples(x, 1).and(y, 8);
+    rhs = new TestTuples(x, 2).and(y, 6);
+    assertEquals(Cursor.MANY, new UnorderedAppend(new Tuples[] { lhs, rhs}).getRowCardinality());
+  }
+
 }

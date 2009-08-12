@@ -34,6 +34,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 // Locally written packages
+import org.mulgara.query.Cursor;
 import org.mulgara.query.TuplesException;
 
 /**
@@ -189,6 +190,48 @@ class UnorderedAppend extends AbstractTuples {
     }
 
     return bound;
+  }
+
+  public int getRowCardinality() throws TuplesException {
+    if (rowCardinality != -1) return rowCardinality;
+
+    if (rowCount > 1) {
+      rowCardinality = Cursor.MANY;
+    } else {
+      switch ((int) rowCount) {
+        case 0:
+          rowCardinality = Cursor.ZERO;
+          break;
+        case 1:
+          rowCardinality = Cursor.ONE;
+          break;
+        case -1:
+          for (Tuples op: operands) {
+            Tuples temp = (Tuples)op.clone();
+            int tc = temp.getRowCardinality();
+            temp.close();
+            if (tc == Cursor.ZERO) {
+              if (rowCardinality == -1) rowCardinality = Cursor.ZERO;
+            } else if (tc == Cursor.ONE) {
+              if (rowCardinality == Cursor.ONE) {
+                rowCardinality = Cursor.MANY;
+                return rowCardinality;
+              }
+              assert rowCardinality != Cursor.MANY;
+              rowCardinality = Cursor.ONE;
+            } else {
+              assert tc == Cursor.MANY;
+              rowCardinality = tc;
+              return rowCardinality;
+            }
+          }
+          break;
+        default:
+          throw new TuplesException("Illegal rowCount " + rowCount);
+      }
+    }
+
+    return rowCardinality;
   }
 
   public boolean isColumnEverUnbound(int column) throws TuplesException {
