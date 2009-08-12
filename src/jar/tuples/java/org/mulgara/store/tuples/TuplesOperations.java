@@ -195,6 +195,83 @@ public abstract class TuplesOperations {
 
   /**
    * Creates a new Tuples which contains all of the bindings of the Tuples in the argument list.
+   * If any tuples contains variables not found in the other Tuples, then those values will
+   * remain unbound for the bindings of those Tuples missing those variables.
+   * @param args A list of the Tuples to be used in the result.
+   * @return A Tuples containing all of the bindings from the args list.
+   * @throws TuplesException If the data could not be appended.
+   */
+  public static Tuples unorderedAppend(List<? extends Tuples> args) throws TuplesException {
+    if (logger.isDebugEnabled()) logger.debug("Appending " + args);
+
+    HashSet<Variable> variableSet = new HashSet<Variable>();
+    List<Variable> variables = new ArrayList<Variable>();
+    boolean unionCompat = true;
+    Variable[] leftVars = null;
+    List<Tuples> operands = new ArrayList<Tuples>();
+    Iterator<? extends Tuples> i = args.iterator();
+    while (i.hasNext()) {
+      Tuples operand = i.next();
+      if (operand.isUnconstrained()) {
+        closeOperands(operands);
+        if (logger.isDebugEnabled()) logger.debug("Returning unconstrained from append.");
+        return unconstrained();
+      } else if (operand.getRowCardinality() == Cursor.ZERO) {
+        if (logger.isDebugEnabled()) logger.debug("Ignoring append operand " + operand + " with rowcount = " + operand.getRowCount());
+        continue;
+      }
+
+      operands.add((Tuples)operand.clone());
+
+      Variable[] vars = operand.getVariables();
+      if (leftVars == null) leftVars = vars;
+      else unionCompat = unionCompat && Arrays.equals(leftVars, vars);
+      for (int j = 0; j < vars.length; j++) {
+        if (!variableSet.contains(vars[j])) {
+          variableSet.add(vars[j]);
+          variables.add(vars[j]);
+        }
+      }
+    }
+
+    if (logger.isDebugEnabled()) logger.debug("Operands after unordered-append-unification: " + operands);
+
+    if (operands.isEmpty()) {
+      if (logger.isDebugEnabled()) logger.debug("Returning empty from unorderedAppend.");
+      return empty();
+    }
+
+    if (operands.size() == 1) {
+      if (logger.isDebugEnabled()) logger.debug("Returning singleton from unorderedAppend.");
+      return operands.get(0);
+    }
+
+    if (unionCompat) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Columns are union-compatible");
+        logger.debug("Returning OrderedAppend from Union compatible append.");
+      }
+      Tuples result = new UnorderedAppend(operands.toArray(new Tuples[operands.size()]));
+      closeOperands(operands);
+      return result;
+    } else {
+      List<Tuples> projected = new ArrayList<Tuples>();
+      for (Tuples operand: operands) {
+        Tuples proj = project(operand, variables);
+        projected.add(proj);
+        operand.close();
+      }
+
+      if (logger.isDebugEnabled()) logger.debug("Returning OrderedAppend from Non-Union compatible unorderedAppend.");
+      Tuples result = new UnorderedAppend(projected.toArray(new Tuples[projected.size()]));
+      closeOperands(projected);
+      return result;
+    }
+  }
+
+
+  /**
+   * Creates a new Tuples which contains all of the bindings of the Tuples in the argument list.
    * All tuples must have an identical pattern, and come directly from the store.
    * @param args A list of the Tuples directly backed by the store to be used in the result.
    * @return A StoreTuples containing all of the bindings from the args list.
