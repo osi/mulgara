@@ -216,8 +216,12 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
     // Generate new server URI
     try {
       String path = "/" + (name == null ? "" : name);
-      int portValue = getPortNumber() == DEFAULT_PORT ? -1 : getPortNumber();
-      newURI = new URI("rmi", null, hostname, portValue, path, null, null);
+      int portNr = getPortNumber();
+      if (portNr == DEFAULT_PORT || portNr == -1) {
+        newURI = new URI("rmi://" + hostname + path);
+      } else {
+        newURI = new URI("rmi://" + hostname + ":" + portNr + path);
+      }
     } catch (URISyntaxException e) {
       throw new Error("Bad generated URI", e);
     }
