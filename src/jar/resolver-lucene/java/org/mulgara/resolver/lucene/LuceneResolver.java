@@ -71,6 +71,7 @@ import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverException;
 import org.mulgara.resolver.spi.ResolverSession;
 import org.mulgara.resolver.spi.Statements;
+import org.mulgara.util.StackTrace;
 import org.mulgara.util.conversion.html.HtmlToTextConverter;
 
 /**
@@ -263,7 +264,7 @@ public class LuceneResolver implements Resolver {
           } catch (org.mulgara.util.conversion.html.ParseException e) {
             throw new ResolverException("Couldn't parse content of " + resource, e);
           } catch (FullTextStringIndexException e) {
-            throw new ResolverException("Unable to modify full text index:" + e);
+            throw new ResolverException("Unable to modify full text index\n" + new StackTrace(e));
           }
         } else if (objectNode instanceof Literal) {
           Literal objectLiteral = (Literal) objectNode;
@@ -292,7 +293,7 @@ public class LuceneResolver implements Resolver {
             }
           } catch (FullTextStringIndexException e) {
             throw new ResolverException("Unable to " + (occurs ? "add" : "delete") + "'" +
-                                        literal + "' to full text string index\n" + e);
+                                        literal + "' to full text string index\n" + new StackTrace(e));
           }
         } else {
           if (logger.isInfoEnabled()) {
@@ -307,7 +308,7 @@ public class LuceneResolver implements Resolver {
     } catch (IOException ioe) {
       throw new ResolverException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
-      throw new ResolverException("Error in string index: " + ef);
+      throw new ResolverException("Error in string index\n" + new StackTrace(ef));
     }
   }
 
@@ -324,7 +325,7 @@ public class LuceneResolver implements Resolver {
     } catch (IOException ioe) {
       throw new ResolverException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
-      throw new ResolverException("Query failed against string index: " + ef);
+      throw new ResolverException("Query failed against string index\n" + new StackTrace(ef));
     }
   }
 
@@ -361,7 +362,7 @@ public class LuceneResolver implements Resolver {
     } catch (IOException ioe) {
       throw new QueryException("Failed to open string index", ioe);
     } catch (FullTextStringIndexException ef) {
-      throw new QueryException("Query failed against string index: " + ef);
+      throw new QueryException("Query failed against string index\n" + new StackTrace(ef));
     } catch (TuplesException te) {
       throw new QueryException("Failed to query string index", te);
     }
@@ -456,15 +457,7 @@ public class LuceneResolver implements Resolver {
 
     protected void doStart(LuceneTxInfo tx, int flags, boolean isNew) {
       currentIndexes.set(tx.indexes);
-      boolean newIndexReference = resolver.indexes == null;
       resolver.indexes = tx.indexes.values();
-      if (newIndexReference) {
-        try {
-          for (FullTextStringIndex index: resolver.indexes) index.optimize();
-        } catch (FullTextStringIndexException e) {
-          logger.error("Unable to optimize the Lucene indexes", e);
-        }
-      }
     }
 
     protected void doEnd(LuceneTxInfo tx, int flags) {
