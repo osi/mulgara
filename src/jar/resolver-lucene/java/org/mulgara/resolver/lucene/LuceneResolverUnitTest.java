@@ -145,7 +145,6 @@ public class LuceneResolverUnitTest extends TestCase {
                    null,                            // no dir for temp strings
                    tempResolverFactoryClassName,    // temporary models
                    null,                            // no dir for temp models
-                   "",                              // no rule loader
                    "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
       database.addContentHandler("org.mulgara.content.n3.N3ContentHandler");

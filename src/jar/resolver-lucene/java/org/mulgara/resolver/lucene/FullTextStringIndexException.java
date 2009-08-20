@@ -50,29 +50,29 @@ package org.mulgara.resolver.lucene;
  */
 public class FullTextStringIndexException extends Exception {
 
+  /** Generated serialization ID */
+  private static final long serialVersionUID = 787298465503301231L;
+
   /**
-   * CONSTRUCTOR FullTextStringIndexException TO DO
-   *
-   * @param message PARAMETER TO DO
+   * Create a new exception for the full text string index.
+   * @param message The error message
    */
   public FullTextStringIndexException(String message) {
     super(message);
   }
 
   /**
-   * CONSTRUCTOR FullTextStringIndexException TO DO
-   *
-   * @param message PARAMETER TO DO
-   * @param cause PARAMETER TO DO
+   * Create a new exception with chaining for the full text string index.
+   * @param message The eror message
+   * @param cause The exception to be chained
    */
   public FullTextStringIndexException(String message, Throwable cause) {
     super(message, cause);
   }
 
   /**
-   * CONSTRUCTOR FullTextStringIndexException TO DO
-   *
-   * @param cause PARAMETER TO DO
+   * Create a new exception with chaining for the full text string index.
+   * @param cause The exception to be chained
    */
   public FullTextStringIndexException(Throwable cause) {
     super(cause);

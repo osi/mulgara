@@ -44,8 +44,9 @@ public class LuceneConstraint implements Constraint {
   private static final Logger logger = Logger.getLogger(LuceneConstraint.class);
   private static final long serialVersionUID = 1L;
 
-  private final URIReference searchPred;
-  private final URIReference scorePred;
+  // Leaving these unused fields as comment in case we ever want them after all
+  // private final URIReference searchPred;
+  // private final URIReference scorePred;
 
   private ConstraintElement model;
   private ConstraintElement subject;
@@ -58,8 +59,8 @@ public class LuceneConstraint implements Constraint {
    * Empty constructor. Used internally during constraint rewriting.
    */
   private LuceneConstraint() {
-    searchPred = null;
-    scorePred = null;
+    // searchPred = null;
+    // scorePred = null;
   }
 
   /**
@@ -86,8 +87,8 @@ public class LuceneConstraint implements Constraint {
    */
   LuceneConstraint(Constraint constraint, URIReference searchPred, URIReference scorePred)
       throws SymbolicTransformationException {
-    this.searchPred = searchPred;
-    this.scorePred = scorePred;
+    // this.searchPred = searchPred;
+    // this.scorePred = scorePred;
 
     // extract model
     model = constraint.getModel();

@@ -320,6 +320,9 @@ public class LuceneIndexerCache {
   }
 
   private static class Stack<T> extends ArrayList<T> {
+    /** Serialization ID */
+    private static final long serialVersionUID = -8597253123267228667L;
+
     public void push(T obj) {
       add(obj);
     }

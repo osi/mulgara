@@ -40,13 +40,14 @@ package org.mulgara.resolver.spi;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 
-public class ResolverException extends Exception
-{
+public class ResolverException extends Exception {
+  /** Serialization ID */
+  private static final long serialVersionUID = -2032778680010965039L;
+
   /**
    * @param message  diagnostic text
    */
-  public ResolverException(String message)
-  {
+  public ResolverException(String message) {
     super(message);
   }
 
@@ -54,8 +55,7 @@ public class ResolverException extends Exception
    * @param message  diagnostic text
    * @param cause  an exception to be chained as the reason for this one
    */
-  public ResolverException(String message, Throwable cause)
-  {
+  public ResolverException(String message, Throwable cause) {
     super(message, cause);
   }
 }

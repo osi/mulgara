@@ -71,10 +71,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
   private final static String indexDirectory =
       TempDir.getTempDir().getPath() + File.separator + "fulltextsp";
 
-  /** Directory for the indexes * */
-  private final static String indexDirectory2 =
-      TempDir.getTempDir().getPath() + File.separator + "fulltextsp2";
-
   /** The directory containing the text documents */
   private final static String textDirectory =
       System.getProperty("cvs.root") + File.separator + "data" + File.separator +
