@@ -16,7 +16,7 @@ grant
   permission java.lang.RuntimePermission "exitVM";
   permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
   permission java.net.SocketPermission "*:80", "accept,connect,resolve";
-  permission java.net.SocketPermission "144.92.73.208", "accept,connect,resolve";
+  permission java.net.SocketPermission "*:443", "connect,resolve";
   permission java.net.SocketPermission "*:1099", "connect,resolve";
   permission java.net.SocketPermission "*:8080", "connect,resolve";
   permission java.net.SocketPermission "*:1024-", "accept,connect,resolve";
