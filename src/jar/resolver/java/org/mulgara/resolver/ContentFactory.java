@@ -56,12 +56,13 @@ import org.mulgara.content.ContentHandlerException;
 public class ContentFactory
 {
   /** Logger.  */
+  @SuppressWarnings("unused")
   private static final Logger logger =
     Logger.getLogger(ContentFactory.class.getName());
 
 
-  private static Map contentClasses = new HashMap();
-  private static Map contentConstructors = new HashMap();
+  private static Map<String,String> contentClasses = new HashMap<String,String>();
+  private static Map<String,Constructor> contentConstructors = new HashMap<String,Constructor>();
 
   static {
     contentClasses.put("file", "org.mulgara.resolver.file.FileContent");
@@ -81,11 +82,10 @@ public class ContentFactory
       throw new IllegalArgumentException("Source URI is null");
     }
 
-    Content content;
     try {
       // Determine the source type
       String scheme = srcURI.getScheme().toLowerCase();
-      Constructor constructor = (Constructor)contentConstructors.get(scheme);
+      Constructor constructor = contentConstructors.get(scheme);
       if (constructor == null) {
         constructor = loadConstructor(scheme);
       }
@@ -99,12 +99,12 @@ public class ContentFactory
   }
   
   private static Constructor loadConstructor(String scheme) throws ContentHandlerException, ClassNotFoundException, NoSuchMethodException {
-    String className = (String)contentClasses.get(scheme);
+    String className = contentClasses.get(scheme);
     if (className == null) {
       throw new ContentHandlerException("No Content wrapper available for " + scheme);
     }
 
-    Class klass = Class.forName(className);
+    Class<?> klass = Class.forName(className);
     Constructor constructor = klass.getConstructor(new Class[] { URI.class });
 
     contentConstructors.put(scheme, constructor);
