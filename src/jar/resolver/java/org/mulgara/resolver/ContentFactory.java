@@ -67,6 +67,7 @@ public class ContentFactory
   static {
     contentClasses.put("file", "org.mulgara.resolver.file.FileContent");
     contentClasses.put("http", "org.mulgara.resolver.http.HttpContent");
+    contentClasses.put("https", "org.mulgara.resolver.http.HttpContent");
     contentClasses.put("jar", "org.mulgara.resolver.jar.JarContent");
   }
 
