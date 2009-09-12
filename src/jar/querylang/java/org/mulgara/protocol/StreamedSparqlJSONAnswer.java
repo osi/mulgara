@@ -49,8 +49,9 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
   boolean prependComma = false;
 
   /**
-   * Creates an XML Answer conforming to SPARQL XML results.
+   * Creates a JSON Answer conforming to SPARQL JSON results.
    * @param answer The Answer to wrap.
+   * @param output The stream to write to.
    */
   public StreamedSparqlJSONAnswer(Answer answer, OutputStream output) {
     super((answer instanceof BooleanAnswer) ? null : answer, output);
@@ -58,9 +59,10 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
   }
 
   /**
-   * Creates an XML Answer with additional metadata.
+   * Creates an JSON Answer with additional metadata.
    * @param answer The Answer to wrap.
    * @param metadata Additional metadata for the answer.
+   * @param output The stream to write to.
    */
   public StreamedSparqlJSONAnswer(Answer answer, URI metadata, OutputStream output) {
     this(answer, output);
@@ -68,8 +70,9 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
   }
 
   /**
-   * Creates an XML Answer conforming to SPARQL XML results.
+   * Creates a JSON Answer conforming to SPARQL JSON results.
    * @param result The boolean result to encode.
+   * @param output The stream to write to.
    */
   public StreamedSparqlJSONAnswer(boolean result, OutputStream output) {
     super(null, output);
@@ -77,12 +80,60 @@ public class StreamedSparqlJSONAnswer extends AbstractStreamedAnswer implements 
   }
 
   /**
-   * Creates an XML Answer with additional metadata.
+   * Creates a JSON Answer with additional metadata.
    * @param result The boolean result to encode.
    * @param metadata Additional metadata for the answer.
+   * @param output The stream to write to.
    */
   public StreamedSparqlJSONAnswer(boolean result, URI metadata, OutputStream output) {
     super(null, output);
+    booleanResult = result;
+    additionalMetadata = metadata;
+  }
+
+  /**
+   * Creates a JSON Answer conforming to SPARQL JSON results.
+   * @param answer The Answer to wrap.
+   * @param output The stream to write to.
+   * @param charsetName The name of the character set to use, if not the default of UTF-8.
+   */
+  public StreamedSparqlJSONAnswer(Answer answer, OutputStream output, String charsetName) {
+    super((answer instanceof BooleanAnswer) ? null : answer, output, charsetName);
+    if (answer instanceof BooleanAnswer) booleanResult = ((BooleanAnswer)answer).getResult();
+  }
+
+  /**
+   * Creates an JSON Answer with additional metadata.
+   * @param answer The Answer to wrap.
+   * @param metadata Additional metadata for the answer.
+   * @param output The stream to write to.
+   * @param charsetName The name of the character set to use, if not the default of UTF-8.
+   */
+  public StreamedSparqlJSONAnswer(Answer answer, URI metadata, OutputStream output, String charsetName) {
+    this(answer, output, charsetName);
+    additionalMetadata = metadata;
+  }
+
+  /**
+   * Creates a JSON Answer conforming to SPARQL JSON results.
+   * @param result The boolean result to encode.
+   * @param output The stream to write to.
+   * @param charsetName The name of the character set to use, if not the default of UTF-8.
+   */
+  public StreamedSparqlJSONAnswer(boolean result, OutputStream output, String charsetName) {
+    super(null, output, charsetName);
+    booleanResult = result;
+  }
+
+  /**
+   * Creates a JSON Answer with additional metadata.
+   * @param result The boolean result to encode.
+   * @param metadata Additional metadata for the answer.
+   * @param output The stream to write to.
+   * @param charsetName The name of the character set to use, if not the default of UTF-8.
+   */
+  public StreamedSparqlJSONAnswer(boolean result, URI metadata, OutputStream output, String charsetName) {
+    super(null, output, charsetName);
     booleanResult = result;
     additionalMetadata = metadata;
   }

@@ -102,7 +102,9 @@ public class StreamedSparqlXMLAnswer extends AbstractStreamedXMLAnswer {
 
   /** {@inheritDoc} */
   protected void addDocHeader() throws IOException {
-    s.append("<?xml version=\"1.0\"?>\n");
+    s.append("<?xml version=\"1.0\" encoding=\"");
+    s.append(charset.name());
+    s.append("\"?>\n");
     s.append("<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\"");
     for (Map.Entry<String,URI> ns: namespaces.entrySet()) {
       s.append(prettyPrint ? HEADER_INDENT : " ");

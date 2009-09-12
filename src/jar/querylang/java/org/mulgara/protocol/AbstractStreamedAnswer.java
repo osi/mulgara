@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
+import org.apache.log4j.Logger;
+
 import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.URIReference;
@@ -36,6 +38,9 @@ import org.mulgara.query.Variable;
  * @copyright &copy; 2008 <a href="http://www.fedora-commons.org/">Fedora Commons</a>
  */
 public abstract class AbstractStreamedAnswer {
+
+  /** Logger. */
+  private final static Logger logger = Logger.getLogger(AbstractStreamedAnswer.class);
 
   /** The API {@link Answer} to convert to the stream. */
   protected final Answer answer;
@@ -53,7 +58,7 @@ public abstract class AbstractStreamedAnswer {
   protected OutputStream output = null;
 
   /** The charset encoding to use when writing to the output stream. */
-  Charset charset = Charset.defaultCharset();
+  Charset charset = Charset.forName("UTF-8");
 
   /** Adds a literal to the stream */
   protected abstract void addLiteral(Literal literal) throws IOException;
@@ -96,6 +101,20 @@ public abstract class AbstractStreamedAnswer {
     this.output = output;
     width = (answer != null) ? answer.getNumberOfVariables() : 0;
     vars = (answer != null) ? answer.getVariables() : null;
+  }
+
+  /**
+   * Creates the object around the answer and output stream.
+   * @param answer The answer to encode.
+   * @param output The stream to write to.
+   */
+  public AbstractStreamedAnswer(Answer answer, OutputStream output, String charsetName) {
+    this(answer, output);
+    try {
+      charset = Charset.forName(charsetName);
+    } catch (Exception e) {
+      logger.error("Invalid charset. Using UTF-8: " + charsetName);
+    }
   }
 
   /**

@@ -641,7 +641,7 @@ public class StreamedSparqlXMLAnswerUnitTest extends TestCase {
     return meta ? HEAD_META_INDENT + HEAD_META + "\n" : "";
   }
 
-  static final String DOC_HEAD = "<?xml version=\"1.0\"?>\n";
+  static final String DOC_HEAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
   static final String SPARQL_HEAD = "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\"";
 

@@ -74,6 +74,14 @@ public abstract class AbstractStreamedXMLAnswer extends AbstractStreamedAnswer i
   }
 
   /**
+   * Create an XMLAnswer based on a given {@link Answer}.
+   * @param answer The Answer with the data to convert.
+   */
+  public AbstractStreamedXMLAnswer(Answer answer, OutputStream output, String charsetName) {
+    super(answer, output, charsetName);
+  }
+
+  /**
    * @see org.mulgara.protocol.StreamedXMLAnswer#setCharacterEncoding(java.lang.String)
    */
   public void setCharacterEncoding(String encoding) {
