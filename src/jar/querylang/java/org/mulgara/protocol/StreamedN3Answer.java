@@ -16,11 +16,13 @@
 
 package org.mulgara.protocol;
 
-import java.io.BufferedOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 
+import org.apache.log4j.Logger;
 import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.TypedNodeVisitable;
@@ -42,11 +44,17 @@ import org.mulgara.query.TuplesException;
  */
 public class StreamedN3Answer implements StreamedAnswer {
 
+  /** Logger. */
+  private final static Logger logger = Logger.getLogger(StreamedN3Answer.class);
+
   /** The answer to convert to RDF/XML. */
   private final GraphAnswer ans;
 
   /** The writer to send the data to. */
   private final PrintWriter p;
+
+  /** The charset encoding to use when writing to the output stream. */
+  static final String UTF8 = "UTF-8";
 
   /**
    * Constructs the object and prepares to writing.
@@ -54,11 +62,26 @@ public class StreamedN3Answer implements StreamedAnswer {
    * @param s The stream to write the answer to.
    */
   public StreamedN3Answer(Answer ans, OutputStream s) {
+    this(ans, s, UTF8);
+  }
+
+  /**
+   * Constructs the object and prepares to writing.
+   * @param ans The answer to emit.
+   * @param s The stream to write the answer to.
+   */
+  public StreamedN3Answer(Answer ans, OutputStream s, String charsetName) {
     if (!(ans instanceof GraphAnswer)) throw new IllegalArgumentException("N3 constructor can only be constructed from a GraphAnswer");
     this.ans = (GraphAnswer)ans;
     assert ans.getVariables().length == 3;
-    BufferedOutputStream out = new BufferedOutputStream(s);
-    p = new PrintWriter(out);
+    Charset charset = null;
+    try {
+      charset = Charset.forName(charsetName);
+    } catch (Exception e) {
+      logger.error("Invalid charset. Using UTF-8: " + charsetName);
+      charset = Charset.forName(UTF8);
+    }
+    p = new PrintWriter(new OutputStreamWriter(s, charset));
   }
 
   /**

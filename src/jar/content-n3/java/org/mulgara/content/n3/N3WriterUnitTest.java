@@ -26,6 +26,8 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // Java 2 enterprise packages
 import javax.activation.MimeType;
@@ -49,31 +51,93 @@ import org.mulgara.resolver.spi.TestResolverSession;
  */
 public class N3WriterUnitTest extends TestCase {
   /**
-   * Test {@link N3Writer} writing.
+   * Test {@link N3Writer} writing on a basic statement with a plain literal.
    *
    * @throws Exception if there's an error running the test (note that if the test
    *                   merely fails, this should <em>not</em> throw any exception
    */
-  public void test1() throws Exception {
-    // basic statement with plain literal
+  public void testBasic() throws Exception {
     runTest("<foo:bar> <foo:baz> \"42\" .\n", null);
-    // basic statement with blank-node and datatyped literal
+  }
+
+  /**
+   * Test {@link N3Writer} writing on a basic statement with blank-node and datatyped literal.
+   *
+   * @throws Exception if there's an error running the test (note that if the test
+   *                   merely fails, this should <em>not</em> throw any exception
+   */
+  public void testBasicBlankDataTyped() throws Exception {
     runTest("_:node1000001 <foo:baz> \"42\"^^<xsd:int> .\n", null);
-    // literal and uri with non-ascii characters
+  }
+
+  /**
+   * Test {@link N3Writer} writing on a statement with non-ascii characters.
+   *
+   * @throws Exception if there's an error running the test (note that if the test
+   *                   merely fails, this should <em>not</em> throw any exception
+   */
+  public void testNonAscii() throws Exception {
     runTest("<foo:i18n:øé> <foo:baz> \"Some text with \\\" in it, and 日本 chars, and \\u00E0 \" .",
             "<foo:i18n:%C3%B8%C3%A9> <foo:baz> \"Some text with \\\" in it, and \\u65E5\\u672C chars, and \\u00E0 \" .\n");
+  }
+
+
+  /**
+   * Test {@link N3Writer} writing with escaped characters.
+   *
+   * @throws Exception if there's an error running the test (note that if the test
+   *                   merely fails, this should <em>not</em> throw any exception
+   */
+  public void testEscapedChars() throws Exception {
     // literal with newlines, ff, etc
     runTest("<foo:bar> <foo:baz> \"Some text with \n, \r, \f, \u0000 in it\" .",
             "<foo:bar> <foo:baz> \"Some text with \\n, \\r, \\u000C, \\u0000 in it\" .\n");
     runTest("<foo:bar> <foo:baz> \"Some text with \\n, \\r, \\f, \\u0000 in it\" .",
             "<foo:bar> <foo:baz> \"Some text with \\n, \\r, \\u000C, \\u0000 in it\" .\n");
+  }
+
+  /**
+   * Test {@link N3Writer} writing statements with multiple blank nodes and a language tag.
+   *
+   * @throws Exception if there's an error running the test (note that if the test
+   *                   merely fails, this should <em>not</em> throw any exception
+   */
+  public void testMultiBlank() throws Exception {
     // multiple blank-nodes, and language-tag
-    runTest("_:bn1 <baz:baz> _:bn2 .\n" +
-            "_:bn2 <bar:bar> <foo:foo> .\n" +
-            "<foo:foo> <dc:title> \"hello\"@en .",
-            "_:node1000002 <baz:baz> _:node1000001 .\n" +
-            "_:node1000001 <bar:bar> <foo:foo> .\n" +
-            "<foo:foo> <dc:title> \"hello\"@en .\n");
+    String n3 = "_:bn1 <baz:baz> _:bn2 .\n" +
+                "_:bn2 <bar:bar> <foo:foo> .\n" +
+                "<foo:foo> <dc:title> \"hello\"@en .";
+    // Obtain a resolver session
+    ResolverSession resolverSession = new TestResolverSession();
+
+    // create the statements
+    Statements statements = new N3Statements(new StringContent(n3), resolverSession);
+
+    // test
+    StringWriter out = new StringWriter();
+    new N3Writer().write(statements, resolverSession, out);
+
+    // don't know what blank nodes will be returned, so we need just need to check that they are used consistently
+    Matcher m = Pattern.compile("(_:node[^ ]*) <baz:baz> (_:node[^ ]*)").matcher(out.toString());
+    assertTrue(m.find());
+    assertEquals(2, m.groupCount());
+    String bn1 = m.group(1);
+    String bn2 = m.group(2);
+    assertNotSame(bn1, bn2);
+
+    String exp = bn1 + " <baz:baz> " + bn2 + " .\n" +
+                 bn2 + " <bar:bar> <foo:foo> .\n" +
+                 "<foo:foo> <dc:title> \"hello\"@en .\n";    
+    assertEquals(exp != null ? exp : n3, out.toString());
+  }
+
+  /**
+   * Test {@link N3Writer} writing with multiple blank nodes using internal IDs.
+   *
+   * @throws Exception if there's an error running the test (note that if the test
+   *                   merely fails, this should <em>not</em> throw any exception
+   */
+  public void testInternalBlank() throws Exception {
     // multiple blank-nodes using internal-ids (numbers)
     runTest("_:42 <baz:baz> _:987 .\n" +
             "_:987 <bar:bar> <foo:foo> .\n",
