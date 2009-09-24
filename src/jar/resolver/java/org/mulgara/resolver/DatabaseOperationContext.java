@@ -712,7 +712,11 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
             logger.debug("Appending " + resolver);
           }
           Tuples oldTuples = tuples;
-          tuples = TuplesOperations.append(tuples, resolution);
+          try {
+            tuples = TuplesOperations.append(tuples, resolution);
+          } finally {
+            resolution.close();
+          }
           oldTuples.close();
         }
       } catch (TuplesException e) {
