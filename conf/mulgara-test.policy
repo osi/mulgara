@@ -12,6 +12,7 @@ grant
   permission java.lang.RuntimePermission "shutdownHooks";
   permission java.lang.RuntimePermission "getClassLoader";
   permission java.lang.RuntimePermission "accessDeclaredMembers";
+  permission java.lang.RuntimePermission "loadLibrary.keychain";
   permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
   permission java.net.SocketPermission "*:1099", "connect,resolve";
   permission java.net.SocketPermission "*:1024-", "accept,connect,resolve";
