@@ -37,6 +37,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.mulgara.util.IntFile;
 import org.mulgara.util.StackTrace;
+import org.mulgara.util.functional.C;
 
 /**
  * A fifo of integer items. A list of "phases" is maintained where each phase
@@ -66,9 +67,6 @@ public final class FreeList {
 
   /** Logger. */
   private final static Logger logger = Logger.getLogger(FreeList.class);
-
-  /** Flag used to indicate that the runtime is in debug mode. */
-  private final static boolean DEBUG = false;
 
   /** The name extension of the file used for the freelist. */
   private final static String INTFILE_EXT = "_ph";
@@ -400,7 +398,7 @@ public final class FreeList {
       throw new IllegalArgumentException("Trying to free item that was never allocated: " + item);
     }
 
-    if (DEBUG && !isValid(item)) throw new AssertionError("Attempt to free an invalid item: " + item);
+    // if (!isValid(item)) throw new AssertionError("Attempt to free an invalid item: " + item);
 
     long head = currentPhase.getHead();
     readHeadBlock(getBlockId(head));
@@ -946,8 +944,8 @@ public final class FreeList {
     private Reference<Token> tokenRef = null;
 
 
-    /** Holds a stack trace of construction so we can tell where problems occurred. */
-    private StackTrace stack = null;
+    /** Holds stack traces of use so we can tell where problems occurred. */
+    private List<StackTrace> stack = null;
 
 
     /**
@@ -971,10 +969,6 @@ public final class FreeList {
         } else {
           init(HEADER_SIZE, HEADER_SIZE, 0, 0);
         }
-      }
-      // record the stack if info is enabled
-      if (logger.isInfoEnabled()) {
-        stack = new StackTrace();
       }
     }
 
@@ -1018,10 +1012,6 @@ public final class FreeList {
         nrValidItems = p.nrValidItems;
         init();
 
-        // record the stack if info is enabled
-        if (logger.isInfoEnabled()) {
-          stack = new StackTrace();
-        }       
       }
     }
 
@@ -1134,6 +1124,11 @@ public final class FreeList {
 
       ++refCount;
 
+      // record the stack if debug is enabled
+      if (logger.isDebugEnabled()) {
+        stack.add(new StackTrace());
+      }
+
       return token;
     }
 
@@ -1225,8 +1220,8 @@ public final class FreeList {
       Token token = (tokenRef != null) ? tokenRef.get() : null;
 
       if ( (token == null) && (refCount > 0)) {
-        if (logger.isInfoEnabled()) {
-          logger.info("Lost phase token.\n" + stack);
+        if (logger.isDebugEnabled()) {
+          logger.info("Lost phase token. Used " + stack.size() + " times:\n" + C.join(stack, "\n\n"));
         }
         refCount = 0;
       }
