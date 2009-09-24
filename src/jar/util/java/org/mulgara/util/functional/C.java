@@ -112,6 +112,7 @@ public class C {
    * @return The first element in the list.
    * @throws NoSuchElementException If the list is empty.
    */
+  @SuppressWarnings("unchecked")
   public static final <T1> T1 head(List<T1> arg) throws NoSuchElementException {
     if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getFirst();
     if (arg.size() == 0) throw new NoSuchElementException("Empty list");
@@ -134,6 +135,7 @@ public class C {
    * @param arg The list.
    * @return The first element in the list, or <code>null</code> if the list is empty.
    */
+  @SuppressWarnings("unchecked")
   public static final <T1> T1 headN(List<T1> arg) {
     return arg.isEmpty() ? null : (arg instanceof LinkedList) ? ((LinkedList<T1>)arg).getFirst() : arg.get(0);
   }
@@ -156,6 +158,7 @@ public class C {
    * @return The last element in the list.
    * @throws IndexOutOfBoundsException If the list is empty.
    */
+  @SuppressWarnings("unchecked")
   public static final <T1> T1 tail(List<T1> arg) throws NoSuchElementException {
     if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getLast();
     if (arg.size() == 0) throw new NoSuchElementException("Empty list");
@@ -200,6 +203,7 @@ public class C {
    * @return The first element in the collection.
    * @throws NoSuchElementException If the collection is empty.
    */
+  @SuppressWarnings("unchecked")
   public static final <T1> T1 first(Collection<T1> arg) throws NoSuchElementException {
     if (arg instanceof LinkedList) return ((LinkedList<T1>)arg).getFirst();
     if (arg.isEmpty()) throw new NoSuchElementException("Empty Collection");
@@ -226,6 +230,38 @@ public class C {
    */
   public static final <T extends Comparable<T>> List<T> descendingInsert(List<T> list, T c) {
     return orderedInsert(list, c, false);
+  }
+
+  /**
+   * Method to join the elements of a list into a string.
+   * @param <T> The type of element in the list.
+   * @param list The list to be converted to a string.
+   * @param separator The separator to use between elements of the list. May be <code>null</code>.
+   * @return The final string.
+   */
+  public static final <T> String join(List<T> list, String separator) {
+    return join(list, null, separator, null);
+  }
+
+  /**
+   * General method to join the elements of a list into a string.
+   * @param <T> The type of element in the list.
+   * @param list The list to be converted to a string.
+   * @param start The start of the string. May be <code>null</code>.
+   * @param separator The separator to use between elements of the list. May be <code>null</code>.
+   * @param end The end of the string. May be <code>null</code>.
+   * @return The final string.
+   */
+  public static final <T> String join(List<T> list, String start, String separator, String end) {
+    StringBuilder s = start == null ? new StringBuilder() : new StringBuilder(start);
+    boolean first = true;
+    for (T elt: list) {
+      if (!first && separator != null) s.append(separator);
+      else first = false;
+      s.append(elt);
+    }
+    if (end != null) s.append(end);
+    return s.toString();
   }
 
   /**
