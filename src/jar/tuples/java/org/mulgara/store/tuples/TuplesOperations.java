@@ -744,7 +744,7 @@ public abstract class TuplesOperations {
         double term = vars.length > 0
                         ? Math.pow(tuples.getRowExpectedCount(), (double)(vars.length - (numLeftBindings - weight)) / vars.length)
                         : tuples.getRowExpectedCount();
-        weightedRowCount += term / Math.pow(10.0, weight);
+        weightedRowCount += term / Math.pow(100.0, weight);
       }
 
       if (logger.isDebugEnabled()) {
