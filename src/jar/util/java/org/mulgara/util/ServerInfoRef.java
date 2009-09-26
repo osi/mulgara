@@ -20,6 +20,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,7 +121,11 @@ public class ServerInfoRef {
   public static final void setServerInfoProperty(String name, Object value) {
     try {
       Method setter = findSetter(name, value);
-      setter.invoke(null, new Object[] { value });
+      if (setter != null) {
+        setter.invoke(null, new Object[] { value });
+      } else {
+        logger.info("No setter method found in Server Info for: " + name);
+      }
     } catch (Exception e) {
       /* Not much that can be done here */
       logger.info("Unable to set '" + name + "' for Server Info", e);
@@ -169,17 +175,36 @@ public class ServerInfoRef {
    * @param value The value of the property to be set.
    * @return The method used for setting the property.
    * @throws SecurityException If the method is not allowed to be used.
-   * @throws NoSuchMethodException If the writable property does not exist.
    * @throws ClassNotFoundException If the ServerInfo class is not on the classpath.
    */
-  private static final Method findSetter(String name, Object value) throws SecurityException, NoSuchMethodException, ClassNotFoundException {
+  private static final Method findSetter(String name, Object value) throws SecurityException, ClassNotFoundException {
     String fullName = "set" + name;
     Method setter = setters.get(fullName);
     if (setter == null) {
-      setter = getServerInfoClass().getMethod(fullName, new Class[] { value.getClass() });
+      for (Class<?>cls: getSuperTypes(value.getClass())) {
+        try {
+          setter = getServerInfoClass().getMethod(fullName, new Class[] { cls });
+          break;
+        } catch (NoSuchMethodException e) { /* continue */ }
+      }
       setters.put(fullName, setter);
     }
     return setter;
+  }
+
+
+  /**
+   * Get the list of all superclasses and interfaces that a class meets.
+   * @param cls The class to get all supertypes of.
+   * @return A List of classes and interfaces that this class extends.
+   */
+  private static final List<Class<?>> getSuperTypes(Class<?> cls) {
+    List<Class<?>> result = new LinkedList<Class<?>>();
+    for (Class<?> i: cls.getInterfaces()) result.add(i);
+    do {
+      result.add(cls);
+    } while ((cls = cls.getSuperclass()) != null);
+    return result;
   }
 
 
