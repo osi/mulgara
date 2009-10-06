@@ -48,6 +48,8 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.mulgara.config.MulgaraConfig;
 import org.mulgara.config.Connector;
 import org.mulgara.config.PublicConnector;
+import org.mulgara.config.XpathFunctionResolver;
+import org.mulgara.query.FunctionResolverRegistry;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.store.StoreException;
 import org.mulgara.store.xa.SimpleXAResourceException;
@@ -504,6 +506,9 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         String configURLStr = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.SERVER_CONFIG);
         mulgaraConfig = new MulgaraUserConfig(configURLStr);
 
+        // set up any local registries used in the system
+        configureRegistries();
+
         // disable automatic starting of the RMI registry
         if (parser.getOptionValue(EmbeddedMulgaraOptionParser.NO_RMI) != null) {
           // disable automatic starting of the RMI Registry
@@ -750,6 +755,19 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
     }
   }
 
+  /**
+   * Configure any singleton registries based on the configuration file.
+   */
+  protected void configureRegistries() {
+    FunctionResolverRegistry fnReg = FunctionResolverRegistry.getFunctionResolverRegistry();
+    for (XpathFunctionResolver r: mulgaraConfig.getXpathFunctionResolver()) {
+      try {
+        fnReg.register(r.getType());
+      } catch (ClassNotFoundException e) {
+        log.error("Unable to load the XPathFunctionResolver: " + r.getType(), e);
+      }
+    }
+  }
 
   /**
    * Prints the usage instructions for starting the server.
