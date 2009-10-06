@@ -231,7 +231,6 @@ abstract class AbstractMulgaraResultSet
    * @throws SQLException on failure
    * @deprecated Deprecated in {@link java.sql.ResultSet}
    */
-  @SuppressWarnings("deprecation")
   public BigDecimal getBigDecimal(int columnIndex, int scale)
     throws SQLException {
 
@@ -296,7 +295,6 @@ abstract class AbstractMulgaraResultSet
    * @throws SQLException on failure
    * @deprecated Deprecated in the original {@link java.sql.ResultSet}
    */
-  @SuppressWarnings("deprecation")
   public java.io.InputStream getUnicodeStream(int columnIndex)
     throws SQLException {
 
@@ -447,7 +445,6 @@ abstract class AbstractMulgaraResultSet
    * @throws SQLException on failure
    * @deprecated Deprecated in the original {@link java.sql.ResultSet}
    */
-  @SuppressWarnings("deprecation")
   public BigDecimal getBigDecimal(String columnName, int scale)
     throws SQLException {
 
@@ -512,7 +509,6 @@ abstract class AbstractMulgaraResultSet
    * @throws SQLException on failure
    * @deprecated This has been deprecated in the original {@link ResultSet#getUnicodeStream(String)}
    */
-  @SuppressWarnings("deprecation")
   public java.io.InputStream getUnicodeStream(String columnName)
     throws SQLException {
 
