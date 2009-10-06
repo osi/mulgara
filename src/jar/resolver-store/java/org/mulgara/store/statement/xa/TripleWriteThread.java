@@ -33,8 +33,6 @@ import java.util.LinkedList;
 // Third party packages
 import org.apache.log4j.Logger;
 
-// Locally written packages
-import org.mulgara.store.statement.*;
 
 final class TripleWriteThread extends Thread {
 
@@ -57,7 +55,7 @@ final class TripleWriteThread extends Thread {
   private int index = 0;
 
   /** The queue of triples to add to the TripleAVLFile. */
-  private LinkedList queue = new LinkedList();
+  private LinkedList<long[][]> queue = new LinkedList<long[][]>();
 
   private boolean threadRunning = true;
 
