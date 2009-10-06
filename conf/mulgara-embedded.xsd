@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- When adding a new type, make sure it has a "disabled" attribute,
+     and update org.mulgara.server.MulgaraUserConfig#isDisabled(Object o) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="ExternalConfigPaths">
     <xs:complexType>
@@ -115,6 +117,12 @@
       <xs:attribute name="disabled" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
+  <xs:element name="XpathFunctionResolver">
+    <xs:complexType>
+      <xs:attribute name="type" type="xs:string" use="required"/>
+      <xs:attribute name="disabled" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="MulgaraConfig">
     <xs:complexType>
       <xs:sequence>
@@ -140,6 +148,7 @@
         <xs:element ref="DefaultContentHandler" minOccurs="0"/> <!-- Compulsory for server -->
         <xs:element ref="ContentHandler" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="ResolverFactory" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="XpathFunctionResolver" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="StartupScript" minOccurs="0"/>
         <xs:element ref="Smtp" minOccurs="0"/> <!-- Compulsory for server -->
       </xs:sequence>

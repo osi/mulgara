@@ -41,6 +41,7 @@ import org.mulgara.config.SecurityAdapterFactory;
 import org.mulgara.config.TemporaryNodePoolFactory;
 import org.mulgara.config.TemporaryResolverFactory;
 import org.mulgara.config.TemporaryStringPoolFactory;
+import org.mulgara.config.XpathFunctionResolver;
 
 /**
  * This class wraps the system configuration, and a user configuration, using any
@@ -77,6 +78,8 @@ public class MulgaraUserConfig extends MulgaraConfig {
   private List<RuleLoader> ruleLoaders;
 
   private List<SecurityAdapterFactory> securityAdapterFactories;
+
+  private List<XpathFunctionResolver> xpathFunctionResolvers;
 
   /**
    * Create the config object, to look like a standard configuration.
@@ -121,11 +124,14 @@ public class MulgaraUserConfig extends MulgaraConfig {
                (Enumeration<RuleLoader>)userConfig.enumerateRuleLoader());
       securityAdapterFactories = initializeList((Enumeration<SecurityAdapterFactory>)systemConfig.enumerateSecurityAdapterFactory(),
                (Enumeration<SecurityAdapterFactory>)userConfig.enumerateSecurityAdapterFactory());
+      xpathFunctionResolvers = initializeList((Enumeration<XpathFunctionResolver>)systemConfig.enumerateXpathFunctionResolver(),
+               (Enumeration<XpathFunctionResolver>)userConfig.enumerateXpathFunctionResolver());
     } else {
       contentHandlers = Collections.list((Enumeration<ContentHandler>)systemConfig.enumerateContentHandler());
       resolverFactories = Collections.list((Enumeration<ResolverFactory>)systemConfig.enumerateResolverFactory());
       ruleLoaders = Collections.list((Enumeration<RuleLoader>)systemConfig.enumerateRuleLoader());
       securityAdapterFactories = Collections.list((Enumeration<SecurityAdapterFactory>)systemConfig.enumerateSecurityAdapterFactory());
+      xpathFunctionResolvers = Collections.list((Enumeration<XpathFunctionResolver>)systemConfig.enumerateXpathFunctionResolver());
     }
   }
 
@@ -178,6 +184,7 @@ public class MulgaraUserConfig extends MulgaraConfig {
     if (o instanceof ResolverFactory) return ((ResolverFactory)o).isDisabled();
     if (o instanceof RuleLoader) return ((RuleLoader)o).isDisabled();
     if (o instanceof SecurityAdapterFactory) return ((SecurityAdapterFactory)o).isDisabled();
+    if (o instanceof XpathFunctionResolver) return ((XpathFunctionResolver)o).isDisabled();
     return true;
   }
 
@@ -229,6 +236,15 @@ public class MulgaraUserConfig extends MulgaraConfig {
   public Enumeration<org.mulgara.config.SecurityAdapterFactory> enumerateSecurityAdapterFactory() {
     return Collections.enumeration(securityAdapterFactories);
   }
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#enumerateXpathFunctionResolver()
+   */
+  @Override
+  public Enumeration<org.mulgara.config.XpathFunctionResolver> enumerateXpathFunctionResolver() {
+    return Collections.enumeration(xpathFunctionResolvers);
+  }
+
 
   /**
    * @see org.mulgara.config.MulgaraConfig#getContentHandler()
@@ -405,6 +421,30 @@ public class MulgaraUserConfig extends MulgaraConfig {
   @Override
   public int getResolverFactoryCount() {
     return resolverFactories.size();
+  }
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#getXpathFunctionResolver()
+   */
+  @Override
+  public XpathFunctionResolver[] getXpathFunctionResolver() {
+    return xpathFunctionResolvers.toArray(new XpathFunctionResolver[xpathFunctionResolvers.size()]);
+  }
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#getXpathFunctionResolver(int)
+   */
+  @Override
+  public XpathFunctionResolver getXpathFunctionResolver(int index) throws IndexOutOfBoundsException {
+    return xpathFunctionResolvers.get(index);
+  }
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#getXpathFunctionResolver()
+   */
+  @Override
+  public int getXpathFunctionResolverCount() {
+    return xpathFunctionResolvers.size();
   }
 
   /**
@@ -754,6 +794,15 @@ public class MulgaraUserConfig extends MulgaraConfig {
 
 
   /**
+   * @see org.mulgara.config.MulgaraConfig#removeAllXpathFunctionResolver()
+   */
+  @Override
+  public void removeAllXpathFunctionResolver() {
+    throw new UnsupportedOperationException("Read only class");
+  }
+
+
+  /**
    * @see org.mulgara.config.MulgaraConfig#removeContentHandler(org.mulgara.config.ContentHandler)
    */
   @Override
@@ -821,6 +870,24 @@ public class MulgaraUserConfig extends MulgaraConfig {
    */
   @Override
   public SecurityAdapterFactory removeSecurityAdapterFactoryAt(int index) {
+    throw new UnsupportedOperationException("Read only class");
+  }
+
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#removeXpathFunctionResolver(org.mulgara.config.XpathFunctionResolver)
+   */
+  @Override
+  public boolean removeXpathFunctionResolver(XpathFunctionResolver resolverFactory) {
+    throw new UnsupportedOperationException("Read only class");
+  }
+
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#removeXpathFunctionResolverAt(int)
+   */
+  @Override
+  public XpathFunctionResolver removeXpathFunctionResolverAt(int index) {
     throw new UnsupportedOperationException("Read only class");
   }
 
@@ -1001,6 +1068,24 @@ public class MulgaraUserConfig extends MulgaraConfig {
    */
   @Override
   public void setSecurityAdapterFactory(SecurityAdapterFactory[] securityAdapterFactoryArray) {
+    throw new UnsupportedOperationException("Read only class");
+  }
+
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#setResolverFactory(int, org.mulgara.config.XpathFunctionResolver)
+   */
+  @Override
+  public void setXpathFunctionResolver(int index, XpathFunctionResolver functionResolver) throws IndexOutOfBoundsException {
+    throw new UnsupportedOperationException("Read only class");
+  }
+
+
+  /**
+   * @see org.mulgara.config.MulgaraConfig#setResolverFactory(org.mulgara.config.XpathFunctionResolver[])
+   */
+  @Override
+  public void setXpathFunctionResolver(XpathFunctionResolver[] xpathFunctionResolverArray) {
     throw new UnsupportedOperationException("Read only class");
   }
 
