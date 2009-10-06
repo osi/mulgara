@@ -44,7 +44,6 @@ import org.mulgara.store.statement.*;
 import org.mulgara.store.tuples.*;
 import org.mulgara.store.xa.*;
 import org.mulgara.util.Constants;
-import org.mulgara.util.StackTrace;
 
 /**
  * @created 2001-10-13
@@ -1698,7 +1697,6 @@ public final class TripleAVLFile {
     private abstract class AbstractStoreTuples implements StoreTuples {
 
       // keep a stack trace of the instantiation of this object
-      protected StackTrace stack = logger.isDebugEnabled() ? new StackTrace() : null;
       protected List<Integer> objectIds = new ArrayList<Integer>();
 
       private long[] startTriple;
@@ -2095,7 +2093,6 @@ public final class TripleAVLFile {
 
           copy.variables = getVariables();
 
-          copy.stack = logger.isDebugEnabled() ? new StackTrace() : null;
           copy.objectIds = new ArrayList<Integer>(objectIds);
           copy.objectIds.add(new Integer(System.identityHashCode(this)));
 
@@ -2124,7 +2121,6 @@ public final class TripleAVLFile {
           if (end.node != null) end.node.release();
           end = null;
         }
-        stack = null;
       }
 
 
