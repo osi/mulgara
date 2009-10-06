@@ -266,9 +266,9 @@ class QueryStructureImpl implements QueryStructure {
   }
 
   /**
-   * Create a new IRI based on a prefixed name.Note that this implementation
+   * Create a new IRI based on a prefixed name. Note that this implementation
    * only accepts URIs, and not the more complete IRI.
-   * @param r The string containing the image of the IRI
+   * @param r The string containing the image of the prefixed name.
    * @return A new {@link org.mulgara.sparql.parser.cst.IRIReference} for the string image.
    * @throws ParseException The r parameter was not a syntactically valid URI.
    */
@@ -277,11 +277,12 @@ class QueryStructureImpl implements QueryStructure {
     Matcher m = pnamePattern.matcher(r);
     if (!m.matches()) {
       // either a normal IRI, or one with a BASE
-      return isRelative(r) ? new IRIReference(base + r, "<" + r + ">") : new IRIReference(r);
+      return isRelative(r) ? new IRIReference(base, null, r) : new IRIReference(r, prefixes);
     }
-    // extract the prefix, and attempt to convert to a URI before creating the reference
-    URI ns = prefixes.get(m.group(1));
-    return ns == null ? new IRIReference(r) : new IRIReference(ns.toString() + m.group(2), r);
+    String prefix = m.group(1);
+    String localPart = m.group(2);
+    URI namespace = prefixes.get(prefix);
+    return namespace == null ? new IRIReference(r, prefixes) : new IRIReference(namespace, prefix, localPart);
   }
 
   /**
