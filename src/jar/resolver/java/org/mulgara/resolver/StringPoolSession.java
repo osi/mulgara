@@ -103,6 +103,15 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
   /** The name of the graph parameter in a URI */
   static final String GRAPH = "graph";
 
+  /** The system URI scheme */
+  static final String RMI_SCHEME = "rmi";
+
+  /** The relative name of the system graph */
+  static final String SYSTEM_GRAPH_NAME = "#";
+
+  /** The relative URI for the system graph */
+  static final URI SYSTEM_GRAPH_URI = URI.create(SYSTEM_GRAPH_NAME);
+
   /** The unique {@link URI} naming this database. */
   private final URI databaseURI;
 
@@ -663,7 +672,8 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
       String scheme = uri.getScheme();
       String fragment = uri.getFragment();
 
-      if (scheme != null && scheme.equals(databaseURI.getScheme())) {
+      // we're only going to fiddle with this if the database scheme is RMI
+      if (scheme != null && scheme.equals(databaseURI.getScheme()) && scheme.equals(RMI_SCHEME)) {
         if (databaseURI.isOpaque()) {
           // databaseURI is opaque.
           if (fragment != null && uri.isOpaque()) {
@@ -741,6 +751,12 @@ public class StringPoolSession implements XAResolverSession, BackupRestoreSessio
               }
             }
           }
+        }
+      } else if (scheme != null && scheme.equals(databaseURI.getScheme())) {
+        // not RMI, but we still want to catch the system graph
+        if (uri.toString().equals(databaseURI.toString() + SYSTEM_GRAPH_NAME)) {
+          SPObjectFactory spObjectFactory = persistentStringPool.getSPObjectFactory();
+          spObject = spObjectFactory.newSPURI(SYSTEM_GRAPH_URI);
         }
       }
     }
