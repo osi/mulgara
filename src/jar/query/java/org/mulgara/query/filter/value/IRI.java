@@ -13,6 +13,8 @@ package org.mulgara.query.filter.value;
 
 import java.net.URI;
 
+import javax.xml.namespace.QName;
+
 import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
@@ -38,17 +40,38 @@ public class IRI implements RDFTerm {
   /** The URI held by this object */
   private final URI value;
 
+  private final QName qname;
+
   /**
    * Creates the value to wrap the uri.
    * @param u The URI to wrap
    */
   public IRI(URI u) {
     value = u;
+    qname = null;
+  }
+
+  /**
+   * Creates the value to wrap the uri.
+   * @param u The URI to wrap
+   * @param q The QName for this uri.
+   */
+  public IRI(URI u, QName q) {
+    value = u;
+    this.qname = q;
   }
 
   /** {@inheritDoc} */
   public URI getValue() {
     return value;
+  }
+
+  /**
+   * Gets the qname for this IRI, if one exists.
+   * @return The QName of the IRI, or <code>null</code> if none exists.
+   */
+  public QName getQName() {
+    return qname;
   }
 
   /** {@inheritDoc} */
@@ -105,4 +128,7 @@ public class IRI implements RDFTerm {
   /** This value does not need a context */
   public void addContextListener(ContextOwner l) { }
 
+  public String toString() {
+    return qname == null ? value.toString() : value.toString() + " (" + qname + ")";
+  }
 }
