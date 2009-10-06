@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jrdf.graph.Node;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.Context;
@@ -38,6 +39,9 @@ public class TypedLiteral extends AbstractComparableLiteral {
 
   /** Generated Serialization ID for RMI */
   private static final long serialVersionUID = -6070455650703063913L;
+
+  /** The logger */
+  private final static Logger logger = Logger.getLogger(TypedLiteral.class.getName());
 
   /** The type URI for this literal */
   private URI type;
@@ -82,7 +86,10 @@ public class TypedLiteral extends AbstractComparableLiteral {
    */
   public static ValueLiteral newLiteral(Object value) throws QueryException {
     DataCompare dc = typeMap.get(value.getClass());
-    if (dc == null) throw new QueryException("Unrecognized data type: " + value.getClass().getSimpleName());
+    if (dc == null) {
+      logger.info("Unrecognized data type: " + value.getClass().getSimpleName());
+      return new SimpleLiteral(value.toString());
+    }
     return dc.newLiteral(value);
   }
 
