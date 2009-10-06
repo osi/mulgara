@@ -67,9 +67,8 @@ import org.mulgara.util.*;
 public class XAStatementStoreImplUnitTest
     extends StatementStoreAbstractUnitTest {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(XAStatementStoreImplUnitTest.class);
 
   /**
@@ -85,7 +84,7 @@ public class XAStatementStoreImplUnitTest
   /**
    * Description of the Field
    */
-  private Set releasedNodes = new HashSet();
+  private Set<Long> releasedNodes = new HashSet<Long>();
 
 
   /**
@@ -134,7 +133,7 @@ public class XAStatementStoreImplUnitTest
    * @throws Exception EXCEPTION TO DO
    */
   public void testListeners() throws Exception {
-    if (!XAStatementStoreImpl.RELEASE_NODE_LISTENERS_ENABLED) return;
+    if (!checkIfListenersEnabled()) return;
 
     xaStore.addReleaseNodeListener(
       new ReleaseNodeListener() {
@@ -154,6 +153,16 @@ public class XAStatementStoreImplUnitTest
     store.removeTriples(2, 5, 6, 2);
     assertEquals(Collections.singleton(new Long(5)), releasedNodes);
   }
+
+
+  /**
+   * This access is hidden in a method to convince the compiler to look at it.
+   * @return <code>true</code> when listeners are enabled at build time.
+   */
+  private static boolean checkIfListenersEnabled() {
+    return XAStatementStoreImpl.RELEASE_NODE_LISTENERS_ENABLED;
+  }
+
 
   /**
    * A method to call for each graph before running tests on it.
