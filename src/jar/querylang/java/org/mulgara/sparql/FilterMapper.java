@@ -351,7 +351,8 @@ public class FilterMapper {
       List<Expression> exprArgs = expr.getArgs();
       RDFTerm[] operands = new RDFTerm[exprArgs.size()];
       for (int i = 0; i < operands.length; i++) operands[i] = mapExpression(exprArgs.get(i));
-      return new ExternalFn(new IRI(expr.getName().getUri()), operands);
+      IRIReference fnName = expr.getName();
+      return new ExternalFn(new IRI(fnName.getUri(), fnName.getQName()), operands);
     }
   }
 
