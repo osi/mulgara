@@ -42,10 +42,17 @@ import java.net.URI;
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
 public class Mulgara {
+  
+  /** The Mulgara prefix for use in place of the namespace */
+  public final static String NS_PREFIX = "mulgara";
+
   /** Mulgara RDF namespace. */
   public final static String NAMESPACE = "http://mulgara.org/mulgara#";
   
-  /** Mulgara RDF namespace. */
+  /** Mulgara virtual RDF namespace. */
+  public final static URI NS_URI = URI.create("http://mulgara.org/mulgara#");
+
+  /** Mulgara virtual RDF namespace. */
   public final static String VIRTUAL_NS = "http://mulgara.org/virtual/";
 
   /** A general identifier for an empty graph */
