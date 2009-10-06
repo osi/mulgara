@@ -27,17 +27,12 @@
 package org.mulgara.store.statement.xa;
 
 import java.io.*;
-import java.nio.*;
-
-// Java 2 standard packages
-import java.util.*;
 
 // Third party packages
 import junit.framework.*;
 import org.apache.log4j.Logger;
 
 // Locally written packages
-import org.mulgara.store.*;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.Block;
 import org.mulgara.util.Constants;
@@ -66,9 +61,8 @@ import org.mulgara.util.TempDir;
  */
 public class TripleAVLFileUnitTest extends TestCase {
 
-  /**
-   * Logger.
-   */
+  /** Logger. */
+  @SuppressWarnings("unused")
   private final static Logger logger = Logger.getLogger(TripleAVLFileUnitTest.class);
 
   /**
