@@ -14,16 +14,26 @@ package org.mulgara.query.filter.value;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.jrdf.vocabulary.RDF;
 import org.mulgara.parser.MulgaraParserException;
+import org.mulgara.query.FunctionResolverRegistry;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.RDFTerm;
 import org.mulgara.query.rdf.XSD;
 
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathFunction;
+import javax.xml.xpath.XPathFunctionException;
+import javax.xml.xpath.XPathFunctionResolver;
+
 /**
- * Executes a function that isn't defined in these packages.
+ * Executes a function that isn't defined in these packages. If the function is external
+ * then the answer is presumed to be scalar. URIs are automatically treated as IRIs, and anything else
+ * is treated as a literal.
  *
  * @created Apr 22, 2008
  * @author Paul Gearon
@@ -53,6 +63,15 @@ public class ExternalFn extends AbstractAccessorFn implements NumericExpression 
   /** This is a constructor function. */
   private boolean isConstructor = false;
 
+  /** The external function to execute. */
+  XPathFunction extFn = null;
+
+  /** Caches functions by their label of iri/#args. */
+  private static Map<String,XPathFunction> fnCache = new WeakHashMap<String,XPathFunction>();
+
+  /** Indicates that an error will always be returned from this method. */
+  private boolean unrecoverableError = false;
+
   /**
    * Create a new function instance.
    * @param fn The function to run.
@@ -65,7 +84,8 @@ public class ExternalFn extends AbstractAccessorFn implements NumericExpression 
       if (operands.length != 1) throw new MulgaraParserException("Cast operation can only take a single parameter");
       isConstructor = true;
     } else {
-      logger.error("Unknown function URI: " + fn);
+      extFn = findFunction(fn, operands.length);
+      if (extFn == null) logger.error("Unknown function: " + fn);
     }
   }
 
@@ -140,6 +160,12 @@ public class ExternalFn extends AbstractAccessorFn implements NumericExpression 
     return getContextOwner() == null ? true : resolve().isLiteral();
   }
 
+  /** @see java.lang.Object#toString() */
+  public String toString() {
+    String result = "function[" + fnUri + "]";
+    if (extFn != null) result += " -> " + extFn.getClass().getName();
+    return result;
+  }
 
   /**
    * Resolve the value of the function.
@@ -156,8 +182,24 @@ public class ExternalFn extends AbstractAccessorFn implements NumericExpression 
       if (XSD.isNumericType(fnUri) && value instanceof Number) return new NumericLiteral(NumericLiteral.getValueFor((Number)value, fnUri), fnUri);
       return TypedLiteral.newLiteral(value.toString(), fnUri, null);
     }
-    logger.warn("Attempting to execute an unsupported function: " + fnUri + "(" + resolveArgs() + ")");
-    return Bool.TRUE;
+    if (extFn == null) {
+      logger.debug("Attempting to execute an unsupported function: " + fnUri + "(" + resolveArgs() + ")");
+      return Bool.FALSE;
+    }
+    if (unrecoverableError) return Bool.FALSE;
+    Object result;
+    try {
+      result = extFn.evaluate(resolveArgs());
+    } catch (XPathFunctionException e) {
+      if (invalidFunctionException(e)) {
+        unrecoverableError = true;
+        logger.error("Error executing XPathFunction", e);
+      } else {
+        if (logger.isDebugEnabled()) logger.debug("Error executing XPathFunction", e);
+      }
+      throw new QueryException("Error executing external function", e);
+    }
+    return (result.getClass().equals(URI.class)) ? new IRI((URI)result) : TypedLiteral.newLiteral(result);
   }
 
   /**
@@ -185,5 +227,42 @@ public class ExternalFn extends AbstractAccessorFn implements NumericExpression 
     RDFTerm result = resolve();
     if (!result.isLiteral() && !(result instanceof NumericExpression)) throw new QueryException("Type Error: Not valid to ask the numeric form of a: " + result.getClass().getSimpleName());
     return ((NumericExpression)result).getNumber();
+  }
+
+  /**
+   * Look for a function in the registered XPathFunctionResolvers.
+   * @param iri The URI of the function to find.
+   * @return The requested XPathFunction, or <code>null</code> if not found.
+   */
+  private XPathFunction findFunction(IRI iri, int argCount) {
+    String label = iri.toString() + "/" + argCount;
+    XPathFunction result = fnCache.get(label);
+    if (result == null) {
+      QName fnName = iri.getQName();
+      if (fnName == null) return null;
+      for (XPathFunctionResolver resolver: FunctionResolverRegistry.getFunctionResolverRegistry()) {
+        try {
+          result = resolver.resolveFunction(fnName, argCount);
+        } catch (Exception e) {
+          // this resolver is unable to handle the given QName
+        }
+        if (result != null) break;
+      }
+      if (result != null) fnCache.put(label, result);
+    }
+    return result;
+  }
+
+  /**
+   * Test if an exception indicates that a method is unavailable.
+   * @param e An exception thrown when an external method is invoked.
+   * @return <code>true</code> if the exception indicates that the method can never be successful.
+   */
+  private static boolean invalidFunctionException(Exception e) {
+    Throwable t = e;
+    do {
+      if (t instanceof NoSuchMethodException) return true;
+    } while ((t = t.getCause()) != null);
+    return false;
   }
 }
