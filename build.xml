@@ -526,7 +526,7 @@
       <zipfileset src="${lib.dir}/${lucene.core.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**, **/*.xml"/>
       <zipfileset src="${lib.dir}/${servlet-jsp.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
@@ -544,8 +544,8 @@
       <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**, **/*.xml"/>
       <zipfileset src="${bin.dir}/${resolver.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-distributed.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**"/>
@@ -1701,7 +1701,7 @@
       <zipfileset src="${lib.dir}/${mail.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${saaj.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${serializer.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${servlet.jar}" excludes="META-INF/**, **/*.xml"/>
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
@@ -1714,8 +1714,8 @@
       <!-- core libraries -->
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**, **/*.xml"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**"/>
@@ -1854,8 +1854,8 @@
 
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**, **/*.xml"/>
       <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
       <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**"/>
@@ -2152,56 +2152,56 @@
       <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
 
       <!-- core libraries -->
-      <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${config.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${descriptor.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${server-local.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-spi.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-filesystem.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-xa.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-nodepool.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-nodepool-memory.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-nodepool-xa.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-stringpool.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-stringpool-memory.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${store-stringpool-xa11.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-http.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-lucene.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-memory.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-store.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-url.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-view.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${tuples.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${tuples-hybrid.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-mp3.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-distributed.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-xsd.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-test.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${swrl.jar}" excludes="META-INF/**"/>
-      <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${driver.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${querylang.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${rmi.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${server.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${server-rmi.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${util.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${config.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${descriptor.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${server-local.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-spi.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-filesystem.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-xa.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-nodepool.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-nodepool-memory.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-nodepool-xa.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-stringpool.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-memory.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-xa.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${store-stringpool-xa11.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${util-xa.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-null.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-file.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-http.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-lucene.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-memory.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-store.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-url.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-view.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${tuples.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${tuples-hybrid.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${content-mp3.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${content-n3.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${content-mbox.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${content-rdfxml.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${content-rlog.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-nodetype.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-prefix.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-relational.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-distributed.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-xsd.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-test.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${resolver-jar.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${dtd.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${jrdf.base.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${krule.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${swrl.jar}" excludes="META-INF/**, **/*.xml"/>
+      <zipfileset src="${bin.dir}/${web.jar}" excludes="META-INF/**, **/*.xml"/>
 
 
       <zipfileset file="${obj.dir}/mulgara-x-config.xml" prefix="conf" />
