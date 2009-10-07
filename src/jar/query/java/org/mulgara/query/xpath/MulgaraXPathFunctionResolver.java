@@ -16,12 +16,7 @@
 
 package org.mulgara.query.xpath;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.xpath.XPathFunction;
-import javax.xml.xpath.XPathFunctionResolver;
+import org.mulgara.query.functions.MulgaraFunctionResolver;
 
 /**
  * Retrieves functions for SPARQL expressions.
@@ -30,52 +25,15 @@ import javax.xml.xpath.XPathFunctionResolver;
  * @author Paul Gearon
  * @copyright &copy; 2009 <a href="http://www.duraspace.org/">DuraSpace</a>
  */
-public class MulgaraXPathFunctionResolver implements XPathFunctionResolver {
+public class MulgaraXPathFunctionResolver extends MulgaraFunctionResolver {
 
   /**
-   * @see javax.xml.xpath.XPathFunctionResolver#resolveFunction(javax.xml.namespace.QName, int)
+   * Initialize the maps of requested parameters to the function object being asked for
    */
-  public XPathFunction resolveFunction(QName functionName, int arity) {
-    XPathFunction result = null;
-    String namespace = functionName.getNamespaceURI();
-    if (namespace != null) {
-      Map<String,XPathFunction> fnGroupMap = functionGroups.get(namespace);
-      if (fnGroupMap != null) {
-        result = fnGroupMap.get(functionName.getLocalPart() + "/" + arity);
-        // fall back to multiple arity
-        if (result == null) result = fnGroupMap.get(functionName.getLocalPart() + "/*");
-      }
-    }
-    return result;
-  }
-
-
-  /**
-   * A mapping of namespace URIs to the map of (name->functions) in that namespace.
-   * This is used to look up the requested function object.
-   */
-  private static final Map<String,Map<String,XPathFunction>> functionGroups = new HashMap<String,Map<String,XPathFunction>>();
-
-
-  // initialize the maps of requested parameters to the function object being asked for
-  static {
+  public MulgaraXPathFunctionResolver() {
     addFunctionGroup(new SparqlFunctionGroup());
     addFunctionGroup(new FnFunctionGroup());
     addFunctionGroup(new OpFunctionGroup());
-  }
-
-  /**
-   * A helper method to create a mapping of function names to their implementing classes,
-   * and of namespaces to these mappings.
-   * @param fnGroup A group of functions to be added into a single namespace.
-   *        This group also provides that namespace.
-   */
-  private static final void addFunctionGroup(MulgaraFunctionGroup fnGroup) {
-    // map the function names to the functions
-    Map<String,XPathFunction> functionMap = new HashMap<String,XPathFunction>();
-    for (MulgaraFunction fn: fnGroup.getAllFunctions()) functionMap.put(fn.getName(), fn);
-    // map the namespace to the name->function map
-    functionGroups.put(fnGroup.getNamespace(), functionMap);
   }
 
 }

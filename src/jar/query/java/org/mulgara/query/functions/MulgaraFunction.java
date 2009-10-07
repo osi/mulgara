@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mulgara.query.xpath;
+package org.mulgara.query.functions;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public abstract class MulgaraFunction implements XPathFunction {
    * If not overridden then this will be the function class's name, starting with a lower-case letter.
    * @return The name/arity of this function.
    */
-  protected String getName() {
+  public String getName() {
     StringBuilder name = new StringBuilder(getClass().getSimpleName());
     char c = name.charAt(0);
     if (Character.isUpperCase(c)) {

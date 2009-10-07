@@ -25,6 +25,8 @@ import java.util.Set;
 import javax.xml.xpath.XPathFunctionException;
 
 import org.apache.xerces.impl.xpath.regex.RegularExpression;
+import org.mulgara.query.functions.MulgaraFunction;
+import org.mulgara.query.functions.MulgaraFunctionGroup;
 
 /**
  * Container for functions in the fn domain.
@@ -34,7 +36,7 @@ import org.apache.xerces.impl.xpath.regex.RegularExpression;
  * @copyright &copy; 2009 <a href="http://www.duraspace.org/">DuraSpace</a>
  */
 @SuppressWarnings("unchecked")
-public class FnFunctionGroup extends MulgaraFunctionGroup {
+public class FnFunctionGroup implements MulgaraFunctionGroup {
 
   /** The prefix for the fn: namespace */
   static final String PREFIX = "fn";

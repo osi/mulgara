@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.mulgara.query.xpath;
+package org.mulgara.query.functions;
 
-import java.net.URI;
 import java.util.Set;
+
 
 /**
  * Represents a group of functions exposed as XPathFunctions in a single namespace.
@@ -26,24 +26,24 @@ import java.util.Set;
  * @author Paul Gearon
  * @copyright &copy; 2009 <a href="http://www.duraspace.org/">DuraSpace</a>
  */
-public abstract class MulgaraFunctionGroup {
+public interface MulgaraFunctionGroup {
 
   /**
    * Get the prefix used for the namespace of these operations.
    * @return The short string used for a prefix in a QName.
    */
-  public abstract String getPrefix();
+  public String getPrefix();
 
   /**
    * Get the namespace of these operations.
    * @return The string of the namespace URI.
    */
-  public abstract String getNamespace();
+  public String getNamespace();
 
   /**
    * Get the set of function in this group.
    * @return A set of MulgaraFunction for this entire group.
    */
-  public abstract Set<MulgaraFunction> getAllFunctions();
+  public Set<MulgaraFunction> getAllFunctions();
 
 }

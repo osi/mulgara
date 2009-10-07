@@ -22,6 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.mulgara.query.functions.MulgaraFunction;
+import org.mulgara.query.functions.MulgaraFunctionGroup;
+
 /**
  * Container for functions in the op pseudo-domain.
  *
@@ -30,7 +33,7 @@ import java.util.Set;
  * @copyright &copy; 2009 <a href="http://www.duraspace.org/">DuraSpace</a>
  */
 @SuppressWarnings("unchecked")
-public class OpFunctionGroup extends MulgaraFunctionGroup {
+public class OpFunctionGroup implements MulgaraFunctionGroup {
 
   /** The prefix for the fn: namespace */
   static final String PREFIX = "op";

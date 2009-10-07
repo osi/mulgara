@@ -27,6 +27,8 @@ import org.jrdf.graph.BlankNode;
 import org.jrdf.graph.Literal;
 import org.mulgara.query.QueryException;
 import org.mulgara.query.filter.value.SimpleLiteral;
+import org.mulgara.query.functions.MulgaraFunction;
+import org.mulgara.query.functions.MulgaraFunctionGroup;
 
 /**
  * Container for functions in the SPARQL domain.
@@ -36,7 +38,7 @@ import org.mulgara.query.filter.value.SimpleLiteral;
  * @copyright &copy; 2009 <a href="http://www.duraspace.org/">DuraSpace</a>
  */
 @SuppressWarnings("unchecked")
-public class SparqlFunctionGroup extends MulgaraFunctionGroup {
+public class SparqlFunctionGroup implements MulgaraFunctionGroup {
 
   /** The prefix for the sparql: namespace */
   static final String PREFIX = "sparql";
@@ -162,7 +164,7 @@ public class SparqlFunctionGroup extends MulgaraFunctionGroup {
 
   /** Function to perform a logical OR between 2 operands. */
   static private class LogicalOr extends LogicOp {
-    protected String getName() { return "logical-or"; }
+    public String getName() { return "logical-or"; }
     public boolean op(Object left, Object right) throws XPathFunctionException {
       return toBool(left) || toBool(right);
     }
@@ -170,7 +172,7 @@ public class SparqlFunctionGroup extends MulgaraFunctionGroup {
 
   /** Function to perform a logical AND between 2 operands. */
   static private class LogicalAnd extends LogicOp {
-    protected String getName() { return "logical-and"; }
+    public String getName() { return "logical-and"; }
     public boolean op(Object left, Object right) throws XPathFunctionException {
       return toBool(left) && toBool(right);
     }
