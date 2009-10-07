@@ -148,21 +148,20 @@ class UnorderedProjection extends AbstractTuples {
   /**
    * Gets the ColumnValue attribute of the UnorderedProjection object
    *
-   * @param column PARAMETER TO DO
-   * @return The ColumnValue value
-   * @throws TuplesException EXCEPTION TO DO
+   * @param column The 0-indexed column number to get the value from
+   * @return The value for the column binding, or {@link Tuples#UNBOUND} if the value is not bound.
+   * @throws TuplesException If there is an error accessing one of the original Tuples.
    */
   public long getColumnValue(int column) throws TuplesException {
     assert((column >= 0) && (column < getNumberOfVariables())) ||
         (column == ABSENT_COLUMN):"Invalid column " + column;
 
     if (columnMapping[column] == ABSENT_COLUMN) {
-      if (logger.isInfoEnabled()) {
-        logger.info(getVariables()[column] + " is never bound\n " + new StackTrace());
+      if (logger.isDebugEnabled()) {
+        logger.debug(getVariables()[column] + " is never bound\n " + new StackTrace());
       }
       return Tuples.UNBOUND;
-    }
-    else {
+    } else {
       return operand.getColumnValue(columnMapping[column]);
     }
   }
