@@ -18,10 +18,10 @@ package org.mulgara.query;
 
 import org.mulgara.util.Reflect;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import javax.xml.xpath.XPathFunctionResolver;
 
@@ -37,14 +37,14 @@ public class FunctionResolverRegistry implements Iterable<XPathFunctionResolver>
   /** The singleton of this object */
   static private FunctionResolverRegistry registry = new FunctionResolverRegistry();
 
-  /** The set of registered resolvers */
-  private Set<XPathFunctionResolver> registered;
+  /** The list of registered resolvers */
+  private List<XPathFunctionResolver> registered;
 
   /**
    * Constructs the singleton resolver.
    */
   private FunctionResolverRegistry() {
-    registered = new HashSet<XPathFunctionResolver>();
+    registered = new ArrayList<XPathFunctionResolver>();
   }
 
   /**
@@ -81,6 +81,6 @@ public class FunctionResolverRegistry implements Iterable<XPathFunctionResolver>
    * @return an Iterator for the registry.
    */
   public Iterator<XPathFunctionResolver> iterator() {
-    return Collections.unmodifiableSet(registered).iterator();
+    return Collections.unmodifiableList(registered).iterator();
   }
 }
