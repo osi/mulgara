@@ -271,9 +271,9 @@ void OrderClause() : {}
 /* [17]    OrderCondition    ::=     ( ( 'ASC' | 'DESC' ) BrackettedExpression ) | ( Constraint | Var ) */
 void OrderCondition() : { boolean asc = true; Expression e; }
 {
-  ( ( "ASC" | "DESC" { asc = false; } ) e=BrackettedExpression() )
+  ( ( ( "ASC" | "DESC" { asc = false; } ) e=BrackettedExpression() )
   |
-  ( e=Constraint() | e=Var() )
+  ( e=Constraint() | e=Var() ) )
   { queryStructure.addOrdering(e, asc); }
 }
 
