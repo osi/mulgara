@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import org.mulgara.util.StringUtil;
 
@@ -75,8 +76,8 @@ public class StreamedSparqlXMLObject implements StreamedXMLAnswer {
   /** {@inheritDoc} */
   protected void addDocHeader() throws IOException {
     s.append("<?xml version=\"1.0\"?>\n");
-    s.append("<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\"");
-    s.append(">");
+    s.append("<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">");
+    if (prettyPrint) s.append("\n");
   }
 
   /** {@inheritDoc} */
@@ -86,9 +87,14 @@ public class StreamedSparqlXMLObject implements StreamedXMLAnswer {
 
   /** {@inheritDoc} */
   protected void addResults() throws IOException {
-    if (prettyPrint) s.append(INDENT_STR).append("<data>");
-    if (objectData != null) s.append(StringUtil.quoteAV(objectData.toString()));
+    if (prettyPrint) s.append(INDENT_STR);
+    s.append("<data>");
+    if (objectData != null) {
+      if (objectData instanceof Map<?,?>) s.append(encodeMap((Map<?,?>)objectData, INDENT_STR));
+      else s.append(StringUtil.quoteAV(objectData.toString()));
+    }
     s.append("</data>");
+    if (prettyPrint) s.append("\n");
   }
 
 
@@ -123,4 +129,18 @@ public class StreamedSparqlXMLObject implements StreamedXMLAnswer {
     this.prettyPrint = prettyPrint;
   }
 
+  public String encodeMap(Map<?,?> map, String indent) {
+    String i2 = prettyPrint ? "\n" + indent + INDENT_STR : "";
+    StringBuilder s = new StringBuilder();
+    for (Map.Entry<?,?> entry: map.entrySet()) {
+      s.append(i2).append("<key>");
+      s.append(StringUtil.quoteAV(entry.getKey().toString()));
+      s.append("</key>");
+      s.append(i2).append("<value>");
+      s.append(StringUtil.quoteAV(entry.getValue().toString()));
+      s.append("</value>");
+    }
+    if (prettyPrint) s.append("\n").append(indent);
+    return s.toString();
+  }
 }

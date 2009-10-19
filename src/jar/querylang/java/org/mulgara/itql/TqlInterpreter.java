@@ -45,6 +45,7 @@ import org.mulgara.query.operation.ExecuteScript;
 import org.mulgara.query.operation.Export;
 import org.mulgara.query.operation.Help;
 import org.mulgara.query.operation.Insertion;
+import org.mulgara.query.operation.ListAlias;
 import org.mulgara.query.operation.Load;
 import org.mulgara.query.operation.Modification;
 import org.mulgara.query.operation.Quit;
@@ -520,7 +521,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
     // Return an AST element, for reporting on what happened.
     // Use a Help command, with the alias listing as the help text.
-    lastCommand = new Help(buildAliasList());
+    lastCommand = new ListAlias(Collections.unmodifiableMap(aliasMap));
   }
 
   /**
@@ -1409,19 +1410,6 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
     // add the pair to the map
     getAliasMap().put(aliasPrefix, aliasTarget);
-  }
-
-
-  /**
-   * Writes the alias map as a set of URI/namespace pairs to a string for printing.
-   * @return A String containing all the alias mappings.
-   */
-  private String buildAliasList() {
-    StringBuilder buffer = new StringBuilder();
-    for (Map.Entry<String,URI> alias: getAliasMap().entrySet()) {
-      buffer.append(alias.getKey()).append(":  <").append(alias.getValue()).append(">\n");
-    }
-    return buffer.toString();
   }
 
 

@@ -19,6 +19,7 @@ package org.mulgara.protocol;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Map;
 
 
 /**
@@ -61,9 +62,30 @@ public class StreamedSparqlJSONObject implements StreamedAnswer {
     s.flush();
   }
 
+  /**
+   * Create a JSON string for a single Map object.
+   * @param o The object to convert to a JSON string.
+   * @return The JSON string representing the parameter.
+   */
+  static String jsonHash(Map<?,?> o) {
+    StringBuilder s = new StringBuilder("{ ");
+    boolean first = true;
+    for (Map.Entry<?,?> entry: o.entrySet()) {
+      if (!first) s.append(", ");
+      else first = false;
+      s.append("\"");
+      s.append(entry.getKey());
+      s.append("\": ");
+      s.append(jsonEscape(entry.getValue()));
+    }
+    s.append(" }");
+    return s.toString();
+  }
+
   /** Trivial escaping. */
-  public static String jsonEscape(Object o) {
+  static String jsonEscape(Object o) {
     if (o instanceof Number) return o.toString();
+    if (o instanceof Map<?,?>) return jsonHash((Map<?,?>)o);
     String data = o.toString();
     data = data.replace("\"", "\\\"");
     data = data.replace("\\", "\\\\");
@@ -73,6 +95,6 @@ public class StreamedSparqlJSONObject implements StreamedAnswer {
     data = data.replace("\n", "\\n");
     data = data.replace("\r", "\\r");
     data = data.replace("\t", "\\t");
-    return data;
+    return "\"" + data + "\"";
   }
 }
