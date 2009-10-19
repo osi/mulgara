@@ -531,6 +531,7 @@
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${xalan.jar}" excludes="META-INF/**"/>
 
 
       <zipfileset src="${bin.dir}/${config.jar}" excludes="META-INF/**"/>
@@ -1705,6 +1706,7 @@
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${xalan.jar}" excludes="META-INF/**"/>
 
       <!-- Libs needed for JSP. Remove these when JSP is eliminated. -->
       <zipfileset src="${jsp-lib.dir}/${jsp-core.jar}" excludes="META-INF/**"/>
@@ -2150,6 +2152,7 @@
       <zipfileset src="${lib.dir}/${sesame-model.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${trove.jar}" excludes="META-INF/**"/>
       <zipfileset src="${lib.dir}/${wsdl4j.jar}" excludes="META-INF/**"/>
+      <zipfileset src="${lib.dir}/${xalan.jar}" excludes="META-INF/**"/>
 
       <!-- core libraries -->
       <zipfileset src="${bin.dir}/${query.jar}" excludes="META-INF/**, **/*.xml"/>
