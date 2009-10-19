@@ -133,8 +133,8 @@ public class BlockCacheLine extends CacheLine {
 
 
   public void reset(long[] prefix) throws TuplesException {
-    if (logger.isInfoEnabled()) {
-      logger.info("Entering reset with prefix: " + AbstractTuples.toString(prefix));
+    if (logger.isDebugEnabled()) {
+      logger.debug("Entering reset with prefix: " + AbstractTuples.toString(prefix));
     }
     super.reset(prefix);
 
@@ -243,7 +243,7 @@ public class BlockCacheLine extends CacheLine {
    * @return The block containing the current prefix.
    */
   private Block findBlock(long[] prefix) throws TuplesException {
-    logger.info("Finding block matching prefix");
+    if (logger.isDebugEnabled()) logger.debug("Finding block matching prefix");
     try {
       assert prefix.length > 0 && prefix.length <= width;
 
@@ -294,8 +294,8 @@ public class BlockCacheLine extends CacheLine {
    *      if found then lowBlock &lt; prefix == highBlock
    */
   private Block findBlock(long[] prefix, boolean found, long lowBound, Block lowBlock, long highBound, Block highBlock) throws TuplesException {
-    if (logger.isInfoEnabled()) {
-      logger.info("finding Block with prefix: " + AbstractTuples.toString(prefix) + " found: " + found +
+    if (logger.isDebugEnabled()) {
+      logger.debug("finding Block with prefix: " + AbstractTuples.toString(prefix) + " found: " + found +
           " lowBound: " + lowBound + " highBound: " + highBound);
     }
     try {
