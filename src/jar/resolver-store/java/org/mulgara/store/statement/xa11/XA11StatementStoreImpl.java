@@ -1517,7 +1517,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
         if (variableMask == (MASK0 | MASK1 | MASK2)) {
           LiteralGraphTuples result = new LiteralGraphTuples(false);
           for (long graphNode: graphNodes) {
-            if (tripleAVLFilePhases[TI_3012].existsTriple(node0, node1, node2, graphNode)) {
+            if (tripleAVLFilePhases[TI_3012].existsTriple(graphNode, node0, node1, node2)) {
               result.appendTuple(new long[] { graphNode });
             }
           }
