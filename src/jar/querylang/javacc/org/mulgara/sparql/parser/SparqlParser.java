@@ -448,7 +448,7 @@ public class SparqlParser implements SparqlParserConstants {
         break;
       case 43:
         jj_consume_token(43);
-                       asc = false;
+                         asc = false;
         break;
       default:
         jj_la1[22] = jj_gen;
@@ -501,13 +501,13 @@ public class SparqlParser implements SparqlParserConstants {
         jj_consume_token(-1);
         throw new ParseException();
       }
-    queryStructure.addOrdering(e, asc);
       break;
     default:
       jj_la1[24] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
+    queryStructure.addOrdering(e, asc);
   }
 
 /* [18]    LimitClause    ::=    'LIMIT' INTEGER */
