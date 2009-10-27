@@ -172,7 +172,7 @@ public class Query implements Cloneable, Serializable, Command {
         if (o instanceof Variable) {
           Variable var = (Variable)o;
           if (!variableSet.contains(var)) {
-            logger.warn("Failed to find " + var + " in " + variableSet);
+            if (logger.isDebugEnabled()) logger.debug("Failed to find " + var + " in " + variableSet);
             throw new IllegalArgumentException("Failed to constrain all variables: " + var +
                 " not constrained in WHERE or GIVEN clauses");
           }
