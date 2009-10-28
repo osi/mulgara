@@ -198,7 +198,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
   private Phase.Token recordingPhaseToken = null;
 
   /** The list of graphs known to this statement store. */
-  private List<Long> committedGraphNodes;
+  private LinkedHashSet<Long> committedGraphNodes = null;
 
   /**
    * This flag indicates that the current object has been fully written, and may be considered
@@ -1191,7 +1191,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     private TripleAVLFile.Phase[] tripleAVLFilePhases = new TripleAVLFile.Phase[NR_INDEXES];
 
     /** The list of graphs valid in this phase. */
-    private List<Long> graphNodes = null;
+    private LinkedHashSet<Long> graphNodes = null;
 
 
     /**
@@ -1204,7 +1204,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
       currentPhase = this;
       dirty = true;
       try {
-        graphNodes = committedGraphNodes == null ? scanForGraphs() : new ArrayList<Long>(committedGraphNodes);
+        graphNodes = committedGraphNodes == null ? scanForGraphs() : new LinkedHashSet<Long>(committedGraphNodes);
       } catch (StatementStoreException e) {
         throw new IOException("Unable to get metadata for phase: " + e.getMessage());
       }
@@ -1222,7 +1222,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
       for (int i = 0; i < NR_INDEXES; ++i) tripleAVLFilePhases[i] = tripleAVLFiles[i].new Phase(p.tripleAVLFilePhases[i]);
       currentPhase = this;
       dirty = true;
-      graphNodes = new ArrayList<Long>(p.graphNodes);
+      graphNodes = new LinkedHashSet<Long>(p.graphNodes);
     }
 
 
@@ -1691,8 +1691,8 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
      * Ask the system for all the known graphs.
      * @return All the known graph nodes.
      */
-    List<Long> scanForGraphs() throws StatementStoreException, IOException {
-      List<Long> nodeList = new ArrayList<Long>();
+    LinkedHashSet<Long> scanForGraphs() throws StatementStoreException, IOException {
+      LinkedHashSet<Long> nodeList = new LinkedHashSet<Long>();
 
       if (systemGraphNode == NONE || rdfTypeNode == NONE || graphTypeNode == NONE) return nodeList;
 
