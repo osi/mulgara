@@ -18,6 +18,7 @@ package org.mulgara.resolver.prefix;
 
 // Java 2 standard packages
 import java.net.*;
+
 import javax.transaction.xa.XAResource;
 
 // Third party packages
@@ -29,7 +30,6 @@ import org.mulgara.query.*;
 import org.mulgara.resolver.spi.*;
 import org.mulgara.store.stringpool.SPObject;
 import org.mulgara.store.stringpool.SPObjectFactory;
-import org.mulgara.store.stringpool.SPURI;
 import org.mulgara.store.stringpool.StringPoolException;
 import org.mulgara.store.stringpool.xa.SPObjectFactoryImpl;
 import org.mulgara.store.tuples.Tuples;
@@ -56,7 +56,10 @@ public class PrefixResolver implements Resolver
   private URI modelTypeURI;
 
   /** The preallocated local node representing the mulgara:prefix property. */
-  private long mulgaraPrefix;
+  private final long mulgaraPrefix;
+
+  /** The preallocated local node representing the mulgara:stringPrefix property. */
+  private final long mulgaraStringPrefix;
 
   //
   // Constructors
@@ -74,6 +77,7 @@ public class PrefixResolver implements Resolver
       ResolverSession resolverSession,
       Resolver systemResolver,
       long mulgaraPrefix,
+      long mulgaraStringPrefix,
       URI modelTypeURI
   ) throws ResolverFactoryException {
 
@@ -90,6 +94,7 @@ public class PrefixResolver implements Resolver
     this.resolverSession = resolverSession;
     this.modelTypeURI = modelTypeURI;
     this.mulgaraPrefix = mulgaraPrefix;
+    this.mulgaraStringPrefix = mulgaraStringPrefix;
   }
 
   //
@@ -144,9 +149,7 @@ public class PrefixResolver implements Resolver
    * @throws ResolverException if the <var>statements</var> can't be
    *   added to the <var>model</var>
    */
-  public void modifyModel(long model, Statements statements, boolean occurs)
-    throws ResolverException
-  {
+  public void modifyModel(long model, Statements statements, boolean occurs) throws ResolverException {
     if (logger.isDebugEnabled()) {
       logger.debug("Modify prefix model " + model);
     }
@@ -158,8 +161,7 @@ public class PrefixResolver implements Resolver
   /**
    * Remove the cached model containing the contents of a URL.
    */
-  public void removeModel(long model) throws ResolverException
-  {
+  public void removeModel(long model) throws ResolverException {
     if (logger.isDebugEnabled()) {
       logger.debug("Remove prefix model " + model);
     }
@@ -170,8 +172,7 @@ public class PrefixResolver implements Resolver
    *
    * Resolution is by filtration of a URL stream, and thus very slow.
    */
-  public Resolution resolve(Constraint constraint) throws QueryException
-  {
+  public Resolution resolve(Constraint constraint) throws QueryException {
     if (logger.isDebugEnabled()) {
       logger.debug("Resolve " + constraint);
     }
@@ -200,32 +201,14 @@ public class PrefixResolver implements Resolver
       Node prefixNode = resolverSession.globalize(object.getValue());
 
       // check the constraint for consistency
-      if (property != mulgaraPrefix || !(prefixNode instanceof Literal || prefixNode instanceof URIReference)) {
-        logger.error("property = " + property +", mulgaraPrefix = " + mulgaraPrefix);
-        logger.error("element(2): " + prefixNode + " [" + prefixNode.getClass().getName() + "]");
+      if ((property != mulgaraPrefix && property != mulgaraStringPrefix) || !(prefixNode instanceof Literal || prefixNode instanceof URIReference)) {
+        logger.debug("property = " + property +", mulgaraPrefix = " + mulgaraPrefix);
+        logger.debug("element(2): " + prefixNode + " [" + prefixNode.getClass().getName() + "]");
         throw new QueryException("Prefix resolver can only be used for prefix constraints: " + constraint);
       }
 
-      String prefix;
-      // extract the string from the literal
-      if (prefixNode instanceof Literal) {
-        prefix = ((Literal)prefixNode).getLexicalForm();
-      } else {
-        prefix = ((URIReference)prefixNode).getURI().toString();
-      }
-
       if (logger.isDebugEnabled()) {
-        logger.debug("Evaluating " + constraint.getElement(0) +
-            " has prefix " +
-            constraint.getElement(2));
-      }
-      URI startPrefixUri;
-      URI endPrefixUri;
-      try {
-        startPrefixUri = new URI(prefix);
-        endPrefixUri = new URI(prefix + Character.MAX_VALUE);
-      } catch (URISyntaxException e) {
-        throw new QueryException("Prefix resolver can only be used for URI prefixes: " + e.getMessage());
+        logger.debug("Evaluating " + constraint.getElement(0) + " has prefix " + constraint.getElement(2));
       }
 
       ConstraintElement node = constraint.getElement(0);
@@ -237,8 +220,8 @@ public class PrefixResolver implements Resolver
 
         // convert the prefix into a string pool object
         SPObjectFactory spoFact = SPObjectFactoryImpl.getInstance();
-        SPURI startPrefixObj = spoFact.newSPURI(startPrefixUri);
-        SPURI endPrefixObj = spoFact.newSPURI(endPrefixUri);
+        SPObject startPrefixObj = getStartObject(spoFact, prefixNode, property);
+        SPObject endPrefixObj = getEndObject(spoFact, prefixNode, property);
 
         // get the extents of the prefix from the string pool
         tuples = resolverSession.findStringPoolRange(startPrefixObj, true, endPrefixObj, false);
@@ -281,6 +264,14 @@ public class PrefixResolver implements Resolver
         } else {
 
           // see if the node starts with the required prefix
+
+          String prefix;
+          // extract the string from the literal
+          if (prefixNode instanceof Literal) {
+            prefix = ((Literal) prefixNode).getLexicalForm();
+          } else {
+            prefix = ((URIReference) prefixNode).getURI().toString();
+          }
           if (spo.getLexicalForm().startsWith(prefix)) {
             tuples = TuplesOperations.unconstrained();
           } else {
@@ -302,6 +293,55 @@ public class PrefixResolver implements Resolver
 
   }
 
+  /**
+   * Create a string pool object to represent the beginning of a search range.
+   * @param factory The string pool factory that will create the object
+   * @param prefixNode The data for the object.
+   * @param predType Predicate to indicate the type of data to get from the string pool.
+   * @return An object representing the start of a range of data to get from the string pool.
+   * @throws QueryException If the predicate indicates a URI but the prefix data is not a valid URI.
+   */
+  private SPObject getStartObject(SPObjectFactory factory, Node prefixNode, long predType) throws QueryException {
+    if (prefixNode instanceof Literal) {
+      String prefix = ((Literal) prefixNode).getLexicalForm();
+      if (predType == mulgaraPrefix) {
+        try {
+          return factory.newSPURI(new URI(prefix));
+        } catch (URISyntaxException e) {
+          throw new QueryException("Bad URI prefix provided: " + prefix + " (should this be using mulgara:stringPrefix?)");
+        }
+      } else return factory.newSPString(prefix);
+    } else {
+      URI startPrefixUri = ((URIReference) prefixNode).getURI();
+      if (predType == mulgaraPrefix) return factory.newSPURI(startPrefixUri);
+      else return factory.newSPString(startPrefixUri.toString());
+    }
+  }
+
+  /**
+   * Create a string pool object to represent the end of a search range.
+   * @param factory The string pool factory that will create the object
+   * @param prefixNode The data for the object.
+   * @param predType Predicate to indicate the type of data to get from the string pool.
+   * @return An object representing the end of a range of data to get from the string pool.
+   * @throws QueryException If the predicate indicates a URI but the prefix data is not a valid URI.
+   */
+  private SPObject getEndObject(SPObjectFactory factory, Node prefixNode, long predType) throws QueryException {
+    String prefix;
+    if (prefixNode instanceof Literal) {
+      prefix = ((Literal) prefixNode).getLexicalForm();
+    } else {
+      prefix = ((URIReference) prefixNode).getURI().toString();
+    }
+
+    if (predType == mulgaraPrefix) {
+      try {
+        return factory.newSPURI(new URI(prefix + Character.MAX_VALUE));
+      } catch (URISyntaxException e) {
+        throw new QueryException("Bad URI prefix provided: " + prefix + " (should this be using mulgara:stringPrefix?)");
+      }
+    } else return factory.newSPString(prefix + Character.MAX_VALUE);
+  }
 
   /**
    * Close all sessions and factories used by this resolver.

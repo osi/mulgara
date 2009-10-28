@@ -73,10 +73,13 @@ public class Mulgara {
   /** The URI for prefix graph types. */
   public final static URI PREFIX_GRAPH_TYPE_URI = URI.create(NAMESPACE + "PrefixGraph");
 
-  /** The URI for prefixes. */
+  /** The URI for URI prefixes. */
   public final static URI PREFIX_URI = URI.create(NAMESPACE + "prefix");
 
-  /** The URI for prefixes. */
+  /** The URI for string prefixes. */
+  public final static URI STR_PREFIX_URI = URI.create(NAMESPACE + "stringPrefix");
+
+  /** The URI for binding variables. */
   public final static URI IS_URI = URI.create(NAMESPACE + "is");
 
 }

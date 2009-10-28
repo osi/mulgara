@@ -42,7 +42,10 @@ public class PrefixResolverFactory implements ResolverFactory {
   private static final URI DEFAULT_GRAPH = URI.create(Mulgara.PREFIX_GRAPH);
 
   /** The preallocated local node representing the prefix predicate. */
-  private long mulgaraPrefix;
+  private final long mulgaraPrefix;
+
+  /** The preallocated local node representing the string prefix predicate. */
+  private final long mulgaraStringPrefix;
 
   //
   // Constructors
@@ -61,6 +64,7 @@ public class PrefixResolverFactory implements ResolverFactory {
 
     // intialize the fields
     mulgaraPrefix = initializer.preallocate(new URIReferenceImpl(Mulgara.PREFIX_URI));
+    mulgaraStringPrefix = initializer.preallocate(new URIReferenceImpl(Mulgara.STR_PREFIX_URI));
 
     // no need to claim the types supported by this resolver, as this is detected in the default graphs
   }
@@ -110,7 +114,7 @@ public class PrefixResolverFactory implements ResolverFactory {
       boolean canWrite, ResolverSession resolverSession, Resolver systemResolver
   ) throws ResolverFactoryException {
     if (logger.isDebugEnabled()) logger.debug("Creating new Prefix resolver");
-    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, Mulgara.PREFIX_GRAPH_TYPE_URI);
+    return new PrefixResolver(resolverSession, systemResolver, mulgaraPrefix, mulgaraStringPrefix, Mulgara.PREFIX_GRAPH_TYPE_URI);
   }
 
   /**
