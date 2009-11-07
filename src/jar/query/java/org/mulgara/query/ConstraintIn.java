@@ -43,6 +43,8 @@ public class ConstraintIn implements ConstraintExpression {
 
   /** The IN element to set subconstraints to. */
   private ConstraintElement graph;
+  
+  private Set<Variable> variables;
 
   /**
    * Construct a filtered constraint.
@@ -83,7 +85,16 @@ public class ConstraintIn implements ConstraintExpression {
 
   /** {@inheritDoc} */
   public Set<Variable> getVariables() {
-    return constraint.getVariables();
+    if (variables == null) {
+      if (graph instanceof Variable) {
+        Set<Variable> vars = new HashSet<Variable>(constraint.getVariables());
+        vars.add((Variable)graph);
+        variables = Collections.unmodifiableSet(vars);
+      } else {
+        variables = constraint.getVariables();
+      }
+    }
+    return variables;
   }
 
 
