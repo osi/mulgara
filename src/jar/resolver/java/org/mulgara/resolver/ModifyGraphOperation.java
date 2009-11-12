@@ -141,9 +141,9 @@ class ModifyGraphOperation implements Operation {
     if (query == null) {
       throw new IllegalArgumentException("Null \"query\" parameter");
     }
-    if (query.getVariableList().size() != 3) {
+    if (!(query.getVariableList().size() == 3 || query instanceof ConstructQuery)) {
       throw new QueryException(
-          "Invalid select clause in insert/select.  Exactly 3 terms required");
+          "Invalid select clause in insert/select.  Exactly 3 terms (or ConstructQuery) required");
     }
 
     // Validate "databaseSession" parameter
