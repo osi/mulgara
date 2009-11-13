@@ -477,7 +477,7 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
         assert resource.getURI() != null;
         return resolverSession.localize(new URIReferenceImpl(new URI(resource.getURI())));
       } catch (URISyntaxException e) {
-        throw new Error("ARP generated a malformed URI", e);
+        throw new Error("ARP generated a malformed URI: '" + resource.getURI() + "'", e);
       }
     }
   }
