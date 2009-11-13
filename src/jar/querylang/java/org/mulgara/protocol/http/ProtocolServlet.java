@@ -443,15 +443,27 @@ public abstract class ProtocolServlet extends MulgaraServlet {
       }
 
       // upload the data
+      int attempts = 0;
+      int failed = 0;
+      StringBuilder errorBuffer = new StringBuilder();
       for (int partNr = 0; partNr < mime.getCount(); partNr++) {
         BodyPart part = mime.getBodyPart(partNr);
         String partName = mime.getPartName(partNr);
         try {
-          if (!knownParam(partName)) resp.addHeader(HDR_STMT_COUNT, Long.toString(loadData(destGraph, part, conn)));
+          if (!knownParam(partName)) {
+            attempts++;
+            resp.addHeader(HDR_STMT_COUNT, Long.toString(loadData(destGraph, part, conn)));
+          }
         } catch (QueryException e) {
           resp.addHeader(HDR_CANNOT_LOAD, partName);
+          errorBuffer.append("\n").append(partName).append(": ").append(e.getMessage());
+          failed++;
         }
       }
+      if (failed == attempts) {
+        throw new BadRequestException("Unable to load data from " + failed + " file" + (failed == 1 ? "" : "s") + errorBuffer);
+      }
+      if (failed > 0) throw new PartialFailureException("Failed to load " + failed + "/" + attempts + " files" + errorBuffer);
     } catch (MessagingException e) {
       throw new BadRequestException("Unable to process received MIME data: " + e.getMessage());
     }
