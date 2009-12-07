@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 
 
 /**
@@ -65,6 +66,12 @@ public class SparqlQueryJX implements JXTestStep {
   /** The default endpoint to connect to */
   private final static String DEFAULT_ENDPOINT = "http://localhost:8080/sparql/";
 
+  /** The character encoding to use for the request URL */
+  private static final String UTF8 = "UTF-8";
+
+  /** Internal record of the URL used */
+  private String requestUrl = "-";
+
   /** Size for internal read buffer */
   private final static int BUFFER_SIZE = 1024;
 
@@ -89,7 +96,7 @@ public class SparqlQueryJX implements JXTestStep {
 
     // retrieve the endpoint to use
     String confEndpoint =  props.getString(ENDPOINT_NAME);
-    String endpoint = (confEndpoint != null) ? confEndpoint : DEFAULT_ENDPOINT;
+    String endpoint = (confEndpoint != null && !confEndpoint.equals("")) ? confEndpoint : DEFAULT_ENDPOINT;
 
     // retrieve flag asking if the query should be timed
     String timeStr = props.getString(TIME_NAME);
@@ -101,7 +108,8 @@ public class SparqlQueryJX implements JXTestStep {
     try {
       queryResult = executeQuery(endpoint, query, defGraph);
     } catch (Exception ex) {
-      queryResult = ex.getMessage();
+      queryResult = "URL = <" + requestUrl + ">";
+      queryResult += "Exception: " + org.mulgara.util.StackTrace.throwableToString(ex);
     } finally {
     }
 
@@ -125,11 +133,12 @@ public class SparqlQueryJX implements JXTestStep {
    * @throws UnsupportedEncodingException The SPARQL endpoint used an encoding not understood by this system.
    * @throws HttpClientException An unexpected response was returned from the SPARQL endpoint.
    */
-  static String executeQuery(String endpoint, String query, URI defGraph)
+  String executeQuery(String endpoint, String query, URI defGraph)
         throws IOException, UnsupportedEncodingException, HttpClientException {
     String request = endpoint + "?";
-    if (defGraph != null) request += "default-graph-uri=" + defGraph.toString();
-    request += "&query=" + query;
+    if (defGraph != null && (0 != defGraph.toString().length())) request += "default-graph-uri=" + defGraph.toString() + "&";
+    request += "query=" + URLEncoder.encode(query, UTF8);
+    requestUrl = request;
 
     HttpClient client = new DefaultHttpClient();
     client.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
@@ -151,7 +160,8 @@ public class SparqlQueryJX implements JXTestStep {
       if (entity != null) {
         InputStreamReader resultStream = new InputStreamReader(entity.getContent());
         char[] buffer = new char[BUFFER_SIZE];
-        while (resultStream.read(buffer) >= 0) result.append(buffer);
+        int len;
+        while ((len = resultStream.read(buffer)) >= 0) result.append(buffer, 0, len);
         resultStream.close();
       } else {
         String msg = "No data in response from SPARQL endpoint";
