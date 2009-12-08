@@ -78,8 +78,6 @@
 	<classpathentry kind="lib" path="lib/castor-1.2-xml.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-discovery-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/concurrent-1.3.4.jar"/>
 	<classpathentry kind="lib" path="lib/connector-1_5.jar"/>
 	<classpathentry kind="lib" path="lib/derby.jar"/>
@@ -127,5 +125,11 @@
 	<classpathentry kind="lib" path="lib/xml-apis-2.9.1.jar"/>
 	<classpathentry kind="lib" path="dist/ideSupport.jar" sourcepath="obj/jar/config/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/apache-mime4j-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.0-beta2.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.0-beta3.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime-4.0-beta2.jar"/>
 	<classpathentry kind="output" path="obj/jar"/>
 </classpath>
