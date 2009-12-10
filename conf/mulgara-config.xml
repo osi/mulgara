@@ -145,6 +145,7 @@ User files may remove any top-level element.
   -->
   <XpathFunctionResolver type="org.mulgara.query.xpath.MulgaraXPathFunctionResolver"/>
   <XpathFunctionResolver type="org.apache.xalan.extensions.XPathFunctionResolverImpl"/>
+  <!-- XpathFunctionResolver type="org.mulgara.query.functions.MulgaraUnsafeFunctionResolver"/ -->
 
   <!-- iTQL script to run on startup -->
   <StartupScript>foo.itql</StartupScript>

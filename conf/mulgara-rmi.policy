@@ -1,4 +1,6 @@
 // Mulgara security policy
+// To enable the MulgaraUnsafeFunctionResolver add the following permission:
+//   permission java.io.FilePermission "<<ALL FILES>>", "execute";
 
 grant 
 {
