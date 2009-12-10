@@ -178,7 +178,7 @@ public abstract class TuplesOperations {
     } else {
       List<Tuples> projected = new ArrayList<Tuples>();
       for (Tuples operand: operands) {
-        Tuples proj = project(operand, variables);
+        Tuples proj = project(operand, variables, true);
         Tuples sorted = sort(proj);
         projected.add(sorted);
         proj.close();
@@ -257,7 +257,7 @@ public abstract class TuplesOperations {
     } else {
       List<Tuples> projected = new ArrayList<Tuples>();
       for (Tuples operand: operands) {
-        Tuples proj = project(operand, variables);
+        Tuples proj = project(operand, variables, false);
         projected.add(proj);
         operand.close();
       }
@@ -399,7 +399,7 @@ public abstract class TuplesOperations {
       }
       // double check that the variables are not equal
       if (subtrahend.getRowCardinality() == Cursor.ZERO || minuend.getRowCardinality() == Cursor.ZERO) {
-        logger.warn("Found an empty Tuples with bound variables");
+        logger.debug("Found an empty Tuples with bound variables");
         return (Tuples)minuend.clone();
       }
       // reorder the subtrahend as necessary
@@ -409,7 +409,7 @@ public abstract class TuplesOperations {
         // yes, there are extra variables
         logger.debug("removing extra variables not needed in subtraction");
         // project out the extra variables (sorting happens in projection)
-        sortedSubtrahend = project(subtrahend, new ArrayList<Variable>(matchingVars));
+        sortedSubtrahend = project(subtrahend, new ArrayList<Variable>(matchingVars), true);
       } else {
         // there were no extra variables in the subtrahend
         logger.debug("All variables needed");
@@ -794,12 +794,13 @@ public abstract class TuplesOperations {
    * Relational projection. This eliminates any columns not in the specified
    * list, and eliminates any duplicate rows that result.
    *
-   * @param tuples PARAMETER TO DO
+   * @param tuples The original tuples to project
    * @param variableList the list of {@link Variable}s to project on
-   * @return RETURNED VALUE TO DO
+   * @param distinct indicates that duplicate rows should be removed
+   * @return The tuples, with only the required columns, and possibly with duplicates removed
    * @throws TuplesException if the projection operation fails
    */
-  public static Tuples project(Tuples tuples, List<Variable> variableList) throws TuplesException {
+  public static Tuples project(Tuples tuples, List<Variable> variableList, boolean distinct) throws TuplesException {
     try {
 
       boolean noVariables = (variableList == null) || (variableList.size() == 0);
@@ -812,9 +813,9 @@ public abstract class TuplesOperations {
       if (logger.isDebugEnabled()) logger.debug("Projecting to " + variableList);
 
       // Perform the actual projection
-      Tuples oldTuples = tuples;
+      Tuples originalTuples = tuples;
       tuples = new UnorderedProjection(tuples, variableList);
-      assert tuples != oldTuples;
+      assert tuples != originalTuples;
 
       // Test whether creating an unordered projects has removed variables.
       if (tuples.isUnconstrained()) {
@@ -823,17 +824,18 @@ public abstract class TuplesOperations {
       }
 
       // Eliminate any duplicates
-      oldTuples = tuples;
-      tuples = removeDuplicates(tuples);
-      assert tuples != oldTuples;
+      if (distinct) {
+        Tuples oldTuples = tuples;
+        tuples = removeDuplicates(tuples);
+        assert tuples != oldTuples;
 
-      if (tuples == oldTuples) {
-        logger.warn("removeDuplicates does not change the underlying tuples");
-      } else {
-        oldTuples.close();
+        if (tuples == oldTuples) {
+          logger.warn("removeDuplicates does not change the underlying tuples");
+        } else {
+          oldTuples.close();
+        }
+        assert tuples.hasNoDuplicates();
       }
-
-      assert tuples.hasNoDuplicates();
 
       return tuples;
     } catch (TuplesException e) {

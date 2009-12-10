@@ -16,7 +16,7 @@
  * created by Plugged In Software Pty Ltd are Copyright (C) 2001,2002
  * Plugged In Software Pty Ltd. All Rights Reserved.
  *
- * Contributor(s): N/A.
+ * Contributor(s): Duraspace.
  *
  * [NOTE: The text of this Exhibit A may differ slightly from the text
  * of the notices in the Source Code files of the Original Code. You
@@ -70,12 +70,7 @@ import java.util.jar.*;
  *
  * @modified $Date: 2005/01/05 04:59:29 $
  *
- * @maintenanceAuthor $Author: newmana $
- *
  * @company <A href="mailto:info@PIsoftware.com">Plugged In Software</A>
- *
- * @copyright &copy;2001 <a href="http://www.pisoftware.com/">Plugged In
- *      Software Pty Ltd</a>
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
@@ -100,7 +95,7 @@ public class Bootstrap extends URLClassLoader {
   /**
    * Used by the addToSystemClasspath hack
    */
-  private static final Class[] parameters = new Class[]{URL.class};
+  private static final Class<?>[] parameters = new Class[]{URL.class};
 
   /**
    * create a 100K temp buffer to store the JAR bytes in
@@ -114,10 +109,8 @@ public class Bootstrap extends URLClassLoader {
   // Members
   //
 
-  /**
-   * the array of JAR files to load
-   *
-   */
+  /** the array of JAR files to load */
+  @SuppressWarnings("unused")
   private URL[] jarURLs = null;
 
   //
@@ -146,7 +139,6 @@ public class Bootstrap extends URLClassLoader {
     this.jarURLs = jarURLs;
   }
 
-  // Bootstrap
 
   /**
    * Loads a comma separated list of embedded JAR files specified by an <CODE>Embedded-Jar</CODE>
@@ -173,26 +165,18 @@ public class Bootstrap extends URLClassLoader {
       Attributes manifestAttr = retrieveManifestAttributes();
 
       // throw and error if we couldn't get any manifest attributes
-      if (manifestAttr == null) {
+      if (manifestAttr == null) throw new Exception("No manifest attributes found for JAR");
 
-        throw new Exception("No manifest attributes found for JAR");
-      }
-
-      // end if
       // get the name of the embedded main class
       String embeddedMainClass = manifestAttr.getValue(EMBEDDED_MAIN_CLASS_KEY);
 
       // it's pointless to continue without a main class
       if (embeddedMainClass == null) {
-
         throw new Exception("No Embedded-Main-Class attribute in manifest");
       }
 
-      // end if
       // Set the path of the jar as a System property - mulgara.jar.path
-      URL bootURL =
-          Bootstrap.class.getClassLoader().getSystemResource(
-          "org/mulgara/util/Bootstrap.class");
+      URL bootURL = ClassLoader.getSystemResource("org/mulgara/util/Bootstrap.class");
 
       String bootURLString = bootURL.toString();
       String preString = "jar:file:";
@@ -207,31 +191,26 @@ public class Bootstrap extends URLClassLoader {
       //       dodgy error message problem.
       // set the xerces system property if we're executing the Mulgara server
       if (embeddedMainClass.equals("org.mulgara.server.EmbeddedMulgaraServer")) {
-
         System.setProperty("org.mulgara.xml.ResourceDocumentBuilderFactory",
             "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
       }
 
-      // end if
       // ************************************************************************
       // get a list of URLs to the embedded JARs
-      LinkedList jarURLs = getEmbeddedJarURLs(manifestAttr);
+      LinkedList<URL> jarURLs = getEmbeddedJarURLs(manifestAttr);
 
       // create a new bootstrap classloader
-      Bootstrap loader =
-            new Bootstrap( (URL[]) jarURLs.toArray(new URL[jarURLs.size()]));
+      Bootstrap loader = new Bootstrap((URL[])jarURLs.toArray(new URL[jarURLs.size()]));
 
       // set the context class loader to the bootstrap
       Thread.currentThread().setContextClassLoader(loader);
 
       // invokes the 'real' main class
       loader.invokeClass(embeddedMainClass, args);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
 
       // print the contents of the exception
-      System.err.println("Unable to bootstrap embedded main class: " +
-          e.toString());
+      System.err.println("Unable to bootstrap embedded main class: " + e.toString());
       System.err.println(">> Stack trace:");
       e.printStackTrace();
 
@@ -240,36 +219,28 @@ public class Bootstrap extends URLClassLoader {
       Throwable cause = e.getCause();
 
       while (cause != null) {
-
         rootCause = cause;
         cause = cause.getCause();
       }
 
-      // end while
       // print a stack trace on it
       if (rootCause != null) {
-
         System.err.println(">> Root cause stack trace:");
         System.err.flush();
         rootCause.printStackTrace();
       }
 
-      // end if
     }
 
-    // try-catch
   }
 
-  // main()
 
   /**
-   * Shutdown the current application by forcing the runtime shutdown hooks to
-   * be executed.
+   * Shutdown the current application by forcing the runtime shutdown hooks to be executed.
    *
-   * @param args PARAMETER TO DO
+   * @param args command line arguments
    */
   public static void shutdown(String[] args) {
-
     System.exit(0);
   }
 
@@ -277,13 +248,11 @@ public class Bootstrap extends URLClassLoader {
    * Hack used to add the Embedded Jars to the system classpath.
    *
    * @param urls URLs of JARs to embed
-   * @throws IOException
+   * @throws IOException Caused by any problem updating the system class path
    */
   public static void addToSystemClasspath(URL[] urls) throws IOException {
 
-    if (urls == null) {
-      throw new IllegalArgumentException("null 'urls' parameter.");
-    }
+    if (urls == null) throw new IllegalArgumentException("null 'urls' parameter.");
 
     //add each
     for (int i = 0; i < urls.length; i++) {
@@ -294,47 +263,39 @@ public class Bootstrap extends URLClassLoader {
   /**
    * Adds the jar (url) to the system classpath.
    *
-   * @param url URL
-   * @throws IOException
+   * @param url URL to add to the system classpath.
+   * @throws IOException Caused by any problem updating the system class path
    */
   public static void addToSystemClasspath(URL url) throws IOException {
 
-    URLClassLoader sysloader = (URLClassLoader) ClassLoader.
-        getSystemClassLoader();
-    Class sysclass = URLClassLoader.class;
+    URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    Class<URLClassLoader> sysclass = URLClassLoader.class;
 
     try {
       Method method = sysclass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
       method.invoke(sysloader, new Object[] {url});
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");
     }
   }
 
 
-  // retrieveManifestAttributes()
-
   /**
    * Returns a list of URLs to the embedded jar files.
    *
    * @param manifestAttr the manifest attributes of the jar to retrieve the
    *      embedded jar names from
-   * @return a list of URLs to the embedded jar files, null if no embedded jars
-   *      found
+   * @return a list of URLs to the embedded jar files, null if no embedded jars found
    */
-  private static LinkedList getEmbeddedJarURLs(Attributes manifestAttr) {
+  private static LinkedList<URL> getEmbeddedJarURLs(Attributes manifestAttr) {
 
     // check the parameters
-    if (manifestAttr == null) {
-
-      throw new IllegalArgumentException("Null manifest attribute");
-    }
+    if (manifestAttr == null) throw new IllegalArgumentException("Null manifest attribute");
 
     // create a list to hold the JAR resources
-    LinkedList jarURLs = new LinkedList();
+    LinkedList<URL> jarURLs = new LinkedList<URL>();
 
     // get the list of embedded jars
     String embeddedJarList = manifestAttr.getValue(EMBEDDED_JAR_KEY);
@@ -342,25 +303,16 @@ public class Bootstrap extends URLClassLoader {
     if (embeddedJarList != null ) {
     
       // tokense the list of jar files
-      StringTokenizer jarTokenizer =
-          new StringTokenizer(embeddedJarList, " ,\t\f");
+      StringTokenizer jarTokenizer = new StringTokenizer(embeddedJarList, " ,\t\f");
 
       // add a URL for each embedded jar to the array
       while (jarTokenizer.hasMoreTokens()) {
-
         // write this JAR to a temp file and get its URL
         URL jarURL = writeTempJARFile(jarTokenizer.nextToken());
-
-        if (jarURL != null) {
-
-          jarURLs.add(jarURL);
-        }
-
-        // end if
+        if (jarURL != null) jarURLs.add(jarURL);
       }
     }
 
-    // end while
     // we don't want the buffer hanging around
     buf = null;
 
@@ -369,10 +321,9 @@ public class Bootstrap extends URLClassLoader {
   }
 
   /**
-   * Retrieves the manifest attributes of the JAR from which this file is
-   * running.
+   * Retrieves the manifest attributes of the JAR from which this file is running.
    *
-       * @return the manifest attributes of the JAR from which this class is running
+   * @return the manifest attributes of the JAR from which this class is running
    * @throws Exception if unable to retrieve the JAR resource for a class
    */
   private static Attributes retrieveManifestAttributes() throws Exception {
@@ -384,10 +335,7 @@ public class Bootstrap extends URLClassLoader {
     URL classURL = ClassLoader.getSystemResource(className + ".class");
 
     // throw an error if we could not get it
-    if (classURL == null) {
-
-      throw new Exception("Unable to retrieve JAR resource for " + className);
-    }
+    if (classURL == null) throw new Exception("Unable to retrieve JAR resource for " + className);
 
     // end if
     // open a connection to the class resource
@@ -395,16 +343,13 @@ public class Bootstrap extends URLClassLoader {
 
     // make sure that we're executing from within a JAR
     if ( (urlConn == null) || ! (urlConn instanceof JarURLConnection)) {
-
       throw new Exception("Bootstrap class must be executed from within a JAR");
     }
 
-    // end if
     // return its manifest attributes
-    return ( (JarURLConnection) urlConn).getMainAttributes();
+    return ((JarURLConnection)urlConn).getMainAttributes();
   }
 
-  // getEmbeddedJarURLs()
 
   /**
    * Writes an embedded JAR file to a temporary file, and returns a URL to the
@@ -412,8 +357,7 @@ public class Bootstrap extends URLClassLoader {
    *
    * @param embeddedJARFilename the name of the embedded JAR file to retrieve
    * @return the URL of the temporary JAR file, null if we were unable to
-   *      retrieve a the embedded JAR or something went wrong writing a temp
-   *      file
+   *      retrieve a the embedded JAR or something went wrong writing a temp file
    */
   private static URL writeTempJARFile(String embeddedJARFilename) {
 
@@ -422,17 +366,13 @@ public class Bootstrap extends URLClassLoader {
     try {
 
       // get the embedded jar as a stream
-      InputStream jarIn =
-          ClassLoader.getSystemResourceAsStream(embeddedJARFilename);
+      InputStream jarIn =ClassLoader.getSystemResourceAsStream(embeddedJARFilename);
 
       // check that the embedded filename is valid
       if (jarIn == null) {
-
-        throw new IOException("Embedded JAR: " + embeddedJARFilename +
-            " does not exist in enclosing JAR.");
+        throw new IOException("Embedded JAR: " + embeddedJARFilename + " does not exist in enclosing JAR.");
       }
 
-      // end if
       // create a temporary file to write the jar to (we may need to keep the
       // class on disk for windows weenies...)
       File tmpJarFile = File.createTempFile("mulgara", ".jar");
@@ -444,29 +384,24 @@ public class Bootstrap extends URLClassLoader {
       // write the embedded jar to disk
       int n;
 
-      while ( (n = jarIn.read(buf)) != -1) {
-
+      while ((n = jarIn.read(buf)) != -1) {
         out.write(buf, 0, n);
       }
 
-      // end if
       // set the embedded JAR's URL
-      embeddedJarURL = tmpJarFile.toURL();
-    }
-    catch (IOException ioe) {
+      embeddedJarURL = tmpJarFile.toURI().toURL();
 
+    } catch (IOException ioe) {
       System.err.println(ioe);
     }
 
-    // try-catch
     // return the temp file's URL
     return embeddedJarURL;
   }
 
-  // writeTempJARFile()
 
   /**
-       * Invokes the <CODE>main()</CODE> or or <CODE>shutdown()</CODE> method of the
+   * Invokes the <CODE>main()</CODE> or or <CODE>shutdown()</CODE> method of the
    * class <CODE>className</CODE> with the given array of arguments. The class
    * must define a <CODE>public static void xxx()</CODE> that takes an array of
    * String.
@@ -492,38 +427,29 @@ public class Bootstrap extends URLClassLoader {
     // check for a shutdown request
     for (int i = 0; i < args.length; i++) {
 
-      if (args[i].equalsIgnoreCase("--shutdown") ||
-          args[i].equalsIgnoreCase("-x")) {
-
+      if (args[i].equalsIgnoreCase("--shutdown") || args[i].equalsIgnoreCase("-x")) {
         // change the method to a shutdown
         methodRequest = "shutdown";
       }
     }
 
     // load the class
-    Class c = this.loadClass(className);
+    Class<?> c = this.loadClass(className);
 
     // get its main method
-    Method m = c.getMethod(methodRequest, new Class[] {
-        args.getClass()});
+    Method m = c.getMethod(methodRequest, new Class[] {args.getClass()});
     m.setAccessible(true);
 
     // retrieve its modifiers
     int mods = m.getModifiers();
 
     // make sure that it is a public static void method
-    if ( (m.getReturnType() != void.class) ||
-        !Modifier.isStatic(mods) ||
-        !Modifier.isPublic(mods)) {
-
+    if ((m.getReturnType() != void.class) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
       throw new NoSuchMethodException(methodRequest);
     }
 
-    // end if
     // invoke it!
-    m.invoke(null, new Object[] {
-        args});
+    m.invoke(null, new Object[] {args});
   }
 
-  // invokeClass()
 }

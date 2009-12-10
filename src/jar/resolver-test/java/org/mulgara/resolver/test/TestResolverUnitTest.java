@@ -142,9 +142,10 @@ public class TestResolverUnitTest extends TestCase {
           { new Order(varArray[0], true), new Order(varArray[1], true), }),     // ORDER BY
       null,                                                                     // LIMIT
       0,                                                                        // OFFSET
+      true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
-    
+
     String[][] result = new String[][] {
       new String[] { "A", "A" },
       new String[] { "A", "B" },
@@ -189,6 +190,7 @@ public class TestResolverUnitTest extends TestCase {
           { new Order(varArray[0], true), new Order(varArray[1], true), }),     // ORDER BY
       null,                                                                     // LIMIT
       0,                                                                        // OFFSET
+      true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
     
@@ -238,6 +240,7 @@ public class TestResolverUnitTest extends TestCase {
 				new Order(varArray[2], true) }),
       null,                                                                     // LIMIT
       0,                                                                        // OFFSET
+      true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
     
@@ -289,6 +292,7 @@ public class TestResolverUnitTest extends TestCase {
 				new Order(varArray[2], true) }),
       null,                                                                     // LIMIT
       0,                                                                        // OFFSET
+      true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
     
@@ -341,6 +345,7 @@ public class TestResolverUnitTest extends TestCase {
 					new Order(varArray[2], true) }),
 				null,                                                                     // LIMIT
 				0,                                                                        // OFFSET
+        true,                                                                     // DISTINCT
 				new UnconstrainedAnswer()                                                 // GIVEN
 			));
 
@@ -358,6 +363,7 @@ public class TestResolverUnitTest extends TestCase {
    *
    * @throws Exception EXCEPTION TO DO
    */
+  @SuppressWarnings("deprecation")
   protected void setUp() throws Exception {
 		if (database == null) {
 			// Create the persistence directory

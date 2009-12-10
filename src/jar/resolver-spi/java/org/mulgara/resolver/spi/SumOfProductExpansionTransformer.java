@@ -29,6 +29,12 @@ import org.mulgara.query.ConstraintFilter;
 /**
  * A transformer that works on the basis of expanding a product of sums into a sum of products.
  * This is needed because our disjunctions (sums) are very inefficient, particularly for searching.
+ * Performs the following transforms:
+ * A and (B or C) -> (A and B) or (A and C)
+ * FILTER(A or B, F) -> FILTER(A, F) or FILTER(B, F)
+ * TODO:
+ * A and ((B or C) - D) -> (A and (B - D)) or (A and (C - D))
+ * A - (B or C) -> (A - B) - C, iff B and C share all variables
  *
  * @created August 7, 2009
  * @author Paul Gearon

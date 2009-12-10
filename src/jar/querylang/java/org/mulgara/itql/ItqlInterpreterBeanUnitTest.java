@@ -752,7 +752,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   
       URI serverURI = new URI("rmi://localhost/server1");
   
-      bean.restore(file.toURL().openStream(), serverURI);
+      bean.restore(file.toURI().toURL().openStream(), serverURI);
     } catch (QueryException e) {
       System.err.println("Error processing query" + e);
       Throwable t = e.getCause();
@@ -816,7 +816,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
       assertTrue("Excepting a backup file", file.exists());
   
       // restore the server
-      bean.restore(file.toURL().openStream(), serverURI);
+      bean.restore(file.toURI().toURL().openStream(), serverURI);
   
       // select the statement
       answer = bean.executeQuery(select);

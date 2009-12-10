@@ -247,7 +247,7 @@ public class WritableGISResolver extends ReadOnlyGISResolver {
           StatementStore.VARIABLES[1],
           StatementStore.VARIABLES[2]
       };
-      projectedDistTypes = TuplesOperations.project(distanceTypes, Arrays.asList(vars));
+      projectedDistTypes = TuplesOperations.project(distanceTypes, Arrays.asList(vars), true);
       if (!isEmpty(distanceTypes)) {
         distTypeStatements = new TuplesWrapperStatements((Tuples)distanceTypes.clone(), d, vars[1], vars[2]);
       }

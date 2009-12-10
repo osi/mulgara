@@ -57,6 +57,7 @@ Tokens
   {def}                limit       = 'limit';
   {def}                load        = 'load';
   {def}                minus       = 'minus';
+  {def}                nondistinct = 'nondistinct';
   {def}                off         = 'off';
   {def}                offset      = 'offset';
   {def}                or          = 'or';
@@ -208,8 +209,8 @@ Productions
     {on} on   ;
 
   select_clause =
-    {empty_select} select |
-    {normal_select} select element+;
+    {empty_select} select nondistinct? |
+    {normal_select} select nondistinct? element+;
 
   from_clause =
     from model_expression;

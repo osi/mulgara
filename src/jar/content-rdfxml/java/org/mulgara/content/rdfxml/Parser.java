@@ -62,7 +62,7 @@ import org.mulgara.util.TempDir;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
-//Jea
+// Jena
 import com.hp.hpl.jena.rdf.arp.ALiteral;
 import com.hp.hpl.jena.rdf.arp.ARP;
 import com.hp.hpl.jena.rdf.arp.AResource;
@@ -375,7 +375,9 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
    */
   public synchronized void error(SAXParseException e) {
     logger.warn("Recoverable error, line " + e.getLineNumber() + ", column " +
-                e.getColumnNumber() + ": " + e.getMessage(), e);
+                e.getColumnNumber() + ": " + e.getMessage());
+    logger.debug("Recoverable error, line " + e.getLineNumber() + ", column " +
+        e.getColumnNumber() + ": " + e.getMessage(), e);
   }
 
   /**
@@ -386,7 +388,9 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
   {
     exception = e;
     logger.error("Fatal error, line " + e.getLineNumber() + ", column " +
-                 e.getColumnNumber() + ": " + e.getMessage(), e);
+                 e.getColumnNumber() + ": " + e.getMessage());
+    logger.debug("Fatal error, line " + e.getLineNumber() + ", column " +
+        e.getColumnNumber() + ": " + e.getMessage(), e);
   }
 
   /**
@@ -395,7 +399,9 @@ class Parser extends Thread implements ErrorHandler, StatementHandler {
    */
   public void warning(SAXParseException e) {
     logger.warn("Warning, line " + e.getLineNumber() + ", column " +
-                e.getColumnNumber() + ": " + e.getMessage(), e);
+                e.getColumnNumber() + ": " + e.getMessage());
+    logger.debug("Warning, line " + e.getLineNumber() + ", column " +
+        e.getColumnNumber() + ": " + e.getMessage(), e);
   }
 
   //

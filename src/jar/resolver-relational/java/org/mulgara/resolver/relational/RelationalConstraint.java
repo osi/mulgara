@@ -195,6 +195,14 @@ public class RelationalConstraint implements Constraint {
     return variables;
   }
 
+  /**
+   * Not a binary operation, so not a binary constraint.
+   * @return <code>false</code> to indicate that this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
+
   static RelationalConstraint localize(QueryEvaluationContext context, RelationalConstraint constraint) throws Exception {
     RelationalConstraint localized = new RelationalConstraint();
 

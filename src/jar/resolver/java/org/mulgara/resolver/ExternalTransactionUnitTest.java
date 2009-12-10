@@ -602,6 +602,7 @@ public class ExternalTransactionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         )));
 
@@ -619,6 +620,7 @@ public class ExternalTransactionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         ));
 
@@ -683,6 +685,7 @@ public class ExternalTransactionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         )));
 
@@ -700,6 +703,7 @@ public class ExternalTransactionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         ));
 
@@ -2578,6 +2582,7 @@ public class ExternalTransactionUnitTest extends TestCase {
       }),
       null,                                             // LIMIT
       0,                                                // OFFSET
+      true,                                             // DISTINCT
       new UnconstrainedAnswer()                         // GIVEN
     );
   }

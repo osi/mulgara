@@ -359,6 +359,7 @@ class SPDecimalExtImpl extends SPDecimalImpl {
    */
   SPDecimalExtImpl(int subtypeId, URI typeURI, String lexicalForm) {
     super(subtypeId, typeURI);
+    if (lexicalForm.startsWith("+")) lexicalForm = lexicalForm.substring(1);
     l = Long.valueOf(lexicalForm);
   }
 
@@ -395,6 +396,9 @@ class SPDecimalExtImpl extends SPDecimalImpl {
     if (o instanceof SPDecimalBaseImpl) {
       return BigDecimal.valueOf(l).compareTo(((SPDecimalBaseImpl)o).val);
     }
+    // if this is an unparseable value, then hard code it to the bottom of the type ordering
+    if (o instanceof UnknownSPTypedLiteralImpl) return -1;
+
     // Compare the longs.
     SPDecimalExtImpl di = (SPDecimalExtImpl)o;
     return compare(l, di.l);

@@ -176,7 +176,8 @@ class DefaultConstraintHandlers
             List l =
                 context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
             try {
-              return TuplesOperations.append(l);
+              if (context.isDistinctQuery()) return TuplesOperations.append(l);
+              else return TuplesOperations.unorderedAppend(l);
             } finally {
               Iterator i = l.iterator();
               while (i.hasNext()) {
@@ -187,13 +188,19 @@ class DefaultConstraintHandlers
         }),
         new NVPair(ConstraintDifference.class, new ConstraintResolutionHandler() {
           public Tuples resolve(QueryEvaluationContext context, GraphExpression modelExpr, ConstraintExpression constraintExpr) throws Exception {
-            List args = context.resolveConstraintOperation(modelExpr, (ConstraintOperation)constraintExpr);
-            assert args.size() == 2;
+            List<ConstraintExpression> constraints = ((ConstraintOperation)constraintExpr).getElements();
+            assert constraints.size() == 2;
+            Tuples lhs = ConstraintOperations.resolveConstraintExpression(context, modelExpr, constraints.get(0));
+            // The RHS must be searchable, so it must return a distinct result
+            // since DISTINCT forces sorting
+            boolean distinct = context.setDistinctQuery(true);
+            Tuples rhs = ConstraintOperations.resolveConstraintExpression(context, modelExpr, constraints.get(1));
+            context.setDistinctQuery(distinct);
             try {
-              return TuplesOperations.subtract((Tuples)args.get(0), (Tuples)args.get(1));
+              return TuplesOperations.subtract(lhs, rhs);
             } finally {
-              ((Tuples)args.get(0)).close();
-              ((Tuples)args.get(1)).close();
+              lhs.close();
+              rhs.close();
             }
           }
         }),

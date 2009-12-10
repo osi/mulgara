@@ -197,9 +197,6 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
   /** A reference token for keeping the recording phase available until we no longer need it */
   private Phase.Token recordingPhaseToken = null;
 
-  /** The list of graphs known to this statement store. */
-  private LinkedHashSet<Long> committedGraphNodes = null;
-
   /**
    * This flag indicates that the current object has been fully written, and may be considered
    * as committed when the rest of the system is ready.
@@ -327,7 +324,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
 
     if (!dirty && currentPhase.isInUse()) {
       try {
-        new Phase();
+        new Phase(true);
       } catch (IOException ex) {
         throw new StatementStoreException("I/O error", ex);
       }
@@ -350,7 +347,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     if (node0 != NONE && node1 != NONE && node2 != NONE && node3 != NONE) {
       if (!dirty && currentPhase.isInUse()) {
         try {
-          new Phase();
+          new Phase(true);
         } catch (IOException ex) {
           throw new StatementStoreException("I/O error", ex);
         }
@@ -367,7 +364,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
             // There is at least one triple to remove so protect the
             // Tuples as we make changes to the triplestore.
             try {
-              new Phase();
+              new Phase(true);
             } catch (IOException ex) {
               throw new StatementStoreException("I/O error", ex);
             }
@@ -625,13 +622,13 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     openMetarootFile(true);
 
     synchronized (committedPhaseLock) {
-      committedPhaseToken = new Phase().use();
+      committedPhaseToken = new Phase(true).use();
     }
     this.phaseNumber = phaseNumber;
     phaseIndex = 1;
     for (int i = 0; i < NR_INDEXES; ++i) tripleAVLFiles[i].clear();
 
-    new Phase();
+    new Phase(true);
   }
 
 
@@ -661,11 +658,15 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     // check that prepare() was not caleld twice
     if (prepared) throw new SimpleXAResourceException("prepare() called twice.");
 
+    Phase newCurrent = null;
     try {
       // Perform a prepare.
       recordingPhaseToken = currentPhase.use();
       Phase recordingPhase = currentPhase;
-      new Phase();
+      // new Phase() has a side effect of setting the current phase, but we'll keep a local copy anyway
+      newCurrent = new Phase(false);
+      // could not set up the committed graphs yet, so send them in after the fact
+      newCurrent.graphNodes = new LinkedHashSet<Long>(recordingPhase.graphNodes);
 
       // Ensure that all data associated with the phase is on disk.
       for (int i = 0; i < NR_INDEXES; ++i) tripleAVLFiles[i].force();
@@ -699,6 +700,11 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
           recordingPhaseToken.release();
           recordingPhaseToken = null;
         }
+        try {
+          newCurrent.graphNodes = newCurrent.scanForGraphs();
+        } catch (Exception e) {
+          logger.error("Error reading graphs while handling exception from phase.prepare", e);
+        }
       }
     }
   }
@@ -726,7 +732,6 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
       synchronized (committedPhaseLock) {
         if (committedPhaseToken != null) committedPhaseToken.release();
         committedPhaseToken = recordingPhaseToken;
-        committedGraphNodes = currentPhase.graphNodes;
       }
       recordingPhaseToken = null;
     } catch (IOException ex) {
@@ -821,7 +826,7 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     } catch (IllegalStateException ex) {
       throw new SimpleXAResourceException("Cannot construct initial phase.", ex);
     }
-    new Phase();
+    new Phase(true);
 
     // Invalidate the on-disk metaroot that the new phase will be saved to.
     Block block = metarootBlocks[1 - phaseIndex];
@@ -1197,16 +1202,19 @@ public final class XA11StatementStoreImpl implements XAStatementStore {
     /**
      * Creates a new phase based on the current state of the database.
      * This sets the latest phase on the outer statement store.
+     * @param initializeGraphs scan for graphs to initialize the graphs list.
      * @throws IOException Error on the filesystem.
      */
-    Phase() throws IOException {
+    Phase(boolean initializeGraphs) throws IOException {
       for (int i = 0; i < NR_INDEXES; ++i) tripleAVLFilePhases[i] = tripleAVLFiles[i].new Phase();
       currentPhase = this;
       dirty = true;
-      try {
-        graphNodes = committedGraphNodes == null ? scanForGraphs() : new LinkedHashSet<Long>(committedGraphNodes);
-      } catch (StatementStoreException e) {
-        throw new IOException("Unable to get metadata for phase: " + e.getMessage());
+      if (initializeGraphs) {
+        try {
+          graphNodes = scanForGraphs();
+        } catch (StatementStoreException e) {
+          throw new IOException("Unable to get metadata for phase: " + e.getMessage());
+        }
       }
     }
 

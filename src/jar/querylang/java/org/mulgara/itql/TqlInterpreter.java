@@ -868,7 +868,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     AHavingClause havingClause;
     ALimitClause limitClause;
     AOffsetClause offsetClause;
-  
+    boolean distinct = true;
+
     // cast the correct way (we don't have a common superclass, event though we
     // have methods with the same names)
     if (rawQuery instanceof AQuery) {
@@ -876,6 +877,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       AQuery query = (AQuery) rawQuery;
       PSelectClause selectClause = query.getSelectClause();
       if (selectClause instanceof ANormalSelectSelectClause) {
+        distinct = ((ANormalSelectSelectClause)selectClause).getNondistinct() == null;
         variables = (LinkedList<PElement>)((ANormalSelectSelectClause)selectClause).getElement();
       }
       fromClause = ((AFromClause)query.getFromClause());
@@ -945,7 +947,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
   
     // build a query using the information we've obtained from the parser
     return new Query(variableList, graphExpression, constraintExpression,
-        havingExpression, orderList, limit, offset, new UnconstrainedAnswer());
+        havingExpression, orderList, limit, offset, distinct, new UnconstrainedAnswer());
   }
 
 

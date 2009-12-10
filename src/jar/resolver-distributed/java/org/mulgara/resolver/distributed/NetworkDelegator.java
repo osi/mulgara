@@ -216,7 +216,7 @@ public class NetworkDelegator implements Delegator {
     // convert the variable set to a variable list - add types via unchecked casts
     List<Variable> variables = new ArrayList<Variable>((Set<Variable>)globalConstraint.getVariables());
     // build the new query
-    return new Query(variables, new GraphResource(model.getURI()), globalConstraint, null, Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
+    return new Query(variables, new GraphResource(model.getURI()), globalConstraint, null, Collections.EMPTY_LIST, null, 0, true, new UnconstrainedAnswer());
   }
 
 
@@ -357,3 +357,4 @@ public class NetworkDelegator implements Delegator {
     }
   }
 }
+

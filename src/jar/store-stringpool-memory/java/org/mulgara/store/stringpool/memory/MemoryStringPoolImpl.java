@@ -198,7 +198,11 @@ public final class MemoryStringPoolImpl implements XAStringPool {
       // Add to both ways of indexing objects and nodes.
       nodeToStringPool.put(gNode, spObject);
       stringToNodePool.put(spObject, gNode);
-      stringIndex.add(spObject);
+      try {
+        stringIndex.add(spObject);
+      } catch (RuntimeException e) {
+        throw new StringPoolException("Unable to add object: " + spObject + " for " + gNode, e);
+      }
     }
   }
 

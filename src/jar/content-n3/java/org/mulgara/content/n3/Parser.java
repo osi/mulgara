@@ -70,6 +70,7 @@ import org.mulgara.util.StringToLongMap;
 import org.mulgara.util.TempDir;
 
 /**
+ * nd
  * <p>This class parses N3 data. It is implemented as a {@link Runnable} to allow it to be running in
  * the background filling a queue, while a consumer thread drains the queue.</p>
  *
@@ -545,7 +546,18 @@ class Parser extends Thread implements N3ParserEventHandler {
     // get the datatype details
     AST dt = a.getFirstChild();
     try {
-      return dt == null ? null : new URI(dt.toString());
+      if (dt == null) return null;
+      String uri = dt.toString();
+      // check for QName
+      int colonIndex = uri.indexOf(':');
+      // relative URI, so just return
+      if (colonIndex == -1) return new URI(uri);
+
+      // look for possible prefix
+      String qnamePrefix = uri.substring(0, colonIndex + 1);
+      String uriPrefix = prefixMap.get(qnamePrefix);
+      // if known prefix, then use it, otherwise just return the string as a URI
+      return uriPrefix == null ? new URI(uri) : new URI(uriPrefix + uri.substring(colonIndex + 1));
     } catch (URISyntaxException e) {
       logger.warn("Error parsing N3 datatype: " + dt.toString(), e);
       return null;

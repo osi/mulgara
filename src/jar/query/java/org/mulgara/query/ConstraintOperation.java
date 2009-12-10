@@ -90,14 +90,14 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
     elements = new ArrayList<ConstraintExpression>(2);
 
     // Add the LHS
-    if (lhs.getClass().equals(getClass())) {
+    if (isAssociative() && lhs.getClass().equals(getClass())) {
       elements.addAll(((ConstraintOperation)lhs).getElements());
     } else {
       elements.add(lhs);
     }
 
     // Add the RHS
-    if (rhs.getClass().equals(getClass())) {
+    if (isAssociative() && rhs.getClass().equals(getClass())) {
       elements.addAll( ( (ConstraintOperation) rhs).getElements());
     } else {
       elements.add(rhs);
@@ -115,7 +115,16 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
     // assert elements.size() > 1;
 
     // Initialize fields
-    this.elements = new ArrayList<ConstraintExpression>(elements);
+    this.elements = new ArrayList<ConstraintExpression>();
+
+    // add all the elements, flattening if needed
+    for (ConstraintExpression op: elements) {
+      if (op.isAssociative() && op.getClass().equals(getClass())) {
+        this.elements.addAll(((ConstraintOperation)op).getElements());
+      } else {
+        this.elements.add(op);
+      }
+    }
   }
 
 
@@ -208,6 +217,14 @@ public abstract class ConstraintOperation extends AbstractConstraintExpression {
     buffer.append(")");
 
     return buffer.toString();
+  }
+
+  /**
+   * Indicates if this operation is associative.
+   * @return <code>true</code> iff this operation is associative.
+   */
+  public boolean isAssociative() {
+    return true;
   }
 
   /**

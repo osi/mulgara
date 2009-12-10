@@ -49,6 +49,7 @@ public class AskQuery extends Query {
         (List<Order>)Collections.EMPTY_LIST, // no ordering
         null, // no limit
         0, // zero offset
+        true, // distinct TODO: change to false when non-distinct is tested
         new UnconstrainedAnswer());
   }
 

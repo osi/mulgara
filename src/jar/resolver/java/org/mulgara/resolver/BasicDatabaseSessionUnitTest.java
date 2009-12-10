@@ -210,6 +210,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
             ),
             null,                               // LIMIT
             0,                                  // OFFSET
+            true,                               // DISTINCT
             new UnconstrainedAnswer()           // GIVEN
           )));
 
@@ -304,6 +305,7 @@ public class BasicDatabaseSessionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         )));
       } finally {

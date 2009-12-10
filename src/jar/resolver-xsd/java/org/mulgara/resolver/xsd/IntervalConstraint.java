@@ -337,4 +337,12 @@ public class IntervalConstraint implements Constraint {
     buffer.append("]");
     return buffer.toString();
   }
+
+  /**
+   * Not a binary operation, so not a binary constraint.
+   * @return <code>false</code> to indicate that this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
 }

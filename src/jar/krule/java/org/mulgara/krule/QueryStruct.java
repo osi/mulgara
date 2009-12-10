@@ -237,7 +237,7 @@ public class QueryStruct implements Serializable {
   @SuppressWarnings("unchecked")
   public Query extractQuery() {
     logger.debug("Extracting query");
-    return new Query(variables, graphs, where, having, (List<Order>)Collections.EMPTY_LIST, null, 0, new UnconstrainedAnswer());
+    return new Query(variables, graphs, where, having, (List<Order>)Collections.EMPTY_LIST, null, 0, true, new UnconstrainedAnswer());
   }
 
 }

@@ -96,6 +96,7 @@ public class PatternMulgara extends SimpleQueryHandler {
          x,                        // ORDER
          null,                     // LIMIT
          0,                        // OFFSET
+         true,                     // DISTINCT
          new UnconstrainedAnswer() // Initial Answer
     );
 

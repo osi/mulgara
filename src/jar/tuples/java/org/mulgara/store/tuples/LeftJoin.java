@@ -113,7 +113,8 @@ public class LeftJoin extends AbstractTuples implements ContextOwner {
     // get the variables to merge on
     commonVars = Collections.unmodifiableSet((Set<Variable>)TuplesOperations.getMatchingVars(lhs, rhs));
 
-    if (commonVars.isEmpty()) logger.warn("Tuples should have variables in common for optional join to occur");
+    // This is more common than we expected, so just log a debug message
+    if (commonVars.isEmpty()) logger.debug("Tuples should have variables in common for optional join to occur");
 
     // initialise the mapping of lhs columns to rhs columns
     varMap = new int[commonVars.size()];

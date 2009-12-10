@@ -252,7 +252,7 @@ public class TestStatementsComparator {
     Tuples projectedTuples = TuplesOperations.project(sortedTuples,
         Arrays.asList(new Variable[] {
         StatementStore.VARIABLES[0], StatementStore.VARIABLES[1],
-        StatementStore.VARIABLES[2]}));
+        StatementStore.VARIABLES[2]}), true);
     sortedTuples.close();
 
     return new TuplesWrapperStatements(projectedTuples,

@@ -169,8 +169,7 @@ public class PatternMapper {
       if (lit.isLanguageCoded()) return new LiteralImpl(lit.getValue(), lit.getLanguage());
       return new LiteralImpl(lit.getValue());
     }
-    // integer, decimal, double, boolean
-    if (n instanceof IntegerLiteral) return new LiteralImpl(((IntegerLiteral)n).getValue().toString(), XSD.INT_URI);
+    // decimal, double, boolean
     if (n instanceof DecimalLiteral) return new LiteralImpl(((IntegerLiteral)n).getValue().toString(), XSD.DECIMAL_URI);
     if (n instanceof DoubleLiteral) return new LiteralImpl(((IntegerLiteral)n).getValue().toString(), XSD.DOUBLE_URI);
     if (n instanceof BooleanLiteral) return new LiteralImpl(((IntegerLiteral)n).getValue().toString(), XSD.BOOLEAN_URI);
@@ -183,11 +182,71 @@ public class PatternMapper {
    * @param t The triple to convert.
    * @return The new constraint.
    */
-  private static ConstraintImpl newConstraintImpl(Triple t) {
+  private static ConstraintExpression newConstraintImpl(Triple t) {
     ConstraintElement s = convertElement(t.getSubject());
     ConstraintElement p = convertElement(t.getPredicate());
-    ConstraintElement o = convertElement(t.getObject());
+    // if the object it a literal, then it may need to be expanded into various equivalent types
+    Node n = t.getObject();
+    if (n instanceof IntegerLiteral) {
+      ConstraintElement[] numbers = createIntLiterals((IntegerLiteral)n);
+      List<ConstraintExpression> options = new ArrayList<ConstraintExpression>();
+      for (ConstraintElement obj: numbers) {
+        options.add(new ConstraintImpl(s, p, obj));
+      }
+      return new ConstraintDisjunction(options);
+    }
+
+    ConstraintElement o = convertElement(n);
     return new ConstraintImpl(s, p, o);
+  }
+
+  /**
+   * Create an array of the literals represented by a number.
+   * @param nrText The text of a number.
+   * @return All the literals that this number can represent.
+   */
+  private static ConstraintElement[] createIntLiterals(IntegerLiteral n) {
+    List<ConstraintElement> elts = new ArrayList<ConstraintElement>();
+    String nrText = n.getValue().toString();
+    long nr = n.getValue().longValue();
+
+    elts.add(new LiteralImpl(nrText, XSD.DECIMAL_URI));
+    elts.add(new LiteralImpl(nrText, XSD.INTEGER_URI));
+    elts.add(new LiteralImpl(nrText, XSD.LONG_URI));
+    if (nr <= Integer.MAX_VALUE && nr >= Integer.MIN_VALUE) {
+      elts.add(new LiteralImpl(nrText, XSD.INT_URI));
+      if (nr <= Short.MAX_VALUE && nr >= Short.MIN_VALUE) {
+        elts.add(new LiteralImpl(nrText, XSD.SHORT_URI));
+        if (nr <= Byte.MAX_VALUE && nr >= Byte.MIN_VALUE) {
+          elts.add(new LiteralImpl(nrText, XSD.BYTE_URI));
+        }
+      }
+    }
+    if (nr < 0) {
+      elts.add(new LiteralImpl(nrText, XSD.NON_POSITIVE_INTEGER_URI));
+      elts.add(new LiteralImpl(nrText, XSD.NEGATIVE_INTEGER_URI));
+    } else if (nr > 0) {
+      elts.add(new LiteralImpl(nrText, XSD.NON_NEGATIVE_INTEGER_URI));
+      elts.add(new LiteralImpl(nrText, XSD.POSITIVE_INTEGER_URI));
+      elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_LONG_URI));
+      if (nr <= UInt.MAX_VALUE) {
+        elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_INT_URI));
+        if (nr <= UShort.MAX_VALUE) {
+          elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_SHORT_URI));
+          if (nr <= UByte.MAX_VALUE) {
+            elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_BYTE_URI));
+          }
+        }
+      }
+    } else { // nr == 0
+      elts.add(new LiteralImpl(nrText, XSD.NON_POSITIVE_INTEGER_URI));
+      elts.add(new LiteralImpl(nrText, XSD.NON_NEGATIVE_INTEGER_URI));
+      elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_LONG_URI));
+      elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_INT_URI));
+      elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_SHORT_URI));
+      elts.add(new LiteralImpl(nrText, XSD.UNSIGNED_BYTE_URI));
+    }
+    return elts.toArray(new ConstraintElement[elts.size()]);
   }
 
   /** A mapping of pattern types to constructors for the objects they map to. */
@@ -315,4 +374,12 @@ public class PatternMapper {
     }
   }
 
+  /** Describes the range of unsigned ints */
+  private static class UInt { public static final long MAX_VALUE = 0xFFFFFFFFL; }
+
+  /** Describes the range of unsigned shorts */
+  private static class UShort { public static final long MAX_VALUE = 0xFFFFL; }
+
+  /** Describes the range of unsigned bytes */
+  private static class UByte { public static final long MAX_VALUE = 0xFFL; }
 }

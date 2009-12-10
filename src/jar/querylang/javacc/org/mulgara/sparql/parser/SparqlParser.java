@@ -1940,15 +1940,15 @@ public class SparqlParser implements SparqlParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INTEGER_POSITIVE:
       t = jj_consume_token(INTEGER_POSITIVE);
-                           {if (true) return new IntegerLiteral(t.image);}
+                           {if (true) return new IntegerLiteral(t.image.substring(1));}
       break;
     case DECIMAL_POSITIVE:
       t = jj_consume_token(DECIMAL_POSITIVE);
-                             {if (true) return new DecimalLiteral(t.image);}
+                             {if (true) return new DecimalLiteral(t.image.substring(1));}
       break;
     case DOUBLE_POSITIVE:
       t = jj_consume_token(DOUBLE_POSITIVE);
-                            {if (true) return new DoubleLiteral(t.image);}
+                            {if (true) return new DoubleLiteral(t.image.substring(1));}
       break;
     default:
       jj_la1[70] = jj_gen;

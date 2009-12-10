@@ -45,6 +45,7 @@ public class ConstructQuery extends Query {
         orderList,
         limit,
         offset,
+        true,
         new UnconstrainedAnswer());
   }
 

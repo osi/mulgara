@@ -79,4 +79,13 @@ public abstract class AbstractConstraintExpression implements ConstraintExpressi
       return false;
     }
   }
+
+  /**
+   * Indicates if this operation is associative.
+   * @return <code>true</code> iff this operation is associative.
+   */
+  public boolean isAssociative() {
+    return true;
+  }
+
 }

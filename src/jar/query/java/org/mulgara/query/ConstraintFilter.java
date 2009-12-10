@@ -104,4 +104,13 @@ public class ConstraintFilter implements ConstraintExpression {
     // can't do an equals() on filter, as this evaluates the filter in context
     return constraintExpr.equals(other.constraintExpr) && filter == other.filter;
   }
+
+  /**
+   * This expression is unary, so associativity is irrelevant.
+   * @return <code>false</code> to indicate that this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
+
 }

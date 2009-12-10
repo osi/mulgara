@@ -66,4 +66,11 @@ public interface ConstraintExpression extends Serializable {
    * @return A set containing all variable constraints.
    */
   public Set<Variable> getVariables();
+
+  /**
+   * Indicates if this operation is associative.
+   * @return <code>true</code> iff this operation is associative.
+   */
+  boolean isAssociative();
+
 }

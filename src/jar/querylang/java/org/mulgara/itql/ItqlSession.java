@@ -546,7 +546,7 @@ public class ItqlSession {
       // return the URL!!!
       try {
 
-        scriptURL = loadingScript.toURL();
+        scriptURL = loadingScript.toURI().toURL();
       } catch (MalformedURLException mue) {
 
         // log the error

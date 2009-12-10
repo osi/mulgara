@@ -259,4 +259,12 @@ public class LuceneConstraint implements Constraint {
     return "LC{subj=" + subject + ", pred=" + predicate + ", obj=" + object + ", score=" + score +
            ", binder=" + binder + "}";
   }
+
+  /**
+   * Not a binary operation, so not associative
+   * @return <code>false</code>
+   */
+  public boolean isAssociative() {
+    return false;
+  }
 }

@@ -142,4 +142,13 @@ public class ConstraintFalse implements ConstraintExpression {
   public String toString() {
     return "no";
   }
+
+  /**
+   * This expression is unary, so associativity is irrelevant.
+   * @return <code>false</code> to indicate that this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
+
 }

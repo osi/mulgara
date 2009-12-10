@@ -47,4 +47,10 @@ public class Variable implements Node, PrimaryExpression, NumericExpression, Log
     return "?" + name;
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
+  public String toString() {
+    return getImage();
+  }
 }

@@ -159,4 +159,8 @@ public class TestConstraint implements Constraint {
         testSelection.equals(rhs.testSelection) &&
         testParam.equals(rhs.testParam);
   }
+
+  public boolean isAssociative() {
+    return false;
+  }
 }

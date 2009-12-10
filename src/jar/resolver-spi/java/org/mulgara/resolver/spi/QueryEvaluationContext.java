@@ -87,4 +87,18 @@ public interface QueryEvaluationContext {
 
   public List<Tuples> resolveConstraintOperation(GraphExpression modelExpr,
                                         ConstraintOperation constraintOper) throws QueryException;
+
+  /**
+   * Indicates that the query being run in this context should return distinct results.
+   * @return If <code>true</code>, then return distinct results. Otherwise allow for duplicates.
+   */
+  public boolean isDistinctQuery();
+
+  /**
+   * Sets the "distinct" status of a query context, returning the previous value.
+   * @param newValue The new value to set the distinct status to. 
+   * @return The previous value of the distinct status.
+   */
+  public boolean setDistinctQuery(boolean newValue);
+
 }

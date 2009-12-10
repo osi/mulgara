@@ -594,7 +594,7 @@ public class TqlSession {
       // found the URL. Return it.
       log.debug("Found loading script - " + loadingScript);
       try {
-        scriptUrl = loadingScript.toURL();
+        scriptUrl = loadingScript.toURI().toURL();
       } catch (MalformedURLException mue) {
         log.warn("Unable to convert loading script filename to URL - " + mue.getMessage());
         System.err.println("Unable to convert loading script filename " + "to URL - " + loadingScript);

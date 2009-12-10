@@ -34,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,6 +60,7 @@ import org.mulgara.resolver.spi.ResolverFactory;
 import org.mulgara.resolver.spi.ResolverFactoryException;
 import org.mulgara.resolver.spi.SecurityAdapter;
 import org.mulgara.resolver.spi.Statements;
+import org.mulgara.resolver.spi.SumOfProductExpansionTransformer;
 import org.mulgara.resolver.spi.SymbolicTransformation;
 import org.mulgara.resolver.spi.SymbolicTransformationContext;
 import org.mulgara.resolver.spi.SystemResolver;
@@ -822,7 +824,16 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
     }
 
     MutableLocalQueryImpl mutable = new MutableLocalQueryImpl(query);
-    Iterator<SymbolicTransformation> i = symbolicTransformationList.iterator();
+    List<SymbolicTransformation> symTxList;
+    symTxList = symbolicTransformationList;
+
+    // non-DISTINCT queries need to be expanded so the disjunction is at the root
+    if (!query.isDistinct()) {
+      symTxList = new ArrayList<SymbolicTransformation>(symbolicTransformationList);
+      symTxList.add(new SumOfProductExpansionTransformer());
+    }
+
+    Iterator<SymbolicTransformation> i = symTxList.iterator();
     while (i.hasNext()) {
       SymbolicTransformation symbolicTransformation = i.next();
       assert symbolicTransformation != null;
@@ -843,7 +854,7 @@ class DatabaseOperationContext implements OperationContext, SessionView, Symboli
         mutable = new MutableLocalQueryImpl(query);
 
         // start again
-        i = symbolicTransformationList.iterator();
+        i = symTxList.iterator();
       }
     }
 

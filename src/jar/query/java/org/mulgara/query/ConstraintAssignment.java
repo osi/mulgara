@@ -180,4 +180,13 @@ public class ConstraintAssignment implements ConstraintExpression {
     buffer.append(var).append(" := ").append(expr).append(")");
     return buffer.toString();
   }
+
+  /**
+   * This expression is non associative.
+   * @return <code>false</code> since this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
+
 }

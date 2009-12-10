@@ -615,6 +615,7 @@ public class ViewResolverUnitTest extends TestCase {
           orderList,                // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         )));
 

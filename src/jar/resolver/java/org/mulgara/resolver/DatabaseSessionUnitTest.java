@@ -547,7 +547,6 @@ public class DatabaseSessionUnitTest extends TestCase {
   // Test cases
   //
 
-  @SuppressWarnings("unchecked")
   public void testModel() {
     try {
       logger.debug("Testing: " + test.errorString);
@@ -565,6 +564,7 @@ public class DatabaseSessionUnitTest extends TestCase {
           orderList,                // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         )));
 

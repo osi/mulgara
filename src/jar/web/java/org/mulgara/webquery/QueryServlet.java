@@ -291,7 +291,8 @@ public class QueryServlet extends MulgaraServlet {
       resp.sendError(SC_SERVICE_UNAVAILABLE, ise.getMessage());
       return;
     } catch (Exception e) {
-      resp.sendError(SC_BAD_REQUEST, "Error executing command. Reason: " + StackTrace.getReasonMessage(e));
+      // resp.sendError(SC_BAD_REQUEST, "Error executing command. Reason: " + StackTrace.getReasonMessage(e));
+      resp.sendError(SC_BAD_REQUEST, "Error executing command. Reason: " + StackTrace.throwableToString(e));
       return;
     }
 

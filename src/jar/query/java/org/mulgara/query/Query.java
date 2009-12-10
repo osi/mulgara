@@ -106,6 +106,9 @@ public class Query implements Cloneable, Serializable, Command {
   /** The offset on rows in the result. This value is never negative. */
   private int offset;
 
+  /** Indicates that the results must be without duplicates. */
+  private boolean distinct = true;
+
   /** The accumulated solutions. This can be <code>null</code>, indicating no solutions. */
   private Answer answer;
 
@@ -149,7 +152,7 @@ public class Query implements Cloneable, Serializable, Command {
   public Query(List<? extends SelectElement> variableList, GraphExpression graphExpression,
       ConstraintExpression constraintExpression,
       ConstraintHaving havingExpression, List<Order> orderList, Integer limit,
-      int offset, Answer answer) {
+      int offset, boolean distinct, Answer answer) {
 
     // Validate parameters
     if (graphExpression == null) {
@@ -189,6 +192,7 @@ public class Query implements Cloneable, Serializable, Command {
     this.orderList = Collections.unmodifiableList(new ArrayList<Order>(orderList));
     this.limit = limit;
     this.offset = offset;
+    this.distinct = distinct;
     this.answer = answer;
   }
 
@@ -206,6 +210,7 @@ public class Query implements Cloneable, Serializable, Command {
     this.orderList = query.orderList;
     this.limit = query.limit;
     this.offset = query.offset;
+    this.distinct = query.distinct;
     this.answer = (query.answer != null) ?(Answer)query.answer.clone() : new UnconstrainedAnswer();
     /*
       this(query.getVariableList(),
@@ -343,6 +348,13 @@ public class Query implements Cloneable, Serializable, Command {
     return answer;
   }
 
+  /**
+   * Accessor for the DISTINCT property on this query.
+   * @return <code>true</code> if results of the query should not contain duplicates.
+   */
+  public boolean isDistinct() {
+    return distinct;
+  }
 
   //
   // Methods overriding Object

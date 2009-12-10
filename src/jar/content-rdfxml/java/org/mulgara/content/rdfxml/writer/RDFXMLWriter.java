@@ -198,7 +198,7 @@ public class RDFXMLWriter {
 
     // ensure variables are in the right order
     Tuples projectedTuples = TuplesOperations.project(materializedTuples,
-        Arrays.asList(vars));
+        Arrays.asList(vars), true);
     materializedTuples.close();
 
     // tuples must be sorted by subject for writing

@@ -91,6 +91,8 @@ class LocalQueryResolver implements QueryEvaluationContext {
 
   private ResolverSession resolverSession;
 
+  private boolean distinctQuery = false;
+
   // Constructor
   LocalQueryResolver(DatabaseOperationContext operationContext, ResolverSession resolverSession) {
     if (operationContext == null) {
@@ -207,8 +209,26 @@ class LocalQueryResolver implements QueryEvaluationContext {
     return resolverSession;
   }
 
-  Tuples resolveMap(Query query, Map outerBindings) throws QueryException
-  {
+  /**
+   * Indicates that the query being run in this context should return distinct results.
+   * @return If <code>true</code>, then return distinct results. Otherwise allow for duplicates.
+   */
+  public boolean isDistinctQuery() {
+    return distinctQuery;
+  }
+
+  /**
+   * Sets the "distinct" status of a query context, returning the previous value.
+   * @param newValue The new value to set the distinct status to. 
+   * @return The previous value of the distinct status.
+   */
+  public boolean setDistinctQuery(boolean newValue) {
+    boolean oldValue = distinctQuery;
+    distinctQuery = newValue;
+    return oldValue;
+  }
+
+  Tuples resolveMap(Query query, Map outerBindings) throws QueryException {
     try {
       Query newQuery = new Query(
           query.getVariableList(),
@@ -220,6 +240,7 @@ class LocalQueryResolver implements QueryEvaluationContext {
           query.getOrderList(),
           query.getLimit(),
           query.getOffset(),
+          query.isDistinct(),
           (Answer)query.getGiven().clone());
           
       return operationContext.innerCount(newQuery);
@@ -266,6 +287,7 @@ class LocalQueryResolver implements QueryEvaluationContext {
         logger.debug(new StackTrace().toString());
       }
 
+      distinctQuery = query.isDistinct();
       Tuples result = ConstraintOperations.resolveConstraintExpression(this,
           query.getModelExpression(), query.getConstraintExpression());
 
@@ -307,7 +329,7 @@ class LocalQueryResolver implements QueryEvaluationContext {
           }
         }
 
-        result = TuplesOperations.project(result, variables);
+        result = TuplesOperations.project(result, variables, query.isDistinct());
       } finally {
         tmp.close();
       }

@@ -643,5 +643,9 @@ public class ConjunctiveTransformerUnitTest extends TestCase {
     public String toString() {
       return "[TC:" + id + "]";
     }
+
+    public boolean isAssociative() {
+      return false;
+    }
   }
 }

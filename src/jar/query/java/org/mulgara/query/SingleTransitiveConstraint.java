@@ -209,4 +209,14 @@ public class SingleTransitiveConstraint implements Constraint {
     }
     return buffer.toString();
   }
+
+
+  /**
+   * Not sure what associativity would mean here, but it shouldn't be possible.
+   * @return <code>false</code> to indicate that this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
+
 }

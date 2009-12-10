@@ -165,6 +165,13 @@ public class IRIReference implements Node, PrimaryExpression {
   }
 
   /**
+   * @see java.lang.Object#toString()
+   */
+  public String toString() {
+    return "<" + uri.toString() + ">";
+  }
+
+  /**
    * Parse a URI, looking for a valid QName structure.
    * @param uri The URI to parse.
    * @return a new QName if one could be parsed, or <code>null</code> if one couldn't be found.

@@ -310,6 +310,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         )));
 
@@ -327,6 +328,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         ));
 
@@ -385,6 +387,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         )));
 
@@ -402,6 +405,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
           ),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         ));
 
@@ -1073,7 +1077,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         session1.createModel(delayTwoSecs, new URI(Mulgara.NAMESPACE + "MockModel"));
 
         try {
-          Answer answer = session1.query(createQuery(delayTwoSecs));
+          session1.query(createQuery(delayTwoSecs));
           fail("query should've gotten interrupted");
         } catch (QueryException qe) {
           logger.debug("query was interrupted", qe);
@@ -1100,7 +1104,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
         logger.debug("Slept for 2sec");
 
         try {
-          Answer answer = session1.query(createQuery(model3URI));
+          session1.query(createQuery(model3URI));
           fail("query should've gotten interrupted");
         } catch (QueryException qe) {
           logger.debug("query was interrupted", qe);
@@ -1256,6 +1260,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
           }),
           null,                                             // LIMIT
           0,                                                // OFFSET
+          true,                                             // DISTINCT
           new UnconstrainedAnswer()                         // GIVEN
         ));
 
@@ -1684,6 +1689,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
       }),
       null,                                             // LIMIT
       0,                                                // OFFSET
+      true,                                             // DISTINCT
       new UnconstrainedAnswer()                         // GIVEN
     );
   }

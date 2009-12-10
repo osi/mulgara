@@ -61,4 +61,11 @@ public abstract class AbstractNaryOperator<T extends Expression> implements Expr
    */
   protected abstract String getOperatorString();
 
+  /**
+   * @see java.lang.Object#toString()
+   * @return By default this will return the image, since that's often right.
+   */
+  public String toString() {
+    return getImage();
+  }
 }

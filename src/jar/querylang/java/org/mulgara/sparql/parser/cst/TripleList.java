@@ -173,4 +173,12 @@ public class TripleList extends BasicGraphPattern {
     addAll(annotations);
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
+  public String toString() {
+    StringBuilder b = new StringBuilder();
+    for (Triple t: triples) b.append(t).append(" . ");
+    return b.toString();
+  }
 }

@@ -185,7 +185,7 @@ public abstract class StatementStoreAbstractUnitTest extends TestCase {
     TestTuples expected = getDump();
 
     Tuples t = store.findTuples(NodePool.NONE, NodePool.NONE, NodePool.NONE, NodePool.NONE);
-    Tuples r = TuplesOperations.project(t, Arrays.asList(StatementStore.VARIABLES));
+    Tuples r = TuplesOperations.project(t, Arrays.asList(StatementStore.VARIABLES), true);
     assertEquals(expected, r);
     t.close();
     r.close();

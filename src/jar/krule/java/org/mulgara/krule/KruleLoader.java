@@ -1054,6 +1054,7 @@ public class KruleLoader implements RuleLoader {
         (List<Order>)Collections.EMPTY_LIST,        // ORDER BY
         null,                                       // LIMIT
         0,                                          // OFFSET
+        true,                                       // DISTINCT
         UNCONSTRAINED                               // GIVEN
     );
   }

@@ -99,6 +99,7 @@ public class ConnectionFactoryUnitTest extends TestCase {
       }),
       null,                                             // LIMIT
       0,                                                // OFFSET
+      true,                                             // DISTINCT
       new UnconstrainedAnswer()                         // GIVEN
     );
   }

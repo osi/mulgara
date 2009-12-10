@@ -387,6 +387,7 @@ public class RelationalResolverUnitTest extends TestCase {
           Collections.singletonList(new Order(new Variable("s"), true)),     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -429,6 +430,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -474,6 +476,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -515,6 +518,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -561,6 +565,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -597,6 +602,7 @@ public class RelationalResolverUnitTest extends TestCase {
           Collections.singletonList(new Order(new Variable("s"), true)),     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -639,6 +645,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -683,6 +690,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -725,6 +733,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -810,6 +819,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -855,6 +865,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -904,6 +915,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -962,6 +974,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1010,6 +1023,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1051,6 +1065,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1105,6 +1120,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1174,6 +1190,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1232,6 +1249,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1292,6 +1310,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1347,6 +1366,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1402,6 +1422,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 
@@ -1474,6 +1495,7 @@ public class RelationalResolverUnitTest extends TestCase {
           orderList,     // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         ));
 

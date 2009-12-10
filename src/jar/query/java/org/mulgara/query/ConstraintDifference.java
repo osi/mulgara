@@ -77,4 +77,12 @@ public class ConstraintDifference extends ConstraintBinaryOperation {
     return " minus ";
   }
 
+  /**
+   * Minus is not an associative operation.
+   * @return <code>false</code> since this operation is not associative.
+   */
+  public boolean isAssociative() {
+    return false;
+  }
+
 }

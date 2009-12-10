@@ -254,8 +254,9 @@ public class SparqlInterpreter implements Interpreter {
     List<Order> orderBy = getOrdering(queryStruct);
     Integer limit = getLimit(queryStruct);
     int offset = queryStruct.getOffset();
+    boolean distinct = queryStruct.isDistinct();
     // null having, unconstrained answer
-    return new Query(selection, defaultGraphs, whereClause, null, orderBy, limit, offset, new UnconstrainedAnswer());
+    return new Query(selection, defaultGraphs, whereClause, null, orderBy, limit, offset, distinct, new UnconstrainedAnswer());
   }
 
   /**

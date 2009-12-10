@@ -695,9 +695,9 @@ NumericLiteral NumericLiteralUnsigned() : { Token t; }
 /* [63]    NumericLiteralPositive    ::=    INTEGER_POSITIVE |  DECIMAL_POSITIVE |  DOUBLE_POSITIVE */
 NumericLiteral NumericLiteralPositive() : { Token t; }
 {
-    t=<INTEGER_POSITIVE> { return new IntegerLiteral(t.image); }
-    | t=<DECIMAL_POSITIVE> { return new DecimalLiteral(t.image); }
-    | t=<DOUBLE_POSITIVE> { return new DoubleLiteral(t.image); }
+    t=<INTEGER_POSITIVE> { return new IntegerLiteral(t.image.substring(1)); }
+    | t=<DECIMAL_POSITIVE> { return new DecimalLiteral(t.image.substring(1)); }
+    | t=<DOUBLE_POSITIVE> { return new DoubleLiteral(t.image.substring(1)); }
 }
 
 /* [64]    NumericLiteralNegative    ::=    INTEGER_NEGATIVE |  DECIMAL_NEGATIVE |  DOUBLE_NEGATIVE */

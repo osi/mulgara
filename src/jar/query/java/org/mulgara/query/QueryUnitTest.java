@@ -109,6 +109,7 @@ public class QueryUnitTest extends TestCase {
         (List<Order>)Collections.EMPTY_LIST,    // no ordering
         null,                                   // no limit
         0,                                      // zero offset
+        true,                                   // no duplicates
         new UnconstrainedAnswer());
   }
 
@@ -155,6 +156,7 @@ public class QueryUnitTest extends TestCase {
         (List<Order>)Collections.EMPTY_LIST,   // no ordering
         null,                                  // no limit
         0,                                     // zero offset
+        true,                                  // no duplicates
         new UnconstrainedAnswer());
 
     // These truths we hold to be self-evident:
