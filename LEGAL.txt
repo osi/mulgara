@@ -46,6 +46,12 @@ I.  Open Source Components
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
 
+    Apache Mime4j
+    JARs:     apache-mime4j-0.5.jar
+    URL:      http://james.apache.org/mime4j/
+    LICENSE:  Apache Software License, v2.0
+              http://www.apache.org/licenses/LICENSE-2.0
+
     Apache SOAP
     JARs:     apache-soap-2.2.jar
     URL:      http://archive.apache.org/dist/ws/soap/version-2.2/
@@ -95,13 +101,15 @@ I.  Open Source Components
               http://www.apache.org/licenses/LICENSE-2.0
     
     Commons HTTP Client
-    JARs:     commons-httpclient-3.1.jar
+    JARs:     httpclient-4.0-beta2.jar
+              httpcore-4.0-beta3.jar
+              httpmime-4.0-beta2.jar
     URL:      http://jakarta.apache.org/commons/httpclient/
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
     
     Commons Logging
-    JARs:     commons-logging-1.0.3.jar
+    JARs:     commons-logging-1.1.1.jar
     URL:      http://jakarta.apache.org/commons/logging/
     LICENSE:  Apache Software License, v2.0
               http://www.apache.org/licenses/LICENSE-2.0
