@@ -103,6 +103,21 @@ public class NumberUtil {
     return (st == null) ? null : st.valueOf(str);
   }
 
+  /**
+   * Returns The negation of a number, regardless of its type.
+   * @param n The number to negate.
+   * @return Negative the number, or null if the number was null.
+   */
+  static public Number minus(Number n) {
+    if (n instanceof Long) return new Long(-n.longValue());
+    if (n instanceof Integer) return new Integer(-n.intValue());
+    if (n instanceof Short) return new Short((short)-n.shortValue());
+    if (n instanceof Byte) return new Byte((byte)-n.byteValue());
+    if (n instanceof Double) return new Double(-n.doubleValue());
+    if (n instanceof Float) return new Float(-n.floatValue());
+    return null;
+  }
+
   ///////////////////////////////////////////////////////////////////////////////
   // Internal structures for handling conversion of numeric types to XSD and back
   ///////////////////////////////////////////////////////////////////////////////

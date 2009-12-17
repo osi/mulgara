@@ -32,10 +32,9 @@ import org.mulgara.query.functions.MulgaraFunctionGroup;
  * @author Paul Gearon
  * @copyright &copy; 2009 <a href="http://www.duraspace.org/">DuraSpace</a>
  */
-@SuppressWarnings("unchecked")
 public class OpFunctionGroup implements MulgaraFunctionGroup {
 
-  /** The prefix for the fn: namespace */
+  /** The prefix for the op: namespace */
   static final String PREFIX = "op";
 
   /** The op: namespace */
@@ -78,7 +77,7 @@ public class OpFunctionGroup implements MulgaraFunctionGroup {
   static private class NumericEqual extends MulgaraFunction {
     public String getName() { return "numeric-equal/2"; }
     public int getArity() { return 2; }
-    public Object eval(List args) {
+    public Object eval(List<?> args) {
       Number left = (Number)args.get(0);
       Number right = (Number)args.get(1);
       return left.doubleValue() == right.doubleValue();
@@ -92,7 +91,7 @@ public class OpFunctionGroup implements MulgaraFunctionGroup {
   static private class NumericLessThan extends MulgaraFunction {
     public String getName() { return "numeric-less-than/2"; }
     public int getArity() { return 2; }
-    public Object eval(List args) {
+    public Object eval(List<?> args) {
       Number left = (Number)args.get(0);
       Number right = (Number)args.get(1);
       return left.doubleValue() < right.doubleValue();
@@ -106,7 +105,7 @@ public class OpFunctionGroup implements MulgaraFunctionGroup {
   static private class NumericGreaterThan extends MulgaraFunction {
     public String getName() { return "numeric-greater-than/2"; }
     public int getArity() { return 2; }
-    public Object eval(List args) {
+    public Object eval(List<?> args) {
       Number left = (Number)args.get(0);
       Number right = (Number)args.get(1);
       return left.doubleValue() > right.doubleValue();
@@ -121,7 +120,7 @@ public class OpFunctionGroup implements MulgaraFunctionGroup {
   static private class NumericIntegerDivision extends MulgaraFunction {
     public String getName() { return "numeric-integer-divide/2"; }
     public int getArity() { return 2; }
-    public Object eval(List args) {
+    public Object eval(List<?> args) {
       Number left = (Number)args.get(0);
       Number right = (Number)args.get(1);
       if (left instanceof BigDecimal) {
@@ -146,7 +145,7 @@ public class OpFunctionGroup implements MulgaraFunctionGroup {
   static private class NumericMod extends MulgaraFunction {
     public String getName() { return "numeric-mod/2"; }
     public int getArity() { return 2; }
-    public Object eval(List args) {
+    public Object eval(List<?> args) {
       Number left = (Number)args.get(0);
       Number right = (Number)args.get(1);
       if (left instanceof Byte || left instanceof Short || left instanceof Integer || left instanceof Long) {
