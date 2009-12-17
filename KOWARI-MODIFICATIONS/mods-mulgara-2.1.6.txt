@@ -1,0 +1,19 @@
+------------------------------------------------------------------------
+r1878 | pag | 2009-12-17 04:20:42 -0500 (Thu, 17 Dec 2009) | 1 line
+Changed paths:
+   A /trunk/src/jar/query/java/org/mulgara/query/xpath/AfnFunctionGroup.java
+   M /trunk/src/jar/query/java/org/mulgara/query/xpath/FnFunctionGroup.java
+   M /trunk/src/jar/query/java/org/mulgara/query/xpath/MulgaraXPathFunctionResolver.java
+   M /trunk/src/jar/query/java/org/mulgara/query/xpath/OpFunctionGroup.java
+   A /trunk/src/jar/query/java/org/mulgara/query/xpath/SmfFunctionGroup.java
+   M /trunk/src/jar/util/java/org/mulgara/util/NumberUtil.java
+   M /trunk/src/jar/util/java/org/mulgara/util/URIUtil.java
+
+Added a new set of functions for SPARQL, particularly the ARQ extensions
+------------------------------------------------------------------------
+r1877 | pag | 2009-12-17 04:17:46 -0500 (Thu, 17 Dec 2009) | 1 line
+Changed paths:
+   M /trunk/src/jar/query/java/org/mulgara/query/ConstraintOptionalJoin.java
+
+Updated this operation to be non-associative
+------------------------------------------------------------------------
