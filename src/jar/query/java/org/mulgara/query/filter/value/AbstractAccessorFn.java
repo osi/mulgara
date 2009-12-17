@@ -51,7 +51,7 @@ public abstract class AbstractAccessorFn extends AbstractFilterValue implements 
    */
   public AbstractAccessorFn(RDFTerm... operands) {
     super(operands);
-    this.operand = operands[0];
+    this.operand = (operands.length > 0) ? operands[0] : null;
   }
 
   /** @see org.mulgara.query.filter.value.ValueLiteral#getType() */
