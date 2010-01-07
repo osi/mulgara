@@ -616,7 +616,7 @@
       <arg line="${test.server.args}"/>
     </exec>
 
-    <exec os="Windows NT,Windows 2000,Windows XP, Windows 2003"
+    <exec os="Windows NT,Windows 2000,Windows XP, Windows 2003, Windows 7"
           executable="${scripts.dir}\bg.exe" failonerror="yes">
 
       <arg value="-o"/>
