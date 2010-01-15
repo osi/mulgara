@@ -43,26 +43,26 @@ import org.mulgara.query.Value;
 
 /**
  * An RDF literal node.
- * 
+ *
  * Strings for the constructor need to be in an unusual format. Each character in the
  * string is used to represent a byte in a UTF-8 encoding. This has no effect on
  * standard ASCII text, but once the characters get above 0x7F then this format no
  * longer represents the string, but rather the encoded data. This is the format
  * returned from the ARP parser.
  *
- * For instance, the character Ž (e acute) has a unicode value of 0xE9, and a
+ * For instance, the character \u00e9 (e acute) has a unicode value of 0xE9, and a
  * UTF-8 encoding of [0xC3, 0xA9]. The literal string used to represent this character
  * has two characters in it (representing the 2 bytes from the UTF-8 encoding),
- * specifically Ì (Latin capital letter A with tilde, unicode value 0xC3)
- * and © (copyright sign, unicode value 0xA9). This is despite the fact that a Java
+ * specifically \u00c3 (Latin capital letter A with tilde, unicode value 0xC3)
+ * and \u00a9 (copyright sign, unicode value 0xA9). This is despite the fact that a Java
  * string can represent e-acute with a single character.
- * 
+ *
  * Previously, this class accepted normal Java strings, and would escape them
  * correctly when presenting the lexical form. If lexical escaping fails, then it
  * will fall back to attempting this method. This means that many normal Java strings
  * will work with this class, but it is still possible to construct a standard string
  * that could potentially represent a UTF-encoding.
- * 
+ *
  *
  * @created 2001-08-13
  *
