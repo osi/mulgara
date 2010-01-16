@@ -155,8 +155,9 @@ public class EmbeddedMulgaraOptionParser extends CmdLineParser {
       String[] remainingArgs = getRemainingArgs();
       if (remainingArgs.length > 0) {
         // throw a new exception to indicate that there were unkown arguments
-        log.error("Unknown options: " + remainingArgs);
-        throw new UnknownOptionException(remainingArgs[0]);
+        log.error("Unknown options: " + remainingArgs[0]);
+        throw new RuntimeException("Unknown option: " + remainingArgs[0]);
+//        throw new jargs.gnu.CmdLineParser.UnknownOptionException(remainingArgs[0]);
       }
 
       // we've now parser the options
