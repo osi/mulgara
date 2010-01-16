@@ -25,7 +25,6 @@
         <module>src/jar/descriptor</module>
         <module>src/jar/doclet</module>
         <module>src/jar/doclet141</module>
-        <module>src/jar/driver</module>
         <module>src/jar/dtd</module>
         <module>src/jar/jrdf</module>
         <module>src/jar/krule</module>
@@ -159,6 +158,11 @@
             <dependency>
                 <groupId>com.hp.hpl.jena</groupId>
                 <artifactId>jena</artifactId>
+                <version>2.5.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hp.hpl.jena</groupId>
+                <artifactId>jenatest</artifactId>
                 <version>2.5.6</version>
             </dependency>
         </dependencies>

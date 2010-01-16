@@ -25,11 +25,6 @@
             <artifactId>config</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.mulgara</groupId>
-            <artifactId>driver</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
@@ -46,6 +41,11 @@
         <dependency>
             <groupId>com.hp.hpl.jena</groupId>
             <artifactId>jena</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.hpl.jena</groupId>
+            <artifactId>jenatest</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
