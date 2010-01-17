@@ -31,14 +31,11 @@ package org.mulgara.resolver.filesystem;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 // Third party packages
 import junit.framework.*; // JUnit
 import org.apache.log4j.*; // Log4J
 import org.jrdf.graph.Node;
-import org.apache.log4j.xml.*; // Log4J
 
 // Locally written packages
 import org.mulgara.query.*;
@@ -80,19 +77,6 @@ public class FileSystemStatementsUnitTest extends TestCase {
   public FileSystemStatementsUnitTest(String name) {
 
     super(name);
-
-    // load the logging configuration
-    BasicConfigurator.configure();
-    try {
-
-      DOMConfigurator.configure(new URL(System.getProperty(
-          "log4j.configuration")));
-    } catch (MalformedURLException mue) {
-
-      log.error(
-          "Unable to configure logging service from XML configuration " +
-          "file", mue);
-    }
   }
 
   /**
@@ -1311,7 +1295,7 @@ public class FileSystemStatementsUnitTest extends TestCase {
   /**
    * Test that the inclusion of files works.
    */
-  public void testFileInclude() {
+  public void testFileInclude() throws URISyntaxException {
 
     if (log.isDebugEnabled()) {
 
@@ -1328,27 +1312,26 @@ public class FileSystemStatementsUnitTest extends TestCase {
     // Obtain a resolver session
     ResolverSession resolverSession = new TestResolverSession();
 
-    // Create a file which represents our sample file
-    File file = new File(System.getProperty("cvs.root") + File.separator +
-                         "data" + File.separator + "ical.rdf");
+    // Create a uri which represents our sample uri
+    URI uri = getClass().getResource("/data/ical.rdf").toURI();
 
     try {
 
       // Allocate the filesystem node as a literal
-      dataDirNode = resolverSession.localize(new URIReferenceImpl(file.toURI()));
+      dataDirNode = resolverSession.localize(new URIReferenceImpl(uri));
     } catch (LocalizeException localiseException) {
 
       // Log the error
-      log.error("Failed to localise bad inclusion node " + file.toURI(),
+      log.error("Failed to localise bad inclusion node " + uri,
                 localiseException);
 
       // Fail the test
-      fail("Failed to localise bad inclusion node " + file.toURI());
+      fail("Failed to localise bad inclusion node " + uri);
     }
 
     try {
 
-      // Set the file system type node
+      // Set the uri system type node
       fileSystemNode = resolverSession.localize(new URIReferenceImpl(new URI(
           "http://mulgara.org/mulgara/filesystem")));
     } catch (LocalizeException localiseException) {
@@ -1626,7 +1609,7 @@ public class FileSystemStatementsUnitTest extends TestCase {
     // Check that we have the right value for the subject node
     assertTrue("First statement's subject node was not the expected value, " +
                "was [" + subjectsNode.toString() + "]",
-               subjectsNode.toString().equals(file.toURI().toString()));
+               subjectsNode.toString().equals(uri.toString()));
 
     try {
 
@@ -1646,10 +1629,10 @@ public class FileSystemStatementsUnitTest extends TestCase {
                predicateNode != null);
 
     // Check that we have the right value for the node
-    assertTrue("First statement's predicate node was not the expected value, " +
+    assertEquals("First statement's predicate node was not the expected value, " +
                "was [" + predicateNode.toString() + "]",
-               predicateNode.toString().equals(
-        "http://mulgara.org/mulgara#canWrite"));
+      "http://mulgara.org/mulgara#canWrite",
+               predicateNode.toString());
 
     try {
 
