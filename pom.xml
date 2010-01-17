@@ -44,7 +44,6 @@
         <module>src/jar/resolver-null</module>
         <module>src/jar/resolver-prefix</module>
         <module>src/jar/resolver-relational</module>
-        <module>src/jar/resolver-spi</module>
         <module>src/jar/resolver-store</module>
         <module>src/jar/resolver-test</module>
         <module>src/jar/resolver-url</module>
@@ -62,10 +61,8 @@
         <module>src/jar/store-stringpool-memory</module>
         <module>src/jar/store-stringpool-xa</module>
         <module>src/jar/store-stringpool-xa11</module>
-        <module>src/jar/store-xa</module>
         <module>src/jar/swrl</module>
         <module>src/jar/tag</module>
-        <module>src/jar/tuples</module>
         <module>src/jar/tuples-hybrid</module>
         <module>src/jar/util</module>
         <module>src/jar/util-xa</module>
@@ -184,6 +181,16 @@
                 <groupId>net.sf</groupId>
                 <artifactId>jargs</artifactId>
                 <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>gnu.trove</groupId>
+                <artifactId>trove4j</artifactId>
+                <version>2.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+                <version>1.0.1B</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.jxunit</groupId>

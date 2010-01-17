@@ -20,6 +20,11 @@
             <artifactId>store</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>query</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 

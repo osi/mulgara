@@ -25,7 +25,7 @@
  *
  */
 
-package org.mulgara.resolver.spi;
+package org.mulgara.store.xa;
 
 // Java packages
 import java.net.URI;
@@ -37,6 +37,10 @@ import org.jrdf.graph.URIReference;
 import org.mulgara.query.Constraint;
 import org.mulgara.query.GraphResource;
 import org.mulgara.query.QueryException;
+import org.mulgara.resolver.spi.DatabaseMetadata;
+import org.mulgara.resolver.spi.ResolverFactory;
+import org.mulgara.resolver.spi.ResolverFactoryException;
+import org.mulgara.resolver.spi.SystemResolver;
 import org.mulgara.store.tuples.Tuples;
 import org.mulgara.store.xa.SimpleXARecoveryHandler;
 
@@ -46,7 +50,7 @@ import org.mulgara.store.xa.SimpleXARecoveryHandler;
  * @created 2004-03-28
  * @author <a href="http://www.pisoftware.com/raboczi">Simon Raboczi</a>
  * @version $Revision: 1.8 $
- * @modified $Date: 2005/01/05 04:58:50 $ 
+ * @modified $Date: 2005/01/05 04:58:50 $
  * @maintenanceAuthor $Author: newmana $
  * @company <a href="mailto:info@PIsoftware.com">Plugged In Software</a>
  * @copyright &copy;2004 <a href="http://www.pisoftware.com/">Plugged In
@@ -68,7 +72,7 @@ public interface SystemResolverFactory extends ResolverFactory, SimpleXARecovery
   public abstract SystemResolver newResolver(boolean canWrite)
     throws ResolverFactoryException;
 
-  public void setDatabaseMetadata(DatabaseMetadata metadata);
+  public void setDatabaseMetadata( DatabaseMetadata metadata);
 
   public URI getSystemModelTypeURI();
 }

@@ -38,7 +38,7 @@ import org.mulgara.query.Variable;
  * @created 2004-04-29
  * @author <a href="http://staff.tucanatech.com/raboczi">Simon Raboczi</a>
  * @version $Revision: 1.8 $
- * @modified $Date: 2005/01/05 04:58:50 $ 
+ * @modified $Date: 2005/01/05 04:58:50 $
  * @maintenanceAuthor $Author: newmana $
  * @company <a href="mailto:info@tucanatech.com">Plugged In Software</a>
  * @copyright &copy;2004 <a href="http://www.PIsoftware.com/">Tucana
@@ -154,7 +154,7 @@ public class SingletonStatements implements Cloneable, Statements {
   }
 
   public int getRowCardinality() {
-    return Cursor.ONE;
+    return ONE;
   }
 
   public Variable[] getVariables() {

@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>org.mulgara</groupId>
-            <artifactId>store-xa</artifactId>
+            <artifactId>store-stringpool</artifactId>
             <version>${project.version}</version>
         </dependency>
 
