@@ -1125,9 +1125,9 @@ public final class FreeList {
       ++refCount;
 
       // record the stack if debug is enabled
-      if (logger.isDebugEnabled()) {
-        stack.add(new StackTrace());
-      }
+//      if (logger.isDebugEnabled()) {
+//        stack.add(new StackTrace());
+//      }
 
       return token;
     }
@@ -1220,9 +1220,9 @@ public final class FreeList {
       Token token = (tokenRef != null) ? tokenRef.get() : null;
 
       if ( (token == null) && (refCount > 0)) {
-        if (logger.isDebugEnabled()) {
-          logger.info("Lost phase token. Used " + stack.size() + " times:\n" + C.join(stack, "\n\n"));
-        }
+//        if (logger.isDebugEnabled()) {
+//          logger.info("Lost phase token. Used " + stack.size() + " times:\n" + C.join(stack, "\n\n"));
+//        }
         refCount = 0;
       }
 
