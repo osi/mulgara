@@ -28,7 +28,7 @@
 package org.mulgara.content.mp3.parser.api;
 
 // Mp3 Library
-import org.blinkenlights.id3.v1.*;
+import org.blinkenlights.jid3.v1.*;
 
 // JRDF
 import org.jrdf.graph.*;
@@ -67,6 +67,6 @@ public interface ID3v1Parser {
    *
    * @throws ParserException
    */
-  public void parseRDF (ID3V1Tags id3v1, SubjectNode mp3Resource,
+  public void parseRDF (ID3V1Tag id3v1, SubjectNode mp3Resource,
                         Graph graph) throws ParserException;
 }

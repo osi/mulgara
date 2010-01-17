@@ -1303,7 +1303,7 @@
 
     <mkdir dir="${test.dir}/RDF-Test-Cases"/>
 
-    <unzip src="data/RDF-Test-Cases-2001-09-12.zip" dest="${test.dir}/RDF-Test-Cases"/>
+    <unzip src="src/jar/store-stringpool/src/test/resources/data/RDF-Test-Cases-2001-09-12.zip" dest="${test.dir}/RDF-Test-Cases"/>
 
     <mkdir dir="${test.dir}/RDQL"/>
 

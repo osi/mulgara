@@ -143,8 +143,7 @@ public class AdvDatabaseSessionUnitTest extends TestCase {
   public void setUp() throws Exception {
     if (database == null) {
       // Create the persistence directory
-      File persistenceDirectory =
-        new File(new File(System.getProperty("cvs.root")), "testDatabase");
+      File persistenceDirectory = new File("target/testDatbase");
       if (persistenceDirectory.isDirectory()) {
         if (!FileUtil.deleteDirectory(persistenceDirectory)) {
           throw new RuntimeException(

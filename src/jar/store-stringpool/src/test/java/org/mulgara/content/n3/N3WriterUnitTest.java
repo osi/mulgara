@@ -77,7 +77,7 @@ public class N3WriterUnitTest extends TestCase {
    *                   merely fails, this should <em>not</em> throw any exception
    */
   public void testNonAscii() throws Exception {
-    runTest("<foo:i18n:øé> <foo:baz> \"Some text with \\\" in it, and 日本 chars, and \\u00E0 \" .",
+    runTest("<foo:i18n:\u00f8\u00e9> <foo:baz> \"Some text with \\\" in it, and \u65E5\u672C chars, and \\u00E0 \" .",
             "<foo:i18n:%C3%B8%C3%A9> <foo:baz> \"Some text with \\\" in it, and \\u65E5\\u672C chars, and \\u00E0 \" .\n");
   }
 
@@ -127,7 +127,7 @@ public class N3WriterUnitTest extends TestCase {
 
     String exp = bn1 + " <baz:baz> " + bn2 + " .\n" +
                  bn2 + " <bar:bar> <foo:foo> .\n" +
-                 "<foo:foo> <dc:title> \"hello\"@en .\n";    
+                 "<foo:foo> <dc:title> \"hello\"@en .\n";
     assertEquals(exp != null ? exp : n3, out.toString());
   }
 

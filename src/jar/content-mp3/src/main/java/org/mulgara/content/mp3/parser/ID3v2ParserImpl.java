@@ -31,7 +31,7 @@ package org.mulgara.content.mp3.parser;
 import org.apache.log4j.*;
 
 // Mp3 Library
-import org.blinkenlights.id3.v2.*;
+import org.blinkenlights.jid3.v2.*;
 
 // JRDF
 import org.jrdf.graph.*;
@@ -82,7 +82,7 @@ public final class ID3v2ParserImpl implements ID3v2Parser {
    *
    * @throws ParserException
    */
-  public void parseRDF(ID3V2Tags id3v2, SubjectNode mp3Resource,
+  public void parseRDF(ID3V2Tag id3v2, SubjectNode mp3Resource,
       Graph graph) throws ParserException {
 
     // Retrieve a field iterator for the ID3 tag

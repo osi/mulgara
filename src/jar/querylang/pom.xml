@@ -23,6 +23,91 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-memory</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-view</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-filesystem</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-prefix</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-lucene</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-xsd</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-http</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-nodetype</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-jar</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-store</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>content-mp3</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>content-mbox</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>store-stringpool-memory</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>store-stringpool-xa11</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.axis</groupId>
             <artifactId>axis</artifactId>
         </dependency>
@@ -35,8 +120,18 @@
             <artifactId>soap</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hp.hpl.jena</groupId>
+            <artifactId>jenatest</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.sourceforge.jxunit</groupId>
             <artifactId>jxunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

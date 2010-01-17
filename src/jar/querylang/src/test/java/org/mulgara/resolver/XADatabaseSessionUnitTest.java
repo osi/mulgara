@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;  // Log4J
 
 // Locally written packages
 import org.mulgara.query.*;
+import org.mulgara.query.rdf.LiteralImpl;
 import org.mulgara.query.rdf.Mulgara;
 import org.mulgara.query.rdf.URIReferenceImpl;
 import org.mulgara.server.Session;
@@ -58,14 +59,14 @@ import org.mulgara.util.FileUtil;
 *      Software Pty Ltd</a>
 * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
 */
-public class DatabaseSessionUnitTest extends TestCase {
+public class XADatabaseSessionUnitTest extends TestCase {
   /** The URI of the {@link #database}: <code>local:database</code>.  */
   private static final URI databaseURI = URI.create("local:database");
 
   /**
-   * The URI of the {@link #database}'s system model:
-   * <code>local:database#</code>.
-   */
+  * The URI of the {@link #database}'s system model:
+  * <code>local:database#</code>.
+  */
   @SuppressWarnings("unused")
   private static final URI systemModelURI = URI.create("local:database#");
 
@@ -74,8 +75,7 @@ public class DatabaseSessionUnitTest extends TestCase {
   private static final URI memoryModelURI = URI.create(Mulgara.NAMESPACE+"MemoryModel");
 
   /** Logger.  */
-  private static Logger logger =
-    Logger.getLogger(DatabaseSessionUnitTest.class.getName());
+  private static Logger logger = Logger.getLogger(XADatabaseSessionUnitTest.class.getName());
 
   /**
   * In-memory test {@link Database} used to generate {@link DatabaseSession}s
@@ -87,27 +87,60 @@ public class DatabaseSessionUnitTest extends TestCase {
 
   private TestDef test;
 
-  protected static final GraphResource[] models;
+  protected static final URI[] modelDataURIs;
+  static {
+    modelDataURIs = new URI[] {
+      null, // No data to load for system model.
+      new File("data/test-model1.rdf").toURI(),
+      new File("data/test-model2.rdf").toURI(),
+      new File("data/test-model3.rdf").toURI(),
+      new File("data/test-model4.rdf").toURI(),
+      new File("data/test-model5.rdf").toURI(),
+      new File("data/test-model6.rdf").toURI(),
+      new File("data/test-model7.rdf").toURI(),
+      new File("data/test-model8.rdf").toURI(),
+      new File("data/test-model9.rdf").toURI(),
+      new File("data/test-model10.rdf").toURI(),
+      new File("data/test-model11.rdf").toURI(),
+    };
+  };
+
+
+  protected static final URI[] modelURIs;
   static {
     try {
-      models = new GraphResource[] {
-        new GraphResource(new URI("local:database#")),
-        new GraphResource(new File("data/test-model1.rdf").toURI()),
-        new GraphResource(new File("data/test-model2.rdf").toURI()),
-        new GraphResource(new File("data/test-model3.rdf").toURI()),
-        new GraphResource(new File("data/test-model4.rdf").toURI()),
-        new GraphResource(new File("data/test-model5.rdf").toURI()),
-        new GraphResource(new File("data/test-model6.rdf").toURI()),
-        new GraphResource(new File("data/test-model7.rdf").toURI()),
-        new GraphResource(new File("data/test-model8.rdf").toURI()),
-        new GraphResource(new File("data/test-model9.rdf").toURI()),
-        new GraphResource(new File("data/test-model10.rdf").toURI()),
-        new GraphResource(new File("data/test-model11.rdf").toURI()),
+      //String baseuri = "rmi://" + InetAddress.getLocalHost().getCanonicalHostName() + "/server1#";
+      String baseuri = "local:database#";
+      modelURIs = new URI[] {
+        new URI(baseuri), //new URI("local:database#"),
+        new URI(baseuri + "test-model1"),
+        new URI(baseuri + "test-model2"),
+        new URI(baseuri + "test-model3"),
+        new URI(baseuri + "test-model4"),
+        new URI(baseuri + "test-model5"),
+        new URI(baseuri + "test-model6"),
+        new URI(baseuri + "test-model7"),
+        new URI(baseuri + "test-model8"),
+        new URI(baseuri + "test-model9"),
+        new URI(baseuri + "test-model10"),
+        new URI(baseuri + "test-model11"),
       };
     } catch (URISyntaxException eu) {
-      throw new IllegalArgumentException("Initialising ModelResources");
+      throw new IllegalArgumentException("Initialising ModelDataURIs");
+    //} catch (java.net.UnknownHostException eu) {
+    //  throw new IllegalArgumentException("Failed to identify hostname");
     }
   };
+
+
+  protected static final GraphResource[] models;
+  static {
+    models = new GraphResource[modelURIs.length];
+    for (int i = 0; i < modelURIs.length; i++) {
+      models[i] = new GraphResource(modelURIs[i]);
+    }
+  };
+
 
   protected static final ConstraintElement[] elements;
   static {
@@ -120,150 +153,181 @@ public class DatabaseSessionUnitTest extends TestCase {
         new URIReferenceImpl(new URI("test:p01")),       // V4
         new URIReferenceImpl(new URI("test:p02")),       // V5
         new URIReferenceImpl(new URI("test:p03")),       // V6
+        new LiteralImpl("o01"),                          // V7
       };
     } catch (URISyntaxException eu) {
       throw new IllegalArgumentException("Initialising ConstraintElements");
     }
   };
 
+
   static TestDef.Parser parser = new TestDef.Parser(elements, models);
+
 
   protected static final TestDef[] tests = {
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "M4",
                  "(result p04 p05 p06 p08)",
                  "testModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
-                 "(query V1 (| V3 V1 V2))",
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
+                 "(query V0 (| V0 V1 V2))",
                  "M4",
-                 "(result p04 p05 p06 p08)",
-                 "testModelPrimitive"),
+                 "(result s01 s02)",
+                 "testSubjectModelPrimitive"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
+                 "(query V0 (| V0 V4 V2))",
+                 "M10",
+                 "(result s01 s02)",
+                 "testSubjectVarObjModelPrimitive"),
+
+    parser.parse("testModel",
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
+                 "(query V0 (| V0 V4 V7))",
+                 "M10",
+                 "(result s01)",
+                 "testSubjectLitObjModelPrimitive"),
+
+    parser.parse("testModel",
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
+                 "(query V0 (| V0 V4 V2))",
+                 "M11",
+                 "(result _node85 _node86)",
+                 "testSubjectVarObjModelPrimitive"),
+
+    parser.parse("testModel",
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
+                 "(query V0 (| V0 V4 V7))",
+                 "M11",
+                 "(result _node85)",
+                 "testSubjectLitObjModelPrimitive"),
+
+    parser.parse("testModel",
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (| V3 V5 V2)))",
                  "M6",
                  "(result o04 o05)",
                  "testConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (| V3 V5 V2)))",
                  "M6",
                  "(result o01 o02 o04 o05 o06 o07)",
                  "testDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(union M4 M5)",
                  "(result p04 p05 p06 p07 p08 p09)",
                  "testUnion"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(intersect M4 M5)",
                  "(result p04 p05)",
                  "testIntersect"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (| V3 V5 V2))",
                  "(union M7 M8)",
                  "(result o02 o05 o08)",
                  "testUnionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (| V3 V5 V2)))",
                  "(intersect M7 M8)",
                  "(result o05)",
                  "testIntersectConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (| V3 V5 V2)))",
                  "(union M7 M8)",
                  "(result o01 o02 o03 o04 o05 o06 o07 o08 o09)",
                  "testUnionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (| V3 V5 V2)))",
                  "(intersect M7 M8)",
                  "(result o04 o05 o06)",
                  "testIntersectDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(union M4 (union M5 M9))",
                  "(result p04 p05 p06 p07 p08 p09 p10)",
                  "testModelUnionUnion"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(union M4 (intersect M5 M9))",
                  "(result p04 p05 p06 p07 p08)",
                  "testModelUnionIntersect"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(intersect M4 (union M5 M9))",
                  "(result p04 p05 p06)",
                  "testModelIntersectUnion"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V1 (| V3 V1 V2))",
                  "(intersect M4 (intersect M5 M9))",
                  "(result p04)",
                  "testModelIntersectIntersect"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o04)",
                  "testConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o04 o05 o06)",
                  "testConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o01 o04 o05 o06 o07)",
                  "testDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "M6",
                  "(result o01 o02 o03 o04 o05 o06 o07)",
                  "testDisjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o43 o44 o45 o46 o47 o48 o49)",
                  "testUnionUnionConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o22 o23 o24 o25 o26 o27 o28 " +
@@ -271,9 +335,8 @@ public class DatabaseSessionUnitTest extends TestCase {
                          "o43 o44 o45 o46 o47 o48 o49)",
                  "testUnionUnionConjunctionDisjunction"),
 
-/*
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o01 o02 o03 o04 o05 o06 o07 " +
@@ -282,10 +345,9 @@ public class DatabaseSessionUnitTest extends TestCase {
                          "o36 o37 o38 o39 o40 o41 o42 " +
                          "o43 o44 o45 o46 o47 o48 o49)",
                  "testUnionUnionDisjunctionConjunction"),
-*/
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (union M2 M3))",
                  "(result o01 o02 o03 o04 o05 o06 o07 " +
@@ -298,14 +360,14 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testUnionUnionDisjunctionDisjunction"),
 /*
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o43 o46 o47 o48 o49)",
                  "testUnionIntersectConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o22 o25 o26 o27 o28 " +
@@ -314,7 +376,7 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testUnionIntersectConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o01 o04 o05 o06 o07 " +
@@ -325,7 +387,7 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testUnionIntersectDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(union M1 (intersect M2 M3))",
                  "(result o01 o04 o05 o06 o07 " +
@@ -338,14 +400,14 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testUnionIntersectDisjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o46 o47 o49)",
                  "testIntersectUnionConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o25 o26 o28 " +
@@ -354,7 +416,7 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testIntersectUnionConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o04 o05 o07 " +
@@ -365,7 +427,7 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testIntersectUnionDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (union M2 M3))",
                  "(result o04 o05 o07 " +
@@ -378,14 +440,14 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testIntersectUnionDisjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o49)",
                  "testIntersectIntersectConjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (and (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o28 " +
@@ -394,7 +456,7 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testIntersectIntersectConjunctionDisjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (and (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o07 " +
@@ -405,7 +467,7 @@ public class DatabaseSessionUnitTest extends TestCase {
                  "testIntersectIntersectDisjunctionConjunction"),
 
     parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
+                 new String[] { "org.mulgara.resolver.store.StatementStoreResolverFactory" },
                  "(query V2 (or (| V3 V4 V2) (or (| V3 V5 V2) (| V3 V6 V2))))",
                  "(intersect M1 (intersect M2 M3))",
                  "(result o07 " +
@@ -417,37 +479,6 @@ public class DatabaseSessionUnitTest extends TestCase {
                          "o49)",
                  "testIntersectIntersectDisjunctionDisjunction"),
 */
-    // This unit test forces a join on the subject column, which has blank
-    // nodes, to prove that the blank nodes are recognized as equal and
-    // joinable from one constraint to the next.  This can go wrong in the
-    // case of the URLResolver, which re-reads the remote file for each
-    // constraint and therefore needs to remember the blank nodes encountered
-    // during previous parsings.
-    /*
-    // This test is disabled until its result list can be parsed by TestDef.
-    parser.parse("testModel",
-                 new String[] { "org.mulgara.resolver.url.URLResolverFactory" },
-                 "(query (V1 V2) (and (| V0 V4 V1) (| V0 V4 V2)))",
-                 "M11",
-                 "(result (o01 o01) " +
-                         "(o04 o04) " +
-                         "(o04 o05) " +
-                         "(o04 o06) " +
-                         "(o04 o08) " +
-                         "(o05 o04) " +
-                         "(o05 o05) " +
-                         "(o05 o06) " +
-                         "(o05 o08) " +
-                         "(o06 o04) " +
-                         "(o06 o05) " +
-                         "(o06 o06) " +
-                         "(o06 o08) " +
-                         "(o08 o04) " +
-                         "(o08 o05) " +
-                         "(o08 o06) " +
-                         "(o08 o08))",
-                 "testBlankNodeMap"),
-    */
     };
 
   /**
@@ -455,7 +486,7 @@ public class DatabaseSessionUnitTest extends TestCase {
   *
   * @param testcase  the bundled parameters for the test
   */
-  public DatabaseSessionUnitTest(TestDef testcase) {
+  public XADatabaseSessionUnitTest(TestDef testcase) {
     super(testcase.name);
 
     this.test = testcase;
@@ -471,7 +502,7 @@ public class DatabaseSessionUnitTest extends TestCase {
     TestSuite suite = new TestSuite();
 
     for (int i = 0; i < tests.length; i++) {
-      suite.addTest(new DatabaseSessionUnitTest(tests[i]));
+      suite.addTest(new XADatabaseSessionUnitTest(tests[i]));
     }
 
     return suite;
@@ -482,8 +513,7 @@ public class DatabaseSessionUnitTest extends TestCase {
   */
   public void setUp() throws Exception {
     // Create the persistence directory
-    File persistenceDirectory =
-      new File(new File(System.getProperty("cvs.root")), "testDatabase");
+    File persistenceDirectory = new File("target/testDatbase");
     if (persistenceDirectory.isDirectory()) {
       if (!FileUtil.deleteDirectory(persistenceDirectory)) {
         throw new RuntimeException(
@@ -497,42 +527,64 @@ public class DatabaseSessionUnitTest extends TestCase {
 
     // Define the the node pool factory
     String nodePoolFactoryClassName =
-      "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory";
+      "org.mulgara.store.nodepool.xa.XANodePoolFactory";
 
     // Define the string pool factory
     String stringPoolFactoryClassName =
+      "org.mulgara.store.stringpool.xa.XAStringPoolFactory";
+
+    String tempNodePoolFactoryClassName =
+      "org.mulgara.store.nodepool.memory.MemoryNodePoolFactory";
+
+    // Define the string pool factory
+    String tempStringPoolFactoryClassName =
       "org.mulgara.store.stringpool.memory.MemoryStringPoolFactory";
 
     // Define the resolver factory used to manage system models
     String systemResolverFactoryClassName =
+      "org.mulgara.resolver.store.StatementStoreResolverFactory";
+
+    // Define the resolver factory used to manage system models
+    String tempResolverFactoryClassName =
       "org.mulgara.resolver.memory.MemoryResolverFactory";
+
+    @SuppressWarnings("unused")
+    String ruleLoaderFactoryClassName = "org.mulgara.rules.RuleLoaderFactory";
 
     // Create a database which keeps its system models on the Java heap
     database = new Database(
-        databaseURI,
-        persistenceDirectory,
-        null,                            // no security domain
-        new JotmTransactionManagerFactory(),
-        0,                               // default transaction timeout
-        0,                               // default idle timeout
-        nodePoolFactoryClassName,        // persistent
-        null,
-        stringPoolFactoryClassName,      // persistent
-        null,
-        systemResolverFactoryClassName,  // persistent
-        null,
-        nodePoolFactoryClassName,        // temporary
-        null,
-        stringPoolFactoryClassName,      // temporary
-        null,
-        systemResolverFactoryClassName,  // temporary
-        null,
-        null);                           // no default content handler
+                 databaseURI,
+                 persistenceDirectory,
+                 null,                            // no security domain
+                 new JotmTransactionManagerFactory(),
+                 0,                               // default transaction timeout
+                 0,                               // default idle timeout
+                 nodePoolFactoryClassName,        // persistent
+                 new File(persistenceDirectory, "xaNodePool"),
+                 stringPoolFactoryClassName,      // persistent
+                 new File(persistenceDirectory, "xaStringPool"),
+                 systemResolverFactoryClassName,  // persistent
+                 new File(persistenceDirectory, "xaStatementStore"),
+                 tempNodePoolFactoryClassName,    // temporary nodes
+                 null,                            // no dir for temp nodes
+                 tempStringPoolFactoryClassName,  // temporary strings
+                 null,                            // no dir for temp strings
+                 tempResolverFactoryClassName,    // temporary models
+                 null,                            // no dir for temp models
+                 "",                              // no rule loader
+                 "org.mulgara.content.rdfxml.RDFXMLContentHandler");
 
-    if (test.resolvers != null) {
-      for (int i = 0; i < test.resolvers.length; i++) {
-        database.addResolverFactory(test.resolvers[i], null);
+    database.addResolverFactory("org.mulgara.resolver.url.URLResolverFactory", null);
+
+    try {
+      URI modelTypeURI = new URI(Mulgara.NAMESPACE+"Model");
+      Session session = database.newSession();
+      for (int i = 1; i < modelURIs.length; i++) {
+        session.createModel(modelURIs[i], modelTypeURI);
+        session.setModel(modelURIs[i], new GraphResource(modelDataURIs[i]));
       }
+    } catch (URISyntaxException e) {
+      throw new Error("Bad hardcoded XA store model URI", e);
     }
   }
 
@@ -540,6 +592,7 @@ public class DatabaseSessionUnitTest extends TestCase {
   * The teardown method for JUnit
   */
   public void tearDown() {
+    logger.debug("TearDown Database");
     database.delete();
   }
 
@@ -564,7 +617,7 @@ public class DatabaseSessionUnitTest extends TestCase {
           orderList,                // ORDER BY
           null,                     // LIMIT
           0,                        // OFFSET
-          true,                                             // DISTINCT
+          true,                     // DISTINCT
           new UnconstrainedAnswer() // GIVEN
         )));
 
@@ -575,10 +628,7 @@ public class DatabaseSessionUnitTest extends TestCase {
         while (true) {
           boolean hasAnswer = answer.next();
           boolean hasResult = i.hasNext();
-          if (!hasAnswer && !hasResult) {
-            break;
-          }
-          assertTrue(test.errorString, hasAnswer && hasResult);
+          if (!hasAnswer && !hasResult) break;
           int c = 0;
           for (Object obj: i.next()) {
             assertEquals(test.errorString, obj.toString(), answer.getObject(c++).toString());

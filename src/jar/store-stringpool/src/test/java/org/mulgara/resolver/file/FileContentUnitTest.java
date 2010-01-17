@@ -68,7 +68,7 @@ public class FileContentUnitTest extends TestCase {
    */
   private static String dataDirectory =
       System.getProperty("cvs.root")+"/data";
-  
+
   /**
    * Create the testing class
    *
@@ -97,7 +97,7 @@ public class FileContentUnitTest extends TestCase {
   }
 
   /**
-   * Test Content type 
+   * Test Content type
    *
    * @throws Exception Test fails
    */
@@ -105,16 +105,16 @@ public class FileContentUnitTest extends TestCase {
 
     FileContent content = null;
     MimeType mimeType = null;
-    
-    // obtain a valid content type via a redirect site 
+
+    // obtain a valid content type via a redirect site
     content = new FileContent(new File(dataDirectory+"/numbers.rdf.gz"));
     mimeType = content.getContentType();
     assertTrue("Expecting mime type of null but found " + mimeType,
-        mimeType == null );    
+        mimeType == null );
   }
 
   /**
-   * Test invalid Content type 
+   * Test invalid Content type
    *
    * @throws Exception Test fails
    */
@@ -122,30 +122,30 @@ public class FileContentUnitTest extends TestCase {
 
     FileContent content = null;
     MimeType mimeType = null;
-            
+
     content = new FileContent(new File(dataDirectory+"/numbers.rdf.gz.bad"));
 
     mimeType = content.getContentType();
     assertTrue("Expecting mime type of null but found " + mimeType,
-        mimeType == null );       
-        
+        mimeType == null );
+
   }
 
   public void testValidInputStream() throws Exception {
 
     FileContent content = null;
-    content = new FileContent(new File(dataDirectory+"/numbers.rdf.gz"));
+    content = new FileContent(getClass().getResource("/data/numbers.rdf.gz").toURI());
     InputStream stream = content.newInputStream();
     assertTrue("Expecting an input stream ", stream != null);
     assertTrue("Expecting 36218 bytes from inputstream ", dumpAndCheck(stream) == 36218);
-    stream.close(); 
-    
-    content = new FileContent(new File(dataDirectory+"/RDF-Test-Cases-2001-09-12.zip"));
+    stream.close();
+
+    content = new FileContent(getClass().getResource("/data/RDF-Test-Cases-2001-09-12.zip").toURI());
     stream = content.newInputStream();
     assertTrue("Expecting an input stream ", stream != null);
     assertTrue("Expecting 787 bytes from inputstream ", dumpAndCheck(stream) == 787);
     stream.close();
-    
+
   }
 
   public void testInvalidInputStream() throws Exception {
@@ -165,7 +165,7 @@ public class FileContentUnitTest extends TestCase {
 
     File tmpFile = TempDir.createTempFile("stream", ".dat");
     tmpFile.deleteOnExit();
-    
+
     FileOutputStream out = new FileOutputStream(tmpFile);
 
     byte[] buffer = new byte[10000];

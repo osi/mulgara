@@ -35,9 +35,9 @@ import org.jrdf.vocabulary.RDF;
 import org.apache.log4j.*;
 
 // Mp3 Library
-import org.blinkenlights.id3.*;
-import org.blinkenlights.id3.v1.*;
-import org.blinkenlights.id3.v2.*;
+import org.blinkenlights.jid3.*;
+import org.blinkenlights.jid3.v1.*;
+import org.blinkenlights.jid3.v2.*;
 
 // Internal packages
 import org.mulgara.content.mp3.parser.api.*;
@@ -85,8 +85,8 @@ public final class ID3ParserImpl implements ID3Parser {
    */
   public void parseTags(MP3Conversion mp3File) throws ParserException {
 
-    ID3V1Tags id3v1 = null;
-    ID3V2Tags id3v2 = null;
+    ID3V1Tag id3v1 = null;
+    ID3V2Tag id3v2 = null;
 
     try {
       // Get the v1 tag associated with the conversion

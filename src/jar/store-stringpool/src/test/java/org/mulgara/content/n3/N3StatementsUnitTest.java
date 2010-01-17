@@ -106,16 +106,13 @@ public class N3StatementsUnitTest extends TestCase {
    */
   public void test1() throws Exception
   {
-    File file = new File(
-                  new File(new File(System.getProperty("cvs.root")), "data"),
-                  "test0014.nt"
-                );
+    URI uri = getClass().getResource("/data/test0014.nt").toURI();
 
     // Obtain a content handler for the test file
     Content content = (Content)
       Class.forName("org.mulgara.resolver.file.FileContent")
-           .getConstructor(new Class[] { File.class })
-           .newInstance(new Object[] { file });
+           .getConstructor(new Class[] { URI.class })
+           .newInstance(new Object[] { uri });
     assert content != null;
 
     // Obtain a resolver session

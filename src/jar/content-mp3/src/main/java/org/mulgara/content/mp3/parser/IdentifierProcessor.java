@@ -36,7 +36,7 @@ import java.net.URISyntaxException;
 import org.apache.log4j.*;
 
 // MP3 Library
-import org.blinkenlights.id3.v2.*;
+import org.blinkenlights.jid3.v2.*;
 
 // JRDF
 import org.jrdf.graph.*;

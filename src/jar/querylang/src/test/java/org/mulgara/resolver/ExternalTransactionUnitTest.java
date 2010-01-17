@@ -10,7 +10,7 @@
  * under the License.
  *
  * This file is an original work developed by Netymon Pty Ltd
- * (http://www.netymon.com, mailto:mail@netymon.com) under contract to 
+ * (http://www.netymon.com, mailto:mail@netymon.com) under contract to
  * Topaz Foundation. Portions created under this contract are
  * Copyright (c) 2007 Topaz Foundation
  * All Rights Reserved.
@@ -51,7 +51,7 @@ import org.mulgara.server.Session;
 import org.mulgara.util.FileUtil;
 
 /**
- * Testing Externally Mediated Transactions. 
+ * Testing Externally Mediated Transactions.
  *
  * @created 2007-11-27
  * @author <a href="mailto:andrae@netymon.com">Andrae Muys</a>
@@ -131,7 +131,7 @@ public class ExternalTransactionUnitTest extends TestCase {
     if (database == null) {
       // Create the persistence directory
       File persistenceDirectory =
-        new File(new File(System.getProperty("cvs.root")), "testDatabase");
+        new File("target/testDatabase");
       if (persistenceDirectory.isDirectory()) {
         if (!FileUtil.deleteDirectory(persistenceDirectory)) {
           throw new RuntimeException(
@@ -209,7 +209,7 @@ public class ExternalTransactionUnitTest extends TestCase {
     public TestXid(int xid) {
       this.xid = xid;
     }
-    
+
     public int getFormatId() {
       return 'X';
     }

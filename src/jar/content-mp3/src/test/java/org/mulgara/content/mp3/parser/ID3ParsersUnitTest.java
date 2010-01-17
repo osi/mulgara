@@ -34,8 +34,8 @@ import java.io.*;
 import org.apache.log4j.*;
 
 // Mp3 Library
-import org.blinkenlights.id3.*;
-import org.blinkenlights.id3.v1.*;
+import org.blinkenlights.jid3.*;
+import org.blinkenlights.jid3.v1.*;
 
 // JRDF
 import org.jrdf.graph.mem.*;
@@ -157,7 +157,7 @@ public class ID3ParsersUnitTest extends TestCase {
 
     // Container for an MP3 file
     MP3File file = null;
-    ID3V1Tags id3v1 = null;
+    ID3V1Tag id3v1 = null;
 
     try {
 
@@ -165,7 +165,7 @@ public class ID3ParsersUnitTest extends TestCase {
       file = new MP3File(mp3File);
 
       // Get the v1 tag of the file
-      id3v1 = file.getID3V1Tags();
+      id3v1 = file.getID3V1Tag();
 
     }
     catch (ID3Exception tagException) {
@@ -182,14 +182,14 @@ public class ID3ParsersUnitTest extends TestCase {
     if (id3v1 == null) {
 
       // If the tag does not exist then create a new one
-      id3v1 = new ID3V1_0Tags();
+      id3v1 = new ID3V1_0Tag();
     }
 
     // Set the tag values
     id3v1.setAlbum("Residence");
     id3v1.setArtist("Karaoke Tundra");
     id3v1.setComment("http://www.kikapu.com");
-    id3v1.setGenre(ID3V1Tags.Genre.Electronic);
+    id3v1.setGenre(ID3V1Tag.Genre.Electronic);
     id3v1.setTitle("Green & Parrot");
     id3v1.setYear("2004");
 
@@ -214,7 +214,7 @@ public class ID3ParsersUnitTest extends TestCase {
       if (log.isDebugEnabled()) {
 
         try {
-          log.debug("--  " + file.getID3V2Tags());
+          log.debug("--  " + file.getID3V2Tag());
         }
         catch (ID3Exception tagException) {
           // Log the error
@@ -228,7 +228,7 @@ public class ID3ParsersUnitTest extends TestCase {
         }
       }
 
-      file.removeID3V2Tags();
+      file.removeID3V2Tag();
     }
     catch (ID3Exception tagException) {
 
@@ -407,10 +407,10 @@ public class ID3ParsersUnitTest extends TestCase {
       property = processor.resolveIdentifier(IdentifierProcessor.MCDI);
 
       // Check that we have the correct genre
-      assertTrue("Genre was not " + ID3V1Tags.Genre.Electronic + " as " +
+      assertTrue("Genre was not " + ID3V1Tag.Genre.Electronic + " as " +
           "expected for id3v1 resource.",
           model.contains(null, property,
-          model.getElementFactory().createLiteral(ID3V1Tags.Genre.Electronic.toString())));
+          model.getElementFactory().createLiteral(ID3V1Tag.Genre.Electronic.toString())));
 
       // Create a property to signify the title
       property = processor.resolveIdentifier(IdentifierProcessor.TOAL);

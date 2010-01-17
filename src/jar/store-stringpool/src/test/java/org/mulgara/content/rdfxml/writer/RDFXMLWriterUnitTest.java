@@ -28,6 +28,7 @@
 package org.mulgara.content.rdfxml.writer;
 
 import java.io.*;
+import java.net.URI;
 
 // Third party packages
 import junit.framework.*;
@@ -65,9 +66,7 @@ public class RDFXMLWriterUnitTest extends TestCase {
   private RDFXMLContentHandler contentHandler = null;
 
   /** RDF file that can be parsed to provide Statements */
-  private static final String RDF_FILE = System.getProperty("cvs.root") +
-      System.getProperty("file.separator") + "data" +
-      System.getProperty("file.separator") + "ical.rdf";
+  private static final String RDF_FILE = "/data/ical.rdf";
 //  private static final String RDF_FILE = "/spare/test/mulgara/jxdata/iTQL/data.rdf";
 
 
@@ -104,7 +103,7 @@ public class RDFXMLWriterUnitTest extends TestCase {
 
     try {
 
-      File rdfFile = new File(RDF_FILE);
+      URI rdfFile = getClass().getResource(RDF_FILE).toURI();
       Content rdfContent = new FileContent(rdfFile);
 
       //check to be sure test data is ok

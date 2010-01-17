@@ -31,7 +31,7 @@ package org.mulgara.content.mp3.parser;
 import org.apache.log4j.*;
 
 // MP3 Library
-import org.blinkenlights.id3.v1.*;
+import org.blinkenlights.jid3.v1.*;
 
 // JRDF Library
 import org.jrdf.graph.*;
@@ -81,7 +81,7 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
    *
    * @throws ParserException
    */
-  public void parseRDF(ID3V1Tags id3v1, SubjectNode mp3Resource,
+  public void parseRDF(ID3V1Tag id3v1, SubjectNode mp3Resource,
       Graph graph) throws ParserException {
 
     // Get the element factory for the graph
@@ -204,12 +204,12 @@ public final class ID3v1ParserImpl implements ID3v1Parser {
       log.debug("Added year " + id3v1.getYear());
     }
 
-    if (id3v1 instanceof ID3V1_1Tags) {
+    if (id3v1 instanceof ID3V1_1Tag) {
 
       try {
         // Add the track property
         graph.add(mp3Resource, processor.resolveIdentifier(IdentifierProcessor.TRCK),
-            factory.createLiteral("" + ((ID3V1_1Tags) id3v1).getAlbumTrack()));
+            factory.createLiteral("" + ((ID3V1_1Tag) id3v1).getAlbumTrack()));
       } catch (GraphException graphException) {
 
         throw new ParserException(

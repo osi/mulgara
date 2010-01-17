@@ -8,10 +8,24 @@
       <version>2.1.7-SNAPSHOT</version>
       <relativePath>../../../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>content-mp3</artifactId>
     <packaging>jar</packaging>
 
     <name>content-mp3</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>store-stringpool</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.blinkenlights.jid3</groupId>
+            <artifactId>JID3</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>

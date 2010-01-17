@@ -35,9 +35,9 @@ import java.net.URI;
 import org.apache.log4j.*;
 
 // Mp3 Library
-import org.blinkenlights.id3.*;
-import org.blinkenlights.id3.v1.*;
-import org.blinkenlights.id3.v2.*;
+import org.blinkenlights.jid3.*;
+import org.blinkenlights.jid3.v1.*;
+import org.blinkenlights.jid3.v2.*;
 
 // JRDF
 import org.jrdf.graph.mem.*;
@@ -273,9 +273,9 @@ public class MP3Conversion {
    * @return The ID3v1 tag associated with this object
    * @throws ID3Exception error reading the file.
    */
-  public ID3V1Tags getV1Tag () throws ID3Exception {
+  public ID3V1Tag getV1Tag () throws ID3Exception {
 
-    return mp3File.getID3V1Tags();
+    return mp3File.getID3V1Tag();
   }
 
   /**
@@ -284,8 +284,8 @@ public class MP3Conversion {
    * @return The ID3v2 tag associated with this object
    * @throws ID3Exception error reading the file.
    */
-  public ID3V2Tags getV2Tag () throws ID3Exception {
+  public ID3V2Tag getV2Tag () throws ID3Exception {
 
-    return mp3File.getID3V2Tags();
+    return mp3File.getID3V2Tag();
   }
 }

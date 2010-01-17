@@ -42,7 +42,7 @@ import org.jrdf.graph.mem.*;
 import org.jrdf.util.ClosableIterator;
 
 // Mp3 Library
-import org.blinkenlights.id3.*;
+import org.blinkenlights.jid3.*;
 
 // Locally written packages
 import org.mulgara.content.Content;

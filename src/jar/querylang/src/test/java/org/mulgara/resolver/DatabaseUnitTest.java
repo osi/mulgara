@@ -123,8 +123,7 @@ public class DatabaseUnitTest extends TestCase {
     URI systemModelURI = new URI("local:database#");
 
     // Create the persistence directory
-    File persistenceDirectory =
-      new File(new File(System.getProperty("cvs.root")), "testDatabase");
+    File persistenceDirectory = new File("target/testDatbase");
     if (persistenceDirectory.isDirectory()) {
       if (!FileUtil.deleteDirectory(persistenceDirectory)) {
         throw new RuntimeException(

@@ -30,7 +30,6 @@
         <module>src/jar/rdql</module>
         <module>src/jar/resolver</module>
         <module>src/jar/resolver-distributed</module>
-        <module>src/jar/resolver-file</module>
         <module>src/jar/resolver-filesystem</module>
         <module>src/jar/resolver-gis</module>
         <module>src/jar/resolver-http</module>
@@ -51,7 +50,6 @@
         <module>src/jar/server-rmi</module>
         <module>src/jar/store</module>
         <module>src/jar/store-nodepool</module>
-        <module>src/jar/store-nodepool-memory</module>
         <module>src/jar/store-nodepool-xa</module>
         <module>src/jar/store-stringpool</module>
         <module>src/jar/store-stringpool-memory</module>
@@ -196,6 +194,31 @@
                 <groupId>jotm</groupId>
                 <artifactId>jotm</artifactId>
                 <version>2.0.10</version>
+            </dependency>
+            <dependency>
+              <groupId>javax.resource</groupId>
+              <artifactId>connector-api</artifactId>
+              <version>1.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.0-beta2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.blinkenlights.jid3</groupId>
+                <artifactId>JID3</artifactId>
+                <version>0.46</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>2.4.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

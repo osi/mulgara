@@ -124,8 +124,7 @@ public class DatabaseSessionListQueryUnitTest extends TestCase {
    */
   public void setUp() throws Exception {
     // Create the persistence directory
-    File persistenceDirectory =
-        new File(new File(System.getProperty("cvs.root")), "testDatabase");
+    File persistenceDirectory = new File("target/testDatbase");
     if (persistenceDirectory.isDirectory()) {
       if (!FileUtil.deleteDirectory(persistenceDirectory)) {
         throw new RuntimeException(

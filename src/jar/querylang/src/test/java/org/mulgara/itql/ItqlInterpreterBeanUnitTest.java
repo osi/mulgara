@@ -122,14 +122,6 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     // delegate to super class constructor
     super(name);
-
-    // load the logging configuration
-    try {
-      DOMConfigurator.configure(System.getProperty("cvs.root") + "/log4j-conf.xml");
-    } catch (FactoryConfigurationError fce) {
-      log.error("Unable to configure logging service from XML configuration file");
-    }
-
   }
 
   /**
@@ -178,7 +170,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     junit.textui.TestRunner.run(suite());
   }
-  
+
   /**
    * Convert Windows line endings...
    */
@@ -642,11 +634,11 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     try {
       File file = new File(tmpDirectory, "server.gz");
       file.delete();
-  
+
       URI serverURI = new URI("rmi://localhost/server1");
-  
+
       bean.backup(serverURI, file);
-  
+
       assertTrue("Excepting a backup file", file.exists());
     } catch (QueryException e) {
       System.err.println("Error processing query" + e);
@@ -674,11 +666,11 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     try {
       File file = new File(tmpDirectory, "server2.gz");
       file.delete();
-  
+
       URI serverURI = new URI("rmi://localhost/server1");
-  
+
       bean.backup(serverURI, new FileOutputStream(file));
-  
+
       assertTrue("Excepting a backup file", file.exists());
     } catch (QueryException e) {
       System.err.println("Error processing query" + e);
@@ -689,7 +681,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
       }
       throw e;
     }
-  
+
   }
 
   /**
@@ -749,9 +741,9 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
 
     try {
       File file = new File(tmpDirectory, "server2.gz");
-  
+
       URI serverURI = new URI("rmi://localhost/server1");
-  
+
       bean.restore(file.toURI().toURL().openStream(), serverURI);
     } catch (QueryException e) {
       System.err.println("Error processing query" + e);
@@ -777,9 +769,9 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     try {
       // log that we're executing the test
       log.debug("Starting round trip test 1");
-  
+
       URI serverURI = new URI("rmi://" + hostName + "/server1");
-  
+
       // test the output
       String select = "select $o from <" + testModel + "> " +
           "where <rmi://" + hostName +
@@ -788,7 +780,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
           "/foobar> <http://purl.org/dc/elements/1.1/creator> $o or " +
           " <rmi://" + hostName +
           "/server1/foobar> <http://purl.org/dc/elements/1.1/creator> $o ;";
-  
+
       // insert statements with a subject the same as the
       // server name
       String insert = "insert " +
@@ -799,25 +791,25 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
           "<rmi://" + hostName +
           "/server1/foobar> <http://purl.org/dc/elements/1.1/creator> 'server1/foobar' " +
           " into <" + testModel + ">;";
-  
+
       // insert the statement
       bean.executeQuery(insert);
-  
+
       // select the statement
       Answer answer = bean.executeQuery(select);
       assertTrue("Excepting a answer before restore", answer != null);
       assertTrue("Excepting a single result and found :" +
           answer.getRowCount(), (answer.getRowCount() == 3));
-  
+
       //backup the server
       File file = new File(tmpDirectory, "roundtrip.gz");
       file.delete();
       bean.backup(serverURI, new FileOutputStream(file));
       assertTrue("Excepting a backup file", file.exists());
-  
+
       // restore the server
       bean.restore(file.toURI().toURL().openStream(), serverURI);
-  
+
       // select the statement
       answer = bean.executeQuery(select);
       assertTrue("Excepting a answer after restore", answer != null);
