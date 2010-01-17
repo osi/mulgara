@@ -1,12 +1,14 @@
 <?xml version  = "1.0" encoding="ISO-8859-1"?>
-<project xmlns = "http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>org.mulgara</groupId>
-      <artifactId>mulgara</artifactId>
-      <version>2.1.7-SNAPSHOT</version>
-      <relativePath>../../../pom.xml</relativePath>
+        <groupId>org.mulgara</groupId>
+        <artifactId>mulgara</artifactId>
+        <version>2.1.7-SNAPSHOT</version>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
     <artifactId>query</artifactId>
@@ -48,5 +50,32 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- TODO needs the mulgara server, but we can't @BeforeClass it since Jena's test are junit3 -->
+                        <exclude>**/TestGraphMulgara*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

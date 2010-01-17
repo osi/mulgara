@@ -23,7 +23,6 @@
             <groupId>org.mulgara</groupId>
             <artifactId>querylang</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

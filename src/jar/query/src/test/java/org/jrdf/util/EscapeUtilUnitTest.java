@@ -37,7 +37,7 @@ public class EscapeUtilUnitTest extends TestCase {
         testEscapedValue("\\u2260", "\u2260");
         testEscapedValue("q", "\u0071");
         testEscapedValue("\\u030C", "\u030c");
-        testEscapedValue("\\u00E9", "Ž");
+        testEscapedValue("\\u00E9", "\u00e9");
     }
 
     public void testControlCharacters() {
