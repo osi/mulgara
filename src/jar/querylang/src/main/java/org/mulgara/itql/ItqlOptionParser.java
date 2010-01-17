@@ -106,8 +106,8 @@ public class ItqlOptionParser extends CmdLineParser {
    */
   public final static Option SCRIPT =
       new CmdLineParser.Option.StringOption('s', "script");
-  
-  
+
+
   /**
    * option to specify a remote host to query for model names
    */
@@ -207,7 +207,8 @@ public class ItqlOptionParser extends CmdLineParser {
       if (remainingArgs.length > 0) {
 
         // throw a new exception to indicate that there were unkown arguments
-        throw new UnknownOptionException(remainingArgs[0]);
+//        throw new UnknownOptionException(remainingArgs[0]);
+        throw new RuntimeException(remainingArgs[0]);
       }
 
       // end if

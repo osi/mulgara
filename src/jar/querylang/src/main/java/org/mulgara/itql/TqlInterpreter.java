@@ -68,7 +68,7 @@ import org.mulgara.util.URIUtil;
  * Interactive TQL (ITQL) command interpreter.
  * Performs parsing and converting TQL requests to query objects for execution;
  * Based on ItqlInterpreter.
- * 
+ *
  * <em>This class is non-reentrant. Parsing should be serialized, or else use a new TqlInterpreters
  * for each thread.</em>
  *
@@ -110,7 +110,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
   /** The command for the callbacks to fill, while parseCommand is running */
   Command lastCommand = null;
-  
+
   /** The last exception or error, to be filled in during the callback operations. */
   Throwable lastError = null;
 
@@ -159,11 +159,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     }
   }
 
-  /**   
+  /**
    * Set up default aliases.
    *
    * @return A map of aliases to their fully qualified names
-   */        
+   */
   public static Map<String,URI> getDefaultAliases() {
     Map<String,URI> aliases = new HashMap<String,URI>();
     aliases.put(RDF, URI.create(RDF_NS));
@@ -175,7 +175,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     aliases.put(SKOS, URI.create(SKOS_NS));
     aliases.put(FOAF, URI.create(FOAF_NS));
     return aliases;
-  }  
+  }
 
 
   //
@@ -220,10 +220,10 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     try {
       // if the lexer saw terminators, parse the associated commands
       if (lexer.nextCommand()) {
-  
+
         Start commandTree = null;
         String commandText = lexer.getCurrentCommand();
-  
+
         // parse the command
         Parser parser = new Parser(lexer);
         commandTree = parser.parse();
@@ -241,7 +241,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     } finally {
       flush();
     }
-    
+
     return lastCommand;
   }
 
@@ -304,7 +304,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
         resetInterpreter();
         commandTree.apply(this);
         lastCommand.setText(commandText);
-        
+
         // take the lastCommand result, and add it to the list of results
         commandList.add(lastCommand);
 
@@ -539,13 +539,13 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       URI ruleGraph = toURI(node.getRules());
       PModelExpression rawModelExpression = node.getBase();
       GraphExpression baseGraph = GraphExpressionBuilder.build(aliasMap, rawModelExpression);
-      
+
       Token dest = null;
       PDestinationClause rawDestinationClause = node.getDestination();
       if (rawDestinationClause != null) {
         dest = ((ADestinationClause)rawDestinationClause).getResource();
       }
-      
+
       URI destGraph = null;
       if (dest == null) {
         destGraph = baseGraph instanceof GraphResource ? ((GraphResource)baseGraph).getURI() : URI.create(Mulgara.DEFAULT_GRAPH);
@@ -745,7 +745,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    * @param node the backup command
    */
   public void outAExportCommand(AExportCommand node) {
-    
+
     // log the command
     if (logger.isDebugEnabled()) logger.debug("Processing export command " + node);
 
@@ -758,7 +758,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     exportCommand.setNamespacePrefixes(aliasMap);
     lastCommand = exportCommand;
   }
-  
+
   /**
    * Restores the contents of a server from a file.
    *
@@ -797,44 +797,44 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
   @SuppressWarnings("unchecked")
   public Set<org.jrdf.graph.Triple> getStatements(ATripleSetOfTriples setOfTriples, Map<String,VariableNodeImpl> variableMap)
       throws QueryException, URISyntaxException {
-  
-    List<ATriple> tripleList = (List<ATriple>)setOfTriples.getTriple();
+
+    List<ATriple> tripleList = (List<ATriple>)(LinkedList)setOfTriples.getTriple();
     HashSet<org.jrdf.graph.Triple> statements = new HashSet<org.jrdf.graph.Triple>();
-  
+
     // Check that each set of triples has the predicate bound.
     for (Iterator<ATriple> i = tripleList.iterator(); i.hasNext(); ) {
-  
+
       // get the triple
       ATriple triple = i.next();
-  
+
       // Convert the Subject, Predicate and Object.
       org.jrdf.graph.Node subject = toNode(triple.getSubject(), variableMap);
       org.jrdf.graph.Node predicate = toNode(triple.getPredicate(), variableMap);
       org.jrdf.graph.Node object = toNode(triple.getObject(), variableMap);
-  
+
       // Predicate cannot be a blank node.
       if (predicate instanceof BlankNode) {
         throw new QueryException("Predicate must be a valid URI");
       }
-  
+
       // Check that the subject or predicate node is not a literal.
       if (subject instanceof LiteralImpl ||
           predicate instanceof LiteralImpl) {
-  
+
         // throw an exception indicating we have a bad triple
         throw new QueryException(
             "Subject or Predicate cannot be a literal");
       }
-  
+
       // Create a new statement using the triple elements
       org.jrdf.graph.Triple jrdfTriple = new TripleImpl(
           (SubjectNode) subject, (PredicateNode) predicate,
           (ObjectNode) object);
-  
+
       // add the statement to the statement set
       statements.add(jrdfTriple);
     }
-  
+
     return statements;
   }
 
@@ -856,10 +856,10 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    */
   @SuppressWarnings("unchecked")
   public Query buildQuery(org.mulgara.itql.node.Node rawQuery) throws QueryException, URISyntaxException {
-  
+
     // validate query parameter
     if (rawQuery == null) throw new IllegalArgumentException("Null \"rawQuery\" parameter");
-  
+
     // create the variables.  May contain a PElement; Count; URI literal; or a sub query
     LinkedList<PElement> variables = null;
     AFromClause fromClause;
@@ -873,7 +873,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // cast the correct way (we don't have a common superclass, event though we
     // have methods with the same names)
     if (rawQuery instanceof AQuery) {
-  
+
       AQuery query = (AQuery) rawQuery;
       PSelectClause selectClause = query.getSelectClause();
       if (selectClause instanceof ANormalSelectSelectClause) {
@@ -887,7 +887,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       limitClause = ((ALimitClause)query.getLimitClause());
       offsetClause = ((AOffsetClause)query.getOffsetClause());
     } else if (rawQuery instanceof ASelectSetOfTriples) {
-  
+
       ASelectSetOfTriples query = (ASelectSetOfTriples) rawQuery;
       variables = new LinkedList<PElement>();
       variables.add(query.getSubject());
@@ -900,11 +900,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       limitClause = ((ALimitClause)query.getLimitClause());
       offsetClause = ((AOffsetClause)query.getOffsetClause());
     } else {
-  
+
       // we only handle AQuery and ASelectSetOfTriples
       throw new IllegalArgumentException("Invalid type for \"rawQuery\" parameter");
     }
-  
+
     if (fromClause == null) throw new QueryException("FROM clause missing.");
     if (whereClause == null) throw new QueryException("WHERE clause missing.");
 
@@ -912,28 +912,28 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     if (logger.isDebugEnabled()) logger.debug("Building query variable list from " + variables);
     List<SelectElement> variableList = this.buildVariableList(variables);
     if (logger.isDebugEnabled()) logger.debug("Built variable list " + variableList);
-  
+
     // get the model expression from the parser
     PModelExpression rawModelExpression = fromClause.getModelExpression();
     if (logger.isDebugEnabled()) logger.debug("Building model expression from " + rawModelExpression);
     // parse the text into a model expression
     GraphExpression graphExpression = GraphExpressionBuilder.build(this.getAliasMap(), rawModelExpression);
     if (logger.isDebugEnabled()) logger.debug("Built model expression " + graphExpression);
-  
+
     // get the constraint expression from the parser
     PConstraintExpression rawConstraintExpression = whereClause.getConstraintExpression();
     if (logger.isDebugEnabled()) logger.debug("Building constraint expression from " + rawConstraintExpression);
     // parse the text into a constraint expression
     ConstraintExpression constraintExpression = build(rawConstraintExpression);
     if (logger.isDebugEnabled()) logger.debug("Built constraint expression " + constraintExpression);
-  
+
     // build the order list
     List<Order> orderList = buildOrderList(orderClause);
 
     // build the having clause
     ConstraintHaving havingExpression = buildHaving(havingClause);
-  
-  
+
+
     // build the limit and offset
     Integer limit = null;
     int offset = 0;
@@ -944,7 +944,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       String failedType = (limit == null) ? "limit" : "offset";
       throw new Error("Parser permitted non-integer for " + failedType, e);
     }
-  
+
     // build a query using the information we've obtained from the parser
     return new Query(variableList, graphExpression, constraintExpression,
         havingExpression, orderList, limit, offset, distinct, new UnconstrainedAnswer());
@@ -959,13 +959,13 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    * @see org.mulgara.itql.SableCCInterpreter#toLiteralImpl(PLiteral)
    */
   public LiteralImpl toLiteralImpl(PLiteral p) {
-  
+
     ALiteral aLiteral = (ALiteral)p;
-  
+
     // Determine the datatype URI, if present
     ADatatype type = (ADatatype)aLiteral.getDatatype();
     URI datatypeURI = (type != null) ? toURI(type.getResource()) : null;
-  
+
     if (datatypeURI != null) {
       return new LiteralImpl(getLiteralText(aLiteral), datatypeURI);
     } else {
@@ -982,7 +982,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    * @see org.mulgara.itql.SableCCInterpreter#toURI(Token)
    */
   public URI toURI(Token token) {
-  
+
     assert token instanceof TResource;
     return URIUtil.convertToURI(token.getText(), aliasMap);
   }
@@ -996,7 +996,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     return new Variable("av__" + this.anonSuffix++);
   }
 
-  
+
   /**
    * Builds a {@link org.mulgara.query.ConstraintExpression} object from a
    * {@link org.mulgara.itql.node.PConstraintExpression}, using an <code>aliasMap</code>
@@ -1012,18 +1012,18 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    */
   public ConstraintExpression build(PConstraintExpression expression) throws
       QueryException, URISyntaxException {
-  
+
     // validate parameters
     if (aliasMap == null) throw new IllegalArgumentException("Null \"aliasMap\" parameter");
     if (expression == null) throw new IllegalArgumentException("Null \"expression\" parameter");
-  
+
     if (logger.isDebugEnabled()) logger.debug("Building constraint expression from " + expression);
-  
+
     // build the contraint expression from the parser input
     expression.apply((Switch)builder);
     ConstraintExpression constraintExpression = builder.getConstraintExpression();
     if (logger.isDebugEnabled()) logger.debug("Successfully built constraint expression from " + expression);
-  
+
     // return the new constraint expression
     return constraintExpression;
   }
@@ -1037,19 +1037,19 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    */
   @SuppressWarnings("unchecked")
   public static String getLiteralText(ALiteral literal) {
-  
+
     // validate the literal parameter
     if (literal == null) throw new IllegalArgumentException("Null \"literal\" " + "parameter");
-  
+
     // the text of the literal
     StringBuffer literalText = new StringBuffer();
-  
+
     // get all the strands in this literal
     List<PStrand> strands = (List<PStrand>)literal.getStrand();
-  
+
     // add each strand together to make the literal text
     for (PStrand strand: strands) {
-      
+
       // add the strand to the literal text
       if (strand instanceof AUnescapedStrand) {
         literalText.append(((AUnescapedStrand)strand).getText().getText());
@@ -1109,36 +1109,36 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    */
   List<SelectElement> buildVariableList(LinkedList<PElement> rawVariableList) throws
       QueryException, URISyntaxException {
-  
+
     // Empty variable list.
     if (rawVariableList == null) return Collections.emptyList();
-  
+
     // validate rawVariableList parameter
     if (rawVariableList.size() == 0) throw new IllegalArgumentException("Empty \"rawVariableList\" parameter");
-  
+
     // Construct the required builder
     VariableBuilder variableBuilder = new VariableBuilder(this, variableFactory);
-  
+
     // end if
     // log that we're building the variable list
     if (logger.isDebugEnabled()) logger.debug("Building variable list from " + rawVariableList);
-  
+
     // copy each variable from the query into the list
     for (PElement element: rawVariableList) element.apply((Switch)variableBuilder);
-  
+
     // Get the variable list
     List<SelectElement> variableList = variableBuilder.getVariableList();
-  
+
     // make sure that we return a list with something in it
     if (variableList.size() == 0) {
       throw new QueryException("No variables parseable from query");
     }
-  
+
     // log that we've successfully built the variable list
     if (logger.isDebugEnabled()) {
       logger.debug("Built variable list " + variableList);
     }
-  
+
     // return the list
     return variableList;
   }
@@ -1159,31 +1159,31 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
   @SuppressWarnings("unchecked")
   List<Order> buildOrderList(AOrderClause orderClause) throws QueryException {
 
-    // short circuit for an empty clause 
+    // short circuit for an empty clause
     if (orderClause == null) return (List<Order>)Collections.EMPTY_LIST;
-    
+
     // get the list of elements in the clause
-    LinkedList<AOrderElement> rawOrderList = (LinkedList<AOrderElement>)orderClause.getOrderElement();
-    
+    LinkedList<AOrderElement> rawOrderList = (LinkedList<AOrderElement>) (LinkedList) orderClause.getOrderElement();
+
     assert rawOrderList != null && !rawOrderList.isEmpty();
-  
+
     if (logger.isDebugEnabled()) logger.debug("Building order list from " + rawOrderList);
-  
+
     // create a list for the parsed variables
     List<Order> orderList = new ArrayList<Order>(rawOrderList.size());
-  
+
     // copy each variable from the query into the list
     for (AOrderElement order: rawOrderList) {
 
       // get the name of this variable
       String variableName = ((AVariable)order.getVariable()).getIdentifier().getText();
-  
+
       if (logger.isDebugEnabled()) logger.debug("Found variable $" + variableName);
-  
+
       // Figure out which way to order, ascending or descending
       boolean ascending;
       PDirection direction = order.getDirection();
-  
+
       if (direction == null) {
         ascending = true;
       } else if (direction instanceof AAscendingDirection) {
@@ -1193,14 +1193,14 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
       } else {
         throw new Error("Unknown direction field in order");
       }
-  
+
       // add a new ordered variable to the list
       orderList.add(new Order(new Variable(variableName), ascending));
     }
-  
+
     // make sure that we return a list with something in it
     if (orderList.size() == 0) throw new QueryException("No variables parseable from query");
-  
+
     if (logger.isDebugEnabled()) logger.debug("Built order list " + orderList);
     return orderList;
   }
@@ -1221,20 +1221,20 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
    *      href="http://www.isi.edu/in-notes/rfc2396.txt">RFC?2396</a>
    */
   ConstraintHaving buildHaving(AHavingClause havingClause) throws QueryException, URISyntaxException {
-  
+
     // short circuit if there is no having clause
     if (havingClause == null) return null;
-    
+
     // get the constraint expression from the parser
     PConstraintExpression rawHavingExpression = havingClause.getConstraintExpression();
     if (logger.isDebugEnabled()) logger.debug("Building constraint expression from " + rawHavingExpression);
-  
+
     ConstraintExpression hExpr = build(rawHavingExpression);
-  
+
     // do some gramatical checking on the clause
     if (hExpr instanceof ConstraintOperation) throw new QueryException("Having currently supports only one constraint");
     if (!checkHavingPredicates(hExpr)) throw new QueryException("Only \"occurs\" predicates can be used in a Having clause");
-  
+
     return (ConstraintHaving)hExpr;
   }
 
@@ -1265,8 +1265,8 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     // Reset the variable incrementer in the query.
     variableFactory.reset();
   }
-  
-  
+
+
   /**
    * @param graphURI
    * @param tripleFactor
@@ -1281,7 +1281,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     } else throw new RuntimeException("Unhandled Grammar Exception: Unknown type of triple factor: " + tripleFactor.getClass().getName());
 
     try {
-      // Create the correct type of modifier for the data 
+      // Create the correct type of modifier for the data
       if (setOfTriples instanceof AResourceSetOfTriples) {
         // this is an insert of one model into another.
         throw new UnsupportedOperationException("No support for direct model to model insertion.");
@@ -1306,7 +1306,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     return null;
   }
 
-  
+
   /**
    * Factory method to create a Modification object.
    * @param graphURI The URI of the graph to be modified.
@@ -1367,11 +1367,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     if (element instanceof ALiteralTripleElement) {
       // create a new literal with the given text
       node = toLiteralImpl(((ALiteralTripleElement)element).getLiteral());
-      
+
     } else if (element instanceof AResourceTripleElement) {
       // create a new resource
       node = new URIReferenceImpl(toURI(((AResourceTripleElement)element).getResource()), false);
-      
+
     } else if (element instanceof AVariableTripleElement) {
 
       // get the variable
@@ -1525,7 +1525,7 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
 
 
   private static class Lexer2 extends Lexer {
-  
+
     int commandCount = 0;
     final LinkedList<Token> leftoverTokenList = new LinkedList<Token>();
     StringBuilder buildingCommand = new StringBuilder();
@@ -1535,11 +1535,11 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
     public Lexer2() {
       super(null);
     }
-  
+
     public int getCommandCount() {
       return commandCount;
     }
-  
+
     public void add(String command) throws LexerException, IOException {
       Lexer lexer = new Lexer(new PushbackReader(new StringReader(command), 256));
       Token t;
@@ -1556,15 +1556,15 @@ public class TqlInterpreter extends DepthFirstAdapter implements SableCCInterpre
         leftoverTokenList.add(t);
       }
     }
-  
+
     public Token next() throws LexerException, IOException {
       return leftoverTokenList.isEmpty() ? new EOF() : (Token) leftoverTokenList.removeFirst();
     }
-  
+
     public Token peek() throws LexerException, IOException {
       return leftoverTokenList.isEmpty() ? new EOF() : (Token) leftoverTokenList.getFirst();
     }
-  
+
     public boolean nextCommand() {
       if (commandCount == 0) {
         return false;

@@ -31,6 +31,10 @@
             <artifactId>jline</artifactId>
         </dependency>
         <dependency>
+            <groupId>soap</groupId>
+            <artifactId>soap</artifactId>
+        </dependency>
+        <dependency>
             <groupId>net.sourceforge.jxunit</groupId>
             <artifactId>jxunit</artifactId>
             <scope>test</scope>
