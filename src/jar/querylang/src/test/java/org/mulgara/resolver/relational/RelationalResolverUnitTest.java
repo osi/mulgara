@@ -17,7 +17,7 @@
  * Northrop Grumman Corporation. All Rights Reserved.
  *
  * This file is an original work and contains no Original Code.  It was
- * developed by Netymon Pty Ltd under contract to the Australian 
+ * developed by Netymon Pty Ltd under contract to the Australian
  * Commonwealth Government, Defense Science and Technology Organisation
  * under contract #4500507038 and is contributed back to the Kowari/Mulgara
  * Project as per clauses 4.1.3 and 4.1.4 of the above contract.
@@ -88,7 +88,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       databaseURI    = new URI("rmi://localhost/database");
       systemModelURI = new URI("rmi://localhost/database#");
-      
+
       testModelURI = new URI("rmi://localhost/database#test");
       testModelDefURI = new URI("rmi://localhost/database?def#test");
 
@@ -184,9 +184,7 @@ public class RelationalResolverUnitTest extends TestCase {
   @SuppressWarnings("deprecation")
   public void setUp() throws Exception {
     if (database == null) {
-      // Create the persistence directory
-      File persistenceDirectory =
-        new File(new File(System.getProperty("cvs.root")), "testDatabase");
+      File persistenceDirectory = new File("target/testDatbase");
       if (persistenceDirectory.isDirectory()) {
         if (!FileUtil.deleteDirectory(persistenceDirectory)) {
           throw new RuntimeException(
@@ -343,7 +341,7 @@ public class RelationalResolverUnitTest extends TestCase {
                  "VALUES (2, 3)");
 
     ResultSet test;
-    
+
     test = stmt.executeQuery("SELECT Persons.URI FROM Persons WHERE Persons.PersonID = 2");
     assertTrue(test.next());
     assertEquals("http://www.carson.id/brian", test.getString(1));
@@ -398,7 +396,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://www.smith.id/albert")), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -410,7 +408,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("fn") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("fn"), true)
         });
 
@@ -443,7 +441,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Albert"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -455,7 +453,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -485,7 +483,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://www.smith.id/albert")), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -497,7 +495,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("o") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("o"), true), 
+          new Order(new Variable("o"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -527,7 +525,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Smith"), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -539,7 +537,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("fn") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("fn"), true)
         });
 
@@ -578,7 +576,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Albert"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -613,7 +611,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://conferences.org/comp/confno2")), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -625,7 +623,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("loc") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("loc"), true)
         });
 
@@ -658,7 +656,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Dublin"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -670,7 +668,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("p"), true)
         });
 
@@ -700,7 +698,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://annotation.semanticweb.org/iswc/iswc.daml#firstName")), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -712,7 +710,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("o") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("p"), true),
           new Order(new Variable("o"), true)
         });
@@ -780,7 +778,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Smith"), answer.getObject(2));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -792,7 +790,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("q") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("p"), true),
           new Order(new Variable("q"), true)
         });
@@ -826,7 +824,7 @@ public class RelationalResolverUnitTest extends TestCase {
       answer.beforeFirst();
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -838,7 +836,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("q") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("p"), true),
           new Order(new Variable("q"), true)
         });
@@ -876,7 +874,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://annotation.semanticweb.org/iswc/iswc.daml#lastName")), answer.getObject(2));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -888,7 +886,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("p"), new Variable("o") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("p"), true),
           new Order(new Variable("o"), true)
         });
@@ -942,7 +940,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Carson"), answer.getObject(2));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -954,7 +952,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("title") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("title"), true)
         });
 
@@ -990,7 +988,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1002,7 +1000,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -1032,7 +1030,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper3")), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1044,7 +1042,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("o") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("o"), true), 
+          new Order(new Variable("o"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -1074,7 +1072,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(0));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1087,8 +1085,8 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("name"), new Variable("abstract") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("name"), true), 
-          new Order(new Variable("abstract"), true), 
+          new Order(new Variable("name"), true),
+          new Order(new Variable("abstract"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -1136,7 +1134,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("I prefer Donkeys"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1152,8 +1150,8 @@ public class RelationalResolverUnitTest extends TestCase {
           new Variable("title"),
         });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("name"), true), 
-          new Order(new Variable("abstract"), true), 
+          new Order(new Variable("name"), true),
+          new Order(new Variable("abstract"), true),
           new Order(new Variable("title"), true),
         });
 
@@ -1209,7 +1207,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Titel of the Paper: Why Cats?", "en"), answer.getObject(2));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1224,7 +1222,7 @@ public class RelationalResolverUnitTest extends TestCase {
           new Variable("title"),
         });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("abstract"), true), 
+          new Order(new Variable("abstract"), true),
           new Order(new Variable("title"), true),
         });
 
@@ -1265,7 +1263,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Titel of the Paper: Apes and their Friends", "en"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1277,8 +1275,8 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("title"), new Variable("author") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("title"), true), 
-          new Order(new Variable("author"), true), 
+          new Order(new Variable("title"), true),
+          new Order(new Variable("author"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -1329,7 +1327,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Carson"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1341,8 +1339,8 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("author"), new Variable("paper") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("author"), true), 
-          new Order(new Variable("paper"), true), 
+          new Order(new Variable("author"), true),
+          new Order(new Variable("paper"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -1385,7 +1383,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://www.conference.org/conf02004/paper#Paper2")), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1397,8 +1395,8 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("title"), new Variable("seeAlso") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("title"), true), 
-          new Order(new Variable("seeAlso"), true), 
+          new Order(new Variable("title"), true),
+          new Order(new Variable("seeAlso"), true),
         });
 
       Answer answer = session.query(new Query(
@@ -1435,7 +1433,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new URIReferenceImpl(new URI("http://annotation.semanticweb.org/iswc/iswc.daml")), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
@@ -1467,7 +1465,7 @@ public class RelationalResolverUnitTest extends TestCase {
     try {
       List<Variable> selectList = Arrays.asList(new Variable[] { new Variable("s"), new Variable("loc") });
       List<Order> orderList = Arrays.asList(new Order[] {
-          new Order(new Variable("s"), true), 
+          new Order(new Variable("s"), true),
           new Order(new Variable("loc"), true)
         });
 
@@ -1505,7 +1503,7 @@ public class RelationalResolverUnitTest extends TestCase {
       assertEquals(new LiteralImpl("Brisbane"), answer.getObject(1));
       assertFalse(answer.next());
       answer.close();
-        
+
     } finally {
       session.close();
     }
