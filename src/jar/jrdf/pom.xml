@@ -8,10 +8,25 @@
       <version>2.1.7-SNAPSHOT</version>
       <relativePath>../../../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>jrdf</artifactId>
     <packaging>jar</packaging>
 
     <name>jrdf</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>query</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>query</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

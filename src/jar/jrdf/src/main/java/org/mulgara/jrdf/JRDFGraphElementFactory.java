@@ -37,10 +37,7 @@ import org.jrdf.graph.*;
 import java.net.URI;
 
 // Local packages
-import org.mulgara.query.*;
 import org.mulgara.query.rdf.*;
-import org.mulgara.resolver.spi.*;
-import org.mulgara.server.*;
 
 /**
  * Creates Mulgara implemented JRDF Graph Nodes and Triples.

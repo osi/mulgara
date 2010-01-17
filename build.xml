@@ -1979,7 +1979,7 @@
     <!-- build the executable jar file -->
     <jar jarfile="${dist.dir}/${mulgara-core.jar}">
       <zipfileset dir="${conf.dir}" prefix="conf" includes="mulgara-config-core.xml, log4j-mulgara.xml, mulgara-rmi.policy, mulgara.policy"/>
-      <zipfileset file="${conf.dir}/core/mulgara-x-config.xml" prefix="conf"/>
+      <zipfileset file="src/jar/server/src/main/resources/conf/mulgara-x-config.xml" prefix="conf"/>
       <zipfileset src="${bin.dir}/${client-jrdf.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${query.jar}" excludes="**/*.xml, META-INF/**"/>
       <zipfileset src="${bin.dir}/${driver.jar}" excludes="**/*.xml, META-INF/**"/>
@@ -2323,10 +2323,10 @@
       <!-- Schemas -->
       <zipfileset dir="${basedir}/data" prefix="data" includes="**/*.rdfs,**/*.rss,**/*.n3"/>
 
-      <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>     
+      <fileset dir="${src.dir}/jar/dtd" includes="META-INF/**, DTD/**"/>
 
     </jar>
   </target>
 
-  
+
 </project>

@@ -149,10 +149,10 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
    * where this class was run.</p>
    * @param args command line arguments
    */
-  public static void main(String[] args) {
+  public static void main(String... args) {
     // report the version and build number
     System.out.println("@@build.label@@");
-  
+
     // Set up the configuration, using command line arguments to override configured options
     EmbeddedMulgaraOptionParser optsParser = new EmbeddedMulgaraOptionParser(args);
 
@@ -179,7 +179,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
       // TODO: Iterate over all configured servers and start each one
       // Create the server instance
       EmbeddedMulgaraServer standAloneServer = new EmbeddedMulgaraServer(optsParser);
-    
+
       if (standAloneServer.isStartable()) {
         // start the server, including all the configured services
         standAloneServer.startServices();
@@ -188,7 +188,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         ShutdownService shutdownServer = new ShutdownService();
         shutdownServer.start();
       }
-  
+
     } catch (ExceptionList el) {
       for (Throwable e: (List<Throwable>)el.getCauses()) {
         log.error("ExceptionList", e);
@@ -400,19 +400,19 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
    */
   public void startServices() throws IOException, NamingException,
       ExceptionList, SimpleXAResourceException, StoreException, Exception {
-  
+
     if (serverManagement == null) throw new IllegalStateException("Servers must be created before they can be started");
-  
+
     // log that we're starting a Mulgara server
     if (log.isDebugEnabled()) log.debug("Starting server");
-  
+
     // start the Mulgara server
     serverManagement.init();
     serverManagement.start();
 
     // get the configured factory and URI and set the ServerInfo for this Mulgara server
     ServerInfo.setLocalSessionFactory(((AbstractServer)serverManagement).getSessionFactory());
-  
+
     // start the HTTP server if required
     if (webServices != null) {
       if (log.isDebugEnabled()) log.debug("Starting HTTP server");
@@ -568,10 +568,10 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
           httpEnabled = true;
           Connector httpConnector = mulgaraConfig.getJetty().getConnector();
           PublicConnector httpPublicConnector = mulgaraConfig.getJetty().getPublicConnector();
-    
+
           String httpHost = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.HTTP_HOST);
           httpHostName = (httpHost != null || httpConnector == null) ? httpHost : httpConnector.getHost();
-    
+
           // set the port on which to accept HTTP requests
           String httpPort = (String)parser.getOptionValue(EmbeddedMulgaraOptionParser.PORT);
           if (httpPort != null) {
@@ -678,7 +678,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
     tempDir.mkdirs();
     TempDir.setTempDir(tempDir);
 
-    // remove any temporary files 
+    // remove any temporary files
     cleanUpTemporaryFiles();
 
     mbean.setProviderClassName(providerClassName);
@@ -954,15 +954,15 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
    * This gets registered with the Runtime.
    */
   private static class RuntimeShutdownHook extends Thread {
-    
+
     EmbeddedMulgaraServer server;
-  
+
     public RuntimeShutdownHook(EmbeddedMulgaraServer server) {
       this.server = server;
       // register a thread name
       this.setName("Standard shutdown hook");
     }
-  
+
     public void run() {
       // log that we're sutting down the servers
       if (log.isInfoEnabled()) {
@@ -977,7 +977,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
       ServerMBean mbean = server.getServerMBean();
       if (mbean != null) {
         ServerState state = mbean.getState();
-  
+
         if (state == ServerState.STARTED) {
           try {
             mbean.stop();
@@ -985,7 +985,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
             log.error("Couldn't stop server", e);
           }
         }
-  
+
         // close the server
         if (state == ServerState.STARTED || state == ServerState.STOPPED) {
           try {

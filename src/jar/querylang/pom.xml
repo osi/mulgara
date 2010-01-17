@@ -45,22 +45,22 @@
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sablecc-maven-plugin</artifactId>
+                <artifactId>javacc-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>javacc</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javacc-maven-plugin</artifactId>
+                <artifactId>sablecc-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>javacc</goal>
+                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>

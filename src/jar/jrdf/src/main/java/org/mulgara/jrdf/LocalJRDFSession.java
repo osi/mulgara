@@ -28,7 +28,6 @@
 package org.mulgara.jrdf;
 
 // Local packages
-import org.mulgara.resolver.spi.*;
 import org.mulgara.server.*;
 
 /**

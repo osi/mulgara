@@ -17,9 +17,6 @@
         <module>src/jar/config</module>
         <module>src/jar/content-mbox</module>
         <module>src/jar/content-mp3</module>
-        <module>src/jar/content-n3</module>
-        <module>src/jar/content-rdfxml</module>
-        <module>src/jar/content-rlog</module>
         <module>src/jar/demo</module>
         <module>src/jar/demo-mp3</module>
         <module>src/jar/descriptor</module>
@@ -191,14 +188,14 @@
                 <version>2.0.4</version>
             </dependency>
             <dependency>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-                <version>1.0.1B</version>
-            </dependency>
-            <dependency>
                 <groupId>net.sourceforge.jxunit</groupId>
                 <artifactId>jxunit</artifactId>
                 <version>3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>jotm</groupId>
+                <artifactId>jotm</artifactId>
+                <version>2.0.10</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

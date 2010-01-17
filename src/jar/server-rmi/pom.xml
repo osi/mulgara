@@ -8,10 +8,24 @@
       <version>2.1.7-SNAPSHOT</version>
       <relativePath>../../../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>server-rmi</artifactId>
     <packaging>jar</packaging>
 
     <name>server-rmi</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>jrdf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
 
 </project>

@@ -396,7 +396,7 @@ public class SparqlInterpreter implements Interpreter {
       return new ConstantValue(constantVars.newVar(), new URIReferenceImpl(((IRIReference)node).getUri(), false));
     }
     // nothing else is valid. We probably have a compound expression.
-    throw new MulgaraParserException("Unexpected element in CONSTRUCT template: " + node); 
+    throw new MulgaraParserException("Unexpected element in CONSTRUCT template: " + node);
   }
 
   /**
@@ -473,10 +473,10 @@ public class SparqlInterpreter implements Interpreter {
   ConstraintExpression getWhere(QueryStructure queryStruct) throws MulgaraParserException {
     // get the basic pattern
     GroupGraphPattern pattern = queryStruct.getWhereClause();
-    
+
     // short-circuit, since DESCRIBE may omit the WHERE clause
     if (pattern == null) return null;
-    
+
     PatternMapper patternMapper = new PatternMapper(pattern);
     ConstraintExpression result = patternMapper.mapToConstraints();
     // apply the FROM NAMED expression
@@ -535,7 +535,7 @@ public class SparqlInterpreter implements Interpreter {
   /**
    * Converts a WHERE clause into using "subject" instead of the variables from described.
    * Then creates a union of this WHERE clause converted for each element in described.
-   * If the base WHERE clause is empty, then ($subject $predicate $object) is presumed. 
+   * If the base WHERE clause is empty, then ($subject $predicate $object) is presumed.
    * @param described The elements to distribute into the unioned WHERE clause.
    * @param baseWhere The WHERE clause to convert and duplicate
    * @return The UNIONed WHERE clauses with the variables adjusted.

@@ -36,7 +36,7 @@ import javax.xml.namespace.QName;
  * @licence <a href="{@docRoot}/../LICENCE.txt">Apache License, Version 2.0</a>
  */
 public class IRIReference implements Node, PrimaryExpression {
-  
+
   /** The RDF namespace */
   private static final String RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 

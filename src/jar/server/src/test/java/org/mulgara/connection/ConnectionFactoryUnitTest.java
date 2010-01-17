@@ -32,6 +32,7 @@ import org.mulgara.query.Query;
 import org.mulgara.query.SelectElement;
 import org.mulgara.query.UnconstrainedAnswer;
 import org.mulgara.query.Variable;
+import org.mulgara.server.EmbeddedMulgaraServer;
 import org.mulgara.server.Session;
 import org.mulgara.server.driver.SessionFactoryFinder;
 
@@ -51,13 +52,18 @@ public class ConnectionFactoryUnitTest {
   /** Simple query to execute on a Connection */
   private Query query;
 
-//  @BeforeClass
-//  public static void startEmbeddedServer {
-//    new EmbeddedMulgaraServer()
-//  }
+  @BeforeClass
+  public static void startEmbeddedServer() {
+    EmbeddedMulgaraServer.main("-a", "target/test-mulgara-data");
+  }
+
+  @AfterClass
+  public static void stopEmbeddedServer() {
+    EmbeddedMulgaraServer.main("-x");
+  }
 
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     factory = new ConnectionFactory();
 
     // Set up a simple query to execute on the connection
@@ -90,7 +96,7 @@ public class ConnectionFactoryUnitTest {
   }
 
   @After
-  protected void tearDown() {
+  public void tearDown() {
     factory.closeAll();
   }
 
