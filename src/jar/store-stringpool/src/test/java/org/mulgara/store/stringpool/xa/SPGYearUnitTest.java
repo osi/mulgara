@@ -103,19 +103,6 @@ public class SPGYearUnitTest extends TestCase {
   public SPGYearUnitTest(String name) {
 
     super(name);
-
-    // Load the logging configuration
-    BasicConfigurator.configure();
-
-    try {
-
-      DOMConfigurator.configure(new URL(System.getProperty(
-          "log4j.configuration")));
-    } catch (MalformedURLException mue) {
-
-      log.error("Unable to configure logging service from XML configuration " +
-                "file", mue);
-    }
   }
 
   /**

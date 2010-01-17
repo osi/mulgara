@@ -75,8 +75,8 @@ public class SPGDayUnitTest extends TestCase {
 
   /** Constant valid test date */
   private static final String VALID_DATE = "---04";
-  
-  /** A valid value for the VALID_DATE in TimeZones west of GMT **/ 
+
+  /** A valid value for the VALID_DATE in TimeZones west of GMT **/
   private static final String VALID_DATE_WEST = "---03";
 
   /** Constant valid test date (Timezone added) */
@@ -88,19 +88,19 @@ public class SPGDayUnitTest extends TestCase {
   /** Constant valid test date (Upper/Lower bounds test) */
   private static final String VALID_DATE4 = "---31Z";
 
-  /** A valid value for the VALID_DATE4 in TimeZones west of GMT **/ 
+  /** A valid value for the VALID_DATE4 in TimeZones west of GMT **/
   private static final String VALID_DATE4_WEST = "---30";
 
-  /** A valid value for the VALID_DATE4 in TimeZones west of GMT **/ 
+  /** A valid value for the VALID_DATE4 in TimeZones west of GMT **/
   private static final String VALID_DATE4_EAST = "---31";
 
   /** Constant valid test date (Upper/Lower bounds test) */
   private static final String VALID_DATE5 = "---01Z";
 
-  /** A valid value for the VALID_DATE5 in TimeZones west of GMT **/ 
+  /** A valid value for the VALID_DATE5 in TimeZones west of GMT **/
   private static final String VALID_DATE5_WEST = "---31";
 
-  /** A valid value for the VALID_DATE5 in TimeZones west of GMT **/ 
+  /** A valid value for the VALID_DATE5 in TimeZones west of GMT **/
   private static final String VALID_DATE5_EAST = "---01";
 
   /** Invalid date 1 (non-numeric characters) */
@@ -124,21 +124,7 @@ public class SPGDayUnitTest extends TestCase {
    * @param name the name of the test
    */
   public SPGDayUnitTest(String name) {
-
     super(name);
-
-    // Load the logging configuration
-    BasicConfigurator.configure();
-
-    try {
-
-      DOMConfigurator.configure(new URL(System.getProperty(
-          "log4j.configuration")));
-    } catch (MalformedURLException mue) {
-
-      log.error("Unable to configure logging service from XML configuration " +
-                "file", mue);
-    }
   }
 
   /**
@@ -178,7 +164,7 @@ public class SPGDayUnitTest extends TestCase {
   	// Get a TimeZone instance which will help us interpret the results.
   	TimeZone tz = TimeZone.getDefault();
   	boolean westOfGMT = tz.getRawOffset() < 0;
-	
+
     // Create a new factory
     SPGDayFactory factory = new SPGDayFactory();
 
@@ -186,11 +172,11 @@ public class SPGDayUnitTest extends TestCase {
     SPGDayImpl gDay = (SPGDayImpl) factory.newSPTypedLiteral(XSD.
         GDAY_URI, VALID_DATE);
 
-    // Because the underlying implementation runs through Calendar 
+    // Because the underlying implementation runs through Calendar
     // instances which muck with the results based on the TimeZone
     // where the tests are run, we just try to check them against
     // that context.
-    
+
     // Test that the lexical form of the date is correct
     assertTrue("GDay lexical form was not " + VALID_DATE +
                " as expected. was:" + gDay.getLexicalForm(),
@@ -296,7 +282,7 @@ public class SPGDayUnitTest extends TestCase {
     // Test that the lexical form of the date is correct
     assertTrue("GDay lexical form was not " + VALID_DATE3 +
                " as expected. was:" + gDay.getLexicalForm(),
-               gDay.getLexicalForm().equals(VALID_DATE3));               
+               gDay.getLexicalForm().equals(VALID_DATE3));
 
     // Retrieve the byte data of the gDay object
     dayBytes = gDay.getData();
