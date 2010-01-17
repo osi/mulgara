@@ -42,6 +42,30 @@
         </dependency>
         <dependency>
             <groupId>org.mulgara</groupId>
+            <artifactId>resolver-relational</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-distributed</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-null</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>server-rmi</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
             <artifactId>resolver-prefix</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

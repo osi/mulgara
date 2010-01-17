@@ -50,7 +50,8 @@ import org.mulgara.util.Rmi;
  * @see <a href="http://developer.java.sun.com/developer/JDCTechTips/2001/tt0327.html#jndi"/>
  *      <cite>JNDI lookup in distributed systems</cite> </a>
  */
-public class RmiServer extends AbstractServer implements RmiServerMBean {
+public class
+  RmiServer extends AbstractServer implements RmiServerMBean {
 
   /** Logger. This is named after the classname. */
   private final static Logger logger = Logger.getLogger(RmiServer.class.getName());
@@ -229,7 +230,7 @@ public class RmiServer extends AbstractServer implements RmiServerMBean {
     // Set URI.
     setURI(newURI);
   }
-  
+
   /** @see org.mulgara.server.AbstractServer#getDefaultPort() */
   protected int getDefaultPort() {
     return DEFAULT_PORT;

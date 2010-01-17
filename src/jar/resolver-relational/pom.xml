@@ -8,10 +8,18 @@
       <version>2.1.7-SNAPSHOT</version>
       <relativePath>../../../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>resolver-relational</artifactId>
     <packaging>jar</packaging>
 
     <name>resolver-relational</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>store-stringpool</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
