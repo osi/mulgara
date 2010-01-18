@@ -31,6 +31,8 @@ package org.mulgara.content.mp3;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 // Third party packages
 import junit.framework.*; // JUnit
@@ -126,7 +128,7 @@ public class MP3StatementsUnitTest extends TestCase {
   /**
    * Test the constructor by ensuring no exceptions occur for a valid MP3 file.
    */
-  public void testConstruction() {
+  public void testConstruction() throws URISyntaxException {
 
     if (log.isDebugEnabled()) {
 
@@ -134,9 +136,7 @@ public class MP3StatementsUnitTest extends TestCase {
     }
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "tmp" + File.separator + "mp3"),
-                         "Chrono_Trigger_600_AD_in_Piano.mp3");
+    URI file = getClass().getResource("/data/mp3/Chrono_Trigger_600_AD_in_Piano.mp3").toURI();
 
     // Containers for construction of content object
     Class<?> contentClass = null;
@@ -161,7 +161,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the Content object constructor
-      constructor = contentClass.getConstructor(new Class[] {File.class});
+      constructor = contentClass.getConstructor(new Class[] {URI.class});
     } catch (NoSuchMethodException noSuchMethodException) {
 
       // Log the exception
@@ -244,13 +244,10 @@ public class MP3StatementsUnitTest extends TestCase {
    * Test that the correct number of statements are created by the
    * statements object.
    */
-  public void testRowCount() {
+  public void testRowCount() throws URISyntaxException {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "tmp" + File.separator + "mp3"),
-                         "Chrono_Trigger_600_AD_in_Piano.mp3");
-
+    URI file = getClass().getResource("/data/mp3/Chrono_Trigger_600_AD_in_Piano.mp3").toURI();
     // Containers for construction of content object
     Class<?> contentClass = null;
     Constructor<?> constructor = null;
@@ -274,7 +271,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the Content object constructor
-      constructor = contentClass.getConstructor(new Class[] {File.class});
+      constructor = contentClass.getConstructor(new Class[] {URI.class});
     } catch (NoSuchMethodException noSuchMethodException) {
 
       // Log the exception
@@ -384,13 +381,10 @@ public class MP3StatementsUnitTest extends TestCase {
   /**
    * Test that beforeFirst().
    */
-  public void testBeforeFirst() {
+  public void testBeforeFirst() throws URISyntaxException {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "tmp" + File.separator + "mp3"),
-                         "Chrono_Trigger_600_AD_in_Piano.mp3");
-
+    URI file = getClass().getResource("/data/mp3/Chrono_Trigger_600_AD_in_Piano.mp3").toURI();
     // Containers for construction of content object
     Class<?> contentClass = null;
     Constructor<?> constructor = null;
@@ -414,7 +408,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the Content object constructor
-      constructor = contentClass.getConstructor(new Class[] {File.class});
+      constructor = contentClass.getConstructor(new Class[] {URI.class});
     } catch (NoSuchMethodException noSuchMethodException) {
 
       // Log the exception
@@ -510,12 +504,10 @@ public class MP3StatementsUnitTest extends TestCase {
   /**
    * Test the constructor by ensuring no exceptions occur for a valid MP3 file.
    */
-  public void testNext() {
+  public void testNext() throws URISyntaxException {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "tmp" + File.separator + "mp3"),
-                         "Chrono_Trigger_600_AD_in_Piano.mp3");
+    URI file = getClass().getResource("/data/mp3/Chrono_Trigger_600_AD_in_Piano.mp3").toURI();
 
     // Containers for construction of content object
     Class<?> contentClass = null;
@@ -540,7 +532,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the Content object constructor
-      constructor = contentClass.getConstructor(new Class[] {File.class});
+      constructor = contentClass.getConstructor(new Class[] {URI.class});
     } catch (NoSuchMethodException noSuchMethodException) {
 
       // Log the exception
@@ -801,11 +793,10 @@ public class MP3StatementsUnitTest extends TestCase {
   /**
    * Test the constructor by ensuring an exception occurs for an invalid MP3 file.
    */
-  public void testNonMP3() {
+  public void testNonMP3() throws URISyntaxException {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "data"), "camera.owl");
+    URI file = getClass().getResource("/parserfactory.conf").toURI();
 
     // Containers for construction of content object
     Class<?> contentClass = null;
@@ -830,7 +821,7 @@ public class MP3StatementsUnitTest extends TestCase {
     try {
 
       // Obtain the Content object constructor
-      constructor = contentClass.getConstructor(new Class[] {File.class});
+      constructor = contentClass.getConstructor(new Class[] {URI.class});
     } catch (NoSuchMethodException noSuchMethodException) {
 
       // Log the exception

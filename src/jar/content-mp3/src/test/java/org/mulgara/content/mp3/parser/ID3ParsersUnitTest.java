@@ -29,6 +29,8 @@ package org.mulgara.content.mp3.parser;
 
 // Standard Java
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 // Apache logging
 import org.apache.log4j.*;
@@ -80,20 +82,6 @@ public class ID3ParsersUnitTest extends TestCase {
   public ID3ParsersUnitTest(String name) {
 
     super(name);
-
-    // load the logging configuration
-//    BasicConfigurator.configure();
-//    try {
-//
-//      DOMConfigurator.configure(new URL(System.getProperty(
-//          "log4j.configuration")));
-//    }
-//    catch (MalformedURLException mue) {
-//
-//      log.error(
-//          "Unable to configure logging service from XML configuration " +
-//          "file", mue);
-//    }
   }
 
   /**
@@ -129,7 +117,7 @@ public class ID3ParsersUnitTest extends TestCase {
   /**
    * Test the process method of an MP3ToRdf entity extraction to XML conversion.
    */
-  public void testProcessID3v1() {
+  public void testProcessID3v1() throws URISyntaxException {
 
     if (log.isDebugEnabled()) {
 
@@ -152,8 +140,7 @@ public class ID3ParsersUnitTest extends TestCase {
     }
 
     // Create a file pointing to an mp3
-    File mp3File = new File(System.getProperty("cvs.root") +
-        "/tmp/mp3/kp068-karaoke-tundra-02-green-parrot.mp3");
+    File mp3File = new File(getClass().getResource("/data/mp3/kp068-karaoke-tundra-02-green-parrot.mp3").getFile());
 
     // Container for an MP3 file
     MP3File file = null;
@@ -492,8 +479,7 @@ public class ID3ParsersUnitTest extends TestCase {
     }
 
     // Create a file pointing to an mp3
-    File mp3File = new File(System.getProperty("cvs.root") +
-        "/tmp/mp3/Chrono_Trigger_600_AD_in_Piano.mp3");
+    File mp3File = new File(getClass().getResource("/data/mp3/Chrono_Trigger_600_AD_in_Piano.mp3").getFile());
 
     // Container for an MP3 file
     MP3File file = null;
