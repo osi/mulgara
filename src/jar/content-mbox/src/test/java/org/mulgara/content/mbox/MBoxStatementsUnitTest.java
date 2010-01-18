@@ -29,6 +29,7 @@ package org.mulgara.content.mbox;
 
 // Java 2 standard packages
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
@@ -83,18 +84,6 @@ public class MBoxStatementsUnitTest extends TestCase {
 
     super(name);
 
-    // load the logging configuration
-    BasicConfigurator.configure();
-    try {
-
-      DOMConfigurator.configure(new URL(System.getProperty(
-          "log4j.configuration")));
-    } catch (MalformedURLException mue) {
-
-      log.error(
-          "Unable to configure logging service from XML configuration " +
-          "file", mue);
-    }
   }
 
   /**
@@ -170,8 +159,7 @@ public class MBoxStatementsUnitTest extends TestCase {
     }
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "data" + File.separator + "mbox"), "Trash");
+    File file = new File(getClass().getResource("/data/mbox/Trash").getFile());
 
     // Containers for construction of content object
     Class<?> contentClass = null;
@@ -421,8 +409,7 @@ public class MBoxStatementsUnitTest extends TestCase {
   public void testBeforeFirst() {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "data" + File.separator + "mbox"), "Trash");
+    File file = new File(getClass().getResource("/data/mbox/Trash").getFile());
 
     // Containers for construction of content object
     Class<?> contentClass = null;
@@ -546,8 +533,7 @@ public class MBoxStatementsUnitTest extends TestCase {
   public void testNext() {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "data" + File.separator + "mbox"), "Trash");
+    File file = new File(getClass().getResource("/data/mbox/Trash").getFile());
 
     // Containers for construction of content object
     Class<?> contentClass = null;
@@ -838,8 +824,7 @@ public class MBoxStatementsUnitTest extends TestCase {
   public void testNonMBox() {
 
     // Create the file handle to our test file
-    File file = new File(new File(new File(System.getProperty("cvs.root")),
-                                  "data"), "camera.owl");
+    File file = new File(getClass().getResource("/modelfactory.conf").getFile());
 
     // Containers for construction of content object
     Class<?> contentClass = null;
