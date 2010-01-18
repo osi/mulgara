@@ -260,7 +260,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testSimpleTwoPhaseCommit() throws URISyntaxException {
     logger.info("testSimpleTwoPhaseCommit");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       DatabaseSession session = (DatabaseSession)database.newSession();
@@ -751,7 +751,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
   public void testExplicitIsolationQuerySingleSession() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session = database.newSession();
@@ -860,7 +860,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
   public void testExternalInternalIsolation() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -918,7 +918,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
   public void testInternalExternalIsolation() throws URISyntaxException {
     logger.info("testExplicitIsolationQuery");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1016,7 +1016,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testConcurrentExplicitTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1116,7 +1116,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testExternalInternalConcurrentTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1215,7 +1215,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testInternalExternalConcurrentTxn() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1321,7 +1321,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testExternalInternalConcurrentTxnRollback() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1421,7 +1421,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testInternalExternalConcurrentTxnRollback() throws URISyntaxException {
     logger.info("testConcurrentExplicitTxn");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1525,7 +1525,7 @@ public class ExternalTransactionUnitTest extends TestCase {
 
   public void testExplicitRollbackIsolationQuery() throws URISyntaxException {
     logger.info("testExplicitRollbackIsolationQuery");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session = database.newSession();
@@ -1581,7 +1581,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testInternalSerialMultipleSessions() throws URISyntaxException {
     logger.info("testInternalSerialMultipleSessions");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     try {
       Session session1 = database.newSession();
@@ -1610,7 +1610,7 @@ public class ExternalTransactionUnitTest extends TestCase {
    */
   public void testTransactionTimeout() throws URISyntaxException {
     logger.info("testTransactionTimeout");
-    URI fileURI  = new File("data/xatest-model1.rdf").toURI();
+    URI fileURI  = getClass().getResource("/data/xatest-model1.rdf").toURI();
 
     // test idle timeout
     try {
