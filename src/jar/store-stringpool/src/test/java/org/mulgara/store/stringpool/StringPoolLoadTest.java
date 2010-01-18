@@ -79,9 +79,6 @@ public class StringPoolLoadTest extends TestCase {
   /** the number of queries to be made */
   protected int noQueries = 3000;
 
-  /** the file containing test data */
-  protected String dataFile = "data/testwords.txt.gz";
-
   /** This flag indicates data should be written to the string pool when it is read */
   protected boolean loadData = true;
 
@@ -221,7 +218,7 @@ public class StringPoolLoadTest extends TestCase {
   protected void setUp() throws Exception {
     random = new Random(System.currentTimeMillis());
 
-    GZIPInputStream gzipStream = new GZIPInputStream(new FileInputStream(dataFile));
+    GZIPInputStream gzipStream = new GZIPInputStream(getClass().getResourceAsStream("/data/testwords.txt.gz"));
     DataInputStream inStream = new DataInputStream(gzipStream);
     reader = new BufferedReader(new InputStreamReader(inStream));
   }
