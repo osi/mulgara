@@ -524,7 +524,7 @@ public class ItqlInterpreterBeanUnitTest {
 
     // execute the load locally
     try {
-      bean.load(getClass().getResource(getClass().getName().replace(".","/") + ".class").openStream(), modelURI);
+      bean.load(getClass().getResource("/" + getClass().getName().replace(".","/") + ".class").openStream(), modelURI);
     } catch (QueryException ex) {
       badFile = true;
     }
@@ -548,7 +548,7 @@ public class ItqlInterpreterBeanUnitTest {
     URL resource = getClass().getResource("/data/camera.n3");
 
     // execute the load locally
-    long statements = bean.load(resource.openStream(), modelURI);
+    long statements = bean.load(new File(resource.getFile()), modelURI);
 
     assertEquals("Incorrect number of statements inserted", 99, statements);
 
@@ -571,7 +571,7 @@ public class ItqlInterpreterBeanUnitTest {
       URI modelURI = new URI(testModel);
 
       // execute the load locally
-      long statements = bean.load(resource.openStream(), modelURI);
+      long statements = bean.load(new File(resource.getFile()), modelURI);
 
       assertEquals("Incorrect number of statements inserted", 512, statements);
     } catch (Exception exception) {

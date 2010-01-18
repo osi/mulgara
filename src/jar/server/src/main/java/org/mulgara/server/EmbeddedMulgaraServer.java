@@ -256,6 +256,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
       BasicConfigurator.configure();
     } else {
       try {
+        if (log.isDebugEnabled()) log.debug("Using logging configuration from " + log4jConfigURL);
         // configure the logging service
         DOMConfigurator.configure(log4jConfigURL);
         if (log.isDebugEnabled()) log.debug("Using logging configuration from " + log4jConfigURL);
@@ -380,7 +381,7 @@ public class EmbeddedMulgaraServer implements SessionFactoryProvider {
         try {
           webServices = new HttpServices(this, httpHostName, mulgaraConfig);
         } catch (Exception e) {
-          log.error("Unable to start web services due to: " + e.getMessage() + " [Continuing]");
+          log.error("Unable to start web services due to: " + e.getMessage() + " [Continuing]", e);
           if (log.isDebugEnabled()) log.debug("Web Server problem", e);
         }
       }

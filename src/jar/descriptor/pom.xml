@@ -8,10 +8,23 @@
       <version>2.1.7-SNAPSHOT</version>
       <relativePath>../../../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>descriptor</artifactId>
     <packaging>jar</packaging>
 
     <name>descriptor</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>querylang</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

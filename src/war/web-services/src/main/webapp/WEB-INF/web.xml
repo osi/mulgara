@@ -76,15 +76,9 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-	<servlet>
-		<servlet-name>error_jsp</servlet-name>
-		<servlet-class>error_jsp</servlet-class>
-	</servlet>
+  <!-- [INSERT JSP FRAGMENT HERE] -->
 
-	<servlet>
-		<servlet-name>index_jsp</servlet-name>
-		<servlet-class>index_jsp</servlet-class>
-	</servlet>
+
   <!-- descriptor mappings -->
   <servlet-mapping>
     <servlet-name>Execute</servlet-name>
@@ -95,21 +89,6 @@
     <servlet-name>Deploy</servlet-name>
     <url-pattern>/descriptor/deploy</url-pattern>
   </servlet-mapping>
-
-
-<!-- precompiled -->
-
-	<servlet-mapping>
-		<servlet-name>error_jsp</servlet-name>
-		<url-pattern>/descriptor/error.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>index_jsp</servlet-name>
-		<url-pattern>/descriptor/index.jsp</url-pattern>
-	</servlet-mapping>
-
-<!-- end precompiled -->
 
 
   <!-- axis mappings -->

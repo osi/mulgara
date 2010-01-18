@@ -1,0 +1,64 @@
+<?xml version  = "1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.mulgara</groupId>
+        <artifactId>mulgara</artifactId>
+        <version>2.1.7-SNAPSHOT</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>web-services</artifactId>
+    <packaging>war</packaging>
+
+    <name>web-services</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>descriptor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jspc-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <webXml>${basedir}/target/jspweb.xml</webXml>
+                    <injectString>&lt;!-- [INSERT JSP FRAGMENT HERE] --&gt;</injectString>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webXml>${basedir}/target/jspweb.xml</webXml>
+                    <!-- Use this to include a selection of jars that will be included in the WAR -->
+                    <packagingIncludes>
+                        **/*.xml,**/*.html,**/*.png,**/*.rdf,**/*.gif,**/*.xsl,WEB-INF/classes/**/*.*,**/*.wsdd
+                        <!-- TODO was including bsf.jar and js.jar -->
+                    </packagingIncludes>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
