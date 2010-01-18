@@ -92,22 +92,22 @@ public class DatabaseSessionUnitTest extends TestCase {
     try {
       models = new GraphResource[] {
         new GraphResource(new URI("local:database#")),
-        new GraphResource(new File("data/test-model1.rdf").toURI()),
-        new GraphResource(new File("data/test-model2.rdf").toURI()),
-        new GraphResource(new File("data/test-model3.rdf").toURI()),
-        new GraphResource(new File("data/test-model4.rdf").toURI()),
-        new GraphResource(new File("data/test-model5.rdf").toURI()),
-        new GraphResource(new File("data/test-model6.rdf").toURI()),
-        new GraphResource(new File("data/test-model7.rdf").toURI()),
-        new GraphResource(new File("data/test-model8.rdf").toURI()),
-        new GraphResource(new File("data/test-model9.rdf").toURI()),
-        new GraphResource(new File("data/test-model10.rdf").toURI()),
-        new GraphResource(new File("data/test-model11.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model1.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model2.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model3.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model4.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model5.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model6.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model7.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model8.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model9.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model10.rdf").toURI()),
+        new GraphResource(DatabaseSessionUnitTest.class.getResource("/data/test-model11.rdf").toURI()),
       };
     } catch (URISyntaxException eu) {
       throw new IllegalArgumentException("Initialising ModelResources");
     }
-  };
+  }
 
   protected static final ConstraintElement[] elements;
   static {

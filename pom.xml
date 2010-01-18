@@ -50,7 +50,6 @@
         <module>src/jar/server-rmi</module>
         <module>src/jar/store</module>
         <module>src/jar/store-nodepool</module>
-        <module>src/jar/store-nodepool-xa</module>
         <module>src/jar/store-stringpool</module>
         <module>src/jar/store-stringpool-memory</module>
         <module>src/jar/store-stringpool-xa</module>
