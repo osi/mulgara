@@ -27,8 +27,10 @@
 
 package org.mulgara.itql;
 
+import org.junit.*;
 import org.mulgara.query.Answer;
 import org.mulgara.query.QueryException;
+import org.mulgara.server.EmbeddedMulgaraServer;
 import org.mulgara.server.SessionFactory;
 import org.mulgara.server.driver.SessionFactoryFinder;
 import org.mulgara.util.Rmi;
@@ -61,6 +63,8 @@ import org.apache.soap.rpc.*;
 import edu.emory.mathcs.util.remote.io.*;
 import edu.emory.mathcs.util.remote.io.server.impl.*;
 
+import static org.junit.Assert.*;
+
 /**
  * Unit test for {@link ItqlInterpreterBeanUnitTest}.
  *
@@ -79,7 +83,7 @@ import edu.emory.mathcs.util.remote.io.server.impl.*;
  *
  * @licence <a href="{@docRoot}/../../LICENCE">Mozilla Public License v1.1</a>
  */
-public class ItqlInterpreterBeanUnitTest extends TestCase {
+public class ItqlInterpreterBeanUnitTest {
 
   //
   // Members
@@ -114,64 +118,6 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
   //
 
   /**
-   * Constructs a new ItqlInterpreter unit test.
-   *
-   * @param name the name of the test
-   */
-  public ItqlInterpreterBeanUnitTest(String name) {
-
-    // delegate to super class constructor
-    super(name);
-  }
-
-  /**
-   * Returns a test suite containing the tests to be run.
-   *
-   * @return the test suite
-   */
-  public static TestSuite suite() {
-
-    TestSuite suite = new TestSuite();
-
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testQuery1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testQuery2"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testQuery3"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testAnswerIteration"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testCreateModel"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi2"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi3"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi4"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi4_1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi5"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi6"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi7"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi8"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testLoadApi9"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testBackupApi1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testBackupApi2"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testExportApi1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testExportApi2"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testRestoreApi1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testRoundTrip1"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testMultipleBeanTest"));
-    suite.addTest(new ItqlInterpreterBeanUnitTest("testExplicitSession"));
-
-    return suite;
-  }
-
-  /**
-   * The main program for the ItqlInterpreterBeanUnitTest class
-   *
-   * @param args The command line arguments
-   * @throws Exception General catch-all for exceptions thrown during the entire test suite
-   */
-  public static void main(String[] args) throws Exception {
-
-    junit.textui.TestRunner.run(suite());
-  }
-
-  /**
    * Convert Windows line endings...
    */
   private static String convertLineEndings(String str) {
@@ -182,11 +128,22 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     return converted;
   }
 
+  @BeforeClass
+  public static void startEmbeddedServer() {
+    EmbeddedMulgaraServer.main("-a", "target/test-mulgara-data/" + ItqlInterpreterBeanUnitTest.class.getName());
+  }
+
+  @AfterClass
+  public static void stopEmbeddedServer() {
+    EmbeddedMulgaraServer.main("-x");
+  }
+
   /**
    * Test the interpreter via a direct call and a SOAP call
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testQuery1() throws Exception {
 
     String queryString =
@@ -198,8 +155,8 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     String soapAnswer = this.executeSoapCall(queryString);
 
     assertEquals(
-        "A basic SELECT SOAP iTQL result is not the same as a direct call",
-        soapAnswer, directAnswer);
+      "A basic SELECT SOAP iTQL result is not the same as a direct call",
+      soapAnswer, directAnswer);
   }
 
   /**
@@ -207,6 +164,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception General catch-all for exceptions thrown during the test
    */
+  @Test
   public void testQuery2() throws Exception {
 
     String queryString = "create <rmi://" + hostName + "/server1#model> ;";
@@ -215,7 +173,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     String soapAnswer = this.executeSoapCall(queryString);
 
     assertEquals("A CREATE SOAP iTQL result is not the same as a direct call",
-        soapAnswer, directAnswer);
+      soapAnswer, directAnswer);
   }
 
   /**
@@ -223,6 +181,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception General catch-all for exceptions thrown during the test
    */
+  @Test
   public void testQuery3() throws Exception {
 
     String queryString =
@@ -246,7 +205,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
     }
 
     assertEquals("A insert SOAP iTQL result is not the same as a direct call",
-        soapAnswer, directAnswer);
+      soapAnswer, directAnswer);
     assertEquals("Incorrect iTQL result found", soapAnswer, result);
   }
 
@@ -256,6 +215,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception General catch-all for exceptions thrown during the test
    */
+  @Test
   public void testAnswerIteration() throws Exception {
 
     //create model
@@ -292,8 +252,8 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
         }
         //ensure all statements were preserved
         assertEquals("Number of Statements in Answer has changed after " +
-            "iteration: " + i + ". Answer: " + result.getClass().getName(),
-            rowCount, statementCount);
+          "iteration: " + i + ". Answer: " + result.getClass().getName(),
+          rowCount, statementCount);
 
         //reset
         result.beforeFirst();
@@ -365,6 +325,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testCreateModel() throws Exception {
 
     // log that we're executing the test
@@ -394,6 +355,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi1() throws Exception {
 
     // log that we're executing the test
@@ -415,6 +377,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi2() throws Exception {
 
     // log that we're executing the test
@@ -449,6 +412,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi3() throws Exception {
 
     // log that we're executing the test
@@ -472,6 +436,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi4() throws Exception {
 
     // log that we're executing the test
@@ -493,6 +458,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi4_1() throws Exception {
 
     // log that we're executing the test
@@ -513,6 +479,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi5() throws Exception {
 
     // log that we're executing the test
@@ -533,6 +500,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi6() throws Exception {
 
     // log that we're executing the test
@@ -553,6 +521,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi7() throws Exception {
 
     boolean badFile = false;
@@ -579,6 +548,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi8() throws Exception {
 
     // log that we're executing the test
@@ -599,6 +569,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testLoadApi9() throws Exception {
 
     try {
@@ -626,6 +597,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testBackupApi1() throws Exception {
 
     // log that we're executing the test
@@ -658,6 +630,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testBackupApi2() throws Exception {
 
     // log that we're executing the test
@@ -690,6 +663,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testExportApi1() throws Exception {
 
     // log that we're executing the test
@@ -712,6 +686,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testExportApi2() throws Exception {
 
     // log that we're executing the test
@@ -734,6 +709,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testRestoreApi1() throws Exception {
 
     // log that we're executing the test
@@ -764,6 +740,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   public void testRoundTrip1() throws Exception {
 
     try {
@@ -799,7 +776,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
       Answer answer = bean.executeQuery(select);
       assertTrue("Excepting a answer before restore", answer != null);
       assertTrue("Excepting a single result and found :" +
-          answer.getRowCount(), (answer.getRowCount() == 3));
+        answer.getRowCount(), (answer.getRowCount() == 3));
 
       //backup the server
       File file = new File(tmpDirectory, "roundtrip.gz");
@@ -814,7 +791,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
       answer = bean.executeQuery(select);
       assertTrue("Excepting a answer after restore", answer != null);
       assertTrue("Excepting a single result and found :" +
-          answer.getRowCount(), (answer.getRowCount() == 3));
+        answer.getRowCount(), (answer.getRowCount() == 3));
     } catch (QueryException e) {
       System.err.println("Error processing query" + e);
       Throwable t = e.getCause();
@@ -832,6 +809,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    * Ensure the number of open files are not exceeded on OS.
    *
    */
+  @Test
   public void testMultipleBeanTest() {
 
     /*
@@ -899,6 +877,7 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if the test fails
    */
+  @Test
   @SuppressWarnings("deprecation")
   public void testExplicitSession() throws Exception {
 
@@ -972,12 +951,14 @@ public class ItqlInterpreterBeanUnitTest extends TestCase {
    *
    * @throws Exception if something goes wrong
    */
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
 
     bean = new ItqlInterpreterBean();
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     if (bean != null) {
       try {
         bean.close();

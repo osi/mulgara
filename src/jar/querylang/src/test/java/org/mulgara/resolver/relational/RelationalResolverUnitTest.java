@@ -184,7 +184,7 @@ public class RelationalResolverUnitTest extends TestCase {
   @SuppressWarnings("deprecation")
   public void setUp() throws Exception {
     if (database == null) {
-      File persistenceDirectory = new File("target/testDatbase");
+      File persistenceDirectory = new File("target/databases/" + getClass().getName());
       if (persistenceDirectory.isDirectory()) {
         if (!FileUtil.deleteDirectory(persistenceDirectory)) {
           throw new RuntimeException(
@@ -259,7 +259,7 @@ public class RelationalResolverUnitTest extends TestCase {
   //
 
   public void testSetupSQLDatabase() throws Exception {
-    File sqlDir = new File(new File(System.getProperty("cvs.root")), "sqltest");
+    File sqlDir = new File("target/sqltest");
     if (sqlDir.isDirectory()) {
       if (!FileUtil.deleteDirectory(sqlDir)) {
         throw new RuntimeException("Unable to remove old directory " + sqlDir);
@@ -361,7 +361,7 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testLoadRelationalDef() throws Exception {
     Session session = database.newSession();
     try {
-      session.setModel(testModelDefURI, new GraphResource(new File("data/ISWC-d2rq.rdf").toURI()));
+      session.setModel(testModelDefURI, new GraphResource(getClass().getResource("/data/ISWC-d2rq.rdf").toURI()));
     } finally {
       session.close();
     }
@@ -1453,7 +1453,7 @@ public class RelationalResolverUnitTest extends TestCase {
   public void testLoadRelationalDef2() throws Exception {
     Session session = database.newSession();
     try {
-      session.setModel(testModel2DefURI, new GraphResource(new File("data/ISWC-d2rq.rdf").toURI()));
+      session.setModel(testModel2DefURI, new GraphResource(getClass().getResource("/data/ISWC-d2rq.rdf").toURI()));
     } finally {
       session.close();
     }

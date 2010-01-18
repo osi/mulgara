@@ -130,8 +130,7 @@ public class ExternalTransactionUnitTest extends TestCase {
   public void setUp() throws Exception {
     if (database == null) {
       // Create the persistence directory
-      File persistenceDirectory =
-        new File("target/testDatabase");
+      File persistenceDirectory = new File("target/testDatabase/" + getClass().getName() + "/");
       if (persistenceDirectory.isDirectory()) {
         if (!FileUtil.deleteDirectory(persistenceDirectory)) {
           throw new RuntimeException(
