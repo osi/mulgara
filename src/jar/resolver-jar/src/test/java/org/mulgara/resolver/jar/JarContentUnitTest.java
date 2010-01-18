@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 import javax.activation.MimeType;
 
@@ -77,7 +78,7 @@ public class JarContentUnitTest extends TestCase {
       libDirectory = "/"+libDirectory.replace('\\','/');
     }
   }
-  
+
   /**
    * Create the testing class
    *
@@ -106,7 +107,7 @@ public class JarContentUnitTest extends TestCase {
   }
 
   /**
-   * Test Content type 
+   * Test Content type
    *
    * @throws Exception Test fails
    */
@@ -114,17 +115,17 @@ public class JarContentUnitTest extends TestCase {
 
     JarContent content = null;
     MimeType mimeType = null;
-    
-    // obtain a valid content type via a redirect site 
+
+    // obtain a valid content type via a redirect site
     content = new JarContent(new URL("jar:file:"+libDirectory+"/junit-3.8.1.jar!/stylesheet.css"));
     mimeType = content.getContentType();
     assertTrue("Expecting mime type of text/plain but found " + mimeType,
         mimeType != null && mimeType.getPrimaryType().equals("content")
-            && mimeType.getSubType().equals("unknown"));    
+            && mimeType.getSubType().equals("unknown"));
   }
 
   /**
-   * Test invalid Content type 
+   * Test invalid Content type
    *
    * @throws Exception Test fails
    */
@@ -132,31 +133,41 @@ public class JarContentUnitTest extends TestCase {
 
     JarContent content = null;
     MimeType mimeType = null;
-            
-    content = new JarContent(new URL("jar:file:"+libDirectory+"/junit-3.8.1.jar!/bad"));
+
+    content = new JarContent(new URL(junitJarUrl() + "/bad"));
 
     mimeType = content.getContentType();
     assertTrue("Expecting mime type of null but found " + mimeType,
-        mimeType == null );    
-        
+        mimeType == null );
+
+  }
+
+  private static String junitJarUrl() {
+    for (String jar : System.getProperty("java.class.path").split(Pattern.quote(File.pathSeparator))) {
+      if( jar.contains("junit-4")) {
+        return "jar:" + new File(jar).toURI().toASCIIString() +"!";
+      }
+    }
+    throw new IllegalStateException("did not find junit on classpath");
   }
 
   public void testValidInputStream() throws Exception {
 
+    // TODO this is brittle. need to commit a jar to the resources for this test
     JarContent content = null;
-    content = new JarContent(new URL("jar:file:"+libDirectory+"/junit-3.8.1.jar!/stylesheet.css"));
+    content = new JarContent(new URL(junitJarUrl() + "/junit/framework/TestCase.class"));
     InputStream stream = content.newInputStream();
     assertTrue("Expecting an input stream ", stream != null);
-    assertTrue("Expecting 15064 bytes from inputstream ", dumpAndCheck(stream) == 1380);
-    stream.close(); 
-    
+    assertEquals("Expected bytes from inputstream ", 3385, dumpAndCheck(stream));
+    stream.close();
+
   }
 
   public void testInvalidInputStream() throws Exception {
 
     boolean exceptionThrown = false;
     JarContent content = null;
-    content = new JarContent(new URL("jar:file:"+libDirectory+"/junit-3.8.1.jar!/bad"));
+    content = new JarContent(new URL(junitJarUrl() + "/bad"));
     try {
       content.newInputStream();
     } catch ( java.io.FileNotFoundException ex) {
@@ -169,7 +180,7 @@ public class JarContentUnitTest extends TestCase {
 
     File tmpFile = TempDir.createTempFile("stream", ".dat");
     tmpFile.deleteOnExit();
-    
+
     FileOutputStream out = new FileOutputStream(tmpFile);
 
     byte[] buffer = new byte[10000];

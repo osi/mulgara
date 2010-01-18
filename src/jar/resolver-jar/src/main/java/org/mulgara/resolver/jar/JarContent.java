@@ -47,7 +47,7 @@ import org.mulgara.content.Content;
 /**
  * Wrapper around a {@link URL}to make it satisfy the {@link Content}
  * interface.
- * 
+ *
  * @created 2004-09-23
  * @author Tate Jones
  * @version $Revision: 1.8 $
