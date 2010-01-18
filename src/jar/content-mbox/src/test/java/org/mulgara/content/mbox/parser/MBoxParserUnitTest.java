@@ -80,18 +80,6 @@ public class MBoxParserUnitTest extends TestCase {
 
     super(name);
 
-    // load the logging configuration
-    BasicConfigurator.configure();
-    try {
-
-      DOMConfigurator.configure(new URL(System.getProperty(
-          "log4j.configuration")));
-    } catch (MalformedURLException mue) {
-
-      log.error(
-          "Unable to configure logging service from XML configuration " +
-          "file", mue);
-    }
   }
 
   /**
@@ -136,7 +124,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testEmptyMBox() {
 
     // Create a file to store our test data in
-    File empty = new File("data/mbox/Empty");
+    File empty = new File(getClass().getResource("/data/mbox/Empty").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(empty);
@@ -246,7 +234,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testBadSubjectMBox() {
 
     // Create a file to store our test data in
-    File badSubject = new File("data/mbox/BadSubject");
+    File badSubject = new File(getClass().getResource("/data/mbox/BadSubject").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(badSubject);
@@ -409,7 +397,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testEmptyHeadersMBox() {
 
     // Create a file to store our test data in
-    File emptyHeader = new File("data/mbox/EmptyHeader");
+    File emptyHeader = new File(getClass().getResource("/data/mbox/EmptyHeader").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(emptyHeader);
@@ -522,7 +510,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testInvalidMBox() {
 
     // Create a file to store our test data in
-    File invalidMBox = new File("data/mbox/Invalid");
+    File invalidMBox = new File(getClass().getResource("/data/mbox/Invalid").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(invalidMBox);
@@ -635,7 +623,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testCouldBeMBox() {
 
     // Create a file to store our test data in
-    File couldBeMBox = new File("data/mbox/CouldBe");
+    File couldBeMBox = new File(getClass().getResource("/data/mbox/CouldBe").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(couldBeMBox);
@@ -747,7 +735,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testNormalMBox() {
 
     // Create a file to store our test data in
-    File normal = new File("data/mbox/Normal");
+    File normal = new File(getClass().getResource("/data/mbox/Normal").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(normal);
@@ -1095,7 +1083,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testAttachments() {
 
     // Create a file to store our test data in
-    File attachments = new File("data/mbox/Attachments");
+    File attachments = new File(getClass().getResource("/data/mbox/Attachments").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(attachments);
@@ -1571,7 +1559,7 @@ public class MBoxParserUnitTest extends TestCase {
   public void testInvalidAttachments() {
 
     // Create a file to store our test data in
-    File invalidAttachments = new File("data/mbox/InvalidAttachments");
+    File invalidAttachments = new File(getClass().getResource("/data/mbox/InvalidAttachments").getFile());
 
     // Create a content object for our file
     Content content = createContentObject(invalidAttachments);
