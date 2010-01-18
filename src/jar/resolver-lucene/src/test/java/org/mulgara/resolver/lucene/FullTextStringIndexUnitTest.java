@@ -71,11 +71,6 @@ public class FullTextStringIndexUnitTest extends TestCase {
   private final static String indexDirectory =
       TempDir.getTempDir().getPath() + File.separator + "fulltextsp";
 
-  /** The directory containing the text documents */
-  private final static String textDirectory =
-      System.getProperty("cvs.root") + File.separator + "data" + File.separator +
-      "fullTextTestData";
-
   /** Logger */
   private final static Logger logger = Logger.getLogger(FullTextStringIndexUnitTest.class);
 
@@ -439,9 +434,7 @@ public class FullTextStringIndexUnitTest extends TestCase {
       // create a new index
       index = new FullTextStringIndex(cache, true, true);
 
-      logger.debug("Obtaining text text documents from " + textDirectory);
-
-      File directory = new File(textDirectory);
+      File directory = new File(getClass().getResource("/data/fullTextTestData").getFile());
       File[] textDocuments = directory.listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           return name.endsWith(".txt");
