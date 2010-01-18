@@ -24,6 +24,13 @@
         </dependency>
         <dependency>
             <groupId>org.mulgara</groupId>
+            <artifactId>query</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
             <artifactId>resolver-memory</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -31,6 +38,12 @@
         <dependency>
             <groupId>org.mulgara</groupId>
             <artifactId>resolver-view</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>resolver-url</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
