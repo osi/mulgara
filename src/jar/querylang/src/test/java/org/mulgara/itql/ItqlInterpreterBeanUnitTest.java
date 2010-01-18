@@ -101,15 +101,6 @@ public class ItqlInterpreterBeanUnitTest {
   /** an example model */
   private static String testModel = "rmi://" + hostName + "/server1#itqlmodel";
 
-  /** Data directory for test files */
-  private static String dataDirectory = System.getProperty("cvs.root") + "/data";
-
-  static {
-    if ( System.getProperty("os.name").indexOf("Windows") >= 0 ) {
-      dataDirectory = "/"+dataDirectory.replace('\\','/');
-    }
-  }
-
   /** a temp directory location */
   private static File tmpDirectory = TempDir.getTempDir();
 
@@ -224,7 +215,7 @@ public class ItqlInterpreterBeanUnitTest {
     bean.executeQueryToString(query);
 
     //load data
-    String dataFile = "file:" + dataDirectory + "/numbers.rdf.gz";
+    String dataFile = getClass().getResource("/data/numbers.rdf.gz").toExternalForm();
     query = "load <" + dataFile + "> into <" + model + "> ;";
     //number of statements must be more than 1 page size (1000 statements)
     System.setProperty("mulgara.rmi.prefetchsize", "10");
@@ -485,11 +476,11 @@ public class ItqlInterpreterBeanUnitTest {
     // log that we're executing the test
     log.debug("Starting load API test 5");
 
-    File source = new File(dataDirectory + "/ical.rdf");
+    URL resource = getClass().getResource("/data/ical.rdf");
     URI modelURI = new URI(testModel);
 
     // execute the load locally
-    long statements = bean.load(source, modelURI);
+    long statements = bean.load(resource.openStream(), modelURI);
 
     assertEquals("Incorrect number of statements inserted", 1482, statements);
 
@@ -506,11 +497,11 @@ public class ItqlInterpreterBeanUnitTest {
     // log that we're executing the test
     log.debug("Starting load API test 6");
 
-    File source = new File(dataDirectory + "/camera.owl");
+    URL resource = getClass().getResource("/data/camera.owl");
     URI modelURI = new URI(testModel);
 
     // execute the load locally
-    long statements = bean.load(source, modelURI);
+    long statements = bean.load(resource.openStream(), modelURI);
 
     assertEquals("Incorrect number of statements inserted", 103, statements);
 
@@ -529,12 +520,11 @@ public class ItqlInterpreterBeanUnitTest {
     // log that we're executing the test
     log.debug("Starting load API test 7");
 
-    File source = new File(dataDirectory + "/camera.owl.bad");
     URI modelURI = new URI(testModel);
 
     // execute the load locally
     try {
-      bean.load(source, modelURI);
+      bean.load(getClass().getResource(getClass().getName().replace(".","/") + ".class").openStream(), modelURI);
     } catch (QueryException ex) {
       badFile = true;
     }
@@ -554,11 +544,11 @@ public class ItqlInterpreterBeanUnitTest {
     // log that we're executing the test
     log.debug("Starting load API test 8");
 
-    File source = new File(dataDirectory + "/camera.n3");
     URI modelURI = new URI(testModel);
+    URL resource = getClass().getResource("/data/camera.n3");
 
     // execute the load locally
-    long statements = bean.load(source, modelURI);
+    long statements = bean.load(resource.openStream(), modelURI);
 
     assertEquals("Incorrect number of statements inserted", 99, statements);
 
@@ -577,11 +567,11 @@ public class ItqlInterpreterBeanUnitTest {
       // log that we're executing the test
       log.debug("Starting load API test 9");
 
-      File source = new File(dataDirectory + "/numbers.rdf.gz");
+      URL resource = getClass().getResource("/data/numbers.rdf.gz");
       URI modelURI = new URI(testModel);
 
       // execute the load locally
-      long statements = bean.load(source, modelURI);
+      long statements = bean.load(resource.openStream(), modelURI);
 
       assertEquals("Incorrect number of statements inserted", 512, statements);
     } catch (Exception exception) {

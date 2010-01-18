@@ -39,6 +39,10 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <includes>
+                                <include>edu.emory.mathcs.util.remote.io.server.impl.RemoteOutputStreamSrvImpl</include>
+                                <include>edu.emory.mathcs.util.remote.io.server.impl.RemoteInputStreamSrvImpl</include>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>
