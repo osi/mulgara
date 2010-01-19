@@ -28,7 +28,6 @@
         <module>src/jar/query</module>
         <module>src/jar/querylang</module>
         <module>src/jar/rdql</module>
-        <module>src/jar/resolver</module>
         <module>src/jar/resolver-distributed</module>
         <module>src/jar/resolver-filesystem</module>
         <module>src/jar/resolver-gis</module>
@@ -60,6 +59,8 @@
         <module>src/jar/util-xa</module>
         <module>src/jar/web</module>
         <module>src/war/web-services</module>
+        <module>src/integration-test</module>
+        <module>src/dist/core</module>
     </modules>
 
     <url>http://mulgara.org/</url>
@@ -299,6 +300,10 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jspc-maven-plugin</artifactId>
                     <version>1.4.6</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2-beta-4</version>
                 </plugin>
             </plugins>
         </pluginManagement>
