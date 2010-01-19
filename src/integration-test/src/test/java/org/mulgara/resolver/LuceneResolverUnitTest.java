@@ -16,7 +16,7 @@
  * Contributions:
  */
 
-package org.mulgara.resolver.lucene;
+package org.mulgara.resolver;
 
 import java.io.File;
 import java.io.StringWriter;

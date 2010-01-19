@@ -25,6 +25,10 @@
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -39,7 +39,7 @@
  * Original Code Source Code for Your Modifications.]
  *
  */
-package org.mulgara.resolver.relational;
+package org.mulgara.resolver;
 
 // Java 2 standard packages
 import java.io.File;

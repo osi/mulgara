@@ -18,9 +18,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.mulgara</groupId>
-            <artifactId>distribution</artifactId>
+            <groupId>org.mulgara.dist</groupId>
+            <artifactId>mulgara</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>ant-task</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -41,11 +47,6 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

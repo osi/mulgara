@@ -61,6 +61,7 @@
         <module>src/war/web-services</module>
         <module>src/integration-test</module>
         <module>src/dist/core</module>
+        <module>src/dist/embedded</module>
     </modules>
 
     <url>http://mulgara.org/</url>
@@ -74,14 +75,6 @@
                 <distribution>repo</distribution>
             </license>
         </licenses>
-    -->
-
-    <!--
-        <scm>
-            <connection>scm:git:git@github.com:osi/jetio.git</connection>
-            <url>scm:git:git@github.com:osi/jetio.git</url>
-            <developerConnection>scm:git:git@github.com:osi/jetio.git</developerConnection>
-        </scm>
     -->
 
     <properties>
@@ -240,6 +233,11 @@
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
                 <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>tomcat</groupId>
+                <artifactId>jasper-runtime</artifactId>
+                <version>4.1.31</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

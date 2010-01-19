@@ -11,6 +11,7 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
+    <groupId>org.mulgara.dist</groupId>
     <artifactId>mulgara-core</artifactId>
     <packaging>pom</packaging>
 
@@ -196,7 +197,6 @@
                         </goals>
                         <configuration>
                             <finalName>mulgara-core-${project.version}</finalName>
-                            <workDirectory>${project.build.directory}/assembly/work/core</workDirectory>
                             <archive>
                                 <manifest>
                                     <mainClass>org.mulgara.server.EmbeddedMulgaraServer</mainClass>

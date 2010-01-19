@@ -21,6 +21,10 @@
             <artifactId>descriptor</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-runtime</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -36,7 +40,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <webXml>${basedir}/target/jspweb.xml</webXml>
+                    <outputWebXml>${basedir}/target/jspweb.xml</outputWebXml>
                     <injectString>&lt;!-- [INSERT JSP FRAGMENT HERE] --&gt;</injectString>
                 </configuration>
             </plugin>
@@ -46,7 +50,7 @@
                     <webXml>${basedir}/target/jspweb.xml</webXml>
                     <!-- Use this to include a selection of jars that will be included in the WAR -->
                     <packagingIncludes>
-                        **/*.xml,**/*.html,**/*.png,**/*.rdf,**/*.gif,**/*.xsl,WEB-INF/classes/**/*.*,**/*.wsdd
+                        **/*.xml,**/*.html,**/*.png,**/*.rdf,**/*.gif,**/*.xsl,WEB-INF/classes/**/*.*,**/*.wsdd,WEB-INF/lib/jasper*.*,WEB-INF/lib/jsp*.*
                         <!-- TODO was including bsf.jar and js.jar -->
                     </packagingIncludes>
                     <archive>

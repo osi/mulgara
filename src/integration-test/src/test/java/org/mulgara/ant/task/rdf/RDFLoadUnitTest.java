@@ -28,6 +28,7 @@
 package org.mulgara.ant.task.rdf;
 
 // Junit
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -143,7 +144,7 @@ public class RDFLoadUnitTest extends TestCase {
     /* PHLOGISTON -- this test should be reenabled
          suite.addTest(new RDFLoadUnitTest("testCreateDropModel"));
      */
-    
+
     suite.addTest(new RDFLoadUnitTest("testDirLoadNoLog"));  // failed
     suite.addTest(new RDFLoadUnitTest("testPathLoadWithLog"));  // failed
     suite.addTest(new RDFLoadUnitTest("testReadLog"));  // failed
@@ -155,11 +156,11 @@ public class RDFLoadUnitTest extends TestCase {
     suite.addTest(new RDFLoadUnitTest("test3ErrorsWithLog"));  // failed
     suite.addTest(new RDFLoadUnitTest("test1PerTrans"));  // failed
     suite.addTest(new RDFLoadUnitTest("test5PerTrans"));  // failed
-    suite.addTest(new RDFLoadUnitTest("test2PerTransWith1Error"));  // failed  
+    suite.addTest(new RDFLoadUnitTest("test2PerTransWith1Error"));  // failed
     suite.addTest(new RDFLoadUnitTest("test2PerTransWith3Errors"));  // failed
-    
+
     //suite.addTest(new RDFLoadUnitTest("test10PerTransIgnoreErrorsIn2Dirs"));  // failed
-    
+
     return suite;
   }
 
@@ -349,7 +350,7 @@ public class RDFLoadUnitTest extends TestCase {
     answer.close();
 
     // Should be 0 errors
-    assertEquals("Wrong number of errors!", 0, load.getNumErrors());
+    Assert.assertEquals("Wrong number of errors!", 0, load.getNumErrors());
   }
 
   /**
@@ -385,10 +386,10 @@ public class RDFLoadUnitTest extends TestCase {
     // Check log
     RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
     loadLog.close();
-    assertEquals("Not enough documents logged!", 5, loadLog.getNumLoaded());
+    Assert.assertEquals("Not enough documents logged!", 5, loadLog.getNumLoaded());
 
     // Should be 0 errors
-    assertEquals("Wrong number of errors!", 0, load.getNumErrors());
+    Assert.assertEquals("Wrong number of errors!", 0, load.getNumErrors());
   }
 
   /**
@@ -411,7 +412,7 @@ public class RDFLoadUnitTest extends TestCase {
     path.addFileset(fileSet);
     load.execute();
 
-    assertEquals("No documents should have been loaded!", 0, load.getNumLoaded());
+    Assert.assertEquals("No documents should have been loaded!", 0, load.getNumLoaded());
   }
 
   /**
@@ -452,7 +453,7 @@ public class RDFLoadUnitTest extends TestCase {
       answer.close();
 
       // Check loader
-      assertEquals("Five documents should have been loaded!", 5,
+      Assert.assertEquals("Five documents should have been loaded!", 5,
                    load.getNumLoaded());
     } finally {
       // Get rid of the log file
@@ -487,7 +488,7 @@ public class RDFLoadUnitTest extends TestCase {
     answer.close();
 
     // Should be 1 error
-    assertEquals("Wrong number of errors!", 1, load.getNumErrors());
+    Assert.assertEquals("Wrong number of errors!", 1, load.getNumErrors());
   }
 
   /**
@@ -525,11 +526,11 @@ public class RDFLoadUnitTest extends TestCase {
       answer.close();
 
       // Should be 1 error
-      assertEquals("Wrong number of errors!", 1, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 1, load.getNumErrors());
 
       // Check log
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
-      assertEquals("Wrong number of documents in log!", 1,
+      Assert.assertEquals("Wrong number of documents in log!", 1,
                    loadLog.getNumLoaded());
     } finally {
       // Get rid of the log file
@@ -564,7 +565,7 @@ public class RDFLoadUnitTest extends TestCase {
     answer.close();
 
     // Should be 2 errors
-    assertEquals("Wrong number of errors!", 2, load.getNumErrors());
+    Assert.assertEquals("Wrong number of errors!", 2, load.getNumErrors());
   }
 
   /**
@@ -602,7 +603,7 @@ public class RDFLoadUnitTest extends TestCase {
       answer.close();
 
       // Should be 2 errors
-      assertEquals("Wrong number of errors!", 2, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 2, load.getNumErrors());
 
       //      // Check log
       //      RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
@@ -649,14 +650,14 @@ public class RDFLoadUnitTest extends TestCase {
       answer.close();
 
       // Should be 3 errors
-      assertEquals("Wrong number of errors!", 3, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 3, load.getNumErrors());
 
       // Should be l loaded
-      assertEquals("Wrong number of documents loaded!", 1, load.getNumLoaded());
+      Assert.assertEquals("Wrong number of documents loaded!", 1, load.getNumLoaded());
 
       // Check log - 2 files in the log, 1 from the previous run
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
-      assertEquals("Wrong number of documents in log!", 2,
+      Assert.assertEquals("Wrong number of documents in log!", 2,
                    loadLog.getNumLoaded());
     } finally {
       // Get rid of the log file
@@ -701,10 +702,10 @@ public class RDFLoadUnitTest extends TestCase {
       // Check log
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       loadLog.close();
-      assertEquals("Not enough documents logged!", 5, loadLog.getNumLoaded());
+      Assert.assertEquals("Not enough documents logged!", 5, loadLog.getNumLoaded());
 
       // Should be 0 errors
-      assertEquals("Wrong number of errors!", 0, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 0, load.getNumErrors());
     } finally {
 
       if (logFile.exists()) logFile.delete();
@@ -747,10 +748,10 @@ public class RDFLoadUnitTest extends TestCase {
       // Check log
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       loadLog.close();
-      assertEquals("Not enough documents logged!", 5, loadLog.getNumLoaded());
+      Assert.assertEquals("Not enough documents logged!", 5, loadLog.getNumLoaded());
 
       // Should be 0 errors
-      assertEquals("Wrong number of errors!", 0, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 0, load.getNumErrors());
     } finally {
       if (logFile.exists()) logFile.delete();
     }
@@ -777,7 +778,7 @@ public class RDFLoadUnitTest extends TestCase {
     // try {
 
       load.setModeluri(URI.create(testModel));
-      load.setLogfile(logFile);      
+      load.setLogfile(logFile);
       load.setMaxerrors(1);
       load.setTransactionsize(2);
 
@@ -798,18 +799,18 @@ public class RDFLoadUnitTest extends TestCase {
       }
 
       // One should be loaded
-      answer.beforeFirst();  
+      answer.beforeFirst();
       assertTrue("No documents should be loaded, found "+answer.getRowCount(), !answer.next());
       answer.close();
 
-      assertEquals("No documents should be loaded!", 0, load.getNumLoaded());
+      Assert.assertEquals("No documents should be loaded!", 0, load.getNumLoaded());
 
       //      // Check log
       //      RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       //      loadLog.close();
       //      assertEquals("No documents should be logged!", 0, loadLog.getNumLoaded());
       // Should be 2 errors
-      assertEquals("Wrong number of errors!", 2, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 2, load.getNumErrors());
     // } finally {
       //      if (logFile.exists()) {
       //        logFile.delete();
@@ -869,16 +870,16 @@ public class RDFLoadUnitTest extends TestCase {
                    answer.getRowCount());
       answer.close();
 
-      assertEquals("One document should be loaded this run!", 2,
+      Assert.assertEquals("One document should be loaded this run!", 2,
                    load.getNumLoaded());
 
       // Check log
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       loadLog.close();
-      assertEquals("Two documents should be logged!", 2, loadLog.getNumLoaded());
+      Assert.assertEquals("Two documents should be logged!", 2, loadLog.getNumLoaded());
 
       // Should be 3 errors
-      assertEquals("Wrong number of errors!", 3, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 3, load.getNumErrors());
     } finally {
       if (logFile.exists()) logFile.delete();
     }
@@ -924,15 +925,15 @@ public class RDFLoadUnitTest extends TestCase {
       assertEquals("Not enough documents loaded!", 4, answer.getRowCount());
       answer.close();
 
-      assertEquals("Four documents should be loaded!", 4, load.getNumLoaded());
+      Assert.assertEquals("Four documents should be loaded!", 4, load.getNumLoaded());
 
       // Check log
       RDFLoadLog loadLog = new RDFLoadLog(logFile, true);
       loadLog.close();
-      assertEquals("Four documents should be logged!", 4, loadLog.getNumLoaded());
+      Assert.assertEquals("Four documents should be logged!", 4, loadLog.getNumLoaded());
 
       // Should be 3 errors
-      assertEquals("Wrong number of errors!", 6, load.getNumErrors());
+      Assert.assertEquals("Wrong number of errors!", 6, load.getNumErrors());
     } finally {
       if (logFile.exists()) logFile.delete();
     }
