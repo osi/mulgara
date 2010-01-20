@@ -28,7 +28,6 @@
         <module>src/jar/querylang</module>
         <module>src/jar/resolver-distributed</module>
         <module>src/jar/resolver-filesystem</module>
-        <module>src/jar/resolver-gis</module>
         <module>src/jar/resolver-http</module>
         <module>src/jar/resolver-jar</module>
         <module>src/jar/resolver-lucene</module>
