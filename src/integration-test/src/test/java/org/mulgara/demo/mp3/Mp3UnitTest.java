@@ -71,14 +71,6 @@ public class Mp3UnitTest extends TestCase {
    */
   private static Logger logger = Logger.getLogger(Mp3UnitTest.class.getName());
 
-  /** Default config file location */
-  private static final String CONFIG_FILE = System.getProperty("cvs.root") +
-      "/conf/mp3-config.xml";
-
-  /** Default Schema File */
-  private static final String SCHEMA_FILE = System.getProperty("cvs.root") +
-      "/conf/mp3.rdfs";
-
   /** Default Mp3 Directory (test data) */
   private static final String MP3_DIR = System.getProperty("cvs.root") +
       "/data/mp3";
@@ -154,8 +146,7 @@ public class Mp3UnitTest extends TestCase {
    * @throws Exception
    */
   public void testLoadSchema() throws Exception {
-    controller.getSchemaModel().loadSchema(new URIReferenceImpl(new File(
-        SCHEMA_FILE).toURI()));
+    controller.getSchemaModel().loadSchema(new URIReferenceImpl(getClass().getResource("/mp3.rdfs").toURI()));
   }
 
   /**
@@ -237,7 +228,7 @@ public class Mp3UnitTest extends TestCase {
 
       //create controller and load default configuration.
       controller = Mp3Controller.newInstance();
-      controller.init(new Mp3ConfigFile(new File(CONFIG_FILE).toURI().toURL()));
+      controller.init(new Mp3ConfigFile(getClass().getResource("/mp3-config.xml")));
 
       //let superclass set up too
       super.setUp();

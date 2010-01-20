@@ -8,10 +8,42 @@
       <version>2.1.7-SNAPSHOT</version>
       <relativePath>../../../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>demo-mp3</artifactId>
     <packaging>jar</packaging>
 
     <name>demo-mp3</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mulgara</groupId>
+            <artifactId>querylang</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>castor-maven-plugin</artifactId>
+                <configuration>
+                    <schema>src/main/castor/mp3-config.xsd</schema>
+                    <packaging>org.mulgara.demo.mp3.config</packaging>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
