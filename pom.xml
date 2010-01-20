@@ -21,7 +21,6 @@
         <module>src/jar/demo-mp3</module>
         <module>src/jar/descriptor</module>
         <module>src/jar/doclet</module>
-        <module>src/jar/doclet141</module>
         <module>src/jar/dtd</module>
         <module>src/jar/jrdf</module>
         <module>src/jar/krule</module>
