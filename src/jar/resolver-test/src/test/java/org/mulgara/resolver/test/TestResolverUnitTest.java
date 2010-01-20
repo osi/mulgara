@@ -193,7 +193,7 @@ public class TestResolverUnitTest extends TestCase {
       true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
-    
+
     String[][] result = new String[][] {
       new String[] { "A", "C" },
       new String[] { "A", "D" },
@@ -243,7 +243,7 @@ public class TestResolverUnitTest extends TestCase {
       true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
-    
+
     String[][] result = new String[][] {
       new String[] { "A", "A", "C" },
       new String[] { "A", "A", "D" },
@@ -295,7 +295,7 @@ public class TestResolverUnitTest extends TestCase {
       true,                                                                     // DISTINCT
       new UnconstrainedAnswer()                                                 // GIVEN
     ));
-    
+
     String[][] result = new String[][] {
       new String[] { "A", "A", "C" },
       new String[] { "A", "A", "D" },
@@ -367,8 +367,7 @@ public class TestResolverUnitTest extends TestCase {
   protected void setUp() throws Exception {
 		if (database == null) {
 			// Create the persistence directory
-			File persistenceDirectory =
-				new File(new File(System.getProperty("cvs.root")), "testDatabase");
+			File persistenceDirectory = new File("target/testDatabase");
 			if (persistenceDirectory.isDirectory()) {
 				if (!FileUtil.deleteDirectory(persistenceDirectory)) {
 					throw new RuntimeException(
