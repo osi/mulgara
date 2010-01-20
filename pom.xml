@@ -26,7 +26,6 @@
         <module>src/jar/krule</module>
         <module>src/jar/query</module>
         <module>src/jar/querylang</module>
-        <module>src/jar/rdql</module>
         <module>src/jar/resolver-distributed</module>
         <module>src/jar/resolver-filesystem</module>
         <module>src/jar/resolver-gis</module>
