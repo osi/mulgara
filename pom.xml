@@ -51,7 +51,6 @@
         <module>src/jar/store-stringpool-xa</module>
         <module>src/jar/store-stringpool-xa11</module>
         <module>src/jar/swrl</module>
-        <module>src/jar/tag</module>
         <module>src/jar/util</module>
         <module>src/jar/util-xa</module>
         <module>src/jar/web</module>
