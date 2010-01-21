@@ -35,6 +35,10 @@
             <artifactId>axis</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
         </dependency>
@@ -50,26 +54,6 @@
         <dependency>
             <groupId>net.sourceforge.jxunit</groupId>
             <artifactId>jxunit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis-jaxrpc</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
